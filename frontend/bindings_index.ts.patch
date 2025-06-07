@@ -1,0 +1,15 @@
+diff --git a/src/bindings/ts/index.ts b/src/bindings/ts/index.ts
+index 74bc9a1..8d8bfe9 100644
+--- a/src/bindings/ts/index.ts
++++ b/src/bindings/ts/index.ts
+@@ -854,8 +854,8 @@ import { PlayerTeleportWaystoneStart } from "./player_teleport_waystone_start_re
+ export { PlayerTeleportWaystoneStart };
+ import { PlayerUseElevator } from "./player_use_elevator_reducer.ts";
+ export { PlayerUseElevator };
+-import { PlayerVoteAnswer } from "./player_vote_answer_reducer.ts";
+-export { PlayerVoteAnswer };
++//import { PlayerVoteAnswer } from "./player_vote_answer_reducer.ts";
++//export { PlayerVoteAnswer };
+ import { PlayerVoteConclude } from "./player_vote_conclude_reducer.ts";
+ export { PlayerVoteConclude };
+ import { PocketSwapContents } from "./pocket_swap_contents_reducer.ts";
