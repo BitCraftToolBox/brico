@@ -17,9 +17,9 @@ import {
     ItemListDesc,
     ItemListPossibility,
     ItemStack,
-    ItemType, KnowledgeScrollDesc,
+    ItemType, KnowledgeScrollDesc, KnowledgeStatModifierDesc,
     ProbabilisticItemStack,
-    ResourceDesc,
+    ResourceDesc, SecondaryKnowledgeDesc,
     SkillDesc,
     ToolDesc,
     ToolTypeDesc,
@@ -326,5 +326,12 @@ export const BitCraftTables = {
         new BitCraftTable('knowledge_scroll_desc',
             KnowledgeScrollDesc.getTypeScriptAlgebraicType()
         )),
-
+    'KnowledgeStatModifierDesc': cachedTable<KnowledgeStatModifierDesc>(
+        new BitCraftTable('knowledge_stat_modifier_desc',
+            KnowledgeScrollDesc.getTypeScriptAlgebraicType()
+        )),
+    'SecondaryKnowledgeDesc': cachedTable<SecondaryKnowledgeDesc>(
+        new BitCraftTable('secondary_knowledge_desc',
+            KnowledgeScrollDesc.getTypeScriptAlgebraicType()
+        )),
 };

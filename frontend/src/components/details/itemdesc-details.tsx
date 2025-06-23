@@ -46,14 +46,22 @@ const StatCard: Component<ItemCardProps> = (props) => {
     const toolTypeIndex = BitCraftTables.ToolTypeDesc.indexedBy("id");
     const skillIndex = BitCraftTables.SkillDesc.indexedBy("id");
     const buffIndex = BitCraftTables.BuffDesc.indexedBy("id");
+    const knowledgeScrollIndex = BitCraftTables.KnowledgeScrollDesc.indexedBy("itemId");
+    const knowledgeStatIndex = BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId");
 
     const toolData = toolIndex && toolIndex()?.get(item.id);
     const equipData = equipIndex && equipIndex()?.get(item.id);
     const foodData = foodIndex && foodIndex()?.get(item.id);
     const weaponData = weaponIndex && weaponIndex()?.get(item.id);
     const toolTypeData = toolData && toolTypeIndex && toolTypeIndex()?.get(toolData.toolType);
+    const knowledgeScrollData = props.itemType == ItemType.Item.tag
+        && knowledgeScrollIndex ? knowledgeScrollIndex()?.get(item.id) : undefined;
+    const secondaryKnowledgeId = knowledgeScrollData ? knowledgeScrollData.secondaryKnowledgeId : undefined;
+    const knowledgeStatData = secondaryKnowledgeId && knowledgeStatIndex && knowledgeScrollData
+        ? knowledgeStatIndex()?.get(knowledgeScrollData.secondaryKnowledgeId) : undefined;
+    const knowledgeStatDataStats = knowledgeStatData && knowledgeStatData.stats;
 
-    return <Show when={toolData || equipData || weaponData || foodData}>
+    return <Show when={toolData || equipData || weaponData || foodData || knowledgeStatData}>
         <Card>
             <CardHeader>
                 <CardTitle class="w-full text-center">Stats</CardTitle>
@@ -114,6 +122,16 @@ const StatCard: Component<ItemCardProps> = (props) => {
                                     )
                                 }}
                             </For>
+                        </div>
+                    </Show>
+                    <Show when={knowledgeStatDataStats?.length}>
+                        <div class="flex flex-col px-2">
+                            <ul class="pl-4">
+                                <For each={knowledgeStatDataStats}>
+                                    {stat =>
+                                        <li>{splitCamelCase(stat.id as unknown as string /* TODO .tag */)} {fixFloat(stat.value * (stat.isPct ? 100 : 1))}{stat.isPct ? "%" : ""}</li>}
+                                </For>
+                            </ul>
                         </div>
                     </Show>
                 </div>
