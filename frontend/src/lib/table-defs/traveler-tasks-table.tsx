@@ -1,14 +1,9 @@
 import {ItemStack, TravelerTaskDesc} from "~/bindings/ts";
-import {useDetailDialog} from "~/lib/contexts";
-import {Button} from "~/components/ui/button";
 import {BitCraftToDataDef, rowActionRawOnly} from "~/lib/table-defs/base";
-import {DropdownMenuItem} from "~/components/ui/dropdown-menu";
-import {TableRowActions} from "~/components/ui/data-table/table-row-actions";
 import {CellContext, Column} from "@tanstack/solid-table";
 import {BitCraftTables} from "~/lib/spacetime";
 import {Show} from "solid-js";
 import {ItemStackArrayComponent} from "~/components/bitcraft/items";
-import {Rarities} from "~/lib/bitcraft-utils";
 import {compareBasic} from "~/lib/utils";
 
 
@@ -25,10 +20,9 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
     columns: [
         {
             id: "Skill",
-            accessorKey: "levelRequirement.skillId",
-            cell: props => {
+            accessorFn: task => {
                 const skillIndex = BitCraftTables.SkillDesc.indexedBy("id")!()!;
-                const skillData = skillIndex.get(props.getValue());
+                const skillData = skillIndex.get(task.levelRequirement.skillId);
                 return skillData ? skillData.name : "Unknown";
             }
         },
@@ -51,15 +45,18 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
         },
         {
             id: "Exp",
-            accessorKey: "rewardedExperience.quantity"
+            accessorKey: "rewardedExperience.quantity",
+            filterFn: 'inNumberRange'
         },
         {
             id: "Min Level",
-            accessorKey: "levelRequirement.minLevel"
+            accessorKey: "levelRequirement.minLevel",
+            filterFn: 'inNumberRange'
         },
         {
             id: "Max Level",
-            accessorKey: "levelRequirement.maxLevel"
+            accessorKey: "levelRequirement.maxLevel",
+            filterFn: 'inNumberRange'
         },
         {
             id: "Description",
@@ -73,12 +70,33 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
             title: "Skill",
             options: (col: Column<TravelerTaskDesc> | undefined) => {
                 if (!col) return [];
-                const skillIndex = BitCraftTables.SkillDesc.indexedBy("id")!()!;
                 return col.getFacetedUniqueValues().keys().map(v => {
                     return {
-                        label: skillIndex.get(v)?.name ?? "Unknown", value: v
+                        label: v, value: v
                     }
                 }).toArray()
+            }
+        },
+        {
+            column: "Min Level",
+            title: "Min Level",
+            options: (col: Column<TravelerTaskDesc> | undefined) => {
+                let minMax = col ? col.getFacetedMinMaxValues() : null;
+                return {
+                    label: "Min Level",
+                    minMax: minMax || [0, 0]
+                }
+            }
+        },
+        {
+            column: "Max Level",
+            title: "Max Level",
+            options: (col: Column<TravelerTaskDesc> | undefined) => {
+                let minMax = col ? col.getFacetedMinMaxValues() : null;
+                return {
+                    label: "Max Level",
+                    minMax: minMax || [0, 0]
+                }
             }
         },
     ]
