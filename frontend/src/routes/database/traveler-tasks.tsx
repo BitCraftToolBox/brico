@@ -14,7 +14,7 @@ export default function TravelerTasks() {
             items={taskDescList.get}
             cols={defs.columns}
             facetedFilters={defs.facetedFilters}
-            searchColumn={""}
+            searchColumn={"Description"}
         >
         </TableLayout>
     )

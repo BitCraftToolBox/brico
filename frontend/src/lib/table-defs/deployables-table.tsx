@@ -60,38 +60,6 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
             filterFn: includedIn<DeployableDesc>(),
         },
         {
-            id: "Occupants",
-            accessorKey: "capacity",
-            filterFn: "inNumberRange"
-        },
-        {
-            id: "Movement",
-            accessorKey: "movementType" // TODO .tag
-        },
-        {
-            id: "Speed",
-            accessorFn: (deployable: DeployableDesc) => {
-                let speeds;
-                switch (deployable.movementType as unknown as string /* TODO .tag */) {
-                    case MovementType.None.tag:
-                        return 0;
-                    case MovementType.Ground.tag:
-                        return deployable.speed
-                            .filter(ms => ms.surfaceType as unknown as string /* TODO .tag */ == SurfaceType.Ground as unknown as string /* TODO .tag */)
-                            .find(() => true)?.speed || 0;
-                    case MovementType.Water.tag:
-                        speeds = new Set(deployable.speed
-                            .filter(ms => ms.surfaceType as unknown as string /* TODO .tag */ != SurfaceType.Ground as unknown as string /* TODO .tag */)
-                            .map(ms => ms.surfaceType /* TODO .tag */ + ": " + ms.speed)).values().toArray()
-                        return speeds.length == 1 ? speeds[0] : speeds;
-                    case MovementType.Amphibious.tag:
-                        speeds = new Set(deployable.speed
-                            .map(ms => ms.speed)).values().toArray();
-                        return speeds.length == 1 ? speeds[0] : speeds;
-                }
-            }
-        },
-        {
             id: "Item Slots",
             accessorKey: "storage",
         },
@@ -138,6 +106,38 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
                         stackProps={() => stackProps}
                     />
                 </Show>
+            }
+        },
+        {
+            id: "Occupants",
+            accessorKey: "capacity",
+            filterFn: "inNumberRange"
+        },
+        {
+            id: "Movement",
+            accessorKey: "movementType" // TODO .tag
+        },
+        {
+            id: "Speed",
+            accessorFn: (deployable: DeployableDesc) => {
+                let speeds;
+                switch (deployable.movementType as unknown as string /* TODO .tag */) {
+                    case MovementType.None.tag:
+                        return 0;
+                    case MovementType.Ground.tag:
+                        return deployable.speed
+                            .filter(ms => ms.surfaceType as unknown as string /* TODO .tag */ == SurfaceType.Ground.tag)
+                            .find(() => true)?.speed || 0;
+                    case MovementType.Water.tag:
+                        speeds = new Set(deployable.speed
+                            .filter(ms => ms.surfaceType as unknown as string /* TODO .tag */ != SurfaceType.Ground.tag)
+                            .map(ms => ms.surfaceType /* TODO .tag */ + ": " + ms.speed)).values().toArray()
+                        return speeds.length == 1 ? speeds[0] : speeds.join(', ');
+                    case MovementType.Amphibious.tag:
+                        speeds = new Set(deployable.speed
+                            .map(ms => ms.speed)).values().toArray();
+                        return speeds.length == 1 ? speeds[0] : speeds;
+                }
             }
         },
         rowActionRawOnly
