@@ -70,7 +70,7 @@ const StatCard: Component<ItemCardProps> = (props) => {
                     <Show when={equipData || weaponData}>
                         <Show when={equipData}>
                             <div class="flex flex-col px-2">
-                                <p>Type: {equipData!.slots.map((s: any) => s.tag).join(", ")}</p>
+                                <p>Type: {equipData!.slots.map((s: any) => s as unknown as string /* TODO .tag */).join(", ")}</p>
                                 <p>Requirement: {skillIndex!()!.get(equipData!.levelRequirement?.skillId)!.name} {equipData!.levelRequirement?.level}</p>
                             </div>
                         </Show>
@@ -78,7 +78,7 @@ const StatCard: Component<ItemCardProps> = (props) => {
                             <div class="flex flex-col px-2">
                                 <For each={equipData?.stats}>
                                     {stat =>
-                                        <p>{splitCamelCase(stat.id.tag)} {fixFloat(stat.value * (stat.isPct ? 100 : 1))}{stat.isPct ? "%" : ""}</p>}
+                                        <p>{splitCamelCase(stat.id as unknown as string /* TODO .tag */)} {fixFloat(stat.value * (stat.isPct ? 100 : 1))}{stat.isPct ? "%" : ""}</p>}
                                 </For>
                                 <Show when={weaponData}>
                                     <p>Damage: {weaponData!.minDamage} - {weaponData!.maxDamage}</p>
@@ -107,7 +107,7 @@ const StatCard: Component<ItemCardProps> = (props) => {
                                             <ul class="pl-4">
                                                 <For each={buffData.stats}>
                                                     {stat =>
-                                                        <li>{splitCamelCase(stat.id.tag)} {fixFloat(stat.value * (stat.isPct ? 100 : 1))}{stat.isPct ? "%" : ""}</li>}
+                                                        <li>{splitCamelCase(stat.id as unknown as string /* TODO .tag */)} {fixFloat(stat.value * (stat.isPct ? 100 : 1))}{stat.isPct ? "%" : ""}</li>}
                                                 </For>
                                             </ul>
                                         </>
@@ -182,7 +182,7 @@ type Option = {
 }
 
 function skillReqPair(req: LevelRequirement, skillData: Map<any, SkillDesc>) {
-    let skillTag: string = skillData.get(req.skillId)?.skillCategory.tag ?? "";
+    let skillTag: string = skillData.get(req.skillId)?.skillCategory as unknown as string /* TODO .tag */ ?? "";
     if (!skillTag || skillTag === "None") return null;
     if (skillTag === "Adventure") skillTag = "Skill";
     return [
@@ -251,7 +251,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                         getInputs={(r) =>
                             <ItemStackArrayComponent
                                 stackProps={() => r.consumedItemStacks.map((s: InputItemStack) => {
-                                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity}
+                                    return {item: [s.itemType as unknown as string /* TODO .tag */, s.itemId], quantity: s.quantity}
                                 })}
                             />
                         }
@@ -288,7 +288,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                                 <>
                                     <ItemStackArrayComponent
                                         stackProps={() => r.consumedItemStacks.map((s: InputItemStack) => {
-                                            return {item: [s.itemType.tag, s.itemId], quantity: s.quantity}
+                                            return {item: [s.itemType as unknown as string /* TODO .tag */, s.itemId], quantity: s.quantity}
                                         })}
                                     />
                                     <Show when={r.resourceId}>
@@ -362,7 +362,7 @@ function collapseStacks(stacks: ItemStack[]) {
     const cargoMap = new Map<number, ItemStack>();
     const itemMap = new Map<number, ItemStack>();
     for (let stack of stacks) {
-        let targetMap = stack.itemType.tag == ItemType.Cargo.tag ? cargoMap : itemMap;
+        let targetMap = stack.itemType as unknown as string /* TODO .tag */ == ItemType.Cargo.tag ? cargoMap : itemMap;
         if (targetMap.has(stack.itemId)) {
             targetMap.get(stack.itemId)!.quantity += stack.quantity;
         } else {
@@ -391,13 +391,13 @@ function addTradeToMap(
         outputs.push(...collapseCargoIds(trade.offerCargoId));
     }
     const stats = [
-        ["Traveler:", trade.traveler.tag] as [string, string],
+        ["Traveler:", trade.traveler as unknown as string /* TODO .tag */] as [string, string],
         ...trade.levelRequirements.map(req => skillReqPair(req, skillData)).filter(p => !!p),
     ];
     map.set(
         "travelerTrade_" + trade.id,
         [
-            trade.traveler.tag + " Trade",
+            trade.traveler as unknown as string /* TODO .tag */ + " Trade",
             <ItemStackArrayComponent stacks={() => inputs}/>,
             () => <ItemStackArrayComponent stacks={() => outputs} showName={true}/>,
             stats
@@ -416,7 +416,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
     const additionalUses = new Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][]]>();
 
     function cappedLevelToStat(req: CappedLevelRequirement) {
-        let skillTag: string = skillData.get(req.skillId)?.skillCategory.tag ?? "";
+        let skillTag: string = skillData.get(req.skillId)?.skillCategory as unknown as string /* TODO .tag */ ?? "";
         if (skillTag === "Adventure") skillTag = "Skill";
         return [
             skillTag + ":",
@@ -569,7 +569,7 @@ export function renderItemDescDialog(item: ItemDesc | CargoDesc, itemType: strin
                 <ItemIcon item={item} noInteract={true}/>
                 <div class="flex flex-col flex-1 justify-left ml-2">
                     {item.name}
-                    <div>(Tier <TierIcon class="inline ml-1" tier={item.tier}/>, {item.rarity.tag})</div>
+                    <div>(Tier <TierIcon class="inline ml-1" tier={item.tier}/>, {item.rarity as unknown as string /* TODO .tag */})</div>
                 </div>
             </div>
             <Show when={item.description}>

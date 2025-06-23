@@ -37,7 +37,7 @@ function computeStatsForItem(item: ItemDesc): ItemStats | undefined {
 
     function addStat(statEntry: CsvStatEntry) {
         stats.push({
-            name: splitCamelCase(statEntry.id.tag),
+            name: splitCamelCase(statEntry.id as unknown as string),
             value: statEntry.value,
             isPct: statEntry.isPct
         })
@@ -209,7 +209,7 @@ export const ItemDescDefs: BitCraftToDataDef<ItemDesc> = {
         },
         {
             id: "Rarity",
-            accessorKey: "rarity.tag",
+            accessorKey: "rarity",  // TODO .tag
             filterFn: includedIn<ItemDesc>(),
             sortingFn: (rowA, rowB) => {
                 if (rowA.original.rarity === rowB.original.rarity) return 0;

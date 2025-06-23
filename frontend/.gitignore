@@ -28,5 +28,5 @@ gitignore
 Thumbs.db
 
 
-src/bindings/
+#src/bindings/
 public/bsatn

@@ -1,4 +1,4 @@
-import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
+import {AlgebraicType} from "@clockworklabs/spacetimedb-sdk";
 import {
     BiomeDesc,
     BuffDesc,
@@ -35,18 +35,36 @@ interface FetchParams {
     itemType: AlgebraicType;
 }
 
-//const bsatnPath = "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_BSATN_Data/refs/heads/main/server";
-const bsatnPath = "/bsatn/server";
+const bsatnPath = "/json";
+//const bsatnPath = "/bsatn/server";
+
+function toCamelCase(obj: any): any {
+    if (Array.isArray(obj)) {
+        return obj.map(toCamelCase);
+    }
+
+    if (obj !== null && typeof obj === "object") {
+        return Object.entries(obj).reduce((acc, [key, value]) => {
+            const camelKey = key.replace(/_([a-z])/g, (_, g) => g.toUpperCase());
+            acc[camelKey] = toCamelCase(value);
+            return acc;
+        }, {} as any);
+    }
+
+    return obj;
+}
 
 async function fetchBSATN<T>(params: FetchParams) {
     const data = await fetch(
-        `${bsatnPath}/${params.name}.bsatn`
+        `${bsatnPath}/${params.name}.json`//.bsatn`
     );
     if (!data.ok) {
         throw Error("Couldn't fetch BSATN data." + await data.text())
     }
-    const reader = new BinaryReader(new Uint8Array((await data.arrayBuffer())));
-    return AlgebraicType.createArrayType(params.itemType).deserialize(reader) as T[];
+    //const reader = new BinaryReader(new Uint8Array((await data.arrayBuffer())));
+    const res = await data.text();
+
+    return toCamelCase(JSON.parse(res)) as T[];//AlgebraicType.createArrayType(params.itemType).deserialize(reader) as T[];
 }
 
 function cachedTable<T>(base: BitCraftTable<T>) {
@@ -146,7 +164,7 @@ export class BitCraftTable<TData> {
                                 } else if (Object.hasOwn(stack, 'items')) {
                                     const possibleStacks = (stack as ItemListPossibility).items;
                                     for (const i of possibleStacks) {
-                                        if (i.itemId === itemId && i.itemType.tag === itemType) {
+                                        if (i.itemId === itemId && i.itemType as unknown as string /* TODO .tag */ === itemType) {
                                             target.push(container);
                                             break;
                                         }
@@ -161,7 +179,7 @@ export class BitCraftTable<TData> {
                                     stack = subStack;
                                 }
                                 stack = stack as ItemStack;
-                                if (stack.itemId === itemId && stack.itemType.tag === itemType) {
+                                if (stack.itemId === itemId && stack.itemType as unknown as string /* TODO .tag */ === itemType) {
                                     target.push(container);
                                 }
                             }

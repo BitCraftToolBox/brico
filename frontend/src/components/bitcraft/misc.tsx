@@ -15,10 +15,10 @@ export const TierIcon: Component<TierIconProps> = (props) => {
     return (
         <img
             class={cn(`inline w-4 h-4 ${Tiers.getBackgroundColorClass(props.tier)}`, props.class)}
-            src={`/assets/Randy UI/Badges/badge-tier-number-${props.tier}.webp`}
+            src={`/assets/Badges/badge-tier-number-${props.tier}.webp`}
             alt={`Tier ${props.tier}`}
             style={{
-                mask: "url('/assets/Randy UI/Badges/badge-tier-container.webp')",
+                mask: "url('/assets/Badges/badge-tier-container.webp')",
                 "mask-size": "contain"
             }}
         />

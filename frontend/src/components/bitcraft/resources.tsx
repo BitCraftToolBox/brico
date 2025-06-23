@@ -57,7 +57,7 @@ export const ResourceIcon: Component<ResourceIconProps> = (props: ResourceIconPr
                 </div>
             </TooltipTrigger>
             <TooltipContent class={`border-1 ${borderColor}`}>
-                {resource.name} <TierIcon tier={resource.tier}/>, {resource.rarity.tag}
+                {resource.name} <TierIcon tier={resource.tier}/>, {resource.rarity as unknown as string /* TODO .tag */}
             </TooltipContent>
         </Tooltip>
         // </div>

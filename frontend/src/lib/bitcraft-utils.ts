@@ -14,7 +14,7 @@ export class Rarities {
     ]
 
     static toValue(r: Rarity): number {
-        switch (r.tag) {
+        switch (r as unknown as string /* TODO .tag */) {
             case Rarity.Common.tag:
                 return 1;
             case Rarity.Uncommon.tag:
@@ -34,7 +34,7 @@ export class Rarities {
     }
 
     static getBorderColorClass(r: Rarity) {
-        switch (r.tag) {
+        switch (r as unknown as string /* TODO .tag */) {
             case Rarity.Mythic.tag: return "border-rarity-border6";
             case Rarity.Legendary.tag: return "border-rarity-border5";
             case Rarity.Epic.tag: return "border-rarity-border4";
@@ -86,12 +86,15 @@ export function stackToItemOrCargo(stack: ItemStack | [string, number]) {
         itemType = stack[0];
         itemId = stack[1];
     } else {
-        itemType = stack.itemType.tag;
+        itemType = stack.itemType as unknown as string /* TODO .tag */;
         itemId = stack.itemId;
     }
-    if (itemType == ItemType.Item.tag) {
+    if (typeof itemType !== 'string') { // @ts-ignore
+        itemType = itemType.tag;
+    }
+    if (itemType === ItemType.Item.tag) {
         return BitCraftTables.ItemDesc.indexedBy("id")!()!.get(itemId)!;
-    } else if (itemType == ItemType.Cargo.tag) {
+    } else if (itemType === ItemType.Cargo.tag) {
         return BitCraftTables.CargoDesc.indexedBy("id")!()!.get(itemId)!;
     } else {
         throw new Error("ItemStack isn't Item or Cargo.");
