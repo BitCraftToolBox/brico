@@ -37,6 +37,7 @@ import { HexDirection as __HexDirection } from "./hex_direction_type";
 import { FloatHexTileMessage as __FloatHexTileMessage } from "./float_hex_tile_message_type";
 import { ChunkCoordinatesMessage as __ChunkCoordinatesMessage } from "./chunk_coordinates_message_type";
 import { ClaimPermission as __ClaimPermission } from "./claim_permission_type";
+import { EmpirePermission as __EmpirePermission } from "./empire_permission_type";
 import { LargeHexTileMessage as __LargeHexTileMessage } from "./large_hex_tile_message_type";
 import { TerrainCell as __TerrainCell } from "./terrain_cell_type";
 import { ItemConversionLocationContext as __ItemConversionLocationContext } from "./item_conversion_location_context_type";

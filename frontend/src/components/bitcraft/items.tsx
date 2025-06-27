@@ -50,9 +50,6 @@ export const ItemIcon: Component<ItemIconProps> = (props: ItemIconProps) => {
     if (Array.isArray(local.item)) {
         item = stackToItemOrCargo(local.item);
         let localType = local.item[0];
-        if (typeof localType !== 'string') { // @ts-ignore
-            localType = localType.tag;
-        }
         isItem = localType === ItemType.Item.tag;
         divW = getWidth(isItem, small);
         divH = getHeight(isItem, small);
@@ -87,7 +84,7 @@ export const ItemIcon: Component<ItemIconProps> = (props: ItemIconProps) => {
                 </div>
             </TooltipTrigger>
             <TooltipContent class={`border-1 ${borderColor}`}>
-                {item.name} <TierIcon tier={item.tier}/>, {item.rarity as unknown as string /* TODO .tag */}
+                {item.name} <TierIcon tier={item.tier}/>, {item.rarity.tag}
             </TooltipContent>
         </Tooltip>
     )
@@ -217,9 +214,9 @@ export const ItemListComponent: Component<ItemListComponentProps> = (props) => {
         possibilities.forEach(poss => {
             totalWeight += poss.probability;
             poss.items.forEach(stack => {
-                const key = stack.itemType as unknown as string /* TODO .tag */ + "_" + stack.itemId;
+                const key = stack.itemType.tag + "_" + stack.itemId;
                 const weighted = stack.quantity * poss.probability * nodeFactor();
-                totals.set(key, [totals.has(key) ? totals.get(key)![0] + weighted : weighted, [stack.itemType as unknown as string /* TODO .tag */, stack.itemId]]);
+                totals.set(key, [totals.has(key) ? totals.get(key)![0] + weighted : weighted, [stack.itemType.tag, stack.itemId]]);
             })
         })
         setAverages(totals.entries().map(entry => {
@@ -257,7 +254,7 @@ export const ItemListComponent: Component<ItemListComponentProps> = (props) => {
                     <Show when={props.original}>
                         <div class="col-span-2 justify-self-center">
                             <ItemStackIcon
-                                item={[props.original!.itemType as unknown as string /* TODO .tag */, props.original!.itemId]}
+                                item={[props.original!.itemType.tag, props.original!.itemId]}
                                 quantity={props.original!.quantity}
                             />
                         </div>

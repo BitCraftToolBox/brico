@@ -73,7 +73,6 @@ import { ExtractionRecipeDesc as __ExtractionRecipeDesc } from "./extraction_rec
 import { FoodDesc as __FoodDesc } from "./food_desc_type";
 import { GateDesc as __GateDesc } from "./gate_desc_type";
 import { HexiteExchangeEntryDesc as __HexiteExchangeEntryDesc } from "./hexite_exchange_entry_desc_type";
-import { InteriorEnvironmentDesc as __InteriorEnvironmentDesc } from "./interior_environment_desc_type";
 import { InteriorInstanceDesc as __InteriorInstanceDesc } from "./interior_instance_desc_type";
 import { InteriorNetworkDesc as __InteriorNetworkDesc } from "./interior_network_desc_type";
 import { InteriorPortalConnectionsDesc as __InteriorPortalConnectionsDesc } from "./interior_portal_connections_desc_type";
@@ -93,11 +92,8 @@ import { OnboardingRewardDesc as __OnboardingRewardDesc } from "./onboarding_rew
 import { ParametersDesc as __ParametersDesc } from "./parameters_desc_type";
 import { PathfindingDesc as __PathfindingDesc } from "./pathfinding_desc_type";
 import { PavingTileDesc as __PavingTileDesc } from "./paving_tile_desc_type";
-import { PillarShapingDesc as __PillarShapingDesc } from "./pillar_shaping_desc_type";
 import { PlayerActionDesc as __PlayerActionDesc } from "./player_action_desc_type";
-import { PlayerHousingDesc as __PlayerHousingDesc } from "./player_housing_desc_type";
 import { PrivateParametersDesc as __PrivateParametersDesc } from "./private_parameters_desc_type";
-import { ReservedNameDesc as __ReservedNameDesc } from "./reserved_name_desc_type";
 import { ResourceClumpDesc as __ResourceClumpDesc } from "./resource_clump_desc_type";
 import { ResourceDesc as __ResourceDesc } from "./resource_desc_type";
 import { ResourceGrowthRecipeDesc as __ResourceGrowthRecipeDesc } from "./resource_growth_recipe_desc_type";
@@ -114,6 +110,10 @@ import { TravelerTradeOrderDesc as __TravelerTradeOrderDesc } from "./traveler_t
 import { WallDesc as __WallDesc } from "./wall_desc_type";
 import { WeaponDesc as __WeaponDesc } from "./weapon_desc_type";
 import { WeaponTypeDesc as __WeaponTypeDesc } from "./weapon_type_desc_type";
+import { InteriorEnvironmentDesc as __InteriorEnvironmentDesc } from "./interior_environment_desc_type";
+import { PillarShapingDesc as __PillarShapingDesc } from "./pillar_shaping_desc_type";
+import { PlayerHousingDesc as __PlayerHousingDesc } from "./player_housing_desc_type";
+import { ReservedNameDesc as __ReservedNameDesc } from "./reserved_name_desc_type";
 
 export type StaticDataUpload = {
   parameters: __ParametersDesc[],

@@ -33,9 +33,9 @@ import {
   type SubscriptionEventContextInterface,
 } from "@clockworklabs/spacetimedb-sdk";
 import { ResourceDesc } from "./resource_desc_type";
-import { ItemStack as __ItemStack } from "./item_stack_type";
 import { FootprintTile as __FootprintTile } from "./footprint_tile_type";
 import { Rarity as __Rarity } from "./rarity_type";
+import { ItemStack as __ItemStack } from "./item_stack_type";
 
 import { type EventContext, type Reducer, RemoteReducers, RemoteTables } from ".";
 

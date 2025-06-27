@@ -14,7 +14,7 @@ export class Rarities {
     ]
 
     static toValue(r: Rarity): number {
-        switch (r as unknown as string /* TODO .tag */) {
+        switch (r.tag) {
             case Rarity.Common.tag:
                 return 1;
             case Rarity.Uncommon.tag:
@@ -34,7 +34,7 @@ export class Rarities {
     }
 
     static getBorderColorClass(r: Rarity) {
-        switch (r as unknown as string /* TODO .tag */) {
+        switch (r.tag) {
             case Rarity.Mythic.tag: return "border-rarity-border6";
             case Rarity.Legendary.tag: return "border-rarity-border5";
             case Rarity.Epic.tag: return "border-rarity-border4";
@@ -86,7 +86,7 @@ export function stackToItemOrCargo(stack: ItemStack | [string, number]) {
         itemType = stack[0];
         itemId = stack[1];
     } else {
-        itemType = stack.itemType as unknown as string /* TODO .tag */;
+        itemType = stack.itemType.tag;
         itemId = stack.itemId;
     }
     if (typeof itemType !== 'string') { // @ts-ignore

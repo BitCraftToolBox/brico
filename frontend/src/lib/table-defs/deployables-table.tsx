@@ -56,7 +56,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Type",
-            accessorKey: "deployableType",  // TODO .tag
+            accessorKey: "deployableType.tag",
             filterFn: includedIn<DeployableDesc>(),
         },
         {
@@ -82,7 +82,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
                 const stack = props.getValue() as ItemStack;
                 return <Show when={stack}>
                     <ItemStackIcon
-                        item={[stack.itemType as unknown as string /* TODO .tag */, stack.itemId]}
+                        item={[stack.itemType.tag, stack.itemId]}
                         quantity={stack.quantity}
                         hideSingle={true}
                     />
@@ -96,7 +96,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
                 const stacks = props.getValue() as ItemStack[];
                 const stackProps = stacks.map(stack => {
                     return {
-                        item: [stack.itemType as unknown as string /* TODO .tag */, stack.itemId] as [string, number],
+                        item: [stack.itemType.tag, stack.itemId] as [string, number],
                         quantity: stack.quantity,
                         hideSingle: true
                     }
@@ -115,23 +115,23 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Movement",
-            accessorKey: "movementType" // TODO .tag
+            accessorKey: "movementType.tag"
         },
         {
             id: "Speed",
             accessorFn: (deployable: DeployableDesc) => {
                 let speeds;
-                switch (deployable.movementType as unknown as string /* TODO .tag */) {
+                switch (deployable.movementType.tag) {
                     case MovementType.None.tag:
                         return 0;
                     case MovementType.Ground.tag:
                         return deployable.speed
-                            .filter(ms => ms.surfaceType as unknown as string /* TODO .tag */ == SurfaceType.Ground.tag)
+                            .filter(ms => ms.surfaceType.tag == SurfaceType.Ground.tag)
                             .find(() => true)?.speed || 0;
                     case MovementType.Water.tag:
                         speeds = new Set(deployable.speed
-                            .filter(ms => ms.surfaceType as unknown as string /* TODO .tag */ != SurfaceType.Ground.tag)
-                            .map(ms => ms.surfaceType /* TODO .tag */ + ": " + ms.speed)).values().toArray()
+                            .filter(ms => ms.surfaceType.tag != SurfaceType.Ground.tag)
+                            .map(ms => ms.surfaceType.tag + ": " + ms.speed)).values().toArray()
                         return speeds.length == 1 ? speeds[0] : speeds.join(', ');
                     case MovementType.Amphibious.tag:
                         speeds = new Set(deployable.speed

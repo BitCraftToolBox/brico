@@ -209,7 +209,7 @@ export const ItemDescDefs: BitCraftToDataDef<ItemDesc> = {
         },
         {
             id: "Rarity",
-            accessorKey: "rarity",  // TODO .tag
+            accessorKey: "rarity.tag",
             filterFn: includedIn<ItemDesc>(),
             sortingFn: (rowA, rowB) => {
                 if (rowA.original.rarity === rowB.original.rarity) return 0;

@@ -47,7 +47,7 @@ export const CargoDescDefs: BitCraftToDataDef<CargoDesc> = {
         },
         {
             id: "Rarity",
-            accessorKey: "rarity", // TODO .tag
+            accessorKey: "rarity.tag",
             filterFn: includedIn<CargoDesc>(),
             sortingFn: (rowA, rowB) => {
                 if (rowA.original.rarity === rowB.original.rarity) return 0;

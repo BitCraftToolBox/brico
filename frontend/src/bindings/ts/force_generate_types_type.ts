@@ -36,6 +36,7 @@ import { HexDirection as __HexDirection } from "./hex_direction_type";
 import { FloatHexTileMessage as __FloatHexTileMessage } from "./float_hex_tile_message_type";
 import { ChunkCoordinatesMessage as __ChunkCoordinatesMessage } from "./chunk_coordinates_message_type";
 import { ClaimPermission as __ClaimPermission } from "./claim_permission_type";
+import { EmpirePermission as __EmpirePermission } from "./empire_permission_type";
 import { LargeHexTileMessage as __LargeHexTileMessage } from "./large_hex_tile_message_type";
 import { TerrainCell as __TerrainCell } from "./terrain_cell_type";
 import { ItemConversionLocationContext as __ItemConversionLocationContext } from "./item_conversion_location_context_type";
@@ -45,6 +46,7 @@ export type ForceGenerateTypes = {
   floatHexTile: __FloatHexTileMessage,
   chunkCoordinatesMessage: __ChunkCoordinatesMessage,
   claimPermission: __ClaimPermission,
+  empirePermission: __EmpirePermission,
   largeHexTileMessage: __LargeHexTileMessage,
   terrainCell: __TerrainCell,
   itemConversionLocatinContext: __ItemConversionLocationContext,
@@ -64,6 +66,7 @@ export namespace ForceGenerateTypes {
       new ProductTypeElement("floatHexTile", __FloatHexTileMessage.getTypeScriptAlgebraicType()),
       new ProductTypeElement("chunkCoordinatesMessage", __ChunkCoordinatesMessage.getTypeScriptAlgebraicType()),
       new ProductTypeElement("claimPermission", __ClaimPermission.getTypeScriptAlgebraicType()),
+      new ProductTypeElement("empirePermission", __EmpirePermission.getTypeScriptAlgebraicType()),
       new ProductTypeElement("largeHexTileMessage", __LargeHexTileMessage.getTypeScriptAlgebraicType()),
       new ProductTypeElement("terrainCell", __TerrainCell.getTypeScriptAlgebraicType()),
       new ProductTypeElement("itemConversionLocatinContext", __ItemConversionLocationContext.getTypeScriptAlgebraicType()),

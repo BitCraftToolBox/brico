@@ -14,9 +14,9 @@ function getRecipes(
         if (!mainOutput) {
             return; // there is an empty recipe, but it's not linked to anything anyway
         }
-        const mainOutputItem = mainOutput.itemType as unknown as string /* TODO .tag */ === ItemType.Item.tag
+        const mainOutputItem = mainOutput.itemType.tag === ItemType.Item.tag
             ? itemData.get(mainOutput.itemId) : cargoData.get(mainOutput.itemId);
-        const mainInputItem = mainInput.itemType as unknown as string /* TODO .tag */ === ItemType.Item.tag
+        const mainInputItem = mainInput.itemType.tag === ItemType.Item.tag
             ? itemData.get(mainInput.itemId) : cargoData.get(mainInput.itemId);
         const friendlyName = recipe.name
             .replace("{0}", mainOutputItem?.name || "{0}")

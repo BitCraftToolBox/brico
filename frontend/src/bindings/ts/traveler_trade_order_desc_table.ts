@@ -33,8 +33,8 @@ import {
   type SubscriptionEventContextInterface,
 } from "@clockworklabs/spacetimedb-sdk";
 import { TravelerTradeOrderDesc } from "./traveler_trade_order_desc_type";
-import { ItemStack as __ItemStack } from "./item_stack_type";
 import { NpcType as __NpcType } from "./npc_type_type";
+import { ItemStack as __ItemStack } from "./item_stack_type";
 import { LevelRequirement as __LevelRequirement } from "./level_requirement_type";
 
 import { type EventContext, type Reducer, RemoteReducers, RemoteTables } from ".";

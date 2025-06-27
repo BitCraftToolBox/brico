@@ -33,8 +33,8 @@ import {
   type SubscriptionEventContextInterface,
 } from "@clockworklabs/spacetimedb-sdk";
 import { EnemyMobMonitorState } from "./enemy_mob_monitor_state_type";
-import { OffsetCoordinatesSmallMessage as __OffsetCoordinatesSmallMessage } from "./offset_coordinates_small_message_type";
 import { EnemyType as __EnemyType } from "./enemy_type_type";
+import { OffsetCoordinatesSmallMessage as __OffsetCoordinatesSmallMessage } from "./offset_coordinates_small_message_type";
 
 import { type EventContext, type Reducer, RemoteReducers, RemoteTables } from ".";
 

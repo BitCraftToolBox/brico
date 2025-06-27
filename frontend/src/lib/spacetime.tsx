@@ -1,8 +1,9 @@
-import {AlgebraicType} from "@clockworklabs/spacetimedb-sdk";
+import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
 import {
     BiomeDesc,
     BuffDesc,
-    BuildingDesc, BuildingRepairsDesc,
+    BuildingDesc,
+    BuildingRepairsDesc,
     BuildingTypeDesc,
     CargoDesc,
     ClaimTechDesc,
@@ -12,14 +13,18 @@ import {
     EnemyDesc,
     EquipmentDesc,
     ExtractionRecipeDesc,
-    FoodDesc, ItemConversionRecipeDesc,
+    FoodDesc,
+    ItemConversionRecipeDesc,
     ItemDesc,
     ItemListDesc,
     ItemListPossibility,
     ItemStack,
-    ItemType, KnowledgeScrollDesc, KnowledgeStatModifierDesc,
+    ItemType,
+    KnowledgeScrollDesc,
+    KnowledgeStatModifierDesc,
     ProbabilisticItemStack,
-    ResourceDesc, SecondaryKnowledgeDesc,
+    ResourceDesc,
+    SecondaryKnowledgeDesc,
     SkillDesc,
     ToolDesc,
     ToolTypeDesc,
@@ -35,36 +40,36 @@ interface FetchParams {
     itemType: AlgebraicType;
 }
 
-const bsatnPath = "/json";
-//const bsatnPath = "/bsatn/server";
+//const bsatnPath = "/json";
+const bsatnPath = "/bsatn/server";
 
-function toCamelCase(obj: any): any {
-    if (Array.isArray(obj)) {
-        return obj.map(toCamelCase);
-    }
-
-    if (obj !== null && typeof obj === "object") {
-        return Object.entries(obj).reduce((acc, [key, value]) => {
-            const camelKey = key.replace(/_([a-z])/g, (_, g) => g.toUpperCase());
-            acc[camelKey] = toCamelCase(value);
-            return acc;
-        }, {} as any);
-    }
-
-    return obj;
-}
+// function toCamelCase(obj: any): any {
+//     if (Array.isArray(obj)) {
+//         return obj.map(toCamelCase);
+//     }
+//
+//     if (obj !== null && typeof obj === "object") {
+//         return Object.entries(obj).reduce((acc, [key, value]) => {
+//             const camelKey = key.replace(/_([a-z])/g, (_, g) => g.toUpperCase());
+//             acc[camelKey] = toCamelCase(value);
+//             return acc;
+//         }, {} as any);
+//     }
+//
+//     return obj;
+// }
 
 async function fetchBSATN<T>(params: FetchParams) {
     const data = await fetch(
-        `${bsatnPath}/${params.name}.json`//.bsatn`
+        `${bsatnPath}/${params.name}.bsatn`//.json`
     );
     if (!data.ok) {
         throw Error("Couldn't fetch BSATN data." + await data.text())
     }
-    //const reader = new BinaryReader(new Uint8Array((await data.arrayBuffer())));
-    const res = await data.text();
-
-    return toCamelCase(JSON.parse(res)) as T[];//AlgebraicType.createArrayType(params.itemType).deserialize(reader) as T[];
+    //const res = await data.text();
+    //return toCamelCase(JSON.parse(res)) as T[];
+    const reader = new BinaryReader(new Uint8Array((await data.arrayBuffer())));
+    return AlgebraicType.createArrayType(params.itemType).deserialize(reader) as T[];
 }
 
 function cachedTable<T>(base: BitCraftTable<T>) {
@@ -103,11 +108,11 @@ export class BitCraftTable<TData> {
     private readonly stackKeys: [(keyof TData)[], (keyof TData)[]];
     preload: boolean;
 
-    constructor(st_name: string, st_type: AlgebraicType, preload: boolean = false,
+    constructor(st_name: string, st_type: AlgebraicType,
                 itemStackKeys: [(keyof TData)[], (keyof TData)[]] = [[], []]) {
         this.st_name = st_name;
         this.st_type = st_type;
-        this.preload = preload;
+        this.preload = true;
         this.stackKeys = itemStackKeys;
         this.get = () => undefined;
         this.#idxCache = new Map<string, Accessor<Map<any, TData> | undefined>>();
@@ -164,7 +169,7 @@ export class BitCraftTable<TData> {
                                 } else if (Object.hasOwn(stack, 'items')) {
                                     const possibleStacks = (stack as ItemListPossibility).items;
                                     for (const i of possibleStacks) {
-                                        if (i.itemId === itemId && i.itemType as unknown as string /* TODO .tag */ === itemType) {
+                                        if (i.itemId === itemId && i.itemType.tag === itemType) {
                                             target.push(container);
                                             break;
                                         }
@@ -179,7 +184,7 @@ export class BitCraftTable<TData> {
                                     stack = subStack;
                                 }
                                 stack = stack as ItemStack;
-                                if (stack.itemId === itemId && stack.itemType as unknown as string /* TODO .tag */ === itemType) {
+                                if (stack.itemId === itemId && stack.itemType.tag === itemType) {
                                     target.push(container);
                                 }
                             }
@@ -201,12 +206,10 @@ export const BitCraftTables = {
     'ItemDesc': cachedTable<ItemDesc>(
         new BitCraftTable('item_desc',
             ItemDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'CargoDesc': cachedTable<CargoDesc>(
         new BitCraftTable('cargo_desc',
             CargoDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'EnemyDesc': cachedTable<EnemyDesc>(
         new BitCraftTable('enemy_desc',
@@ -215,7 +218,6 @@ export const BitCraftTables = {
     'ResourceDesc': cachedTable<ResourceDesc>(
         new BitCraftTable('resource_desc',
             ResourceDesc.getTypeScriptAlgebraicType(),
-            true,
             [[], ['onDestroyYield']]
         )),
     'BuildingRepairsDesc': cachedTable<BuildingRepairsDesc>(
@@ -245,13 +247,11 @@ export const BitCraftTables = {
     'TravelerTaskDesc': cachedTable<TravelerTaskDesc>(
         new BitCraftTable('traveler_task_desc',
             TravelerTaskDesc.getTypeScriptAlgebraicType(),
-            false,
             [['requiredItems'], ['rewardedItems']]
         )),
     'TravelerTradeOrderDesc': cachedTable<TravelerTradeOrderDesc>(
         new BitCraftTable('traveler_trade_order_desc',
             TravelerTradeOrderDesc.getTypeScriptAlgebraicType(),
-            false,
             [['requiredItems', 'requiredCargoId'], ['offerItems', 'offerCargoId']]
     )),
     'BiomeDesc': cachedTable<BiomeDesc>(
@@ -261,66 +261,54 @@ export const BitCraftTables = {
     'ItemListDesc': cachedTable<ItemListDesc>(
         new BitCraftTable('item_list_desc',
             ItemListDesc.getTypeScriptAlgebraicType(),
-            true,
             [[], ['possibilities']]
         )),
     'CraftingRecipeDesc': cachedTable<CraftingRecipeDesc>(
         new BitCraftTable('crafting_recipe_desc',
             CraftingRecipeDesc.getTypeScriptAlgebraicType(),
-            true,
             [['consumedItemStacks'], ['craftedItemStacks']]
         )),
     'ExtractionRecipeDesc': cachedTable<ExtractionRecipeDesc>(
         new BitCraftTable('extraction_recipe_desc',
             ExtractionRecipeDesc.getTypeScriptAlgebraicType(),
-            true,
             [['cargoId', 'consumedItemStacks'], ['extractedItemStacks']]
         )),
     'ItemConversionRecipeDesc': cachedTable<ItemConversionRecipeDesc>(
         new BitCraftTable('item_conversion_recipe_desc',
             ItemConversionRecipeDesc.getTypeScriptAlgebraicType(),
-            true,
             [['inputItems'], ['outputItem']]
         )),
     'WeaponDesc': cachedTable<WeaponDesc>(
         new BitCraftTable('weapon_desc',
             WeaponDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'WeaponTypeDesc': cachedTable<WeaponTypeDesc>(
         new BitCraftTable('weapon_type_desc',
             WeaponTypeDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'EquipmentDesc': cachedTable<EquipmentDesc>(
         new BitCraftTable('equipment_desc',
             EquipmentDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'ToolDesc': cachedTable<ToolDesc>(
         new BitCraftTable('tool_desc',
             ToolDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'ToolTypeDesc': cachedTable<ToolTypeDesc>(
         new BitCraftTable('tool_type_desc',
             ToolTypeDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'FoodDesc': cachedTable<FoodDesc>(
         new BitCraftTable('food_desc',
             FoodDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'BuffDesc': cachedTable<BuffDesc>(
         new BitCraftTable('buff_desc',
             BuffDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'SkillDesc': cachedTable<SkillDesc>(
         new BitCraftTable('skill_desc',
             SkillDesc.getTypeScriptAlgebraicType(),
-            true
         )),
     'KnowledgeScrollDesc': cachedTable<KnowledgeScrollDesc>(
         new BitCraftTable('knowledge_scroll_desc',
@@ -328,10 +316,10 @@ export const BitCraftTables = {
         )),
     'KnowledgeStatModifierDesc': cachedTable<KnowledgeStatModifierDesc>(
         new BitCraftTable('knowledge_stat_modifier_desc',
-            KnowledgeScrollDesc.getTypeScriptAlgebraicType()
+            KnowledgeStatModifierDesc.getTypeScriptAlgebraicType()
         )),
     'SecondaryKnowledgeDesc': cachedTable<SecondaryKnowledgeDesc>(
         new BitCraftTable('secondary_knowledge_desc',
-            KnowledgeScrollDesc.getTypeScriptAlgebraicType()
+            SecondaryKnowledgeDesc.getTypeScriptAlgebraicType()
         )),
 };
