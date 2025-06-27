@@ -37,7 +37,7 @@ function computeStatsForItem(item: ItemDesc): ItemStats | undefined {
 
     function addStat(statEntry: CsvStatEntry) {
         stats.push({
-            name: splitCamelCase(statEntry.id as unknown as string),
+            name: splitCamelCase(statEntry.id.tag),
             value: statEntry.value,
             isPct: statEntry.isPct
         })

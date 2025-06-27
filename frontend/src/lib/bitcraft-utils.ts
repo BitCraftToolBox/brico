@@ -114,7 +114,10 @@ export function cleanAssetPath(path: string, quantity?: number) {
             return "OldGeneratedIcons/Items/HexCoin500";
         }
     }
-    if (!path.startsWith('GeneratedIcons/')) {
+    if (path.startsWith("Buildings/")) {
+        return "GeneratedIcons/Other/" + path;
+    }
+    if (!path.startsWith("GeneratedIcons/")) {
         return "OldGeneratedIcons/" + path;
     }
     return path.replace("GeneratedIcons/Other/GeneratedIcons", "GeneratedIcons");

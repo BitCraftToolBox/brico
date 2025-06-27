@@ -1,7 +1,7 @@
 import {
     CappedLevelRequirement,
-    CargoDesc,
-    CraftingRecipeDesc,
+    CargoDesc, ConstructionRecipeDesc,
+    CraftingRecipeDesc, DeconstructionRecipeDesc,
     ExperienceStackF32,
     ExtractionRecipeDesc,
     InputItemStack,
@@ -13,7 +13,7 @@ import {
     LevelRequirement,
     ProbabilisticItemStack,
     SkillDesc,
-    ToolRequirement,
+    ToolRequirement, ToolTypeDesc,
     TravelerTaskDesc,
     TravelerTradeOrderDesc
 } from "~/bindings/ts";
@@ -23,12 +23,13 @@ import {TbArrowBigDownLines as IconDown} from "solid-icons/tb";
 import {Card, CardContent, CardHeader, CardTitle} from "~/components/ui/card";
 import {fixFloat, splitCamelCase} from "~/lib/utils";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
-import {expandStack, ItemIcon, ItemStackArrayComponent} from "~/components/bitcraft/items";
+import {expandStack, ItemIcon, ItemStackArrayComponent, ItemStackIconProps} from "~/components/bitcraft/items";
 import {TierIcon} from "~/components/bitcraft/misc";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {getRecipeMaps} from "~/lib/recipes";
 import {ResourceIcon} from "~/components/bitcraft/resources";
 import {UseFullNodeOutputContext} from "~/lib/contexts";
+import {BuildingIcon} from "~/components/bitcraft/buildings";
 
 
 type ItemCardProps = {
@@ -209,26 +210,26 @@ function skillReqPair(req: LevelRequirement, skillData: Map<any, SkillDesc>) {
     ] as [JSX.Element, JSX.Element];
 }
 
+function toolReqPair(req: ToolRequirement, toolData: Map<any, ToolTypeDesc>) {
+    const tool = toolData.get(req.toolType);
+    if (!tool) return null;
+    return [
+        "Tool:",
+        <>
+            Tier <TierIcon tier={req.level} class="mx-1 self-center"/>
+            {tool.name}
+            <Show when={req.power > 1}>
+                {"(Power >= "}{req.power}{")"}
+            </Show>
+        </>
+    ] as [JSX.Element, JSX.Element];
+}
+
 const RecipesPanel: Component<RecipesPanelProps> = (props) => {
     const resourceData = BitCraftTables.ResourceDesc.indexedBy("id")!()!;
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")!()!;
-    const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")!()!;
     const buildingData = BitCraftTables.BuildingTypeDesc.indexedBy("id")!()!;
-
-    function toolReqPair(req: ToolRequirement) {
-        const tool = toolData.get(req.toolType);
-        if (!tool) return null;
-        return [
-            "Tool:",
-            <>
-                Tier <TierIcon tier={req.level} class="mx-1 self-center"/>
-                {tool.name}
-                <Show when={req.power > 1}>
-                    {"(Power >= "}{req.power}{")"}
-                </Show>
-            </>
-        ] as [JSX.Element, JSX.Element];
-    }
+    const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")!()!;
 
     const optionValues = props.options.map((opt) => opt.value);
 
@@ -280,7 +281,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                                 ["Time:", fixFloat(r.timeRequirement)],
                                 ["Stamina:", fixFloat(r.staminaRequirement)],
                                 ...r.levelRequirements.map((s: any) => skillReqPair(s, skillData)).filter((p: any) => !!p && p.length),
-                                ...r.toolRequirements.map(toolReqPair).filter((p: any) => !!p && p.length),
+                                ...r.toolRequirements.map((r: any) => toolReqPair(r, toolData)).filter((p: any) => !!p && p.length),
                                 ...(r.buildingRequirement ? [[
                                     "Building:",
                                     <>
@@ -328,7 +329,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                                 stats.push(["Time:", fixFloat(r.timeRequirement)]);
                                 stats.push(["Stamina:", fixFloat(r.staminaRequirement)])
                                 stats.push(...r.levelRequirements.map((req) => skillReqPair(req, skillData)).filter(p => !!p))
-                                stats.push(...r.toolRequirements.map(toolReqPair).filter(p => !!p))
+                                stats.push(...r.toolRequirements.map((req) => toolReqPair(req, toolData)).filter(p => !!p))
                                 return stats;
                             }}
                             maskedProbabilities={extraction.verbPhrase === "Loot"}
@@ -430,6 +431,8 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
     const conversionsIndex = BitCraftTables.ItemConversionRecipeDesc.findByItemStacks(item.id, props.itemType);
     const conversionData = conversionsIndex && conversionsIndex();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")!()!;
+    const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")!()!;
+    const buildingData = BitCraftTables.BuildingDesc.indexedBy("id")!()!;
 
     const additionalUses = new Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][]]>();
 
@@ -484,12 +487,74 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
         )
     }
 
+    function addConstructionToMap(cons: ConstructionRecipeDesc, map: any) {
+        const inputs = <ItemStackArrayComponent
+            stackProps={() => [
+                ...cons.consumedItemStacks.map((s: InputItemStack) => {
+                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
+                }),
+                ...cons.consumedCargoStacks.map((s: InputItemStack) => {
+                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
+                })
+            ]}
+        />;
+        const stats = [
+            ["Effort:", cons.actionsRequired],
+            ["Time:", fixFloat(cons.timeRequirement)],
+            ["Stamina:", fixFloat(cons.staminaRequirement)],
+            ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
+            ...cons.experiencePerProgress.map(exp => experienceStackToStat(exp)),
+            ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
+        ]
+        map.set(
+            "construction_" + cons.id,
+            [
+                "Construct " + cons.name,
+                inputs,
+                () => <BuildingIcon building={cons.buildingDescriptionId} />,
+                stats
+            ]
+        )
+    }
+
+    function addDeconstructionToMap(cons: DeconstructionRecipeDesc, map: any) {
+        const outputs = <ItemStackArrayComponent
+            stackProps={() => [
+                ...cons.outputItemStacks.map((s: ItemStack) => {
+                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
+                }),
+                ...(cons.outputCargoId
+                    ? [{item: [ItemType.Cargo.tag, cons.outputCargoId], quantity: 1} as ItemStackIconProps]
+                    : [])
+            ]}
+        />;
+        const stats = [
+            ["Time:", fixFloat(cons.timeRequirement)],
+            ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
+            ...cons.experiencePerProgress.map(exp => experienceStackToStat(exp)),
+            ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
+        ]
+        const building = buildingData.get(cons.consumedBuilding);
+        map.set(
+            "deconstruction_" + cons.id,
+            [
+                "Deconstruct " + (building?.name ?? "unknown building"),
+                <BuildingIcon building={cons.consumedBuilding} />,
+                () => outputs,
+                stats
+            ]
+        )
+    }
+
     conversionData && conversionData[0].forEach(conv => addConversionToMap(conv, additionalUses));
 
     const travelerTaskData = BitCraftTables.TravelerTaskDesc.findByItemStacks(item.id, props.itemType);
     travelerTaskData()![0].forEach(task => addTaskToMap(task, additionalUses));
     const travelerTradeData = BitCraftTables.TravelerTradeOrderDesc.findByItemStacks(item.id, props.itemType);
     travelerTradeData()![0].forEach(trade => addTradeToMap(trade, additionalUses, skillData));
+
+    const constructionData = BitCraftTables.ConstructionRecipeDesc.findByItemStacks(item.id, props.itemType);
+    constructionData()![0].forEach(construction => addConstructionToMap(construction, additionalUses));
 
     const additionalAcquisitions = new Map<string, [string, JSX.Element, ItemStack[] | ProbabilisticItemStack[] | ItemListDesc[], [JSX.Element, JSX.Element][]]>();
     const itemListData = BitCraftTables.ItemListDesc.findByItemStacks(item.id, props.itemType);
@@ -516,6 +581,9 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
     travelerTaskData()![1].forEach(task => addTaskToMap(task, additionalAcquisitions));
     travelerTradeData()![1].forEach(trade => addTradeToMap(trade, additionalAcquisitions, skillData));
     conversionData && conversionData[1].forEach(conv => addConversionToMap(conv, additionalUses));
+
+    const deconstructionData = BitCraftTables.DeconstructionRecipeDesc.findByItemStacks(item.id, props.itemType);
+    deconstructionData()![1].forEach(deconstruction => addDeconstructionToMap(deconstruction, additionalAcquisitions));
 
     const usageOptions = recipeMaps.useRecipe.values().map(([n, v]) => {
         return {label: n, value: "craft_" + v.id}

@@ -126,7 +126,7 @@ const ProbabilityIndicator: Component<ProbabilityIndicatorProps> = (props) => {
     return text;
 }
 
-type ItemStackIconProps = ItemIconProps & {
+export type ItemStackIconProps = ItemIconProps & {
     quantity: number | [number, number]
     hideSingle?: boolean
     probability?: number | "UNKNOWN"
