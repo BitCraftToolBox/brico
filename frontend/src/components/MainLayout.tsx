@@ -1,6 +1,7 @@
 import Nav from "~/components/Nav";
 import {JSX, Suspense} from "solid-js";
 import {cn} from "~/lib/utils";
+import {Title} from "@solidjs/meta";
 
 interface LayoutProps {
     title: string;
@@ -12,6 +13,7 @@ interface LayoutProps {
 export default function MainLayout(props: LayoutProps) {
     return (
         <div class="w-full h-full flex flex-col">
+            <Title>{props.title} - Brico's Toolbox</Title>
             <Nav title={props.title}>
                 {props.secondaryNav}
             </Nav>

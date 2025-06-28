@@ -1,13 +1,15 @@
 import {Component, ComponentProps, splitProps} from "solid-js";
 import {BuildingDesc} from "~/bindings/ts";
-import {cleanAssetPath, Tiers} from "~/lib/bitcraft-utils";
+import {cleanAssetPath, getBuildingTier, Tiers} from "~/lib/bitcraft-utils";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {cn} from "~/lib/utils";
 import {BitCraftTables} from "~/lib/spacetime";
+import {useDetailDialog} from "~/lib/contexts";
 
 type BuildingIconProps = ComponentProps<"div"> & {
     building: number | BuildingDesc
     small?: boolean
+    noInteract?: boolean
 }
 
 const height = "h-[130px]";
@@ -24,8 +26,9 @@ function getHeight(isSmall: boolean) {
 }
 
 export const BuildingIcon: Component<BuildingIconProps> = (props: BuildingIconProps) => {
-    const [local, others] = splitProps(props, ["class", "building", "small"]);
+    const [local, others] = splitProps(props, ["class", "building", "small", "noInteract"]);
     const small = typeof local.small === "undefined" ? true : local.small;
+    const noInteract = local.noInteract || false;
 
     let building: BuildingDesc;
     let divW: typeof width | typeof widthSmall;
@@ -39,15 +42,21 @@ export const BuildingIcon: Component<BuildingIconProps> = (props: BuildingIconPr
     divW = getWidth(small);
     divH = getHeight(small);
 
-    // TODO where do buildings get their tier?
-    // it shows in the build menu but I can't see it in the building desc or construction recipe (outside of lvl/material requirements)
-    const bgColor = Tiers.getBackgroundColorClass(0);
+    const bgColor = Tiers.getBackgroundColorClass(getBuildingTier(building));
     const path = building.iconAssetName
         ? "/assets/" + cleanAssetPath(building.iconAssetName) + ".webp"
         : "/assets/Unknown.webp";
+
+    const dialog = useDetailDialog();
+
     return (
-        <Tooltip>
-            <TooltipTrigger>
+        <Tooltip disabled={noInteract}>
+            <TooltipTrigger onclick={(ev: MouseEvent) => {
+                if (noInteract) return;
+                dialog.setContent(["BuildingDesc", building]);
+                dialog.setOpen(true);
+                ev.stopPropagation();
+            }}>
                 <div
                     class={cn(`rounded border-3 ${bgColor} ${divW} ${divH}`, local.class)}
                     {...others}
@@ -55,7 +64,7 @@ export const BuildingIcon: Component<BuildingIconProps> = (props: BuildingIconPr
                     <img src={path} alt={building.name}/>
                 </div>
             </TooltipTrigger>
-            <TooltipContent class={`border-1`}>
+            <TooltipContent class={`border-1 ${bgColor}`}>
                 {building.name}
             </TooltipContent>
         </Tooltip>

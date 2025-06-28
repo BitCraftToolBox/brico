@@ -9,6 +9,7 @@ import {BitCraftTables} from "~/lib/spacetime";
 type ResourceIconProps = ComponentProps<"div"> & {
     res: number | ResourceDesc
     small?: boolean
+    noInteract?: boolean
 }
 
 const height = "h-[130px]";
@@ -25,8 +26,9 @@ function getHeight(isSmall: boolean) {
 }
 
 export const ResourceIcon: Component<ResourceIconProps> = (props: ResourceIconProps) => {
-    const [local, others] = splitProps(props, ["class", "res", "small"]);
+    const [local, others] = splitProps(props, ["class", "res", "small", "noInteract"]);
     const small = typeof local.small === "undefined" ? true : local.small;
+    const noInteract = local.noInteract || false;
 
     let resource: ResourceDesc;
     let divW: typeof width | typeof widthSmall;
@@ -47,7 +49,7 @@ export const ResourceIcon: Component<ResourceIconProps> = (props: ResourceIconPr
         : "/assets/Unknown.webp";
     return (
         // <div class="flex flex-col justify-center">
-        <Tooltip>
+        <Tooltip disabled={noInteract}>
             <TooltipTrigger>
                 <div
                     class={cn(`rounded border-3 ${borderColor} ${bgColor} ${divW} ${divH}`, local.class)}

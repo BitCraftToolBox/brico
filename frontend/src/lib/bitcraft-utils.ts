@@ -1,4 +1,4 @@
-import {ItemStack, ItemType, Rarity} from "~/bindings/ts";
+import {BuildingDesc, ItemStack, ItemType, Rarity} from "~/bindings/ts";
 import {BitCraftTables} from "~/lib/spacetime";
 
 
@@ -121,4 +121,8 @@ export function cleanAssetPath(path: string, quantity?: number) {
         return "OldGeneratedIcons/" + path;
     }
     return path.replace("GeneratedIcons/Other/GeneratedIcons", "GeneratedIcons");
+}
+
+export function getBuildingTier(building: BuildingDesc) {
+    return Math.max(...building.functions.map(func => func.level), ...[0]);
 }

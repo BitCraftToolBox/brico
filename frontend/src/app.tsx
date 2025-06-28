@@ -9,7 +9,7 @@ import {Dialog, DialogContent} from "~/components/ui/dialog";
 import {createSignal} from "solid-js";
 import {DetailDialogContext} from "~/lib/contexts";
 import {renderDialog} from "~/components/details/renderer";
-
+import {MetaProvider} from "@solidjs/meta";
 
 export default function App() {
     const colorModeStorage = localStorageManager;
@@ -22,7 +22,7 @@ export default function App() {
     return (
         <HashRouter
             root={props => (
-                <>
+                <MetaProvider>
                     <ColorModeScript storageType={colorModeStorage.type}/>
                     <ColorModeProvider storageManager={colorModeStorage}>
                         <DetailDialogContext.Provider value={dialogContext}>
@@ -37,7 +37,7 @@ export default function App() {
                             </Dialog>
                         </DetailDialogContext.Provider>
                     </ColorModeProvider>
-                </>
+                </MetaProvider>
             )}
         >
             <FileRoutes/>

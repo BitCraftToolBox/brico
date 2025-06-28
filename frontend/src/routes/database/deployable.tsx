@@ -4,7 +4,7 @@ import {DeployableDesc} from "~/bindings/ts";
 import {DeployableDescDefs} from "~/lib/table-defs/deployables-table";
 
 
-export default function Cargo() {
+export default function Deployables() {
     const cargoDescList = BitCraftTables.DeployableDesc;
     const defs = DeployableDescDefs;
 

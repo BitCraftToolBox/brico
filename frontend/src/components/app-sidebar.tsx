@@ -59,12 +59,10 @@ const groups: SidebarGroupDef[] = [
             {
                 href: '/database/resources',
                 title: 'Resources',
-                disabled: true
             },
             {
-                href: '/database/structures',
+                href: '/database/buildings',
                 title: 'Structures',
-                disabled: true
             },
             {
                 href: '/database/collection',
