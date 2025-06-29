@@ -104,21 +104,21 @@ const groups: SidebarGroupDef[] = [
             },
         ]
     },
-    {
-        name: 'Tools (coming Soon™)',
-        items: [
-            {
-                href: '/database/crafting',
-                title: 'Crafting Calculator',
-                disabled: true
-            },
-            {
-                href: '/tools/timers',
-                title: 'Timers',
-                disabled: true
-            }
-        ]
-    }
+    // {
+    //     name: 'Tools (coming Soon™)',
+    //     items: [
+    //         {
+    //             href: '/database/crafting',
+    //             title: 'Crafting Calculator',
+    //             disabled: true
+    //         },
+    //         {
+    //             href: '/tools/timers',
+    //             title: 'Timers',
+    //             disabled: true
+    //         }
+    //     ]
+    // }
 ]
 
 export function AppSidebar() {

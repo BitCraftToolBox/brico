@@ -7,7 +7,7 @@ import {SidebarProvider} from "~/components/ui/sidebar";
 import {AppSidebar} from "~/components/app-sidebar"
 import {Dialog, DialogContent} from "~/components/ui/dialog";
 import {createSignal} from "solid-js";
-import {DetailDialogContext} from "~/lib/contexts";
+import {DetailDialogContext, UseFullNodeOutputContext} from "~/lib/contexts";
 import {renderDialog} from "~/components/details/renderer";
 import {MetaProvider} from "@solidjs/meta";
 
@@ -17,6 +17,10 @@ export default function App() {
     const [dialogContent, setDialogContent] = createSignal<[string, any]>(["", null]);
     const dialogContext = {
         open: dialogOpen, setOpen: setDialogOpen, content: dialogContent, setContent: setDialogContent
+    }
+    const [useFullNode, setUseFullNode] = createSignal(false);
+    const fullNodeContext = {
+        useFullNode: useFullNode, setUseFullNode: setUseFullNode, toggle: () => setUseFullNode(!useFullNode())
     }
 
     return (
@@ -31,9 +35,11 @@ export default function App() {
                                     <AppSidebar/>
                                     {props.children}
                                 </SidebarProvider>
-                                <DialogContent class="max-w-[80vw] max-h-[80vh] w-auto">
-                                    {renderDialog(dialogContent())}
-                                </DialogContent>
+                                <UseFullNodeOutputContext.Provider value={fullNodeContext}>
+                                    <DialogContent class="max-w-[80vw] max-h-[80vh] w-auto">
+                                        {renderDialog(dialogContent())}
+                                    </DialogContent>
+                                </UseFullNodeOutputContext.Provider>
                             </Dialog>
                         </DetailDialogContext.Provider>
                     </ColorModeProvider>

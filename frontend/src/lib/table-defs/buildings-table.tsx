@@ -5,9 +5,11 @@ import {useDetailDialog} from "~/lib/contexts";
 import {Button} from "~/components/ui/button";
 import {BuildingIcon} from "~/components/bitcraft/buildings";
 import {BitCraftTables} from "~/lib/spacetime";
-import {includedIn} from "~/lib/utils";
+import {cn, includedIn} from "~/lib/utils";
 import {TableRowActions} from "~/components/ui/data-table/table-row-actions";
 import {DropdownMenuItem} from "~/components/ui/dropdown-menu";
+import {getBuildingTier, Tiers} from "~/lib/bitcraft-utils";
+import {TierIcon} from "~/components/bitcraft/misc";
 
 
 class FuncTypes {
@@ -51,6 +53,10 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
                 return bldg.functions.map(func => bldgTypes!()!.get(func.functionType)?.name || "Unknown");
             },
             filterFn: 'arrIncludesSome'
+        },
+        {
+            id: "Tier",
+            accessorFn: getBuildingTier
         },
         {
             id: "Item Slots",
@@ -162,6 +168,17 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
                     return { label: v, value: v }
                 }).toArray()
             }
+        },
+        {
+            column: "Tier",
+            title: "Tier",
+            options: Tiers.tiers.map(t => {
+                return {
+                    label: String(t.value),
+                    value: t.value,
+                    icon: (props) => t.value > 0 && t.value <= 10 ? <TierIcon tier={t.value} class={cn("mr-1", props.class)}/> : ""
+                }
+            })
         },
         {
             column: "Item Slots",

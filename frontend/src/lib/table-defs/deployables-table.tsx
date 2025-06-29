@@ -125,9 +125,10 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
                     case MovementType.None.tag:
                         return 0;
                     case MovementType.Ground.tag:
-                        return deployable.speed
-                            .filter(ms => ms.surfaceType.tag == SurfaceType.Ground.tag)
-                            .find(() => true)?.speed || 0;
+                        speeds = new Set(deployable.speed
+                            .filter(ms => ms.surfaceType.tag == SurfaceType.Ground.tag || ms.surfaceType.tag == SurfaceType.Swamp.tag)
+                            .map(ms => ms.surfaceType.tag + ": " + ms.speed)).values().toArray()
+                        return speeds.length == 1 ? speeds[0] : speeds.join(', ');
                     case MovementType.Water.tag:
                         speeds = new Set(deployable.speed
                             .filter(ms => ms.surfaceType.tag != SurfaceType.Ground.tag)

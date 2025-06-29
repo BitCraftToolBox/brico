@@ -5,6 +5,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {cn} from "~/lib/utils";
 import {BitCraftTables} from "~/lib/spacetime";
 import {useDetailDialog} from "~/lib/contexts";
+import {TierIcon} from "~/components/bitcraft/misc";
 
 type BuildingIconProps = ComponentProps<"div"> & {
     building: number | BuildingDesc
@@ -61,11 +62,12 @@ export const BuildingIcon: Component<BuildingIconProps> = (props: BuildingIconPr
                     class={cn(`rounded border-3 ${bgColor} ${divW} ${divH}`, local.class)}
                     {...others}
                 >
-                    <img src={path} alt={building.name}/>
+                    <img src={path} alt={building.name}
+                         onerror={(e) => (e.target as HTMLImageElement).src = "/assets/Unknown.webp"} />
                 </div>
             </TooltipTrigger>
-            <TooltipContent class={`border-1 ${bgColor}`}>
-                {building.name}
+            <TooltipContent class={`border-1`}>
+                {building.name}, Tier <TierIcon tier={getBuildingTier(building)}/>
             </TooltipContent>
         </Tooltip>
     )

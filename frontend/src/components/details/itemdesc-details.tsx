@@ -1,7 +1,9 @@
 import {
     CappedLevelRequirement,
-    CargoDesc, ConstructionRecipeDesc,
-    CraftingRecipeDesc, DeconstructionRecipeDesc,
+    CargoDesc,
+    ConstructionRecipeDesc,
+    CraftingRecipeDesc,
+    DeconstructionRecipeDesc,
     ExperienceStackF32,
     ExtractionRecipeDesc,
     InputItemStack,
@@ -13,7 +15,8 @@ import {
     LevelRequirement,
     ProbabilisticItemStack,
     SkillDesc,
-    ToolRequirement, ToolTypeDesc,
+    ToolRequirement,
+    ToolTypeDesc,
     TravelerTaskDesc,
     TravelerTradeOrderDesc
 } from "~/bindings/ts";
@@ -28,7 +31,6 @@ import {TierIcon} from "~/components/bitcraft/misc";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {getRecipeMaps} from "~/lib/recipes";
 import {ResourceIcon} from "~/components/bitcraft/resources";
-import {UseFullNodeOutputContext} from "~/lib/contexts";
 import {BuildingIcon} from "~/components/bitcraft/buildings";
 
 
@@ -56,7 +58,7 @@ const StatCard: Component<ItemCardProps> = (props) => {
     const weaponData = weaponIndex && weaponIndex()?.get(item.id);
     const toolTypeData = toolData && toolTypeIndex && toolTypeIndex()?.get(toolData.toolType);
     const knowledgeScrollData = props.itemType == ItemType.Item.tag
-        && knowledgeScrollIndex ? knowledgeScrollIndex()?.get(item.id) : undefined;
+    && knowledgeScrollIndex ? knowledgeScrollIndex()?.get(item.id) : undefined;
     const secondaryKnowledgeId = knowledgeScrollData ? knowledgeScrollData.secondaryKnowledgeId : undefined;
     const knowledgeStatData = secondaryKnowledgeId && knowledgeStatIndex && knowledgeScrollData
         ? knowledgeStatIndex()?.get(knowledgeScrollData.secondaryKnowledgeId) : undefined;
@@ -511,7 +513,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
             [
                 "Construct " + cons.name,
                 inputs,
-                () => <BuildingIcon building={cons.buildingDescriptionId} />,
+                () => <BuildingIcon building={cons.buildingDescriptionId}/>,
                 stats
             ]
         )
@@ -539,7 +541,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
             "deconstruction_" + cons.id,
             [
                 "Deconstruct " + (building?.name ?? "unknown building"),
-                <BuildingIcon building={cons.consumedBuilding} />,
+                <BuildingIcon building={cons.consumedBuilding}/>,
                 () => outputs,
                 stats
             ]
@@ -645,12 +647,8 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
 }
 
 export function renderItemDescDialog(item: ItemDesc | CargoDesc, itemType: string) {
-    const [useFullNode, setUseFullNode] = createSignal(false);
-    const fullNodeContext = {
-        useFullNode: useFullNode, setUseFullNode: setUseFullNode, toggle: () => setUseFullNode(!useFullNode())
-    }
     return (
-        <UseFullNodeOutputContext.Provider value={fullNodeContext}>
+        <>
             <div class="flex flex-row">
                 <ItemIcon item={item} noInteract={true}/>
                 <div class="flex flex-col flex-1 justify-left ml-2">
@@ -667,6 +665,6 @@ export function renderItemDescDialog(item: ItemDesc | CargoDesc, itemType: strin
                 <StatCard item={item} itemType={itemType}/>
             </Show>
             <RecipesCard item={item} itemType={itemType}/>
-        </UseFullNodeOutputContext.Provider>
+        </>
     )
 }

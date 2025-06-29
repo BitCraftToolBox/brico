@@ -1,12 +1,7 @@
 import {
-    BuildingDesc,
-    ConstructionRecipeDesc,
-    DeconstructionRecipeDesc,
-    ExperienceStackF32,
-    InputItemStack,
-    ItemStack,
-    ItemType,
-    LevelRequirement,
+    ExperienceStackF32, ExtractionRecipeDesc, InputItemStack, ItemListDesc, ItemStack,
+    LevelRequirement, ProbabilisticItemStack,
+    ResourceDesc,
     SkillDesc,
     ToolRequirement,
     ToolTypeDesc
@@ -17,15 +12,15 @@ import {TbArrowBigDownLines as IconDown} from "solid-icons/tb";
 import {Card, CardContent} from "~/components/ui/card";
 import {fixFloat} from "~/lib/utils";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
-import {ItemStackArrayComponent, ItemStackIconProps} from "~/components/bitcraft/items";
 import {TierIcon} from "~/components/bitcraft/misc";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
-import {BuildingIcon} from "~/components/bitcraft/buildings";
-import {getBuildingTier} from "~/lib/bitcraft-utils";
+import {ResourceIcon} from "~/components/bitcraft/resources";
+import {getResourceExtraction} from "~/lib/recipes";
+import {expandStack, ItemStackArrayComponent} from "~/components/bitcraft/items";
 
 
-type BuildingCardProps = {
-    building: BuildingDesc
+type ResourceCardProps = {
+    resource: ResourceDesc
 }
 
 
@@ -33,8 +28,10 @@ type RecipePanelProps<T> = {
     recipe: T
     tabValue: string
     getInputs: (recipe: T) => JSX.Element
-    getOutputs: (recipe: T) => JSX.Element
+    getOutputStacks?: (recipe: T) => ItemStack[] | ProbabilisticItemStack[] | ItemListDesc[]
     getStatlines: (recipe: T) => [JSX.Element, JSX.Element][]
+    maskedProbabilities?: boolean
+    chances?: number
 }
 
 function RecipePanel<T>(props: RecipePanelProps<T>) {
@@ -48,7 +45,9 @@ function RecipePanel<T>(props: RecipePanelProps<T>) {
                     <IconDown class="w-8 h-8 my-2"/>
                 </div>
                 <div class="grid grid-flow-col grid-rows-1 justify-center">
-                    {props.getOutputs!(props.recipe)}
+                    <For each={props.getOutputStacks!(props.recipe)} fallback={"No Outputs"}>
+                        {stack => expandStack(stack, props.maskedProbabilities, props.chances)}
+                    </For>
                 </div>
                 <div class="flex flex-col items-center mt-4">
                     <For each={props.getStatlines(props.recipe)}>
@@ -67,7 +66,7 @@ type RecipesPanelProps = {
     value: Accessor<Option>,
     setValue: Setter<Option>,
     options: Option[]
-    recipeMap: Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][]]>
+    recipeMap: Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][], ExtractionRecipeDesc, ResourceDesc]>
 }
 
 type Option = {
@@ -139,7 +138,9 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                             tabValue={tabValue}
                             getInputs={(r) => r[1]}
                             getStatlines={(r) => r[3]}
-                            getOutputs={additionalRecipe[2]}
+                            getOutputStacks={(r) => r[2]}
+                            maskedProbabilities={additionalRecipe[4].verbPhrase === "Loot"}
+                            chances={additionalRecipe[5].maxHealth}
                         />
                     )
                 }}
@@ -148,13 +149,12 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
     </>
 }
 
-type OutputStacks = ((r: any) => JSX.Element);
+type OutputStacks = ItemStack[] | ProbabilisticItemStack[] | ItemListDesc[];
 
-const RecipesCard: Component<BuildingCardProps> = (props) => {
-    const building = props.building;
+const RecipesCard: Component<ResourceCardProps> = (props) => {
+    const res = props.resource;
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")!()!;
     const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")!()!;
-    const buildingData = BitCraftTables.BuildingDesc.indexedBy("id")!()!;
 
     function experienceStackToStat(exp: ExperienceStackF32) {
         return [
@@ -163,79 +163,37 @@ const RecipesCard: Component<BuildingCardProps> = (props) => {
         ] as [JSX.Element, JSX.Element];
     }
 
-    function addConstructionToMap(cons: ConstructionRecipeDesc, map: any) {
-        const inputs = <ItemStackArrayComponent
-            stackProps={() => [
-                ...cons.consumedItemStacks.map((s: InputItemStack) => {
-                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
-                }),
-                ...cons.consumedCargoStacks.map((s: InputItemStack) => {
-                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
-                })
-            ]}
-        />;
-        const stats = [
-            ["Effort:", cons.actionsRequired],
-            ["Time:", fixFloat(cons.timeRequirement)],
-            ["Stamina:", fixFloat(cons.staminaRequirement)],
-            ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
-            ...cons.experiencePerProgress.map(exp => experienceStackToStat(exp)),
-            ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
-        ]
-        map.set(
-            "construction_" + cons.id,
+    const additionalUses = new Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][], ExtractionRecipeDesc, ResourceDesc]>();
+    const additionalAcquisitions = new Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][], ExtractionRecipeDesc, ResourceDesc]>();
+
+    const extractionData = getResourceExtraction(res);
+    if (extractionData) {
+        const r: ExtractionRecipeDesc = extractionData[1][1];
+        const inputs = <>
+            <ItemStackArrayComponent
+                stackProps={() => r.consumedItemStacks.map((s: InputItemStack) => {
+                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity}
+                })}
+            />
+            <div class="self-start"><ResourceIcon res={res.id}/></div>
+        </>;
+        const outputs = r.extractedItemStacks
+            .map((p: ProbabilisticItemStack) => p).filter((s: ProbabilisticItemStack) => !!s)
+        const stats: [JSX.Element, JSX.Element][] = [];
+        stats.push(["Total HP", res.maxHealth]);
+        stats.push(["Time:", fixFloat(r.timeRequirement)]);
+        stats.push(["Stamina:", fixFloat(r.staminaRequirement)])
+        stats.push(...r.levelRequirements.map((req) => skillReqPair(req, skillData)).filter(p => !!p))
+        stats.push(...r.toolRequirements.map((req) => toolReqPair(req, toolData)).filter(p => !!p))
+        additionalUses.set(
+            "extraction_" + extractionData[0],
             [
-                "Construct " + cons.name,
-                inputs,
-                () => <BuildingIcon building={cons.buildingDescriptionId} />,
-                stats
+                extractionData[1][0], inputs, outputs,
+                stats, extractionData[1][1], res
             ]
         )
     }
 
-    function addDeconstructionToMap(cons: DeconstructionRecipeDesc, map: any) {
-        const outputs = <ItemStackArrayComponent
-            stackProps={() => [
-                ...cons.outputItemStacks.map((s: ItemStack) => {
-                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
-                }),
-                ...(cons.outputCargoId
-                    ? [{item: [ItemType.Cargo.tag, cons.outputCargoId], quantity: 1} as ItemStackIconProps]
-                    : [])
-            ]}
-        />;
-        const stats = [
-            ["Time:", fixFloat(cons.timeRequirement)],
-            ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
-            ...cons.experiencePerProgress.map(exp => experienceStackToStat(exp)),
-            ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
-        ]
-        const building = buildingData.get(cons.consumedBuilding);
-        map.set(
-            "deconstruction_" + cons.id,
-            [
-                "Deconstruct " + (building?.name ?? "unknown building"),
-                <BuildingIcon building={cons.consumedBuilding} />,
-                () => outputs,
-                stats
-            ]
-        )
-    }
-
-    const additionalUses = new Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][]]>();
-    const additionalAcquisitions = new Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][]]>();
-
-    const constructionData = BitCraftTables.ConstructionRecipeDesc.indexedBy("buildingDescriptionId");
-    const buildRecipe = constructionData!()!.get(building.id);
-    if (buildRecipe) {
-        addConstructionToMap(buildRecipe, additionalAcquisitions)
-    }
-
-    const deconstructionData = BitCraftTables.DeconstructionRecipeDesc.indexedBy("consumedBuilding");
-    const consumeRecipe = deconstructionData!()!.get(building.id);
-    if (consumeRecipe) {
-        addDeconstructionToMap(consumeRecipe, additionalUses)
-    }
 
     const usageOptions = additionalUses.entries().map(([n, v]) => {
         return {label: v[0], value: n}
@@ -253,8 +211,8 @@ const RecipesCard: Component<BuildingCardProps> = (props) => {
                 <CardContent class="mt-6">
                     <Tabs class="w-full">
                         <TabsList class="grid grid-cols-2">
-                            <TabsTrigger value="obtain" disabled={acquireOptions.length == 0}>Build</TabsTrigger>
-                            <TabsTrigger value="use" disabled={usageOptions.length == 0}>Deconstruct</TabsTrigger>
+                            <TabsTrigger value="obtain" disabled={acquireOptions.length == 0}>Obtain</TabsTrigger>
+                            <TabsTrigger value="use" disabled={usageOptions.length == 0}>Use</TabsTrigger>
                         </TabsList>
                         <TabsContent value="obtain">
                             <RecipesPanel
@@ -279,23 +237,22 @@ const RecipesCard: Component<BuildingCardProps> = (props) => {
     )
 }
 
-export function renderBuildingDialog(building: BuildingDesc) {
+export function renderResourceDialog(resource: ResourceDesc) {
     return (
         <>
             <div class="flex flex-row">
-                <BuildingIcon building={building} noInteract={true}/>
+                <ResourceIcon res={resource} noInteract={true}/>
                 <div class="flex flex-col flex-1 justify-left ml-2">
-                    {building.name}
-                    <div>(Tier <TierIcon class="inline ml-1" tier={getBuildingTier(building)}/>)</div>
+                    {resource.name}
+                    <div>(Tier <TierIcon class="inline ml-1" tier={resource.tier}/>, {resource.rarity.tag})</div>
                 </div>
             </div>
-            <Show when={building.description}>
+            <Show when={resource.description}>
                 <div class="flex flex-row justify-center">
-                    <div class="text-muted-foreground max-w-[500px] text-balance text-center">{building.description}</div>
+                    <div class="text-muted-foreground max-w-[500px] text-balance text-center">{resource.description}</div>
                 </div>
             </Show>
-            {/* TODO building stat display */}
-            <RecipesCard building={building}/>
+            <RecipesCard resource={resource}/>
         </>
     )
 }

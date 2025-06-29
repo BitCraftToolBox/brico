@@ -5,6 +5,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {cn} from "~/lib/utils";
 import {TierIcon} from "~/components/bitcraft/misc";
 import {BitCraftTables} from "~/lib/spacetime";
+import {useDetailDialog} from "~/lib/contexts";
 
 type ResourceIconProps = ComponentProps<"div"> & {
     res: number | ResourceDesc
@@ -47,21 +48,28 @@ export const ResourceIcon: Component<ResourceIconProps> = (props: ResourceIconPr
     const path = resource.iconAssetName
         ? "/assets/" + cleanAssetPath(resource.iconAssetName) + ".webp"
         : "/assets/Unknown.webp";
+
+    const dialog = useDetailDialog();
+
     return (
-        // <div class="flex flex-col justify-center">
         <Tooltip disabled={noInteract}>
-            <TooltipTrigger>
+            <TooltipTrigger onclick={(ev: MouseEvent) => {
+                if (noInteract) return;
+                dialog.setContent(["ResourceDesc", resource]);
+                dialog.setOpen(true);
+                ev.stopPropagation();
+            }}>
                 <div
                     class={cn(`rounded border-3 ${borderColor} ${bgColor} ${divW} ${divH}`, local.class)}
                     {...others}
                 >
-                    <img src={path} alt={resource.name}/>
+                    <img src={path} alt={resource.name}
+                         onerror={(e) => (e.target as HTMLImageElement).src = "/assets/Unknown.webp"} />
                 </div>
             </TooltipTrigger>
             <TooltipContent class={`border-1 ${borderColor}`}>
                 {resource.name} <TierIcon tier={resource.tier}/>, {resource.rarity.tag}
             </TooltipContent>
         </Tooltip>
-        // </div>
     )
 }

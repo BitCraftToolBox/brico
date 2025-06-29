@@ -51,14 +51,14 @@ export const ItemIcon: Component<ItemIconProps> = (props: ItemIconProps) => {
         item = stackToItemOrCargo(local.item);
         let localType = local.item[0];
         isItem = localType === ItemType.Item.tag;
-        divW = getWidth(isItem, small);
-        divH = getHeight(isItem, small);
     } else {
         item = local.item;
         isItem = !Object.hasOwn(local.item, "carriedModelAssetName");
-        divW = getWidth(isItem, small);
-        divH = getHeight(isItem, small);
     }
+    divW = getWidth(isItem, small);
+    divH = getHeight(isItem, small);
+    // TODO find a way to fix oxen and birds overflowing
+    //const leading = small ? "leading-[52px]" : "leading-[104px]";
     const bgColor = Tiers.getBackgroundColorClass(item.tier);
     const borderColor = Rarities.getBorderColorClass(item.rarity);
 
@@ -77,10 +77,13 @@ export const ItemIcon: Component<ItemIconProps> = (props: ItemIconProps) => {
                 ev.stopPropagation();
             }}>
                 <div
-                    class={cn(`rounded border-3 mx-1 ${borderColor} ${bgColor} ${divW} ${divH}`, local.class)}
+                    class={cn(
+                        `rounded border-3 mx-1 ${borderColor} ${bgColor} ${divW} ${divH} overflow-clip`,
+                        local.class)}
                     {...others}
                 >
-                    <img src={path} alt={item.name}/>
+                    <img src={path} alt={item.name}
+                         onerror={(e) => (e.target as HTMLImageElement).src = "/assets/Unknown.webp"} />
                 </div>
             </TooltipTrigger>
             <TooltipContent class={`border-1 ${borderColor}`}>

@@ -78,3 +78,23 @@ export function getRecipeMaps(item: ItemDesc | CargoDesc, itemType: string): {
         acquireExtraction: outputExtractionMap
     }
 }
+
+export function getResourceExtraction(res: ResourceDesc) {
+    const cargoDescIndex = BitCraftTables.CargoDesc.indexedBy("id");
+    const resourceDescIndex = BitCraftTables.ResourceDesc.indexedBy("id");
+
+    const cargoData = cargoDescIndex && cargoDescIndex()!;
+    const resourceData = resourceDescIndex && resourceDescIndex()!;
+
+    const extractionsIndex = BitCraftTables.ExtractionRecipeDesc.indexedBy("resourceId");
+
+    const extraction = extractionsIndex!()!.get(res.id);
+
+    if (extraction) {
+        const resource = extraction.resourceId;
+        const cargo = extraction.cargoId;
+        const name = resource ? resourceData!.get(resource)?.name : cargoData!.get(cargo)?.name;
+        return [extraction.id, [extraction.verbPhrase + " " + (name ?? "Unknown"), extraction]] as [number, [string, ExtractionRecipeDesc]];
+    }
+    return undefined;
+}
