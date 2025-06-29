@@ -30,6 +30,7 @@ import {IconTypes} from "solid-icons";
 type SidebarItemDef = {
     title: string
     href: string
+    /* TODO figure out bitcraft icon font or export it or something */
     icon?: IconTypes
     disabled?: boolean
 }

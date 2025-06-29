@@ -197,6 +197,6 @@
   background: repeating-linear-gradient(to right, hsl(var(--muted-foreground)), hsl(var(--muted-foreground)) 1px, transparent 2px, transparent 4px);
   height: 1px;
   margin-top: calc(1em + 1px);
-  margin-right: 4x;
+  margin-right: 4px;
   flex-grow: 1;
 }
