@@ -86,16 +86,15 @@ function cachedTable<T>(base: BitCraftTable<T>) {
 
 function createIndex<TData, TIdx extends keyof TData & string, TValue extends TData[TIdx] & (string | number)>(
     tbl: Accessor<TData[] | undefined>, field: TIdx
-): Accessor<Map<TValue, TData> | undefined> {
+): Accessor<Map<TValue, TData>> {
     return createMemo(() => {
-        let map = new Map<TValue, TData>();
-        if (!tbl()) {
-            return undefined;
+        const data = tbl() ?? [];          
+        const map = new Map<TValue, TData>();
+        for (const item of data) {
+            const key = item[field] as TValue;
+            if (key != null) map.set(key, item);
         }
-        for (let item of tbl()!) {
-            map.set(item[field] as TValue, item);
-        }
-        return map;
+        return map; 
     });
 }
 
@@ -103,7 +102,7 @@ export class BitCraftTable<TData> {
     st_name: string;
     st_type: AlgebraicType;
     get: Accessor<TData[] | undefined>;
-    #idxCache: Map<string, Accessor<Map<any, TData> | undefined>>;
+    #idxCache: Map<string, Accessor<Map<any, TData>>>;
     #stacksContainingItem: Map<string, Accessor<[TData[], TData[]] | undefined>>; // key is (itemType.tag + "_" + (item.id || cargo.id))
     private readonly stackKeys: [(keyof TData)[], (keyof TData)[]];
     preload: boolean;
@@ -115,15 +114,14 @@ export class BitCraftTable<TData> {
         this.preload = true;
         this.stackKeys = itemStackKeys;
         this.get = () => undefined;
-        this.#idxCache = new Map<string, Accessor<Map<any, TData> | undefined>>();
+        this.#idxCache = new Map<string, Accessor<Map<any, TData>>>();
         this.#stacksContainingItem = new Map<string, Accessor<[TData[], TData[]] | undefined>>();
     }
 
-    indexedBy<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx) {
+    indexedBy<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx): Accessor<Map<any, TData>> {
         let res = this.#idxCache.get(key);
         if (!res) {
             res = createIndex<TData, TIdx, TValue>(this.get, key);
-            if (!res()) return undefined;
             this.#idxCache.set(key, res)
         }
         return res;
