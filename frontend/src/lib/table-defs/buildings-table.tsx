@@ -1,4 +1,4 @@
-import {BuildingDesc} from "~/bindings/ts";
+import {BuildingDesc, ItemDesc} from "~/bindings/ts";
 import {BitCraftToDataDef} from "~/lib/table-defs/base";
 import {Column} from "@tanstack/solid-table";
 import {useDetailDialog} from "~/lib/contexts";
@@ -56,7 +56,8 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
         },
         {
             id: "Tier",
-            accessorFn: getBuildingTier
+            accessorFn: getBuildingTier,
+            filterFn: includedIn<BuildingDesc>(),
         },
         {
             id: "Item Slots",
