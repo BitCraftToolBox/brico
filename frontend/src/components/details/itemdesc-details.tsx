@@ -114,7 +114,7 @@ const StatCard: Component<ItemCardProps> = (props) => {
                                     if (!buffData) return <></>;
                                     return (
                                         <>
-                                            <div>{buffData?.description} {buffData.duration ? ("(" + buffData.duration / 60 + "m)") : ""}</div>
+                                            <div>{buffData?.description} {(buff.duration ?? buffData.duration) ? ("(" + (buff.duration ?? buffData.duration) / 60 + "m)") : ""}</div>
                                             <ul class="pl-4">
                                                 <For each={buffData.stats}>
                                                     {stat =>
