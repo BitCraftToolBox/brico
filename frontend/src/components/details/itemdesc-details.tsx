@@ -302,8 +302,8 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                                 ["Time:", fixFloat(r.timeRequirement)],
                                 ["Stamina:", fixFloat(r.staminaRequirement)],
                                 ...r.experiencePerProgress.map((xp) => skillExpPair(xp, r.actionsRequired, skillData)).filter(p => !!p),
-                                ...r.levelRequirements.map((s: any) => skillReqPair(s, skillData)).filter((p: any) => !!p && p.length),
-                                ...r.toolRequirements.map((r: any) => toolReqPair(r, toolData)).filter((p: any) => !!p && p.length),
+                                ...r.levelRequirements.map((s: any) => skillReqPair(s, skillData)).filter(p => !!p),
+                                ...r.toolRequirements.map((r: any) => toolReqPair(r, toolData)).filter(p => !!p),
                                 ...(r.buildingRequirement ? [[
                                     "Building:",
                                     <>
@@ -525,9 +525,9 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
             ["Effort:", cons.actionsRequired],
             ["Time:", fixFloat(cons.timeRequirement)],
             ["Stamina:", fixFloat(cons.staminaRequirement)],
-            ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
-            ...cons.experiencePerProgress.map(exp => skillExpPair(exp, cons.actionsRequired, skillData)),
-            ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
+            ...cons.levelRequirements.map(req => skillReqPair(req, skillData)).filter(p => !!p),
+            ...cons.experiencePerProgress.map(exp => skillExpPair(exp, cons.actionsRequired, skillData)).filter(p => !!p),
+            ...cons.toolRequirements.map(req => toolReqPair(req, toolData)).filter(p => !!p),
         ]
         map.set(
             "construction_" + cons.id,
@@ -553,9 +553,9 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
         />;
         const stats = [
             ["Time:", fixFloat(cons.timeRequirement)],
-            ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
-            ...cons.experiencePerProgress.map(exp => skillExpPair(exp, undefined, skillData)),
-            ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
+            ...cons.levelRequirements.map(req => skillReqPair(req, skillData)).filter(p => !!p),
+            ...cons.experiencePerProgress.map(exp => skillExpPair(exp, undefined, skillData)).filter(p => !!p),
+            ...cons.toolRequirements.map(req => toolReqPair(req, toolData)).filter(p => !!p),
         ]
         const building = buildingData.get(cons.consumedBuilding);
         map.set(
