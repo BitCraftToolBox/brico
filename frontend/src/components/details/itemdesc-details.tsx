@@ -32,6 +32,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/c
 import {getRecipeMaps} from "~/lib/recipes";
 import {ResourceIcon} from "~/components/bitcraft/resources";
 import {BuildingIcon} from "~/components/bitcraft/buildings";
+import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 
 
 type ItemCardProps = {
@@ -58,9 +59,9 @@ const StatCard: Component<ItemCardProps> = (props) => {
     const weaponData = weaponIndex && weaponIndex()?.get(item.id);
     const toolTypeData = toolData && toolTypeIndex && toolTypeIndex()?.get(toolData.toolType);
     const knowledgeScrollData = props.itemType == ItemType.Item.tag
-    && knowledgeScrollIndex ? knowledgeScrollIndex()?.get(item.id) : undefined;
+        && knowledgeScrollIndex ? knowledgeScrollIndex()?.get(item.id) : undefined;
     const secondaryKnowledgeId = knowledgeScrollData ? knowledgeScrollData.secondaryKnowledgeId : undefined;
-    const knowledgeStatData = secondaryKnowledgeId && knowledgeStatIndex && knowledgeScrollData
+    const knowledgeStatData = secondaryKnowledgeId && knowledgeScrollData
         ? knowledgeStatIndex()?.get(knowledgeScrollData.secondaryKnowledgeId) : undefined;
     const knowledgeStatDataStats = knowledgeStatData && knowledgeStatData.stats;
 
@@ -227,6 +228,24 @@ function toolReqPair(req: ToolRequirement, toolData: Map<any, ToolTypeDesc>) {
     ] as [JSX.Element, JSX.Element];
 }
 
+export function skillExpPair(xp: ExperienceStackF32, total: number | undefined, skillData: Map<any, SkillDesc>) {
+    if (!xp.quantity) return null;
+    const totalXp = total ? total * xp.quantity : null;
+    const perHit = fixFloat(xp.quantity);
+    let elem;
+    if (!totalXp) {
+        elem = perHit;
+    } else {
+        elem = <Tooltip>
+            <TooltipTrigger>{perHit}</TooltipTrigger>
+            <TooltipContent>
+                Total: {fixFloat(totalXp)}
+            </TooltipContent>
+        </Tooltip>
+    }
+    return [`${skillData.get(xp.skillId)?.name} XP/Progress`, elem] as [JSX.Element, JSX.Element];
+}
+
 const RecipesPanel: Component<RecipesPanelProps> = (props) => {
     const resourceData = BitCraftTables.ResourceDesc.indexedBy("id")!()!;
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")!()!;
@@ -282,6 +301,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                                 ["Effort:", r.actionsRequired],
                                 ["Time:", fixFloat(r.timeRequirement)],
                                 ["Stamina:", fixFloat(r.staminaRequirement)],
+                                ...r.experiencePerProgress.map((xp) => skillExpPair(xp, r.actionsRequired, skillData)).filter(p => !!p),
                                 ...r.levelRequirements.map((s: any) => skillReqPair(s, skillData)).filter((p: any) => !!p && p.length),
                                 ...r.toolRequirements.map((r: any) => toolReqPair(r, toolData)).filter((p: any) => !!p && p.length),
                                 ...(r.buildingRequirement ? [[
@@ -330,6 +350,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                                 }
                                 stats.push(["Time:", fixFloat(r.timeRequirement)]);
                                 stats.push(["Stamina:", fixFloat(r.staminaRequirement)])
+                                stats.push(...r.experiencePerProgress.map((xp) => skillExpPair(xp, res?.maxHealth, skillData)).filter(p => !!p))
                                 stats.push(...r.levelRequirements.map((req) => skillReqPair(req, skillData)).filter(p => !!p))
                                 stats.push(...r.toolRequirements.map((req) => toolReqPair(req, toolData)).filter(p => !!p))
                                 return stats;
@@ -379,7 +400,7 @@ function collapseCargoIds(cargo: number[]) {
     }).toArray();
 }
 
-function collapseStacks(stacks: ItemStack[]) {
+export function collapseStacks(stacks: ItemStack[]) {
     const cargoMap = new Map<number, ItemStack>();
     const itemMap = new Map<number, ItemStack>();
     for (let stack of stacks) {
@@ -505,7 +526,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
             ["Time:", fixFloat(cons.timeRequirement)],
             ["Stamina:", fixFloat(cons.staminaRequirement)],
             ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
-            ...cons.experiencePerProgress.map(exp => experienceStackToStat(exp)),
+            ...cons.experiencePerProgress.map(exp => skillExpPair(exp, cons.actionsRequired, skillData)),
             ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
         ]
         map.set(
@@ -533,7 +554,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
         const stats = [
             ["Time:", fixFloat(cons.timeRequirement)],
             ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
-            ...cons.experiencePerProgress.map(exp => experienceStackToStat(exp)),
+            ...cons.experiencePerProgress.map(exp => skillExpPair(exp, undefined, skillData)),
             ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
         ]
         const building = buildingData.get(cons.consumedBuilding);

@@ -17,6 +17,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/c
 import {ResourceIcon} from "~/components/bitcraft/resources";
 import {getResourceExtraction} from "~/lib/recipes";
 import {expandStack, ItemStackArrayComponent} from "~/components/bitcraft/items";
+import {collapseStacks, skillExpPair} from "~/components/details/itemdesc-details";
 
 
 type ResourceCardProps = {
@@ -66,7 +67,7 @@ type RecipesPanelProps = {
     value: Accessor<Option>,
     setValue: Setter<Option>,
     options: Option[]
-    recipeMap: Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][], ExtractionRecipeDesc, ResourceDesc]>
+    recipeMap: Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][], ExtractionRecipeDesc | undefined, ResourceDesc]>
 }
 
 type Option = {
@@ -139,7 +140,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                             getInputs={(r) => r[1]}
                             getStatlines={(r) => r[3]}
                             getOutputStacks={(r) => r[2]}
-                            maskedProbabilities={additionalRecipe[4].verbPhrase === "Loot"}
+                            maskedProbabilities={additionalRecipe[4]?.verbPhrase === "Loot"}
                             chances={additionalRecipe[5].maxHealth}
                         />
                     )
@@ -156,14 +157,7 @@ const RecipesCard: Component<ResourceCardProps> = (props) => {
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")!()!;
     const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")!()!;
 
-    function experienceStackToStat(exp: ExperienceStackF32) {
-        return [
-            `${skillData.get(exp.skillId)?.name} Exp:`,
-            `${fixFloat(exp.quantity)}`
-        ] as [JSX.Element, JSX.Element];
-    }
-
-    const additionalUses = new Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][], ExtractionRecipeDesc, ResourceDesc]>();
+    const additionalUses = new Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][], ExtractionRecipeDesc | undefined, ResourceDesc]>();
     const additionalAcquisitions = new Map<string, [string, JSX.Element, OutputStacks, [JSX.Element, JSX.Element][], ExtractionRecipeDesc, ResourceDesc]>();
 
     const extractionData = getResourceExtraction(res);
@@ -183,6 +177,7 @@ const RecipesCard: Component<ResourceCardProps> = (props) => {
         stats.push(["Total HP", res.maxHealth]);
         stats.push(["Time:", fixFloat(r.timeRequirement)]);
         stats.push(["Stamina:", fixFloat(r.staminaRequirement)])
+        stats.push(...r.experiencePerProgress.map((xp) => skillExpPair(xp, res.maxHealth, skillData)).filter(p => !!p))
         stats.push(...r.levelRequirements.map((req) => skillReqPair(req, skillData)).filter(p => !!p))
         stats.push(...r.toolRequirements.map((req) => toolReqPair(req, toolData)).filter(p => !!p))
         additionalUses.set(
@@ -193,7 +188,12 @@ const RecipesCard: Component<ResourceCardProps> = (props) => {
             ]
         )
     }
-
+    if (res.onDestroyYield.length) {
+        const name = "Deplete " + res.name;
+        const input = <ResourceIcon res={res}/>;
+        const outputs = collapseStacks(res.onDestroyYield);
+        additionalUses.set("resourceDeplete_" + res.id, [name, input, outputs, [], undefined, res]);
+    }
 
     const usageOptions = additionalUses.entries().map(([n, v]) => {
         return {label: v[0], value: n}

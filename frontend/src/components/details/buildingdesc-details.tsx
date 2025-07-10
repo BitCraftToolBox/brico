@@ -22,6 +22,7 @@ import {TierIcon} from "~/components/bitcraft/misc";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {BuildingIcon} from "~/components/bitcraft/buildings";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
+import {skillExpPair} from "~/components/details/itemdesc-details";
 
 
 type BuildingCardProps = {
@@ -156,13 +157,6 @@ const RecipesCard: Component<BuildingCardProps> = (props) => {
     const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")!()!;
     const buildingData = BitCraftTables.BuildingDesc.indexedBy("id")!()!;
 
-    function experienceStackToStat(exp: ExperienceStackF32) {
-        return [
-            `${skillData.get(exp.skillId)?.name} Exp:`,
-            `${fixFloat(exp.quantity)}`
-        ] as [JSX.Element, JSX.Element];
-    }
-
     function addConstructionToMap(cons: ConstructionRecipeDesc, map: any) {
         const inputs = <ItemStackArrayComponent
             stackProps={() => [
@@ -179,7 +173,7 @@ const RecipesCard: Component<BuildingCardProps> = (props) => {
             ["Time:", fixFloat(cons.timeRequirement)],
             ["Stamina:", fixFloat(cons.staminaRequirement)],
             ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
-            ...cons.experiencePerProgress.map(exp => experienceStackToStat(exp)),
+            ...cons.experiencePerProgress.map(exp => skillExpPair(exp, cons.actionsRequired, skillData)),
             ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
         ]
         map.set(
@@ -207,7 +201,7 @@ const RecipesCard: Component<BuildingCardProps> = (props) => {
         const stats = [
             ["Time:", fixFloat(cons.timeRequirement)],
             ...cons.levelRequirements.map(req => skillReqPair(req, skillData)),
-            ...cons.experiencePerProgress.map(exp => experienceStackToStat(exp)),
+            ...cons.experiencePerProgress.map(exp => skillExpPair(exp, undefined, skillData)),
             ...cons.toolRequirements.map(req => toolReqPair(req, toolData)),
         ]
         const building = buildingData.get(cons.consumedBuilding);
