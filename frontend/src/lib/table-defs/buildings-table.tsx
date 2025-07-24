@@ -18,6 +18,7 @@ class FuncTypes {
     static TRADE = [30];
     static PASSIVE_CRAFTING = [12, 14, 15, 21, 24, 34];
     static CRAFTING = [13, 16, 17, 20, 22, 23, 25, 33, 40, 44, 48, 635094930, 1559722792, 2012420824];
+    static HOUSING = [787619404];
 }
 
 export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
@@ -111,6 +112,26 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
                     FuncTypes.CRAFTING.includes(func.functionType) ? func.craftingSlots
                         : FuncTypes.PASSIVE_CRAFTING.includes(func.functionType) ? func.refiningSlots
                             : null
+                )
+                .find(Boolean),
+            filterFn: includedIn<BuildingDesc>(),
+            sortUndefined: 'last'
+        },
+        {
+            id: "Housing Slots",
+            accessorFn: (dep: BuildingDesc) => dep.functions
+                .map(func =>
+                    FuncTypes.HOUSING.includes(func.functionType) ? func.housingSlots : null
+                )
+                .find(Boolean),
+            filterFn: includedIn<BuildingDesc>(),
+            sortUndefined: 'last'
+        },
+        {
+            id: "Housing Income",
+            accessorFn: (dep: BuildingDesc) => dep.functions
+                .map(func =>
+                    FuncTypes.HOUSING.includes(func.functionType) ? func.housingIncome : null
                 )
                 .find(Boolean),
             filterFn: includedIn<BuildingDesc>(),
