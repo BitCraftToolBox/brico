@@ -234,26 +234,30 @@ export const ItemListComponent: Component<ItemListComponentProps> = (props) => {
 
     return (
         <HoverCard>
-            <HoverCardTrigger class="rounded border-accent-foreground border-l-1 border-r-1 mx-1">
+            <HoverCardTrigger class="rounded-lg border border-border px-3 py-2 mx-1 flex flex-col items-center gap-1 bg-muted/10 shadow-sm">
                 <Show when={props.probability}>
-                    <div class="text-center">
-                        <ProbabilityIndicator probability={props.probability!} chances={props.chances}/>
+                    <div class="text-sm font-semibold text-foreground text-center">
+                        <ProbabilityIndicator probability={props.probability!} chances={props.chances} />
                     </div>
                 </Show>
-                <ItemStackArrayComponent stackProps={averages}/>
+                <ItemStackArrayComponent stackProps={averages} />
                 <Show when={props.showTip}>
-                    <div class="text-center text-muted-foreground underline decoration-1 decoration-dashed"
-                         onclick={() =>
-                             typeof props.probability === 'number' && props.chances && fullNode.toggle()
-                         }
+                    <button
+                        type="button"
+                        title="Toggle between average per output and full yield"
+                        class="text-xs text-muted-foreground underline underline-offset-2 decoration-muted-foreground/50 hover:decoration-muted-foreground/90 transition-colors text-center"
+                        onclick={() =>
+                            typeof props.probability === 'number' && props.chances && fullNode.toggle()
+                        }
                     >
                         {`(avg. / ${fullNode.useFullNode() ? "full yield" : "output"})`}
-                    </div>
+                    </button>
                 </Show>
             </HoverCardTrigger>
             <HoverCardContent class="w-auto min-w-64">
-                <div class="grid grid-flow-row grid-cols-2 justify-items-center overflow-y-auto max-h-[50vh]">
-                    <p class="text-center mb-2 col-span-2">Weighted List</p>
+                <div class="grid grid-flow-row grid-cols-2 justify-items-center max-h-[50vh] overflow-y-auto">
+                    <p class="text-center mb-2 col-span-2 text-sm text-muted-foreground">Weighted List</p>
+
                     <Show when={props.original}>
                         <div class="col-span-2 justify-self-center">
                             <ItemStackIcon
@@ -262,14 +266,16 @@ export const ItemListComponent: Component<ItemListComponentProps> = (props) => {
                             />
                         </div>
                     </Show>
-                    <div>Weight</div>
-                    <div>Items</div>
+
+                    <div class="text-xs font-semibold text-muted-foreground">Weight</div>
+                    <div class="text-xs font-semibold text-muted-foreground">Items</div>
+
                     <For each={possibilities}>
                         {(poss) => (
                             <>
-                                <Separator class="my-2 col-span-2 border-muted-foreground"/>
-                                <div class="place-self-center">{fixFloat(poss.probability, 3)}</div>
-                                <ItemStackArrayComponent stacks={() => poss.items}/>
+                                <Separator class="my-2 col-span-2 border-muted" />
+                                <div class="place-self-center text-sm">{fixFloat(poss.probability, 3)}</div>
+                                <ItemStackArrayComponent stacks={() => poss.items} />
                             </>
                         )}
                     </For>

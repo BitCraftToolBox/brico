@@ -40,28 +40,29 @@ type RecipePanelProps<T> = {
 
 function RecipePanel<T>(props: RecipePanelProps<T>) {
     return (
-        <TabsContent class="mt-8" value={props.tabValue}>
-            <div class="flex flex-col min-w-1/2 justify-center">
-                <div class="grid grid-flow-col grid-rows-1 justify-center">
+        <TabsContent value={props.tabValue} class="animate-none">
+            <div class="flex flex-col items-center w-full  mx-auto gap-4 px-2 md:px-4">
+                <div class="grid grid-flow-col auto-cols-auto justify-center gap-2">
                     {props.getInputs(props.recipe)}
                 </div>
-                <div class="flex flex-row justify-center">
-                    <IconDown class="w-8 h-8 my-2"/>
+                <IconDown class="w-6 h-6 text-muted-foreground" />
+                <div class="grid grid-flow-col auto-cols-auto justify-center gap-2">
+                    {props.getOutputs(props.recipe)}
                 </div>
-                <div class="grid grid-flow-col grid-rows-1 justify-center">
-                    {props.getOutputs!(props.recipe)}
-                </div>
-                <div class="flex flex-col items-center mt-4">
+                <div class="grid w-full max-w-md gap-1">
                     <For each={props.getStatlines(props.recipe)}>
-                        {pair => <div class="flex flex-row w-full max-w-100">
-                            <div class="text-nowrap mr-2">{pair[0]}</div>
-                            <div class="dots-before flex flex-1 text-nowrap">{pair[1]}</div>
-                        </div>}
+                        {([label, value]) => (
+                            <div class="flex justify-between items-center border-b border-muted py-0.5 px-1 text-sm">
+                                <div class="text-muted-foreground">{label}</div>
+                                <div class="font-medium text-right">{value}</div>
+                            </div>
+                        )}
                     </For>
                 </div>
+
             </div>
         </TabsContent>
-    )
+    );
 }
 
 type RecipesPanelProps = {
