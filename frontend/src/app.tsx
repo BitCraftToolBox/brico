@@ -1,15 +1,15 @@
-import {HashRouter} from "@solidjs/router";
-import {FileRoutes} from "@solidjs/start/router";
+import { HashRouter } from "@solidjs/router";
+import { FileRoutes } from "@solidjs/start/router";
 import "@fontsource/inter/latin";
 import "./app.css";
-import {ColorModeProvider, ColorModeScript, localStorageManager} from "@kobalte/core"
-import {SidebarProvider} from "~/components/ui/sidebar";
-import {AppSidebar} from "~/components/app-sidebar"
-import {Dialog, DialogContent} from "~/components/ui/dialog";
-import {createSignal} from "solid-js";
-import {DetailDialogContext, UseFullNodeOutputContext} from "~/lib/contexts";
-import {renderDialog} from "~/components/details/renderer";
-import {MetaProvider} from "@solidjs/meta";
+import { ColorModeProvider, ColorModeScript, localStorageManager } from "@kobalte/core"
+import { SidebarProvider } from "~/components/ui/sidebar";
+import { AppSidebar } from "~/components/app-sidebar"
+import { Dialog, DialogContent } from "~/components/ui/dialog";
+import { createSignal } from "solid-js";
+import { DetailDialogContext, UseFullNodeOutputContext } from "~/lib/contexts";
+import { renderDialog } from "~/components/details/renderer";
+import { MetaProvider } from "@solidjs/meta";
 
 export default function App() {
     const colorModeStorage = localStorageManager;
@@ -27,16 +27,17 @@ export default function App() {
         <HashRouter
             root={props => (
                 <MetaProvider>
-                    <ColorModeScript storageType={colorModeStorage.type}/>
+                    <ColorModeScript storageType={colorModeStorage.type} />
                     <ColorModeProvider storageManager={colorModeStorage}>
                         <DetailDialogContext.Provider value={dialogContext}>
                             <Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
                                 <SidebarProvider>
-                                    <AppSidebar/>
+                                    <AppSidebar />
                                     {props.children}
                                 </SidebarProvider>
                                 <UseFullNodeOutputContext.Provider value={fullNodeContext}>
-                                    <DialogContent class="max-w-[80vw] max-h-[80vh] w-auto">
+                                    <DialogContent class="w-[100vw] h-[100vh] max-w-none max-h-none sm:max-w-[80vw] sm:max-h-[80vh] sm:w-auto sm:h-auto
+">
                                         {renderDialog(dialogContent())}
                                     </DialogContent>
                                 </UseFullNodeOutputContext.Provider>
@@ -46,7 +47,7 @@ export default function App() {
                 </MetaProvider>
             )}
         >
-            <FileRoutes/>
+            <FileRoutes />
         </HashRouter>
     );
 }
