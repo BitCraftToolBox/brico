@@ -21,7 +21,7 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
     return (
         <div class="flex flex-col gap-2">
             <div class="flex items-center justify-between">
-                <div class="flex flex-1 items-center space-x-2">
+                <div class="flex space-x-2">
                     <Show when={props.searchColumn}>
                         <TextField
                             value={(props.table.getColumn(props.searchColumn!)?.getFilterValue() as string) ?? ""}
@@ -29,32 +29,29 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
                                 props.table.getColumn(props.searchColumn!)?.setFilterValue(value);
                                 ensurePagesVisible(props.table);
                             }}
+                            class="w-auto lg:w-[250px]"
                         >
-                            <TextFieldInput placeholder="Search..." class="h-8 w-[250px] lg:w-[250px]" />
+                            <TextFieldInput placeholder="Search..." class="h-8" />
                         </TextField>
                     </Show>
-
                     {isFiltered() && (
                         <Button
-                            variant="ghost"
+                            variant="outline"
                             onClick={() => props.table.resetColumnFilters()}
-                            class="h-8 px-2 sm:px-3 w-full sm:w-auto"
+                            class="h-8 w-auto px-2 sm:px-3"
                         >
                             Reset
                             <IconX />
                         </Button>
                     )}
                 </div>
-                <div class="w-full sm:w-auto">
-                    <TableViewOptions table={props.table} />
-                </div>
+                <TableViewOptions table={props.table} />
             </div>
             <div class="grid grid-cols-3 sm:flex flex-wrap items-center gap-2 w-full">
                 <For each={props.filters}>
                     {(filter) => <TableFacetedFilter {...filter} />}
                 </For>
             </div>
-
         </div>
     );
 }

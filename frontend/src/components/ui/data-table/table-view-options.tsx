@@ -24,7 +24,7 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
                 as={Button<"button">}
                 variant="outline"
                 size="sm"
-                class="ml-auto h-8"
+                class="h-8 w-auto px-2 sm:px-3"
             >
                 <IconSettings />
                 View

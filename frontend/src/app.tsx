@@ -36,8 +36,10 @@ export default function App() {
                                     {props.children}
                                 </SidebarProvider>
                                 <UseFullNodeOutputContext.Provider value={fullNodeContext}>
-                                    <DialogContent class="w-[100vw] h-[100vh] max-w-none max-h-none sm:max-w-[80vw] sm:max-h-[80vh] sm:w-auto sm:h-auto
-">
+                                    <DialogContent
+                                        class="flex flex-col w-[100vw] h-[100vh] max-w-none max-h-none
+                                               sm:max-w-[80vw] sm:max-h-[80vh] sm:w-auto sm:h-auto"
+                                    >
                                         {renderDialog(dialogContent())}
                                     </DialogContent>
                                 </UseFullNodeOutputContext.Provider>
