@@ -234,7 +234,7 @@ export const ItemListComponent: Component<ItemListComponentProps> = (props) => {
 
     return (
         <HoverCard>
-            <HoverCardTrigger class="rounded-lg border border-border px-3 py-2 mx-1 flex flex-col items-center gap-1 bg-muted/10 shadow-sm">
+            <HoverCardTrigger class="px-3 py-2 mx-1 flex flex-col items-center gap-1">
                 <Show when={props.probability}>
                     <div class="text-sm font-semibold text-foreground text-center">
                         <ProbabilityIndicator probability={props.probability!} chances={props.chances} />
