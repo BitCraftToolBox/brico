@@ -25,7 +25,6 @@ export default createHandler(() => (
       </head>
       <body>
       <div id="app">{children}</div>
-      <div id="kobalte">{children}</div>
       {scripts}
       </body>
       </html>
