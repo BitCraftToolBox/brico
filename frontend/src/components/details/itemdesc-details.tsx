@@ -172,7 +172,7 @@ function RecipePanel<T>(props: RecipePanelProps<T>) {
                                 fallback={<div class="col-span-full text-center text-muted-foreground">No Outputs</div>}
                             >
                                 {(stack) => (
-                                    <div class="rounded-xl border border-border bg-muted/30 px-3 py-4 min-w-[80px] min-h-[80px] flex flex-col items-center justify-center text-center shadow-sm">
+                                    <div class="rounded-xl border border-border bg-muted/30 px-3 py-4 min-w-[80px] max-w-[200px] w-full overflow-x-auto flex-shrink-0 flex flex-col items-center justify-center text-center shadow-sm">
                                         {expandStack(stack, props.maskedProbabilities, props.chances)}
                                     </div>
                                 )}
