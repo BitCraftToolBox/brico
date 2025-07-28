@@ -157,7 +157,7 @@ export const ItemStackIcon: Component<ItemStackIconProps> = (props) => {
             </Show>
             <ItemIcon {...others} quantity={local.quantity}/>
             <Show when={text}>
-                <p>{text}</p>
+                <p class="px-1">{text}</p>
             </Show>
         </div>
     )
