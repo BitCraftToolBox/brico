@@ -28,7 +28,7 @@ export function compareBasic(a: number, b: number) {
 }
 
 export function fixFloat(f: number, places: number = 3) {
-    return +f.toFixed(places);
+    return +f.toPrecision(places);
 }
 
 export function splitCamelCase(str: string) {
