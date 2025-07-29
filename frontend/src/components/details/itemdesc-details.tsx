@@ -167,16 +167,18 @@ function RecipePanel<T>(props: RecipePanelProps<T>) {
                     <Show
                         when={props.getOutputs}
                         fallback={
-                            <For
-                                each={props.getOutputStacks?.(props.recipe)}
-                                fallback={<div class="col-span-full text-center text-muted-foreground">No Outputs</div>}
-                            >
-                                {(stack) => (
-                                    <div class="rounded-xl border border-border bg-muted/30 px-3 py-4 min-w-[80px] max-w-[200px] w-full overflow-x-auto flex-shrink-0 flex flex-col items-center justify-center text-center shadow-sm">
-                                        {expandStack(stack, props.maskedProbabilities, props.chances)}
-                                    </div>
-                                )}
-                            </For>
+                            <div class="flex overflow-x-auto gap-2 px-2  min-w-[80px] max-w-[200px]">
+                                <For
+                                    each={props.getOutputStacks?.(props.recipe)}
+                                    fallback={<div class="col-span-full text-center text-muted-foreground">No Outputs</div>}
+                                >
+                                    {(stack) => (
+                                        <div class="flex-shrink-0 rounded-xl border bg-muted/30 px-3 py-4 flex flex-col items-center text-center text-xs gap-1">
+                                            {expandStack(stack, props.maskedProbabilities, props.chances)}
+                                        </div>
+                                    )}
+                                </For>
+                            </div>
                         }
                     >
                         {props.getOutputs!(props.recipe)}
