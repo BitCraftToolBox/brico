@@ -159,7 +159,7 @@ function RecipePanel<T>(props: RecipePanelProps<T>) {
     return (
         <TabsContent value={props.tabValue} class="animate-none">
             <div class="flex flex-col items-center w-full mx-auto gap-3 px-2 md:px-4 max-w-[1100px]">
-                <div class="grid grid-flow-col auto-cols-auto justify-center gap-2">
+                <div class="grid grid-flow-col auto-cols-auto justify-center gap-2 mt-4">
                     {props.getInputs(props.recipe)}
                 </div>
                 <IconDown class="w-6 h-6 text-muted-foreground" />
@@ -167,18 +167,26 @@ function RecipePanel<T>(props: RecipePanelProps<T>) {
                     <Show
                         when={props.getOutputs}
                         fallback={
-                            <div class="flex overflow-x-auto gap-2 px-2  min-w-[80px] max-w-[200px]">
-                                <For
-                                    each={props.getOutputStacks?.(props.recipe)}
-                                    fallback={<div class="col-span-full text-center text-muted-foreground">No Outputs</div>}
+                            <div class="w-full rounded-xl border border-border bg-muted/30 px-2 py-3 overflow-hidden">
+                                <div
+                                    class="flex gap-2 overflow-x-auto"
+                                    style="scrollbar-width: thin; scrollbar-gutter: stable"
                                 >
-                                    {(stack) => (
-                                        <div class="flex-shrink-0 rounded-xl border bg-muted/30 px-3 py-4 flex flex-col items-center text-center text-xs gap-1">
-                                            {expandStack(stack, props.maskedProbabilities, props.chances)}
-                                        </div>
-                                    )}
-                                </For>
+                                    <For
+                                        each={props.getOutputStacks?.(props.recipe)}
+                                        fallback={<div class="col-span-full text-center text-muted-foreground">No Outputs</div>}
+                                    >
+                                        {(stack) => (
+                                            <div
+                                                class="flex-shrink-0 min-w-[80px] max-w-[200px] rounded-xl border bg-muted/30 px-3 py-4 flex flex-1/2 items-center text-center text-xs gap-1"
+                                            >
+                                                {expandStack(stack, props.maskedProbabilities, props.chances)}
+                                            </div>
+                                        )}
+                                    </For>
+                                </div>
                             </div>
+
                         }
                     >
                         {props.getOutputs!(props.recipe)}
