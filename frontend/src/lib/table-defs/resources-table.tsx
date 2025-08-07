@@ -107,7 +107,7 @@ export const ResourceDescDefs: BitCraftToDataDef<ResourceDesc> = {
                     return {
                         label: v, value: v
                     }
-                }).toArray()
+                }).toArray().sort((a, b) => a.label.localeCompare(b.label))
             }
         },
         {

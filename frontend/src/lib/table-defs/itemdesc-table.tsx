@@ -276,7 +276,7 @@ export const ItemDescDefs: BitCraftToDataDef<ItemDesc> = {
                     return {
                         label: v, value: v
                     }
-                }).toArray()
+                }).toArray().sort((a, b) => a.label.localeCompare(b.label))
             }
         },
         {
