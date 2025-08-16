@@ -20,7 +20,7 @@ import {
     TravelerTaskDesc,
     TravelerTradeOrderDesc
 } from "~/bindings/ts";
-import {Accessor, Component, createSignal, For, JSX, Setter, Show} from "solid-js";
+import {Accessor, Component, createSignal, For, JSX, onCleanup, onMount, Setter, Show} from "solid-js";
 import {BitCraftTables} from "~/lib/spacetime";
 import {TbArrowBigDownLines as IconDown} from "solid-icons/tb";
 import {Card, CardContent, CardHeader, CardTitle} from "~/components/ui/card";
@@ -156,37 +156,74 @@ type RecipePanelProps<T> = {
 }
 
 function RecipePanel<T>(props: RecipePanelProps<T>) {
+    const [isOverflowing, setIsOverflowing] = createSignal(false);
+    let scrollRef: HTMLDivElement | undefined;
+
+    onMount(() => {
+        const checkOverflow = () => {
+            if (!scrollRef) return;
+            setIsOverflowing(scrollRef.scrollWidth > scrollRef.clientWidth);
+        };
+
+        checkOverflow();
+        window.addEventListener('resize', checkOverflow);
+        onCleanup(() => window.removeEventListener('resize', checkOverflow));
+    });
+
     return (
-        <TabsContent class="mt-8" value={props.tabValue}>
-            <div class="flex flex-col min-w-1/2 justify-center">
-                <div class="grid grid-flow-col grid-rows-1 justify-center">
+        <TabsContent value={props.tabValue} class="animate-none">
+            <div class="flex flex-col items-center w-full mx-auto gap-3 px-2 md:px-4 max-w-[1100px]">
+                <div class="grid grid-flow-col auto-cols-auto justify-center gap-2 mt-4">
                     {props.getInputs(props.recipe)}
                 </div>
-                <div class="flex flex-row justify-center">
-                    <IconDown class="w-8 h-8 my-2"/>
-                </div>
-                <div class="grid grid-flow-col grid-rows-1 justify-center">
-                    <Show when={props.getOutputs}
-                          fallback={
-                              <For each={props.getOutputStacks!(props.recipe)} fallback={"No Outputs"}>
-                                  {stack => expandStack(stack, props.maskedProbabilities, props.chances)}
-                              </For>
-                          }
+                <IconDown class="w-6 h-6 text-muted-foreground" />
+                <div class="grid grid-flow-col auto-cols-auto justify-center gap-2">
+                    <Show
+                        when={props.getOutputs}
+                        fallback={
+                            <div class="w-full rounded-xl border border-border bg-muted/30 px-2 py-3 overflow-hidden">
+                                <div
+                                    ref={scrollRef}
+                                    class={`flex overflow-x-auto items-stretch ${isOverflowing() ? 'gap-2' : 'justify-center gap-0 min-w-full'}`}
+                                    style={`scrollbar-width: thin;${isOverflowing() ? ' scrollbar-gutter: stable;' : ''}`}
+                                >
+
+
+
+
+                                    <For
+                                        each={props.getOutputStacks?.(props.recipe)}
+                                        fallback={<div class="col-span-full text-center text-muted-foreground">No Outputs</div>}
+                                    >
+                                        {(stack) => (
+                                            <div
+                                                class="flex-shrink-0 min-w-[80px] max-w-[200px] rounded-xl border bg-muted/30 px-3 py-4 flex items-center text-center text-xs gap-1"
+                                            >
+                                                {expandStack(stack, props.maskedProbabilities, props.chances)}
+                                            </div>
+                                        )}
+                                    </For>
+                                </div>
+                            </div>
+
+                        }
                     >
                         {props.getOutputs!(props.recipe)}
                     </Show>
                 </div>
-                <div class="flex flex-col items-center mt-4">
+                <div class="grid w-full max-w-md gap-1">
                     <For each={props.getStatlines(props.recipe)}>
-                        {pair => <div class="flex flex-row w-full max-w-100">
-                            <div class="text-nowrap mr-2">{pair[0]}</div>
-                            <div class="dots-before flex flex-1 text-nowrap">{pair[1]}</div>
-                        </div>}
+                        {([label, value]) => (
+                            <div class="flex justify-between items-center border-b border-muted py-0.5 px-1 text-sm">
+                                <div class="text-muted-foreground">{label}</div>
+                                <div class="font-medium text-right">{value}</div>
+                            </div>
+                        )}
                     </For>
                 </div>
             </div>
         </TabsContent>
-    )
+    );
 }
 
 type RecipesPanelProps = {
@@ -219,7 +256,7 @@ function toolReqPair(req: ToolRequirement, toolData: Map<any, ToolTypeDesc>) {
     return [
         "Tool:",
         <>
-            Tier <TierIcon tier={req.level} class="mx-1 self-center"/>
+            Tier <TierIcon tier={req.level} class="mx-1 self-center" />
             {tool.name}
             <Show when={req.power > 1}>
                 {"(Power >= "}{req.power}{")"}
@@ -308,7 +345,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                                     "Building:",
                                     <>
                                         Tier <TierIcon tier={(r as CraftingRecipeDesc).buildingRequirement!.tier}
-                                                       class="mx-1 self-center"/>
+                                            class="mx-1 self-center" />
                                         {buildingData.get((r as CraftingRecipeDesc).buildingRequirement!.buildingType)?.name}
                                     </>
                                 ]] : [])
@@ -440,8 +477,8 @@ function addTradeToMap(
         "travelerTrade_" + trade.id,
         [
             trade.traveler.tag + " Trade",
-            <ItemStackArrayComponent stacks={() => inputs}/>,
-            () => <ItemStackArrayComponent stacks={() => outputs} showName={true}/>,
+            <ItemStackArrayComponent stacks={() => inputs} />,
+            () => <ItemStackArrayComponent stacks={() => outputs} showName={true} />,
             stats
         ]
     );
@@ -487,7 +524,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
             "travelerTask_" + task.id,
             [
                 (skill ? skill + " " : "") + "Traveler Task",
-                <ItemStackArrayComponent stacks={() => inputs}/>,
+                <ItemStackArrayComponent stacks={() => inputs} />,
                 outputs, stats
             ]
         )
@@ -498,7 +535,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
             "conversion_" + conv.id,
             [
                 conv.name,
-                <ItemStackArrayComponent stacks={() => conv.inputItems}/>,
+                <ItemStackArrayComponent stacks={() => conv.inputItems} />,
                 (conv.outputItem ? [conv.outputItem] : []) as ItemStack[],
                 [
                     ["Time:", fixFloat(conv.timeCost)],
@@ -514,10 +551,10 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
         const inputs = <ItemStackArrayComponent
             stackProps={() => [
                 ...cons.consumedItemStacks.map((s: InputItemStack) => {
-                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
+                    return { item: [s.itemType.tag, s.itemId], quantity: s.quantity } as ItemStackIconProps
                 }),
                 ...cons.consumedCargoStacks.map((s: InputItemStack) => {
-                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
+                    return { item: [s.itemType.tag, s.itemId], quantity: s.quantity } as ItemStackIconProps
                 })
             ]}
         />;
@@ -534,7 +571,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
             [
                 "Construct " + cons.name,
                 inputs,
-                () => <BuildingIcon building={cons.buildingDescriptionId}/>,
+                () => <BuildingIcon building={cons.buildingDescriptionId} />,
                 stats
             ]
         )
@@ -544,10 +581,10 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
         const outputs = <ItemStackArrayComponent
             stackProps={() => [
                 ...cons.outputItemStacks.map((s: ItemStack) => {
-                    return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
+                    return { item: [s.itemType.tag, s.itemId], quantity: s.quantity } as ItemStackIconProps
                 }),
                 ...(cons.outputCargoId
-                    ? [{item: [ItemType.Cargo.tag, cons.outputCargoId], quantity: 1} as ItemStackIconProps]
+                    ? [{ item: [ItemType.Cargo.tag, cons.outputCargoId], quantity: 1 } as ItemStackIconProps]
                     : [])
             ]}
         />;
@@ -562,7 +599,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
             "deconstruction_" + cons.id,
             [
                 "Deconstruct " + (building?.name ?? "unknown building"),
-                <BuildingIcon building={cons.consumedBuilding}/>,
+                <BuildingIcon building={cons.consumedBuilding} />,
                 () => outputs,
                 stats
             ]
@@ -591,13 +628,13 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
         }
         additionalAcquisitions.set(
             "itemList_" + res.id,
-            [name + " (item list)", <ItemIcon item={itemWithList}/>, [res], []]
+            [name + " (item list)", <ItemIcon item={itemWithList} />, [res], []]
         );
     });
     const resourceDepletion = BitCraftTables.ResourceDesc.findByItemStacks(item.id, props.itemType);
     resourceDepletion()![1].forEach(res => {
         const name = "Deplete " + res.name;
-        const input = <ResourceIcon res={res}/>;
+        const input = <ResourceIcon res={res} />;
         const outputs = collapseStacks(res.onDestroyYield);
         additionalAcquisitions.set("resourceDeplete_" + res.id, [name, input, outputs, []]);
     });
@@ -609,23 +646,23 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
     deconstructionData()![1].forEach(deconstruction => addDeconstructionToMap(deconstruction, additionalAcquisitions));
 
     const usageOptions = recipeMaps.useRecipe.values().map(([n, v]) => {
-        return {label: n, value: "craft_" + v.id}
+        return { label: n, value: "craft_" + v.id }
     }).toArray();
     usageOptions.push(...recipeMaps.useExtraction.values().map(([n, v]) => {
-        return {label: n, value: "extraction_" + v.id}
+        return { label: n, value: "extraction_" + v.id }
     }).toArray())
     usageOptions.push(...additionalUses.entries().map((([n, v]) => {
-        return {label: v[0], value: n}
+        return { label: v[0], value: n }
     })));
 
     const acquireOptions = recipeMaps.acquireRecipe.values().map(([n, v]) => {
-        return {label: n, value: "craft_" + v.id}
+        return { label: n, value: "craft_" + v.id }
     }).toArray();
     acquireOptions.push(...recipeMaps.acquireExtraction.values().map(([n, v]) => {
-        return {label: n, value: "extraction_" + v.id}
+        return { label: n, value: "extraction_" + v.id }
     }).toArray())
     acquireOptions.push(...additionalAcquisitions.entries().map(([n, v]) => {
-        return {label: v[0], value: n}
+        return { label: v[0], value: n }
     }));
 
     const [usageValue, setUsageValue] = createSignal<Option>((usageOptions.length ? usageOptions[0] : ["No uses", ""]) as Option);
@@ -671,10 +708,10 @@ export function renderItemDescDialog(item: ItemDesc | CargoDesc, itemType: strin
     return (
         <>
             <div class="flex flex-row">
-                <ItemIcon item={item} noInteract={true}/>
+                <ItemIcon item={item} noInteract={true} />
                 <div class="flex flex-col flex-1 justify-left ml-2">
                     {item.name}
-                    <div>(Tier <TierIcon class="inline ml-1" tier={item.tier}/>, {item.rarity.tag})</div>
+                    <div>(Tier <TierIcon class="inline ml-1" tier={item.tier} />, {item.rarity.tag})</div>
                 </div>
             </div>
             <Show when={item.description}>
@@ -683,9 +720,9 @@ export function renderItemDescDialog(item: ItemDesc | CargoDesc, itemType: strin
                 </div>
             </Show>
             <Show when={itemType == ItemType.Item.tag}>
-                <StatCard item={item} itemType={itemType}/>
+                <StatCard item={item} itemType={itemType} />
             </Show>
-            <RecipesCard item={item} itemType={itemType}/>
+            <RecipesCard item={item} itemType={itemType} />
         </>
     )
 }
