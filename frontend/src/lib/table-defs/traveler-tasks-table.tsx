@@ -1,4 +1,4 @@
-import {ItemStack, TravelerTaskDesc} from "~/bindings/ts";
+import {ItemStack, TravelerTaskDesc} from "~/bindings/src";
 import {BitCraftToDataDef, rowActionRawOnly} from "~/lib/table-defs/base";
 import {CellContext, Column} from "@tanstack/solid-table";
 import {BitCraftTables} from "~/lib/spacetime";

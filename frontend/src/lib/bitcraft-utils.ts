@@ -1,4 +1,4 @@
-import {BuildingDesc, ItemStack, ItemType, Rarity} from "~/bindings/ts";
+import {BuildingDesc, ItemStack, ItemType, Rarity} from "~/bindings/src";
 import {BitCraftTables} from "~/lib/spacetime";
 
 

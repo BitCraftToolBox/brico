@@ -1,4 +1,4 @@
-import {BuildingDesc, CargoDesc, ItemDesc, ItemType, ResourceDesc} from "~/bindings/ts";
+import {BuildingDesc, CargoDesc, ItemDesc, ItemType, ResourceDesc} from "~/bindings/src";
 import {renderItemDescDialog} from "~/components/details/itemdesc-details";
 import {DialogContent, DialogHeader, DialogTitle} from "~/components/ui/dialog";
 import {TbCopy} from 'solid-icons/tb'

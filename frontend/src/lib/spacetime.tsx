@@ -32,7 +32,7 @@ import {
     TravelerTradeOrderDesc,
     WeaponDesc,
     WeaponTypeDesc
-} from "~/bindings/ts";
+} from "~/bindings/src";
 import {Accessor, createMemo, createResource} from "solid-js";
 
 interface FetchParams {
@@ -41,7 +41,7 @@ interface FetchParams {
 }
 
 //const bsatnPath = "/json";
-const bsatnPath = "/bsatn/server";
+const bsatnPath = "/bsatn/static";
 
 // function toCamelCase(obj: any): any {
 //     if (Array.isArray(obj)) {

@@ -188,7 +188,7 @@ export function AppSidebar() {
                             <Tooltip>
                                 <TooltipTrigger>
                                     <Button variant="ghost" size="sm" class="w-9 px-0">
-                                        <img src="/cordis_star.svg" width="24px" height="24px"
+                                        <img src="/umb_star.svg" width="24px" height="24px"
                                              alt="Umbilica Icon"></img>
                                     </Button>
                                 </TooltipTrigger>

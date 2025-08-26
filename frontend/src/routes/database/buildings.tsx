@@ -1,6 +1,6 @@
 import {BitCraftTables} from "~/lib/spacetime";
 import TableLayout from "~/components/TableLayout";
-import {BuildingDesc} from "~/bindings/ts";
+import {BuildingDesc} from "~/bindings/src";
 import {BuildingDescDefs} from "~/lib/table-defs/buildings-table";
 
 

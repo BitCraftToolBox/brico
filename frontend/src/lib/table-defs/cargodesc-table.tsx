@@ -1,4 +1,4 @@
-import {CargoDesc} from "~/bindings/ts";
+import {CargoDesc} from "~/bindings/src";
 import {useDetailDialog} from "~/lib/contexts";
 import {Button} from "~/components/ui/button";
 import {cn, compareBasic, includedIn} from "~/lib/utils";

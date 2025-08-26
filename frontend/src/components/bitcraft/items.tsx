@@ -1,4 +1,4 @@
-import {CargoDesc, ItemDesc, ItemListDesc, ItemStack, ItemType, ProbabilisticItemStack} from "~/bindings/ts";
+import {CargoDesc, ItemDesc, ItemListDesc, ItemStack, ItemType, ProbabilisticItemStack} from "~/bindings/src";
 import {Accessor, Component, ComponentProps, createEffect, createSignal, For, Show, splitProps} from "solid-js";
 import {cn, fixFloat, RequireOnlyOne} from "~/lib/utils";
 import {cleanAssetPath, Rarities, stackToItemOrCargo, Tiers} from "~/lib/bitcraft-utils";

@@ -1,4 +1,4 @@
-import {CsvStatEntry, ItemDesc} from "~/bindings/ts";
+import {CsvStatEntry, ItemDesc} from "~/bindings/src";
 import {useDetailDialog} from "~/lib/contexts";
 import {Button} from "~/components/ui/button";
 import {cn, compareBasic, fixFloat, includedIn, splitCamelCase} from "~/lib/utils";

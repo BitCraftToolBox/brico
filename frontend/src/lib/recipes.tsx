@@ -1,5 +1,5 @@
 import {BitCraftTables} from "~/lib/spacetime";
-import {CargoDesc, CraftingRecipeDesc, ExtractionRecipeDesc, ItemDesc, ItemType, ResourceDesc} from "~/bindings/ts";
+import {CargoDesc, CraftingRecipeDesc, ExtractionRecipeDesc, ItemDesc, ItemType, ResourceDesc} from "~/bindings/src";
 
 
 function getRecipes(

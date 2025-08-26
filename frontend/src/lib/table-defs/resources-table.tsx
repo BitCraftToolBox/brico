@@ -1,4 +1,4 @@
-import {ResourceDesc} from "~/bindings/ts";
+import {ResourceDesc} from "~/bindings/src";
 import {BitCraftToDataDef} from "~/lib/table-defs/base";
 import {useDetailDialog} from "~/lib/contexts";
 import {Button} from "~/components/ui/button";

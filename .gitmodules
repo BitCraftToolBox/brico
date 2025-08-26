@@ -1,0 +1,7 @@
+[submodule "frontend/public/bsatn"]
+	path = frontend/public/bsatn
+	url = https://github.com/BitCraftToolBox/BitCraft_BSATN_Data
+[submodule "frontend/src/bindings"]
+	path = frontend/src/bindings
+	url = https://github.com/BitCraftToolBox/BitCraft_Bindings
+	branch = ts-region

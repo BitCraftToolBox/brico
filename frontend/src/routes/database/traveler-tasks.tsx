@@ -1,6 +1,6 @@
 import {BitCraftTables} from "~/lib/spacetime";
 import TableLayout from "~/components/TableLayout";
-import {TravelerTaskDesc} from "~/bindings/ts";
+import {TravelerTaskDesc} from "~/bindings/src";
 import {TravelerTaskDefs} from "~/lib/table-defs/traveler-tasks-table";
 
 

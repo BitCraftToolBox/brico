@@ -5,7 +5,7 @@ import {
     SkillDesc,
     ToolRequirement,
     ToolTypeDesc
-} from "~/bindings/ts";
+} from "~/bindings/src";
 import {Accessor, Component, createSignal, For, JSX, Setter, Show} from "solid-js";
 import {BitCraftTables} from "~/lib/spacetime";
 import {TbArrowBigDownLines as IconDown} from "solid-icons/tb";

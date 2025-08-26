@@ -1,5 +1,5 @@
 import {Component, ComponentProps, splitProps} from "solid-js";
-import {ResourceDesc} from "~/bindings/ts";
+import {ResourceDesc} from "~/bindings/src";
 import {cleanAssetPath, Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {cn} from "~/lib/utils";

@@ -1,4 +1,4 @@
-import {DeployableDesc, ItemDesc, ItemStack, ItemType, MovementType, SurfaceType} from "~/bindings/ts";
+import {DeployableDesc, ItemDesc, ItemStack, ItemType, MovementType, SurfaceType} from "~/bindings/src";
 import {includedIn} from "~/lib/utils";
 import {BitCraftToDataDef, rowActionRawOnly} from "~/lib/table-defs/base";
 import {Column} from "@tanstack/solid-table";

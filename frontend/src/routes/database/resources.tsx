@@ -1,6 +1,6 @@
 import {BitCraftTables} from "~/lib/spacetime";
 import TableLayout from "~/components/TableLayout";
-import {ResourceDesc} from "~/bindings/ts";
+import {ResourceDesc} from "~/bindings/src";
 import {ResourceDescDefs} from "~/lib/table-defs/resources-table";
 
 

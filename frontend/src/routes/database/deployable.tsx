@@ -1,6 +1,6 @@
 import {BitCraftTables} from "~/lib/spacetime";
 import TableLayout from "~/components/TableLayout";
-import {DeployableDesc} from "~/bindings/ts";
+import {DeployableDesc} from "~/bindings/src";
 import {DeployableDescDefs} from "~/lib/table-defs/deployables-table";
 
 

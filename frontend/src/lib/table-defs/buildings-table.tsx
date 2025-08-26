@@ -1,4 +1,4 @@
-import {BuildingDesc, ItemDesc} from "~/bindings/ts";
+import {BuildingDesc} from "~/bindings/src";
 import {BitCraftToDataDef} from "~/lib/table-defs/base";
 import {Column} from "@tanstack/solid-table";
 import {useDetailDialog} from "~/lib/contexts";

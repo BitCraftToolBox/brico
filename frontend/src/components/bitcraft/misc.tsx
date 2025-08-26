@@ -1,5 +1,5 @@
 import {Component, ComponentProps} from "solid-js";
-import {Rarity} from "~/bindings/ts";
+import {Rarity} from "~/bindings/src";
 import {Tiers} from "~/lib/bitcraft-utils";
 import {cn} from "~/lib/utils";
 
