@@ -89,9 +89,9 @@ const groups: SidebarGroupDef[] = [
                 disabled: true
             },
             {
-                href: '/database/item-lists',
+                href: '/database/item-list',
                 title: 'Item Lists',
-                disabled: true
+                disabled: false
             },
             {
                 href: 'database/weapons',
