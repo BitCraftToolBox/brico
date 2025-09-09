@@ -9,6 +9,8 @@ import {cn, compareBasic, includedIn} from "~/lib/utils";
 import {Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {TierIcon} from "~/components/bitcraft/misc";
 import {Column} from "@tanstack/solid-table";
+import {A} from "@solidjs/router";
+import {TbExternalLink} from "solid-icons/tb";
 
 
 export const ResourceDescDefs: BitCraftToDataDef<ResourceDesc> = {
@@ -90,6 +92,20 @@ export const ResourceDescDefs: BitCraftToDataDef<ResourceDesc> = {
                                     onclick={() => window.navigator.clipboard.writeText(String(props.row.original.id))}
                             >
                                 Copy ID
+                            </Button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Button 
+                                class="w-full" 
+                                variant="ghost"
+                                as={A} 
+                                href={
+                                    `https://bitcraftmap.com/?regionId=1,2,3,4,5,6,7,8,9&resourceId=${props.row.original.id}` + "" +
+                                    `#{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"makeCanvas":1,"zoomTo":0,"flyTo":[11520,11520],"color":"#00000000","turnLayerOff":["ruinedLayer","treesLayer","templesLayer"]},"geometry":{"type":"Point","coordinates":[0,0]}}]}`
+                                }
+                                target="_blank"
+                            >
+                                View Map <TbExternalLink />
                             </Button>
                         </DropdownMenuItem>
                     </TableRowActions>
