@@ -1,4 +1,4 @@
-import {DeployableDesc, ItemDesc, ItemStack, ItemType, MovementType, SurfaceType} from "~/bindings/src";
+import {DeployableDescV2, ItemDesc, ItemStack, ItemType, MovementType, SurfaceType} from "~/bindings/src";
 import {includedIn} from "~/lib/utils";
 import {BitCraftToDataDef, rowActionRawOnly} from "~/lib/table-defs/base";
 import {Column} from "@tanstack/solid-table";
@@ -9,7 +9,7 @@ import {Show} from "solid-js";
 
 const itemCache = new Map<number, { deed: ItemStack | undefined, training: ItemStack[] }>
 
-function requiredItemsForDeployable(dep: DeployableDesc) {
+function requiredItemsForDeployable(dep: DeployableDescV2) {
     const existing = itemCache.get(dep.id);
     if (existing) return existing;
 
@@ -47,7 +47,7 @@ function requiredItemsForDeployable(dep: DeployableDesc) {
     return res;
 }
 
-export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
+export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV2> = {
     columns: [
         {
             id: "Name",
@@ -57,7 +57,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         {
             id: "Type",
             accessorKey: "deployableType.tag",
-            filterFn: includedIn<DeployableDesc>(),
+            filterFn: includedIn<DeployableDescV2>(),
         },
         {
             id: "Item Slots",
@@ -65,7 +65,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Item Stack Size",
-            accessorFn: (dep: DeployableDesc) => dep.itemSlotSize / 6000
+            accessorFn: (dep: DeployableDescV2) => dep.itemSlotSize / 6000
         },
         {
             id: "Cargo Slots",
@@ -73,11 +73,11 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Cargo Stack Size",
-            accessorFn: (dep: DeployableDesc) => dep.cargoSlotSize / 6000
+            accessorFn: (dep: DeployableDescV2) => dep.cargoSlotSize / 6000
         },
         {
             id: "Deed",
-            accessorFn: (dep: DeployableDesc) => requiredItemsForDeployable(dep).deed,
+            accessorFn: (dep: DeployableDescV2) => requiredItemsForDeployable(dep).deed,
             cell: props => {
                 const stack = props.getValue() as ItemStack;
                 return <Show when={stack}>
@@ -91,7 +91,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Training",
-            accessorFn: (dep: DeployableDesc) => requiredItemsForDeployable(dep).training,
+            accessorFn: (dep: DeployableDescV2) => requiredItemsForDeployable(dep).training,
             cell: props => {
                 const stacks = props.getValue() as ItemStack[];
                 const stackProps = stacks.map(stack => {
@@ -119,14 +119,14 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Speed",
-            accessorFn: (deployable: DeployableDesc) => {
+            accessorFn: (deployable: DeployableDescV2) => {
                 let speeds;
                 switch (deployable.movementType.tag) {
                     case MovementType.None.tag:
                         return 0;
                     case MovementType.Ground.tag:
                         speeds = new Set(deployable.speed
-                            .filter(ms => ms.surfaceType.tag == SurfaceType.Ground.tag || ms.surfaceType.tag == SurfaceType.Swamp.tag)
+                            .filter(ms => ms.surfaceType.tag == SurfaceType.Ground.tag)
                             .map(ms => ms.surfaceType.tag + ": " + ms.speed)).values().toArray()
                         return speeds.length == 1 ? speeds[0] : speeds.join(', ');
                     case MovementType.Water.tag:
@@ -141,13 +141,21 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
                 }
             }
         },
+        {
+            id: "Can Auto-Follow",
+            accessorKey: "canAutoFollow"
+        },
+        {
+            id: "Affected By Wind",
+            accessorKey: "affectedByWind"
+        },
         rowActionRawOnly
     ],
     facetedFilters: [
         {
             column: "Type",
             title: "Type",
-            options: (col: Column<DeployableDesc> | undefined) => {
+            options: (col: Column<DeployableDescV2> | undefined) => {
                 if (!col) return [];
                 return col.getFacetedUniqueValues().keys().map(v => {
                     return {

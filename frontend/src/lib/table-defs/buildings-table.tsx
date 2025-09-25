@@ -13,8 +13,8 @@ import {TierIcon} from "~/components/bitcraft/misc";
 
 
 class FuncTypes {
-    static STORAGE = [3, 1721785854];
-    static STOCKPILE = [4, 1721785854];
+    static STORAGE = [3, 4, 1721785854];
+    // static STOCKPILE = [4, 1721785854]; // not consistently used for cargo. just use storage
     static TRADE = [30];
     static PASSIVE_CRAFTING = [12, 14, 15, 21, 24, 34];
     static CRAFTING = [13, 16, 17, 20, 22, 23, 25, 33, 40, 44, 48, 635094930, 1559722792, 2012420824];
@@ -81,7 +81,7 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
         {
             id: "Cargo Slots",
             accessorFn: (bldg: BuildingDesc) => bldg.functions
-                .filter(func => FuncTypes.STOCKPILE.includes(func.functionType))
+                .filter(func => FuncTypes.STORAGE.includes(func.functionType))
                 .map(func => func.cargoSlots)
                 .find(Boolean),
             filterFn: 'inNumberRange',
@@ -90,7 +90,7 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
         {
             id: "Cargo Stack Size",
             accessorFn: (bldg: BuildingDesc) => bldg.functions
-                .filter(func => FuncTypes.STOCKPILE.includes(func.functionType))
+                .filter(func => FuncTypes.STORAGE.includes(func.functionType))
                 .map(func => func.cargoSlotSize / 6000)
                 .find(Boolean),
             filterFn: includedIn<BuildingDesc>(),
