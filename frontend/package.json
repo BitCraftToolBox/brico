@@ -7,7 +7,7 @@
     "start": "vinxi start"
   },
   "dependencies": {
-    "@clockworklabs/spacetimedb-sdk": "^1.1.0",
+    "@clockworklabs/spacetimedb-sdk": "^1.3.0",
     "@fontsource/inter": "^5.2.5",
     "@kobalte/core": "^0.13.10",
     "@solidjs/meta": "^0.29.4",
