@@ -1,6 +1,6 @@
 import {BitCraftTables} from "~/lib/spacetime";
 import TableLayout from "~/components/TableLayout";
-import {DeployableDescV2} from "~/bindings/src";
+import {DeployableDescV3} from "~/bindings/src";
 import {DeployableDescDefs} from "~/lib/table-defs/deployables-table";
 
 
@@ -9,7 +9,7 @@ export default function Deployables() {
     const defs = DeployableDescDefs;
 
     return (
-        <TableLayout<DeployableDescV2>
+        <TableLayout<DeployableDescV3>
             title="Deployables"
             items={cargoDescList.get}
             cols={defs.columns}

@@ -1,4 +1,4 @@
-import {DeployableDescV2, ItemDesc, ItemStack, ItemType, MovementType, SurfaceType} from "~/bindings/src";
+import {DeployableDescV3, ItemDesc, ItemStack, ItemType, MovementType, SurfaceType} from "~/bindings/src";
 import {includedIn} from "~/lib/utils";
 import {BitCraftToDataDef, rowActionRawOnly} from "~/lib/table-defs/base";
 import {Column} from "@tanstack/solid-table";
@@ -9,7 +9,7 @@ import {Show} from "solid-js";
 
 const itemCache = new Map<number, { deed: ItemStack | undefined, training: ItemStack[] }>
 
-function requiredItemsForDeployable(dep: DeployableDescV2) {
+function requiredItemsForDeployable(dep: DeployableDescV3) {
     const existing = itemCache.get(dep.id);
     if (existing) return existing;
 
@@ -47,7 +47,7 @@ function requiredItemsForDeployable(dep: DeployableDescV2) {
     return res;
 }
 
-export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV2> = {
+export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV3> = {
     columns: [
         {
             id: "Name",
@@ -57,7 +57,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV2> = {
         {
             id: "Type",
             accessorKey: "deployableType.tag",
-            filterFn: includedIn<DeployableDescV2>(),
+            filterFn: includedIn<DeployableDescV3>(),
         },
         {
             id: "Item Slots",
@@ -65,7 +65,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV2> = {
         },
         {
             id: "Item Stack Size",
-            accessorFn: (dep: DeployableDescV2) => dep.itemSlotSize / 6000
+            accessorFn: (dep: DeployableDescV3) => dep.itemSlotSize / 6000
         },
         {
             id: "Cargo Slots",
@@ -73,11 +73,11 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV2> = {
         },
         {
             id: "Cargo Stack Size",
-            accessorFn: (dep: DeployableDescV2) => dep.cargoSlotSize / 6000
+            accessorFn: (dep: DeployableDescV3) => dep.cargoSlotSize / 6000
         },
         {
             id: "Deed",
-            accessorFn: (dep: DeployableDescV2) => requiredItemsForDeployable(dep).deed,
+            accessorFn: (dep: DeployableDescV3) => requiredItemsForDeployable(dep).deed,
             cell: props => {
                 const stack = props.getValue() as ItemStack;
                 return <Show when={stack}>
@@ -91,7 +91,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV2> = {
         },
         {
             id: "Training",
-            accessorFn: (dep: DeployableDescV2) => requiredItemsForDeployable(dep).training,
+            accessorFn: (dep: DeployableDescV3) => requiredItemsForDeployable(dep).training,
             cell: props => {
                 const stacks = props.getValue() as ItemStack[];
                 const stackProps = stacks.map(stack => {
@@ -119,7 +119,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV2> = {
         },
         {
             id: "Speed",
-            accessorFn: (deployable: DeployableDescV2) => {
+            accessorFn: (deployable: DeployableDescV3) => {
                 let speeds;
                 switch (deployable.movementType.tag) {
                     case MovementType.None.tag:
@@ -155,7 +155,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV2> = {
         {
             column: "Type",
             title: "Type",
-            options: (col: Column<DeployableDescV2> | undefined) => {
+            options: (col: Column<DeployableDescV3> | undefined) => {
                 if (!col) return [];
                 return col.getFacetedUniqueValues().keys().map(v => {
                     return {
