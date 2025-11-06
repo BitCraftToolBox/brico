@@ -9,7 +9,7 @@ import {
     ClaimTechDesc,
     CollectibleDesc, ConstructionRecipeDescV2,
     CraftingRecipeDesc, DeconstructionRecipeDesc,
-    DeployableDescV3,
+    DeployableDescV4,
     EnemyDesc,
     EquipmentDesc,
     ExtractionRecipeDesc,
@@ -244,9 +244,9 @@ export const BitCraftTables = {
         new BitCraftTable('collectible_desc',
             CollectibleDesc.getTypeScriptAlgebraicType()
         )),
-    'DeployableDesc': cachedTable<DeployableDescV3>(
-        new BitCraftTable('deployable_desc_v3',
-            DeployableDescV3.getTypeScriptAlgebraicType()
+    'DeployableDesc': cachedTable<DeployableDescV4>(
+        new BitCraftTable('deployable_desc_v4',
+            DeployableDescV4.getTypeScriptAlgebraicType()
         )),
     'ClaimTechDesc': cachedTable<ClaimTechDesc>(
         new BitCraftTable('claim_tech_desc',
