@@ -60,7 +60,7 @@ function computeStatsForItem(item: ItemDesc): ItemStats | undefined {
     let weapon = weaponIndex()!.get(id);
     if (weapon) {
         stats.push({name: 'Min Damage', value: weapon.minDamage, isPct: false})
-        stats.push({name: 'Min Damage', value: weapon.maxDamage, isPct: false})
+        stats.push({name: 'Max Damage', value: weapon.maxDamage, isPct: false})
         stats.push({name: 'Stamina Multiplier', value: weapon.staminaUseMultiplier, isPct: false})
         stats.push({name: 'Cooldown', value: weapon.cooldown, isPct: false})
     }
