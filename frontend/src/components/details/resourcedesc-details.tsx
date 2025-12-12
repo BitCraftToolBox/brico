@@ -140,7 +140,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                             getInputs={(r) => r[1]}
                             getStatlines={(r) => r[3]}
                             getOutputStacks={(r) => r[2]}
-                            maskedProbabilities={additionalRecipe[4]?.verbPhrase === "Loot"}
+                            maskedProbabilities={false}
                             chances={additionalRecipe[5].maxHealth}
                         />
                     )

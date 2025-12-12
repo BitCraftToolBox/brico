@@ -1,7 +1,7 @@
 import {
     CappedLevelRequirement,
     CargoDesc,
-    ConstructionRecipeDesc,
+    ConstructionRecipeDescV2,
     CraftingRecipeDesc,
     DeconstructionRecipeDesc,
     ExperienceStackF32,
@@ -355,7 +355,7 @@ const RecipesPanel: Component<RecipesPanelProps> = (props) => {
                                 stats.push(...r.toolRequirements.map((req) => toolReqPair(req, toolData)).filter(p => !!p))
                                 return stats;
                             }}
-                            maskedProbabilities={extraction.verbPhrase === "Loot"}
+                            maskedProbabilities={false}
                             chances={extraction.resourceId ? BitCraftTables.ResourceDesc.indexedBy("id")!()!.get(extraction.resourceId)!.maxHealth : undefined}
                         />
                     )
@@ -510,7 +510,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
         )
     }
 
-    function addConstructionToMap(cons: ConstructionRecipeDesc, map: any) {
+    function addConstructionToMap(cons: ConstructionRecipeDescV2, map: any) {
         const inputs = <ItemStackArrayComponent
             stackProps={() => [
                 ...cons.consumedItemStacks.map((s: InputItemStack) => {
