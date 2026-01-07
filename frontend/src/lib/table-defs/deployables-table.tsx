@@ -47,6 +47,26 @@ function requiredItemsForDeployable(dep: DeployableDescV4) {
     return res;
 }
 
+function getStepHeight(deployable: DeployableDescV4): number | null {
+    const pathfinding = BitCraftTables.PathfindingDesc.indexedBy("id")!()!;
+    if (deployable.movementType.tag === MovementType.Water.tag) {
+        return pathfinding.get(deployable.pathfindingId)?.maxSwimHeightDelta || null;
+    }
+
+    if (deployable.movementType.tag === MovementType.Ground.tag) {
+        const pf = pathfinding.get(deployable.pathfindingId);
+        if (!pf) return null;
+        return Math.max(
+            // theoretically should be the same
+            ...pf.climbDownOptions.map(o => o.maxElevationDifference),
+            ...pf.climbUpOptions.map(o => o.maxElevationDifference)
+        );
+    }
+
+    return null;
+}
+
+
 export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV4> = {
     columns: [
         {
@@ -140,6 +160,10 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV4> = {
                         return speeds.length == 1 ? speeds[0] : speeds;
                 }
             }
+        },
+        {
+            id: "Step Height",
+            accessorFn: d => getStepHeight(d)
         },
         {
             id: "Can Auto-Follow",

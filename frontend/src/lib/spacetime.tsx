@@ -21,7 +21,7 @@ import {
     ItemStack,
     ItemType,
     KnowledgeScrollDesc,
-    KnowledgeStatModifierDesc,
+    KnowledgeStatModifierDesc, PathfindingDesc,
     ProbabilisticItemStack,
     ResourceDesc,
     SecondaryKnowledgeDesc,
@@ -329,5 +329,9 @@ export const BitCraftTables = {
     'SecondaryKnowledgeDesc': cachedTable<SecondaryKnowledgeDesc>(
         new BitCraftTable('secondary_knowledge_desc',
             SecondaryKnowledgeDesc.getTypeScriptAlgebraicType()
+        )),
+    'PathfindingDesc': cachedTable<PathfindingDesc>(
+        new BitCraftTable('pathfinding_desc',
+            PathfindingDesc.getTypeScriptAlgebraicType()
         )),
 };
