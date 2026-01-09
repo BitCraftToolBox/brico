@@ -12,6 +12,7 @@ import {TableRowActions} from "~/components/ui/data-table/table-row-actions";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {ItemIcon} from "~/components/bitcraft/items";
 import {TierIcon} from "~/components/bitcraft/misc";
+import {TbLink} from "solid-icons/tb";
 
 
 type ItemStats = {
@@ -259,6 +260,13 @@ export const ItemDescDefs: BitCraftToDataDef<ItemDesc> = {
                                     onclick={() => window.navigator.clipboard.writeText(String(props.row.original.id))}
                             >
                                 Copy ID
+                            </Button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Button class="w-full" variant="ghost"
+                                    onclick={() => window.navigator.clipboard.writeText(`(item=${props.row.original.id})`)}
+                            >
+                                Copy Chat Link <TbLink />
                             </Button>
                         </DropdownMenuItem>
                     </TableRowActions>

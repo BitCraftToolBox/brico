@@ -10,6 +10,7 @@ import {TableRowActions} from "~/components/ui/data-table/table-row-actions";
 import {DropdownMenuItem} from "~/components/ui/dropdown-menu";
 import {getBuildingTier, Tiers} from "~/lib/bitcraft-utils";
 import {TierIcon} from "~/components/bitcraft/misc";
+import {TbLink} from "solid-icons/tb";
 
 
 class FuncTypes {
@@ -173,6 +174,13 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
                                     onclick={() => window.navigator.clipboard.writeText(String(props.row.original.id))}
                             >
                                 Copy ID
+                            </Button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Button class="w-full" variant="ghost"
+                                    onclick={() => window.navigator.clipboard.writeText(`(build=${props.row.original.id})`)}
+                            >
+                                Copy Chat Link <TbLink />
                             </Button>
                         </DropdownMenuItem>
                     </TableRowActions>

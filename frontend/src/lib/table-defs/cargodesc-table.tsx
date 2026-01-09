@@ -10,6 +10,7 @@ import {TableRowActions} from "~/components/ui/data-table/table-row-actions";
 import {ItemIcon} from "~/components/bitcraft/items";
 import {TierIcon} from "~/components/bitcraft/misc";
 import {BitCraftTables} from "~/lib/spacetime";
+import {TbLink} from "solid-icons/tb";
 
 
 export const CargoDescDefs: BitCraftToDataDef<CargoDesc> = {
@@ -97,6 +98,13 @@ export const CargoDescDefs: BitCraftToDataDef<CargoDesc> = {
                                     onclick={() => window.navigator.clipboard.writeText(String(props.row.original.id))}
                             >
                                 Copy ID
+                            </Button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Button class="w-full" variant="ghost"
+                                    onclick={() => window.navigator.clipboard.writeText(`(cargo=${props.row.original.id})`)}
+                            >
+                                Copy Chat Link <TbLink />
                             </Button>
                         </DropdownMenuItem>
                     </TableRowActions>

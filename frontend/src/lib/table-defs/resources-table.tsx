@@ -10,7 +10,7 @@ import {Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {TierIcon} from "~/components/bitcraft/misc";
 import {Column} from "@tanstack/solid-table";
 import {A} from "@solidjs/router";
-import {TbExternalLink} from "solid-icons/tb";
+import {TbExternalLink, TbLink} from "solid-icons/tb";
 
 
 export const ResourceDescDefs: BitCraftToDataDef<ResourceDesc> = {
@@ -92,6 +92,13 @@ export const ResourceDescDefs: BitCraftToDataDef<ResourceDesc> = {
                                     onclick={() => window.navigator.clipboard.writeText(String(props.row.original.id))}
                             >
                                 Copy ID
+                            </Button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <Button class="w-full" variant="ghost"
+                                    onclick={() => window.navigator.clipboard.writeText(`(res=${props.row.original.id})`)}
+                            >
+                                Copy Chat Link <TbLink />
                             </Button>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
