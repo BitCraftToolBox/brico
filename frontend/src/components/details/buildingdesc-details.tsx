@@ -1,6 +1,6 @@
 import {
     BuildingDesc,
-    ConstructionRecipeDesc,
+    ConstructionRecipeDescV2,
     DeconstructionRecipeDesc,
     ExperienceStackF32,
     InputItemStack,
@@ -157,7 +157,7 @@ const RecipesCard: Component<BuildingCardProps> = (props) => {
     const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")!()!;
     const buildingData = BitCraftTables.BuildingDesc.indexedBy("id")!()!;
 
-    function addConstructionToMap(cons: ConstructionRecipeDesc, map: any) {
+    function addConstructionToMap(cons: ConstructionRecipeDescV2, map: any) {
         const inputs = <ItemStackArrayComponent
             stackProps={() => [
                 ...cons.consumedItemStacks.map((s: InputItemStack) => {
@@ -192,10 +192,7 @@ const RecipesCard: Component<BuildingCardProps> = (props) => {
             stackProps={() => [
                 ...cons.outputItemStacks.map((s: ItemStack) => {
                     return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
-                }),
-                ...(cons.outputCargoId
-                    ? [{item: [ItemType.Cargo.tag, cons.outputCargoId], quantity: 1} as ItemStackIconProps]
-                    : [])
+                })
             ]}
         />;
         const stats = [

@@ -545,10 +545,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
             stackProps={() => [
                 ...cons.outputItemStacks.map((s: ItemStack) => {
                     return {item: [s.itemType.tag, s.itemId], quantity: s.quantity} as ItemStackIconProps
-                }),
-                ...(cons.outputCargoId
-                    ? [{item: [ItemType.Cargo.tag, cons.outputCargoId], quantity: 1} as ItemStackIconProps]
-                    : [])
+                })
             ]}
         />;
         const stats = [

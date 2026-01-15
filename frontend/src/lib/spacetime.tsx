@@ -238,7 +238,7 @@ export const BitCraftTables = {
     'DeconstructionRecipeDesc': cachedTable<DeconstructionRecipeDesc>(
         new BitCraftTable('deconstruction_recipe_desc',
             DeconstructionRecipeDesc.getTypeScriptAlgebraicType(),
-            [[], ['outputItemStacks', 'outputCargoId']]
+            [[], ['outputItemStacks']]
         )),
     'CollectibleDesc': cachedTable<CollectibleDesc>(
         new BitCraftTable('collectible_desc',
