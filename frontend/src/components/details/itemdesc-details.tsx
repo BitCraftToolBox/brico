@@ -400,7 +400,7 @@ function collapseCargoIds(cargo: number[]) {
     }).toArray();
 }
 
-export function collapseStacks(stacks: ItemStack[]) {
+export function collapseStacks(stacks: ItemStack[], includeCargo: boolean = false) {
     const cargoMap = new Map<number, ItemStack>();
     const itemMap = new Map<number, ItemStack>();
     for (let stack of stacks) {
@@ -416,7 +416,7 @@ export function collapseStacks(stacks: ItemStack[]) {
             } as ItemStack)
         }
     }
-    return [...cargoMap.values(), ...itemMap.values()];
+    return [...(includeCargo ? cargoMap.values() : []), ...itemMap.values()];
 }
 
 function addTradeToMap(
@@ -596,7 +596,9 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
         const name = "Deplete " + res.name;
         const input = <ResourceIcon res={res}/>;
         const outputs = collapseStacks(res.onDestroyYield);
-        additionalAcquisitions.set("resourceDeplete_" + res.id, [name, input, outputs, []]);
+        if (outputs) {
+            additionalAcquisitions.set("resourceDeplete_" + res.id, [name, input, outputs, []]);
+        }
     });
     travelerTaskData()![1].forEach(task => addTaskToMap(task, additionalAcquisitions));
     travelerTradeData()![1].forEach(trade => addTradeToMap(trade, additionalAcquisitions, skillData));

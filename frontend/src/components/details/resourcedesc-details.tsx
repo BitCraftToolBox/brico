@@ -192,7 +192,9 @@ const RecipesCard: Component<ResourceCardProps> = (props) => {
         const name = "Deplete " + res.name;
         const input = <ResourceIcon res={res}/>;
         const outputs = collapseStacks(res.onDestroyYield);
-        additionalUses.set("resourceDeplete_" + res.id, [name, input, outputs, [], undefined, res]);
+        if (outputs) {
+            additionalUses.set("resourceDeplete_" + res.id, [name, input, outputs, [], undefined, res]);
+        }
     }
 
     const usageOptions = additionalUses.entries().map(([n, v]) => {
