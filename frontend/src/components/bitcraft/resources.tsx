@@ -1,6 +1,6 @@
 import {Component, ComponentProps, splitProps} from "solid-js";
 import {ResourceDesc} from "~/bindings/src";
-import {cleanAssetPath, Rarities, Tiers} from "~/lib/bitcraft-utils";
+import {getAssetURL, Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {cn} from "~/lib/utils";
 import {TierIcon} from "~/components/bitcraft/misc";
@@ -45,9 +45,7 @@ export const ResourceIcon: Component<ResourceIconProps> = (props: ResourceIconPr
 
     const bgColor = Tiers.getBackgroundColorClass(resource.tier);
     const borderColor = Rarities.getBorderColorClass(resource.rarity);
-    const path = resource.iconAssetName
-        ? "/assets/" + cleanAssetPath(resource.iconAssetName) + ".webp"
-        : "/assets/Unknown.webp";
+    const path = getAssetURL(resource.iconAssetName);
 
     const dialog = useDetailDialog();
 

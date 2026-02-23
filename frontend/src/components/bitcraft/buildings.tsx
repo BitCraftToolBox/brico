@@ -1,6 +1,6 @@
 import {Component, ComponentProps, splitProps} from "solid-js";
 import {BuildingDesc} from "~/bindings/src";
-import {cleanAssetPath, getBuildingTier, Tiers} from "~/lib/bitcraft-utils";
+import {getAssetURL, getBuildingTier, Tiers} from "~/lib/bitcraft-utils";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {cn} from "~/lib/utils";
 import {BitCraftTables} from "~/lib/spacetime";
@@ -44,9 +44,7 @@ export const BuildingIcon: Component<BuildingIconProps> = (props: BuildingIconPr
     divH = getHeight(small);
 
     const bgColor = Tiers.getBackgroundColorClass(getBuildingTier(building));
-    const path = building.iconAssetName
-        ? "/assets/" + cleanAssetPath(building.iconAssetName) + ".webp"
-        : "/assets/Unknown.webp";
+    const path = getAssetURL(building.iconAssetName);
 
     const dialog = useDetailDialog();
 

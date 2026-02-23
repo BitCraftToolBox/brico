@@ -1,7 +1,7 @@
 import {CargoDesc, ItemDesc, ItemListDesc, ItemStack, ItemType, ProbabilisticItemStack} from "~/bindings/src";
 import {Accessor, Component, ComponentProps, createEffect, createSignal, For, Show, splitProps} from "solid-js";
 import {cn, fixFloat, RequireOnlyOne} from "~/lib/utils";
-import {cleanAssetPath, Rarities, stackToItemOrCargo, Tiers} from "~/lib/bitcraft-utils";
+import {getAssetURL, Rarities, stackToItemOrCargo, Tiers} from "~/lib/bitcraft-utils";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {TierIcon} from "~/components/bitcraft/misc";
 import {BitCraftTables} from "~/lib/spacetime";
@@ -62,9 +62,7 @@ export const ItemIcon: Component<ItemIconProps> = (props: ItemIconProps) => {
     const bgColor = Tiers.getBackgroundColorClass(item.tier);
     const borderColor = Rarities.getBorderColorClass(item.rarity);
 
-    let path = item.iconAssetName
-        ? "/assets/" + cleanAssetPath(item.iconAssetName, props.quantity) + ".webp"
-        : "/assets/Unknown.webp";
+    let path = getAssetURL(item.iconAssetName);
 
     const dialog = useDetailDialog();
 

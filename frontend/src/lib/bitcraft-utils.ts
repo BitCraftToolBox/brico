@@ -101,26 +101,35 @@ export function stackToItemOrCargo(stack: ItemStack | [string, number]) {
     }
 }
 
-export function cleanAssetPath(path: string, quantity?: number) {
-    if (path.startsWith("Items/HexCoin")) {
-        // TODO parse out Items/HexCoin[,3,10,500] properly
-        if (!quantity || quantity < 3) {
-            return "OldGeneratedIcons/Items/HexCoin";
-        } else if (quantity < 10) {
-            return "OldGeneratedIcons/Items/HexCoin3";
-        } else if (quantity < 500) {
-            return "OldGeneratedIcons/Items/HexCoin10";
+export function getAssetURL(path: string, quantity?: number) {
+    if (!path) {
+        return '/assets/Unknown.webp';
+    }
+    // match <path>[,n1,n2,...], used by hex coins
+    const bracketMatch = path.match(/^([\\\w]+)(\[(,\d+)+])$/);
+    if (bracketMatch) {
+        const baseName = bracketMatch[1];
+        const bracketNumbers = bracketMatch[2];
+        let quantities: number[] = [];
+        if (bracketNumbers) {
+            quantities = bracketNumbers.split(',').map(n => parseInt(n)).filter(n => !isNaN(n));
+            quantities.sort((a, b) => a - b);
+        }
+        if (!quantity || quantities.length === 0) {
+            path = `${baseName}`;
         } else {
-            return "OldGeneratedIcons/Items/HexCoin500";
+            let selected = quantities[0];
+            for (const n of quantities) {
+                if (quantity >= n) {
+                    selected = n;
+                } else {
+                    break;
+                }
+            }
+            path = `${baseName}${selected !== undefined ? selected : ''}`;
         }
     }
-    if (path.startsWith("Buildings/")) {
-        return "GeneratedIcons/Other/" + path;
-    }
-    if (!path.startsWith("GeneratedIcons/")) {
-        return "OldGeneratedIcons/" + path;
-    }
-    return path.replace("GeneratedIcons/Other/GeneratedIcons", "GeneratedIcons");
+    return `/assets/bitcraft/sprites/${path}.webp`;
 }
 
 export function getBuildingTier(building: BuildingDesc) {
