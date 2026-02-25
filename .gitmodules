@@ -7,4 +7,6 @@
 	branch = ts-region
 [submodule "frontend/public/assets/bitcraft"]
 	path = frontend/public/assets/bitcraft
-	url = git@github.com:BitCraftToolBox/BitCraft_Assets.git
+        url = git@github.com:BitCraftToolBox/BitCraft_Assets.git
+#        url = https://github.com/BitCraftToolBox/BitCraft_Assets.git
+
