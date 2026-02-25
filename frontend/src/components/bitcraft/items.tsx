@@ -62,7 +62,7 @@ export const ItemIcon: Component<ItemIconProps> = (props: ItemIconProps) => {
     const bgColor = Tiers.getBackgroundColorClass(item.tier);
     const borderColor = Rarities.getBorderColorClass(item.rarity);
 
-    let path = getAssetURL(item.iconAssetName);
+    let path = getAssetURL(item.iconAssetName, others.quantity);
 
     const dialog = useDetailDialog();
 

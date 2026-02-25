@@ -1,4 +1,4 @@
-import {DeployableDescV4, ItemDesc, ItemStack, ItemType, MovementType, SurfaceType} from "~/bindings/src";
+import {DeployableDesc, ItemDesc, ItemStack, ItemType, MovementType, SurfaceType} from "~/bindings/src";
 import {includedIn} from "~/lib/utils";
 import {BitCraftToDataDef, rowActionRawOnly} from "~/lib/table-defs/base";
 import {Column} from "@tanstack/solid-table";
@@ -9,7 +9,7 @@ import {Show} from "solid-js";
 
 const itemCache = new Map<number, { deed: ItemStack | undefined, training: ItemStack[] }>
 
-function requiredItemsForDeployable(dep: DeployableDescV4) {
+function requiredItemsForDeployable(dep: DeployableDesc) {
     const existing = itemCache.get(dep.id);
     if (existing) return existing;
 
@@ -47,7 +47,7 @@ function requiredItemsForDeployable(dep: DeployableDescV4) {
     return res;
 }
 
-function getStepHeight(deployable: DeployableDescV4): number | null {
+function getStepHeight(deployable: DeployableDesc): number | null {
     const pathfinding = BitCraftTables.PathfindingDesc.indexedBy("id")!()!;
     if (deployable.movementType.tag === MovementType.Water.tag) {
         return pathfinding.get(deployable.pathfindingId)?.maxSwimHeightDelta || null;
@@ -67,7 +67,7 @@ function getStepHeight(deployable: DeployableDescV4): number | null {
 }
 
 
-export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV4> = {
+export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
     columns: [
         {
             id: "Name",
@@ -77,7 +77,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV4> = {
         {
             id: "Type",
             accessorKey: "deployableType.tag",
-            filterFn: includedIn<DeployableDescV4>(),
+            filterFn: includedIn<DeployableDesc>(),
         },
         {
             id: "Item Slots",
@@ -85,7 +85,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV4> = {
         },
         {
             id: "Item Stack Size",
-            accessorFn: (dep: DeployableDescV4) => dep.itemSlotSize / 6000
+            accessorFn: (dep: DeployableDesc) => dep.itemSlotSize / 6000
         },
         {
             id: "Cargo Slots",
@@ -93,11 +93,11 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV4> = {
         },
         {
             id: "Cargo Stack Size",
-            accessorFn: (dep: DeployableDescV4) => dep.cargoSlotSize / 6000
+            accessorFn: (dep: DeployableDesc) => dep.cargoSlotSize / 6000
         },
         {
             id: "Deed",
-            accessorFn: (dep: DeployableDescV4) => requiredItemsForDeployable(dep).deed,
+            accessorFn: (dep: DeployableDesc) => requiredItemsForDeployable(dep).deed,
             cell: props => {
                 const stack = props.getValue() as ItemStack;
                 return <Show when={stack}>
@@ -111,7 +111,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV4> = {
         },
         {
             id: "Training",
-            accessorFn: (dep: DeployableDescV4) => requiredItemsForDeployable(dep).training,
+            accessorFn: (dep: DeployableDesc) => requiredItemsForDeployable(dep).training,
             cell: props => {
                 const stacks = props.getValue() as ItemStack[];
                 const stackProps = stacks.map(stack => {
@@ -139,7 +139,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV4> = {
         },
         {
             id: "Speed",
-            accessorFn: (deployable: DeployableDescV4) => {
+            accessorFn: (deployable: DeployableDesc) => {
                 let speeds;
                 switch (deployable.movementType.tag) {
                     case MovementType.None.tag:
@@ -179,7 +179,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDescV4> = {
         {
             column: "Type",
             title: "Type",
-            options: (col: Column<DeployableDescV4> | undefined) => {
+            options: (col: Column<DeployableDesc> | undefined) => {
                 if (!col) return [];
                 return col.getFacetedUniqueValues().keys().map(v => {
                     return {

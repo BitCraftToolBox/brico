@@ -106,7 +106,7 @@ export function getAssetURL(path: string, quantity?: number) {
         return '/assets/Unknown.webp';
     }
     // match <path>[,n1,n2,...], used by hex coins
-    const bracketMatch = path.match(/^([\\\w]+)(\[(,\d+)+])$/);
+    const bracketMatch = path.match(/^([/\w]+)(\[(,\d+)+])$/);
     if (bracketMatch) {
         const baseName = bracketMatch[1];
         const bracketNumbers = bracketMatch[2];

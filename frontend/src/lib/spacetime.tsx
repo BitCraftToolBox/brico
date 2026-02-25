@@ -7,9 +7,9 @@ import {
     BuildingTypeDesc,
     CargoDesc,
     ClaimTechDesc,
-    CollectibleDesc, ConstructionRecipeDescV2,
+    CollectibleDesc, ConstructionRecipeDesc,
     CraftingRecipeDesc, DeconstructionRecipeDesc,
-    DeployableDescV4,
+    DeployableDesc,
     EnemyDesc,
     EquipmentDesc,
     ExtractionRecipeDesc,
@@ -230,9 +230,9 @@ export const BitCraftTables = {
         new BitCraftTable('building_type_desc',
             BuildingTypeDesc.getTypeScriptAlgebraicType()
         )),
-    'ConstructionRecipeDesc': cachedTable<ConstructionRecipeDescV2>(
-        new BitCraftTable('construction_recipe_desc_v2',
-            ConstructionRecipeDescV2.getTypeScriptAlgebraicType(),
+    'ConstructionRecipeDesc': cachedTable<ConstructionRecipeDesc>(
+        new BitCraftTable('construction_recipe_desc',
+            ConstructionRecipeDesc.getTypeScriptAlgebraicType(),
             [['consumedItemStacks', 'consumedCargoStacks'], []]
         )),
     'DeconstructionRecipeDesc': cachedTable<DeconstructionRecipeDesc>(
@@ -244,9 +244,9 @@ export const BitCraftTables = {
         new BitCraftTable('collectible_desc',
             CollectibleDesc.getTypeScriptAlgebraicType()
         )),
-    'DeployableDesc': cachedTable<DeployableDescV4>(
-        new BitCraftTable('deployable_desc_v4',
-            DeployableDescV4.getTypeScriptAlgebraicType()
+    'DeployableDesc': cachedTable<DeployableDesc>(
+        new BitCraftTable('deployable_desc',
+            DeployableDesc.getTypeScriptAlgebraicType()
         )),
     'ClaimTechDesc': cachedTable<ClaimTechDesc>(
         new BitCraftTable('claim_tech_desc',

@@ -1,7 +1,7 @@
 import {
     CappedLevelRequirement,
     CargoDesc,
-    ConstructionRecipeDescV2,
+    ConstructionRecipeDesc,
     CraftingRecipeDesc,
     DeconstructionRecipeDesc,
     ExperienceStackF32,
@@ -510,7 +510,7 @@ const RecipesCard: Component<ItemCardProps> = (props) => {
         )
     }
 
-    function addConstructionToMap(cons: ConstructionRecipeDescV2, map: any) {
+    function addConstructionToMap(cons: ConstructionRecipeDesc, map: any) {
         const inputs = <ItemStackArrayComponent
             stackProps={() => [
                 ...cons.consumedItemStacks.map((s: InputItemStack) => {
