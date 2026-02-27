@@ -107,7 +107,7 @@ export const ResourceDescDefs: BitCraftToDataDef<ResourceDesc> = {
                                 variant="ghost"
                                 as={A} 
                                 href={
-                                    `https://bitcraftmap.com/?regionId=1,2,3,4,5,6,7,8,9&resourceId=${props.row.original.id}` +
+                                    `https://bitcraftmap.com/?resourceId=${props.row.original.id}` +
                                     `#{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"zoomTo":-4.3,"turnLayerOff":["ruinedLayer","treesLayer","templesLayer"]}}]}`
                                 }
                                 target="_blank"
