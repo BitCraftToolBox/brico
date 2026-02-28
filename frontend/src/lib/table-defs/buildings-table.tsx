@@ -107,6 +107,14 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
             sortUndefined: 'last'
         },
         {
+            id: "Crafts per Player",
+            accessorFn: (dep: BuildingDesc) => dep.functions
+                .map(func => func.concurrentCraftsPerPlayer || null)
+                .find(Boolean),
+            filterFn: includedIn<BuildingDesc>(),
+            sortUndefined: 'last'
+        },
+        {
             id: "Crafting Slots",
             accessorFn: (dep: BuildingDesc) => dep.functions
                 .map(func =>
