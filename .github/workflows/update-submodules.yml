@@ -1,0 +1,51 @@
+name: Update Submodules
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-submodules:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout preview branch
+        uses: actions/checkout@v4
+        with:
+          ref: preview
+          submodules: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update submodules
+        id: commit_push
+        run: |
+          git submodule update --remote --recursive
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update submodules to latest versions"
+            git push origin preview
+            echo "changes_pushed=true" >> $GITHUB_OUTPUT
+          else
+            echo "No submodule updates available"
+            echo "changes_pushed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Create Pull Request
+        if: steps.commit_push.outputs.changes_pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head preview \
+            --title "Update submodules" \
+            --body "This PR updates submodules to their latest versions.
+
+          **Automated by GitHub Actions**
+          
+          Please review the submodule changes before merging." || echo "Pull Request already exists"
