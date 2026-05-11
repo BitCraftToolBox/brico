@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 const {fontFamily} = require("tailwindcss/defaultTheme")
 
-export default {
+module.exports = {
   darkMode: ["variant", [".dark &", '[data-kb-theme="dark"] &']],
   content: ["./src/**/*.{ts,tsx}"],
   prefix: "",
@@ -86,15 +86,6 @@ export default {
           bg8: 'var(--bc-tier-color-8)',
           bg9: 'var(--bc-tier-color-9)',
           bg10: 'var(--bc-tier-color-10)',
-        },
-        rarity: {
-          border0: 'var(--bc-rarity-color-0)',
-          border1: 'var(--bc-rarity-color-1)',
-          border2: 'var(--bc-rarity-color-2)',
-          border3: 'var(--bc-rarity-color-3)',
-          border4: 'var(--bc-rarity-color-4)',
-          border5: 'var(--bc-rarity-color-5)',
-          border6: 'var(--bc-rarity-color-6)',
         }
       },
       borderRadius: {

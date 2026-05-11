@@ -1,50 +1,42 @@
-import {DeployableDesc, ItemDesc, ItemStack, ItemType, MovementType, SurfaceType} from "~/bindings/src";
-import {includedIn} from "~/lib/utils";
-import {BitCraftToDataDef, rowActionRawOnly} from "~/lib/table-defs/base";
-import {Column} from "@tanstack/solid-table";
-import {BitCraftTables} from "~/lib/spacetime";
-import {ItemStackArrayComponent, ItemStackIcon} from "~/components/bitcraft/items";
 import {Show} from "solid-js";
+import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
+import {ItemDesc} from "~/bindings/src/item_desc_type";
+import {MovementType} from "~/bindings/src/movement_type_type";
+import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
+import {SurfaceType} from "~/bindings/src/surface_type_type";
+import {TableColumnHeader} from "~/components/data-table/table-column-header";
+import {CollectibleIcon} from "~/components/shared/GameIcon";
+import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {ItemLink} from "~/lib/game-links";
+import {BitCraftTables} from "~/lib/spacetime";
+import {BitCraftToDataDef} from "~/lib/table-utils/base";
+import {boolFilter, headerColumn, knowledgeColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
+import {statsColumn, statsFilter} from "~/lib/table-utils/stats-column-builder";
+import {compareOptions, includedIn} from "~/lib/utils";
 
 
-const itemCache = new Map<number, { deed: ItemStack | undefined, training: ItemStack[] }>
-
-function requiredItemsForDeployable(dep: DeployableDesc) {
-    const existing = itemCache.get(dep.id);
-    if (existing) return existing;
-
+function requiredItemsForDeployable(dep: DeployableDesc): {
+    deed: ItemDesc | undefined;
+    training: SecondaryKnowledgeDesc[];
+} {
     const collTable = BitCraftTables.CollectibleDesc.indexedBy("id")!()!;
     const collId = dep.deployFromCollectibleId;
     if (!collId) return {deed: undefined, training: []};
     const collectible = collTable.get(collId);
     if (!collectible) return {deed: undefined, training: []};
+
     const itemIndex = BitCraftTables.ItemDesc.indexedBy("id")!()!;
-    const deed = collectible.itemDeedId;
-    let deedItem: ItemDesc | undefined;
-    if (deed) {
-        deedItem = itemIndex.get(deed);
+    const deedItem = collectible.itemDeedId ? itemIndex.get(collectible.itemDeedId) : undefined;
+
+    const knowledgeIds = collectible.requiredKnowledgesToUse ?? [];
+    let knowledgeDescs: SecondaryKnowledgeDesc[] = [];
+    if (knowledgeIds.length) {
+        const knowledgeIndex = BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id")!()!;
+        knowledgeDescs = knowledgeIds
+            .map(k => knowledgeIndex.get(k))
+            .filter((k): k is SecondaryKnowledgeDesc => !!k);
     }
-    const knowledge = collectible.requiredKnowledgesToUse;
-    let knowledgeItems = [] as ItemStack[];
-    if (knowledge.length) {
-        const knowledgeTable = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")!()!;
-        knowledgeItems = knowledge
-            .map(k => itemIndex.get(knowledgeTable.get(k)?.itemId))
-            .filter(p => !!p)
-            .map(i => {
-                return {
-                    itemId: i.id,
-                    quantity: 1,
-                    itemType: ItemType.Item
-                } as ItemStack;
-            });
-    }
-    const res = {
-        deed: deedItem ? { itemId: deedItem.id, itemType: ItemType.Item as ItemType, quantity: 1, durability: undefined} : undefined,
-        training: knowledgeItems
-    };
-    itemCache.set(dep.id, res)
-    return res;
+    return {deed: deedItem, training: knowledgeDescs};
 }
 
 function getStepHeight(deployable: DeployableDesc): number | null {
@@ -69,11 +61,16 @@ function getStepHeight(deployable: DeployableDesc): number | null {
 
 export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
     columns: [
-        {
-            id: "Name",
-            accessorKey: "name",
-            enableHiding: false
-        },
+        headerColumn({
+            route: dep => ["deployable", dep.id],
+            prefixElement: dep => {
+                const collTable = BitCraftTables.CollectibleDesc.indexedBy("id");
+                const collectible = collTable?.()?.get(dep.deployFromCollectibleId);
+                // this should be noInteract because it links to the collectible rather than the deployable itself
+                return collectible?.iconAssetName ? <CollectibleIcon collectible={collectible} small noInteract/> : <></>;
+            },
+
+        }),
         {
             id: "Type",
             accessorKey: "deployableType.tag",
@@ -82,52 +79,60 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         {
             id: "Item Slots",
             accessorKey: "storage",
+            filterFn: "inNumberRange",
         },
         {
             id: "Item Stack Size",
-            accessorFn: (dep: DeployableDesc) => dep.itemSlotSize / 6000
+            accessorFn: (dep: DeployableDesc) => dep.itemSlotSize / 6000,
+            filterFn: includedIn<DeployableDesc>(),
+        },
+        {
+            id: "Total Item Size",
+            header: (props) => {
+                return (
+                    <TableColumnHeader column={props.column} title={props.column.id}>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                Total Item Size
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Equivalent "player inventory" slots.
+                            </TooltipContent>
+                        </Tooltip>
+                    </TableColumnHeader>
+                );
+            },
+            accessorFn: (dep: DeployableDesc) => dep.storage * dep.itemSlotSize / 6000,
+            filterFn: "inNumberRange",
         },
         {
             id: "Cargo Slots",
-            accessorKey: "stockpile"
+            accessorKey: "stockpile",
+            filterFn: "inNumberRange",
         },
         {
             id: "Cargo Stack Size",
-            accessorFn: (dep: DeployableDesc) => dep.cargoSlotSize / 6000
+            accessorFn: (dep: DeployableDesc) => dep.cargoSlotSize / 6000,
+            filterFn: includedIn<DeployableDesc>(),
+        },
+        {
+            id: "Total Cargo Size",
+            accessorFn: (dep: DeployableDesc) => dep.stockpile * dep.cargoSlotSize / 6000,
+            filterFn: "inNumberRange",
         },
         {
             id: "Deed",
-            accessorFn: (dep: DeployableDesc) => requiredItemsForDeployable(dep).deed,
+            accessorFn: (dep: DeployableDesc) => requiredItemsForDeployable(dep).deed?.name ?? "",
             cell: props => {
-                const stack = props.getValue() as ItemStack;
-                return <Show when={stack}>
-                    <ItemStackIcon
-                        item={[stack.itemType.tag, stack.itemId]}
-                        quantity={stack.quantity}
-                        hideSingle={true}
-                    />
-                </Show>
+                const deed = () => requiredItemsForDeployable(props.row.original).deed;
+                return <Show when={deed()}>
+                    {d => <ItemLink id={d().id} name={d().name}/>}
+                </Show>;
             }
         },
-        {
-            id: "Training",
-            accessorFn: (dep: DeployableDesc) => requiredItemsForDeployable(dep).training,
-            cell: props => {
-                const stacks = props.getValue() as ItemStack[];
-                const stackProps = stacks.map(stack => {
-                    return {
-                        item: [stack.itemType.tag, stack.itemId] as [string, number],
-                        quantity: stack.quantity,
-                        hideSingle: true
-                    }
-                })
-                return <Show when={stacks.length}>
-                    <ItemStackArrayComponent
-                        stackProps={() => stackProps}
-                    />
-                </Show>
-            }
-        },
+        knowledgeColumn<DeployableDesc, number[]>("Training",
+            { accessorFn: dep => requiredItemsForDeployable(dep).training.map(k => k.id)}
+        ),
         {
             id: "Occupants",
             accessorKey: "capacity",
@@ -135,7 +140,8 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Movement",
-            accessorKey: "movementType.tag"
+            accessorKey: "movementType.tag",
+            filterFn: includedIn<DeployableDesc>(),
         },
         {
             id: "Speed",
@@ -163,30 +169,37 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Step Height",
-            accessorFn: d => getStepHeight(d)
+            accessorFn: getStepHeight,
+            filterFn: "inNumberRange",
         },
         {
             id: "Can Auto-Follow",
-            accessorKey: "canAutoFollow"
+            accessorKey: "canAutoFollow",
+            filterFn: includedIn<DeployableDesc>(),
         },
         {
             id: "Affected By Wind",
-            accessorKey: "affectedByWind"
+            accessorKey: "affectedByWind",
+            filterFn: includedIn<DeployableDesc>(),
         },
-        rowActionRawOnly
+        statsColumn(),
+        rowActions(),
     ],
     facetedFilters: [
-        {
-            column: "Type",
-            title: "Type",
-            options: (col: Column<DeployableDesc> | undefined) => {
-                if (!col) return [];
-                return col.getFacetedUniqueValues().keys().map(v => {
-                    return {
-                        label: v, value: v
-                    }
-                }).toArray()
-            }
-        },
-    ]
+        uniqueValuesFilter("Type"),
+        rangeFilter("Item Slots"),
+        uniqueValuesFilter("Item Stack Size", undefined, compareOptions),
+        rangeFilter("Total Item Size"),
+        rangeFilter("Cargo Slots"),
+        uniqueValuesFilter("Cargo Stack Size", undefined, compareOptions),
+        rangeFilter("Total Cargo Size"),
+        uniqueValuesFilter("Training", undefined, compareOptions),
+        rangeFilter("Occupants"),
+        uniqueValuesFilter("Movement"),
+        rangeFilter("Step Height"),
+        boolFilter("Can Auto-Follow"),
+        uniqueValuesFilter("Affected By Wind", undefined, compareOptions),
+        statsFilter(),
+    ],
+    searchColumns: ["Name"],
 }

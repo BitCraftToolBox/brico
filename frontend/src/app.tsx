@@ -1,55 +1,53 @@
-import { HashRouter } from "@solidjs/router";
-import { FileRoutes } from "@solidjs/start/router";
+import {ColorModeProvider, ColorModeScript} from "@kobalte/core"
+import {MetaProvider} from "@solidjs/meta";
+import {Router} from "@solidjs/router";
+import {FileRoutes} from "@solidjs/start/router";
 import "@fontsource/inter/latin";
 import "./app.css";
-import { ColorModeProvider, ColorModeScript, localStorageManager } from "@kobalte/core"
-import { SidebarProvider } from "~/components/ui/sidebar";
-import { AppSidebar } from "~/components/app-sidebar"
-import { Dialog, DialogContent } from "~/components/ui/dialog";
-import { createSignal } from "solid-js";
-import { DetailDialogContext, UseFullNodeOutputContext } from "~/lib/contexts";
-import { renderDialog } from "~/components/details/renderer";
-import { MetaProvider } from "@solidjs/meta";
+import {Show} from "solid-js";
+import {AppSidebar} from "~/components/app-sidebar"
+import AppLoadingScreen from "~/components/AppLoadingScreen";
+import {SidebarProvider} from "~/components/ui/sidebar";
+import {SettingsProvider, useSettings} from "~/lib/settings";
+import {useGameDataReady, useLoadingProgress} from "~/lib/spacetime";
 
-export default function App() {
-    const colorModeStorage = localStorageManager;
-    const [dialogOpen, setDialogOpen] = createSignal(false);
-    const [dialogContent, setDialogContent] = createSignal<[string, any]>(["", null]);
-    const dialogContext = {
-        open: dialogOpen, setOpen: setDialogOpen, content: dialogContent, setContent: setDialogContent
-    }
-    const [useFullNode, setUseFullNode] = createSignal(false);
-    const fullNodeContext = {
-        useFullNode: useFullNode, setUseFullNode: setUseFullNode, toggle: () => setUseFullNode(!useFullNode())
-    }
+
+/** Inner wrapper — needs to be a child of SettingsProvider so useSettings() resolves */
+function AppRoot(props: { children: any }) {
+    const { sidebarStartsCollapsed, colorStorageManager } = useSettings();
+    const isReady = useGameDataReady();
+    const progress = useLoadingProgress();
 
     return (
-        <HashRouter
+        <>
+            <ColorModeScript storageType="localStorage" storageKey="brico:theme"/>
+            <ColorModeProvider storageManager={colorStorageManager}>
+                <Show when={!isReady()}>
+                    <AppLoadingScreen loaded={progress().loaded} total={progress().total}/>
+                </Show>
+                <Show when={isReady()}>
+                    <SidebarProvider defaultOpen={!sidebarStartsCollapsed()}>
+                        <AppSidebar/>
+                        {props.children}
+                    </SidebarProvider>
+                </Show>
+            </ColorModeProvider>
+        </>
+    );
+}
+
+export default function App() {
+    return (
+        <Router
             root={props => (
                 <MetaProvider>
-                    <ColorModeScript storageType={colorModeStorage.type} />
-                    <ColorModeProvider storageManager={colorModeStorage}>
-                        <DetailDialogContext.Provider value={dialogContext}>
-                            <Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
-                                <SidebarProvider>
-                                    <AppSidebar />
-                                    {props.children}
-                                </SidebarProvider>
-                                <UseFullNodeOutputContext.Provider value={fullNodeContext}>
-                                    <DialogContent
-                                        class="flex flex-col w-[100vw] h-[100vh] max-w-none max-h-none
-                                               sm:max-w-[80vw] sm:max-h-[80vh] sm:w-auto sm:h-auto"
-                                    >
-                                        {renderDialog(dialogContent())}
-                                    </DialogContent>
-                                </UseFullNodeOutputContext.Provider>
-                            </Dialog>
-                        </DetailDialogContext.Provider>
-                    </ColorModeProvider>
+                    <SettingsProvider>
+                        <AppRoot>{props.children}</AppRoot>
+                    </SettingsProvider>
                 </MetaProvider>
             )}
         >
-            <FileRoutes />
-        </HashRouter>
+            <FileRoutes/>
+        </Router>
     );
 }

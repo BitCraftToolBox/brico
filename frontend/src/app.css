@@ -4,199 +4,207 @@
 @config "../tailwind.config.cjs";
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    :root {
+        --background: 44, 44.7%, 83.7%;
+        --foreground: 203, 70.9%, 28.7%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+        --muted: 44.1, 27.9%, 76.1%;
+        --muted-foreground: 203, 70.9%, 33%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
+        --popover: 45, 45.7%, 92.6%;
+        --popover-foreground: 203, 70.9%, 28.7%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+        --border: 44, 28.1%, 76.4%;
+        --input: 43, 78.6%, 46.5%;
 
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
+        --card: 45, 45.7%, 92.6%;
+        --card-foreground: 203, 70.9%, 28.7%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+        --primary: 203, 70.9%, 28.7%;
+        --primary-foreground: 44, 54.7%, 64.7%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+        --accent: 44, 54.7%, 64.7%;
+        --accent-foreground: 203, 70.9%, 28.7%;
 
-    --info: 204 94% 94%;
-    --info-foreground: 199 89% 48%;
+        --destructive: 345, 66.7%, 48%;
+        --destructive-foreground: 0, 0%, 98%;
 
-    --success: 149 80% 90%;
-    --success-foreground: 160 84% 39%;
+        --info: 204 94% 94%;
+        --info-foreground: 199 89% 48%;
 
-    --warning: 48 96% 89%;
-    --warning-foreground: 25 95% 53%;
+        --success: 149 80% 90%;
+        --success-foreground: 140.5, 82%, 39.2%;
 
-    --error: 0 93% 94%;
-    --error-foreground: 0 84% 60%;
+        --warning: 48 96% 89%;
+        --warning-foreground: 50, 100%, 40%;
 
-    --ring: 240 5.9% 10%;
+        --error: 0 93% 94%;
+        --error-foreground: 345, 66.7%, 48%;
 
-    --radius: 0.5rem;
-  }
+        --ring: 203, 70.9%, 28.7%;
 
-  .dark,
-  [data-kb-theme="dark"] {
-    --background: 251 16% 20%;
-    --foreground: 0 0% 98%;
+        --radius: 0.5rem;
+    }
+    .dark, [data-kb-theme="dark"] {
+        --background: 251.3, 15.7%, 20%;
+        --foreground: 43.8, 45.7%, 84.1%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+        --muted: 250.9, 7.5%, 28.8%;
+        --muted-foreground: 240 5% 64.9%;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+        --accent: 249.5, 11.7%, 32%;
+        --accent-foreground: 43.8, 45.7%, 84.1%;
 
-    --popover: 251 16% 20%;
-    --popover-foreground: 0 0% 98%;
+        --popover: 255, 14.3%, 16.5%;
+        --popover-foreground: 43.8, 45.7%, 84.1%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
+        --border: 255, 1.6%, 51.8%;
+        --input: 43.8, 13.7%, 62.7%;
 
-    --card: 251 16% 20%;
-    --card-foreground: 0 0% 98%;
+        --card: 255, 14.3%, 16.5%;
+        --card-foreground: 43.8, 45.7%, 84.1%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
+        --primary: 43.8, 45.7%, 84.1%;
+        --primary-foreground: 240 5.9% 10%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+        --destructive: 345.3, 66.5%, 48%;
+        --destructive-foreground: 0, 33.3%, 98.8%;
 
-    --info: 204 94% 94%;
-    --info-foreground: 199 89% 48%;
+        --info: 204 94% 94%;
+        --info-foreground: 199 89% 48%;
 
-    --success: 149 80% 90%;
-    --success-foreground: 160 84% 39%;
+        --success: 149 80% 90%;
+        --success-foreground: 140.7, 82.9%, 39%;
 
-    --warning: 48 96% 89%;
-    --warning-foreground: 25 95% 53%;
+        --warning: 50, 100%, 40%;
+        --warning-foreground: 48 96% 89%;
 
-    --error: 0 93% 94%;
-    --error-foreground: 0 84% 60%;
+        --error: 345.3, 66.5%, 48%;
+        --error-foreground: 0, 33.3%, 98.8%;
 
-    --ring: 240 4.9% 83.9%;
+        --ring: 43.8, 45.7%, 84.1%;
 
-    --radius: 0.5rem;
-  }
+        --radius: 0.5rem;
+    }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 1;
-  }
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: "rlig" 1,
+        "calt" 1;
+    }
 }
 
 @layer utilities {
-  .step {
-    counter-increment: step;
-  }
+    .step {
+        counter-increment: step;
+    }
 
-  .step:before {
-    @apply absolute w-9 h-9 bg-muted rounded-full font-mono font-medium text-center text-base inline-flex items-center justify-center -indent-px border-4 border-background;
-    @apply ml-[-50px] mt-[-4px];
-    content: counter(step);
-  }
+    .step:before {
+        @apply absolute w-9 h-9 bg-muted rounded-full font-mono font-medium text-center text-base inline-flex items-center justify-center -indent-px border-4 border-background;
+        @apply ml-[-50px] mt-[-4px];
+        content: counter(step);
+    }
 
-  .mt-25\% {
-    margin-top: 25%;
-  }
+    .mt-25\% {
+        margin-top: 25%;
+    }
 }
 
 @media (max-width: 640px) {
-  .container {
-    @apply px-4;
-  }
+    .container {
+        @apply px-4;
+    }
 }
 
 ::-webkit-scrollbar {
-  width: 16px;
+    width: 16px;
 }
 
 ::-webkit-scrollbar-thumb {
-  border-radius: 9999px;
-  border: 4px solid transparent;
-  background-clip: content-box;
-  @apply bg-accent;
+    border-radius: 9999px;
+    border: 4px solid transparent;
+    background-clip: content-box;
+    @apply bg-accent;
 }
 
 ::-webkit-scrollbar-corner {
-  display: none;
+    display: none;
 }
 
 @layer base {
-  :root {
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+    :root {
+        --sidebar-background: 45, 42.1%, 92.5%;
+        --sidebar-foreground: 203, 70.9%, 28.7%;
+        --sidebar-primary: 203, 70.9%, 28.7%;
+        --sidebar-primary-foreground: 44, 54.7%, 64.7%;
+        --sidebar-accent: 43.9, 60%, 45.1%;
+        --sidebar-accent-foreground: 45, 42.1%, 92.5%;
+        --sidebar-border: 44, 54.7%, 64.7%;
+        --sidebar-ring: 43.9, 60%, 45.1%;
+    }
 
-  .dark,
-  [data-kb-theme="dark"] {
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+    .dark, [data-kb-theme="dark"] {
+        --sidebar-background: 251.3, 15.7%, 20%;
+        --sidebar-foreground: 43.8, 45.7%, 84.1%;
+        --sidebar-primary: 255, 14.3%, 16.5%;
+        --sidebar-primary-foreground: 43.8, 45.7%, 84.1%;
+        --sidebar-accent: 43.9, 60%, 45.1%;
+        --sidebar-accent-foreground: 251.3, 15.7%, 20%;
+        --sidebar-border: 43.8, 45.7%, 84.1%;
+        --sidebar-ring: 43.8, 45.7%, 84.1%;
+    }
+
+
 }
 
-:root {
-  --bc-tier-color-0: #413A64;
-  --bc-tier-color-1: #636A74;
-  --bc-tier-color-2: #875F45;
-  --bc-tier-color-3: #5C6F4D;
-  --bc-tier-color-4: #49619C;
-  --bc-tier-color-5: #814F87;
-  --bc-tier-color-6: #983A44;
-  --bc-tier-color-7: #947014;
-  --bc-tier-color-8: #538484;
-  --bc-tier-color-9: #464953;
-  --bc-tier-color-10: #97AFBE;
+@layer base {
+    :root {
+        --bc-tier-color-0: #D4CDAF;
+        --bc-tier-color-1: #868D98;
+        --bc-tier-color-2: #AF8162;
+        --bc-tier-color-3: #7D966A;
+        --bc-tier-color-4: #788CBE;
+        --bc-tier-color-5: #AB7BB2;
+        --bc-tier-color-6: #CC6672;
+        --bc-tier-color-7: #D6AC43;
+        --bc-tier-color-8: #78BABA;
+        --bc-tier-color-9: #4D505B;
+        --bc-tier-color-10: #A9BBC6;
+    }
 
-  --bc-rarity-color-0: #866d49;
-  --bc-rarity-color-1: #866d49;
-  --bc-rarity-color-2: #955c52;
-  --bc-rarity-color-3: #6a809f;
-  --bc-rarity-color-4: #c37513;
-  --bc-rarity-color-5: #1096bd;
-  --bc-rarity-color-6: #7e4de7;
+    .dark, [data-kb-theme="dark"] {
+        --bc-tier-color-0: #413A64;
+        --bc-tier-color-1: #636A74;
+        --bc-tier-color-2: #875F45;
+        --bc-tier-color-3: #5C6F4D;
+        --bc-tier-color-4: #49619C;
+        --bc-tier-color-5: #814F87;
+        --bc-tier-color-6: #983A44;
+        --bc-tier-color-7: #947014;
+        --bc-tier-color-8: #538484;
+        --bc-tier-color-9: #464953;
+        --bc-tier-color-10: #97AFBE;
+    }
 }
 
 .dots-before::before {
-  content: '';
-  background: repeating-linear-gradient(to right, hsl(var(--muted-foreground)), hsl(var(--muted-foreground)) 1px, transparent 2px, transparent 4px);
-  height: 1px;
-  margin-top: calc(1em + 1px);
-  margin-right: 4px;
-  flex-grow: 1;
+    content: '';
+    background: repeating-linear-gradient(to right, hsl(var(--muted-foreground)), hsl(var(--muted-foreground)) 1px, transparent 2px, transparent 4px);
+    height: 1px;
+    margin-top: calc(1em + 1px);
+    margin-right: 4px;
+    flex-grow: 1;
 }

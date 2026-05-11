@@ -1,0 +1,8 @@
+{
+  "buff_desc": "icon_asset_name",
+  "combat_action_desc": "icon_asset_name",
+  "empire_icon_desc": "icon_unicode",
+  "npc_desc": "icon_address",
+  "prospecting_desc": "icon_asset_path",
+  "skill_desc": "icon_asset_name"
+}

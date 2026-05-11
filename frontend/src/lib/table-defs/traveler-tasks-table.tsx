@@ -1,31 +1,30 @@
-import {ItemStack, TravelerTaskDesc} from "~/bindings/src";
-import {BitCraftToDataDef, rowActionRawOnly} from "~/lib/table-defs/base";
-import {CellContext, Column} from "@tanstack/solid-table";
-import {BitCraftTables} from "~/lib/spacetime";
+import {CellContext} from "@tanstack/solid-table";
 import {Show} from "solid-js";
-import {ItemStackArrayComponent} from "~/components/bitcraft/items";
+import {ItemStack} from "~/bindings/src/item_stack_type";
+import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
+import {ItemStackArray} from "~/components/shared/ItemStacks";
+import {SkillLinkById} from "~/lib/game-links";
+import {BitCraftTables} from "~/lib/spacetime";
+import {BitCraftToDataDef} from "~/lib/table-utils/base";
+import {headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {compareBasic} from "~/lib/utils";
 
 
 function renderItemStackArray(props: CellContext<TravelerTaskDesc, any>) {
     const stacks = props.getValue() as ItemStack[];
     return <Show when={stacks.length}>
-        <ItemStackArrayComponent
-            stacks={() => stacks}
-        />
+        <ItemStackArray stacks={stacks}/>
     </Show>
 }
 
 export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
     columns: [
-        {
-            id: "Skill",
-            accessorFn: task => {
-                const skillIndex = BitCraftTables.SkillDesc.indexedBy("id")!()!;
-                const skillData = skillIndex.get(task.levelRequirement.skillId);
-                return skillData ? skillData.name : "Unknown";
-            }
-        },
+        headerColumn({
+            title: "Description",
+            accessor: {accessorKey: "description"},
+            route: tt => ["traveler-task", tt.id],
+            customRender: (val) => <span class="text-sm text-balance">{val}</span>,
+        }),
         {
             id: "Requirements",
             accessorKey: "requiredItems",
@@ -44,6 +43,20 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
             }
         },
         {
+            id: "Skill",
+            accessorFn: task => {
+                const skillIndex = BitCraftTables.SkillDesc.indexedBy("id")!()!;
+                if (!task.levelRequirement.skillId) return "";
+                const skillData = skillIndex.get(task.levelRequirement.skillId);
+                return skillData ? skillData.name : "Unknown";
+            },
+            cell: (props) => {
+                const task = props.row.original;
+                if (!task.levelRequirement.skillId) return <></>;
+                return <SkillLinkById skillId={task.levelRequirement.skillId}/>;
+            },
+        },
+        {
             id: "Exp",
             accessorKey: "rewardedExperience.quantity",
             filterFn: 'inNumberRange'
@@ -58,46 +71,13 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
             accessorKey: "levelRequirement.maxLevel",
             filterFn: 'inNumberRange'
         },
-        {
-            id: "Description",
-            accessorKey: "description"
-        },
-        rowActionRawOnly
+        rowActions(),
     ],
     facetedFilters: [
-        {
-            column: "Skill",
-            title: "Skill",
-            options: (col: Column<TravelerTaskDesc> | undefined) => {
-                if (!col) return [];
-                return col.getFacetedUniqueValues().keys().map(v => {
-                    return {
-                        label: v, value: v
-                    }
-                }).toArray()
-            }
-        },
-        {
-            column: "Min Level",
-            title: "Min Level",
-            options: (col: Column<TravelerTaskDesc> | undefined) => {
-                let minMax = col ? col.getFacetedMinMaxValues() : null;
-                return {
-                    label: "Min Level",
-                    minMax: minMax || [0, 0]
-                }
-            }
-        },
-        {
-            column: "Max Level",
-            title: "Max Level",
-            options: (col: Column<TravelerTaskDesc> | undefined) => {
-                let minMax = col ? col.getFacetedMinMaxValues() : null;
-                return {
-                    label: "Max Level",
-                    minMax: minMax || [0, 0]
-                }
-            }
-        },
-    ]
+        uniqueValuesFilter("Skill"),
+        rangeFilter("Exp"),
+        rangeFilter("Min Level"),
+        rangeFilter("Max Level"),
+    ],
+    searchColumns: ["Description"],
 }

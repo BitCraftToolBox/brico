@@ -1,13 +1,28 @@
 import {useColorMode} from "@kobalte/core"
+import {A} from "@solidjs/router";
 
-import {TbDeviceLaptop as IconLaptop, TbMoon as IconMoon, TbSun as IconSun} from "solid-icons/tb"
+import {
+    TbOutlineDeviceLaptop as IconLaptop,
+    TbOutlineMoon as IconMoon,
+    TbOutlineSearch as IconSearch,
+    TbOutlineSettings as IconSettings,
+    TbOutlineSun as IconSun
+} from "solid-icons/tb"
+import {Show} from "solid-js";
+import {isDev} from "solid-js/web";
+import GlobalSearchInput from "~/components/GlobalSearchInput";
 import {Button} from "~/components/ui/button"
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "~/components/ui/dropdown-menu"
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger} from "~/components/ui/dropdown-menu"
 import {SidebarTrigger} from "~/components/ui/sidebar";
-import {children, JSX, Show} from "solid-js";
 
 function DarkModeToggle() {
     const {setColorMode} = useColorMode()
+    const colorPage = isDev ? () => (<>
+        <DropdownMenuSeparator/>
+        <DropdownMenuItem>
+            <A href="/tools/colors">Theme Colors</A>
+        </DropdownMenuItem>
+    </>) : () => <></>;
 
     return (
         <DropdownMenu>
@@ -29,6 +44,7 @@ function DarkModeToggle() {
                     <IconLaptop class="mr-2 size-4"/>
                     <span>System</span>
                 </DropdownMenuItem>
+                {colorPage()}
             </DropdownMenuContent>
         </DropdownMenu>
     )
@@ -36,27 +52,39 @@ function DarkModeToggle() {
 
 interface NavProps {
     title: string;
-    children: JSX.Element;
+    hideSearch?: boolean;
 }
 
 export default function Nav(props: NavProps) {
-    const c = children(() => props.children);
     return (
-        <nav class={`flex flex-col bg-sidebar pt-1 sticky z-20 top-0 ${c() ? "h-20" : "h-10"}`}>
-            <div class="flex flex-row justify-center h-10 w-full">
-                <SidebarTrigger class="mr-auto ml-2"/>
-                <div>
-                    <h1 class="text-lg text-center">{props.title}</h1>
+        <nav class="flex flex-col sticky z-20 top-0 h-10 bg-sidebar-primary text-sidebar-primary-foreground">
+            <div class="flex flex-row items-center h-10 w-full gap-2 px-2">
+                <SidebarTrigger class="shrink-0"/>
+                <div class="shrink-0">
+                    <h1 class="text-lg text-center leading-none">{props.title}</h1>
                 </div>
-                <div class="ml-auto mr-2">
+                <div class="flex-1"/>
+                <Show when={!props.hideSearch}>
+                    {/* Full search input on sm+ */}
+                    <GlobalSearchInput class="hidden sm:block w-56 lg:w-72" placeholder="Search..."/>
+                    {/* Icon link on xs */}
+                    <div class="shrink-0 sm:hidden">
+                        <Button as={"A"} href="/search" variant="ghost" size="sm" class="w-7 px-0" aria-label="Search">
+                            <IconSearch class="size-5"/>
+                        </Button>
+                    </div>
+                </Show>
+                <div class="shrink-0">
                     <DarkModeToggle/>
                 </div>
-            </div>
-            <Show when={c()}>
-                <div class="flex flex-row justify-center h-10 w-full">
-                    {c()}
+                <div class="shrink-0">
+                    <A href="/settings">
+                        <Button variant="ghost" size="sm" class="w-7 px-0" aria-label="Settings">
+                            <IconSettings class="size-5"/>
+                        </Button>
+                    </A>
                 </div>
-            </Show>
+            </div>
         </nav>
     )
 }

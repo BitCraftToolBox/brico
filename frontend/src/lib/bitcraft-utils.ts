@@ -1,5 +1,7 @@
-import {BuildingDesc, ItemStack, ItemType, Rarity} from "~/bindings/src";
-import {BitCraftTables} from "~/lib/spacetime";
+import {Accessor, createMemo} from "solid-js";
+import {BuildingDesc} from "~/bindings/src/building_desc_type";
+import {PathfindingDesc} from "~/bindings/src/pathfinding_desc_type";
+import {Rarity} from "~/bindings/src/rarity_type";
 
 
 export class Rarities {
@@ -13,8 +15,8 @@ export class Rarities {
         Rarity.Mythic.tag,
     ]
 
-    static toValue(r: Rarity): number {
-        switch (r.tag) {
+    static toValue(r: Rarity["tag"]): number {
+        switch (r) {
             case Rarity.Common.tag:
                 return 1;
             case Rarity.Uncommon.tag:
@@ -35,13 +37,20 @@ export class Rarities {
 
     static getBorderColorClass(r: Rarity) {
         switch (r.tag) {
-            case Rarity.Mythic.tag: return "border-rarity-border6";
-            case Rarity.Legendary.tag: return "border-rarity-border5";
-            case Rarity.Epic.tag: return "border-rarity-border4";
-            case Rarity.Rare.tag: return "border-rarity-border3";
-            case Rarity.Uncommon.tag: return "border-rarity-border2";
-            case Rarity.Common.tag: return "border-rarity-border1";
-            default: return "border-rarity-border0";
+            case Rarity.Mythic.tag:
+                return "border-rarity-border6";
+            case Rarity.Legendary.tag:
+                return "border-rarity-border5";
+            case Rarity.Epic.tag:
+                return "border-rarity-border4";
+            case Rarity.Rare.tag:
+                return "border-rarity-border3";
+            case Rarity.Uncommon.tag:
+                return "border-rarity-border2";
+            case Rarity.Common.tag:
+                return "border-rarity-border1";
+            default:
+                return "border-rarity-border0";
         }
     }
 }
@@ -65,41 +74,34 @@ export class Tiers {
     static getBackgroundColorClass(tier: number) {
         switch (tier) {
             // don't combine these. type union needed for tailwind generation.
-            case 10: return "bg-tier-bg10";
-            case 9: return "bg-tier-bg9";
-            case 8: return "bg-tier-bg8";
-            case 7: return "bg-tier-bg7";
-            case 6: return "bg-tier-bg6";
-            case 5: return "bg-tier-bg5";
-            case 4: return "bg-tier-bg4";
-            case 3: return "bg-tier-bg3";
-            case 2: return "bg-tier-bg2";
-            case 1: return "bg-tier-bg1";
-            default: return "bg-tier-bg0";
+            case 10:
+                return "bg-tier-bg10";
+            case 9:
+                return "bg-tier-bg9";
+            case 8:
+                return "bg-tier-bg8";
+            case 7:
+                return "bg-tier-bg7";
+            case 6:
+                return "bg-tier-bg6";
+            case 5:
+                return "bg-tier-bg5";
+            case 4:
+                return "bg-tier-bg4";
+            case 3:
+                return "bg-tier-bg3";
+            case 2:
+                return "bg-tier-bg2";
+            case 1:
+                return "bg-tier-bg1";
+            default:
+                return "bg-tier-bg0";
         }
     }
 }
 
-export function stackToItemOrCargo(stack: ItemStack | [string, number]) {
-    let itemType, itemId;
-    if (Array.isArray(stack)) {
-        itemType = stack[0];
-        itemId = stack[1];
-    } else {
-        itemType = stack.itemType.tag;
-        itemId = stack.itemId;
-    }
-    if (typeof itemType !== 'string') { // @ts-ignore
-        itemType = itemType.tag;
-    }
-    if (itemType === ItemType.Item.tag) {
-        return BitCraftTables.ItemDesc.indexedBy("id")!()!.get(itemId)!;
-    } else if (itemType === ItemType.Cargo.tag) {
-        return BitCraftTables.CargoDesc.indexedBy("id")!()!.get(itemId)!;
-    } else {
-        throw new Error("ItemStack isn't Item or Cargo.");
-    }
-}
+// e.g. /assets/bitcraft/sprites if checked out as submodule
+const SPRITE_CDN_BASE = import.meta.env.VITE_SPRITE_CDN_BASE ?? "https://cdn.brico.app/sprites";
 
 export function getAssetURL(path: string, quantity?: number) {
     if (!path) {
@@ -112,7 +114,7 @@ export function getAssetURL(path: string, quantity?: number) {
         const bracketNumbers = bracketMatch[2];
         let quantities: number[] = [];
         if (bracketNumbers) {
-            quantities = bracketNumbers.split(',').map(n => parseInt(n)).filter(n => !isNaN(n));
+            quantities = bracketNumbers.split(',').map(n => parseInt(n, 10)).filter(n => !isNaN(n));
             quantities.sort((a, b) => a - b);
         }
         if (!quantity || quantities.length === 0) {
@@ -129,9 +131,43 @@ export function getAssetURL(path: string, quantity?: number) {
             path = `${baseName}${selected !== undefined ? selected : ''}`;
         }
     }
-    return `/assets/bitcraft/sprites/${path}.webp`;
+    return `${SPRITE_CDN_BASE}/${path}.webp`;
 }
 
 export function getBuildingTier(building: BuildingDesc) {
     return Math.max(...building.functions.map(func => func.level), ...[0]);
+}
+
+export function checkStepHeight(pathfinding: Accessor<PathfindingDesc | undefined>) {
+    const maxStepUp = createMemo(() => {
+        const p = pathfinding();
+        if (!p?.climbUpOptions?.length) return undefined;
+        return Math.max(...p.climbUpOptions.map(o => o.maxElevationDifference));
+    });
+
+    const maxStepDown = createMemo(() => {
+        const p = pathfinding();
+        if (!p?.climbDownOptions?.length) return undefined;
+        return Math.min(...p.climbDownOptions.map(o => o.maxElevationDifference));
+    });
+
+    const stepIsSymmetric = createMemo(() => {
+        const up = maxStepUp();
+        const down = maxStepDown();
+        return up !== undefined && down !== undefined && up === -down;
+    })
+
+    const labels = createMemo(() => {
+        return [
+            {label: stepIsSymmetric() ? "Step Height" : "Step Up", value: maxStepUp()},
+            ...(!stepIsSymmetric ? [{label: "Step Down", value: maxStepDown()}] : []),
+        ]
+    })
+
+    return {
+        maxStepUp,
+        maxStepDown,
+        stepIsSymmetric,
+        labels
+    }
 }

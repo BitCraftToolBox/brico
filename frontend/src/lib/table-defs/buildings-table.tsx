@@ -1,296 +1,107 @@
-import {BuildingDesc} from "~/bindings/src";
-import {BitCraftToDataDef} from "~/lib/table-defs/base";
-import {Column} from "@tanstack/solid-table";
-import {useDetailDialog} from "~/lib/contexts";
-import {Button} from "~/components/ui/button";
-import {BuildingIcon} from "~/components/bitcraft/buildings";
+import {ColumnDef} from "@tanstack/solid-table";
+import {BuildingDesc} from "~/bindings/src/building_desc_type";
+import {BuildingFunction} from "~/bindings/src/building_function_type";
+import {BuildingIcon} from "~/components/shared/GameIcon";
+import {getBuildingTier} from "~/lib/bitcraft-utils";
 import {BitCraftTables} from "~/lib/spacetime";
-import {cn, includedIn} from "~/lib/utils";
-import {TableRowActions} from "~/components/ui/data-table/table-row-actions";
-import {DropdownMenuItem} from "~/components/ui/dropdown-menu";
-import {getBuildingTier, Tiers} from "~/lib/bitcraft-utils";
-import {TierIcon} from "~/components/bitcraft/misc";
-import {TbLink} from "solid-icons/tb";
+import {BitCraftToDataDef} from "~/lib/table-utils/base";
+import {headerColumn, rangeFilter, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
+import {compareOptions, includedIn} from "~/lib/utils";
 
 
-class FuncTypes {
-    static STORAGE = [3, 4, 1721785854];
-    // static STOCKPILE = [4, 1721785854]; // not consistently used for cargo. just use storage
-    static TRADE = [30];
-    static PASSIVE_CRAFTING = [12, 14, 15, 21, 24, 34];
-    static CRAFTING = [13, 16, 17, 20, 22, 23, 25, 33, 40, 44, 48, 635094930, 1559722792, 2012420824];
-    static HOUSING = [787619404];
+type NumericBuildingProp = Extract<keyof BuildingFunction, string> &
+    { [K in keyof BuildingFunction]: BuildingFunction[K] extends number ? K : never }[keyof BuildingFunction];
+
+const fromFunctionProp = (
+    title: string,
+    prop: NumericBuildingProp,
+    filter: ColumnDef<BuildingDesc, number>["filterFn"] = includedIn()
+): ColumnDef<BuildingDesc, number | undefined> => {
+    return {
+        id: title,
+        accessorFn: (bldg: BuildingDesc) =>
+            bldg.functions.find(func => func[prop] > 0)?.[prop],
+        filterFn: filter,
+        sortUndefined: 'last'
+    };
 }
 
 export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
     columns: [
-        {
-            id: "Name",
-            accessorKey: "name",
-            cell: (props) => {
-                const dialog = useDetailDialog();
-                return (
-                    <Button
-                        variant="ghost" class="w-full justify-start h-[65px]"
-                        onclick={(ev: MouseEvent) => {
-                            dialog.setContent(["BuildingDesc", props.row.original]);
-                            dialog.setOpen(true);
-                            ev.stopPropagation();
-                        }}
-                    >
-                        <BuildingIcon building={props.row.original}/> {props.row.original.name}
-                    </Button>
-                )
-            },
-            enableHiding: false
-        },
+        headerColumn({
+            route: bldg => ["building", bldg.id],
+            prefixElement: bldg => <BuildingIcon building={bldg} small/>
+        }),
         {
             id: "Type",
             accessorFn: (bldg: BuildingDesc) => {
                 const bldgTypes = BitCraftTables.BuildingTypeDesc.indexedBy("id");
-                return bldg.functions.map(func => bldgTypes!()!.get(func.functionType)?.name || "Unknown");
+                return bldg.functions.map(func => bldgTypes()!.get(func.functionType)?.name || "Unknown");
             },
             getUniqueValues: (bldg: BuildingDesc) => {
                 const bldgTypes = BitCraftTables.BuildingTypeDesc.indexedBy("id");
-                return bldg.functions.map(func => bldgTypes!()!.get(func.functionType)?.name || "Unknown");
+                return bldg.functions.map(func => bldgTypes()!.get(func.functionType)?.name || "Unknown");
             },
-            filterFn: 'arrIncludesSome'
+            filterFn: "arrIncludesSome"
         },
-        {
-            id: "Tier",
-            accessorFn: getBuildingTier,
-            filterFn: includedIn<BuildingDesc>(),
-        },
-        {
-            id: "Item Slots",
-            accessorFn: (bldg: BuildingDesc) => bldg.functions
-                .filter(func => FuncTypes.STORAGE.includes(func.functionType))
-                .map(func => func.storageSlots)
-                .find(Boolean),
-            filterFn: 'inNumberRange',
-            sortUndefined: 'last'
-        },
+        tierColumn({accessorFn: getBuildingTier}),
+        fromFunctionProp("Item Slots", "storageSlots", "inNumberRange"),
         {
             id: "Item Stack Size",
-            accessorFn: (bldg: BuildingDesc) => bldg.functions
-                .filter(func => FuncTypes.STORAGE.includes(func.functionType))
-                .map(func => func.itemSlotSize / 6000)
-                .find(Boolean),
+            accessorFn: (bldg: BuildingDesc) => {
+                // this ensures we get the slot size of the function used for finding slots above
+                // if a building ever has multiple inventory functions of the same item type,
+                // these might need to switch to arrays or something
+                const storageIndex = bldg.functions
+                    .findIndex(func => func.storageSlots > 0);
+                if (storageIndex == -1) return undefined;
+                return bldg.functions[storageIndex].itemSlotSize / 6000;
+            },
             filterFn: includedIn<BuildingDesc>(),
-            sortUndefined: 'last'
+            sortUndefined: "last"
         },
-        {
-            id: "Cargo Slots",
-            accessorFn: (bldg: BuildingDesc) => bldg.functions
-                .filter(func => FuncTypes.STORAGE.includes(func.functionType))
-                .map(func => func.cargoSlots)
-                .find(Boolean),
-            filterFn: 'inNumberRange',
-            sortUndefined: 'last'
-        },
+        fromFunctionProp("Cargo Slots", "cargoSlots", "inNumberRange"),
         {
             id: "Cargo Stack Size",
-            accessorFn: (bldg: BuildingDesc) => bldg.functions
-                .filter(func => FuncTypes.STORAGE.includes(func.functionType))
-                .map(func => func.cargoSlotSize / 6000)
-                .find(Boolean),
+            accessorFn: (bldg: BuildingDesc) => {
+                // as above
+                const stockpileIndex = bldg.functions
+                    .findIndex(func => func.cargoSlots > 0);
+                if (stockpileIndex == -1) return undefined;
+                return bldg.functions[stockpileIndex].cargoSlotSize / 6000;
+            },
             filterFn: includedIn<BuildingDesc>(),
-            sortUndefined: 'last'
+            sortUndefined: "last"
         },
-        {
-            id: "Trade Slots",
-            accessorFn: (dep: BuildingDesc) => dep.functions
-                .filter(func => FuncTypes.TRADE.includes(func.functionType))
-                .map(func => func.tradeOrders)
-                .find(Boolean),
-            filterFn: includedIn<BuildingDesc>(),
-            sortUndefined: 'last'
-        },
-        {
-            id: "Crafts per Player",
-            accessorFn: (dep: BuildingDesc) => dep.functions
-                .map(func => func.concurrentCraftsPerPlayer || null)
-                .find(Boolean),
-            filterFn: includedIn<BuildingDesc>(),
-            sortUndefined: 'last'
-        },
+        fromFunctionProp("Trade Orders", "tradeOrders"),
+        fromFunctionProp("Crafts per Player", "concurrentCraftsPerPlayer"),
         {
             id: "Crafting Slots",
-            accessorFn: (dep: BuildingDesc) => dep.functions
-                .map(func =>
-                    FuncTypes.CRAFTING.includes(func.functionType) ? func.craftingSlots
-                        : FuncTypes.PASSIVE_CRAFTING.includes(func.functionType) ? func.refiningSlots
-                            : null
-                )
-                .find(Boolean),
+            accessorFn: (bldg: BuildingDesc) => {
+                const func = bldg.functions.find(func => func.craftingSlots > 0 || func.refiningSlots > 0 || func.refiningCargoSlots > 0);
+                if (!func) return undefined;
+                // as of now, no building can be used for both active and passive crafting
+                // if that changes, these might need to be split up into separate columns
+                return func.refiningCargoSlots + func.refiningSlots + func.craftingSlots;
+            },
             filterFn: includedIn<BuildingDesc>(),
-            sortUndefined: 'last'
+            sortUndefined: "last"
         },
-        {
-            id: "Housing Slots",
-            accessorFn: (dep: BuildingDesc) => dep.functions
-                .map(func =>
-                    FuncTypes.HOUSING.includes(func.functionType) ? func.housingSlots : null
-                )
-                .find(Boolean),
-            filterFn: includedIn<BuildingDesc>(),
-            sortUndefined: 'last'
-        },
-        {
-            id: "Housing Income",
-            accessorFn: (dep: BuildingDesc) => dep.functions
-                .map(func =>
-                    FuncTypes.HOUSING.includes(func.functionType) ? func.housingIncome : null
-                )
-                .find(Boolean),
-            filterFn: includedIn<BuildingDesc>(),
-            sortUndefined: 'last'
-        },
-        {
-            id: "actions",
-            header: () => <></>,
-            enableHiding: false,
-            cell: (props) => {
-                const dialog = useDetailDialog();
-                return (
-                    <TableRowActions row={props.row}>
-                        <DropdownMenuItem>
-                            <Button
-                                class="w-full" variant="ghost"
-                                onclick={(ev: MouseEvent) => {
-                                    dialog.setContent(["BuildingDesc", props.row.original])
-                                    dialog.setOpen(true);
-                                    ev.stopPropagation();
-                                }}
-                            >
-                                View Details
-                            </Button>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Button class="w-full" variant="ghost"
-                                    onclick={(ev: MouseEvent) => {
-                                        dialog.setContent(["raw", props.row.original])
-                                        dialog.setOpen(true);
-                                        ev.stopPropagation();
-                                    }}
-                            >
-                                Raw Details
-                            </Button>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Button class="w-full" variant="ghost"
-                                    onclick={() => window.navigator.clipboard.writeText(String(props.row.original.id))}
-                            >
-                                Copy ID
-                            </Button>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Button class="w-full" variant="ghost"
-                                    onclick={() => window.navigator.clipboard.writeText(`(build=${props.row.original.id})`)}
-                            >
-                                Copy Chat Link <TbLink />
-                            </Button>
-                        </DropdownMenuItem>
-                    </TableRowActions>
-                )
-            }
-        }
+        fromFunctionProp("Housing Slots", "housingSlots"),
+        fromFunctionProp("Housing Income", "housingIncome"),
+        rowActions(undefined, "build"),
     ],
     facetedFilters: [
-        {
-            column: "Type",
-            title: "Type",
-            options: (col: Column<BuildingDesc> | undefined) => {
-                if (!col) return [];
-                return col.getFacetedUniqueValues().keys().map(v => {
-                    return { label: v, value: v }
-                }).toArray()
-            }
-        },
-        {
-            column: "Tier",
-            title: "Tier",
-            options: Tiers.tiers.map(t => {
-                return {
-                    label: String(t.value),
-                    value: t.value,
-                    icon: (props) => t.value > 0 && t.value <= 10 ? <TierIcon tier={t.value} class={cn("mr-1", props.class)}/> : ""
-                }
-            })
-        },
-        {
-            column: "Item Slots",
-            title: "Item Slots",
-            options: (col: Column<BuildingDesc> | undefined) => {
-                let minMax = col ? col.getFacetedMinMaxValues() : null;
-                return {
-                    label: "Item Slots",
-                    minMax: minMax || [0, 0]
-                }
-            }
-        },
-        {
-            column: "Item Stack Size",
-            title: "Item Stack Size",
-            options: (col: Column<BuildingDesc> | undefined) => {
-                if (!col) return [];
-                return col.getFacetedUniqueValues().keys().map(v => {
-                    if (!v) return null;
-                    return {
-                        label: v, value: v
-                    }
-                }).toArray().filter(v => !!v);
-            }
-        },
-        {
-            column: "Cargo Slots",
-            title: "Cargo Slots",
-            options: (col: Column<BuildingDesc> | undefined) => {
-                let minMax = col ? col.getFacetedMinMaxValues() : null;
-                return {
-                    label: "Cargo Slots",
-                    minMax: minMax || [0, 0]
-                }
-            }
-        },
-        {
-            column: "Cargo Stack Size",
-            title: "Cargo Stack Size",
-            options: (col: Column<BuildingDesc> | undefined) => {
-                if (!col) return [];
-                return col.getFacetedUniqueValues().keys().map(v => {
-                    if (!v) return null;
-                    return {
-                        label: v, value: v
-                    }
-                }).toArray().filter(v => !!v);
-            }
-        },
-        {
-            column: "Trade Slots",
-            title: "Trade Slots",
-            options: (col: Column<BuildingDesc> | undefined) => {
-                if (!col) return [];
-                return col.getFacetedUniqueValues().keys().map(v => {
-                    if (!v) return null;
-                    return {
-                        label: v, value: v
-                    }
-                }).toArray().filter(v => !!v);
-            }
-        },
-        {
-            column: "Crafting Slots",
-            title: "Crafting Slots",
-            options: (col: Column<BuildingDesc> | undefined) => {
-                if (!col) return [];
-                return col.getFacetedUniqueValues().keys().map(v => {
-                    if (!v) return null;
-                    return {
-                        label: v, value: v
-                    }
-                }).toArray().filter(v => !!v).sort((a, b) => a.value > b.value ? 1 : b.value > a.value ? -1 : 0);
-            }
-        },
-    ]
+        uniqueValuesFilter("Type", undefined, compareOptions),
+        tierFilter(),
+        rangeFilter("Item Slots"),
+        uniqueValuesFilter("Item Stack Size", undefined, compareOptions),
+        rangeFilter("Cargo Slots"),
+        uniqueValuesFilter("Cargo Stack Size", undefined, compareOptions),
+        uniqueValuesFilter("Trade Orders", undefined, compareOptions),
+        uniqueValuesFilter("Crafting Slots", undefined, compareOptions),
+        uniqueValuesFilter("Housing Slots", undefined, compareOptions),
+        uniqueValuesFilter("Housing Income", undefined, compareOptions),
+    ],
+    searchColumns: ["Name"],
 }

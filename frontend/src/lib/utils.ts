@@ -1,6 +1,6 @@
+import {FilterFn, Row, Table} from "@tanstack/solid-table";
 import {type ClassValue, clsx} from "clsx"
 import {twMerge} from "tailwind-merge"
-import {FilterFn, Row, Table} from "@tanstack/solid-table";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -15,11 +15,11 @@ export function includedIn<T>(): FilterFn<T> {
     const fn = (
         row: Row<T>,
         columnId: string,
-        filterValue: any[]
+        filterValue: T[]
     ) => {
         return filterValue.includes(row.getValue(columnId));
     }
-    fn.autoRemove = (val: any) => testFalsey(val);
+    fn.autoRemove = (val: T) => testFalsey(val);
     return fn;
 }
 
@@ -27,7 +27,25 @@ export function compareBasic(a: number, b: number) {
     return a === b ? 0 : a > b ? 1 : -1
 }
 
-export function fixFloat(f: number, places: number = 3) {
+export function compareOptions(a: { label: string, value: any }, b: { label: string, value: any }) {
+    const aVal = a.value;
+    const bVal = b.value;
+    if (aVal === bVal) return 0;
+    if (typeof aVal === 'number' && typeof bVal === 'number') return compareBasic(aVal, bVal);
+    if (aVal == null || bVal == null) return (
+        aVal == null ? 1 : -1
+    )
+    if (typeof aVal === 'undefined' || typeof bVal === 'undefined') return (
+        typeof aVal === 'undefined' ? 1 : -1
+    )
+    return aVal.toString().localeCompare(bVal.toString());
+}
+
+export function fixFloat(f: number, p?: number): number;
+export function fixFloat(f: number | undefined, p?: number): number | undefined;
+
+export function fixFloat(f: number | undefined, places: number = 3): number | undefined {
+    if (typeof f === 'undefined') return undefined;
     return +f.toPrecision(places);
 }
 
@@ -41,11 +59,20 @@ export function ensurePagesVisible(table: Table<any>) {
     }
 }
 
-// https://stackoverflow.com/a/49725198 idk what this monstrosity is, but it works for my purposes
-export type RequireOnlyOne<T, Keys extends keyof T = keyof T> =
-    Pick<T, Exclude<keyof T, Keys>>
-    & {
-    [K in Keys]-?:
-    Required<Pick<T, K>>
-    & Partial<Record<Exclude<Keys, K>, undefined>>
-}[Keys]
+export function undefinedIfZero(val: number | undefined) {
+    if (val === undefined) return undefined;
+    return val !== 0 ? val : undefined;
+}
+
+export function readableSeconds(seconds: number | undefined): string | undefined {
+    if (seconds === undefined) return undefined;
+    seconds = Math.round(seconds);
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const secs = seconds % 60;
+    return [
+        hours > 0 ? `${hours}h` : null,
+        minutes > 0 ? `${minutes}m` : null,
+        secs > 0 ? `${secs}s` : null,
+    ].filter(Boolean).join(" ") || "0s";
+}
