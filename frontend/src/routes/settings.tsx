@@ -9,7 +9,7 @@ import {
     TbOutlineMoon as IconMoon,
     TbOutlineSun as IconSun,
 } from "solid-icons/tb";
-import {createMemo, For, JSX, Show} from "solid-js";
+import {createMemo, createSignal, For, JSX, onCleanup, onMount, Show} from "solid-js";
 import MainLayout from "~/components/MainLayout";
 import {Button} from "~/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
@@ -35,7 +35,7 @@ function SettingsSection(props: {title: string; description?: string; children: 
     );
 }
 
-function SettingsRow(props: {label: string; description?: string; children: JSX.Element}) {
+function SettingsRow(props: {label: string; description?: JSX.Element; children: JSX.Element}) {
     return (
         <div class="flex flex-row items-center justify-between gap-4">
             <div class="flex flex-col gap-0.5">
@@ -82,6 +82,15 @@ function ButtonGroup<T extends string>(props: {
 // ── Page ──────────────────────────────────────────────────────
 
 const PAGE_SIZE_OPTIONS = [8, 10, 20, 30, 40, 50];
+
+const KONAMI_CODE = [
+    "ArrowUp", "ArrowUp",
+    "ArrowDown", "ArrowDown",
+    "ArrowLeft", "ArrowRight",
+    "ArrowLeft", "ArrowRight",
+    "b", "a",
+    "Enter",
+];
 
 /**
  * Multi-select that lets users choose which sidebar items are "favorites"
@@ -153,6 +162,26 @@ function SidebarFavoritesSelect() {
 
 export default function SettingsPage() {
     const settings = useSettings();
+
+    const [konamiUnlocked, setKonamiUnlocked] = createSignal(false);
+    let konamiIdx = 0;
+    const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === KONAMI_CODE[konamiIdx]) {
+            konamiIdx++;
+            if (konamiIdx === KONAMI_CODE.length) {
+                setKonamiUnlocked(true);
+                konamiIdx = 0;
+            }
+        } else {
+            // Allow restarting from the first key if the mistyped key happens to be it
+            konamiIdx = e.key === KONAMI_CODE[0] ? 1 : 0;
+        }
+    };
+    onMount(() => window.addEventListener("keydown", onKeyDown));
+    onCleanup(() => window.removeEventListener("keydown", onKeyDown));
+
+    /** Show the section if the code was entered this session OR if already enabled (to allow toggling off). */
+    const showEasterSection = () => konamiUnlocked() || settings.easterEggs();
 
     // Derived counts for the "Reset hidden columns" row
     const hiddenColumnStats = createMemo(() => {
@@ -283,6 +312,32 @@ export default function SettingsPage() {
                         </Button>
                     </SettingsRow>
                 </SettingsSection>
+
+                <Show when={showEasterSection()}>
+                    <SettingsSection
+                        title="🥚 Easter Eggs"
+                        description="Secret features. How did you even find this?"
+                    >
+                        <SettingsRow
+                            label="Enable easter eggs"
+                            description="Unlocks hidden easter-egg features scattered across the site."
+                        >
+                            <Switch checked={settings.easterEggs()} onChange={settings.setEasterEggs}>
+                                <SwitchControl><SwitchThumb/></SwitchControl>
+                            </Switch>
+                        </SettingsRow>
+                        <SettingsRow label="TF2 Mode" description="Hats">
+                            <Switch checked={settings.tf2Mode()} onChange={settings.setTf2Mode}>
+                                <SwitchControl><SwitchThumb/></SwitchControl>
+                            </Switch>
+                        </SettingsRow>
+                        <SettingsRow label="Region 9 Mode" description="Jamba Be Praised">
+                            <Switch checked={settings.r9Mode()} onChange={settings.setR9Mode}>
+                                <SwitchControl><SwitchThumb/></SwitchControl>
+                            </Switch>
+                        </SettingsRow>
+                    </SettingsSection>
+                </Show>
             </div>
         </MainLayout>
     );

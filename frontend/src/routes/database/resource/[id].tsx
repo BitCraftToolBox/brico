@@ -1,17 +1,20 @@
 import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
+import {lootTab} from "~/components/fun/BricoLootBox";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, ResourceDepletionPanel} from "~/components/shared/RecipeDisplay";
 import {breadcrumb} from "~/lib/game-links";
 import {enemiesForResource, extractionRecipeForResource, resourcesYieldingResource} from "~/lib/relations";
+import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
 export default function ResourceDetail() {
     const params = useParams();
     const navigate = useNavigate();
+    const { easterEggs } = useSettings();
     const isLoading = useTablesLoading(BitCraftTables.ResourceDesc);
     const resourceIndex = BitCraftTables.ResourceDesc.indexedBy("id");
 
@@ -111,6 +114,7 @@ export default function ResourceDetail() {
                         />
                     ),
                 },
+                ...(resource()?.id === 1702339460 && easterEggs() ? [lootTab()] : [])
             ]}
         />
     );

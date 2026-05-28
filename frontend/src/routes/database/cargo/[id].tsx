@@ -1,6 +1,7 @@
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {ItemType} from "~/bindings/src/item_type_type";
+import {lootTab} from "~/components/fun/BricoLootBox";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
 import {breadcrumb} from "~/lib/game-links";
@@ -22,6 +23,7 @@ import {
     travelerTradesOffering,
     travelerTradesRequiring,
 } from "~/lib/relations";
+import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {
     constructionCombinedTab,
@@ -45,6 +47,7 @@ import {questDropAugmentedLists} from "~/routes/database/item/[id]";
 export default function CargoDetail() {
     const params = useParams();
     const isLoading = useTablesLoading(BitCraftTables.CargoDesc);
+    const { easterEggs } = useSettings();
     const cargoIndex = BitCraftTables.CargoDesc.indexedBy("id");
     const knowledgeIndex = BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id");
 
@@ -134,6 +137,7 @@ export default function CargoDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                ...(cargo()?.id === 92169812 && easterEggs() ? [lootTab()] : [])
             ]}
         />
     );

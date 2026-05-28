@@ -63,6 +63,13 @@ export type AppSettings = {
     completedQuests: () => Set<number>;
     setCompletedQuests: (ids: number[]) => void;
 
+    easterEggs: () => boolean;
+    setEasterEggs: (v: boolean) => void;
+    tf2Mode: () => boolean;
+    setTf2Mode: (v: boolean) => void;
+    r9Mode: () => boolean;
+    setR9Mode: (v: boolean) => void;
+
     /** Show probabilistic item stack %s and item list averages as expected value for full node instead. NOT PERSISTED for now. */
     displayProbabilityAsAverage: () => boolean;
     setDisplayProbabilityAsAverage: (b: boolean) => void;
@@ -91,6 +98,9 @@ const KEYS = {
     tablePageSize: "brico:table:page-size",
     tableHiddenColumns: "brico:table:hidden-columns",
     completedQuests: "brico:quests:completed",
+    easterEggs: "brico:easter-eggs",
+    tf2Mode: "brico:easter-eggs:tf2-mode",
+    r9Mode: "brico:easter-eggs:r9-mode",
 } as const;
 
 function createSettings(): AppSettings {
@@ -194,6 +204,10 @@ function createSettings(): AppSettings {
     const completedQuests = createMemo(() => new Set(completedQuestsRaw()));
     const setCompletedQuests = (ids: number[]) => setCompletedQuestsRaw(ids);
 
+    const [easterEggs, setEasterEggs] = makePersisted(createSignal<boolean>(false), {name: KEYS.easterEggs});
+    const [tf2Mode, setTf2Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.tf2Mode});
+    const [r9Mode, setR9Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.r9Mode});
+
     return {
         colorStorageManager,
         showSidebarControls,
@@ -220,6 +234,12 @@ function createSettings(): AppSettings {
         setFlattenItemListOutputs,
         completedQuests,
         setCompletedQuests,
+        easterEggs,
+        setEasterEggs,
+        tf2Mode,
+        setTf2Mode,
+        r9Mode,
+        setR9Mode,
         getTableSession,
     };
 }
