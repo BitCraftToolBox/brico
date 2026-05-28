@@ -20,6 +20,9 @@ export default function MainLayout(props: LayoutProps) {
         <div class="relative flex flex-col w-full h-dvh overflow-hidden">
             <Title>{title} - Brico's Toolbox</Title>
             <Nav title={props.navTitle ?? props.title} hideSearch={props.hideSearch}/>
+            <div class="h-10 w-full bg-muted text-muted-foreground flex flex-col items-center justify-center">
+                <span>BitCraft EA1 Archive - See current data at <a href="https://brico.app" class="underline">Brico.app</a>.</span>
+            </div>
             <div class="flex flex-1 min-h-0">
                 <Suspense>
                     <main
