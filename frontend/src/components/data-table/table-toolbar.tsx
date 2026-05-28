@@ -6,6 +6,7 @@ import {createSignal, For, onCleanup, Show} from "solid-js";
 import {Button} from "~/components/ui/button"
 import {TextField, TextFieldInput} from "~/components/ui/text-field"
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {useSettings} from "~/lib/settings";
 import {ensurePagesVisible} from "~/lib/utils";
 
 import {TableFacetedFilter, TableFacetedFilterProps} from "./table-faceted-filter"
@@ -18,6 +19,7 @@ type DataTableToolbarProps<TData> = {
 }
 
 export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
+    const { tablePageSize } = useSettings();
     const isFiltered = () => props.table.getState().columnFilters.length > 0 || props.table.getState().globalFilter;
 
     const getSearchPlaceholder = () => {
@@ -51,6 +53,7 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
         throttledSetGlobalFilter.clear();
         props.table.setGlobalFilter("");
         props.table.resetColumnFilters();
+        props.table.setPageSize(tablePageSize());
         ensurePagesVisible(props.table);
     }
 
@@ -63,10 +66,10 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
         if (!tierTagMatch) return false;
 
         const wildTier = tierTagMatch[1] === '*' || tierTagMatch[1] === '?';
-        let tierNum;
+        let tierNum: number | undefined;
         if (!wildTier) {
             tierNum = parseInt(tierTagMatch[1], 10);
-            if (tierNum < -1 || tierNum > 10) return false;
+            if (tierNum < -1 || tierNum > 10 || Number.isNaN(tierNum)) return false;
         }
         const remainder = tierTagMatch[2].trim();
 
@@ -195,16 +198,16 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
                             </TooltipContent>
                         </Tooltip>
                     </Show>
-                    {isFiltered() && (
+                    <Show when={isFiltered() || props.table.getState().pagination.pageSize != tablePageSize()}>
                         <Button
                             variant="outline"
                             onClick={resetAllFilters}
                             class="h-8 w-auto px-2 sm:px-3"
                         >
-                            Reset
+                            Reset View
                             <IconX/>
                         </Button>
-                    )}
+                    </Show>
                 </div>
                 <TableViewOptions table={props.table}/>
             </div>

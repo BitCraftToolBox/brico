@@ -1,7 +1,6 @@
 import {
     type Column,
     ColumnDef,
-    ColumnFiltersState,
     createSolidTable,
     FilterFn,
     getCoreRowModel,
@@ -12,10 +11,9 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     InitialTableState,
-    SortingState,
     VisibilityState
 } from "@tanstack/solid-table"
-import {createMemo, createSignal, For, mergeProps, Show, splitProps} from "solid-js"
+import {createMemo, createSignal, For, Show, splitProps} from "solid-js"
 import {Dynamic} from "solid-js/web";
 import {TableColumnHeader} from "~/components/data-table/table-column-header";
 import {NumberBasedOption, StatsBasedOption, TableFacetedFilterProps, ValueBasedOption} from "~/components/data-table/table-faceted-filter";
@@ -44,7 +42,7 @@ export type FilterSetupProps<TData> = Omit<TableFacetedFilterProps<TData>, "tabl
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
-    const {tablePageSize, tableHiddenColumns} = useSettings();
+    const {tableHiddenColumns, getTableSession} = useSettings();
 
     // Restore persisted hidden columns for this table as the initial visibility state
     const persistedHidden: string[] = tableHiddenColumns()[props.name] ?? [];
@@ -52,18 +50,14 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         persistedHidden.map((id) => [id, false])
     );
 
-    const [rowSelection, setRowSelection] = createSignal({})
     const [columnVisibility, setColumnVisibility] = createSignal<VisibilityState>(initialColumnVisibility)
-    const [columnFilters, setColumnFilters] = createSignal<ColumnFiltersState>([])
-    const [sorting, setSorting] = createSignal<SortingState>([])
-    const [globalFilter, setGlobalFilter] = createSignal('')
 
+    const session = getTableSession(props.name);
+    const [columnFilters, setColumnFilters] = [session.columnFilters, session.setColumnFilters];
+    const [sorting, setSorting] = [session.sorting, session.setSorting];
+    const [globalFilter, setGlobalFilter] = [session.globalFilter, session.setGlobalFilter];
+    const [pagination, setPagination] = [session.pagination, session.setPagination];
 
-    const initialState = mergeProps(props.initialState, {
-        pagination: {
-            pageSize: tablePageSize()
-        }
-    })
     props.columns.forEach(c => {
         if (c.header === undefined) {
             c.header = (props) => <TableColumnHeader column={props.column} title={props.column.id}></TableColumnHeader>;
@@ -103,24 +97,24 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
             get columnVisibility() {
                 return columnVisibility()
             },
-            get rowSelection() {
-                return rowSelection()
-            },
             get columnFilters() {
                 return columnFilters()
             },
             get globalFilter() {
                 return globalFilter()
             },
+            get pagination() {
+                return pagination()
+            }
         },
-        initialState: initialState,
-        enableRowSelection: true,
+        initialState: props.initialState,
+        enableRowSelection: false,
         enableGlobalFilter: true,
-        onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
         onGlobalFilterChange: setGlobalFilter,
+        onPaginationChange: setPagination,
         globalFilterFn,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
