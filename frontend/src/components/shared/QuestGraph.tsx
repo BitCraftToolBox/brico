@@ -901,7 +901,7 @@ export function buildQuestGraph(): QuestGraphData {
     const allQuests = BitCraftTables.QuestChainDesc.get() ?? [];
 
     // Filter: only real quests (not hints, not unstartable)
-    const realQuests = allQuests.filter(q => !q.isHint && !q.unstartable);
+    const realQuests = allQuests.filter(q => !q.isHint);// && !q.unstartable);
 
     // Build a set of valid quest IDs for edge filtering
     const validIds = new Set(realQuests.map(q => q.id));

@@ -13,7 +13,7 @@ import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {ItemDesc} from "~/bindings/src/item_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
+//import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {Rarity} from "~/bindings/src/rarity_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
@@ -403,7 +403,7 @@ export const CollectibleIcon: Component<CollectibleIconProps> = (props) => {
         />
     )
 };
-
+/*
 type PlaceableIconProps = Omit<ComponentProps<"div">, "children"> & {
     placeable: PlaceableDesc;
     small?: boolean;
@@ -424,7 +424,7 @@ export const PlaceableIcon: Component<PlaceableIconProps> = (props) => {
         />
     );
 };
-
+*/
 type ItemListSourceIconProps = Omit<ComponentProps<"div">, "children"> & {
     list: ItemListDesc;
     small?: boolean;

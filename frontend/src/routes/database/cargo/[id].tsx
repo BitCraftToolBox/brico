@@ -4,7 +4,7 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
 import {breadcrumb} from "~/lib/game-links";
-import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
+//import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
     constructionRecipesConsuming,
     conversionRecipesConsuming,
@@ -32,8 +32,6 @@ import {
     enemyDropsTab,
     extractionTab,
     itemListsTab,
-    placeableInteractionsTab,
-    placeablePlacementTab,
     questRequirementsTab,
     questRewardsTab,
     travelerTasksTab,
@@ -88,8 +86,8 @@ export default function CargoDetail() {
     });
     const questRewards = createMemo(() => cargoId() != null ? questsRewardingItem(cargoId()!, cargoType) : []);
 
-    const placeablePlacements = createMemo(() => cargoId() != null ? placementsConsumingItem(cargoId()!, cargoType) : []);
-    const placeableInteractions = createMemo(() => cargoId() != null ? interactionsInvolvingItem(cargoId()!, cargoType) : []);
+    //const placeablePlacements = createMemo(() => cargoId() != null ? placementsConsumingItem(cargoId()!, cargoType) : []);
+    //const placeableInteractions = createMemo(() => cargoId() != null ? interactionsInvolvingItem(cargoId()!, cargoType) : []);
 
     return (
         <DetailPageLayout
@@ -132,8 +130,8 @@ export default function CargoDetail() {
                 itemListsTab(inItemLists()),
                 questRequirementsTab(questRequires()),
                 questRewardsTab(questRewards()),
-                placeablePlacementTab(placeablePlacements()),
-                placeableInteractionsTab(placeableInteractions()),
+                // placeablePlacementTab(placeablePlacements()),
+                // placeableInteractionsTab(placeableInteractions()),
             ]}
         />
     );

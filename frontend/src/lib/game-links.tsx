@@ -220,8 +220,8 @@ export function CollectibleLinkById(props: { id: number; class?: string; showIco
 }
 
 // ─── Placeable ──────────────────────────────────────────────────
-
-/** Renders a placeable name as a link. */
+/*
+/** Renders a placeable name as a link. *
 export function PlaceableLink(props: { id: number; name?: string; class?: string; showIcon?: boolean }) {
     const show = () => props.showIcon !== false;
     return (
@@ -235,12 +235,12 @@ export function PlaceableLink(props: { id: number; name?: string; class?: string
     );
 }
 
-/** Resolves a placeable ID to a PlaceableLink. */
+/** Resolves a placeable ID to a PlaceableLink. *
 export function PlaceableLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
     const plc = () => BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(props.id);
     return <PlaceableLink id={props.id} name={plc()?.name} class={props.class} showIcon={props.showIcon}/>;
 }
-
+*/
 // ─── Item ────────────────────────────────────────────────────────
 
 /** Renders an item name as a link. */

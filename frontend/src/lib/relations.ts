@@ -11,8 +11,8 @@
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
-import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
+import {ConstructionRecipeDescV2} from "~/bindings/src/construction_recipe_desc_v_2_type";
+import {ContributionLootDescV2} from "~/bindings/src/contribution_loot_desc_v_2_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
@@ -27,7 +27,7 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
-import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
+//import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
@@ -125,12 +125,12 @@ export function extractionRecipesConsuming(itemId: number, itemType: string): Ex
 // ─── Construction Recipes ───────────────────────────────────────
 
 /** The construction recipe for a given building */
-export function constructionRecipeForBuilding(buildingId: number): ConstructionRecipeDesc | undefined {
+export function constructionRecipeForBuilding(buildingId: number): ConstructionRecipeDescV2 | undefined {
     return BitCraftTables.ConstructionRecipeDesc.indexedBy("buildingDescriptionId")()?.get(buildingId);
 }
 
 /** Construction recipes that consume this item/cargo */
-export function constructionRecipesConsuming(itemId: number, itemType: string): ConstructionRecipeDesc[] {
+export function constructionRecipesConsuming(itemId: number, itemType: string): ConstructionRecipeDescV2[] {
     const all = BitCraftTables.ConstructionRecipeDesc.get();
     if (!all) return [];
     return all.filter(r =>
@@ -234,7 +234,7 @@ export function itemListsContaining(itemId: number, itemType: string): ItemListD
 
 export type ItemListSource =
     | { type: "Item"; item: ItemDesc }
-    | { type: "Enemy"; loot: ContributionLootDesc; enemy?: EnemyDesc }
+    | { type: "Enemy"; loot: ContributionLootDescV2; enemy?: EnemyDesc }
     | { type: "Unknown" };
 
 export function getItemListSource(il: ItemListDesc | undefined): ItemListSource {
@@ -254,7 +254,7 @@ export function getItemListSource(il: ItemListDesc | undefined): ItemListSource 
     return {type: "Unknown"};
 }
 
-export function contributionLootFromEnemy(enemy: EnemyDesc | undefined): [ContributionLootDesc, ItemListDesc][] {
+export function contributionLootFromEnemy(enemy: EnemyDesc | undefined): [ContributionLootDescV2, ItemListDesc][] {
     if (!enemy) return [];
     const lootDescs = BitCraftTables.ContributionLootDesc.get();
     if (!lootDescs) return [];
@@ -262,7 +262,7 @@ export function contributionLootFromEnemy(enemy: EnemyDesc | undefined): [Contri
     if (!matchedLoot) return [];
     const itemListIndex = BitCraftTables.ItemListDesc.indexedBy("id")();
     return matchedLoot.map(cl => [cl, itemListIndex.get(cl.itemListId)])
-        .filter((p): p is [ContributionLootDesc, ItemListDesc] => !!p[1])
+        .filter((p): p is [ContributionLootDescV2, ItemListDesc] => !!p[1])
         .sort((a, b) => b[0].minimumContribution - a[0].minimumContribution);
 }
 
@@ -357,7 +357,7 @@ export function getExtractionRecipeName(recipe: ExtractionRecipeDesc): string {
 }
 
 /** Display name for a construction recipe */
-export function getConstructionRecipeName(recipe: ConstructionRecipeDesc): string {
+export function getConstructionRecipeName(recipe: ConstructionRecipeDescV2): string {
     // wild RHS but it doesn't ever occur
     return recipe.name || ("Construct " + (BitCraftTables.BuildingDesc.indexedBy("id")()?.get(recipe.buildingDescriptionId)?.name ?? ("Building #" + recipe.buildingDescriptionId)));
 }
@@ -452,7 +452,7 @@ export function buildingForDeconstruction(recipe: DeconstructionRecipeDesc): Bui
 }
 
 /** Get the building associated with a construction recipe */
-export function buildingForConstruction(recipe: ConstructionRecipeDesc): BuildingDesc | undefined {
+export function buildingForConstruction(recipe: ConstructionRecipeDescV2): BuildingDesc | undefined {
     return BitCraftTables.BuildingDesc.indexedBy("id")()?.get(recipe.buildingDescriptionId);
 }
 
@@ -466,32 +466,32 @@ export function enemiesDropping(itemId: number, itemType: string): EnemyDesc[] {
 }
 
 // ─── Quest Drops ─────────────────────────────────────────────────
-
-/** Quest drops that conditionally drop this item/cargo */
+/**
+/** Quest drops that conditionally drop this item/cargo *
 export function questDropsContaining(itemId: number, itemType: string): QuestDropDesc[] {
     const all = BitCraftTables.QuestDropDesc.get();
     if (!all) return [];
     return all.filter(q => q.itemDrop && anyProbStackMatches([q.itemDrop], itemId, itemType));
 }
 
-/** Quest drops linked to an extraction recipe (by ExtractionRecipeDesc.id) */
+/** Quest drops linked to an extraction recipe (by ExtractionRecipeDesc.id) *
 export function questDropsForExtraction(extractionId: number): QuestDropDesc[] {
     if (!extractionId) return [];
     return BitCraftTables.QuestDropDesc.get()?.filter(q => q.extractionId === extractionId) ?? [];
 }
 
-/** Quest drops linked to an enemy (by EnemyDesc.enemyType) */
+/** Quest drops linked to an enemy (by EnemyDesc.enemyType) *
 export function questDropsForEnemy(enemyType: number): QuestDropDesc[] {
     if (!enemyType) return [];
     return BitCraftTables.QuestDropDesc.get()?.filter(q => q.enemyId === enemyType) ?? [];
 }
 
-/** Quest drops linked to an item list */
+/** Quest drops linked to an item list *
 export function questDropsForItemList(itemListId: number): QuestDropDesc[] {
     if (!itemListId) return [];
     return BitCraftTables.QuestDropDesc.get()?.filter(q => q.itemListId === itemListId) ?? [];
 }
-
+*/
 // ─── Quest Chain Relations ───────────────────────────────────────
 
 /** Quest chains that require this entity (by tag + value) in their requirements array */
@@ -583,6 +583,7 @@ export function questDropSourcesFor(itemId: number, itemType: string): {
     enemies: EnemyDesc[];
     itemLists: ItemListDesc[];
 } {
+    return { extractionRecipes: [], enemies: [] , itemLists: [] };/*
     const drops = questDropsContaining(itemId, itemType);
     const extractionRecipes: ExtractionRecipeDesc[] = [];
     const enemies: EnemyDesc[] = [];
@@ -613,5 +614,5 @@ export function questDropSourcesFor(itemId: number, itemType: string): {
         }
     }
 
-    return { extractionRecipes, enemies, itemLists };
+    return { extractionRecipes, enemies, itemLists };*/
 }

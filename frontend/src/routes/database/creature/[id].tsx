@@ -1,20 +1,20 @@
 import {useParams} from "@solidjs/router";
-import {createMemo, For, Show} from "solid-js";
-import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
-import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
+import {createMemo, Show} from "solid-js";
+import {CombatActionDescV3} from "~/bindings/src/combat_action_desc_v_3_type";
+import {ContributionLootDescV2} from "~/bindings/src/contribution_loot_desc_v_2_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon} from "~/components/shared/GameIcon";
-import {ItemListDisplay, QuestDropDisplay} from "~/components/shared/ItemStacks";
+import {ItemListDisplay} from "~/components/shared/ItemStacks";
 import {EnemyDropPanel} from "~/components/shared/RecipeDisplay";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {breadcrumb, ItemListLink, SkillLinkById} from "~/lib/game-links";
-import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList} from "~/lib/relations";
+import {contributionLootFromEnemy} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
-type LootRow = [ContributionLootDesc, ItemListDesc];
+type LootRow = [ContributionLootDescV2, ItemListDesc];
 
 export default function CreatureDetail() {
     const params = useParams();
@@ -36,11 +36,11 @@ export default function CreatureDetail() {
         if (!c?.combatActionsIds?.length) return [];
         const idx = combatActionIndex();
         if (!idx) return [];
-        return c.combatActionsIds.map(id => idx.get(id)).filter((v): v is CombatActionDesc => !!v);
+        return c.combatActionsIds.map(id => idx.get(id)).filter((v): v is CombatActionDescV3 => !!v);
     });
 
     const extractedItems = createMemo(() => creature()?.extractedItemStacks ?? []);
-    const questDrops = createMemo(() => creature() ? questDropsForEnemy(creature()!.enemyType) : []);
+    const questDrops = createMemo(() => []);//creature() ? questDropsForEnemy(creature()!.enemyType) : []);
     const contributionLists = createMemo(() => creature() ? contributionLootFromEnemy(creature()!) : []);
 
     const {labels: pathfindingLabels} = checkStepHeight(pathfinding);
@@ -166,16 +166,16 @@ export default function CreatureDetail() {
                                 {
                                     header: "Output",
                                     cell: ([loot, list]) => {
-                                        const questDrops = questDropsForItemList(list.id);
+                                        const questDrops = [];//questDropsForItemList(list.id);
                                         const listComp = <ItemListDisplay itemList={list} chances={loot.weighted ? 1000 : 1} probability={1}/>;
                                         return (
                                             <div class="flex flex-row flex-wrap gap-1">
                                                 <Show when={questDrops.length} fallback={listComp}>
                                                     <div class="mt-4">{listComp}</div>
                                                 </Show>
-                                                <For each={questDrops}>
+                                                {/*<For each={questDrops}>
                                                     {(drop) => <QuestDropDisplay questDrop={drop} chances={1}/>}
-                                                </For>
+                                                </For>*/}
                                             </div>
                                         )
                                     },

@@ -13,7 +13,7 @@
 
 import {TbOutlineArrowBigDownLines as IconDown, TbOutlineLock as IconLock} from "solid-icons/tb";
 import {Accessor, Component, createEffect, createSignal, For, JSX, Show} from "solid-js";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
+import {ConstructionRecipeDescV2} from "~/bindings/src/construction_recipe_desc_v_2_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
@@ -22,15 +22,15 @@ import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_de
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
-import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
+//import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
+//import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
+//import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
-import {BuildingIcon, EnemyIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon} from "~/components/shared/GameIcon";
-import {expandStack, InputItemStackArray, ItemStackArray, ItemStackIcon, QuestDropDisplay} from "~/components/shared/ItemStacks";
+import {BuildingIcon, EnemyIcon, ItemListSourceIcon, ResourceIcon} from "~/components/shared/GameIcon";
+import {expandStack, InputItemStackArray, ItemStackArray, ItemStackIcon} from "~/components/shared/ItemStacks";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {
     collapseStacks,
@@ -39,15 +39,12 @@ import {
     craftingStatLines,
     deconstructionStatLines,
     extractionStatLines,
-    growthStatLines,
-    interactionStatLines,
-    placementStatLines,
     prospectingForResource,
     StatLine,
     travelerTaskStatLines,
     travelerTradeStatLines,
 } from "~/lib/recipe-sources";
-import {buildingForConstruction, buildingForDeconstruction, questDropsForEnemy, questDropsForExtraction, questDropsForItemList, resourceForExtraction} from "~/lib/relations";
+import {buildingForConstruction, buildingForDeconstruction, resourceForExtraction} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
 
 // ─── Stat Line Display ─────────────────────────────────────────
@@ -147,6 +144,7 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
             <Show when={depletionResource()}>
                 {dR => (
                     <div class="flex flex-col items-center gap-0.5">
+                        {/*
                         <Show when={props.showLabel}>
                             <span class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight"
                                   title={`${props.resource.onDestroyYieldResourceChance === 1 ? "Guaranteed spawn" : "Chance to spawn"} on last hit of resource extraction`}
@@ -154,6 +152,7 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                                 {props.resource.onDestroyYieldResourceChance === 1 ? "deplete" : `${props.resource.onDestroyYieldResourceChance * 100}%`}
                             </span>
                         </Show>
+                        */}
                         <ResourceIcon res={dR()} small/>
                     </div>
                 )}
@@ -164,7 +163,7 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
 
 export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> = (props) => {
     const resource = () => resourceForExtraction(props.recipe);
-    const questDrops = () => questDropsForExtraction(props.recipe.id);
+    const questDrops = () => []; //questDropsForExtraction(props.recipe.id);
 
     return (
         <RecipeVisual
@@ -189,15 +188,15 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                          }
                     >
                         {(stack) => expandStack(stack,
-                            resource()?.showTimeLeft || prospectingForResource(resource()?.id)?.length ? undefined : resource()?.maxHealth)
+                            /*resource()?.showTimeLeft || */prospectingForResource(resource()?.id)?.length ? undefined : resource()?.maxHealth)
                         }
                     </For>
                     <Show when={resource()}>
                         {r => <ResourceDepletionIcons resource={r()} showLabel={true}/>}
                     </Show>
-                    <For each={questDrops()}>
+                    {/*<For each={questDrops()}>
                         {(drop) => <QuestDropDisplay questDrop={drop} chances={resource()?.maxHealth}/>}
-                    </For>
+                    </For>*/}
                 </>
             }
             stats={extractionStatLines(props.recipe, resource())}
@@ -207,7 +206,7 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
 
 // ─── Construction Recipe Panel ──────────────────────────────────
 
-export const ConstructionRecipePanel: Component<{ recipe: ConstructionRecipeDesc }> = (props) => {
+export const ConstructionRecipePanel: Component<{ recipe: ConstructionRecipeDescV2 }> = (props) => {
     const building = () => buildingForConstruction(props.recipe);
 
     return (
@@ -299,7 +298,7 @@ export const ResourceDepletionPanel: Component<{ resource: ResourceDesc }> = (pr
 // ─── Item List Panel ────────────────────────────────────────────
 
 export const ItemListPanel: Component<{ list: ItemListDesc }> = (props) => {
-    const questDrops = () => questDropsForItemList(props.list.id);
+    const questDrops = () => [];//questDropsForItemList(props.list.id);
     const listComp = expandStack(props.list);
     return (
         <RecipeVisual
@@ -309,9 +308,9 @@ export const ItemListPanel: Component<{ list: ItemListDesc }> = (props) => {
                     <Show when={questDrops().length} fallback={listComp}>
                         <div class="mt-4">{listComp}</div>
                     </Show>
-                    <For each={questDrops()}>
+                    {/*<For each={questDrops()}>
                         {(drop) => <QuestDropDisplay questDrop={drop}/>}
-                    </For>
+                    </For>*/}
                 </>
             }
         />
@@ -322,7 +321,7 @@ export const ItemListPanel: Component<{ list: ItemListDesc }> = (props) => {
 
 /** Renders an enemy as the input with its extracted item drops + quest drops as outputs. */
 export const EnemyDropPanel: Component<{ enemy: EnemyDesc }> = (props) => {
-    const questDrops = () => questDropsForEnemy(props.enemy.enemyType);
+    const questDrops = () => [];//questDropsForEnemy(props.enemy.enemyType);
 
     return (
         <RecipeVisual
@@ -336,9 +335,9 @@ export const EnemyDropPanel: Component<{ enemy: EnemyDesc }> = (props) => {
                     }>
                         {(stack) => expandStack(stack, 1)}
                     </For>
-                    <For each={questDrops()}>
+                    {/*<For each={questDrops()}>
                         {(drop) => <QuestDropDisplay questDrop={drop} chances={1}/>}
-                    </For>
+                    </For>*/}
                 </>
             }
         />
@@ -451,7 +450,7 @@ export const renderKnowledgeLockedItem = <T extends {requiredKnowledges: number[
 }
 
 // ─── Placeable Placement Panel ──────────────────────────────────
-
+/*
 export const PlacementPanel: Component<{ placement: PlaceablePlacementDesc }> = (props) => {
     const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(props.placement.placedPlaceableId);
 
@@ -589,3 +588,4 @@ export const GrowthPanel: Component<{ growth: PlaceableGrowthDesc }> = (props) =
         />
     );
 };
+*/

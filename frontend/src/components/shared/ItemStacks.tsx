@@ -19,12 +19,11 @@ import {ItemListPossibility} from "~/bindings/src/item_list_possibility_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
-import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
+//import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
 import {CargoIcon, ItemIcon} from "~/components/shared/GameIcon";
 import {Button} from "~/components/ui/button";
 import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {QuestChainLinkById} from "~/lib/game-links";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables} from "~/lib/spacetime";
 import {cn, fixFloat} from "~/lib/utils";
@@ -471,10 +470,10 @@ export const InputItemStackArray: Component<{
 
 // ─── QuestDropDisplay ──────────────────────────────────────────
 // Renders a quest-conditional drop: warning-colored group + popover with quest/stage info.
-
+/*
 export const QuestDropDisplay: Component<{
     questDrop: QuestDropDesc;
-    /** HP / progress points of source (for avg calc tooltip) */
+    /** HP / progress points of source (for avg calc tooltip) *
     chances?: number;
     class?: string;
 }> = (props) => {
@@ -488,7 +487,7 @@ export const QuestDropDisplay: Component<{
                 <div class={cn("flex flex-col items-center gap-0.5", props.class)}>
                     <ProbBadge probability={props.questDrop.itemDrop.probability} chances={props.chances}/>
                     <PopoverTrigger class="cursor-pointer">
-                        {/* Warning-colored group box — matches ItemListDisplay styling but in amber */}
+                        {/* Warning-colored group box — matches ItemListDisplay styling but in amber *}
                         <div class={cn(
                             "flex flex-row flex-wrap sm:flex-nowrap items-end gap-0.5 rounded-md px-1 py-0.5",
                             "bg-warning/50 dark:bg-warning/25 border border-dashed border-warning-foreground",
@@ -515,7 +514,7 @@ export const QuestDropDisplay: Component<{
         </Show>
     );
 };
-
+*/
 // ─── expandStack ───────────────────────────────────────────────
 // Smart dispatcher that resolves the right component for any stack-like input.
 // Handles: ItemStack, ProbabilisticItemStack, ItemListDesc

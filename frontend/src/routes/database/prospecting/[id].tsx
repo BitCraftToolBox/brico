@@ -5,7 +5,7 @@ import {TierIcon} from "~/components/shared/GameIcon";
 import {ItemStackTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {fixFloat, readableSeconds} from "~/lib/utils";
+import {readableSeconds} from "~/lib/utils";
 
 export default function ProspectingDetail() {
     const params = useParams();
@@ -37,7 +37,7 @@ export default function ProspectingDetail() {
         if (!idx) return [];
         return p.biomeRequirements.map(id => idx.get(id)).filter(Boolean) as any[];
     });
-
+/*
     const experienceStr = createMemo(() => {
         const p = prospecting();
         if (!p?.experiencePerNode) return undefined;
@@ -45,7 +45,7 @@ export default function ProspectingDetail() {
         const name = skillIndex()?.get(p.experiencePerNode.skillId)?.name ?? `Skill ${p.experiencePerNode.skillId}`;
         return `${name}: ${fixFloat(p.experiencePerNode.quantity)}`;
     });
-
+*/
     const spawnInfo = createMemo(() => {
         const p = prospecting();
         if (!p) return undefined;
@@ -78,8 +78,8 @@ export default function ProspectingDetail() {
             details={[
                 {label: "Breadcrumb Count", value: breadCrumbCount()},
                 {label: "Contribution Per Crumb", value: prospecting()?.contributionPerVisitedBreadCrumb},
-                {label: "% Nodes for Max Contribution", value: (prospecting()?.pctNodesForMaxContribution ?? 0) * 100},
-                {label: "Experience Per Node", value: experienceStr()},
+                //{label: "% Nodes for Max Contribution", value: (prospecting()?.pctNodesForMaxContribution ?? 0) * 100},
+                //{label: "Experience Per Node", value: experienceStr()},
                 {label: "Deadzone Angle", value: prospecting()?.deadzoneAngleBetweenCrumbs},
                 {label: "Join Radius", value: prospecting()!.joinRadius},
                 {label: "Pointer Duration", value: readableSeconds(prospecting()?.pointerDuration)},

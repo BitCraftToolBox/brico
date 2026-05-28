@@ -37,8 +37,8 @@ export default function QuestChainDetail() {
         return [{
             properties: [
                 {label: "Is Hint", value: q.isHint},
-                {label: "Unstartable", value: q.unstartable},
-                {label: "Is Secret", value: q.isSecret},
+                //{label: "Unstartable", value: q.unstartable},
+                //{label: "Is Secret", value: q.isSecret},
                 {label: "Stages", value: q.stages?.length ?? 0},
             ],
         }];
@@ -76,12 +76,12 @@ export default function QuestChainDetail() {
     // Cumulative quest tree — only computed for real (non-hint, non-unstartable) quests
     const treeResult = createMemo(() => {
         const q = quest();
-        if (!q || q.isHint || q.unstartable) return null;
+        if (!q || q.isHint) return null;
         return computeQuestTree(q.id, completedQuests(), questIndex(), stagesMap());
     });
 
     const graphControls = () => (
-        <Show when={quest() && !quest()!.unstartable && !quest()!.isHint}>
+        <Show when={quest() && !quest()!.isHint}>
             <div class="flex flex-row items-center gap-4">
                 <A href={`/tools/quest-graph?chain=${quest()!.id}`}
                    class="text-sm px-3 py-1.5 rounded-md border bg-background hover:bg-muted transition-colors text-foreground inline-block w-fit">
@@ -109,7 +109,7 @@ export default function QuestChainDetail() {
             name={quest()?.name ?? `Quest #${params.id}`}
             icon={pageIcon("Quest Chains", "size-16")}
             details={details()}
-            summaryContent={stages().length || (quest() && !quest()!.unstartable && !quest()!.isHint) ? () => (
+            summaryContent={stages().length || (quest() && !quest()!.isHint) ? () => (
                 <div class="flex flex-col gap-3 px-1 py-2">
                     {graphControls()}
                     <Show when={stages().length}>

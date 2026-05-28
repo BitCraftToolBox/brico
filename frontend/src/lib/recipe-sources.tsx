@@ -9,8 +9,7 @@
  */
 
 import {JSX} from "solid-js";
-import {Biome} from "~/bindings/src/biome_type";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
+import {ConstructionRecipeDescV2} from "~/bindings/src/construction_recipe_desc_v_2_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
 import {ExperienceStackF32} from "~/bindings/src/experience_stack_f_32_type";
@@ -19,9 +18,9 @@ import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_de
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {LevelRequirement} from "~/bindings/src/level_requirement_type";
-import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
+//import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
+//import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
+//import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
@@ -30,7 +29,7 @@ import {ToolTypeDesc} from "~/bindings/src/tool_type_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {BiomeLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
+import {IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
 import {getTravelerNpcName} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
@@ -163,7 +162,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
     const lines: StatLine[] = [];
     let totalEffort = resource?.maxHealth;
     if (resource) {
-        if (resource?.showTimeLeft) {
+        if (false) {//resource?.showTimeLeft) {
             // TODO growth_recipe_desc is private
             lines.push(["Timed Node", "? min"])
             totalEffort = 0;
@@ -193,7 +192,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
     return lines;
 }
 
-export function constructionStatLines(recipe: ConstructionRecipeDesc): StatLine[] {
+export function constructionStatLines(recipe: ConstructionRecipeDescV2): StatLine[] {
     const lines: StatLine[] = [
         ["Effort:", recipe.actionsRequired],
         ["Time:", fixFloat(recipe.timeRequirement)],
@@ -252,7 +251,7 @@ export function travelerTradeStatLines(trade: TravelerTradeOrderDesc): StatLine[
 }
 
 // ─── Placeable Stat Line Extractors ─────────────────────────────
-
+/*
 export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[] {
     const lines: StatLine[] = [
         ["Time:", fixFloat(placement.requiredTime)],
@@ -341,7 +340,7 @@ export function growthStatLines(growth: PlaceableGrowthDesc): StatLine[] {
     }
     return lines;
 }
-
+*/
 // ─── Stack Utilities ────────────────────────────────────────────
 
 export function collapseStacks(stacks: ItemStack[], includeCargo: boolean = false): ItemStack[] {

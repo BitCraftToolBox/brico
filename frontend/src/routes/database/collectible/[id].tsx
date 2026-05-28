@@ -2,7 +2,7 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {CollectibleType} from "~/bindings/src/collectible_type_type";
-import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
+import {DeployableDescV4} from "~/bindings/src/deployable_desc_v_4_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
@@ -64,19 +64,19 @@ export default function CollectibleDetail() {
     const deployables = createMemo(() => {
         const c = collectible();
         if (!c) return [];
-        if (c.collectibleType.tag === "DeployableAppearanceOverride") {
+        if (false) {// c.collectibleType.tag === "DeployableAppearanceOverride") {
             const appearances = BitCraftTables.DeployableAppearanceOverrideDesc.indexedBy("collectibleId")();
-            const appearance = appearances?.get(c.id);
+            const appearance = appearances?.get(c!.id);
             if (!appearance) return [];
             const model = appearance.affectedModelAddress;
             const deployables = BitCraftTables.DeployableDesc.get();
             return deployables?.filter(d => d.modelAddress === model)
                 .map(d => [d, index().get(d.deployFromCollectibleId)])
-                .filter((p): p is [DeployableDesc, CollectibleDesc] => !!p[1]) ?? [];
+                .filter((p): p is [DeployableDescV4, CollectibleDesc] => !!p[1]) ?? [];
         } else if (c.collectibleType.tag === "Deployable") {
             const deployables = BitCraftTables.DeployableDesc.indexedBy("deployFromCollectibleId");
             const dep = deployables()?.get(c.id);
-            return dep ? [[dep, c]] as [DeployableDesc, CollectibleDesc][] : [];
+            return dep ? [[dep, c]] as [DeployableDescV4, CollectibleDesc][] : [];
         } else {
             return [];
         }
@@ -111,7 +111,7 @@ export default function CollectibleDetail() {
                     count: deployables().length,
                     showWhenEmpty: false,
                     content: () => (
-                        <RelTable<[DeployableDesc, CollectibleDesc]> data={deployables()} columns={[
+                        <RelTable<[DeployableDescV4, CollectibleDesc]> data={deployables()} columns={[
                             {header: "Deployable", cell: d => <CollectibleIcon collectible={d[1]} small noInteract/>, class: "w-10"},
                             {header: "Name", cell: d => <IconLink href={`/database/deployable/${d[0].id}`} icon={pageIcon("Deployables")}>{d[0].name}</IconLink>},
                         ]} />

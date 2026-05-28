@@ -56,7 +56,7 @@ const sidebarGroups = [
         name: "Character",
         items: [
             {href: '/database/deployable', title: 'Deployables',      icon: makeFontIcon("FFD4")},
-            {href: '/database/placeable',  title: 'Placeables',       icon: makeFontIcon("0072")},
+            //{href: '/database/placeable',  title: 'Placeables',       icon: makeFontIcon("0072")},
             {href: '/database/combat',     title: 'Combat Abilities', icon: makeFontIcon("FFC3")},
             {href: '/database/buff',       title: 'Buffs',            icon: makeFontIcon("FFD0")},
         ] as const
@@ -75,7 +75,7 @@ const sidebarGroups = [
         name: "Toolbox",
         items: [
             {href: '/tools/emblem', title: 'Emblem Editor', icon: makeFontIcon("FFB7")},
-            {href: '/tools/placeable-graph', title: 'Placeable Graph', icon: makeFontIcon("0072")},
+            //{href: '/tools/placeable-graph', title: 'Placeable Graph', icon: makeFontIcon("0072")},
             {href: '/tools/quest-graph', title: 'Quest Graph', icon: makeFontIcon("0107")},
         ] as const
     },

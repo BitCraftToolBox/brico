@@ -1,6 +1,6 @@
 import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
-import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
+import {ClaimTechDescV2} from "~/bindings/src/claim_tech_desc_v_2_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemStackTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
@@ -24,7 +24,7 @@ export default function ClaimResearchDetail() {
         if (!t?.requirements?.length) return [];
         const idx = index();
         if (!idx) return [];
-        return t.requirements.map(id => idx.get(id)).filter((v): v is ClaimTechDesc => !!v);
+        return t.requirements.map(id => idx.get(id)).filter((v): v is ClaimTechDescV2 => !!v);
     });
 
     const unlocksTechs = createMemo(() => {
@@ -32,12 +32,12 @@ export default function ClaimResearchDetail() {
         if (!t?.unlocksTechs?.length) return [];
         const idx = index();
         if (!idx) return [];
-        return t.unlocksTechs.map(id => idx.get(id)).filter((v): v is ClaimTechDesc => !!v);
+        return t.unlocksTechs.map(id => idx.get(id)).filter((v): v is ClaimTechDescV2 => !!v);
     });
 
     const claimTechColumns = [
-        {header: "Tech", cell: (row: ClaimTechDesc) => <span>{row.name}</span>},
-        {header: "Tier", cell: (row: ClaimTechDesc) => <span>{row.tier}</span>},
+        {header: "Tech", cell: (row: ClaimTechDescV2) => <span>{row.name}</span>},
+        {header: "Tier", cell: (row: ClaimTechDescV2) => <span>{row.tier}</span>},
     ];
 
     return (
@@ -75,13 +75,13 @@ export default function ClaimResearchDetail() {
                     id: "requirements",
                     label: "Requirements",
                     count: requirements().length,
-                    content: () => <RelTable<ClaimTechDesc> data={requirements()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>
+                    content: () => <RelTable<ClaimTechDescV2> data={requirements()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>
                 },
                 {
                     id: "unlocks",
                     label: "Unlocks Techs",
                     count: unlocksTechs().length,
-                    content: () => <RelTable<ClaimTechDesc> data={unlocksTechs()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>
+                    content: () => <RelTable<ClaimTechDescV2> data={unlocksTechs()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>
                 },
             ]}
         />

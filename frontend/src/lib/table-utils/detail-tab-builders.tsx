@@ -6,15 +6,15 @@
  */
 
 import {createSignal, Show} from "solid-js";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
+import {ConstructionRecipeDescV2} from "~/bindings/src/construction_recipe_desc_v_2_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
+//import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
+//import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
@@ -27,9 +27,7 @@ import {
     DeconstructionRecipePanel,
     EnemyDropPanel,
     ExtractionRecipePanel,
-    InteractionPanel,
     ItemListPanel,
-    PlacementPanel,
     RecipeSelect,
     renderKnowledgeLockedItem,
     ResourceDepletionPanel,
@@ -37,7 +35,6 @@ import {
     TravelerTradePanel,
 } from "~/components/shared/RecipeDisplay";
 import {QuestChainLink} from "~/lib/game-links";
-import {getInteractionName, getPlacementName} from "~/lib/placeables";
 import {
     getConstructionRecipeName,
     getConversionRecipeName,
@@ -155,7 +152,7 @@ export function depletionTab(
  * with synchronized selection (selecting one auto-selects the matching deconstruction)
  */
 export function constructionCombinedTab(
-    constructsInto: ConstructionRecipeDesc[],
+    constructsInto: ConstructionRecipeDescV2[],
     deconstructedFrom: DeconstructionRecipeDesc[],
     showWhenEmpty: boolean = false
 ): RelationshipTab {
@@ -168,7 +165,7 @@ export function constructionCombinedTab(
             const [conSelected, setConSelected] = createSignal<number>(0);
             const [deconSelected, setDeconSelected] = createSignal<number>(0);
 
-            function onConSelected(cr: ConstructionRecipeDesc) {
+            function onConSelected(cr: ConstructionRecipeDescV2) {
                 const match = deconstructedFrom.findIndex(dr => dr.consumedBuilding === cr.buildingDescriptionId);
                 setDeconSelected(match);
             }
@@ -365,7 +362,7 @@ export function enemyDropsTab(enemies: EnemyDesc[]): RelationshipTab {
 // ─── Single Recipe Tab Builders (for building page) ────────────
 
 export function constructionCombinedSingleTab(
-    constructionRecipe: ConstructionRecipeDesc | undefined,
+    constructionRecipe: ConstructionRecipeDescV2 | undefined,
     deconstructionRecipe: DeconstructionRecipeDesc | undefined,
 ): RelationshipTab {
     return {
@@ -428,7 +425,7 @@ export function questRewardsTab(quests: QuestChainDesc[]): RelationshipTab {
 }
 
 // ─── Placeable Tab Builders ─────────────────────────────────────
-
+/*
 export function placeablePlacementTab(
     placements: PlaceablePlacementDesc[],
     showWhenEmpty: boolean = false,
@@ -468,4 +465,4 @@ export function placeableInteractionsTab(
         ),
     };
 }
-
+*/

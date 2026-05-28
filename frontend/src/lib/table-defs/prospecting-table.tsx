@@ -1,6 +1,6 @@
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
-import {BiomeLink, LinkedList, SkillLinkById} from "~/lib/game-links";
+import {BiomeLink, LinkedList} from "~/lib/game-links";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {descriptionColumn, headerColumn, rowActions} from "~/lib/table-utils/column-builders";
@@ -52,6 +52,7 @@ export const ProspectingDefs: BitCraftToDataDef<ProspectingDesc> = {
             accessorKey: "contributionPerVisitedBreadCrumb",
             cell: (props) => <span>{fixFloat(props.row.original.contributionPerVisitedBreadCrumb)}</span>,
         },
+        /*
         {
             id: "Experience Per Breadcrumb",
             accessorFn: (row) => {
@@ -68,6 +69,7 @@ export const ProspectingDefs: BitCraftToDataDef<ProspectingDesc> = {
                 );
             },
         },
+        */
         rowActions(),
     ],
     searchColumns: ["Name", "Description"],

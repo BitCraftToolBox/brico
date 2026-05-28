@@ -8,15 +8,15 @@ import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {BuildingRepairsDesc} from "~/bindings/src/building_repairs_desc_type";
 import {BuildingTypeDesc} from "~/bindings/src/building_type_desc_type";
 import {CargoDesc} from "~/bindings/src/cargo_desc_type";
-import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
+import {ClaimTechDescV2} from "~/bindings/src/claim_tech_desc_v_2_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
-import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
-import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
+import {CombatActionDescV3} from "~/bindings/src/combat_action_desc_v_3_type";
+import {ConstructionRecipeDescV2} from "~/bindings/src/construction_recipe_desc_v_2_type";
+import {ContributionLootDescV2} from "~/bindings/src/contribution_loot_desc_v_2_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
-import {DeployableAppearanceOverrideDesc} from "~/bindings/src/deployable_appearance_override_desc_type";
-import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
+//import {DeployableAppearanceOverrideDesc} from "~/bindings/src/deployable_appearance_override_desc_type";
+import {DeployableDescV4} from "~/bindings/src/deployable_desc_v_4_type";
 import {EnemyAiParamsDesc} from "~/bindings/src/enemy_ai_params_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
@@ -30,14 +30,14 @@ import {KnowledgeStatModifierDesc} from "~/bindings/src/knowledge_stat_modifier_
 import {NpcDesc} from "~/bindings/src/npc_desc_type";
 import {PathfindingDesc} from "~/bindings/src/pathfinding_desc_type";
 import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
-import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
-import {PlaceableGroupDesc} from "~/bindings/src/placeable_group_desc_type";
-import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
+//import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
+//import {PlaceableGroupDesc} from "~/bindings/src/placeable_group_desc_type";
+//import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
+//import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
+//import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
-import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
+//import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
 import {QuestStageDesc} from "~/bindings/src/quest_stage_desc_type";
 import {ResourceClumpDesc} from "~/bindings/src/resource_clump_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
@@ -151,6 +151,9 @@ export class BitCraftTable<TData> {
         return map;
     }
 }
+const EMPTY = new BitCraftTable<any>('<empty>', null as unknown as AlgebraicType);
+EMPTY.get = () => [];
+EMPTY.loading = () => false;
 
 export const BitCraftTables = {
     'ItemDesc': cache<ItemDesc>('item_desc', ItemDesc),
@@ -160,11 +163,11 @@ export const BitCraftTables = {
     'BuildingRepairsDesc': cache<BuildingRepairsDesc>('building_repairs_desc', BuildingRepairsDesc),
     'BuildingDesc': cache<BuildingDesc>('building_desc', BuildingDesc),
     'BuildingTypeDesc': cache<BuildingTypeDesc>('building_type_desc', BuildingTypeDesc),
-    'ConstructionRecipeDesc': cache<ConstructionRecipeDesc>('construction_recipe_desc', ConstructionRecipeDesc),
+    'ConstructionRecipeDesc': cache<ConstructionRecipeDescV2>('construction_recipe_desc_v2', ConstructionRecipeDescV2),
     'DeconstructionRecipeDesc': cache<DeconstructionRecipeDesc>('deconstruction_recipe_desc', DeconstructionRecipeDesc),
     'CollectibleDesc': cache<CollectibleDesc>('collectible_desc', CollectibleDesc),
-    'DeployableDesc': cache<DeployableDesc>('deployable_desc', DeployableDesc),
-    'ClaimTechDesc': cache<ClaimTechDesc>('claim_tech_desc', ClaimTechDesc),
+    'DeployableDesc': cache<DeployableDescV4>('deployable_desc_v4', DeployableDescV4),
+    'ClaimTechDesc': cache<ClaimTechDescV2>('claim_tech_desc_v2', ClaimTechDescV2),
     'TravelerTaskDesc': cache<TravelerTaskDesc>('traveler_task_desc', TravelerTaskDesc),
     'TravelerTradeOrderDesc': cache<TravelerTradeOrderDesc>('traveler_trade_order_desc', TravelerTradeOrderDesc),
     'BiomeDesc': cache<BiomeDesc>('biome_desc', BiomeDesc),
@@ -186,22 +189,22 @@ export const BitCraftTables = {
     'PathfindingDesc': cache<PathfindingDesc>('pathfinding_desc', PathfindingDesc),
     'AchievementDesc': cache<AchievementDesc>('achievement_desc', AchievementDesc),
     'ProspectingDesc': cache<ProspectingDesc>('prospecting_desc', ProspectingDesc),
-    'CombatActionDesc': cache<CombatActionDesc>('combat_action_desc', CombatActionDesc),
+    'CombatActionDesc': cache<CombatActionDescV3>('combat_action_desc_v3', CombatActionDescV3),
     'PavingTileDesc': cache<PavingTileDesc>('paving_tile_desc', PavingTileDesc),
     'ResourceClumpDesc': cache<ResourceClumpDesc>('resource_clump_desc', ResourceClumpDesc),
     'EnemyAiParamsDesc': cache<EnemyAiParamsDesc>('enemy_ai_params_desc', EnemyAiParamsDesc),
-    'ContributionLootDesc': cache<ContributionLootDesc>('contribution_loot_desc', ContributionLootDesc),
-    'QuestDropDesc': cache<QuestDropDesc>('quest_drop_desc', QuestDropDesc),
+    'ContributionLootDesc': cache<ContributionLootDescV2>('contribution_loot_desc_v2', ContributionLootDescV2),
+    'QuestDropDesc': EMPTY, //cache<QuestDropDesc>('quest_drop_desc', QuestDropDesc),
     'QuestChainDesc': cache<QuestChainDesc>('quest_chain_desc', QuestChainDesc),
     'BuffTypeDesc': cache<BuffTypeDesc>('buff_type_desc', BuffTypeDesc),
     'QuestStageDesc': cache<QuestStageDesc>('quest_stage_desc', QuestStageDesc),
-    'PlaceableDesc': cache<PlaceableDesc>('placeable_desc', PlaceableDesc),
-    'PlaceableGroupDesc': cache<PlaceableGroupDesc>('placeable_group_desc', PlaceableGroupDesc),
-    'PlaceableGrowthDesc': cache<PlaceableGrowthDesc>('placeable_growth_desc', PlaceableGrowthDesc),
-    'PlaceableInteractionDesc': cache<PlaceableInteractionDesc>('placeable_interaction_desc', PlaceableInteractionDesc),
-    'PlaceablePlacementDesc': cache<PlaceablePlacementDesc>('placeable_placement_desc', PlaceablePlacementDesc),
+    'PlaceableDesc': EMPTY, //cache<PlaceableDesc>('placeable_desc', PlaceableDesc),
+    'PlaceableGroupDesc': EMPTY, //cache<PlaceableGroupDesc>('placeable_group_desc', PlaceableGroupDesc),
+    'PlaceableGrowthDesc': EMPTY, //cache<PlaceableGrowthDesc>('placeable_growth_desc', PlaceableGrowthDesc),
+    'PlaceableInteractionDesc': EMPTY, //cache<PlaceableInteractionDesc>('placeable_interaction_desc', PlaceableInteractionDesc),
+    'PlaceablePlacementDesc': EMPTY, //cache<PlaceablePlacementDesc>('placeable_placement_desc', PlaceablePlacementDesc),
     'NpcDesc': cache<NpcDesc>('npc_desc', NpcDesc),
-    'DeployableAppearanceOverrideDesc': cache<DeployableAppearanceOverrideDesc>('deployable_appearance_override_desc', DeployableAppearanceOverrideDesc),
+    'DeployableAppearanceOverrideDesc': EMPTY, //cache<DeployableAppearanceOverrideDesc>('deployable_appearance_override_desc', DeployableAppearanceOverrideDesc),
 };
 
 /**

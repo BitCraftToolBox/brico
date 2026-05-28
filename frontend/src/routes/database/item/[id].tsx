@@ -4,7 +4,7 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {breadcrumb, BuffLink, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
-import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
+//import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
     constructionRecipesConsuming,
     conversionRecipesConsuming,
@@ -37,8 +37,6 @@ import {
     extractionTab,
     itemListsTab,
     itemListTab,
-    placeableInteractionsTab,
-    placeablePlacementTab,
     questRequirementsTab,
     questRewardsTab,
     travelerTasksTab,
@@ -155,8 +153,8 @@ export default function ItemDetail() {
     });
     const questRewards = createMemo(() => itemId() != null ? questsRewardingItem(itemId()!, itemType) : []);
 
-    const placeablePlacements = createMemo(() => itemId() != null ? placementsConsumingItem(itemId()!, itemType) : []);
-    const placeableInteractions = createMemo(() => itemId() != null ? interactionsInvolvingItem(itemId()!, itemType) : []);
+    //const placeablePlacements = createMemo(() => itemId() != null ? placementsConsumingItem(itemId()!, itemType) : []);
+    //const placeableInteractions = createMemo(() => itemId() != null ? interactionsInvolvingItem(itemId()!, itemType) : []);
 
     const detailGroups = createMemo((): DetailGroup[] => {
         const i = item();
@@ -297,8 +295,8 @@ export default function ItemDetail() {
                 itemListsTab(inItemLists()),
                 questRequirementsTab(questRequires()),
                 questRewardsTab(questRewards()),
-                placeablePlacementTab(placeablePlacements()),
-                placeableInteractionsTab(placeableInteractions()),
+                //placeablePlacementTab(placeablePlacements()),
+                //placeableInteractionsTab(placeableInteractions()),
             ]}
         />
     );

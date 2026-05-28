@@ -7,7 +7,7 @@ import {useNavigate} from "@solidjs/router";
 import {Component} from "solid-js";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuffEffect} from "~/bindings/src/buff_effect_type";
-import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
+import {CombatActionDescV2} from "~/bindings/src/combat_action_desc_v_2_type";
 import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
 import {InputItemStack} from "~/bindings/src/input_item_stack_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
@@ -107,10 +107,10 @@ export const AchievementTable: Component<{ data: AchievementDesc[] }> = (props) 
 
 // ─── Combat Action Table ────────────────────────────────────────
 
-export const CombatActionTable: Component<{ data: CombatActionDesc[] }> = (props) => {
+export const CombatActionTable: Component<{ data: CombatActionDescV2[] }> = (props) => {
     const navigate = useNavigate();
     return (
-        <RelTable<CombatActionDesc>
+        <RelTable<CombatActionDescV2>
             data={props.data}
             columns={[
                 {header: "Name", cell: (row) => <CombatActionLink id={row.id} name={row.name} codepoint={row.iconAssetName}/>},

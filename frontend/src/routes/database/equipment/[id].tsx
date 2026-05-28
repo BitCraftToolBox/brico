@@ -29,7 +29,7 @@ export default function EquipmentDetail() {
                     {label: "Slots", value: eq.slots?.map(s => splitCamelCase(s.tag)).join(", ")},
                     {label: "Required Skill", value: eq.levelRequirement?.skillId ? <SkillLinkById skillId={eq.levelRequirement.skillId}/> : undefined},
                     {label: "Required Level", value: eq.levelRequirement?.level},
-                    {label: "Show In Progression", value: eq.showInProgression ? "Yes" : undefined},
+                    //{label: "Show In Progression", value: eq.showInProgression ? "Yes" : undefined},
                 ],
             },
         ];

@@ -53,7 +53,7 @@ export default function BuildingDetail() {
 
         const lightRadius = b.lightRadius > 0 ? fixFloat(b.lightRadius) : undefined;
         const restedBuff = b.restedBuffDuration > 0 ? `${fixFloat(b.restedBuffDuration)}s` : undefined;
-        if (lightRadius || restedBuff || b.wilderness || b.unenterable || b.notDeconstructible || b.destroyOnUnclaim) {
+        if (lightRadius || restedBuff || b.wilderness || b.unenterable || b.notDeconstructible) {// || b.destroyOnUnclaim) {
             groups.push({
                 properties: [
                     {label: "Max Health", value: b.maxHealth},
@@ -66,7 +66,7 @@ export default function BuildingDetail() {
                     {label: "Wilderness", value: b.wilderness ? true : undefined},
                     {label: "Unenterable", value: b.unenterable ? true : undefined},
                     {label: "Not Deconstructible", value: b.notDeconstructible ? true : undefined},
-                    {label: "Destroy On Unclaim", value: b.destroyOnUnclaim ? true : undefined},
+                    // {label: "Destroy On Unclaim", value: b.destroyOnUnclaim ? true : undefined},
                 ],
             });
         }
