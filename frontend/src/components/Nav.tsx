@@ -60,8 +60,9 @@ export default function Nav(props: NavProps) {
         <nav class="flex flex-col sticky z-20 top-0 h-10 bg-sidebar-primary text-sidebar-primary-foreground">
             <div class="flex flex-row items-center h-10 w-full gap-2 px-2">
                 <SidebarTrigger class="shrink-0"/>
-                <div class="shrink-0">
-                    <h1 class="text-lg text-center leading-none">{props.title}</h1>
+                {/* hack so overflow is to the left - the last part of the title is the most important */}
+                <div class="max-w-[calc(90svw-5rem)] overflow-hidden" style="direction: rtl">
+                    <h1 class="text-lg text-center text-nowrap leading-none">{props.title}</h1>
                 </div>
                 <div class="flex-1"/>
                 <Show when={!props.hideSearch}>

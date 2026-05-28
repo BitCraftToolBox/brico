@@ -13,6 +13,7 @@
 import {useNavigate} from "@solidjs/router";
 import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
 import {createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
+import {useIsMobile} from "~/components/ui/sidebar";
 import {ObjectMatch, quickSearch} from "~/lib/global-search";
 import {cn} from "~/lib/utils";
 
@@ -35,6 +36,7 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
     const [dropdownOpen, setDropdownOpen] = createSignal(false);
     const [activeIndex, setActiveIndex] = createSignal(-1);
     const [activeTab, setActiveTab] = createSignal("all");
+    const isMobile = useIsMobile();
     let inputRef: HTMLInputElement | undefined;
     let dropdownRef: HTMLDivElement | undefined;
     let wrapperRef: HTMLDivElement | undefined;
@@ -113,7 +115,6 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
         const q = query().trim();
         setDropdownOpen(false);
         if (inputRef) inputRef.value = "";
-        setQuery("");
         navigate(`/search?q=${encodeURIComponent(q)}`);
     };
 
@@ -154,7 +155,6 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
     };
 
     onMount(() => {
-        if (props.autofocus) inputRef?.focus();
 
         const onKeyDown = (e: KeyboardEvent) => {
             if (e.key !== "/") return;
@@ -199,6 +199,7 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
                         onFocus={() => {
                             if (query().trim()) setDropdownOpen(true);
                         }}
+                        autofocus={props.autofocus && (!isMobile() || !query()) ? true : undefined}
                         class={cn(
                             "w-full rounded-md border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sidebar-ring",
                             isLarge() ? "pl-10 pr-12 py-3 text-base" : "pl-8 pr-8 py-1.5 text-sm"

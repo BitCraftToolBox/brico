@@ -55,7 +55,7 @@ function ButtonGroup<T extends string>(props: {
     onChange: (v: T) => void;
 }) {
     return (
-        <div class="flex rounded-md border border-input overflow-hidden">
+        <div class="flex flex-col sm:flex-row rounded-md border border-input overflow-hidden">
             <For each={props.options}>
                 {(opt) => (
                     <button
@@ -67,7 +67,7 @@ function ButtonGroup<T extends string>(props: {
                                 ? "bg-primary text-primary-foreground font-medium"
                                 : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                             }
-                            [&:not(:last-child)]:border-r [&:not(:last-child)]:border-input`}
+                            not-last:border-r not-last:border-input`}
                         onClick={() => props.onChange(opt.value)}
                     >
                         {opt.icon({class: "size-4 shrink-0"})}
