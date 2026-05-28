@@ -3,6 +3,7 @@ import {createMemo} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemStackTable} from "~/components/shared/RelTablePresets";
+import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {readableSeconds, undefinedIfZero} from "~/lib/utils";
 
@@ -42,6 +43,7 @@ export default function ClaimResearchDetail() {
     return (
         <DetailPageLayout
             title={tech()?.name ?? `Claim Tech #${params.id}`}
+            breadcrumb={breadcrumb("/database/claim-research")}
             loading={isLoading() && !tech()}
             name={tech()?.name ?? "Claim research not found"}
             tier={tech()?.tier}

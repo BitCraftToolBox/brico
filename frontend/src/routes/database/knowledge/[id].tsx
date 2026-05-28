@@ -2,6 +2,7 @@ import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
+import {breadcrumb} from "~/lib/game-links";
 import {questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
@@ -79,6 +80,7 @@ export default function KnowledgeDetail() {
     return (
         <DetailPageLayout
             title={knowledge()?.name ?? `Knowledge #${params.id}`}
+            breadcrumb={breadcrumb("/database/knowledge")}
             loading={isLoading() && !knowledge()}
             icon={<Show when={item()}>{(i) =>
                 <ItemIcon item={i()} small={false} noInteract/>

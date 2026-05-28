@@ -13,6 +13,7 @@ import {createMemo, Show} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
 import MainLayout from "~/components/MainLayout";
 import {QuestGraph} from "~/components/shared/QuestGraph";
+import {breadcrumb} from "~/lib/game-links";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -42,7 +43,12 @@ export default function QuestGraphTool() {
     });
 
     return (
-        <MainLayout title="Quest Graph">
+        <MainLayout title="Quest Graph" navTitle={
+            <>
+                {breadcrumb("/database/quest-chain", "Quests")}
+                {"Graph"}
+            </>
+        }>
             <Show when={!isLoading()} fallback={
                 <div class="flex items-center justify-center py-20">
                     <Spinner type={SpinnerType.ballTriangle} class="mx-auto"/>

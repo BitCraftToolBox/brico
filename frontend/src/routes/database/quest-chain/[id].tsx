@@ -124,7 +124,7 @@ export default function QuestChainDetail() {
                     </Show>
                 </div>
             ) : undefined}
-            detailTabs={treeResult()?.allTreeQuestIds.size ? [["Quest Tree", () => {
+            infoTabs={treeResult()?.allTreeQuestIds.size ? [["Quest Tree", () => {
                 const result = treeResult();
                 if (!result) return <></>;
                 const incomplete = [...result.involvedQuestIds];

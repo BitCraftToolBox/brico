@@ -2,6 +2,7 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemListSourceIcon} from "~/components/shared/GameIcon";
+import {breadcrumb} from "~/lib/game-links";
 import {getItemListSource, ItemListSource} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {itemListTab} from "~/lib/table-utils/detail-tab-builders";
@@ -36,6 +37,7 @@ export default function ItemListDetail() {
     return (
         <DetailPageLayout
             title={itemList()?.name || `Item List #${params.id}`}
+            breadcrumb={breadcrumb("/database/item-list")}
             loading={isLoading() && !itemList()}
             name={itemList()?.name || `Item List #${params.id}`}
             tag={"Item List"}

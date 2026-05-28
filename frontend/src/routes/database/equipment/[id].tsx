@@ -2,7 +2,7 @@ import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
-import {SkillLinkById} from "~/lib/game-links";
+import {breadcrumb, SkillLinkById} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, splitCamelCase} from "~/lib/utils";
 
@@ -48,6 +48,7 @@ export default function EquipmentDetail() {
     return (
         <DetailPageLayout
             title={item()?.name ?? `Equipment #${params.id}`}
+            breadcrumb={breadcrumb("/database/equipment")}
             loading={isLoading() && !equipment()}
             icon={<Show when={item()}>{(i) =>
                 <GameIcon name={i().name} iconAsset={i().iconAssetName} shape="tall"

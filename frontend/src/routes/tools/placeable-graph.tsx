@@ -15,6 +15,7 @@ import {PlaceablePlacementDesc} from "~/bindings/src";
 import MainLayout from "~/components/MainLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {buildPlaceableGraph, PlaceableGraph} from "~/components/shared/PlaceableGraph";
+import {breadcrumb} from "~/lib/game-links";
 import {getPlaceableName} from "~/lib/placeables";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -43,6 +44,12 @@ export default function PlaceableGraphTool() {
         const id = parseInt(str, 10);
         return isNaN(id) ? undefined : id;
     });
+    const selectedPlaceableName = createMemo(() => {
+        if (!selectedPlacementId()) return undefined;
+        const p = placements().find(pp => pp.id === selectedPlacementId());
+        if (!p) return undefined;
+        return getPlaceableName(p?.placedPlaceableId);
+    })
 
     const graphData = createMemo(() => {
         const id = selectedPlacementId();
@@ -75,21 +82,30 @@ export default function PlaceableGraphTool() {
     }
 
     return (
-        <MainLayout title="Placeable Graph">
+        <MainLayout title="Placeable Graph" navTitle={
+            <>
+                {breadcrumb("/database/placeable", "Placeables")}
+                <span>Lifecycle Graph</span>
+                <Show when={selectedPlaceableName()}>{(n) => {
+                    return <>
+                        <span class="mx-1.5">{">"}</span>
+                        <span>{n()}</span>
+                    </>;
+                }}</Show>
+            </>
+        }>
             <Show when={!isLoading()} fallback={
                 <div class="flex items-center justify-center py-20">
                     <Spinner type={SpinnerType.ballTriangle} class="mx-auto"/>
                 </div>
             }>
                 <div class="flex flex-col gap-4 px-4 pb-6 h-full">
-                    {/* Header */}
-                    <div class="flex justify-center">
-                        <h1 class="text-xl font-bold">Placeable Lifecycle Graph</h1>
-                    </div>
-
                     <Show when={graphData()} fallback={
                         /* Empty state: list of placements */
                         <div class="max-w-2xl mx-auto w-full">
+                            <div class="flex justify-center pb-4">
+                                <h1 class="text-xl font-bold">Placeable Lifecycle Graph</h1>
+                            </div>
                             <p class="text-sm text-muted-foreground mb-4">
                                 Select a placement to visualize its lifecycle chain.
                             </p>
@@ -111,19 +127,12 @@ export default function PlaceableGraphTool() {
                     }>
                         {(data) => (
                             <div class="flex flex-col flex-1 min-h-0 gap-2">
-                                <Show when={selectedPlacementId()}>
-                                    {(id) => {
-                                        const p = () => placements().find(pp => pp.id === id());
-                                        return (
-                                            <Show when={p()}>
-                                                {(pp) => (
-                                                    <div class="flex justify-center">
-                                                        <h2 class="text-lg font-bold">{getPlaceableName(pp().placedPlaceableId)}</h2>
-                                                    </div>
-                                                )}
-                                            </Show>
-                                        );
-                                    }}
+                                <Show when={selectedPlaceableName()}>
+                                    {(n) => (
+                                        <div class="flex justify-center">
+                                            <h2 class="text-lg font-bold">{n()}</h2>
+                                        </div>
+                                    )}
                                 </Show>
                                 <div class="flex justify-center">
                                     <button

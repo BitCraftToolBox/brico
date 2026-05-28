@@ -4,7 +4,7 @@ import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayou
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {StatTable} from "~/components/shared/RelTablePresets";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
-import {CollectibleLink, ItemLink} from "~/lib/game-links";
+import {breadcrumb, CollectibleLink, ItemLink} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds, undefinedIfZero} from "~/lib/utils";
 
@@ -83,6 +83,7 @@ export default function DeployableDetail() {
     return (
         <DetailPageLayout
             title={deployable()?.name ?? `Deployable #${params.id}`}
+            breadcrumb={breadcrumb("/database/deployable")}
             loading={isLoading() && !deployable()}
             icon={<Show when={collectible()}>{c => <CollectibleIcon collectible={c()} small={false} noInteract/>}</Show>}
             name={deployable()?.name ?? "Deployable not found"}

@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
+import {breadcrumb} from "~/lib/game-links";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
     constructionRecipesConsuming,
@@ -93,6 +94,7 @@ export default function CargoDetail() {
     return (
         <DetailPageLayout
             title={cargo()?.name ?? `Cargo #${params.id}`}
+            breadcrumb={breadcrumb("/database/cargo")}
             loading={isLoading() && !cargo()}
             icon={<Show when={cargo()}>{(c) =>
                 <CargoIcon cargo={c()} small={false} noInteract/>

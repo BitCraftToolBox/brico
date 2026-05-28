@@ -3,7 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
-import {BuffLink, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
+import {breadcrumb, BuffLink, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
     constructionRecipesConsuming,
@@ -270,6 +270,7 @@ export default function ItemDetail() {
     return (
         <DetailPageLayout
             title={item()?.name ?? `Item #${params.id}`}
+            breadcrumb={breadcrumb("/database/item")}
             loading={isLoading() && !item()}
             icon={<Show when={item()}>{i => <ItemIcon item={i()} small={false} noInteract/>}</Show>}
             name={item()?.name ?? "Item not found"}

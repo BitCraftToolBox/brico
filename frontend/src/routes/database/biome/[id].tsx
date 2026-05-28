@@ -2,6 +2,7 @@ import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
+import {breadcrumb} from "~/lib/game-links";
 import {prospectingForBiome} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -26,6 +27,7 @@ export default function BiomeDetail() {
     return (
         <DetailPageLayout
             title={biome()?.name ?? `Biome #${params.id}`}
+            breadcrumb={breadcrumb("/database/biome")}
             loading={isLoading() && !biome()}
             name={biome()?.name ?? "Biome not found"}
             description={biome()?.description}

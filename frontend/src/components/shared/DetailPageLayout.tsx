@@ -7,6 +7,7 @@
  * 3. Relationship Tabs: Each tab renders a mini table of related objects
  */
 
+import {useSearchParams} from "@solidjs/router";
 import {
     TbOutlineClipboardCheck as IconClipboardCheck,
     TbOutlineClipboardCopy as IconClipboardCopy,
@@ -46,6 +47,8 @@ export interface RelationshipTab {
 export interface DetailPageProps {
     /** Page title (shown in browser tab / MainLayout) */
     title: string;
+    /** Shown before the title in the navbar */
+    breadcrumb?: JSX.Element;
     /** Whether the primary data is still loading */
     loading?: boolean;
     /** Icon element */
@@ -77,7 +80,7 @@ export interface DetailPageProps {
     /** BitCraft chat hyperlink */
     chatLink?: string;
     /** Extra detail tabs **/
-    detailTabs?: [string, () => JSX.Element][]
+    infoTabs?: [string, () => JSX.Element][]
     /** Relationship tabs */
     tabs?: RelationshipTab[];
     /** Fallback when entity not found */
@@ -172,27 +175,67 @@ const CopyButton: Component<{
 // ─── Main Component ─────────────────────────────────────────────
 
 export const DetailPageLayout: Component<DetailPageProps> = (props) => {
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const availableTabs = () => props.tabs?.filter(t => t.count === undefined || t.count > 0) ?? [];
     const disabledTabs = () => props.tabs?.filter(t => t.count !== undefined && t.count === 0 && (t.showWhenEmpty ?? true)) ?? [];
     const groups = () => normalizeGroups(props.details);
     const hasDetails = () => groups().some(g => visibleProps(g.properties).length > 0);
-    const hasInfoSection = () => hasDetails() || props.summaryContent || props.rawData || props.detailTabs;
+    const hasInfoSection = () => hasDetails() || props.summaryContent || props.rawData || props.infoTabs;
 
-    const [infoTab, setInfoTab] = createSignal<InfoTab>("summary");
-    const [selectedTab, setSelectedTab] = createSignal<string | undefined>(availableTabs()?.[0]?.id);
+    const [infoTab, setInfoTabRaw] = createSignal<InfoTab>("summary");
+    const setInfoTab = (tab: string) => {
+        setInfoTabRaw(tab);
+        setSearchParams({tab}, {replace: true});
+    }
+    // Start undefined; the effect below will resolve from ?detail= or default to first tab.
+    const [selectedTab, setSelectedTabRaw] = createSignal<string | undefined>(undefined);
+    const setSelectedTab = (detail: string) => {
+        setSelectedTabRaw(detail);
+        setSearchParams({detail}, {replace: true});
+    }
+
     onMount(() => {
+        const tabParam = Array.isArray(searchParams.tab) ? searchParams.tab[0] : searchParams.tab;
+        if (tabParam) {
+            // Build the list of valid info-tab ids so we can validate the param.
+            const validInfoTabs: string[] = [
+                ...(props.summaryContent ? ["summary"] : []),
+                ...(props.infoTabs?.map(t => t[0]) ?? []),
+                ...(hasDetails() ? ["details"] : []),
+                ...(props.rawData ? ["raw"] : []),
+            ];
+            if (validInfoTabs.includes(tabParam)) {
+                setInfoTab(tabParam as InfoTab);
+                return; // skip the default-details logic below
+            }
+        }
+        // Default: prefer Details when there is no Summary
         if (hasDetails() && !props.summaryContent) {
             setInfoTab("details");
         }
     });
+
     createEffect(() => {
-        if (selectedTab() && !availableTabs()?.find(t => t.id === selectedTab())) {
-            setSelectedTab(availableTabs()?.[0]?.id);
+        const tabs = availableTabs();
+        const detailParam = Array.isArray(searchParams.detail) ? searchParams.detail[0] : searchParams.detail;
+
+        if (detailParam) {
+            const match = tabs.find(t => t.id === detailParam);
+            setSelectedTab(match?.id ?? tabs[0]?.id);
+            return;
         }
+
+        // No param: keep the current selection if it is still valid, otherwise reset to first tab.
+        // (selectedTab() is only read in this branch so it is not a dependency when detailParam is set,
+        //  preventing a re-trigger loop after setSelectedTab is called above.)
+        const current = selectedTab();
+        if (current && tabs.find(t => t.id === current)) return;
+        setSelectedTab(tabs[0]?.id);
     });
 
     return (
-        <MainLayout title={props.title}>
+        <MainLayout title={props.title} navTitle={<>{props.breadcrumb}{props.title}</>}>
             <Show when={!props.loading} fallback={
                 <div class="flex items-center justify-center py-20">
                     <Spinner type={SpinnerType.ballTriangle} class="mx-auto"/>
@@ -233,7 +276,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                     <Show when={props.summaryContent}>
                                         <PseudoTabLink label="Summary" tab="summary" active={infoTab()} onClick={setInfoTab}/>
                                     </Show>
-                                    <For each={props.detailTabs}>{tab =>
+                                    <For each={props.infoTabs}>{tab =>
                                         <PseudoTabLink label={tab[0]} tab={tab[0]} active={infoTab()} onClick={setInfoTab}/>
                                     }</For>
                                     <PseudoTabLink label="Details" tab="details" active={infoTab()} onClick={setInfoTab}/>
@@ -248,7 +291,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                     {props.summaryContent!()}
                                 </Show>
                                 {/* Extra tabs */}
-                                <For each={props.detailTabs}>{tab =>
+                                <For each={props.infoTabs}>{tab =>
                                     <Show when={infoTab() === tab[0]}>
                                         {tab[1]()}
                                     </Show>

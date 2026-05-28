@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds, splitCamelCase} from "~/lib/utils";
 
@@ -57,6 +58,7 @@ export default function BuffDetail() {
     return (
         <DetailPageLayout
             title={buff()?.description ?? `Buff #${params.id}`}
+            breadcrumb={breadcrumb("/database/buff")}
             loading={isLoading() && !buff()}
             name={buff()?.description ?? `Buff #${params.id}`}
             icon={<Show when={buff()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}

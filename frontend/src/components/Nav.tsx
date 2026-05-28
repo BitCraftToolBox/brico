@@ -8,7 +8,7 @@ import {
     TbOutlineSettings as IconSettings,
     TbOutlineSun as IconSun
 } from "solid-icons/tb"
-import {Show} from "solid-js";
+import {JSX, Show} from "solid-js";
 import {isDev} from "solid-js/web";
 import GlobalSearchInput from "~/components/GlobalSearchInput";
 import {Button} from "~/components/ui/button"
@@ -51,7 +51,7 @@ function DarkModeToggle() {
 }
 
 interface NavProps {
-    title: string;
+    title: JSX.Element;
     hideSearch?: boolean;
 }
 

@@ -9,7 +9,7 @@ import {ItemListDisplay, QuestDropDisplay} from "~/components/shared/ItemStacks"
 import {EnemyDropPanel} from "~/components/shared/RecipeDisplay";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
-import {ItemListLink, SkillLinkById} from "~/lib/game-links";
+import {breadcrumb, ItemListLink, SkillLinkById} from "~/lib/game-links";
 import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
@@ -105,6 +105,7 @@ export default function CreatureDetail() {
     return (
         <DetailPageLayout
             title={creature()?.name ?? `Creature #${params.id}`}
+            breadcrumb={breadcrumb("/database/creature")}
             loading={isLoading() && !creature()}
             icon={<Show when={creature()}>{(c) =>
                 <EnemyIcon enemy={c()} small={false} noInteract/>

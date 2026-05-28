@@ -367,3 +367,15 @@ export function knowledgeStatIcon(): JSX.Element {
     if (!icon) return <></>;
     return icon({class: "size-4 shrink-0 inline align-text-bottom"});
 }
+
+
+export function breadcrumb(href: string, title?: string): JSX.Element {
+    title = title ?? href
+        .split("/").pop()
+        ?.replace(/(-[a-z])/g, c => " " + c[1].toUpperCase())
+        .replace(/^\w/, c => c.toUpperCase());
+    if (!title) return <></>;
+    return <>
+        <A href={href}>{title}</A><span class="mx-1.5">{">"}</span>
+    </>;
+}

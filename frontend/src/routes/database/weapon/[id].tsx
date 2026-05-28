@@ -4,6 +4,7 @@ import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
+import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
@@ -34,6 +35,7 @@ export default function WeaponDetail() {
     return (
         <DetailPageLayout
             title={item()?.name ?? `Weapon #${params.id}`}
+            breadcrumb={breadcrumb("/database/weapon")}
             loading={isLoading() && !weapon()}
             icon={<Show when={item()}>{(i) =>
                 <GameIcon name={i().name} iconAsset={i().iconAssetName} shape="tall"

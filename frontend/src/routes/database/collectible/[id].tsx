@@ -5,7 +5,7 @@ import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_ty
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
-import {ItemLink} from "~/lib/game-links";
+import {breadcrumb, ItemLink} from "~/lib/game-links";
 import {questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
@@ -62,6 +62,7 @@ export default function CollectibleDetail() {
     return (
         <DetailPageLayout
             title={collectible()?.name ?? `Collectible #${params.id}`}
+            breadcrumb={breadcrumb("/database/collectible")}
             loading={isLoading() && !collectible()}
             icon={<Show when={collectible()}>{c => <CollectibleIcon collectible={c()} small={false} noInteract/>}</Show>}
             name={collectible()?.name ?? "Collectible not found"}

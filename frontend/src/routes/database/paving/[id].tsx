@@ -4,6 +4,7 @@ import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_ty
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {InputItemStackTable, KnowledgeTable, StatTable} from "~/components/shared/RelTablePresets";
+import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
@@ -40,6 +41,7 @@ export default function PavingDetail() {
     return (
         <DetailPageLayout
             title={tile()?.name ?? `Paving Tile #${params.id}`}
+            breadcrumb={breadcrumb("/database/paving")}
             loading={isLoading() && !tile()}
             icon={<Show when={tile()}>{(t) =>
                 <GameIcon name={t().name} iconAsset={t().iconAddress} shape="square"

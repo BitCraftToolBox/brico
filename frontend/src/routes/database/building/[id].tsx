@@ -4,6 +4,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, DetailProperty} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
+import {breadcrumb} from "~/lib/game-links";
 import {constructionRecipeForBuilding, deconstructionRecipeForBuilding,} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {constructionCombinedSingleTab} from "~/lib/table-utils/detail-tab-builders";
@@ -96,6 +97,7 @@ export default function BuildingDetail() {
     return (
         <DetailPageLayout
             title={building()?.name ?? `Building #${params.id}`}
+            breadcrumb={breadcrumb("/database/building", "Structure")}
             loading={isLoading() && !building()}
             icon={<Show when={building()}>{(b) =>
                 <GameIcon name={b().name} iconAsset={b().iconAssetName} shape="square"

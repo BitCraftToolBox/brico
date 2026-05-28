@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/shared/DetailPageLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {GrowthPanel, InteractionPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
+import {breadcrumb} from "~/lib/game-links";
 import {
     findRootPlacement,
     getInteractionName,
@@ -152,6 +153,7 @@ export default function PlaceableDetail() {
     return (
         <DetailPageLayout
             title={placeable()?.name ?? `Placeable #${params.id}`}
+            breadcrumb={breadcrumb("/database/placeable")}
             loading={isLoading() && !placeable()}
             icon={<Show when={placeable()}>{p =>
                 <PlaceableIcon placeable={p()} small={false} noInteract/>

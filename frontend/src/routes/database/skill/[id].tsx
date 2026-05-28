@@ -1,8 +1,8 @@
 import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
+import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {splitCamelCase} from "~/lib/utils";
 
 export default function SkillDetail() {
     const params = useParams();
@@ -14,14 +14,21 @@ export default function SkillDetail() {
         if (isNaN(id)) return undefined;
         return skillIndex()?.get(id);
     });
+    const skillTag = createMemo(() => {
+        const s = skill();
+        if (!s) return "Unknown";
+        if (s.skillCategory.tag == "None") return "Skill";
+        return s.skillCategory.tag;
+    });
 
     return (
         <DetailPageLayout
             title={skill()?.name ?? `Skill #${params.id}`}
+            breadcrumb={breadcrumb("/database/skill", skillTag())}
             loading={isLoading() && !skill()}
             name={skill()?.name ?? `Skill #${params.id}`}
             description={skill()?.description}
-            tag={skill() ? splitCamelCase(skill()!.skillCategory?.tag ?? "") : undefined}
+            tag={skillTag()}
             details={[
                 {label: "Title", value: skill()?.title},
                 {label: "Max Level", value: skill()?.maxLevel},

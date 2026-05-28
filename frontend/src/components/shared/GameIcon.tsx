@@ -5,7 +5,7 @@
  */
 
 import {useColorMode} from "@kobalte/core";
-import {A} from "@solidjs/router";
+import {A, useNavigate} from "@solidjs/router";
 import {Component, ComponentProps, JSX, Show, splitProps} from "solid-js";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {CargoDesc} from "~/bindings/src/cargo_desc_type";
@@ -111,6 +111,13 @@ export type GameIconProps = Omit<ComponentProps<"div">, "children"> & {
     tooltipContent?: JSX.Element;
     /** Quantity for asset URL variants (e.g. hex coin) */
     quantity?: number;
+    /**
+     * When set, clicking the icon navigates to the href with a query-string appended.
+     * - string: always appended as `?<clickParams>` on left-click.
+     * - [string, string]: first element on left-click, second on right-click (context menu).
+     * Ctrl/Meta/Shift clicks pass through to the browser normally.
+     */
+    clickParams?: string | [string, string];
 };
 
 type TierIconProps = ComponentProps<"img" | "div"> & {
@@ -156,12 +163,13 @@ export const TierIcon: Component<TierIconProps> = (props) => {
 export const GameIcon: Component<GameIconProps> = (props) => {
     const [local, others] = splitProps(props, [
         "class", "name", "iconAsset", "shape", "small", "tier", "rarity",
-        "href", "noInteract", "tooltipContent", "quantity",
+        "href", "noInteract", "tooltipContent", "quantity", "clickParams",
     ]);
 
     const small = () => local.small ?? true;
     const noInteract = () => local.noInteract ?? false;
     const {colorMode} = useColorMode();
+    const navigate = useNavigate();
 
     const sizeEntry = () => {
         const preset = SHAPE_SIZES[local.shape];
@@ -193,6 +201,21 @@ export const GameIcon: Component<GameIconProps> = (props) => {
             </Show>
         </div>
     );
+
+    const handleClick = (e: MouseEvent) => {
+        if (!local.clickParams || !local.href) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return; // let browser handle modifier clicks
+        e.preventDefault();
+        const param = Array.isArray(local.clickParams) ? local.clickParams[0] : local.clickParams;
+        navigate(`${local.href}?${param}`);
+    };
+
+    const handleContextMenu = (e: MouseEvent) => {
+        if (!local.clickParams || !local.href) return;
+        if (!Array.isArray(local.clickParams)) return;
+        e.preventDefault();
+        navigate(`${local.href}?${local.clickParams[1]}`);
+    };
 
     const iconDiv = () => (
         <div
@@ -229,7 +252,10 @@ export const GameIcon: Component<GameIconProps> = (props) => {
                           {iconDiv()}
                       </TooltipTrigger>
                   }>
-                <TooltipTrigger as={A} href={local.href ?? "#"} class={"cursor-pointer"}>
+                <TooltipTrigger as={A} href={local.href ?? "#"} class={"cursor-pointer"}
+                                onClick={handleClick}
+                                onContextMenu={handleContextMenu}
+                >
                     {iconDiv()}
                 </TooltipTrigger>
             </Show>
@@ -263,6 +289,7 @@ export const ItemIcon: Component<ItemIconProps> = (props) => {
             href={`/database/item/${props.item.id}`}
             quantity={local.quantity}
             shape="tall"
+            clickParams={["detail=crafts-from", "detail=crafts-into"]}
             {...others}
         />
     );
@@ -287,6 +314,7 @@ export const CargoIcon: Component<CargoIconProps> = (props) => {
             quantity={local.quantity}
             href={`/database/cargo/${props.cargo.id}`}
             shape="wide"
+            clickParams={["detail=crafts-from", "detail=crafts-into"]}
             {...others}
         />
     )

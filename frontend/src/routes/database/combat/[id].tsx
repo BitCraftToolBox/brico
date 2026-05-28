@@ -4,6 +4,7 @@ import {BuffEffect} from "~/bindings/src/buff_effect_type";
 import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {BuffTable} from "~/components/shared/RelTablePresets";
+import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, undefinedIfZero} from "~/lib/utils";
 
@@ -56,6 +57,7 @@ export default function CombatDetail() {
     return (
         <DetailPageLayout
             title={action()?.name ?? `Combat Action #${params.id}`}
+            breadcrumb={breadcrumb("/database/combat", "Combat Ability")}
             loading={isLoading() && !action()}
             name={action()?.name ?? "Combat action not found"}
             description={action()?.description}

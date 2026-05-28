@@ -2,7 +2,7 @@ import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
-import {SkillLinkById} from "~/lib/game-links";
+import {breadcrumb, SkillLinkById} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function ToolDetail() {
@@ -24,6 +24,7 @@ export default function ToolDetail() {
     return (
         <DetailPageLayout
             title={item()?.name ?? `Tool #${params.id}`}
+            breadcrumb={breadcrumb("/database/tool")}
             loading={isLoading() && !tool()}
             icon={<Show when={item()}>{(i) =>
                 <GameIcon name={i().name} iconAsset={i().iconAssetName} shape="tall"

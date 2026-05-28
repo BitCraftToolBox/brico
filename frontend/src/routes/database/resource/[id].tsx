@@ -4,6 +4,7 @@ import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, ResourceDepletionPanel} from "~/components/shared/RecipeDisplay";
+import {breadcrumb} from "~/lib/game-links";
 import {enemiesForResource, extractionRecipeForResource, resourcesYieldingResource} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
@@ -39,6 +40,7 @@ export default function ResourceDetail() {
     return (
         <DetailPageLayout
             title={resource()?.name ?? `Resource #${params.id}`}
+            breadcrumb={breadcrumb("/database/resource")}
             loading={isLoading() && !resource()}
             icon={<Show when={resource()}>{(r) =>
                 <GameIcon name={r().name} iconAsset={r().iconAssetName} shape="square"

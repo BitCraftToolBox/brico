@@ -3,6 +3,7 @@ import {createMemo} from "solid-js";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {TierIcon} from "~/components/shared/GameIcon";
 import {ItemStackTable} from "~/components/shared/RelTablePresets";
+import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -70,6 +71,7 @@ export default function ProspectingDetail() {
     return (
         <DetailPageLayout
             title={prospecting()?.name ?? `Prospecting #${params.id}`}
+            breadcrumb={breadcrumb("/database/prospecting")}
             loading={isLoading() && !prospecting()}
             name={prospecting()?.name ?? "Prospecting entry not found"}
             description={prospecting()?.description}

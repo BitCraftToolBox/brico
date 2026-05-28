@@ -6,6 +6,7 @@ import {useIsMobile} from "./ui/sidebar";
 
 interface LayoutProps {
     title: string;
+    navTitle?: JSX.Element;
     children?: JSX.Element;
     wrapperClasses?: string;
     hideSearch?: boolean;
@@ -18,7 +19,7 @@ export default function MainLayout(props: LayoutProps) {
     return (
         <div class="relative flex flex-col w-full h-dvh overflow-hidden">
             <Title>{title} - Brico's Toolbox</Title>
-            <Nav title={props.title} hideSearch={props.hideSearch}/>
+            <Nav title={props.navTitle ?? props.title} hideSearch={props.hideSearch}/>
             <div class="flex flex-1 min-h-0">
                 <Suspense>
                     <main
