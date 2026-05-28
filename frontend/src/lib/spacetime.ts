@@ -15,6 +15,7 @@ import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_ty
 import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
+import {DeployableAppearanceOverrideDesc} from "~/bindings/src/deployable_appearance_override_desc_type";
 import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
 import {EnemyAiParamsDesc} from "~/bindings/src/enemy_ai_params_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
@@ -200,6 +201,7 @@ export const BitCraftTables = {
     'PlaceableInteractionDesc': cache<PlaceableInteractionDesc>('placeable_interaction_desc', PlaceableInteractionDesc),
     'PlaceablePlacementDesc': cache<PlaceablePlacementDesc>('placeable_placement_desc', PlaceablePlacementDesc),
     'NpcDesc': cache<NpcDesc>('npc_desc', NpcDesc),
+    'DeployableAppearanceOverrideDesc': cache<DeployableAppearanceOverrideDesc>('deployable_appearance_override_desc', DeployableAppearanceOverrideDesc),
 };
 
 /**

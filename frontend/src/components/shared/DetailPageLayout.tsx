@@ -23,6 +23,7 @@ import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardHeader} from "~/components/ui/card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
 import {Rarities} from "~/lib/bitcraft-utils";
+import {cn} from "~/lib/utils";
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -423,7 +424,7 @@ export function RelTable<T>(props: RelTableProps<T>) {
                 <tr>
                     <For each={props.columns}>
                         {(col) => (
-                            <th class={`text-left px-3 py-2 font-medium text-muted-foreground ${col.class || ""}`}>
+                            <th class={cn("text-left px-3 py-2 font-medium text-muted-foreground", col.class)}>
                                 {col.header}
                             </th>
                         )}
@@ -443,7 +444,7 @@ export function RelTable<T>(props: RelTableProps<T>) {
                         >
                             <For each={props.columns}>
                                 {(col) => (
-                                    <td class={`px-3 py-2 ${col.class || ""}`}>
+                                    <td class={cn("px-3 py-2", col.class)}>
                                         {col.cell(row)}
                                     </td>
                                 )}

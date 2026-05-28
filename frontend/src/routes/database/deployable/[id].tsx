@@ -1,10 +1,11 @@
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
+import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
+import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {StatTable} from "~/components/shared/RelTablePresets";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
-import {breadcrumb, CollectibleLink, ItemLink} from "~/lib/game-links";
+import {breadcrumb, CollectibleLink, IconLink, ItemLink, pageIcon} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds, undefinedIfZero} from "~/lib/utils";
 
@@ -25,6 +26,16 @@ export default function DeployableDetail() {
     const collectible = createMemo(() => deployable() ? collectibleIndex()?.get(deployable()!.deployFromCollectibleId) : undefined);
     const itemDeed = createMemo(() => collectible() ? itemIndex()?.get(collectible()!.itemDeedId) : undefined);
     const pathfinding = createMemo(() => deployable() ? pathfindingIndex()?.get(deployable()!.pathfindingId) : undefined);
+    const appearances = createMemo(() => {
+        const dep = deployable();
+        if (!dep) return [];
+        const model = dep.modelAddress;
+        const overrides = BitCraftTables.DeployableAppearanceOverrideDesc.get();
+        const collectibles = BitCraftTables.CollectibleDesc.indexedBy("id")();
+        return overrides?.filter(o => o.affectedModelAddress === model)
+            .map(dao => collectibles.get(dao.collectibleId))
+            .filter((col): col is CollectibleDesc => !!col) ?? [];
+    });
 
     const {labels: pathfindingLabels} = checkStepHeight(pathfinding);
 
@@ -95,6 +106,27 @@ export default function DeployableDetail() {
             chatLink={`(col=${collectible()?.id})`}
             tabs={[
                 {
+                    id: "appearances",
+                    label: "Appearances",
+                    count: appearances().length,
+                    showWhenEmpty: false,
+                    content: () => (
+                        <RelTable<CollectibleDesc>
+                            data={appearances()} columns={[
+                            {header: "Collectible", cell: row => <CollectibleIcon collectible={row} small/>},
+                            {header: "Name", cell: row => <IconLink icon={pageIcon("Collection")} href={`/database/collectible/${row.id}`}>{row.name}</IconLink>},
+                        ]}
+                        />
+                    )
+                },
+                {
+                    id: "stats",
+                    label: "Stats",
+                    count: deployable()?.stats?.length ?? 0,
+                    showWhenEmpty: false,
+                    content: () => <StatTable data={deployable()!.stats}/>,
+                },
+                {
                     id: "collectible",
                     label: "Collectible",
                     count: collectible() ? 1 : 0,
@@ -118,13 +150,6 @@ export default function DeployableDetail() {
                         </Show>
                     ),
                 },
-                {
-                    id: "stats",
-                    label: "Stats",
-                    count: deployable()?.stats?.length ?? 0,
-                    showWhenEmpty: false,
-                    content: () => <StatTable data={deployable()!.stats}/>,
-                }
             ]}
         />
     );

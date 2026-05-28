@@ -11,7 +11,7 @@
 import {useNavigate, useSearchParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
-import {PlaceablePlacementDesc} from "~/bindings/src";
+import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import MainLayout from "~/components/MainLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {buildPlaceableGraph, PlaceableGraph} from "~/components/shared/PlaceableGraph";
