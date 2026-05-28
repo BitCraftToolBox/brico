@@ -1,12 +1,25 @@
 import {ColorModeStorageManager, ConfigColorMode} from "@kobalte/core";
 import {makePersisted} from "@solid-primitives/storage";
-import {createContext, createMemo, createSignal, JSX, onCleanup, useContext} from "solid-js";
+import {ColumnFiltersState, PaginationState, SortingState} from "@tanstack/solid-table";
+import {Accessor, createContext, createMemo, createSignal, JSX, onCleanup, Setter, useContext} from "solid-js";
 import {ALL_SIDEBAR_HREFS} from "~/lib/sidebar-items";
 
 // ── Types ─────────────────────────────────────────────────────
 
 export type SortMode = "tree" | "az";
 export type ViewMode = "list" | "grid";
+
+/** Session-only (non-persisted) state for a single data table. */
+export type TableSessionState = {
+    columnFilters: Accessor<ColumnFiltersState>;
+    setColumnFilters: Setter<ColumnFiltersState>;
+    sorting: Accessor<SortingState>;
+    setSorting: Setter<SortingState>;
+    pagination: Accessor<PaginationState>;
+    setPagination: Setter<PaginationState>;
+    globalFilter: Accessor<string>;
+    setGlobalFilter: Setter<string>;
+};
 
 
 export type AppSettings = {
@@ -56,6 +69,12 @@ export type AppSettings = {
     /** Flatten item list outputs by recursively expanding inner item lists into a single averaged list. NOT PERSISTED. */
     flattenItemListOutputs: () => boolean;
     setFlattenItemListOutputs: (b: boolean) => void;
+
+    /**
+     * Returns (or lazily creates) the session-only table state signals for the given table name.
+     * These are NOT persisted and reset on page reload.
+     */
+    getTableSession: (name: string) => TableSessionState;
 };
 
 // ── Factory ───────────────────────────────────────────────────
@@ -152,6 +171,22 @@ function createSettings(): AppSettings {
     const [displayProbabilityAsAverage, setDisplayProbabilityAsAverage] = createSignal(false);
     const [flattenItemListOutputs, setFlattenItemListOutputs] = createSignal(false);
 
+    // Session-only table state — keyed by table name, not persisted.
+    const tableSessions = new Map<string, TableSessionState>();
+    const getTableSession = (name: string): TableSessionState => {
+        if (!tableSessions.has(name)) {
+            const [columnFilters, setColumnFilters] = createSignal<ColumnFiltersState>([]);
+            const [sorting, setSorting] = createSignal<SortingState>([]);
+            const [pagination, setPagination] = createSignal<PaginationState>({pageSize: tablePageSize(), pageIndex: 0});
+            const [globalFilter, setGlobalFilter] = createSignal('');
+            tableSessions.set(name, {
+                columnFilters, setColumnFilters, sorting, setSorting,
+                pagination, setPagination, globalFilter, setGlobalFilter
+            });
+        }
+        return tableSessions.get(name)!;
+    };
+
     const [completedQuestsRaw, setCompletedQuestsRaw] = makePersisted(
         createSignal<number[]>([]),
         {name: KEYS.completedQuests}
@@ -185,6 +220,7 @@ function createSettings(): AppSettings {
         setFlattenItemListOutputs,
         completedQuests,
         setCompletedQuests,
+        getTableSession,
     };
 }
 
