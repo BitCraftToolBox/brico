@@ -17,13 +17,13 @@
  *
  */
 
-import { readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { resolve, basename, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import {readdirSync, readFileSync, writeFileSync} from "node:fs";
+import {basename, dirname, resolve} from "node:path";
+import {fileURLToPath} from "node:url";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
-const iconsDir = resolve(__dir, "./icons");
-const outFile = resolve(__dir, "../src/components/icons/font-icons-data.ts");
+const iconsDir = resolve(__dir, "./data");
+const outFile = resolve(__dir, "../../src/components/icons/font-icons-data.ts");
 
 const files = readdirSync(iconsDir)
     .filter((f) => f.endsWith(".svg"))

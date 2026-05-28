@@ -1,6 +1,6 @@
-import { defineConfig } from "@solidjs/start/config";
+import {defineConfig} from "@solidjs/start/config";
 import tailwindcss from "@tailwindcss/vite";
-import treeShakeFontIcons from "./scripts/vite-plugin-tree-shake-icons.mjs";
+import treeShakeFontIcons from "./scripts/icons/vite-plugin-tree-shake-icons.mjs";
 
 export default defineConfig({
   ssr: false,

@@ -1,3 +1,5 @@
+// noinspection ES6PreferShortImport
+
 /**
  * analyze-icon-usage.mjs
  *
@@ -15,21 +17,21 @@
  *       (or: npx tsx scripts/analyze-icon-usage.mjs)
  */
 
-import { readFileSync, readdirSync } from "node:fs";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { AlgebraicType, BinaryReader } from "@clockworklabs/spacetimedb-sdk";
+import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
+import {readdirSync, readFileSync} from "node:fs";
+import {dirname, resolve} from "node:path";
+import {fileURLToPath} from "node:url";
 
 // Binding type modules — they export namespaces with getTypeScriptAlgebraicType()
-import { BuffDesc } from "../src/bindings/src/buff_desc_type.ts";
-import { CombatActionDesc } from "../src/bindings/src/combat_action_desc_type.ts";
-import { EmpireIconDesc } from "../src/bindings/src/empire_icon_desc_type.ts";
-import { NpcDesc } from "../src/bindings/src/npc_desc_type.ts";
-import { ProspectingDesc } from "../src/bindings/src/prospecting_desc_type.ts";
-import { SkillDesc } from "../src/bindings/src/skill_desc_type.ts";
+import {BuffDesc} from "../../src/bindings/src/buff_desc_type.ts";
+import {CombatActionDesc} from "../../src/bindings/src/combat_action_desc_type.ts";
+import {EmpireIconDesc} from "../../src/bindings/src/empire_icon_desc_type.ts";
+import {NpcDesc} from "../../src/bindings/src/npc_desc_type.ts";
+import {ProspectingDesc} from "../../src/bindings/src/prospecting_desc_type.ts";
+import {SkillDesc} from "../../src/bindings/src/skill_desc_type.ts";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
-const ROOT = __dir.endsWith("scripts") ? resolve(__dir, "..") : __dir;
+const ROOT = __dir.endsWith("icons") ? resolve(__dir, "../..") : __dir;
 
 /**
  * Map from table name (as used in font_icons.json / BSATN filenames)
@@ -191,7 +193,7 @@ export function scanSourceForIconUsage(srcDir) {
  */
 export function collectUsedCodepoints(rootDir) {
     const root = rootDir || ROOT;
-    const fontIconsJson = JSON.parse(readFileSync(resolve(root, "scripts/font_icons.json"), "utf8"));
+    const fontIconsJson = JSON.parse(readFileSync(resolve(root, "scripts/icons/font_icons.json"), "utf8"));
     const used = new Set(["xxxx"]); // always keep the .notdef fallback
 
     // 1. BSATN data — extract icon field values from game tables
@@ -217,7 +219,7 @@ export function collectUsedCodepoints(rootDir) {
 // ── CLI runner ─────────────────────────────────────────────────
 
 function main() {
-    const fontIconsJson = JSON.parse(readFileSync(resolve(ROOT, "scripts/font_icons.json"), "utf8"));
+    const fontIconsJson = JSON.parse(readFileSync(resolve(ROOT, "scripts/icons/font_icons.json"), "utf8"));
 
     console.log("=== BSATN Icon Field Analysis ===\n");
 

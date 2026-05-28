@@ -6,8 +6,8 @@
     "build": "vinxi build",
     "start": "vinxi start",
     "typecheck": "tsc --noEmit",
-    "gen-icons": "node scripts/gen-font-icons.mjs",
-    "analyze-icons": "npx tsx scripts/analyze-icon-usage.mjs"
+    "gen-icons": "node scripts/icons/gen-font-icons.mjs",
+    "analyze-icons": "npx tsx scripts/icons/analyze-icon-usage.mjs"
   },
   "dependencies": {
     "@clockworklabs/spacetimedb-sdk": "^1.3.0",

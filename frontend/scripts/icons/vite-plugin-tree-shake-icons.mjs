@@ -5,14 +5,14 @@
  * at build time. Delegates all analysis logic to analyze-icon-usage.mjs.
  */
 
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { collectUsedCodepoints } from "./analyze-icon-usage.mjs";
+import {dirname, resolve} from "node:path";
+import {fileURLToPath} from "node:url";
+import {collectUsedCodepoints} from "./analyze-icon-usage.mjs";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 // When loaded by Vite, import.meta.url points to the bundled config in frontend/,
 // not scripts/. When run directly, __dir is scripts/ and ROOT goes up one level.
-const ROOT = __dir.endsWith("scripts") ? resolve(__dir, "..") : __dir;
+const ROOT = __dir.endsWith("icons") ? resolve(__dir, "../..") : __dir;
 
 const FONT_ICONS_DATA_RE = /font-icons-data\.(ts|js)$/;
 
