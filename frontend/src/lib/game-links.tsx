@@ -116,7 +116,7 @@ export function KnowledgeLink(props: { id: number; name?: string; class?: string
                     <IconLock class="size-3 text-destructive shrink-0"/>
                 </Show>
             </TooltipTrigger>
-            <TooltipContent>Developer-locked / inaccessible</TooltipContent>
+            <TooltipContent class="max-w-[90svw]">Developer-locked / inaccessible</TooltipContent>
         </Tooltip>
     );
 }

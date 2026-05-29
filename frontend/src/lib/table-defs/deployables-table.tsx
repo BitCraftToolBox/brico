@@ -95,7 +95,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
                             <TooltipTrigger>
                                 Total Item Size
                             </TooltipTrigger>
-                            <TooltipContent>
+                            <TooltipContent class="max-w-[90svw]">
                                 Equivalent "player inventory" slots.
                             </TooltipContent>
                         </Tooltip>

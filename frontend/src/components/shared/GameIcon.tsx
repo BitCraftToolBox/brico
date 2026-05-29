@@ -19,6 +19,8 @@ import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {getAssetURL, getBuildingTier, Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {getItemListSource} from "~/lib/relations";
+import {useSettings} from "~/lib/settings";
+import {BitCraftTables} from "~/lib/spacetime";
 import {cn} from "~/lib/utils";
 
 // ─── Shape Definitions ──────────────────────────────────────────
@@ -127,6 +129,14 @@ type TierIconProps = ComponentProps<"img" | "div"> & {
 // ─── Component ──────────────────────────────────────────────────
 
 export const TierIcon: Component<TierIconProps> = (props) => {
+    const { colorMode } = useColorMode();
+    const { midnightDark } = useSettings();
+    const t0Filter = () =>
+        colorMode() === "dark"
+        ? midnightDark()
+            ? "brightness(0) saturate(100%) invert(13%) sepia(23%) saturate(1316%) hue-rotate(210deg) brightness(91%) contrast(89%)" // midnight
+            : "brightness(0) saturate(100%) invert(21%) sepia(19%) saturate(1384%) hue-rotate(210deg) brightness(96%) contrast(89%)" // dark
+        : "brightness(0) saturate(100%) invert(87%) sepia(27%) saturate(207%) hue-rotate(11deg) brightness(93%) contrast(84%)"; // light
     const inRange = props.tier >= 1 && props.tier <= 10;
     if (!inRange) return (
         <div class={cn("inline-block relative", props.class)} title={`Tier ${props.tier}`}>
@@ -134,14 +144,11 @@ export const TierIcon: Component<TierIconProps> = (props) => {
                 class={"w-4 h-4"}
                 src={`/assets/Badges/badge-tier-container.webp`}
                 alt={`Tier ${props.tier}`}
-                style={{
-                    // hardcoded to T0 color #413A64
-                    filter: "brightness(0) saturate(100%) invert(21%) sepia(19%) saturate(1384%) hue-rotate(210deg) brightness(96%) contrast(89%)",
-                }}
+                style={{filter: t0Filter()}}
             />
             <p class={"absolute text-xs select-none " +
                 "top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] " +
-                "text-background dark:text-foreground"
+                "text-foreground"
             }>{props.tier}</p>
         </div>
     );
@@ -181,7 +188,7 @@ export const GameIcon: Component<GameIconProps> = (props) => {
 
     const bgColor = () => local.tier !== undefined ? Tiers.getBackgroundColorClass(local.tier) : "";
     const borderColor = () => local.rarity ? Rarities.getBorderColorClass(local.rarity) : "";
-    const path = () => getAssetURL(local.iconAsset, local.quantity);
+    const path = () => local.iconAsset.startsWith("/") ? local.iconAsset : getAssetURL(local.iconAsset, local.quantity);
 
     const frameSrc = () => {
         const prefix = FRAME_PREFIX[local.shape];
@@ -259,7 +266,7 @@ export const GameIcon: Component<GameIconProps> = (props) => {
                     {iconDiv()}
                 </TooltipTrigger>
             </Show>
-            <TooltipContent class={borderColor() ? `border ${borderColor()}` : ""}>
+            <TooltipContent class={cn("max-w-[90svw]", borderColor() ? `border ${borderColor()}` : "")}>
                 {local.tooltipContent ?? defaultTooltip()}
             </TooltipContent>
         </Tooltip>
@@ -277,13 +284,22 @@ type ItemIconProps = Omit<ComponentProps<"div">, "children"> & {
     quantity?: number;
 };
 
+const HATS = ["soldier", "pyro", "sniper", "demoman", "scout", "medic", "heavy", "engineer", "spy"];
 export const ItemIcon: Component<ItemIconProps> = (props) => {
     const [local, others] = splitProps(props, ["item", "quantity"]);
+    let asset = props.item.iconAssetName;
+    const { tf2Mode } = useSettings();
+    if (tf2Mode()) {
+        const eq = BitCraftTables.EquipmentDesc.indexedBy("itemId")?.()?.get(props.item.id);
+        if (eq && eq.slots.some(s => s.tag === "HeadClothing")) {
+            asset = `/assets/Hats/${HATS[Math.floor(Math.random() * HATS.length)]}.webp`;
+        }
+    }
 
     return (
         <GameIcon
             name={props.item.name}
-            iconAsset={props.item.iconAssetName}
+            iconAsset={asset}
             tier={props.item.tier}
             rarity={props.item.rarity}
             href={`/database/item/${props.item.id}`}

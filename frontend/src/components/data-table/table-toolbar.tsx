@@ -34,7 +34,7 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
         return `Search by ${otherCols}${props.searchColumns.length > 2 ? ',' : ''} or ${lastCol}...`;
     };
 
-    const [currentSearch, setCurrentSearch] = createSignal<string>("");
+    const [currentSearch, setCurrentSearch] = createSignal<string>(props.table.getState().globalFilter || "");
     const [isSmartFiltering, setIsSmartFiltering] = createSignal(false);
 
     // Leading throttled global filter setter (fires immediately, then throttles to 300ms)
@@ -185,15 +185,16 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
                 <div class="flex space-x-2">
                     <Show when={props.searchColumns?.length}>
                         <Tooltip open={isSmartFiltering()} placement="top-start">
-                            <TooltipTrigger as={TextField}
-                                            value={currentSearch()}
-                                            onChange={setFilter}
-                                            class="w-auto lg:w-[250px]"
+                            <TooltipTrigger
+                                as={TextField}
+                                value={currentSearch()}
+                                onChange={setFilter}
+                                class="w-auto lg:w-[250px]"
                             >
                                 <TextFieldInput placeholder={getSearchPlaceholder()} class="h-8"
                                                 onKeyDown={handleKeyDown}/>
                             </TooltipTrigger>
-                            <TooltipContent>
+                            <TooltipContent class="max-w-[90svw]">
                                 Press <kbd>Enter</kbd> to commit Tier/Tag filters, <kbd>Esc</kbd> to clear.
                             </TooltipContent>
                         </Tooltip>
@@ -211,7 +212,7 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
                 </div>
                 <TableViewOptions table={props.table}/>
             </div>
-            <div class="grid grid-cols-3 sm:flex flex-wrap items-center gap-2 w-full">
+            <div class="flex flex-wrap items-center gap-2 w-full max-h-20 overflow-y-scroll sm:justify-normal justify-center">
                 <For each={props.filters}>
                     {(filter) => <TableFacetedFilter {...filter} />}
                 </For>

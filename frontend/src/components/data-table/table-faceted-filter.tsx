@@ -286,13 +286,22 @@ function StatsFilterContent<TData>(props: {
 // ─── Main Filter Component ──────────────────────────────────────
 
 function BoolFilterItem(props: {
-    onSelect: () => void,
+    column?: Column<any>,
+    table: Table<any>,
     value: boolean,
     selectedValues: any[],
     resolvedOptions: ValueBasedOption[],
     facets: Map<any, number>,
 }) {
-    return <CommandItem onSelect={props.onSelect}>
+    return <CommandItem onSelect={() => {
+        const current = props.column?.getFilterValue();
+        if (Array.isArray(current) && current.length && current.includes(props.value)) {
+            props.column?.setFilterValue(undefined);
+        } else {
+            props.column?.setFilterValue([props.value]);
+        }
+        ensurePagesVisible(props.table);
+    }}>
         <div class={cn(
             "mr-2 flex size-4 items-center justify-center rounded-full border border-primary",
             props.selectedValues.some(v => v === props.value)
@@ -371,8 +380,9 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                      setPopoverOpen(open);
                      setEditingWithNumberInputs(false);
                  }}>
-            <PopoverTrigger as={Button<"button">} variant="outline" size="sm" class={`h-8 border-dashed ${selectedValues().length ? "border-muted-foreground" : ""}`}
-                            onclick={() => setPopoverOpen(!popoverOpen())}
+            <PopoverTrigger
+                as={Button<"button">} variant="outline" size="sm" onclick={() => setPopoverOpen(!popoverOpen())}
+                class={`h-8 border-dashed ${selectedValues().length ? "border-muted-foreground border-solid" : ""}`}
             >
                 <IconCirclePlus/>
                 {props.title}
@@ -413,7 +423,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                     </Show>
                     <Show when={isNumberBased()}>
                         <FilterBadge values={selectedValues} table={props.table} column={props.column}>
-                            {selectedValues()[0] + "~" + selectedValues()[1]}
+                            {selectedValues()[0] + "-" + selectedValues()[1]}
                         </FilterBadge>
                     </Show>
                     <Show when={isValueBased()}>
@@ -593,28 +603,26 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                         </Command>
                     }>
                         <Command class="w-full h-full">
+                            <CommandList>
                             <div class="flex flex-row w-full justify-around px-2 py-2">
                                 <BoolFilterItem
                                     value={true}
-                                    onSelect={() => {
-                                        props.column?.setFilterValue([true]);
-                                        ensurePagesVisible(props.table);
-                                    }}
+                                    column={props.column}
+                                    table={props.table}
                                     selectedValues={selectedValues()}
                                     resolvedOptions={resolvedOptions() as ValueBasedOption[]}
                                     facets={facets() as Map<any, number>}
                                 />
                                 <BoolFilterItem
                                     value={false}
-                                    onSelect={() => {
-                                        props.column?.setFilterValue([false]);
-                                        ensurePagesVisible(props.table);
-                                    }}
+                                    column={props.column}
+                                    table={props.table}
                                     selectedValues={selectedValues()}
                                     resolvedOptions={resolvedOptions() as ValueBasedOption[]}
                                     facets={facets() as Map<any, number>}
                                 />
                             </div>
+                            </CommandList>
                         </Command>
                     </Show>
                 </Show>

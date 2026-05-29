@@ -1,6 +1,6 @@
 import {Column, Table} from "@tanstack/solid-table"
 
-import {TbOutlineSettings as IconSettings} from "solid-icons/tb"
+import {TbOutlineEye as IconSettings} from "solid-icons/tb"
 import {For} from "solid-js"
 import {Button} from "~/components/ui/button"
 import {DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from "~/components/ui/dropdown-menu"

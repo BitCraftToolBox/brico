@@ -1,6 +1,6 @@
 import {createMemo, For} from "solid-js";
 import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
-import {GameIcon} from "~/components/shared/GameIcon";
+import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {
@@ -46,7 +46,7 @@ export const PlaceableDefs: BitCraftToDataDef<PlaceableDesc> = {
             prefixElement: plc => {
                 const asset = plc.iconAssetName;
                 if (!asset) return <></>;
-                return <GameIcon name={plc.name} iconAsset={asset} shape={"square"} tier={plc.tier} small/>;
+                return <PlaceableIcon placeable={plc} small={false} noInteract/>;
             }
         }),
         descriptionColumn(),

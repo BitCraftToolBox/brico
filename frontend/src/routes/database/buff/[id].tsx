@@ -38,7 +38,7 @@ export default function BuffDetail() {
                     label: "Online Timestamp",
                     value: <Tooltip>
                         <TooltipTrigger>{b.onlineTimestamp ? "Yes" : "No"}</TooltipTrigger>
-                        <TooltipContent>If No, buff ticks down while offline.</TooltipContent>
+                        <TooltipContent class="max-w-[90svw]">If No, buff ticks down while offline.</TooltipContent>
                     </Tooltip>
                 },
             ],

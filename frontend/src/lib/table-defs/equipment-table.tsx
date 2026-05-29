@@ -21,8 +21,10 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
         }),
         {
             id: "Slots",
-            accessorFn: row => row.slots?.map(s => splitCamelCase(s.tag)).join(", ") ?? "",
-            filterFn: includedIn<EquipmentDesc>(),
+            accessorFn: row => row.slots?.map(s => splitCamelCase(s.tag)) ?? [],
+            getUniqueValues: row => row.slots?.map(s => splitCamelCase(s.tag)) ?? [],
+            cell: ctx => ctx.getValue()?.join(", ") ?? "",
+            filterFn: 'arrIncludesSome',
         },
         {
             id: "Skill",

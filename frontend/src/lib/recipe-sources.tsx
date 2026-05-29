@@ -177,7 +177,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
                     lines.push(["Prospecting Hits",
                         <Tooltip>
                             <TooltipTrigger>{min * perNode} - {max * perNode}</TooltipTrigger>
-                            <TooltipContent>{perNode} contribution per node, {min} - {max} nodes, {(min + max) / 2 * perNode} hits average</TooltipContent>
+                            <TooltipContent class="max-w-[90svw]">{perNode} contribution per node, {min} - {max} nodes, {(min + max) / 2 * perNode} hits average</TooltipContent>
                         </Tooltip>
                     ]);
                 }

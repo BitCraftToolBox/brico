@@ -113,7 +113,7 @@ function ProbBadge(props: { probability: number, chances?: number }) {
                     <TooltipTrigger class={badgeClass} onclick={() => setDisplayProbabilityAsAverage(!displayProbabilityAsAverage())}>
                         {pct()}%
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent class="max-w-[90svw]">
                         Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently.
                     </TooltipContent>
                 </Tooltip>
@@ -122,7 +122,7 @@ function ProbBadge(props: { probability: number, chances?: number }) {
                     <TooltipTrigger class={badgeClass} onclick={() => setDisplayProbabilityAsAverage(!displayProbabilityAsAverage())}>
                         {ev()}
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent class="max-w-[90svw]">
                         Average number of drops for a full bar (resource health, dungeon contribution, etc.): {fixFloat(props.probability * 100)}% * {props.chances} = {ev()}.
                     </TooltipContent>
                 </Tooltip>
