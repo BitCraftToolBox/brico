@@ -179,9 +179,21 @@ export default function SettingsPage() {
     };
     onMount(() => window.addEventListener("keydown", onKeyDown));
     onCleanup(() => window.removeEventListener("keydown", onKeyDown));
+    const [developerMode, setDeveloperMode] = createSignal(false);
+    const [taps, setTaps] = createSignal(0);
+    const [showDevModeUnlock, setShowDevModeUnlock] = createSignal(false);
+    const incUnlockCounter = () => {
+        if (showEasterSection()) return;
+        setTaps(taps() + 1);
+        if (taps() >= 7) {
+            setDeveloperMode(true);
+            setShowDevModeUnlock(true);
+            setTimeout(() => setShowDevModeUnlock(false), 1500);
+        }
+    }
 
-    /** Show the section if the code was entered this session OR if already enabled (to allow toggling off). */
-    const showEasterSection = () => konamiUnlocked() || settings.easterEggs();
+    /** Show the section if unlocked this session OR if already enabled (to allow toggling off). */
+    const showEasterSection = () => konamiUnlocked() || developerMode() || settings.easterEggs();
 
     // Derived counts for the "Reset hidden columns" row
     const hiddenColumnStats = createMemo(() => {
@@ -194,7 +206,7 @@ export default function SettingsPage() {
     return (
         <MainLayout title="Settings" hideSearch>
             <div class="max-w-3xl mx-auto flex flex-col gap-4 px-4 pb-6">
-                <h1 class="text-2xl font-bold">Settings</h1>
+                <h1 class="text-2xl font-bold" onclick={incUnlockCounter}><Show when={showDevModeUnlock()} fallback="Settings">You are now a developer!</Show></h1>
 
                 {/* ── Theme ──────────────────────────────── */}
                 <SettingsSection
@@ -211,6 +223,11 @@ export default function SettingsPage() {
                                 {value: "system", icon: IconSystem, label: "System"},
                             ]}
                         />
+                    </SettingsRow>
+                    <SettingsRow label="Midnight" description="High contrast for vampires and OLED enjoyers. Only affects dark mode.">
+                        <Switch checked={settings.midnightDark()} onChange={settings.setMidnightDark}>
+                            <SwitchControl><SwitchThumb/></SwitchControl>
+                        </Switch>
                     </SettingsRow>
                 </SettingsSection>
 

@@ -25,6 +25,8 @@ export type TableSessionState = {
 export type AppSettings = {
     /** Color mode storage manager */
     colorStorageManager: ColorModeStorageManager;
+    midnightDark: () => boolean;
+    setMidnightDark: (midnight: boolean) => void;
     /** Show/hide sort/view/favorite buttons */
     showSidebarControls: () => boolean;
     setShowSidebarControls: (s: boolean) => void;
@@ -89,6 +91,7 @@ export type AppSettings = {
 /** All localStorage keys and defaults in one place */
 const KEYS = {
     theme: "brico:theme",
+    midnightDark: "brico:theme:midnightDark",
     sidebarShowControls: "brico:sidebar:show-controls",
     sidebarStartsCollapsed: "brico:sidebar:starts-collapsed",
     sidebarSort: "brico:sidebar:sort",
@@ -207,9 +210,12 @@ function createSettings(): AppSettings {
     const [easterEggs, setEasterEggs] = makePersisted(createSignal<boolean>(false), {name: KEYS.easterEggs});
     const [tf2Mode, setTf2Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.tf2Mode});
     const [r9Mode, setR9Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.r9Mode});
+    const [midnightDark, setMidnightDark] = makePersisted(createSignal<boolean>(false), {name: KEYS.midnightDark});
 
     return {
         colorStorageManager,
+        midnightDark,
+        setMidnightDark,
         showSidebarControls,
         setShowSidebarControls,
         sidebarStartsCollapsed,

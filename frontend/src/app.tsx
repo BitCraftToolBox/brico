@@ -4,7 +4,7 @@ import {Router} from "@solidjs/router";
 import {FileRoutes} from "@solidjs/start/router";
 import "@fontsource/inter/latin";
 import "./app.css";
-import {Show} from "solid-js";
+import {createEffect, Show} from "solid-js";
 import {AppSidebar} from "~/components/app-sidebar"
 import AppLoadingScreen from "~/components/AppLoadingScreen";
 import {SidebarProvider} from "~/components/ui/sidebar";
@@ -14,9 +14,17 @@ import {useGameDataReady, useLoadingProgress} from "~/lib/spacetime";
 
 /** Inner wrapper — needs to be a child of SettingsProvider so useSettings() resolves */
 function AppRoot(props: { children: any }) {
-    const { sidebarStartsCollapsed, colorStorageManager } = useSettings();
+    const { sidebarStartsCollapsed, colorStorageManager, midnightDark } = useSettings();
     const isReady = useGameDataReady();
     const progress = useLoadingProgress();
+
+    createEffect(() => {
+        if (midnightDark()) {
+            document.documentElement.setAttribute("data-midnight-dark", "");
+        } else {
+            document.documentElement.removeAttribute("data-midnight-dark");
+        }
+    });
 
     return (
         <>

@@ -5,7 +5,8 @@ import type {CargoDesc} from "~/bindings/src/cargo_desc_type";
 import type {ItemDesc} from "~/bindings/src/item_desc_type";
 import type {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemType} from "~/bindings/src/item_type_type";
-import {CargoIcon, ItemIcon} from "~/components/shared/GameIcon";
+import Rarity from "~/bindings/src/rarity_type";
+import {CargoIcon, ItemIcon, rarityToFrameSlug} from "~/components/shared/GameIcon";
 import {getAssetURL, Tiers} from "~/lib/bitcraft-utils";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables} from "~/lib/spacetime";
@@ -15,8 +16,8 @@ const KEY_ASSET = "GeneratedIcons/Cargo/Brico'sBigKey";
 const CHEST_TIER = 4;
 
 type LootResult =
-    | { type: "item"; item: ItemDesc }
-    | { type: "cargo"; cargo: CargoDesc };
+    | { type: "item"; item: ItemDesc, quantity: number }
+    | { type: "cargo"; cargo: CargoDesc, quantity: number };
 
 function rollItemList(list: ItemListDesc): LootResult | null {
     if (!list.possibilities.length) return null;
@@ -32,10 +33,10 @@ function rollItemList(list: ItemListDesc): LootResult | null {
             const stack = poss.items[Math.floor(Math.random() * poss.items.length)];
             if (stack.itemType.tag === ItemType.Cargo.tag) {
                 const cargo = cargoIdx?.get(stack.itemId);
-                return cargo ? { type: "cargo", cargo } : null;
+                return cargo ? { type: "cargo", cargo, quantity: stack.quantity } : null;
             }
             const item = itemIdx?.get(stack.itemId);
-            return item ? { type: "item", item } : null;
+            return item ? { type: "item", item, quantity: stack.quantity } : null;
         }
     }
 
@@ -45,10 +46,10 @@ function rollItemList(list: ItemListDesc): LootResult | null {
         const stack = last.items[0];
         if (stack.itemType.tag === ItemType.Cargo.tag) {
             const cargo = cargoIdx?.get(stack.itemId);
-            return cargo ? { type: "cargo", cargo } : null;
+            return cargo ? { type: "cargo", cargo, quantity: stack.quantity } : null;
         }
         const item = itemIdx?.get(stack.itemId);
-        return item ? { type: "item", item } : null;
+        return item ? { type: "item", item, quantity: stack.quantity } : null;
     }
     return null;
 }
@@ -65,6 +66,7 @@ type AnimPhase =
 
 export interface BricoLootBoxProps {
     loot: readonly [itemId: number, itemType: ItemType["tag"], itemListId: number | undefined][] | "hat";
+    chest?: [string, Rarity, number];
 }
 
 function pickRandomHatId(): number | null {
@@ -158,7 +160,17 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
 
         if (targetListId) {
             const list = BitCraftTables.ItemListDesc.indexedBy("id")()?.get(targetListId);
-            if (list) setLootResult(rollItemList(list));
+            if (list) {
+                const item = BitCraftTables.ItemDesc.indexedBy("id")()?.get(targetItemId);
+                const result = rollItemList(list);
+                if (result && item?.itemListId === targetListId) {
+                    // input was item list itself, just resolve to the rolled item
+                    setResolvedItemId(result.type === "item" ? [result.item.id, "Item"] : [result.cargo.id, "Cargo"]);
+                    setLootResult(null);
+                } else {
+                    setLootResult(result);
+                }
+            }
         }
 
         setChestOrigin(anchorRef?.getBoundingClientRect() ?? null);
@@ -238,22 +250,26 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
         opacity: p() === "fading" ? "0" : "1",
     } satisfies Record<string, string>);
 
+    const chestRarity = () => props.chest?.[1] || Rarity.Common as Rarity;
+    const chestTier = () => props.chest?.[2] || CHEST_TIER;
+    const chestAsset = () => props.chest?.[0] || CHEST_ASSET;
+
     const frameSrc = () => {
         const theme = colorMode() === "dark" ? "dark" : "light";
-        return `/assets/Frames/creaturebuildingresource-frame-common-${theme}.webp`;
+        return `/assets/Frames/creaturebuildingresource-frame-${rarityToFrameSlug(chestRarity())}-${theme}.webp`;
     };
 
-    const chestIconSrc = () => getAssetURL(CHEST_ASSET);
+    const chestIconSrc = () => getAssetURL(chestAsset());
     const keyIconSrc = () => getAssetURL(KEY_ASSET);
     const baseItem: () => LootResult | null = () => {
         const [id, type] = resolvedItemId();
         if (id === null || type === null) return null;
         if (type === "Cargo") {
             const cargo = BitCraftTables.CargoDesc.indexedBy("id")().get(id);
-            return cargo ? {type: "cargo", cargo} : null;
+            return cargo ? {type: "cargo", cargo, quantity: 1} : null;
         } else {
             const item = BitCraftTables.ItemDesc.indexedBy("id")()?.get(id);
-            return item ? {type: "item", item} : null;
+            return item ? {type: "item", item, quantity: 1} : null;
         }
     };
 
@@ -262,7 +278,7 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
             <img
                 src={chestIconSrc()}
                 alt=""
-                class={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-contain w-[120px] h-[120px] ${Tiers.getBackgroundColorClass(CHEST_TIER)}`}
+                class={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-contain w-[120px] h-[120px] ${Tiers.getBackgroundColorClass(chestTier())}`}
                 onerror={(e) => ((e.target as HTMLImageElement).src = "/assets/Unknown.webp")}
             />
             <img src={frameSrc()} alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-fill pointer-events-none" />
@@ -375,8 +391,8 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
                                     {(base) => {
                                         const b = base();
                                         return b.type === "item"
-                                            ? <ItemIcon item={b.item} small={false} noInteract={false}/>
-                                            : <CargoIcon cargo={b.cargo} small={false} noInteract={false}/>
+                                            ? <ItemIcon item={b.item} small={false} quantity={b.quantity} noInteract={false}/>
+                                            : <CargoIcon cargo={b.cargo} small={false} quantity={b.quantity} noInteract={false}/>
                                     }}
                                 </Show>
                             </div>
@@ -398,8 +414,8 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
                                             style={{ animation: "bricoFadeIn 1.35s ease forwards" }}
                                         >
                                             {r.type === "item"
-                                                ? <ItemIcon item={r.item} small={false} noInteract={false}/>
-                                                : <CargoIcon cargo={r.cargo} small={false} noInteract={false}/>}
+                                                ? <ItemIcon item={r.item} small={false} quantity={r.quantity} noInteract={false}/>
+                                                : <CargoIcon cargo={r.cargo} small={false} quantity={r.quantity} noInteract={false}/>}
                                         </div>
                                     );
                                 }}
@@ -415,6 +431,7 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
 const loots = [
     [1086855799, "Item", 350062593], // party cracker
     [2139638761, "Cargo", 680933968], // coralith
+    [164053808, "Item", 1687372047],
     // mythic t6 hit
     [1622627516, "Item", 1314539293],
     [181836937, "Item", 1382641800],
@@ -451,3 +468,18 @@ export const lootTab = () => {
         }
     }
 };
+
+export const lootTabWith = (props: BricoLootBoxProps) => {
+    const { r9Mode } = useSettings();
+    return {
+        id: 'brico-loot',
+        label: r9Mode() ? "Jamba" : "Loot",
+        content: () => {
+            return (
+                <div class="flex w-full justify-center">
+                    <BricoLootBox {...props} />
+                </div>
+            );
+        }
+    }
+}
