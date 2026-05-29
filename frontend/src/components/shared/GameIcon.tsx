@@ -68,7 +68,7 @@ const FRAME_PREFIX: Record<IconShape, string> = {
 };
 
 /** Map a Rarity to the corresponding frame filename slug */
-function rarityToFrameSlug(rarity?: Rarity): string {
+export function rarityToFrameSlug(rarity?: Rarity): string {
     if (!rarity) return "basic";
     switch (rarity.tag) {
         case Rarity.Common.tag:
