@@ -187,11 +187,12 @@ export function AppSidebar() {
                 </div>
             </Show>
 
-            <SidebarContent class="gap-0 group-data-[collapsible=icon]:scrollbar-none">
+            <SidebarContent class="gap-0 group-data-[collapsible=icon]:scrollbar-none transform-[scaleX(-1)]">
                 <Show when={sidebarSort() === "tree"}>
                     <For each={visibleGroups()}>
                         {(group) => (
                             <Collapsible
+                                class="transform-[scaleX(-1)]"
                                 defaultOpen={!sidebarCollapsedGroups().includes(group.name)}
                                 onOpenChange={(isOpen) => setGroupCollapsed(group.name, !isOpen)}
                             >
@@ -227,7 +228,7 @@ export function AppSidebar() {
                     </For>
                 </Show>
                 <Show when={sidebarSort() === "az"}>
-                    <SidebarGroupContent>
+                    <SidebarGroupContent class="transform-[scaleX(-1)]">
                         <Show
                             when={sidebarView() === "grid" && state.open()}
                             fallback={

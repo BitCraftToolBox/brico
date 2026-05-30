@@ -185,9 +185,9 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     const hasInfoSection = () => hasDetails() || props.summaryContent || props.rawData || props.infoTabs;
 
     const [infoTab, setInfoTabRaw] = createSignal<InfoTab>("summary");
-    const setInfoTab = (tab: string) => {
-        setInfoTabRaw(tab);
-        setSearchParams({tab}, {replace: true});
+    const setInfoTab = (info: string) => {
+        setInfoTabRaw(info);
+        setSearchParams({info}, {replace: true});
     }
     // Start undefined; the effect below will resolve from ?detail= or default to first tab.
     const [selectedTab, setSelectedTabRaw] = createSignal<string | undefined>(undefined);
@@ -197,7 +197,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     }
 
     onMount(() => {
-        const tabParam = Array.isArray(searchParams.tab) ? searchParams.tab[0] : searchParams.tab;
+        const tabParam = Array.isArray(searchParams.info) ? searchParams.info[0] : searchParams.info;
         if (tabParam) {
             // Build the list of valid info-tab ids so we can validate the param.
             const validInfoTabs: string[] = [

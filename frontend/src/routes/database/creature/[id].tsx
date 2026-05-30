@@ -8,6 +8,7 @@ import {EnemyIcon} from "~/components/shared/GameIcon";
 import {ItemListDisplay, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {EnemyDropPanel} from "~/components/shared/RecipeDisplay";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
+import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {breadcrumb, ItemListLink, SkillLinkById} from "~/lib/game-links";
 import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList} from "~/lib/relations";
@@ -49,7 +50,15 @@ export default function CreatureDetail() {
         const c = creature();
         if (!c?.experiencePerDamageDealt?.length) return undefined;
         return c.experiencePerDamageDealt.filter(exp => exp.skillId).map(exp => {
-            return <><SkillLinkById skillId={exp.skillId}/>: <span title={"Experience per Damage Dealt"} class={"decoration-dotted underline"}>{fixFloat(exp.quantity)}</span></>;
+            return <><SkillLinkById skillId={exp.skillId}/>: <Tooltip>
+                    <TooltipTrigger class={"decoration-dotted underline"}>{fixFloat(exp.quantity)}</TooltipTrigger>
+                    <TooltipContent>
+                        Experience per Damage Dealt<br/>
+                        {c.maxHealth} HP * {fixFloat(exp.quantity)} = {c.maxHealth * fixFloat(exp.quantity)} XP<br/>
+                        <span class="text-muted-foreground">Note: overkill damage also grants XP. This is the minimum.</span>
+                    </TooltipContent>
+                </Tooltip>
+            </>;
         }).map((e, i) => <>{i > 0 && <><br/></>}{e}</>);
     });
 
