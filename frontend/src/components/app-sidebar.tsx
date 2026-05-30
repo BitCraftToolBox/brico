@@ -78,6 +78,7 @@ export function AppSidebar() {
         showSidebarControls,
         sidebarSort, setSidebarSort, sidebarView, setSidebarView,
         sidebarFavoritesOnly, setSidebarFavoritesOnly, sidebarFavorites,
+        sidebarCollapsedGroups, setSidebarCollapsedGroups
     } = useSettings();
 
     // Derived: Set of visible hrefs for O(1) lookup
@@ -90,6 +91,14 @@ export function AppSidebar() {
             .map(g => ({...g, items: g.items.filter(i => favoriteHrefs().has(i.href))}))
             .filter(g => g.items.length > 0);
     });
+
+    function setGroupCollapsed(name: string, collapsed: boolean){
+        if (collapsed) {
+            setSidebarCollapsedGroups([...sidebarCollapsedGroups(), name]);
+        } else {
+            setSidebarCollapsedGroups([...sidebarCollapsedGroups().filter(s => s !== name)]);
+        }
+    }
 
     // Derived: flat alphabetical list, filtered to favorites when favorites-only is on
     const azItems = createMemo(() => {
@@ -182,15 +191,18 @@ export function AppSidebar() {
                 <Show when={sidebarSort() === "tree"}>
                     <For each={visibleGroups()}>
                         {(group) => (
-                            <Collapsible defaultOpen>
+                            <Collapsible
+                                defaultOpen={!sidebarCollapsedGroups().includes(group.name)}
+                                onOpenChange={(isOpen) => setGroupCollapsed(group.name, !isOpen)}
+                            >
                                 <CollapsibleTrigger class="group/collapsible w-full">
                                     <div class="flex flex-row items-center h-8">
                                         <SidebarGroupLabel class="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                                             {group.name}
                                         </SidebarGroupLabel>
-                                        <IconChevronDown class="mr-2 ml-auto shrink-0 transition-transform
-                                                                 group-data-closed/collapsible:rotate-180
-                                                                 group-data-[collapsible=icon]:mx-auto"/>
+                                        <IconChevronDown
+                                            class="mr-2 ml-auto shrink-0 transition-transform group-data-closed/collapsible:rotate-180 group-data-[collapsible=icon]:mx-auto"
+                                        />
                                     </div>
                                 </CollapsibleTrigger>
                                 <CollapsibleContent>

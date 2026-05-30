@@ -90,7 +90,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
             id: "Total Item Size",
             header: (props) => {
                 return (
-                    <TableColumnHeader column={props.column} title={props.column.id}>
+                    <TableColumnHeader column={props.column} title={props.column.id} table={props.table}>
                         <Tooltip>
                             <TooltipTrigger>
                                 Total Item Size

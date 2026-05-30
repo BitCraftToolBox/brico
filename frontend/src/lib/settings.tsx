@@ -54,6 +54,9 @@ export type AppSettings = {
      */
     sidebarFavorites: () => string[];
     setSidebarFavorites: (favorites: string[]) => void;
+    /** Default collapse groups on load */
+    sidebarCollapsedGroups: () => string[];
+    setSidebarCollapsedGroups: (v: string[]) => void;
     /** Default rows per page for all data tables */
     tablePageSize: () => number;
     setTablePageSize: (v: number) => void;
@@ -98,6 +101,7 @@ const KEYS = {
     sidebarView: "brico:sidebar:view",
     sidebarFavoritesOnly: "brico:sidebar:favorites-only",
     sidebarHiddenItems: "brico:sidebar:hidden-items",
+    sidebarCollapsedGroups: "brico:sidebar:collapsed-groups",
     tablePageSize: "brico:table:page-size",
     tableHiddenColumns: "brico:table:hidden-columns",
     completedQuests: "brico:quests:completed",
@@ -142,6 +146,7 @@ function createSettings(): AppSettings {
     const [sidebarView, setSidebarView] = makePersisted(createSignal<ViewMode>("list"), {name: KEYS.sidebarView});
     const [sidebarFavoritesOnly, setSidebarFavoritesOnly] = makePersisted(createSignal<boolean>(false), {name: KEYS.sidebarFavoritesOnly});
     const [sidebarHiddenItems, setSidebarHiddenItems] = makePersisted(createSignal<string[]>([]), {name: KEYS.sidebarHiddenItems});
+    const [sidebarCollapsedGroups, setSidebarCollapsedGroups] = makePersisted(createSignal<string[]>([]), {name: KEYS.sidebarCollapsedGroups});
 
     // tables
     const [tablePageSize, setTablePageSize] = makePersisted(createSignal<number>(10), {name: KEYS.tablePageSize});
@@ -210,13 +215,11 @@ function createSettings(): AppSettings {
         {key: KEYS.theme, get: theme, set: setTheme},
         {key: KEYS.midnightDark, get: midnightDark, set: setMidnightDark},
         {key: KEYS.sidebarShowControls, get: showSidebarControls, set: setShowSidebarControls},
-        {key: KEYS.sidebarStartsCollapsed, get: sidebarStartsCollapsed, set: setSidebarStartsCollapsed},
         {key: KEYS.sidebarSort, get: sidebarSort, set: setSidebarSort},
         {key: KEYS.sidebarView, get: sidebarView, set: setSidebarView},
         {key: KEYS.sidebarFavoritesOnly, get: sidebarFavoritesOnly, set: setSidebarFavoritesOnly},
         {key: KEYS.sidebarHiddenItems, get: sidebarHiddenItems, set: setSidebarHiddenItems},
         {key: KEYS.tablePageSize, get: tablePageSize, set: setTablePageSize},
-        {key: KEYS.tableHiddenColumns, get: tableHiddenColumns, set: setTableHiddenColumns},
         {key: KEYS.completedQuests, get: completedQuestsRaw, set: setCompletedQuestsRaw},
         {key: KEYS.easterEggs, get: easterEggs, set: setEasterEggs},
         {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
@@ -239,6 +242,8 @@ function createSettings(): AppSettings {
         setSidebarFavoritesOnly,
         sidebarHiddenItems,
         setSidebarHiddenItems,
+        sidebarCollapsedGroups,
+        setSidebarCollapsedGroups,
         sidebarFavorites,
         setSidebarFavorites,
         tablePageSize,

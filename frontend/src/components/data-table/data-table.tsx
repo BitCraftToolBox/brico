@@ -67,12 +67,6 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         setGlobalFilterRaw(Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q);
     }
 
-    props.columns.forEach(c => {
-        if (c.header === undefined) {
-            c.header = (props) => <TableColumnHeader column={props.column} title={props.column.id}></TableColumnHeader>;
-        }
-    });
-
     // Custom global filter function for multi-column search
     const globalFilterFn: FilterFn<TData> = (row, _columnId, value) => {
         if (!value || !props.searchColumns || props.searchColumns.length === 0) {
@@ -133,6 +127,12 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         getFacetedUniqueValues: getFacetedUniqueValues(),
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
     })
+
+    props.columns.forEach(c => {
+        if (c.header === undefined) {
+            c.header = (props) => <TableColumnHeader column={props.column} title={props.column.id} table={table}></TableColumnHeader>;
+        }
+    });
 
     const filters = createMemo<TableFacetedFilterProps<TData>[]>(() => {
         return props.facetedFilters?.map((filter: FilterSetupProps<TData, any>) => {
