@@ -67,7 +67,9 @@ export default function PlaceableGraphTool() {
 
     const PLACEMENT_LOOP_NAMES = new Map<number, string>([
         [1110954448, "Sagi Bird Trapping"],
-        [774931176, "Sagi Bird Domestication"]
+        [774931176, "Sagi Bird Domestication"],
+        [2078563352, "Nubi Goat Trappping"],
+        [2135187451, "Nubi Goat Domestication"],
     ]);
     function placementSelectionRow(placement: PlaceablePlacementDesc) {
         const loopName = PLACEMENT_LOOP_NAMES.get(placement.id);
