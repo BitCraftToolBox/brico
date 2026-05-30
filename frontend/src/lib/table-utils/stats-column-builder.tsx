@@ -188,16 +188,17 @@ function computeStatOptions<T>(col: Column<T>, columnId: string): StatsOptionEnt
  * Creates a stats faceted filter for CsvStatEntry[] columns.
  * Supports multi-stat filtering with per-stat ranges.
  */
-export function statsFilter<T>(column: string = "Stats"): FilterSetupProps<T> {
+export function statsFilter<T>(column: string = "Stats"): FilterSetupProps<T, StatsBasedOption> {
     return {
         column,
         title: column,
+        type: "stat",
         options: (col: Column<T> | undefined) => {
-            if (!col) return {label: column, stats: []} as StatsBasedOption;
+            if (!col) return {label: column, stats: []};
             return {
                 label: column,
                 stats: computeStatOptions(col, column),
-            } as StatsBasedOption;
+            };
         },
     };
 }

@@ -1,7 +1,8 @@
 import {throttle} from "@solid-primitives/scheduled"
+import {useLocation} from "@solidjs/router";
 import type {Table} from "@tanstack/solid-table"
 
-import {TbOutlineX as IconX} from "solid-icons/tb"
+import {TbOutlineClipboardCheck as IconClipboardCheck, TbOutlineLink as IconLink, TbOutlineX as IconX} from "solid-icons/tb"
 import {createSignal, For, onCleanup, Show} from "solid-js";
 import {Button} from "~/components/ui/button"
 import {TextField, TextFieldInput} from "~/components/ui/text-field"
@@ -179,6 +180,48 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
         }
     }
 
+    const [filtersSaved, setFiltersSaved] = createSignal(false);
+    const current = useLocation();
+    function saveFilters() {
+        const params = new URLSearchParams();
+
+        const globalFilter = props.table.getState().globalFilter as string;
+        if (globalFilter) params.set("q", globalFilter);
+
+        for (const {id, value} of props.table.getState().columnFilters) {
+            let filterOpts = props.filters?.find(f => f.column?.id === id);
+            if (!filterOpts) continue;
+            if (filterOpts.type === "value" || filterOpts.type === "bool") {
+                // value-based (multi-select) — each selected value is a separate param
+                for (const v of value as unknown[]) {
+                    params.append(id, String(v));
+                }
+            } else if (filterOpts.type === "range") {
+                // number range — stored as [min, max] tuple but keyed as .min / .max
+                const [min, max] = value as [number, number];
+                params.set(`${id}.min`, String(min));
+                params.set(`${id}.max`, String(max));
+
+            } else if (filterOpts.type === "stat") {
+                const {requireAll, stats} = value as {requireAll: boolean; stats: Record<string, [number, number]>};
+                params.set(`${id}.requireAll`, String(requireAll));
+                for (const [key, [min, max]] of Object.entries(stats)) {
+                    // skip empty/default stat entries
+                    if (min == null && max == null) continue;
+                    params.set(`${id}.${key}.min`, String(min));
+                    params.set(`${id}.${key}.max`, String(max));
+                }
+            }
+        }
+
+        const qs = params.toString();
+        const url = `${window.location.origin}${current.pathname}${qs ? `?${qs}` : ""}`;
+        navigator.clipboard.writeText(url).then(() => {
+            setFiltersSaved(true);
+            setTimeout(() => setFiltersSaved(false), 1500);
+        });
+    }
+
     return (
         <div class="flex flex-col gap-2">
             <div class="flex items-center justify-between">
@@ -205,8 +248,19 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
                             onClick={resetAllFilters}
                             class="h-8 w-auto px-2 sm:px-3"
                         >
-                            Reset View
+                            Reset Filters
                             <IconX/>
+                        </Button>
+                    </Show>
+                    <Show when={isFiltered()}>
+                        <Button
+                            variant="outline"
+                            onClick={saveFilters}
+                            class="h-8 w-auto px-2 sm:px-3"
+                        >
+                            <Show when={filtersSaved()} fallback={<>Link Filters <IconLink class="ml-1"/></>}>
+                                Link Copied! <IconClipboardCheck class="ml-1"/>
+                            </Show>
                         </Button>
                     </Show>
                 </div>

@@ -154,19 +154,19 @@ const CopyButton: Component<{
     copyElement?: JSX.Element;
     copiedElement?: JSX.Element;
 }> = (props) => {
-    const [jsonCopied, setJsonCopied] = createSignal(false);
+    const [contentCopied, setContentCopied] = createSignal(false);
     const copyContent = () => {
         if (props.content) {
             navigator.clipboard.writeText(props.content).then(() => {
-                setJsonCopied(true);
-                setTimeout(() => setJsonCopied(false), 1500);
+                setContentCopied(true);
+                setTimeout(() => setContentCopied(false), 1500);
             });
         }
     };
 
     return (
         <Button variant="outline" size="sm" onClick={copyContent}>
-            <Show when={jsonCopied()} fallback={props.copyElement || <><IconClipboardCopy class="mr-1"/> Copy JSON</>}>
+            <Show when={contentCopied()} fallback={props.copyElement || <><IconClipboardCopy class="mr-1"/> Copy JSON</>}>
                 {props.copiedElement || <><IconClipboardCheck class="mr-1"/> Copied!</>}
             </Show>
         </Button>

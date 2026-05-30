@@ -11,6 +11,7 @@ import {TbOutlineClipboardCopy as IconClipboardCopy, TbOutlineExternalLink as Ic
 import {JSX, Show} from "solid-js";
 import {Rarity} from "~/bindings/src/rarity_type";
 import {FilterSetupProps} from "~/components/data-table/data-table";
+import {RangedBasedOption, ValueBasedOption} from "~/components/data-table/table-faceted-filter";
 import {TableRowActions} from "~/components/data-table/table-row-actions";
 import {TierIcon} from "~/components/shared/GameIcon";
 import {Button} from "~/components/ui/button";
@@ -215,15 +216,16 @@ export function rowActions<T, V extends string | number>(
 /**
  * Creates a Tag faceted filter that reads unique values from the column
  */
-export function tagFilter<T>(): FilterSetupProps<T> {
+export function tagFilter<T>(): FilterSetupProps<T, ValueBasedOption<string>[]> {
     return {
         column: "Tag",
         title: "Tag",
+        type: "value",
         options: (col: Column<T> | undefined) => {
             if (!col) return [];
-            return col.getFacetedUniqueValues().keys().map((v: any) => ({
+            return col.getFacetedUniqueValues().keys().map((v) => ({
                 label: v, value: v,
-            })).toArray().sort((a: any, b: any) => a.label.localeCompare(b.label));
+            })).toArray().sort((a, b) => a.label.localeCompare(b.label));
         },
     };
 }
@@ -231,10 +233,11 @@ export function tagFilter<T>(): FilterSetupProps<T> {
 /**
  * Creates a Rarity faceted filter with predefined options
  */
-export function rarityFilter<T>(): FilterSetupProps<T> {
+export function rarityFilter<T>(): FilterSetupProps<T, ValueBasedOption<Rarity["tag"]>[]> {
     return {
         column: "Rarity",
         title: "Rarity",
+        type: "value",
         options: Rarities.rarities.map(r => ({label: r, value: r})),
     };
 }
@@ -242,10 +245,11 @@ export function rarityFilter<T>(): FilterSetupProps<T> {
 /**
  * Creates a Tier faceted filter with icons
  */
-export function tierFilter<T>(): FilterSetupProps<T> {
+export function tierFilter<T>(): FilterSetupProps<T, ValueBasedOption<number>[]> {
     return {
         column: "Tier",
         title: "Tier",
+        type: "value",
         options: Tiers.tiers.map(t => ({
             label: String(t.value),
             value: t.value,
@@ -257,10 +261,11 @@ export function tierFilter<T>(): FilterSetupProps<T> {
 /**
  * Creates a numeric range filter
  */
-export function rangeFilter<T>(column: string, title?: string): FilterSetupProps<T> {
+export function rangeFilter<T>(column: string, title?: string): FilterSetupProps<T, RangedBasedOption> {
     return {
         column,
         title: title ?? column,
+        type: "range",
         options: (col: Column<T> | undefined) => {
             const minMax = col ? col.getFacetedMinMaxValues() : null;
             return {label: title ?? column, minMax: minMax || [0, 0]};
@@ -278,10 +283,11 @@ export function uniqueValuesFilter<T>(
     title?: string,
     sortFn?: (a: OptionType, b: OptionType) => number,
     iconFn?: (props: any) => JSX.Element,
-): FilterSetupProps<T> {
+): FilterSetupProps<T, ValueBasedOption[]> {
     return {
         column,
         title: title ?? column,
+        type: "value",
         options: (col: Column<T> | undefined) => {
             if (!col) return [];
             const opts = col.getFacetedUniqueValues().keys().map((v: any) => {
@@ -299,10 +305,11 @@ export function boolFilter<T>(
     title?: string,
     trueLabel = "Yes",
     falseLabel = "No",
-): FilterSetupProps<T> {
+): FilterSetupProps<T, ValueBasedOption<boolean>[]> {
     return {
         column,
         title: title ?? column,
+        type: "bool",
         options: [{label: trueLabel, value: true}, {label: falseLabel, value: false}],
     }
 }

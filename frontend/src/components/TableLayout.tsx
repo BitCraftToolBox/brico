@@ -9,7 +9,7 @@ interface TableLayoutProps<TData> {
     items: Accessor<TData[] | undefined>
     colDefs: {
         columns: ColumnDef<TData>[]
-        facetedFilters?: FilterSetupProps<TData>[]
+        facetedFilters?: FilterSetupProps<TData, any>[]
         searchColumns?: string[]
     }
 }
