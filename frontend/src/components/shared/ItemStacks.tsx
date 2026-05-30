@@ -83,9 +83,9 @@ export const ItemStackIcon: Component<ItemStackIconProps> = (props) => {
                 return (
                     <div class={cn("flex flex-col items-center gap-0.5", props.class)}>
                         <Show when={isItem(obj())} fallback={
-                            <CargoIcon cargo={obj() as CargoDesc} quantity={qty()} small={props.small ?? true} noInteract={props.noInteract}/>
+                            <CargoIcon cargo={obj() as CargoDesc} quantity={qty()} small={props.small} noInteract={props.noInteract}/>
                         }>
-                            <ItemIcon item={obj() as ItemDesc} quantity={qty()} small={props.small ?? true} noInteract={props.noInteract}/>
+                            <ItemIcon item={obj() as ItemDesc} quantity={qty()} small={props.small} noInteract={props.noInteract}/>
                         </Show>
                         <Show when={nameText()}>
                             <span class="text-xs text-center leading-tight max-w-20 truncate" title={obj().name}>

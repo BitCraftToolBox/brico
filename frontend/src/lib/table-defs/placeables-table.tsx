@@ -47,7 +47,7 @@ export const PlaceableDefs: BitCraftToDataDef<PlaceableDesc> = {
             prefixElement: plc => {
                 const asset = plc.iconAssetName;
                 if (!asset) return <></>;
-                return <PlaceableIcon placeable={plc} small={false} noInteract/>;
+                return <PlaceableIcon placeable={plc}/>;
             }
         }),
         descriptionColumn(),
