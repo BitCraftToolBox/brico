@@ -1,10 +1,12 @@
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
+import {ItemType} from "~/bindings/src/item_type_type";
 
-import {DetailGroup, DetailPageLayout, DetailProperty} from "~/components/shared/DetailPageLayout";
+import {DetailGroup, DetailPageLayout, DetailProperty, RelTable} from "~/components/shared/DetailPageLayout";
 import {BuildingIcon} from "~/components/shared/GameIcon";
+import {ItemStackIcon} from "~/components/shared/ItemStacks";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
-import {breadcrumb} from "~/lib/game-links";
+import {breadcrumb, BuffLinkById, LinkedList} from "~/lib/game-links";
 import {constructionRecipeForBuilding, deconstructionRecipeForBuilding,} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {constructionCombinedSingleTab} from "~/lib/table-utils/detail-tab-builders";
@@ -35,6 +37,18 @@ export default function BuildingDetail() {
         if (!b) return undefined;
         return deconstructionRecipeForBuilding(b.id);
     });
+
+    const buildingBuffDescs = createMemo(() =>
+        BitCraftTables.BuildingBuffDesc.get()?.filter(b => b.buildingId === building()?.id) ?? []
+    );
+
+    const buffCount = createMemo(() =>
+        buildingBuffDescs().reduce((sum, b) => sum + b.buffs.length, 0)
+    );
+
+    const empireCurrencyId = createMemo(() =>
+        BitCraftTables.ItemDesc.get()?.find(i => i.tag === "Empire Currency")?.id
+    );
 
     const functionNames = createMemo(() => {
         const b = building();
@@ -112,7 +126,41 @@ export default function BuildingDetail() {
             objectId={building()?.id}
             chatLink={`(build=${building()?.id})`}
             tabs={[
-                constructionCombinedSingleTab(constructionRecipe(), deconstructionRecipe())
+                constructionCombinedSingleTab(constructionRecipe(), deconstructionRecipe()),
+                {
+                    id: "buffs",
+                    label: "Buffs",
+                    count: buffCount(),
+                    showWhenEmpty: false,
+                    content: () => {
+                        return <RelTable
+                            data={buildingBuffDescs()}
+                            columns={[
+                                {
+                                    header: "Cost",
+                                    cell: row => (
+                                        <Show when={row.empireCurrencyCost} fallback={"None"}>
+                                            <Show when={empireCurrencyId()}>{id => (
+                                                <ItemStackIcon
+                                                    stack={{itemId: id(), quantity: row.empireCurrencyCost, itemType: ItemType.Item as any, durability: undefined}}
+                                                    small showName
+                                                />
+                                            )}</Show>
+                                        </Show>
+                                    ),
+                                },
+                                {
+                                    header: "Buffs",
+                                    cell: row => <LinkedList>
+                                        {row.buffs.map(e => (
+                                            <BuffLinkById buffId={e.buffId} duration={e.duration}/>
+                                        ))}
+                                    </LinkedList>,
+                                },
+                            ]}
+                        />;
+                    },
+                },
             ]}
         />
     );

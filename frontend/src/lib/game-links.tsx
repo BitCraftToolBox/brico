@@ -21,7 +21,7 @@ import {FontIcon} from "~/components/icons/font-icons";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {PAGE_ICONS, SidebarPages} from "~/lib/sidebar-items";
 import {BitCraftTables} from "~/lib/spacetime";
-import {cn} from "~/lib/utils";
+import {cn, fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Constants ──────────────────────────────────────────────────
 
@@ -130,7 +130,7 @@ export function KnowledgeLinkById(props: { id: number; class?: string; showIcon?
 // ─── Buff ───────────────────────────────────────────────────────
 
 /** Renders a buff description as a link. */
-export function BuffLink(props: { buffId: number; label?: string; class?: string; showIcon?: boolean }) {
+export function BuffLink(props: { buffId: number; label?: string; class?: string; showIcon?: boolean, duration?: number }) {
     const show = () => props.showIcon !== false;
     return (
         <IconLink
@@ -138,9 +138,36 @@ export function BuffLink(props: { buffId: number; label?: string; class?: string
             icon={show() ? pageIcon("Buffs") : undefined}
             class={props.class}
         >
-            {props.label ?? `Buff #${props.buffId}`}
+            {props.label ?? `Buff #${props.buffId}`} {props.duration ? <span class={"text-muted-foreground"}>{readableSeconds(fixFloat(props.duration))}</span> : null}
         </IconLink>
     );
+}
+
+export function BuffLinkById(props: { buffId: number; class?: string; showIcon?: boolean, duration?: number }) {
+    const buff = () => BitCraftTables.BuffDesc.indexedBy("id")()?.get(props.buffId);
+    return <BuffLink buffId={props.buffId} label={buff()?.description} class={props.class} showIcon={props.showIcon} duration={props.duration ?? buff()?.duration ?? undefined}/>;
+}
+
+// ─── Building ───────────────────────────────────────────────────
+
+/** Renders a building name as a link. */
+export function BuildingLink(props: { id: number; name?: string; class?: string; showIcon?: boolean }) {
+    const show = () => props.showIcon !== false;
+    return (
+        <IconLink
+            href={`/database/building/${props.id}`}
+            icon={show() ? pageIcon("Structures") : undefined}
+            class={props.class}
+        >
+            {props.name ?? `Building #${props.id}`}
+        </IconLink>
+    );
+}
+
+/** Resolves a building ID to a BuildingLink. */
+export function BuildingLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
+    const building = () => BitCraftTables.BuildingDesc.indexedBy("id")()?.get(props.id);
+    return <BuildingLink id={props.id} name={building()?.name} class={props.class} showIcon={props.showIcon}/>;
 }
 
 // ─── Achievement ────────────────────────────────────────────────
