@@ -55,11 +55,14 @@ export default function ResourceDetail() {
             tag={resource()?.tag}
             details={[
                 {label: "Max Health", value: resource()?.maxHealth},
-                {label: "Flattenable", value: resource()?.flattenable ? true : undefined},
+                {label: "Ignores Damage", value: resource()?.ignoreDamage ? true : undefined},
+                {label: "Show Time Left", value: resource()?.showTimeLeft ? true : undefined},
                 {label: "Despawn Time", value: resource()?.despawnTime ? `${fixFloat(resource()!.despawnTime)}s` : undefined},
-                {label: "Spawn Priority", value: resource()?.spawnPriority},
                 {label: "Scheduled Respawn", value: resource()?.scheduledRespawnTime ? `${fixFloat(resource()!.scheduledRespawnTime)}s` : undefined},
                 {label: "Not Respawning", value: resource()?.notRespawning ? true : undefined},
+                {label: "Flattenable", value: resource()?.flattenable ? true : undefined},
+                {label: "Spawn Priority", value: resource()?.spawnPriority},
+                {label: "Compendium Entry", value: !resource()?.compendiumEntry ? false : undefined},
             ]}
             rawData={resource()}
             spacetimeTable={BitCraftTables.ResourceDesc.st_name}

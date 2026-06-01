@@ -177,6 +177,7 @@ export default function ItemDetail() {
             properties: [
                 {label: "Volume", value: i.volume},
                 {label: "Durability", value: i.durability > 0 ? i.durability : undefined},
+                {label: "Compendium Entry", value: !i.compendiumEntry ? false : undefined},
             ],
         });
 
