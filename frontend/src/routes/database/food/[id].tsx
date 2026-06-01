@@ -1,7 +1,7 @@
 import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {GameIcon} from "~/components/shared/GameIcon";
+import {ItemIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb, BuffLink} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -55,8 +55,7 @@ export default function FoodDetail() {
             breadcrumb={breadcrumb("/database/food")}
             loading={isLoading() && !food()}
             icon={<Show when={item()}>{(i) =>
-                <GameIcon name={i().name} iconAsset={i().iconAssetName} shape="tall"
-                          small={false} tier={i().tier} rarity={i().rarity} noInteract/>
+                <ItemIcon item={i()} small={false} noInteract/>
             }</Show>}
             name={item()?.name ?? `Food #${params.id}`}
             tier={item()?.tier}

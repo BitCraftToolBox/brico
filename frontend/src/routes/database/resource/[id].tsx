@@ -3,7 +3,7 @@ import {createMemo, For, Show} from "solid-js";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {lootTab} from "~/components/fun/BricoLootBox";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {GameIcon} from "~/components/shared/GameIcon";
+import {ResourceIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, ResourceDepletionPanel} from "~/components/shared/RecipeDisplay";
 import {breadcrumb} from "~/lib/game-links";
 import {enemiesForResource, extractionRecipeForResource, resourcesYieldingResource} from "~/lib/relations";
@@ -46,8 +46,7 @@ export default function ResourceDetail() {
             breadcrumb={breadcrumb("/database/resource")}
             loading={isLoading() && !resource()}
             icon={<Show when={resource()}>{(r) =>
-                <GameIcon name={r().name} iconAsset={r().iconAssetName} shape="square"
-                          small={false} tier={r().tier} rarity={r().rarity} noInteract/>
+                <ResourceIcon res={r()} small={false} noInteract/>
             }</Show>}
             name={resource()?.name ?? "Resource not found"}
             tier={resource()?.tier}
@@ -56,11 +55,14 @@ export default function ResourceDetail() {
             tag={resource()?.tag}
             details={[
                 {label: "Max Health", value: resource()?.maxHealth},
-                {label: "Flattenable", value: resource()?.flattenable ? true : undefined},
+                {label: "Ignores Damage", value: resource()?.ignoreDamage ? true : undefined},
+                {label: "Show Time Left", value: resource()?.showTimeLeft ? true : undefined},
                 {label: "Despawn Time", value: resource()?.despawnTime ? `${fixFloat(resource()!.despawnTime)}s` : undefined},
-                {label: "Spawn Priority", value: resource()?.spawnPriority},
                 {label: "Scheduled Respawn", value: resource()?.scheduledRespawnTime ? `${fixFloat(resource()!.scheduledRespawnTime)}s` : undefined},
                 {label: "Not Respawning", value: resource()?.notRespawning ? true : undefined},
+                {label: "Flattenable", value: resource()?.flattenable ? true : undefined},
+                {label: "Spawn Priority", value: resource()?.spawnPriority},
+                {label: "Compendium Entry", value: !resource()?.compendiumEntry ? false : undefined},
             ]}
             rawData={resource()}
             spacetimeTable={BitCraftTables.ResourceDesc.st_name}

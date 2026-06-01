@@ -6,7 +6,7 @@
 
 import {useColorMode} from "@kobalte/core";
 import {A, useNavigate} from "@solidjs/router";
-import {Component, ComponentProps, JSX, Show, splitProps} from "solid-js";
+import {Component, ComponentProps, createSignal, JSX, Show, splitProps} from "solid-js";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {CargoDesc} from "~/bindings/src/cargo_desc_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
@@ -19,6 +19,8 @@ import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {getAssetURL, getBuildingTier, Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {getItemListSource} from "~/lib/relations";
+import {useSettings} from "~/lib/settings";
+import {BitCraftTables} from "~/lib/spacetime";
 import {cn} from "~/lib/utils";
 
 // ─── Shape Definitions ──────────────────────────────────────────
@@ -118,6 +120,7 @@ export type GameIconProps = Omit<ComponentProps<"div">, "children"> & {
      * Ctrl/Meta/Shift clicks pass through to the browser normally.
      */
     clickParams?: string | [string, string];
+    showFallbackText?: boolean;
 };
 
 type TierIconProps = ComponentProps<"img" | "div"> & {
@@ -127,6 +130,14 @@ type TierIconProps = ComponentProps<"img" | "div"> & {
 // ─── Component ──────────────────────────────────────────────────
 
 export const TierIcon: Component<TierIconProps> = (props) => {
+    const { colorMode } = useColorMode();
+    const { midnightDark } = useSettings();
+    const t0Filter = () =>
+        colorMode() === "dark"
+        ? midnightDark()
+            ? "brightness(0) saturate(100%) invert(13%) sepia(23%) saturate(1316%) hue-rotate(210deg) brightness(91%) contrast(89%)" // midnight
+            : "brightness(0) saturate(100%) invert(21%) sepia(19%) saturate(1384%) hue-rotate(210deg) brightness(96%) contrast(89%)" // dark
+        : "brightness(0) saturate(100%) invert(87%) sepia(27%) saturate(207%) hue-rotate(11deg) brightness(93%) contrast(84%)"; // light
     const inRange = props.tier >= 1 && props.tier <= 10;
     if (!inRange) return (
         <div class={cn("inline-block relative", props.class)} title={`Tier ${props.tier}`}>
@@ -134,14 +145,11 @@ export const TierIcon: Component<TierIconProps> = (props) => {
                 class={"w-4 h-4"}
                 src={`/assets/Badges/badge-tier-container.webp`}
                 alt={`Tier ${props.tier}`}
-                style={{
-                    // hardcoded to T0 color #413A64
-                    filter: "brightness(0) saturate(100%) invert(21%) sepia(19%) saturate(1384%) hue-rotate(210deg) brightness(96%) contrast(89%)",
-                }}
+                style={{filter: t0Filter()}}
             />
             <p class={"absolute text-xs select-none " +
                 "top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] " +
-                "text-background dark:text-foreground"
+                "text-foreground"
             }>{props.tier}</p>
         </div>
     );
@@ -164,6 +172,7 @@ export const GameIcon: Component<GameIconProps> = (props) => {
     const [local, others] = splitProps(props, [
         "class", "name", "iconAsset", "shape", "small", "tier", "rarity",
         "href", "noInteract", "tooltipContent", "quantity", "clickParams",
+        "showFallbackText"
     ]);
 
     const small = () => local.small ?? true;
@@ -181,7 +190,7 @@ export const GameIcon: Component<GameIconProps> = (props) => {
 
     const bgColor = () => local.tier !== undefined ? Tiers.getBackgroundColorClass(local.tier) : "";
     const borderColor = () => local.rarity ? Rarities.getBorderColorClass(local.rarity) : "";
-    const path = () => getAssetURL(local.iconAsset, local.quantity);
+    const path = () => local.iconAsset.startsWith("/") ? local.iconAsset : getAssetURL(local.iconAsset, local.quantity);
 
     const frameSrc = () => {
         const prefix = FRAME_PREFIX[local.shape];
@@ -217,6 +226,8 @@ export const GameIcon: Component<GameIconProps> = (props) => {
         navigate(`${local.href}?${local.clickParams[1]}`);
     };
 
+    const [iconFailed, setIconFailed] = createSignal(false);
+
     const iconDiv = () => (
         <div
             class={cn(
@@ -232,7 +243,10 @@ export const GameIcon: Component<GameIconProps> = (props) => {
                 //src={"/assets/Frames/item-frame.webp"}
                 alt={local.name}
                 class={`${bgColor()} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-contain ${iconDims()}`}
-                onerror={(e) => ((e.target as HTMLImageElement).src = "/assets/Unknown.webp")}
+                onerror={(e) => {
+                    (e.target as HTMLImageElement).src = "/assets/Unknown.webp";
+                    setIconFailed(true);
+                }}
             />
             {/* Game frame image overlaid on top */}
             <img
@@ -246,20 +260,23 @@ export const GameIcon: Component<GameIconProps> = (props) => {
 
     return (
         <Tooltip disabled={noInteract()}>
-            <Show when={local.href && !noInteract()}
-                  fallback={
-                      <TooltipTrigger as={"span"}>
-                          {iconDiv()}
-                      </TooltipTrigger>
-                  }>
-                <TooltipTrigger as={A} href={local.href ?? "#"} class={"cursor-pointer"}
-                                onClick={handleClick}
-                                onContextMenu={handleContextMenu}
+            <div class="flex flex-col items-center">
+                <Show when={local.href && !noInteract()}
+                      fallback={<TooltipTrigger as={"span"}>{iconDiv()}</TooltipTrigger>}
                 >
-                    {iconDiv()}
-                </TooltipTrigger>
-            </Show>
-            <TooltipContent class={borderColor() ? `border ${borderColor()}` : ""}>
+                    <TooltipTrigger
+                        as={A} href={local.href ?? "#"} class={"cursor-pointer"}
+                        onClick={handleClick}
+                        onContextMenu={handleContextMenu}
+                    >
+                        {iconDiv()}
+                    </TooltipTrigger>
+                </Show>
+                <Show when={props.showFallbackText && iconFailed()}>
+                    <div class={cn(sizeEntry().icon[0], "text-muted-foreground text-xs text-center")}>{local.name}</div>
+                </Show>
+            </div>
+            <TooltipContent class={cn("max-w-[90svw]", borderColor() ? `border ${borderColor()}` : "")}>
                 {local.tooltipContent ?? defaultTooltip()}
             </TooltipContent>
         </Tooltip>
@@ -277,13 +294,22 @@ type ItemIconProps = Omit<ComponentProps<"div">, "children"> & {
     quantity?: number;
 };
 
+const HATS = ["soldier", "pyro", "sniper", "demoman", "scout", "medic", "heavy", "engineer", "spy"];
 export const ItemIcon: Component<ItemIconProps> = (props) => {
     const [local, others] = splitProps(props, ["item", "quantity"]);
+    let asset = props.item.iconAssetName;
+    const { tf2Mode } = useSettings();
+    if (tf2Mode()) {
+        const eq = BitCraftTables.EquipmentDesc.indexedBy("itemId")?.()?.get(props.item.id);
+        if (eq && eq.slots.some(s => s.tag === "HeadClothing")) {
+            asset = `/assets/Hats/${HATS[Math.floor(Math.random() * HATS.length)]}.webp`;
+        }
+    }
 
     return (
         <GameIcon
             name={props.item.name}
-            iconAsset={props.item.iconAssetName}
+            iconAsset={asset}
             tier={props.item.tier}
             rarity={props.item.rarity}
             href={`/database/item/${props.item.id}`}
@@ -345,6 +371,7 @@ type ResourceIconProps = Omit<ComponentProps<"div">, "children"> & {
     res: ResourceDesc;
     small?: boolean;
     noInteract?: boolean;
+    showFallbackText?: boolean;
 };
 
 export const ResourceIcon: Component<ResourceIconProps> = (props) => {

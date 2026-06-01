@@ -154,7 +154,7 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                                 {props.resource.onDestroyYieldResourceChance === 1 ? "deplete" : `${props.resource.onDestroyYieldResourceChance * 100}%`}
                             </span>
                         </Show>
-                        <ResourceIcon res={dR()} small/>
+                        <ResourceIcon res={dR()} small showFallbackText/>
                     </div>
                 )}
             </Show>
@@ -172,7 +172,7 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                 <>
                     <InputItemStackArray stacks={props.recipe.consumedItemStacks}/>
                     <Show when={resource()}>
-                        {(res) => <ResourceIcon res={res()}/>}
+                        {(res) => <ResourceIcon res={res()} showFallbackText/>}
                     </Show>
                     <Show when={props.recipe.cargoId}>
                         <ItemStackIcon
@@ -290,7 +290,7 @@ export const TravelerTradePanel: Component<{ trade: TravelerTradeOrderDesc }> = 
 export const ResourceDepletionPanel: Component<{ resource: ResourceDesc }> = (props) => {
     return (
         <RecipeVisual
-            inputs={<ResourceIcon res={props.resource}/>}
+            inputs={<ResourceIcon res={props.resource} showFallbackText/>}
             outputs={<ResourceDepletionIcons resource={props.resource} showLabel={true}/>}
         />
     );

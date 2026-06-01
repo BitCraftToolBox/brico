@@ -5,8 +5,9 @@ import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/Detai
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {StatTable} from "~/components/shared/RelTablePresets";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
-import {breadcrumb, CollectibleLink, IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {breadcrumb, IconLink, ItemLink, pageIcon} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
+import {collectiblesTab} from "~/lib/table-utils/detail-tab-builders";
 import {fixFloat, readableSeconds, undefinedIfZero} from "~/lib/utils";
 
 export default function DeployableDetail() {
@@ -126,18 +127,7 @@ export default function DeployableDetail() {
                     showWhenEmpty: false,
                     content: () => <StatTable data={deployable()!.stats}/>,
                 },
-                {
-                    id: "collectible",
-                    label: "Collectible",
-                    count: collectible() ? 1 : 0,
-                    content: () => (
-                        <Show when={collectible()}>
-                            {c => <div class="p-1">
-                                <CollectibleLink id={c().id} name={c().name}/>
-                            </div>}
-                        </Show>
-                    ),
-                },
+                ...(collectible() ? [collectiblesTab([collectible()!])] : []),
                 {
                     id: "deed",
                     label: "Item Deed",

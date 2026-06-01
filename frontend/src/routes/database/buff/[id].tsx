@@ -1,9 +1,10 @@
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
-import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
+import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {breadcrumb} from "~/lib/game-links";
+import {breadcrumb, IconLink, pageIcon} from "~/lib/game-links";
+import {SidebarPages} from "~/lib/sidebar-items";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds, splitCamelCase} from "~/lib/utils";
 
@@ -38,7 +39,7 @@ export default function BuffDetail() {
                     label: "Online Timestamp",
                     value: <Tooltip>
                         <TooltipTrigger>{b.onlineTimestamp ? "Yes" : "No"}</TooltipTrigger>
-                        <TooltipContent>If No, buff ticks down while offline.</TooltipContent>
+                        <TooltipContent class="max-w-[90svw]">If No, buff ticks down while offline.</TooltipContent>
                     </Tooltip>
                 },
             ],
@@ -55,6 +56,37 @@ export default function BuffDetail() {
         return groups;
     });
 
+    type SourceEntry = { href: string; iconPage: SidebarPages; name: string };
+
+    const sources = createMemo((): SourceEntry[] => {
+        const b = buff();
+        if (!b) return [];
+        const entries: SourceEntry[] = [];
+        const itemIdx = BitCraftTables.ItemDesc.indexedBy("id")();
+        for (const food of BitCraftTables.FoodDesc.get() ?? []) {
+            if (food.buffs.some(e => e.buffId === b.id)) {
+                const item = itemIdx?.get(food.itemId);
+                entries.push({
+                    href: `/database/food/${food.itemId}`,
+                    iconPage: "Food",
+                    name: item?.name ?? `Food #${food.itemId}`,
+                });
+            }
+        }
+        const buildingIdx = BitCraftTables.BuildingDesc.indexedBy("id")();
+        for (const bb of BitCraftTables.BuildingBuffDesc.get() ?? []) {
+            if (bb.buffs.some(e => e.buffId === b.id)) {
+                const building = buildingIdx?.get(bb.buildingId);
+                entries.push({
+                    href: `/database/building/${bb.buildingId}`,
+                    iconPage: "Structures",
+                    name: building?.name ?? `Building #${bb.buildingId}`,
+                });
+            }
+        }
+        return entries;
+    });
+
     return (
         <DetailPageLayout
             title={buff()?.description ?? `Buff #${params.id}`}
@@ -67,7 +99,21 @@ export default function BuffDetail() {
             rawData={buff()}
             spacetimeTable={BitCraftTables.BuffDesc.st_name}
             objectId={buff()?.id}
-            tabs={[]}
+            tabs={[
+                {
+                    id: "sources",
+                    label: "Sources",
+                    count: sources().length,
+                    showWhenEmpty: false,
+                    content: () => <RelTable
+                        data={sources()}
+                        columns={[{
+                            header: "Source",
+                            cell: row => <IconLink href={row.href} icon={pageIcon(row.iconPage)}>{row.name}</IconLink>,
+                        }]}
+                    />,
+                },
+            ]}
         />
     );
 }

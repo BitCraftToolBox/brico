@@ -54,6 +54,9 @@ export type AppSettings = {
      */
     sidebarFavorites: () => string[];
     setSidebarFavorites: (favorites: string[]) => void;
+    /** Default collapse groups on load */
+    sidebarCollapsedGroups: () => string[];
+    setSidebarCollapsedGroups: (v: string[]) => void;
     /** Default rows per page for all data tables */
     tablePageSize: () => number;
     setTablePageSize: (v: number) => void;
@@ -98,6 +101,7 @@ const KEYS = {
     sidebarView: "brico:sidebar:view",
     sidebarFavoritesOnly: "brico:sidebar:favorites-only",
     sidebarHiddenItems: "brico:sidebar:hidden-items",
+    sidebarCollapsedGroups: "brico:sidebar:collapsed-groups",
     tablePageSize: "brico:table:page-size",
     tableHiddenColumns: "brico:table:hidden-columns",
     completedQuests: "brico:quests:completed",
@@ -107,53 +111,59 @@ const KEYS = {
 } as const;
 
 function createSettings(): AppSettings {
-    const [theme, setTheme] = makePersisted(
-        createSignal<ConfigColorMode>("system"),
-        {name: KEYS.theme}
-    );
 
-    const [showSidebarControls, setShowSidebarControls] = makePersisted(
-        createSignal(true),
-        {name: KEYS.sidebarShowControls}
-    )
-    const [sidebarStartsCollapsed, setSidebarStartsCollapsed] = makePersisted(
-        createSignal(false),
-        {name: KEYS.sidebarStartsCollapsed}
-    );
-    const [sidebarSort, setSidebarSort] = makePersisted(
-        createSignal<SortMode>("tree"),
-        {name: KEYS.sidebarSort}
-    );
-    const [sidebarView, setSidebarView] = makePersisted(
-        createSignal<ViewMode>("list"),
-        {name: KEYS.sidebarView}
-    );
-    const [sidebarFavoritesOnly, setSidebarFavoritesOnly] = makePersisted(
-        createSignal<boolean>(false),
-        {name: KEYS.sidebarFavoritesOnly}
-    );
-    const [sidebarHiddenItems, setSidebarHiddenItems] = makePersisted(
-        createSignal<string[]>([]),
-        {name: KEYS.sidebarHiddenItems}
-    );
-    /** Derived: all known hrefs minus explicitly hidden ones. */
-    const sidebarFavorites = createMemo(() =>
-        ALL_SIDEBAR_HREFS.filter(h => !sidebarHiddenItems().includes(h))
-    );
-    /** Setting favorites computes hidden = allHrefs - newFavorites. */
-    const setSidebarFavorites = (favorites: string[]) => {
-        setSidebarHiddenItems(ALL_SIDEBAR_HREFS.filter(h => !favorites.includes(h)));
+    // cross-tab sync
+    type PersistedSync<T> = { key: string; get: Accessor<T>; set: (v: T) => void };
+    const persistedSyncs: PersistedSync<any>[] = [];
+
+    const onStorageChange = (e: StorageEvent) => {
+        if (!e.newValue) return;
+        for (const sync of persistedSyncs) {
+            if (e.key !== sync.key) continue;
+            try {
+                // prevent looping
+                const parsed = JSON.parse(e.newValue);
+                if (parsed !== sync.get()) sync.set(parsed);
+            } catch {
+                // malformed value in storage — ignore
+            }
+            break;
+        }
     };
+    window.addEventListener("storage", onStorageChange);
+    onCleanup(() => window.removeEventListener("storage", onStorageChange));
 
-    const [tablePageSize, setTablePageSize] = makePersisted(
-        createSignal<number>(10),
-        {name: KEYS.tablePageSize}
-    );
-    const [tableHiddenColumns, setTableHiddenColumns] = makePersisted(
-        createSignal<Record<string, string[]>>({}),
-        {name: KEYS.tableHiddenColumns}
-    );
+    // persisted signals
 
+    // theme
+    const [theme, setTheme] = makePersisted(createSignal<ConfigColorMode>("system"), {name: KEYS.theme});
+    const [midnightDark, setMidnightDark] = makePersisted(createSignal<boolean>(false), {name: KEYS.midnightDark});
+
+    // sidebar
+    const [showSidebarControls, setShowSidebarControls] = makePersisted(createSignal(true), {name: KEYS.sidebarShowControls});
+    const [sidebarStartsCollapsed, setSidebarStartsCollapsed] = makePersisted( createSignal(false), {name: KEYS.sidebarStartsCollapsed});
+    const [sidebarSort, setSidebarSort] = makePersisted(createSignal<SortMode>("tree"), {name: KEYS.sidebarSort});
+    const [sidebarView, setSidebarView] = makePersisted(createSignal<ViewMode>("list"), {name: KEYS.sidebarView});
+    const [sidebarFavoritesOnly, setSidebarFavoritesOnly] = makePersisted(createSignal<boolean>(false), {name: KEYS.sidebarFavoritesOnly});
+    const [sidebarHiddenItems, setSidebarHiddenItems] = makePersisted(createSignal<string[]>([]), {name: KEYS.sidebarHiddenItems});
+    const [sidebarCollapsedGroups, setSidebarCollapsedGroups] = makePersisted(createSignal<string[]>([]), {name: KEYS.sidebarCollapsedGroups});
+
+    // tables
+    const [tablePageSize, setTablePageSize] = makePersisted(createSignal<number>(10), {name: KEYS.tablePageSize});
+    const [tableHiddenColumns, setTableHiddenColumns] = makePersisted(createSignal<Record<string, string[]>>({}), {name: KEYS.tableHiddenColumns});
+
+    // game data?
+    const [completedQuestsRaw, setCompletedQuestsRaw] = makePersisted(createSignal<number[]>([]), {name: KEYS.completedQuests});
+
+    // easter eggs
+    const [easterEggs, setEasterEggs] = makePersisted(createSignal<boolean>(false), {name: KEYS.easterEggs});
+    const [tf2Mode, setTf2Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.tf2Mode});
+    const [r9Mode, setR9Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.r9Mode});
+
+
+    // derived signals
+
+    // theme
     const colorStorageManager: ColorModeStorageManager = {
         ssr: false,
         type: "localStorage",
@@ -165,26 +175,25 @@ function createSettings(): AppSettings {
         }
     };
 
-    // Keep theme() in sync when another tab writes to "brico:theme".
-    // makePersisted JSON-serializes values, so the raw localStorage value is e.g. `'"dark"'`.
-    // We must JSON.parse before comparing/setting to avoid a double-encode feedback loop
-    // that would exhaust the localStorage quota.
-    const onStorageChange = (e: StorageEvent) => {
-        if (e.key !== KEYS.theme || !e.newValue) return;
-        try {
-            const parsed = JSON.parse(e.newValue) as ConfigColorMode;
-            if (parsed !== theme()) setTheme(parsed);
-        } catch {
-            // Malformed value in storage — ignore.
-        }
+    // sidebar
+    const sidebarFavorites = createMemo(() =>
+        ALL_SIDEBAR_HREFS.filter(h => !sidebarHiddenItems().includes(h))
+    );
+    const setSidebarFavorites = (favorites: string[]) => {
+        setSidebarHiddenItems(ALL_SIDEBAR_HREFS.filter(h => !favorites.includes(h)));
     };
-    window.addEventListener("storage", onStorageChange);
-    onCleanup(() => window.removeEventListener("storage", onStorageChange));
+
+    // game data
+    const completedQuests = createMemo(() => new Set(completedQuestsRaw()));
+    const setCompletedQuests = (ids: number[]) => setCompletedQuestsRaw(ids);
+
+
+    // non-persisted signals
 
     const [displayProbabilityAsAverage, setDisplayProbabilityAsAverage] = createSignal(false);
     const [flattenItemListOutputs, setFlattenItemListOutputs] = createSignal(false);
 
-    // Session-only table state — keyed by table name, not persisted.
+    // Session-only table state — keyed by table name
     const tableSessions = new Map<string, TableSessionState>();
     const getTableSession = (name: string): TableSessionState => {
         if (!tableSessions.has(name)) {
@@ -200,17 +209,22 @@ function createSettings(): AppSettings {
         return tableSessions.get(name)!;
     };
 
-    const [completedQuestsRaw, setCompletedQuestsRaw] = makePersisted(
-        createSignal<number[]>([]),
-        {name: KEYS.completedQuests}
-    );
-    const completedQuests = createMemo(() => new Set(completedQuestsRaw()));
-    const setCompletedQuests = (ids: number[]) => setCompletedQuestsRaw(ids);
 
-    const [easterEggs, setEasterEggs] = makePersisted(createSignal<boolean>(false), {name: KEYS.easterEggs});
-    const [tf2Mode, setTf2Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.tf2Mode});
-    const [r9Mode, setR9Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.r9Mode});
-    const [midnightDark, setMidnightDark] = makePersisted(createSignal<boolean>(false), {name: KEYS.midnightDark});
+    // Register all persisted signals for cross-tab synchronization.
+    persistedSyncs.push(
+        {key: KEYS.theme, get: theme, set: setTheme},
+        {key: KEYS.midnightDark, get: midnightDark, set: setMidnightDark},
+        {key: KEYS.sidebarShowControls, get: showSidebarControls, set: setShowSidebarControls},
+        {key: KEYS.sidebarSort, get: sidebarSort, set: setSidebarSort},
+        {key: KEYS.sidebarView, get: sidebarView, set: setSidebarView},
+        {key: KEYS.sidebarFavoritesOnly, get: sidebarFavoritesOnly, set: setSidebarFavoritesOnly},
+        {key: KEYS.sidebarHiddenItems, get: sidebarHiddenItems, set: setSidebarHiddenItems},
+        {key: KEYS.tablePageSize, get: tablePageSize, set: setTablePageSize},
+        {key: KEYS.completedQuests, get: completedQuestsRaw, set: setCompletedQuestsRaw},
+        {key: KEYS.easterEggs, get: easterEggs, set: setEasterEggs},
+        {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
+        {key: KEYS.r9Mode, get: r9Mode, set: setR9Mode},
+    );
 
     return {
         colorStorageManager,
@@ -228,6 +242,8 @@ function createSettings(): AppSettings {
         setSidebarFavoritesOnly,
         sidebarHiddenItems,
         setSidebarHiddenItems,
+        sidebarCollapsedGroups,
+        setSidebarCollapsedGroups,
         sidebarFavorites,
         setSidebarFavorites,
         tablePageSize,

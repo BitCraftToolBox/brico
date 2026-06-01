@@ -83,9 +83,9 @@ export const ItemStackIcon: Component<ItemStackIconProps> = (props) => {
                 return (
                     <div class={cn("flex flex-col items-center gap-0.5", props.class)}>
                         <Show when={isItem(obj())} fallback={
-                            <CargoIcon cargo={obj() as CargoDesc} quantity={qty()} small={props.small ?? true} noInteract={props.noInteract}/>
+                            <CargoIcon cargo={obj() as CargoDesc} quantity={qty()} small={props.small} noInteract={props.noInteract}/>
                         }>
-                            <ItemIcon item={obj() as ItemDesc} quantity={qty()} small={props.small ?? true} noInteract={props.noInteract}/>
+                            <ItemIcon item={obj() as ItemDesc} quantity={qty()} small={props.small} noInteract={props.noInteract}/>
                         </Show>
                         <Show when={nameText()}>
                             <span class="text-xs text-center leading-tight max-w-20 truncate" title={obj().name}>
@@ -113,7 +113,7 @@ function ProbBadge(props: { probability: number, chances?: number }) {
                     <TooltipTrigger class={badgeClass} onclick={() => setDisplayProbabilityAsAverage(!displayProbabilityAsAverage())}>
                         {pct()}%
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent class="max-w-[90svw]">
                         Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently.
                     </TooltipContent>
                 </Tooltip>
@@ -122,7 +122,7 @@ function ProbBadge(props: { probability: number, chances?: number }) {
                     <TooltipTrigger class={badgeClass} onclick={() => setDisplayProbabilityAsAverage(!displayProbabilityAsAverage())}>
                         {ev()}
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent class="max-w-[90svw]">
                         Average number of drops for a full bar (resource health, dungeon contribution, etc.): {fixFloat(props.probability * 100)}% * {props.chances} = {ev()}.
                     </TooltipContent>
                 </Tooltip>

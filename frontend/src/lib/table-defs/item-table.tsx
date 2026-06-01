@@ -71,7 +71,7 @@ export const ItemDescDefs: BitCraftToDataDef<ItemDesc> = {
             cell: (props) => (
                 <Tooltip>
                     <TooltipTrigger>{props.row.original.volume}</TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent class="max-w-[90svw]">
                         Inventory stack: {6000 / props.row.original.volume}
                     </TooltipContent>
                 </Tooltip>

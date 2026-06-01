@@ -4,6 +4,7 @@ import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BiomeDesc} from "~/bindings/src/biome_desc_type";
 import {BuffDesc} from "~/bindings/src/buff_desc_type";
 import {BuffTypeDesc} from "~/bindings/src/buff_type_desc_type";
+import {BuildingBuffDesc} from "~/bindings/src/building_buff_desc_type";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {BuildingRepairsDesc} from "~/bindings/src/building_repairs_desc_type";
 import {BuildingTypeDesc} from "~/bindings/src/building_type_desc_type";
@@ -158,6 +159,7 @@ export const BitCraftTables = {
     'EnemyDesc': cache<EnemyDesc>('enemy_desc', EnemyDesc),
     'ResourceDesc': cache<ResourceDesc>('resource_desc', ResourceDesc),
     'BuildingRepairsDesc': cache<BuildingRepairsDesc>('building_repairs_desc', BuildingRepairsDesc),
+    'BuildingBuffDesc': cache<BuildingBuffDesc>('building_buff_desc', BuildingBuffDesc),
     'BuildingDesc': cache<BuildingDesc>('building_desc', BuildingDesc),
     'BuildingTypeDesc': cache<BuildingTypeDesc>('building_type_desc', BuildingTypeDesc),
     'ConstructionRecipeDesc': cache<ConstructionRecipeDesc>('construction_recipe_desc', ConstructionRecipeDesc),

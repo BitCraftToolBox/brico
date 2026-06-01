@@ -2,7 +2,7 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
-import {GameIcon} from "~/components/shared/GameIcon";
+import {ItemIcon} from "~/components/shared/GameIcon";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -38,8 +38,7 @@ export default function WeaponDetail() {
             breadcrumb={breadcrumb("/database/weapon")}
             loading={isLoading() && !weapon()}
             icon={<Show when={item()}>{(i) =>
-                <GameIcon name={i().name} iconAsset={i().iconAssetName} shape="tall"
-                          small={false} tier={i().tier} rarity={i().rarity} noInteract/>
+                <ItemIcon item={i()} small={false} noInteract/>
             }</Show>}
             name={item()?.name ?? `Weapon #${params.id}`}
             tier={weapon()?.tier}

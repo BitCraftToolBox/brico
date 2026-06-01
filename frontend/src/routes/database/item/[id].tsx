@@ -30,6 +30,7 @@ import {
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {
+    collectiblesTab,
     constructionCombinedTab,
     conversionTab,
     craftedFromTab,
@@ -88,6 +89,7 @@ export default function ItemDetail() {
     const toolTypeIndex = BitCraftTables.ToolTypeDesc.indexedBy("id");
     const weaponTypeIndex = BitCraftTables.WeaponTypeDesc.indexedBy("id");
     const knowledgeScrollIndex = BitCraftTables.KnowledgeScrollDesc.indexedBy("itemId");
+    const collectibleIndex = BitCraftTables.CollectibleDesc.indexedBy("itemDeedId");
 
     const item = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
@@ -100,6 +102,10 @@ export default function ItemDetail() {
     const foodData = createMemo(() => item() ? foodIndex()?.get(item()!.id) : undefined);
     const weaponData = createMemo(() => item() ? weaponIndex()?.get(item()!.id) : undefined);
     const scrollData = createMemo(() => item() ? knowledgeScrollIndex()?.get(item()!.id) : undefined);
+    const collectibleData = createMemo(() => {
+        const col = item() ? collectibleIndex()?.get(item()!.id) : undefined;
+        return col ? [col] : [];
+    });
 
     const knowledgeStatData = createMemo(() => {
         const scroll = scrollData();
@@ -171,6 +177,7 @@ export default function ItemDetail() {
             properties: [
                 {label: "Volume", value: i.volume},
                 {label: "Durability", value: i.durability > 0 ? i.durability : undefined},
+                {label: "Compendium Entry", value: !i.compendiumEntry ? false : undefined},
             ],
         });
 
@@ -298,6 +305,7 @@ export default function ItemDetail() {
                 travelerTradesTab(tradeOffers(), tradeRequires()),
                 itemListTab(isItemList()),
                 itemListsTab(inItemLists()),
+                collectiblesTab(collectibleData()),
                 questRequirementsTab(questRequires()),
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),

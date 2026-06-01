@@ -6,6 +6,7 @@
  */
 
 import {createSignal, Show} from "solid-js";
+import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
@@ -36,7 +37,7 @@ import {
     TravelerTaskPanel,
     TravelerTradePanel,
 } from "~/components/shared/RecipeDisplay";
-import {QuestChainLink} from "~/lib/game-links";
+import {CollectibleLink, QuestChainLink} from "~/lib/game-links";
 import {getInteractionName, getPlacementName} from "~/lib/placeables";
 import {
     getConstructionRecipeName,
@@ -362,6 +363,22 @@ export function enemyDropsTab(enemies: EnemyDesc[]): RelationshipTab {
     };
 }
 
+export function collectiblesTab(collectibles: CollectibleDesc[]) : RelationshipTab {
+    return {
+        id: "collectibles",
+        label: "Collectibles",
+        count: collectibles.length,
+        showWhenEmpty: false,
+        content: () => (
+            <RelTable<CollectibleDesc>
+                data={collectibles}
+                columns={[
+                    {header: "Collectible", cell: c => <CollectibleLink id={c.id} name={c.name}/>},
+                ]}
+            />
+        ),
+    }
+}
 // ─── Single Recipe Tab Builders (for building page) ────────────
 
 export function constructionCombinedSingleTab(

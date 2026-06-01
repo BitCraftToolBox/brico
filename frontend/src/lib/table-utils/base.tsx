@@ -4,7 +4,7 @@ import {FilterSetupProps} from "~/components/data-table/data-table";
 
 export type BitCraftToDataDef<T> = {
     columns: ColumnDef<T, any>[];
-    facetedFilters?: FilterSetupProps<T>[];
+    facetedFilters?: FilterSetupProps<T, any>[];
     searchColumns?: string[];
 };
 

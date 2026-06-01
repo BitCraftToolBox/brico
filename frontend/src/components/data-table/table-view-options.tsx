@@ -1,7 +1,7 @@
 import {Column, Table} from "@tanstack/solid-table"
 
-import {TbOutlineSettings as IconSettings} from "solid-icons/tb"
-import {For} from "solid-js"
+import {TbOutlineEye as IconEye, TbOutlineEyeClosed as IconEyeOff} from "solid-icons/tb"
+import {For, Show} from "solid-js"
 import {Button} from "~/components/ui/button"
 import {DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from "~/components/ui/dropdown-menu"
 import {useSettings} from "~/lib/settings";
@@ -62,7 +62,7 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
                 size="sm"
                 class="h-8 w-auto px-2 sm:px-3"
             >
-                <IconSettings/>
+                <Show when={props.table.getIsAllColumnsVisible()} fallback={<IconEyeOff/>}><IconEye/></Show>
                 View
             </DropdownMenuTrigger>
             <DropdownMenuContent>

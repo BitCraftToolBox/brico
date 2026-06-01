@@ -1,3 +1,4 @@
+import {useSearchParams} from "@solidjs/router";
 import {
     type Column,
     ColumnDef,
@@ -16,7 +17,7 @@ import {
 import {createMemo, createSignal, For, Show, splitProps} from "solid-js"
 import {Dynamic} from "solid-js/web";
 import {TableColumnHeader} from "~/components/data-table/table-column-header";
-import {NumberBasedOption, StatsBasedOption, TableFacetedFilterProps, ValueBasedOption} from "~/components/data-table/table-faceted-filter";
+import {TableFacetedFilterProps} from "~/components/data-table/table-faceted-filter";
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "~/components/ui/table"
 import {useSettings} from "~/lib/settings";
@@ -24,25 +25,25 @@ import {useSettings} from "~/lib/settings";
 import {TablePagination} from "./table-pagination"
 import {TableToolbar} from "./table-toolbar"
 
-type OptionsType<TData> = ValueBasedOption[] | NumberBasedOption | StatsBasedOption;
-type OptionsFnOrValue<TData> = ((col: Column<TData> | undefined) => OptionsType<TData>) | OptionsType<TData>;
+type OptionsFnOrValue<TData, TResult> = ((col: Column<TData> | undefined) => TResult) | TResult;
 
 type DataTableProps<TData> = {
     name: string
     columns: ColumnDef<TData>[]
     data: TData[]
-    facetedFilters?: FilterSetupProps<TData>[]
+    facetedFilters?: FilterSetupProps<TData, any>[]
     searchColumns?: string[]
     initialState?: InitialTableState
 }
 
-export type FilterSetupProps<TData> = Omit<TableFacetedFilterProps<TData>, "table" | "column" | "options"> & {
+export type FilterSetupProps<TData, TResult> = Omit<TableFacetedFilterProps<TData>, "table" | "column" | "options"> & {
     column?: string
-    options: OptionsFnOrValue<TData>
+    options: OptionsFnOrValue<TData, TResult>
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
     const {tableHiddenColumns, getTableSession} = useSettings();
+    const [searchParams, setSearchParams] = useSearchParams()
 
     // Restore persisted hidden columns for this table as the initial visibility state
     const persistedHidden: string[] = tableHiddenColumns()[props.name] ?? [];
@@ -55,14 +56,16 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     const session = getTableSession(props.name);
     const [columnFilters, setColumnFilters] = [session.columnFilters, session.setColumnFilters];
     const [sorting, setSorting] = [session.sorting, session.setSorting];
-    const [globalFilter, setGlobalFilter] = [session.globalFilter, session.setGlobalFilter];
+    const [globalFilter, setGlobalFilterRaw] = [session.globalFilter, session.setGlobalFilter];
     const [pagination, setPagination] = [session.pagination, session.setPagination];
 
-    props.columns.forEach(c => {
-        if (c.header === undefined) {
-            c.header = (props) => <TableColumnHeader column={props.column} title={props.column.id}></TableColumnHeader>;
-        }
-    });
+    const setGlobalFilter = (s: string) => {
+        setSearchParams({q: s});
+        setGlobalFilterRaw(s);
+    };
+    if (searchParams.q) {
+        setGlobalFilterRaw(Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q);
+    }
 
     // Custom global filter function for multi-column search
     const globalFilterFn: FilterFn<TData> = (row, _columnId, value) => {
@@ -125,15 +128,21 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
     })
 
+    props.columns.forEach(c => {
+        if (c.header === undefined) {
+            c.header = (props) => <TableColumnHeader column={props.column} title={props.column.id} table={table}></TableColumnHeader>;
+        }
+    });
+
     const filters = createMemo<TableFacetedFilterProps<TData>[]>(() => {
-        return props.facetedFilters?.map((filter) => {
-            const [local, others] = splitProps(filter as FilterSetupProps<TData>, ["column", "options"])
+        return props.facetedFilters?.map((filter: FilterSetupProps<TData, any>) => {
+            const [local, others] = splitProps(filter as FilterSetupProps<TData, any>, ["column", "options"])
             const col = local.column ? table.getColumn(local.column) : undefined;
 
             // If options is a function, bind it to the resolved column and pass it through
             // so the filter component can evaluate it reactively (re-running when data changes)
             const options = typeof local.options === 'function'
-                ? () => (local.options as (col: Column<TData> | undefined) => OptionsType<TData>)(col)
+                ? () => (local.options as (col: Column<TData> | undefined) => any)(col)
                 : local.options;
 
             return {

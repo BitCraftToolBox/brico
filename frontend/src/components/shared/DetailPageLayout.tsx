@@ -154,19 +154,19 @@ const CopyButton: Component<{
     copyElement?: JSX.Element;
     copiedElement?: JSX.Element;
 }> = (props) => {
-    const [jsonCopied, setJsonCopied] = createSignal(false);
+    const [contentCopied, setContentCopied] = createSignal(false);
     const copyContent = () => {
         if (props.content) {
             navigator.clipboard.writeText(props.content).then(() => {
-                setJsonCopied(true);
-                setTimeout(() => setJsonCopied(false), 1500);
+                setContentCopied(true);
+                setTimeout(() => setContentCopied(false), 1500);
             });
         }
     };
 
     return (
         <Button variant="outline" size="sm" onClick={copyContent}>
-            <Show when={jsonCopied()} fallback={props.copyElement || <><IconClipboardCopy class="mr-1"/> Copy JSON</>}>
+            <Show when={contentCopied()} fallback={props.copyElement || <><IconClipboardCopy class="mr-1"/> Copy JSON</>}>
                 {props.copiedElement || <><IconClipboardCheck class="mr-1"/> Copied!</>}
             </Show>
         </Button>
@@ -185,9 +185,9 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     const hasInfoSection = () => hasDetails() || props.summaryContent || props.rawData || props.infoTabs;
 
     const [infoTab, setInfoTabRaw] = createSignal<InfoTab>("summary");
-    const setInfoTab = (tab: string) => {
-        setInfoTabRaw(tab);
-        setSearchParams({tab}, {replace: true});
+    const setInfoTab = (info: string) => {
+        setInfoTabRaw(info);
+        setSearchParams({info}, {replace: true});
     }
     // Start undefined; the effect below will resolve from ?detail= or default to first tab.
     const [selectedTab, setSelectedTabRaw] = createSignal<string | undefined>(undefined);
@@ -197,7 +197,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     }
 
     onMount(() => {
-        const tabParam = Array.isArray(searchParams.tab) ? searchParams.tab[0] : searchParams.tab;
+        const tabParam = Array.isArray(searchParams.info) ? searchParams.info[0] : searchParams.info;
         if (tabParam) {
             // Build the list of valid info-tab ids so we can validate the param.
             const validInfoTabs: string[] = [

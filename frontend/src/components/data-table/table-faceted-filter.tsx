@@ -1,3 +1,4 @@
+import {useSearchParams} from "@solidjs/router";
 import type {Column, Table} from "@tanstack/solid-table"
 
 import {TbOutlineCheck as IconCheck, TbOutlineCirclePlus as IconCirclePlus, TbOutlineX as IconX} from "solid-icons/tb"
@@ -17,10 +18,10 @@ type OptionBase = {
     label: string
     icon?: (props: { class?: string, value: any }) => JSX.Element
 }
-export type ValueBasedOption = OptionBase & {
-    value: any
+export type ValueBasedOption<T = any> = OptionBase & {
+    value: T
 };
-export type NumberBasedOption = OptionBase & {
+export type RangedBasedOption = OptionBase & {
     minMax: [number, number]
 };
 
@@ -41,13 +42,28 @@ export type StatsBasedOption = OptionBase & {
     stats: StatsOptionEntry[];
 };
 
+type ValueProps<TData> = {
+    type: "value";
+    options: ValueBasedOption[] | ((col: Column<TData> | undefined) => ValueBasedOption[]);
+}
+type BoolProps<TData> = {
+    type: "bool";
+    options: ValueBasedOption<boolean>[] | ((col: Column<TData> | undefined) => ValueBasedOption<boolean>[]);
+}
+type RangeProps<TData> = {
+    type: "range";
+    options: RangedBasedOption | ((col: Column<TData> | undefined) => RangedBasedOption);
+}
+type StatProps<TData> = {
+    type: "stat";
+    options: StatsBasedOption | ((col: Column<TData> | undefined) => StatsBasedOption);
+}
+
 export type TableFacetedFilterProps<TData> = {
     table: Table<TData>
     column?: Column<TData>
     title?: string
-    options: ValueBasedOption[] | NumberBasedOption | StatsBasedOption
-        | ((col: Column<TData> | undefined) => ValueBasedOption[] | NumberBasedOption | StatsBasedOption)
-}
+} & (ValueProps<TData> | BoolProps<TData> | RangeProps<TData> | StatProps<TData>);
 
 type BadgeOpts<TData> = ParentProps<{
     table: Table<TData>
@@ -188,7 +204,7 @@ function StatsFilterContent<TData>(props: {
                                         <span class="flex-1">{stat.label}</span>
                                         <Show when={isSelected()}>
                                             <span class="ml-auto text-xs text-muted-foreground">
-                                                {filterValue().stats[stat.key][0]} ~ {filterValue().stats[stat.key][1]}
+                                                {filterValue().stats[stat.key][0]} - {filterValue().stats[stat.key][1]}
                                             </span>
                                         </Show>
                                         <Show when={props.column?.getFacetedUniqueValues()?.get(stat.key)}>
@@ -286,13 +302,22 @@ function StatsFilterContent<TData>(props: {
 // ─── Main Filter Component ──────────────────────────────────────
 
 function BoolFilterItem(props: {
-    onSelect: () => void,
+    column?: Column<any>,
+    table: Table<any>,
     value: boolean,
     selectedValues: any[],
     resolvedOptions: ValueBasedOption[],
     facets: Map<any, number>,
 }) {
-    return <CommandItem onSelect={props.onSelect}>
+    return <CommandItem onSelect={() => {
+        const current = props.column?.getFilterValue();
+        if (Array.isArray(current) && current.length && current.includes(props.value)) {
+            props.column?.setFilterValue(undefined);
+        } else {
+            props.column?.setFilterValue([props.value]);
+        }
+        ensurePagesVisible(props.table);
+    }}>
         <div class={cn(
             "mr-2 flex size-4 items-center justify-center rounded-full border border-primary",
             props.selectedValues.some(v => v === props.value)
@@ -320,20 +345,70 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
         return props.options;
     });
 
-    const isValueBased = () => Array.isArray(resolvedOptions());
-    const isStatsBased = () => !isValueBased() && "stats" in (resolvedOptions() as object);
-    const isNumberBased = () => !isValueBased() && !isStatsBased();
-    const isBoolBased = () => {
-        if (!isValueBased()) return false;
-        const opts = resolvedOptions() as unknown as ValueBasedOption[];
-        return opts.length == 2 && opts.some(o => o.value === true) && opts.some(o => o.value === false);
-    }
+    const isValueBased = () => props.type === "value";
+    const isStatsBased = () => props.type === "stat";
+    const isNumberBased = () => props.type === "range";
+    const isBoolBased = () => props.type === "bool";
 
     const facets = () => isValueBased()
         ? props.column?.getFacetedUniqueValues()
         : isNumberBased()
             ? props.column?.getFacetedMinMaxValues()
             : undefined;
+
+    const [searchParams] = useSearchParams();
+
+    if (props.column && searchParams) {
+        if (isValueBased()) {
+            const val = searchParams[props.column.id];
+            if (val) {
+                const opts = (resolvedOptions() as ValueBasedOption[]);
+                const validValues = (Array.isArray(val) ? val : [val])
+                    .map(v => opts.find(o => String(o.value) === v))
+                    .filter(v => !!v).map(v => v.value);
+                if (validValues.length) {
+                    props.column.setFilterValue(validValues);
+                }
+            }
+        } else if (isNumberBased()) {
+            const minVal = searchParams[props.column.id + ".min"];
+            const maxVal = searchParams[props.column.id + ".max"];
+            if (!Array.isArray(minVal) && !Array.isArray(maxVal)) {
+                const minMax = (resolvedOptions() as RangedBasedOption).minMax;
+                const min = Number(minVal);
+                const max = Number(maxVal);
+                if (!Number.isNaN(min) && !Number.isNaN(max)) {
+                    // ensure provided range is in allowed range
+                    const range = [Math.max(minMax[0], min), Math.min(minMax[1], max)];
+                    props.column.setFilterValue(range);
+                }
+            }
+        } else if (isStatsBased()) {
+            let reqStr = searchParams[props.column.id + ".requireAll"];
+            if (!reqStr || !Array.isArray(reqStr) && ["true", "false"].includes(reqStr)) {
+                const opts = (resolvedOptions() as StatsBasedOption);
+                const requireAll = reqStr !== "false"; // default to true if not provided
+                const regex = new RegExp(`^${props.column!.id}\\.(.+)\\.(min|max)$`);
+                const paramStats = Object.keys(searchParams).map(k => k.match(regex)?.[1]).filter((v): v is string => !!v);
+                const validStats = new Map(opts.stats.filter(e => paramStats.includes(e.key)).map(e => [e.key, e.minMax]));
+                const stats: Record<string, [number, number]> = {};
+                validStats.forEach(([statMin, statMax], key) => {
+                    const minStr = searchParams[`${props.column!.id}.${key}.min`];
+                    const maxStr = searchParams[`${props.column!.id}.${key}.max`];
+                    if (!Array.isArray(minStr) && !Array.isArray(maxStr)) {
+                        const min = Number(minStr);
+                        const max = Number(maxStr);
+                        if (!Number.isNaN(min) && !Number.isNaN(max)) {
+                            stats[key] = [Math.max(statMin, min), Math.min(statMax, max)];
+                        }
+                    }
+                });
+                if (stats && Object.keys(stats).length) {
+                    props.column.setFilterValue({requireAll, stats});
+                }
+            }
+        }
+    }
 
     const selectedValues = () => {
         if (isStatsBased()) {
@@ -371,8 +446,9 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                      setPopoverOpen(open);
                      setEditingWithNumberInputs(false);
                  }}>
-            <PopoverTrigger as={Button<"button">} variant="outline" size="sm" class={`h-8 border-dashed ${selectedValues().length ? "border-muted-foreground" : ""}`}
-                            onclick={() => setPopoverOpen(!popoverOpen())}
+            <PopoverTrigger
+                as={Button<"button">} variant="outline" size="sm" onclick={() => setPopoverOpen(!popoverOpen())}
+                class={`h-8 border-dashed ${selectedValues().length ? "border-muted-foreground border-solid" : ""}`}
             >
                 <IconCirclePlus/>
                 {props.title}
@@ -413,7 +489,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                     </Show>
                     <Show when={isNumberBased()}>
                         <FilterBadge values={selectedValues} table={props.table} column={props.column}>
-                            {selectedValues()[0] + "~" + selectedValues()[1]}
+                            {selectedValues()[0] + "-" + selectedValues()[1]}
                         </FilterBadge>
                     </Show>
                     <Show when={isValueBased()}>
@@ -454,6 +530,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                 {/* Number range filter */}
                 <Show when={isNumberBased()}>
                     <Slider
+                        disabled={(facets() as [number, number])[0] === (facets() as [number, number])[1]}
                         minValue={(facets() as [number, number])[0]}
                         maxValue={(facets() as [number, number])[1]}
                         defaultValue={
@@ -461,6 +538,9 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                         }
                         getValueLabel={(params) => `${params.values[0]} - ${params.values[1]}`}
                         onChangeEnd={(vals) => {
+                            if (isNaN(vals[0]) || isNaN(vals[1])) {
+                                return;
+                            }
                             props.column?.setFilterValue(vals as [number, number])
                             ensurePagesVisible(props.table);
                         }}
@@ -508,10 +588,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                                         if (sliderEditMin && sliderEditMax) {
                                             const min = +sliderEditMin!.value.replace(/[^-.\d]/g, '');
                                             const max = +sliderEditMax!.value.replace(/[^-.\d]/g, '');
-                                            if (isNaN(min) || isNaN(max)) {
-                                                console.log("Got non-numeric inputs. This should not happen! Please report it if you see this.",
-                                                    sliderEditMin.value, sliderEditMax.value)
-                                            } else {
+                                            if (!isNaN(min) && !isNaN(max)) {
                                                 props.column?.setFilterValue([min, max]);
                                                 ensurePagesVisible(props.table);
                                             }
@@ -526,97 +603,94 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                 </Show>
                 {/* Value-based filter */}
                 <Show when={isValueBased()}>
-                    <Show when={isBoolBased()} fallback={
-                        <Command shouldFilter={false}>
-                            <CommandInput placeholder={props.title} value={search()} onValueChange={setSearch}/>
-                            <CommandList>
-                                <CommandEmpty>No results found.</CommandEmpty>
-                                <CommandGroup>
-                                    <For each={filteredOptions()}>
-                                        {(option) => {
-                                            const isSelected = () => (selectedValues() as any[]).includes(option.value)
-                                            return (
-                                                <CommandItem
-                                                    onSelect={() => {
-                                                        let newValues
-                                                        if (isSelected()) {
-                                                            newValues = (selectedValues() as any[]).filter((item) => item !== option.value)
-                                                        } else {
-                                                            newValues = [...selectedValues(), option.value]
-                                                        }
-                                                        props.column?.setFilterValue(newValues.length ? newValues : undefined)
-                                                        ensurePagesVisible(props.table);
-                                                    }}
-                                                >
-                                                    <div
-                                                        class={cn(
-                                                            "mr-2 flex size-4 items-center justify-center rounded-sm border border-primary",
-                                                            isSelected()
-                                                                ? "bg-primary text-primary-foreground"
-                                                                : "opacity-50 [&_svg]:invisible"
-                                                        )}
-                                                    >
-                                                        <IconCheck/>
-                                                    </div>
-                                                    <Show when={option.icon} keyed>
-                                                        {(icon) => icon({value: option.value, class: "mr-2 size-4 text-muted-foreground"})}
-                                                    </Show>
-                                                    <span>{option.label}</span>
-                                                    <Show when={(facets() as Map<any, number>)?.get(option.value)}>
-                                                        {(count) => (
-                                                            <span class="ml-auto flex size-4 items-center justify-center font-mono text-xs">
-                                                            {count()}
-                                                        </span>
-                                                        )}
-                                                    </Show>
-                                                </CommandItem>
-                                            )
-                                        }}
-                                    </For>
-                                </CommandGroup>
-                                <Show when={(selectedValues() as any[]).length > 0}>
-                                    <>
-                                        <CommandSeparator/>
-                                        <CommandGroup>
+                    <Command shouldFilter={false}>
+                        <CommandInput placeholder={props.title} value={search()} onValueChange={setSearch}/>
+                        <CommandList>
+                            <CommandEmpty>No results found.</CommandEmpty>
+                            <CommandGroup>
+                                <For each={filteredOptions()}>
+                                    {(option) => {
+                                        const isSelected = () => (selectedValues() as any[]).includes(option.value)
+                                        return (
                                             <CommandItem
                                                 onSelect={() => {
-                                                    props.column?.setFilterValue(undefined)
+                                                    let newValues
+                                                    if (isSelected()) {
+                                                        newValues = (selectedValues() as any[]).filter((item) => item !== option.value)
+                                                    } else {
+                                                        newValues = [...selectedValues(), option.value]
+                                                    }
+                                                    props.column?.setFilterValue(newValues.length ? newValues : undefined)
+                                                    ensurePagesVisible(props.table);
                                                 }}
-                                                class="justify-center text-center"
                                             >
-                                                Clear filters
+                                                <div
+                                                    class={cn(
+                                                        "mr-2 flex size-4 items-center justify-center rounded-sm border border-primary",
+                                                        isSelected()
+                                                            ? "bg-primary text-primary-foreground"
+                                                            : "opacity-50 [&_svg]:invisible"
+                                                    )}
+                                                >
+                                                    <IconCheck/>
+                                                </div>
+                                                <Show when={option.icon} keyed>
+                                                    {(icon) => icon({value: option.value, class: "mr-2 size-4 text-muted-foreground"})}
+                                                </Show>
+                                                <span>{option.label}</span>
+                                                <Show when={(facets() as Map<any, number>)?.get(option.value)}>
+                                                    {(count) => (
+                                                        <span class="ml-auto flex size-4 items-center justify-center font-mono text-xs">
+                                                        {count()}
+                                                    </span>
+                                                    )}
+                                                </Show>
                                             </CommandItem>
-                                        </CommandGroup>
-                                    </>
-                                </Show>
-                            </CommandList>
-                        </Command>
-                    }>
-                        <Command class="w-full h-full">
-                            <div class="flex flex-row w-full justify-around px-2 py-2">
-                                <BoolFilterItem
-                                    value={true}
-                                    onSelect={() => {
-                                        props.column?.setFilterValue([true]);
-                                        ensurePagesVisible(props.table);
+                                        )
                                     }}
-                                    selectedValues={selectedValues()}
-                                    resolvedOptions={resolvedOptions() as ValueBasedOption[]}
-                                    facets={facets() as Map<any, number>}
-                                />
-                                <BoolFilterItem
-                                    value={false}
-                                    onSelect={() => {
-                                        props.column?.setFilterValue([false]);
-                                        ensurePagesVisible(props.table);
-                                    }}
-                                    selectedValues={selectedValues()}
-                                    resolvedOptions={resolvedOptions() as ValueBasedOption[]}
-                                    facets={facets() as Map<any, number>}
-                                />
-                            </div>
-                        </Command>
-                    </Show>
+                                </For>
+                            </CommandGroup>
+                            <Show when={(selectedValues() as any[]).length > 0}>
+                                <>
+                                    <CommandSeparator/>
+                                    <CommandGroup>
+                                        <CommandItem
+                                            onSelect={() => {
+                                                props.column?.setFilterValue(undefined)
+                                            }}
+                                            class="justify-center text-center"
+                                        >
+                                            Clear filters
+                                        </CommandItem>
+                                    </CommandGroup>
+                                </>
+                            </Show>
+                        </CommandList>
+                    </Command>
+                </Show>
+                <Show when={isBoolBased()}>
+                    <Command class="w-full h-full">
+                        <CommandList>
+                        <div class="flex flex-row w-full justify-around px-2 py-2">
+                            <BoolFilterItem
+                                value={true}
+                                column={props.column}
+                                table={props.table}
+                                selectedValues={selectedValues()}
+                                resolvedOptions={resolvedOptions() as ValueBasedOption[]}
+                                facets={facets() as Map<any, number>}
+                            />
+                            <BoolFilterItem
+                                value={false}
+                                column={props.column}
+                                table={props.table}
+                                selectedValues={selectedValues()}
+                                resolvedOptions={resolvedOptions() as ValueBasedOption[]}
+                                facets={facets() as Map<any, number>}
+                            />
+                        </div>
+                        </CommandList>
+                    </Command>
                 </Show>
             </PopoverContent>
         </Popover>

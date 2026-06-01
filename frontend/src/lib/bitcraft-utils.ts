@@ -6,14 +6,14 @@ import {Rarity} from "~/bindings/src/rarity_type";
 
 export class Rarities {
     static rarities = [
-        Rarity.Default.tag,
-        Rarity.Common.tag,
-        Rarity.Uncommon.tag,
-        Rarity.Rare.tag,
-        Rarity.Epic.tag,
-        Rarity.Legendary.tag,
-        Rarity.Mythic.tag,
-    ]
+        Rarity.Default.tag as Rarity["tag"],
+        Rarity.Common.tag as Rarity["tag"],
+        Rarity.Uncommon.tag as Rarity["tag"],
+        Rarity.Rare.tag as Rarity["tag"],
+        Rarity.Epic.tag as Rarity["tag"],
+        Rarity.Legendary.tag as Rarity["tag"],
+        Rarity.Mythic.tag as Rarity["tag"],
+    ] satisfies Rarity["tag"][];
 
     static toValue(r: Rarity["tag"]): number {
         switch (r) {
