@@ -96,6 +96,11 @@ export function useInteractionsByPlaceable() {
             const arr = map.get(ia.placeableId);
             if (arr) arr.push(ia);
             else map.set(ia.placeableId, [ia]);
+            if (ia.onDestroySpawnedPlaceableId) {
+                const outArr = map.get(ia.onDestroySpawnedPlaceableId);
+                if (outArr) outArr.push(ia);
+                else map.set(ia.onDestroySpawnedPlaceableId, [ia]);
+            }
         }
         return map;
     });

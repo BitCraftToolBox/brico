@@ -243,8 +243,56 @@ function detourPath(
 }
 
 /**
+ * Same-column edge: rectangular path that routes between nodes vertically.
+ * Path: exits right from source → goes vertical to target level →
+ * goes left back to column → enters from left into target.
+ *
+ * This creates an upside-down U or right-side U that curves around
+ * intermediate nodes in the same column without doubling back.
+ */
+function sameColumnPath(
+    srcX: number, srcY: number,
+    tgtX: number, tgtY: number,
+): { d: string; mid: { x: number; y: number } } {
+    const hw = NODE_W / 2;
+    const pad = 25; // How far right to swing
+
+    // Exit and entry points
+    const exitX = srcX + hw;
+    const entryX = tgtX - hw; // = srcX - hw (same column)
+    const rightX = srcX + hw + pad;
+    const leftX = srcX - hw - pad;
+    const flipY = tgtY - (tgtY > srcY ? 1 : -1) * (NODE_H / 2);
+
+    // Path: right → vertical → left
+    const r = 7;
+    const v = tgtY > srcY ? r : -r;
+    const d = [
+        `M ${exitX} ${srcY}`,
+        `L ${rightX - r} ${srcY}`,
+        `Q ${rightX} ${srcY}, ${rightX} ${srcY + v}`,
+        `L ${rightX} ${flipY - v}`,
+        `Q ${rightX} ${flipY}, ${rightX - r} ${flipY}`,
+        `L ${leftX + r} ${flipY}`,
+        `Q ${leftX} ${flipY}, ${leftX} ${flipY + v}`,
+        `L ${leftX} ${tgtY - v}`,
+        `Q ${leftX} ${tgtY}, ${leftX + r} ${tgtY}`,
+        `L ${entryX} ${tgtY}`
+    ].join(" ");
+
+    // Label positioned on the right side at the midpoint height
+    const mid = {
+        x: rightX,
+        y: flipY,
+    };
+
+    return {d, mid};
+}
+
+/**
  * Compute all routed edges. Edges spanning multiple columns with intermediate
  * nodes get detour paths; others get direct quadratic bezier curves.
+ * Same-column edges get an S-curve to the right.
  * Self-loops get an arc path above the node.
  */
 function computeRoutedEdges(
@@ -310,7 +358,11 @@ function computeRoutedEdges(
             }
         }
 
-        if (!hasIntermediate) {
+        if (srcCol === tgtCol) {
+            // Same-column edge: rectangular path avoiding backward cut
+            const {d, mid} = sameColumnPath(src.x, src.y, tgt.x, tgt.y);
+            result.push({index: i, d, mid, label: e.label, tooltip: e.tooltip, edgeType: e.edgeType});
+        } else if (!hasIntermediate) {
             // Direct edge with pair offset
             const offset = pairOffsets[i];
             const d = directPath(src.x, src.y, tgt.x, tgt.y, offset);
@@ -341,6 +393,30 @@ function computeRoutedEdges(
 
             const {d, mid} = detourPath(src.x, src.y, tgt.x, tgt.y, detourY, isBackward);
             result.push({index: i, d, mid, label: e.label, tooltip: e.tooltip, edgeType: e.edgeType});
+        }
+    }
+
+    // Post-process: spread apart label midpoints that would visually overlap.
+    // This handles crossing edges (e.g. Na→N+1b and Nb→N+1a) whose midpoints
+    // coincide at the center of the quadrilateral formed by the four nodes.
+    const LABEL_COL_W = 52; // approximate label box half-width threshold
+    const LABEL_COL_H = 22; // approximate label box height + margin
+    for (let i = 0; i < result.length; i++) {
+        if (!result[i].label || result[i].isSelfLoop) continue;
+        for (let j = i + 1; j < result.length; j++) {
+            if (!result[j].label || result[j].isSelfLoop) continue;
+            const dx = Math.abs(result[i].mid.x - result[j].mid.x);
+            const dy = Math.abs(result[i].mid.y - result[j].mid.y);
+            if (dx < LABEL_COL_W && dy < LABEL_COL_H) {
+                const push = (LABEL_COL_H - dy) / 2 + 2;
+                if (result[i].mid.y <= result[j].mid.y) {
+                    result[i] = {...result[i], mid: {...result[i].mid, y: result[i].mid.y - push}};
+                    result[j] = {...result[j], mid: {...result[j].mid, y: result[j].mid.y + push}};
+                } else {
+                    result[i] = {...result[i], mid: {...result[i].mid, y: result[i].mid.y + push}};
+                    result[j] = {...result[j], mid: {...result[j].mid, y: result[j].mid.y - push}};
+                }
+            }
         }
     }
 
@@ -796,6 +872,30 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
         onCleanup(() => svg.on(".zoom", null));
     });
 
+    const drawEdge= (edge: RoutedEdge, isHov: boolean) => {
+        const bw = () => Math.max(60, edge.label.length * 6.2 + 16);
+        const bh = 18;
+        return (
+            <Show when={edge.label}>
+                <g style="pointer-events:none">
+                    <rect
+                        x={edge.mid.x - bw() / 2} y={edge.mid.y - bh / 2}
+                        width={bw()} height={bh} rx={3}
+                        class="fill-background stroke-border"
+                        opacity={0.92}
+                        stroke-width={0.5}
+                    />
+                    <text x={edge.mid.x} y={edge.mid.y} text-anchor="middle"
+                          dominant-baseline="middle" font-size="9"
+                          fill="currentColor" opacity={isHov ? 1 : 0.6}
+                          style="font-family:system-ui">
+                        {edge.label}
+                    </text>
+                </g>
+            </Show>
+        );
+    }
+
     return (
         <div
             ref={containerRef!}
@@ -922,57 +1022,13 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
                         }}
                     </For>
 
-                    {/* Edge labels */}
+                    {/* Edge labels - non-hovered */}
                     <For each={routedEdges()}>
-                        {(edge) => {
-                            const bw = () => Math.max(60, edge.label.length * 6.2 + 16);
-                            const bh = 18;
-                            return (
-                                <Show when={edge.label}>
-                                    <g style="pointer-events:none">
-                                        <rect
-                                            x={edge.mid.x - bw() / 2} y={edge.mid.y - bh / 2}
-                                            width={bw()} height={bh} rx={3}
-                                            class="fill-background stroke-border"
-                                            opacity={0.92}
-                                            stroke-width={0.5}
-                                        />
-                                        <text x={edge.mid.x} y={edge.mid.y} text-anchor="middle"
-                                              dominant-baseline="middle" font-size="9"
-                                              fill="currentColor" opacity={0.6}
-                                              style="font-family:system-ui">
-                                            {edge.label}
-                                        </text>
-                                    </g>
-                                </Show>
-                            );
-                        }}
-                    </For>
-
-                    {/* Interaction hover tooltips */}
-                    <For each={routedEdges()}>
-                        {(edge) => {
-                            const isHov = () => hoveredEdge() === edge.index;
-                            return (
-                                <Show when={isHov() && edge.tooltip}>
-                                    <g style="pointer-events:none">
-                                        <rect
-                                            x={edge.mid.x - 70} y={edge.mid.y + 14}
-                                            width={140} height={20} rx={3}
-                                            class="fill-background stroke-border"
-                                            opacity={0.95}
-                                            stroke-width={0.5}
-                                        />
-                                        <text x={edge.mid.x} y={edge.mid.y + 24} text-anchor="middle"
-                                              dominant-baseline="middle" font-size="9"
-                                              fill="currentColor"
-                                              style="font-family:system-ui">
-                                            {edge.tooltip}
-                                        </text>
-                                    </g>
-                                </Show>
-                            );
-                        }}
+                        {(edge) => (
+                            <Show when={hoveredEdge() !== edge.index}>
+                                {drawEdge(edge, false)}
+                            </Show>
+                        )}
                     </For>
 
                     {/* Nodes — foreignObject with GameIcon */}
@@ -999,7 +1055,8 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
                                         const desc = () => cargoIndex()?.get(node.gameId);
                                         return (
                                             <Show when={desc()}>
-                                                {(d) => <CargoIcon cargo={d()} small noInteract/>}
+                                                {/* hardcoded to use the same size as square icons */}
+                                                {(d) => <CargoIcon cargo={d()} small noInteract class={"max-w-[65px] max-h-[65px]"}/>}
                                             </Show>
                                         );
                                     } else {
@@ -1120,6 +1177,36 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
                                         fill="transparent"
                                     />
                                 </g>
+                            );
+                        }}
+                    </For>
+
+                    {/* Edge label - hovered */}
+                    <Show when={hoveredEdge() !== null}>
+                        {drawEdge(routedEdges()[hoveredEdge()!], true)}
+                    </Show>
+                    {/* Interaction hover tooltips */}
+                    <For each={routedEdges()}>
+                        {(edge) => {
+                            const isHov = () => hoveredEdge() === edge.index;
+                            return (
+                                <Show when={isHov() && edge.tooltip}>
+                                    <g style="pointer-events:none">
+                                        <rect
+                                            x={edge.mid.x - 70} y={edge.mid.y + 14}
+                                            width={140} height={20} rx={3}
+                                            class="fill-background stroke-border"
+                                            opacity={0.95}
+                                            stroke-width={0.5}
+                                        />
+                                        <text x={edge.mid.x} y={edge.mid.y + 24} text-anchor="middle"
+                                              dominant-baseline="middle" font-size="9"
+                                              fill="currentColor"
+                                              style="font-family:system-ui">
+                                            {edge.tooltip}
+                                        </text>
+                                    </g>
+                                </Show>
                             );
                         }}
                     </For>
@@ -1258,6 +1345,9 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
         // Interactions
         const interactions = interactionsByPlaceable.get(plcId) ?? [];
         for (const ia of interactions) {
+            // only where this is the input
+            if (ia.placeableId !== plcId) continue;
+
             // Tooltip: consumed items
             const tooltip = ia.consumedItemStacks.length
                 ? ia.consumedItemStacks.map(s => {
