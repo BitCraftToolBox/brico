@@ -63,6 +63,9 @@ export type AppSettings = {
     /** Per-table hidden column IDs. Key = table name, value = list of hidden column IDs. */
     tableHiddenColumns: () => Record<string, string[]>;
     setTableHiddenColumns: (v: Record<string, string[]>) => void;
+    /** Show row action buttons in the first column instead of the last */
+    tableActionsFirst: () => boolean;
+    setTableActionsFirst: (v: boolean) => void;
 
     /** Quest chain IDs the user has marked as completed. */
     completedQuests: () => Set<number>;
@@ -104,6 +107,7 @@ const KEYS = {
     sidebarCollapsedGroups: "brico:sidebar:collapsed-groups",
     tablePageSize: "brico:table:page-size",
     tableHiddenColumns: "brico:table:hidden-columns",
+    tableActionsFirst: "brico:table:actions-first",
     completedQuests: "brico:quests:completed",
     easterEggs: "brico:easter-eggs",
     tf2Mode: "brico:easter-eggs:tf2-mode",
@@ -151,6 +155,7 @@ function createSettings(): AppSettings {
     // tables
     const [tablePageSize, setTablePageSize] = makePersisted(createSignal<number>(10), {name: KEYS.tablePageSize});
     const [tableHiddenColumns, setTableHiddenColumns] = makePersisted(createSignal<Record<string, string[]>>({}), {name: KEYS.tableHiddenColumns});
+    const [tableActionsFirst, setTableActionsFirst] = makePersisted(createSignal(false), {name: KEYS.tableActionsFirst});
 
     // game data?
     const [completedQuestsRaw, setCompletedQuestsRaw] = makePersisted(createSignal<number[]>([]), {name: KEYS.completedQuests});
@@ -220,6 +225,7 @@ function createSettings(): AppSettings {
         {key: KEYS.sidebarFavoritesOnly, get: sidebarFavoritesOnly, set: setSidebarFavoritesOnly},
         {key: KEYS.sidebarHiddenItems, get: sidebarHiddenItems, set: setSidebarHiddenItems},
         {key: KEYS.tablePageSize, get: tablePageSize, set: setTablePageSize},
+        {key: KEYS.tableActionsFirst, get: tableActionsFirst, set: setTableActionsFirst},
         {key: KEYS.completedQuests, get: completedQuestsRaw, set: setCompletedQuestsRaw},
         {key: KEYS.easterEggs, get: easterEggs, set: setEasterEggs},
         {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
@@ -250,6 +256,8 @@ function createSettings(): AppSettings {
         setTablePageSize,
         tableHiddenColumns,
         setTableHiddenColumns,
+        tableActionsFirst,
+        setTableActionsFirst,
         displayProbabilityAsAverage,
         setDisplayProbabilityAsAverage,
         flattenItemListOutputs,

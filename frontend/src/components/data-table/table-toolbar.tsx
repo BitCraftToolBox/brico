@@ -266,7 +266,7 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
                 </div>
                 <TableViewOptions table={props.table}/>
             </div>
-            <div class="flex flex-wrap items-center gap-2 w-full max-h-20 overflow-y-scroll sm:justify-normal justify-center">
+            <div class="flex flex-wrap items-center gap-2 w-full max-h-20 overflow-y-auto sm:justify-normal justify-center">
                 <For each={props.filters}>
                     {(filter) => <TableFacetedFilter {...filter} />}
                 </For>
