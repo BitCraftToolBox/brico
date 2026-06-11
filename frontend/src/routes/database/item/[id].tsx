@@ -89,7 +89,7 @@ export default function ItemDetail() {
     const toolTypeIndex = BitCraftTables.ToolTypeDesc.indexedBy("id");
     const weaponTypeIndex = BitCraftTables.WeaponTypeDesc.indexedBy("id");
     const knowledgeScrollIndex = BitCraftTables.KnowledgeScrollDesc.indexedBy("itemId");
-    const collectibleIndex = BitCraftTables.CollectibleDesc.indexedBy("itemDeedId");
+    const collectibleIndex = BitCraftTables.CollectibleDesc.indexedByMulti("itemDeedId");
 
     const item = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
@@ -103,8 +103,10 @@ export default function ItemDetail() {
     const weaponData = createMemo(() => item() ? weaponIndex()?.get(item()!.id) : undefined);
     const scrollData = createMemo(() => item() ? knowledgeScrollIndex()?.get(item()!.id) : undefined);
     const collectibleData = createMemo(() => {
-        const col = item() ? collectibleIndex()?.get(item()!.id) : undefined;
-        return col ? [col] : [];
+        const coll = collectibleIndex();
+        const i = item();
+        if (!i || !coll) return [];
+        return coll.get(i.id) ?? [];
     });
 
     const knowledgeStatData = createMemo(() => {

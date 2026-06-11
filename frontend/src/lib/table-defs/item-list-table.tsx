@@ -10,10 +10,16 @@ export const ItemListDescDefs: BitCraftToDataDef<ItemListDesc> = {
     columns: [
         headerColumn({
             route: list => ["item-list", list.id],
-            customRender: (val: JSX.Element) => <div class={"text-wrap"}>{val}</div>,
+            customRender: (val: JSX.Element) => <div class="text-wrap">{val}</div>,
             prefixElement: list => {
-                const item = BitCraftTables.ItemDesc.indexedBy("itemListId")().get(list.id);
-                if (item) return <ItemIcon item={item} small noInteract/>;
+                const items = BitCraftTables.ItemDesc.indexedByMulti("itemListId")().get(list.id);
+                if (items && items.length >= 1) {
+                    let item = items[0];
+                    // TODO this is the only current case where the item we want isn't the first one. but man is this ugly.
+                    if (list.id === 1096831250) item = items.find(i => i.id === 1753489769) ?? item;
+                    return <ItemIcon item={item} small noInteract/>;
+                }
+                // NB should also be multi but doesn't happen in practice
                 const lootDescs = BitCraftTables.ContributionLootDesc.indexedBy("itemListId");
                 const matchedLoot = lootDescs().get(list.id);
                 if (matchedLoot) {
@@ -29,10 +35,14 @@ export const ItemListDescDefs: BitCraftToDataDef<ItemListDesc> = {
             accessorFn: (row) => row,
             cell: (props) => {
                 let originalIcon: JSX.Element | undefined = undefined;
-                const item = BitCraftTables.ItemDesc.indexedBy("itemListId")().get(props.row.original.id);
-                if (item) {
+                const items = BitCraftTables.ItemDesc.indexedByMulti("itemListId")().get(props.row.original.id);
+                if (items && items.length >= 1) {
+                    let item = items[0];
+                    // as above
+                    if (props.row.original.id === 1096831250) item = items.find(i => i.id === 1753489769) ?? item;
                     originalIcon = <ItemIcon item={item} small noInteract/>;
                 } else {
+                    // NB should also be multi but doesn't happen in practice
                     const lootDescs = BitCraftTables.ContributionLootDesc.indexedBy("itemListId");
                     const matchedLoot = lootDescs().get(props.row.original.id);
                     if (matchedLoot) {
