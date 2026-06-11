@@ -3,9 +3,10 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
-    "build": "node scripts/check-barrel-imports.mjs && vinxi build",
+    "build": "node scripts/check-barrel-imports.mjs && node scripts/gen-version-info.mjs && vinxi build",
     "start": "vinxi start",
     "typecheck": "node scripts/check-barrel-imports.mjs && tsc --noEmit",
+    "gen-version": "node scripts/gen-version-info.mjs",
     "gen-icons": "node scripts/icons/gen-font-icons.mjs",
     "analyze-icons": "npx tsx scripts/icons/analyze-icon-usage.mjs"
   },
