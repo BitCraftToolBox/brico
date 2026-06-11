@@ -297,19 +297,22 @@ type ItemIconProps = Omit<ComponentProps<"div">, "children"> & {
 const HATS = ["soldier", "pyro", "sniper", "demoman", "scout", "medic", "heavy", "engineer", "spy"];
 export const ItemIcon: Component<ItemIconProps> = (props) => {
     const [local, others] = splitProps(props, ["item", "quantity"]);
-    let asset = props.item.iconAssetName;
     const { tf2Mode } = useSettings();
-    if (tf2Mode()) {
-        const eq = BitCraftTables.EquipmentDesc.indexedBy("itemId")?.()?.get(props.item.id);
-        if (eq && eq.slots.some(s => s.tag === "HeadClothing")) {
-            asset = `/assets/Hats/${HATS[Math.floor(Math.random() * HATS.length)]}.webp`;
+    const hatIcon = () => {
+        if (tf2Mode()) {
+            const eq = BitCraftTables.EquipmentDesc.indexedBy("itemId")?.()?.get(props.item.id);
+            if (eq && eq.slots.some(s => s.tag === "HeadClothing")) {
+                return `/assets/Hats/${HATS[Math.floor(Math.random() * HATS.length)]}.webp`;
+            }
         }
+        return undefined;
     }
+    const asset = () => hatIcon() ?? local.item.iconAssetName;
 
     return (
         <GameIcon
             name={props.item.name}
-            iconAsset={asset}
+            iconAsset={asset()}
             tier={props.item.tier}
             rarity={props.item.rarity}
             href={`/database/item/${props.item.id}`}
