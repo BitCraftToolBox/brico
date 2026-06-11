@@ -97,6 +97,28 @@ function createIndex<TData, TIdx extends keyof TData & string, TValue extends TD
     });
 }
 
+function createIndexMulti<TData, TIdx extends keyof TData & string, TValue extends TData[TIdx] & (string | number)>(
+    tbl: Accessor<TData[] | undefined>, field: TIdx
+): Accessor<Map<TValue, TData[]>> {
+    return createMemo(() => {
+        const data = tbl() ?? [];
+        const map = new Map<TValue, TData[]>();
+        for (const item of data) {
+            const key = item[field] as TValue;
+            if (key !== null && key !== 0) { // idk a big list of 0 values seems useless but if it's needed later I guess it's an easy change
+                let existing = map.get(key);
+                if (existing) {
+                    existing.push(item);
+                } else {
+                    existing = [item];
+                    map.set(key, existing);
+                }
+            }
+        }
+        return map;
+    });
+}
+
 export function loadTableAdHoc<T>(n: string, b: { getTypeScriptAlgebraicType: () => AlgebraicType }) {
     return cache<T>(n, b);
 }
@@ -108,6 +130,7 @@ export class BitCraftTable<TData> {
     loading: Accessor<boolean>;
     error: Accessor<any>;
     #idxCache: Map<string, Accessor<Map<any, TData>>>;
+    #idxCacheMulti: Map<string, Accessor<Map<any, TData[]>>>;
     #tagOrdinalCache: Map<string, Map<string, number>>;
 
     constructor(st_name: string, st_type: AlgebraicType) {
@@ -117,6 +140,7 @@ export class BitCraftTable<TData> {
         this.loading = () => true;
         this.error = () => undefined;
         this.#idxCache = new Map<string, Accessor<Map<any, TData>>>();
+        this.#idxCacheMulti = new Map<string, Accessor<Map<any, TData[]>>>();
         this.#tagOrdinalCache = new Map<string, Map<string, number>>();
     }
 
@@ -125,6 +149,15 @@ export class BitCraftTable<TData> {
         if (!res) {
             res = createIndex<TData, TIdx, TValue>(this.get, key);
             this.#idxCache.set(key, res)
+        }
+        return res;
+    }
+
+    indexedByMulti<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx): Accessor<Map<any, TData[]>> {
+        let res = this.#idxCacheMulti.get(key);
+        if (!res) {
+            res = createIndexMulti<TData, TIdx, TValue>(this.get, key);
+            this.#idxCacheMulti.set(key, res)
         }
         return res;
     }

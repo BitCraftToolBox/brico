@@ -5,6 +5,7 @@ import {FaSolidArrowDownAZ as IconSortAZ, FaSolidFolderTree as IconSortTree} fro
 import {
     TbFillLayoutGrid as IconViewGrid,
     TbOutlineDeviceLaptop as IconSystem,
+    TbOutlineDots as IconDots,
     TbOutlineList as IconViewList,
     TbOutlineMoon as IconMoon,
     TbOutlineSun as IconSun,
@@ -314,6 +315,14 @@ export default function SettingsPage() {
                             </SelectTrigger>
                             <SelectContent/>
                         </Select>
+                    </SettingsRow>
+                    <SettingsRow
+                        label="Show row actions first"
+                        description={<>Moves the <IconDots class="inline"/> menu to the first column instead of the last.</>}
+                    >
+                        <Switch checked={settings.tableActionsFirst()} onChange={settings.setTableActionsFirst}>
+                            <SwitchControl><SwitchThumb/></SwitchControl>
+                        </Switch>
                     </SettingsRow>
                     <SettingsRow
                         label="Reset hidden columns"

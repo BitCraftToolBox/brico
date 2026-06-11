@@ -42,7 +42,7 @@ export type FilterSetupProps<TData, TResult> = Omit<TableFacetedFilterProps<TDat
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
-    const {tableHiddenColumns, getTableSession} = useSettings();
+    const {tableHiddenColumns, tableActionsFirst, getTableSession} = useSettings();
     const [searchParams, setSearchParams] = useSearchParams()
 
     // Restore persisted hidden columns for this table as the initial visibility state
@@ -91,6 +91,12 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
             return props.data
         },
         get columns() {
+            if (tableActionsFirst()) {
+                let actionsCol = props.columns.find(c => c.id === "actions");
+                if (actionsCol) {
+                    return [actionsCol, ...props.columns.filter(c => c.id !== "actions")]
+                }
+            }
             return props.columns
         },
         state: {

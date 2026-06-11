@@ -30,6 +30,7 @@ import {
     useSidebar
 } from "~/components/ui/sidebar"
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {VersionChecker} from "~/components/version-checker";
 import {useSettings} from "~/lib/settings";
 import {SIDEBAR_GROUPS, type SidebarItemDef} from "~/lib/sidebar-items";
 
@@ -283,6 +284,7 @@ export function AppSidebar() {
                         </Tooltip>
                     </a>
                 </div>
+                <VersionChecker/>
                 <div class="overflow-hidden
                             transition-[max-height,opacity] duration-200 ease-linear
                             max-h-6 opacity-100

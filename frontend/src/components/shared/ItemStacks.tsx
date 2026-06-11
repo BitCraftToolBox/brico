@@ -328,7 +328,7 @@ export const ItemListDisplay: Component<{
                     {/* Averaged items in a styled group */}
                     <div class={cn(
                         "flex flex-row flex-wrap justify-center items-end gap-0.5 rounded-md px-1 py-0.5",
-                        "bg-muted/40 border border-dashed border-muted-foreground/30",
+                        "bg-muted/40 border border-dashed border-muted-foreground",
                     )}>
                         <For each={averages()}>
                             {(avg) => (

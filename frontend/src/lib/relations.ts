@@ -82,8 +82,8 @@ function anyPossibilityMatches(possibilities: ItemListPossibility[], itemId: num
 export function craftingRecipesProducing(itemId: number, itemType: string): CraftingRecipeDesc[] {
     const all = BitCraftTables.CraftingRecipeDesc.get();
     if (!all) return [];
-    const items = BitCraftTables.ItemDesc.indexedBy("itemListId")();
-    const lists = itemListsContaining(itemId, itemType).map(ild => items.get(ild.id)).filter((item): item is NonNullable<typeof item> => item !== undefined);
+    const items = BitCraftTables.ItemDesc.indexedByMulti("itemListId")();
+    const lists = itemListsContaining(itemId, itemType).flatMap(ild => items.get(ild.id)).filter((item): item is NonNullable<typeof item> => item !== undefined);
     return all.filter(r => {
         return anyStackMatches(r.craftedItemStacks, itemId, itemType)
             || lists?.some((listItem => anyStackMatches(r.craftedItemStacks, listItem.id, ItemType.Item.tag)));
@@ -241,12 +241,15 @@ export function getItemListSource(il: ItemListDesc | undefined): ItemListSource 
     if (!il) return {type: "Unknown"};
 
     // Check if any item references this list (ItemDesc.itemListId)
-    const items = BitCraftTables.ItemDesc.get();
-    const matchedItem = items?.find((i: ItemDesc) => i.itemListId === il.id);
+    const items = BitCraftTables.ItemDesc.indexedByMulti("itemListId")().get(il.id);
+    let matchedItem = items?.length ? items[0] : null;
+    // TODO see item-list-table
+    if (items?.length && il.id === 1096831250) matchedItem = items.find(i => i.id === 1753489769) ?? matchedItem;
     if (matchedItem) return {type: "Item", item: matchedItem};
 
     // Check ContributionLootDesc -> enemyTypeId -> EnemyDesc
     const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
+    // NB should also be multi but doesn't happen in practice
     const lootDescs = BitCraftTables.ContributionLootDesc.indexedBy("itemListId");
     const matchedLoot = lootDescs().get(il.id);
     if (matchedLoot) return {type: "Enemy", loot: matchedLoot, enemy: enemyIndex()?.get(matchedLoot.enemyTypeId)};
