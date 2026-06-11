@@ -93,7 +93,7 @@ export const searchableTables: SearchableTable[] = [
     },
     {
         label: "Biomes", route: "/database/biome", tableKey: "BiomeDesc",
-        pk: "id", name: (r) => r.name,
+        pk: "biomeType", name: (r) => r.name,
     },
     {
         label: "Item Lists", route: "/database/item-list", tableKey: "ItemListDesc",
