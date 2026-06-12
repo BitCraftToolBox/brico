@@ -2,19 +2,21 @@ import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/shared/DetailPageLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
-import {GrowthPanel, InteractionPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
+import {ExtractionRecipePanel, GrowthPanel, InteractionPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
 import {breadcrumb} from "~/lib/game-links";
 import {
     findRootPlacement,
     getInteractionName,
     getPlaceableName,
     getPlacementName,
+    useExtractionsByPlaceable,
     useGroupsByPlaceable,
     useGrowthByOutcome,
     useGrowthByPlaceable,
     useInteractionsByPlaceable,
     usePlacementsByPlaceable,
 } from "~/lib/placeables";
+import {getExtractionRecipeName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function PlaceableDetail() {
@@ -42,12 +44,14 @@ export default function PlaceableDetail() {
     const growthMap = useGrowthByPlaceable();
     const growthByOutcomeMap = useGrowthByOutcome();
     const interactionsMap = useInteractionsByPlaceable();
+    const extractionsMap = useExtractionsByPlaceable();
 
     const groups = createMemo(() => placeableId() != null ? groupsMap()?.get(placeableId()!) ?? [] : []);
     const placements = createMemo(() => placeableId() != null ? placementsMap()?.get(placeableId()!) ?? [] : []);
     const growth = createMemo(() => placeableId() != null ? growthMap()?.get(placeableId()!) : undefined);
     const growthSources = createMemo(() => placeableId() != null ? growthByOutcomeMap()?.get(placeableId()!) ?? [] : []);
     const interactions = createMemo(() => placeableId() != null ? interactionsMap()?.get(placeableId()!) ?? [] : []);
+    const extractions = createMemo(() => placeableId() != null ? extractionsMap()?.get(placeableId()!) ?? [] : []);
 
     // Root placement (for "View in Graph" link)
     const rootPlacement = createMemo(() => placeableId() != null ? findRootPlacement(placeableId()!) : undefined);
@@ -119,6 +123,22 @@ export default function PlaceableDetail() {
                     />
                 ),
             });
+        }
+
+        const ext = extractions();
+        if (ext.length) {
+            result.push({
+                id: "extracted-from",
+                label: "Extracted from",
+                count: ext.length,
+                content: () => (
+                    <RecipeSelect
+                        recipes={ext}
+                        nameFor={getExtractionRecipeName}
+                        render={e => <ExtractionRecipePanel recipe={e}/> }
+                    />
+                )
+            })
         }
 
         const g = growth();

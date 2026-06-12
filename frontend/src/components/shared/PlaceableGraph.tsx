@@ -1321,11 +1321,12 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
             const totalWeight = growth.outcomes.reduce((s, o) => s + o.probability, 0);
             const minTime = growth.time[0] ?? 0;
             const maxTime = growth.time[1] ?? minTime;
+            const timeString = minTime === maxTime ? readableSeconds(minTime) : `${readableSeconds(minTime)}–${readableSeconds(maxTime)}`;
 
             for (const outcome of growth.outcomes) {
                 const pct = totalWeight > 0 ? (outcome.probability / totalWeight) * 100 : 0;
                 const isSelf = outcome.placeableId === plcId;
-                const label = `${pct.toFixed(0)}% | ${readableSeconds(minTime)}–${readableSeconds(maxTime)}`;
+                const label = `${pct.toFixed(0)}% | ${timeString}`;
 
                 const outcomeNodeId = addPlaceableNode(outcome.placeableId, column + 1);
                 edges.push({
@@ -1359,47 +1360,23 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
                 : undefined;
 
             // Output items
-            // If an interaction produces multiple items and at least one already
-            // exists as a node, treat the others as byproducts (shown on hover)
-            // rather than creating separate nodes for them.
             const outputs = ia.outputItemStacks;
-            const existingOutputs = outputs.filter(o => nodeIds.has(`${o.itemType.tag}-${o.itemId}`));
-            const novelOutputs = outputs.filter(o => !nodeIds.has(`${o.itemType.tag}-${o.itemId}`));
-
-            if (outputs.length > 1 && existingOutputs.length > 0 && novelOutputs.length > 0) {
-                // Byproduct mode: only create edges to existing nodes,
-                // show novel items as "also produces" in tooltip
-                const byproductStr = novelOutputs.map(o => {
-                    const name = o.itemType.tag === "Cargo"
-                        ? cargoIndex?.get(o.itemId)?.name ?? `Cargo #${o.itemId}`
-                        : itemIndex?.get(o.itemId)?.name ?? `Item #${o.itemId}`;
-                    return `${o.quantity}× ${name}`;
-                }).join(", ");
-
-                const fullTooltip = [tooltip, `Also: ${byproductStr}`].filter(Boolean).join(" | ");
-
-                for (const output of existingOutputs) {
-                    const outNodeId = `${output.itemType.tag}-${output.itemId}`;
-                    edges.push({
-                        source: plcNodeId,
-                        target: outNodeId,
-                        label: `${ia.verbPhrase} → ${output.quantity}×`,
-                        edgeType: "interaction",
-                        tooltip: fullTooltip,
-                    });
+            for (const output of outputs) {
+                const tag = `${output.itemType.tag}-${output.itemId}`;
+                const existing = nodes.find(n => n.id === tag);
+                let nodeId: string;
+                if (existing) {
+                    existing.column = existing.id != inputNodeId ? column + 1 : existing.column;
+                    nodeId = existing.id;
+                } else {
+                    nodeId = addItemNode(output.itemId, output.itemType.tag, column + 1);
                 }
-            } else {
-                // Normal mode: create nodes and edges for all outputs
-                for (const output of outputs) {
-                    const outNodeId = addItemNode(output.itemId, output.itemType.tag, column + 2);
-                    edges.push({
-                        source: plcNodeId,
-                        target: outNodeId,
-                        label: `${ia.verbPhrase} → ${output.quantity}×`,
-                        edgeType: "interaction",
-                        tooltip,
-                    });
-                }
+                edges.push({
+                    source: plcNodeId,
+                    target: nodeId,
+                    label: `${ia.verbPhrase} → ${output.quantity}×`,
+                    edgeType: "interaction",
+                });
             }
 
             // Spawned placeable

@@ -9,6 +9,7 @@
  */
 
 import {createMemo} from "solid-js";
+import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {PlaceableGroupDesc} from "~/bindings/src/placeable_group_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
@@ -63,6 +64,7 @@ export function useGrowthByPlaceable() {
         const all = BitCraftTables.PlaceableGrowthDesc.get() ?? [];
         const map = new Map<number, PlaceableGrowthDesc>();
         for (const g of all) {
+            if (g.outcomes.every(o => o.placeableId === 0)) continue;
             map.set(g.placeableId, g);
         }
         return map;
@@ -79,6 +81,25 @@ export function useGrowthByOutcome() {
                 const arr = map.get(outcome.placeableId);
                 if (arr) arr.push(g);
                 else map.set(outcome.placeableId, [g]);
+            }
+        }
+        return map;
+    });
+}
+
+// ─── Extraction Lookup ─────────────────────────────────────────
+
+export function useExtractionsByPlaceable() {
+    return createMemo(() => {
+        const all = BitCraftTables.ExtractionRecipeDesc.get() ?? [];
+        const map = new Map<number, ExtractionRecipeDesc[]>();
+        for (const ext of all) {
+            if (!ext.spawnedPlaceables?.length) continue;
+            for (const esp of ext.spawnedPlaceables) {
+                const pid = esp.placeableId;
+                const arr = map.get(pid);
+                if (arr) arr.push(ext);
+                else map.set(pid, [ext]);
             }
         }
         return map;

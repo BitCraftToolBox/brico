@@ -101,7 +101,7 @@ export const ItemStackIcon: Component<ItemStackIconProps> = (props) => {
 
 // ─── Probability Badge ─────────────────────────────────────────
 
-function ProbBadge(props: { probability: number, chances?: number }) {
+export function ProbBadge(props: { probability: number, chances?: number, extraTooltip?: JSX.Element }) {
     const { displayProbabilityAsAverage, setDisplayProbabilityAsAverage } = useSettings();
     const pct = () => fixFloat(props.probability * 100, 2);
     const ev = () => props.chances ? fixFloat(props.probability * props.chances) : undefined;
@@ -115,6 +115,7 @@ function ProbBadge(props: { probability: number, chances?: number }) {
                     </TooltipTrigger>
                     <TooltipContent class="max-w-[90svw]">
                         Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently.
+                        {props.extraTooltip}
                     </TooltipContent>
                 </Tooltip>
             }>
@@ -124,6 +125,7 @@ function ProbBadge(props: { probability: number, chances?: number }) {
                     </TooltipTrigger>
                     <TooltipContent class="max-w-[90svw]">
                         Average number of drops for a full bar (resource health, dungeon contribution, etc.): {fixFloat(props.probability * 100)}% * {props.chances} = {ev()}.
+                        {props.extraTooltip}
                     </TooltipContent>
                 </Tooltip>
             </Show>

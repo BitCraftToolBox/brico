@@ -284,6 +284,19 @@ export function ItemLink(props: { id: number; name?: string; class?: string; sho
     );
 }
 
+export function CargoLink(props: { id: number; name?: string; class?: string; showIcon?: boolean }) {
+    const show = () => props.showIcon !== false;
+    return (
+        <IconLink
+            href={`/database/cargo/${props.id}`}
+            icon={show() ? pageIcon("Cargo") : undefined}
+            class={props.class}
+        >
+            {props.name ?? `Cargo #${props.id}`}
+        </IconLink>
+    );
+}
+
 // ─── Item List ───────────────────────────────────────────────────
 
 /** Renders an item list name as a link. */

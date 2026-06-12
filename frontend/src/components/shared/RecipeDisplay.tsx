@@ -18,6 +18,7 @@ import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
+import {ExtractionSpawnedPlaceable} from "~/bindings/src/extraction_spawned_placeable_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
@@ -30,8 +31,9 @@ import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {BuildingIcon, EnemyIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon} from "~/components/shared/GameIcon";
-import {expandStack, InputItemStackArray, ItemStackArray, ItemStackIcon, QuestDropDisplay} from "~/components/shared/ItemStacks";
+import {expandStack, InputItemStackArray, ItemStackArray, ItemStackIcon, ProbBadge, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
+import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {
     collapseStacks,
     constructionStatLines,
@@ -49,6 +51,7 @@ import {
 } from "~/lib/recipe-sources";
 import {buildingForConstruction, buildingForDeconstruction, questDropsForEnemy, questDropsForExtraction, questDropsForItemList, resourceForExtraction} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
+import {fixFloat} from "~/lib/utils";
 
 // ─── Stat Line Display ─────────────────────────────────────────
 
@@ -137,28 +140,66 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                     <div class="flex flex-col items-center gap-0.5">
                         {/* size and positioning copied from ProbItemStackIcon/ProbBadge to align with the extracted item stacks */}
                         <Show when={props.showLabel}>
-                            <span class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight"
-                                  title="Guaranteed drop on last hit of resource extraction">deplete</span>
+                            <Tooltip>
+                                <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
+                                    deplete
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    Guaranteed drop on last hit of resource extraction
+                                </TooltipContent>
+                            </Tooltip>
                         </Show>
                         <ItemStackArray stacks={dep()} class="pt-1"/>
                     </div>
                 }
             </Show>
             <Show when={depletionResource()}>
-                {dR => (
-                    <div class="flex flex-col items-center gap-0.5">
-                        <Show when={props.showLabel}>
-                            <span class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight"
-                                  title={`${props.resource.onDestroyYieldResourceChance === 1 ? "Guaranteed spawn" : "Chance to spawn"} on last hit of resource extraction`}
-                            >
-                                {props.resource.onDestroyYieldResourceChance === 1 ? "deplete" : `${props.resource.onDestroyYieldResourceChance * 100}%`}
-                            </span>
-                        </Show>
-                        <ResourceIcon res={dR()} small showFallbackText/>
-                    </div>
-                )}
+                {dR => {
+                    const chance = props.resource.onDestroyYieldResourceChance;
+                    const minRad = props.resource.onDestroyYieldResourceMinRadius;
+                    const maxRad = props.resource.onDestroyYieldResourceMaxRadius;
+                    const label = chance === 1 ? "deplete" : `${fixFloat(chance * 100)}%`;
+                    const spawnText = chance === 1 ? "Guaranteed spawn" : "Chance to spawn";
+                    const radText = minRad > 0 || maxRad > 0 ? ` within ${minRad}–${maxRad} tiles` : "";
+                    const tooltipText = spawnText + radText + " on last hit of resource extraction.";
+                    return (
+                        <div class="flex flex-col items-center gap-0.5">
+                            <Show when={props.showLabel}>
+                                <Tooltip>
+                                    <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
+                                        {label}
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {tooltipText}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </Show>
+                            <ResourceIcon res={dR()} small showFallbackText/>
+                        </div>
+                    )
+                }}
             </Show>
         </div>
+    );
+}
+
+const ExtractedPlaceableIcons: Component<{ drops: ExtractionSpawnedPlaceable[], showLabel: boolean, chances?: number }> = (props) => {
+    const placeableIndex = BitCraftTables.PlaceableDesc.indexedBy("id");
+    return (
+        <For each={props.drops}>{esp => {
+            const placeable = placeableIndex().get(esp.placeableId);
+            if (!placeable) return null;
+            const radText = esp.radiusMin > 0 || esp.radiusMax > 0 ? <><br/>Drops within {esp.radiusMin}–{esp.radiusMax} tiles.</> : "";
+            return (
+                <div class="flex flex-col items-center gap-0.5">
+                    <Show when={props.showLabel}>
+                        <ProbBadge probability={esp.chance} chances={props.chances} extraTooltip={radText}></ProbBadge>
+                    </Show>
+                    <PlaceableIcon placeable={placeable} small/>
+                </div>
+            )
+        }}
+        </For>
     );
 }
 
@@ -192,6 +233,9 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                             resource()?.showTimeLeft || prospectingForResource(resource()?.id)?.length ? undefined : resource()?.maxHealth)
                         }
                     </For>
+                    <Show when={props.recipe.spawnedPlaceables}>
+                        {p => <ExtractedPlaceableIcons drops={p()} showLabel={true} chances={resource()?.maxHealth}/>}
+                    </Show>
                     <Show when={resource()}>
                         {r => <ResourceDepletionIcons resource={r()} showLabel={true}/>}
                     </Show>

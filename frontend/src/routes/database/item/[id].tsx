@@ -1,4 +1,4 @@
-import {useParams} from "@solidjs/router";
+import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {lootTabWith} from "~/components/fun/BricoLootBox";
@@ -295,6 +295,15 @@ export default function ItemDetail() {
             spacetimeTable={BitCraftTables.ItemDesc.st_name}
             objectId={item()?.id}
             chatLink={`(item=${item()?.id})`}
+            summaryContent={placeablePlacements().length === 1 ? () => (
+                <div class="flex flex-col items-center gap-2 py-2">
+                    <p class="text-sm text-muted-foreground">This item starts a placeable lifecycle chain.</p>
+                    <A href={`/tools/placeable-graph?placement=${placeablePlacements()[0].id}`}
+                       class="text-sm font-medium hover:underline">
+                        View full lifecycle in Placeable Graph →
+                    </A>
+                </div>
+            ) : undefined}
             tabs={!item() ? [] : [
                 craftedFromTab(craftedFrom()),
                 craftsIntoTab(craftsInto()),
