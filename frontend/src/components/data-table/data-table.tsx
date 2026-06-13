@@ -2,6 +2,7 @@ import {useSearchParams} from "@solidjs/router";
 import {
     type Column,
     ColumnDef,
+    type ColumnSort,
     createSolidTable,
     FilterFn,
     getCoreRowModel,
@@ -67,6 +68,39 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         setGlobalFilterRaw(Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q);
     }
 
+    // Restore persisted column sorting from URL params (sort.<index>.id / sort.<index>.dir)
+    const validColumnIds = new Set(
+        props.columns
+            .map((column) => column.id)
+            .filter((id): id is string => typeof id === "string")
+    );
+
+    const orderedSortParts = new Map<number, {id?: string; dir?: string}>();
+    for (const [key, rawValue] of Object.entries(searchParams)) {
+        const match = key.match(/^sort\.(\d+)\.(id|dir)$/);
+        if (!match) continue;
+
+        const index = Number(match[1]);
+        const part = match[2] as "id" | "dir";
+        const value = Array.isArray(rawValue) ? rawValue[0] : rawValue;
+        const current = orderedSortParts.get(index) ?? {};
+        current[part] = value;
+        orderedSortParts.set(index, current);
+    }
+
+    let urlSorting: ColumnSort[] = Array.from(orderedSortParts.entries())
+        .sort(([a], [b]) => a - b)
+        .flatMap(([, value]) => {
+            if (!value.id || !validColumnIds.has(value.id)) return [];
+            if (value.dir !== "asc" && value.dir !== "desc") return [];
+            return [{id: value.id, desc: value.dir === "desc"}];
+        });
+
+    if (urlSorting.length > 0) {
+        setSorting(urlSorting);
+    }
+
+
     // Custom global filter function for multi-column search
     const globalFilterFn: FilterFn<TData> = (row, _columnId, value) => {
         if (!value || !props.searchColumns || props.searchColumns.length === 0) {
@@ -119,6 +153,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         initialState: props.initialState,
         enableRowSelection: false,
         enableGlobalFilter: true,
+        enableMultiSort: true,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,

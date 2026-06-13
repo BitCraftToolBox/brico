@@ -21,7 +21,9 @@ type DataTableToolbarProps<TData> = {
 
 export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
     const { tablePageSize } = useSettings();
-    const isFiltered = () => props.table.getState().columnFilters.length > 0 || props.table.getState().globalFilter;
+    const isFiltered = () => props.table.getState().columnFilters.length > 0
+        || props.table.getState().globalFilter
+        || props.table.getState().sorting.length > 0;
 
     const getSearchPlaceholder = () => {
         if (!props.searchColumns || props.searchColumns.length === 0) {
@@ -54,6 +56,7 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
         throttledSetGlobalFilter.clear();
         props.table.setGlobalFilter("");
         props.table.resetColumnFilters();
+        props.table.resetSorting();
         props.table.setPageSize(tablePageSize());
         ensurePagesVisible(props.table);
     }
@@ -187,6 +190,12 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
 
         const globalFilter = props.table.getState().globalFilter as string;
         if (globalFilter) params.set("q", globalFilter);
+
+        for (const [index, columnSort] of props.table.getState().sorting.entries()) {
+            // Persist explicit sort priority order for stable multi-sort restoration
+            params.set(`sort.${index}.id`, columnSort.id);
+            params.set(`sort.${index}.dir`, columnSort.desc ? "desc" : "asc");
+        }
 
         for (const {id, value} of props.table.getState().columnFilters) {
             let filterOpts = props.filters?.find(f => f.column?.id === id);

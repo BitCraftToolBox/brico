@@ -359,7 +359,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
     const [searchParams] = useSearchParams();
 
     if (props.column && searchParams) {
-        if (isValueBased()) {
+        if (isValueBased() || isBoolBased()) {
             const val = searchParams[props.column.id];
             if (val) {
                 const opts = (resolvedOptions() as ValueBasedOption[]);
@@ -415,7 +415,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
             const val = props.column?.getFilterValue() as StatsFilterValue;
             return Object.keys(val?.stats ?? {});
         }
-        return isValueBased()
+        return isValueBased() || isBoolBased()
             ? (props.column?.getFilterValue() ?? []) as any[]
             : (props.column?.getFilterValue() ?? []) as [number, number];
     };
@@ -445,7 +445,8 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                  onOpenChange={(open) => {
                      setPopoverOpen(open);
                      setEditingWithNumberInputs(false);
-                 }}>
+                 }}
+        >
             <PopoverTrigger
                 as={Button<"button">} variant="outline" size="sm" onclick={() => setPopoverOpen(!popoverOpen())}
                 class={`h-8 border-dashed ${selectedValues().length ? "border-muted-foreground border-solid" : ""}`}
@@ -492,7 +493,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                             {selectedValues()[0] + "-" + selectedValues()[1]}
                         </FilterBadge>
                     </Show>
-                    <Show when={isValueBased()}>
+                    <Show when={isValueBased() || isBoolBased()}>
                         <FilterBadge values={selectedValues} table={props.table} column={props.column} class="lg:hidden">
                             {selectedValues().length}
                         </FilterBadge>
