@@ -33,7 +33,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {BiomeLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
 import {getTravelerNpcName} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
-import {fixFloat} from "~/lib/utils";
+import {fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Type ─────────────────────────────────────────────
 
@@ -334,7 +334,9 @@ export function growthStatLines(growth: PlaceableGrowthDesc): StatLine[] {
     const minTime = growth.time[0] ?? 0;
     const maxTime = growth.time[1] ?? minTime;
     const lines: StatLine[] = [
-        ["Time:", `${fixFloat(minTime)}s – ${fixFloat(maxTime)}s`],
+        ["Time:", minTime === maxTime
+            ? `${readableSeconds(fixFloat(minTime))}`
+            : `${readableSeconds(fixFloat(minTime))} - ${readableSeconds(fixFloat(maxTime))}`],
     ];
     if (!growth.showTimeLeft) {
         lines.push(["Shows Time Left:", "No"]);

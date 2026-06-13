@@ -580,14 +580,16 @@ const GrowthOutcomeIcon: Component<{
 
     return (
         <div class="flex flex-col items-center gap-0.5">
-            <button
-                class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight hover:bg-muted cursor-pointer transition-colors"
-                onClick={props.onTogglePercent}
-                title="Click to toggle between percentage and weight"
-            >
-                {props.showPercent() ? `${pct().toFixed(1)}%` : props.probability}
-            </button>
-            <Show when={placeable()} fallback={<span class="text-xs text-muted-foreground">#{props.placeableId}</span>}>
+            <Show when={props.placeableId !== 0}>
+                <button
+                    class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight hover:bg-muted cursor-pointer transition-colors"
+                    onClick={props.onTogglePercent}
+                    title="Click to toggle between percentage and weight"
+                >
+                    {props.showPercent() ? `${pct().toFixed(1)}%` : props.probability}
+                </button>
+            </Show>
+            <Show when={placeable()} fallback={<span class="text-xs text-muted-foreground">{props.placeableId === 0 ? "Despawn" : `#${props.placeableId}`}</span>}>
                 {(p) => <PlaceableIcon placeable={p()} small/>}
             </Show>
             <Show when={placeable()}>

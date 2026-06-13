@@ -1324,6 +1324,7 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
             const timeString = minTime === maxTime ? readableSeconds(minTime) : `${readableSeconds(minTime)}–${readableSeconds(maxTime)}`;
 
             for (const outcome of growth.outcomes) {
+                if (outcome.placeableId === 0) continue;
                 const pct = totalWeight > 0 ? (outcome.probability / totalWeight) * 100 : 0;
                 const isSelf = outcome.placeableId === plcId;
                 const label = `${pct.toFixed(0)}% | ${timeString}`;

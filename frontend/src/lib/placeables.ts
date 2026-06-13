@@ -64,7 +64,6 @@ export function useGrowthByPlaceable() {
         const all = BitCraftTables.PlaceableGrowthDesc.get() ?? [];
         const map = new Map<number, PlaceableGrowthDesc>();
         for (const g of all) {
-            if (g.outcomes.every(o => o.placeableId === 0)) continue;
             map.set(g.placeableId, g);
         }
         return map;
