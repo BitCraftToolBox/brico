@@ -20,13 +20,13 @@ export const KnowledgeDefs: BitCraftToDataDef<SecondaryKnowledgeDesc> = {
         tagColumn(undefined, {
             accessorFn: row => {
                 const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")()?.get(row.id);
-                return scroll?.tag;
+                return scroll?.tag ?? "";
             }
         }),
         tagColumn("Title", {
             accessorFn: row => {
                 const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")()?.get(row.id);
-                return scroll?.title;
+                return scroll?.title ?? "";
             }
         }),
         boolColumn("Known By Default", {

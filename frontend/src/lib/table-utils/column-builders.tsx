@@ -117,7 +117,7 @@ export function descriptionColumn<T>(
 
 export function tagColumn<T>(
     title: string = "Tag",
-    accessor: AccessorProp<T, string | undefined> = {accessorKey: title.toLowerCase() as AccessorKey<T>}
+    accessor: AccessorProp<T, string> = {accessorKey: title.toLowerCase() as AccessorKey<T>}
 ): ColumnDef<T> {
     return {
         id: title,
