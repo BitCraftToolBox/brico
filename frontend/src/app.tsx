@@ -1,22 +1,34 @@
 import {ColorModeProvider, ColorModeScript} from "@kobalte/core"
 import {MetaProvider} from "@solidjs/meta";
-import {Router} from "@solidjs/router";
+import {Router, useLocation} from "@solidjs/router";
 import {FileRoutes} from "@solidjs/start/router";
 import "@fontsource/inter/latin";
 import "./app.css";
-import {createEffect, Show} from "solid-js";
+import {createEffect, createMemo, Show} from "solid-js";
 import {AppSidebar} from "~/components/app-sidebar"
 import AppLoadingScreen from "~/components/AppLoadingScreen";
 import {SidebarProvider} from "~/components/ui/sidebar";
 import {SettingsProvider, useSettings} from "~/lib/settings";
-import {useGameDataReady, useLoadingProgress} from "~/lib/spacetime";
+import {BitCraftTables, useGameDataReady, useLoadingProgress, useTablesLoading} from "~/lib/spacetime";
 
 
 /** Inner wrapper — needs to be a child of SettingsProvider so useSettings() resolves */
 function AppRoot(props: { children: any }) {
     const { sidebarStartsCollapsed, colorStorageManager, midnightDark } = useSettings();
-    const isReady = useGameDataReady();
-    const progress = useLoadingProgress();
+    const location = useLocation();
+
+    const allReady = useGameDataReady();
+    const allProgress = useLoadingProgress();
+    const eventsLoading = useTablesLoading(BitCraftTables.ResourceDesc);
+
+    const isEventsRoute = createMemo(() => location.pathname === "/events");
+    const isReady = createMemo(() => (isEventsRoute() ? !eventsLoading() : allReady()));
+    const progress = createMemo(() => {
+        if (isEventsRoute()) {
+            return {loaded: eventsLoading() ? 0 : 1, total: 1};
+        }
+        return allProgress();
+    });
 
     createEffect(() => {
         if (midnightDark()) {

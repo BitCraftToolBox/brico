@@ -8,6 +8,12 @@ import {ALL_SIDEBAR_HREFS} from "~/lib/sidebar-items";
 
 export type SortMode = "tree" | "az";
 export type ViewMode = "list" | "grid";
+export type UnchartedNotifications = {
+    notifyAtStart: boolean;
+    notifyAt15m: boolean;
+    notifyAt60m: boolean;
+    soundEnabled: boolean;
+};
 
 /** Session-only (non-persisted) state for a single data table. */
 export type TableSessionState = {
@@ -78,6 +84,11 @@ export type AppSettings = {
     r9Mode: () => boolean;
     setR9Mode: (v: boolean) => void;
 
+    unchartedNotifications: () => UnchartedNotifications;
+    setUnchartedNotifications: (v: UnchartedNotifications) => void;
+
+    // unpersisted settings
+
     /** Show probabilistic item stack %s and item list averages as expected value for full node instead. NOT PERSISTED for now. */
     displayProbabilityAsAverage: () => boolean;
     setDisplayProbabilityAsAverage: (b: boolean) => void;
@@ -112,6 +123,7 @@ const KEYS = {
     easterEggs: "brico:easter-eggs",
     tf2Mode: "brico:easter-eggs:tf2-mode",
     r9Mode: "brico:easter-eggs:r9-mode",
+    unchartedNotifications: "brico:uncharted:notifications",
 } as const;
 
 function createSettings(): AppSettings {
@@ -164,6 +176,15 @@ function createSettings(): AppSettings {
     const [easterEggs, setEasterEggs] = makePersisted(createSignal<boolean>(false), {name: KEYS.easterEggs});
     const [tf2Mode, setTf2Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.tf2Mode});
     const [r9Mode, setR9Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.r9Mode});
+    const [unchartedNotifications, setUnchartedNotifications] = makePersisted(
+        createSignal<UnchartedNotifications>({
+            notifyAtStart: false,
+            notifyAt15m: false,
+            notifyAt60m: false,
+            soundEnabled: false,
+        }),
+        {name: KEYS.unchartedNotifications}
+    );
 
 
     // derived signals
@@ -230,6 +251,7 @@ function createSettings(): AppSettings {
         {key: KEYS.easterEggs, get: easterEggs, set: setEasterEggs},
         {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
         {key: KEYS.r9Mode, get: r9Mode, set: setR9Mode},
+        {key: KEYS.unchartedNotifications, get: unchartedNotifications, set: setUnchartedNotifications},
     );
 
     return {
@@ -270,6 +292,8 @@ function createSettings(): AppSettings {
         setTf2Mode,
         r9Mode,
         setR9Mode,
+        unchartedNotifications,
+        setUnchartedNotifications,
         getTableSession,
     };
 }
