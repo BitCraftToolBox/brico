@@ -1,11 +1,16 @@
-import {TbOutlineClipboardCheck, TbOutlineExternalLink} from "solid-icons/tb";
+import {TbOutlineBell as IconNotification, TbOutlineClipboardCheck as IconCopied, TbOutlineExternalLink as IconExternal} from "solid-icons/tb";
 import {createEffect, createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
 import type {Rarity} from "~/bindings/src/rarity_type";
 import type {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import MainLayout from "~/components/MainLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
+import {Button} from "~/components/ui/button";
+import {Command, CommandGroup, CommandList, CommandSeparator} from "~/components/ui/command";
+import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
+import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {useSettings} from "~/lib/settings";
 import {BitCraftTables} from "~/lib/spacetime";
 import {readableSeconds} from "~/lib/utils";
 import {DbConnection, type EventContext, type SubscriptionHandle, tables} from "~/relay";
@@ -20,6 +25,7 @@ const EAST_REGION_ID = 15;
 const NORTH_REGION_ID = 23;
 const TRACKED_REGION_IDS = [SOUTH_REGION_ID, WEST_REGION_ID, EAST_REGION_ID, NORTH_REGION_ID] as const;
 const MYTHIC_RARITY: Rarity = {tag: "Mythic"};
+const RECONNECT_DELAY_MS = 5000;
 
 type EventTimer = {
     entityId: bigint;
@@ -27,6 +33,12 @@ type EventTimer = {
     endTimestamp: GrowthTimer["endTimestamp"];
     x: number;
     z: number;
+};
+
+type RegionCard = {
+    title: string;
+    positionClass: string;
+    timers: () => EventTimer[];
 };
 
 function formatEndTimestamp(timestamp: GrowthTimer["endTimestamp"]): string {
@@ -56,15 +68,16 @@ function getEventMapLink(timer: EventTimer): string {
     return `https://bitcraftmap.com/?center=${Math.floor(timer.z / 3)},${Math.floor(timer.x / 3)}&zoom=-3#{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"turnLayerOn":"eventsLayer"}}]}`;
 }
 
-function getCopyChatText(timer: EventTimer): string {
+function getCopyChatText(timer: EventTimer, region: string): string {
     const coordZ = Math.floor(timer.z / 3);
     const coordX = Math.floor(timer.x / 3);
-    const nowMs = Date.now();
-    const endMs = Number(timer.endTimestamp.toMillis());
-    const timing = isActiveEvent(timer)
-        ? "now active!"
-        : `in ${readableSeconds((endMs - nowMs) / 1000, true)}.`;
-    return `World event at (coord=${coordZ},${coordX}) ${timing}`;
+    if  (isActiveEvent(timer)) {
+        return `World event currently active in ${region} (coord=${coordZ},${coordX}).`;
+    } else {
+        const nowMs = Date.now();
+        const endMs = Number(timer.endTimestamp.toMillis());
+        return `Next world event in ${region} (coord=${coordZ},${coordX}) starting in ${readableSeconds((endMs - nowMs) / 1000, true)}.`
+    }
 }
 
 function getTimeLeftText(timer: EventTimer, nowMs: number): string {
@@ -85,18 +98,20 @@ function CopyChatLinkButton(props: { content: string }) {
     };
 
     return (
-        <button class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground" onClick={copyContent}>
+        <button class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer" onClick={copyContent}>
             <Show
                 when={contentCopied()}
                 fallback={<>Copy Chat Link <FontIcon codepoint="FFE0" class="size-3 inline"/></>}
             >
-                <>Copied! <TbOutlineClipboardCheck class="size-3 inline"/></>
+                <>Copied! <IconCopied class="size-3 inline"/></>
             </Show>
         </button>
     );
 }
 
 export default function Events() {
+    const {unchartedNotifications, setUnchartedNotifications} = useSettings();
+
     const [northTimers, setNorthTimers] = createSignal<EventTimer[]>([]);
     const [westTimers, setWestTimers] = createSignal<EventTimer[]>([]);
     const [eastTimers, setEastTimers] = createSignal<EventTimer[]>([]);
@@ -104,10 +119,27 @@ export default function Events() {
     const [connected, setConnected] = createSignal(false);
     const [error, setError] = createSignal<string | null>(null);
     const [nowMs, setNowMs] = createSignal(Date.now());
+    const [notificationsOpen, setNotificationsOpen] = createSignal(false);
+    const [notificationPermission, setNotificationPermission] = createSignal<NotificationPermission | "unsupported">(
+        typeof Notification === "undefined" ? "unsupported" : Notification.permission
+    );
+
+    const resourceById = BitCraftTables.ResourceDesc.indexedBy("id");
 
     let connection: DbConnection | null = null;
     let subscription: SubscriptionHandle | null = null;
     let nowInterval: ReturnType<typeof setInterval> | null = null;
+    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+    let notificationAudio: HTMLAudioElement | null = null;
+    let intentionalDisconnect = false;
+    let suppressReconnectForDisconnect = false;
+    const sentNotificationKeys = new Set<string>();
+
+    function updateUnchartedNotifications(
+        patch: Partial<ReturnType<typeof unchartedNotifications>>
+    ) {
+        setUnchartedNotifications({...unchartedNotifications(), ...patch});
+    }
 
     function setTimersForRegion(regionId: number, timers: EventTimer[]) {
         switch (regionId) {
@@ -132,11 +164,10 @@ export default function Events() {
         if (!TRACKED_REGION_IDS.includes(regionId as (typeof TRACKED_REGION_IDS)[number])) {
             return;
         }
-        const resourceById = BitCraftTables.ResourceDesc.indexedBy("id")();
         const timers: EventTimer[] = [];
         for (const row of conn.db.growth_timers.iter()) {
             if (row.regionId !== regionId) continue;
-            const resource = resourceById.get(row.resourceId);
+            const resource = resourceById().get(row.resourceId);
             if (!resource || resource.tag !== "World Event") continue;
             timers.push({
                 entityId: row.entityId,
@@ -161,41 +192,40 @@ export default function Events() {
         }
     }
 
-    function shouldSkipRealtimeEvent(ctx: EventContext): boolean {
-        return ctx.event.tag === "SubscribeApplied";
-    }
-
-    function handleGrowthInsert(ctx: EventContext, row: GrowthTimer) {
-        if (shouldSkipRealtimeEvent(ctx) || !connection) return;
-        refreshRegionTimers(connection, row.regionId as number);
-    }
-
-    function handleGrowthDelete(ctx: EventContext, row: GrowthTimer) {
-        if (shouldSkipRealtimeEvent(ctx) || !connection) return;
-        refreshRegionTimers(connection, row.regionId as number);
-    }
-
-    function handleGrowthUpdate(ctx: EventContext, oldRow: GrowthTimer, row: GrowthTimer) {
-        if (shouldSkipRealtimeEvent(ctx) || !connection) return;
-        const oldRegion = oldRow.regionId as number;
-        const newRegion = row.regionId as number;
-        refreshRegionTimers(connection, oldRegion);
-        if (oldRegion !== newRegion) {
-            refreshRegionTimers(connection, newRegion);
+    function clearReconnectTimeout() {
+        if (reconnectTimeout !== null) {
+            clearTimeout(reconnectTimeout);
+            reconnectTimeout = null;
         }
     }
 
-    onMount(() => {
-        nowInterval = setInterval(() => setNowMs(Date.now()), 1000);
-
-        if (!RELAY_URI || !RELAY_MODULE) {
-            setError("Missing relay config. Set VITE_RELAY_HOST and VITE_RELAY_MODULE.");
-            return;
+    function cleanupConnection(isIntentionalClose = false) {
+        subscription?.unsubscribe();
+        subscription = null;
+        if (connection) {
+            suppressReconnectForDisconnect = isIntentionalClose;
+            connection.disconnect();
+            connection = null;
+            if (isIntentionalClose) {
+                queueMicrotask(() => {
+                    suppressReconnectForDisconnect = false;
+                });
+            }
         }
+    }
 
-        const tokenKey = `prism:${RELAY_URI}/${RELAY_MODULE}/auth_token`;
+    function scheduleReconnect(message: string) {
+        if (intentionalDisconnect) return;
+        clearReconnectTimeout();
+        setError(`${message} Reconnecting in 5s...`);
+        reconnectTimeout = setTimeout(() => {
+            reconnectTimeout = null;
+            connectRelay();
+        }, RECONNECT_DELAY_MS);
+    }
 
-        connection = DbConnection.builder()
+    function createConnectionBuilder(tokenKey: string) {
+        return DbConnection.builder()
             .withUri(RELAY_URI)
             .withDatabaseName(RELAY_MODULE)
             .withToken(localStorage.getItem(tokenKey) ?? undefined)
@@ -203,6 +233,7 @@ export default function Events() {
                 localStorage.setItem(tokenKey, token);
                 setConnected(true);
                 setError(null);
+                clearReconnectTimeout();
 
                 conn.db.growth_timers.onInsert(handleGrowthInsert);
                 conn.db.growth_timers.onDelete(handleGrowthDelete);
@@ -217,7 +248,7 @@ export default function Events() {
                         setError(ctx.event ? `Subscription error: ${String(ctx.event)}` : "Subscription error.");
                     })
                     .subscribe([
-                        // The relay bindings expose this table as growth_timers (same role as growth_state).
+                        // relay-combined growth state + resource + location table
                         tables.growth_timers.where(r =>
                             r.regionId.eq(SOUTH_REGION_ID)
                                 .or(r.regionId.eq(WEST_REGION_ID))
@@ -228,15 +259,79 @@ export default function Events() {
             })
             .onDisconnect((ctx) => {
                 setConnected(false);
+                if (suppressReconnectForDisconnect || intentionalDisconnect) return;
                 if (ctx.event) {
-                    setError(`Disconnected: ${String(ctx.event)}`);
+                    scheduleReconnect(`Disconnected: ${String(ctx.event)}`);
                 }
             })
             .onConnectError((ctx) => {
                 setConnected(false);
-                setError(ctx.event ? `Connection error: ${String(ctx.event)}` : "Connection error.");
-            })
-            .build();
+                scheduleReconnect(ctx.event ? `Connection error: ${String(ctx.event)}` : "Connection error.");
+            });
+    }
+
+    function connectRelay() {
+        clearReconnectTimeout();
+        cleanupConnection(true);
+        const tokenKey = `prism:${RELAY_URI}/${RELAY_MODULE}/auth_token`;
+        connection = createConnectionBuilder(tokenKey).build();
+    }
+
+    function playNotificationSound() {
+        if (!unchartedNotifications().soundEnabled) return;
+        if (!notificationAudio) {
+            notificationAudio = new Audio("/assets/notification.ogg");
+            notificationAudio.preload = "auto";
+        }
+        notificationAudio.currentTime = 0;
+        void notificationAudio.play().catch(() => undefined);
+    }
+
+    async function ensureNotificationPermission() {
+        if (typeof Notification === "undefined") {
+            setNotificationPermission("unsupported");
+            return "unsupported" as const;
+        }
+        if (Notification.permission === "default") {
+            const permission = await Notification.requestPermission();
+            setNotificationPermission(permission);
+            return permission;
+        }
+        setNotificationPermission(Notification.permission);
+        return Notification.permission;
+    }
+
+    function notifyUser(message: string) {
+        void ensureNotificationPermission().then((permission) => {
+            if (permission === "granted") {
+                new Notification(message);
+            }
+        });
+        playNotificationSound();
+    }
+
+    function shouldSkipRealtimeEvent(ctx: EventContext): boolean {
+        return ctx.event.tag === "SubscribeApplied";
+    }
+
+    function handleGrowthInsert(ctx: EventContext, row: GrowthTimer) {
+        if (shouldSkipRealtimeEvent(ctx) || !connection) return;
+        refreshRegionTimers(connection, row.regionId);
+    }
+
+    function handleGrowthDelete(ctx: EventContext, row: GrowthTimer) {
+        if (shouldSkipRealtimeEvent(ctx) || !connection) return;
+        refreshRegionTimers(connection, row.regionId);
+    }
+
+    function handleGrowthUpdate(ctx: EventContext, _oldRow: GrowthTimer, newRow: GrowthTimer) {
+        // essentially impossible for a resource to cross regions, so we only need to check the new row's region
+        handleGrowthInsert(ctx, newRow);
+    }
+
+    onMount(() => {
+        nowInterval = setInterval(() => setNowMs(Date.now()), 1000);
+        connectRelay();
     });
 
     createEffect(() => {
@@ -247,17 +342,23 @@ export default function Events() {
     });
 
     onCleanup(() => {
+        intentionalDisconnect = true;
         if (nowInterval !== null) {
             clearInterval(nowInterval);
             nowInterval = null;
         }
-        subscription?.unsubscribe();
-        subscription = null;
-        if (connection) {
-            connection.disconnect();
-            connection = null;
-        }
+        clearReconnectTimeout();
+        cleanupConnection(true);
         setConnected(false);
+    });
+
+    createEffect(() => {
+        if (!notificationsOpen()) return;
+        if (typeof Notification === "undefined") {
+            setNotificationPermission("unsupported");
+            return;
+        }
+        setNotificationPermission(Notification.permission);
     });
 
     const globalHighlight = createMemo(() => {
@@ -275,7 +376,7 @@ export default function Events() {
         };
     });
 
-    const regionCards = createMemo(() => {
+    const regionCards = createMemo<RegionCard[]>(() => {
         const buildRegionCard = (title: string, positionClass: string, timers: () => EventTimer[]) => {
             return {
                 title,
@@ -291,10 +392,113 @@ export default function Events() {
         ];
     });
 
+    createEffect(() => {
+        const notificationSettings = unchartedNotifications();
+        const thresholds = [
+            {enabled: notificationSettings.notifyAtStart, minutes: 0, label: "event started"},
+            {enabled: notificationSettings.notifyAt15m, minutes: 15, label: "event starts in 15 minutes"},
+            {enabled: notificationSettings.notifyAt60m, minutes: 60, label: "event starts in 60 minutes"},
+        ];
+        if (!thresholds.some((t) => t.enabled)) return;
+
+        const now = nowMs();
+        for (const region of regionCards()) {
+            for (const timer of region.timers()) {
+                if (isActiveEvent(timer)) continue;
+                const endMs = Number(timer.endTimestamp.toMillis());
+                const remainingMs = endMs - now;
+                for (const threshold of thresholds) {
+                    if (!threshold.enabled) continue;
+                    const isTriggered = threshold.minutes === 0
+                        ? remainingMs <= 0
+                        : remainingMs <= threshold.minutes * 60_000 && remainingMs > 0;
+                    if (!isTriggered) continue;
+
+                    const key = `${timer.entityId.toString()}:${endMs}:${threshold.minutes}`;
+                    if (sentNotificationKeys.has(key)) continue;
+
+                    sentNotificationKeys.add(key);
+                    notifyUser(`${region.title} ${threshold.label}.`);
+                }
+            }
+        }
+    });
+
     return (
         <MainLayout title="Uncharted Islands Events" hideSearch>
             <div class="w-full px-4 pb-6">
-                <h1 class="text-4xl font-bold mb-2 text-foreground text-center">Uncharted Islands Events</h1>
+                <div class="mb-2 flex items-center justify-center gap-3">
+                    <h1 class="text-4xl font-bold text-foreground text-center">Uncharted Islands Events</h1>
+                    <Popover open={notificationsOpen()} onOpenChange={setNotificationsOpen}>
+                        <PopoverTrigger as={Button<"button">} variant="outline" size="icon" aria-label="Notification settings">
+                            <IconNotification class="size-5"/>
+                        </PopoverTrigger>
+                        <PopoverContent class="w-80 p-0">
+                            <Command shouldFilter={false}>
+                                <div class="px-3 py-2 text-sm font-semibold">Notifications</div>
+                                <CommandSeparator/>
+                                <CommandList class="max-h-none">
+                                    <CommandGroup>
+                                        <label class="flex items-center justify-between px-2 py-1.5 text-sm">
+                                            <span>0 minutes</span>
+                                            <input
+                                                type="checkbox"
+                                                class="size-4 accent-primary"
+                                                checked={unchartedNotifications().notifyAtStart}
+                                                onChange={(e) => updateUnchartedNotifications({notifyAtStart: e.currentTarget.checked})}
+                                            />
+                                        </label>
+                                        <label class="flex items-center justify-between px-2 py-1.5 text-sm">
+                                            <span>15 minutes</span>
+                                            <input
+                                                type="checkbox"
+                                                class="size-4 accent-primary"
+                                                checked={unchartedNotifications().notifyAt15m}
+                                                onChange={(e) => updateUnchartedNotifications({notifyAt15m: e.currentTarget.checked})}
+                                            />
+                                        </label>
+                                        <label class="flex items-center justify-between px-2 py-1.5 text-sm">
+                                            <span>1 hour</span>
+                                            <input
+                                                type="checkbox"
+                                                class="size-4 accent-primary"
+                                                checked={unchartedNotifications().notifyAt60m}
+                                                onChange={(e) => updateUnchartedNotifications({notifyAt60m: e.currentTarget.checked})}
+                                            />
+                                        </label>
+                                    </CommandGroup>
+                                    <CommandSeparator/>
+                                    <CommandGroup>
+                                        <div class="flex items-center justify-between px-2 py-1">
+                                            <span class="text-sm">{unchartedNotifications().soundEnabled ? "Sound" : "Muted"}</span>
+                                            <Switch
+                                                checked={unchartedNotifications().soundEnabled}
+                                                onChange={(checked) => updateUnchartedNotifications({soundEnabled: checked})}
+                                            >
+                                                <SwitchControl>
+                                                    <SwitchThumb/>
+                                                </SwitchControl>
+                                            </Switch>
+                                        </div>
+                                    </CommandGroup>
+                                    <CommandSeparator/>
+                                    <CommandGroup>
+                                        <Button
+                                            variant="outline"
+                                            class="w-full"
+                                            onClick={() => notifyUser("Test event notification")}
+                                        >
+                                            Test Now
+                                        </Button>
+                                        <p class="pt-2 text-xs text-muted-foreground text-center">
+                                            Notification permission: {notificationPermission() === "unsupported" ? "unsupported" : notificationPermission()}
+                                        </p>
+                                    </CommandGroup>
+                                </CommandList>
+                            </Command>
+                        </PopoverContent>
+                    </Popover>
+                </div>
                 <p class="text-center text-sm text-muted-foreground mb-8">
                     Relay status: {connected() ? "Connected" : "Disconnected"}
                 </p>
@@ -332,7 +536,7 @@ export default function Events() {
                                                 />
                                                 <div class="flex flex-col min-w-0">
                                                     <span class="text-sm font-medium text-foreground">{timer.resource.name}</span>
-                                                    <Tooltip>
+                                                    <Tooltip placement="bottom-start">
                                                         <TooltipTrigger as="span" class="text-xs text-muted-foreground w-fit cursor-help">
                                                             {getTimeLeftText(timer, nowMs())}
                                                         </TooltipTrigger>
@@ -347,9 +551,9 @@ export default function Events() {
                                                         class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                                                     >
                                                         <span>View Map</span>
-                                                        <TbOutlineExternalLink class="w-3 h-3"/>
+                                                        <IconExternal class="w-3 h-3"/>
                                                     </a>
-                                                    <CopyChatLinkButton content={getCopyChatText(timer)}/>
+                                                    <CopyChatLinkButton content={getCopyChatText(timer, region.title)}/>
                                                 </div>
                                             </div>
                                         )}

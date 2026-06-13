@@ -65,20 +65,13 @@ export default function PlaceableGraphTool() {
         selectPlacement(placementId);
     }
 
-    const PLACEMENT_LOOP_NAMES = new Map<number, string>([
-        [1110954448, "Sagi Bird Trapping"],
-        [774931176, "Sagi Bird Domestication"],
-        [2078563352, "Nubi Goat Trappping"],
-        [2135187451, "Nubi Goat Domestication"],
-    ]);
     function placementSelectionRow(placement: PlaceablePlacementDesc) {
-        const loopName = PLACEMENT_LOOP_NAMES.get(placement.id);
         const placeable = BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(placement.placedPlaceableId);
         const placeableName = placeable?.name;
         return (
             <>
-                <span class="font-medium"><div class="flex items-center gap-1"><Show when={placeable}><PlaceableIcon placeable={placeable!} small={true} noInteract/></Show> {loopName ?? placeableName}</div></span>
-                <span class="text-xs text-muted-foreground ml-auto">{loopName ? placeableName : ""} #{placement.id}</span>
+                <span class="font-medium"><div class="flex items-center gap-1"><Show when={placeable}><PlaceableIcon placeable={placeable!} small={true} noInteract/></Show> {placeableName}</div></span>
+                <span class="text-xs text-muted-foreground ml-auto">#{placement.id}</span>
             </>
         );
     }
@@ -87,7 +80,7 @@ export default function PlaceableGraphTool() {
         <MainLayout title="Placeable Graph" navTitle={
             <>
                 {breadcrumb("/database/placeable", "Placeables")}
-                <span>Lifecycle Graph</span>
+                <span>Graph</span>
                 <Show when={selectedPlaceableName()}>{(n) => {
                     return <>
                         <span class="mx-1.5">{">"}</span>
@@ -109,7 +102,7 @@ export default function PlaceableGraphTool() {
                                 <h1 class="text-xl font-bold">Placeable Lifecycle Graph</h1>
                             </div>
                             <p class="text-sm text-muted-foreground mb-4">
-                                Select a placement to visualize its lifecycle chain.
+                                Select a placement to visualize its lifecycle graph.
                             </p>
                             <div class="border rounded-md max-h-[70vh] overflow-auto">
                                 <For each={placements()} fallback={
