@@ -64,12 +64,12 @@ export function undefinedIfZero(val: number | undefined) {
     return val !== 0 ? val : undefined;
 }
 
-export function readableSeconds(seconds: number | undefined): string | undefined {
+export function readableSeconds(seconds: number | undefined, shorten: boolean = false): string | undefined {
     if (seconds === undefined) return undefined;
     seconds = Math.round(seconds);
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
-    const secs = seconds % 60;
+    const secs = hours > 0 && shorten ? 0 : seconds % 60;
     return [
         hours > 0 ? `${hours}h` : null,
         minutes > 0 ? `${minutes}m` : null,

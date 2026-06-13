@@ -68,9 +68,9 @@ export const TravelerTradeDefs: BitCraftToDataDef<TravelerTradeOrderDesc> = {
     facetedFilters: [
         uniqueValuesFilter("Traveler", undefined, compareOptions),
         uniqueValuesFilter("Skill", undefined, compareOptions),
+        rangeFilter("Level"),
         uniqueValuesFilter("Required Knowledge", undefined, compareOptions),
         uniqueValuesFilter("Blocking Knowledge", undefined, compareOptions),
-        rangeFilter("Level"),
     ],
     searchColumns: ["Description"],
 };

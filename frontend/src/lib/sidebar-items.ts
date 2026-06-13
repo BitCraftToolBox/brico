@@ -75,6 +75,7 @@ const sidebarGroups = [
         name: "Toolbox",
         items: [
             {href: '/tools/emblem', title: 'Emblem Editor', icon: makeFontIcon("FFB7")},
+            {href: '/events', title: 'Event Timers', icon: makeFontIcon("FFFE")},
             {href: '/tools/placeable-graph', title: 'Placeable Graph', icon: makeFontIcon("0072")},
             {href: '/tools/quest-graph', title: 'Quest Graph', icon: makeFontIcon("0107")},
         ] as const

@@ -1,7 +1,10 @@
 import {useColorMode} from "@kobalte/core";
+import {A} from "@solidjs/router";
 import GlobalSearchInput from "~/components/GlobalSearchInput";
 import MainLayout from "~/components/MainLayout";
+import {GameIcon} from "~/components/shared/GameIcon";
 import BricoFace from "~/components/ui/brico-face";
+import {Button} from "~/components/ui/button";
 
 export default function Home() {
     const {colorMode} = useColorMode();
@@ -16,6 +19,18 @@ export default function Home() {
                     large
                     autofocus
                 />
+                <Button variant="ghost" as={A} href="/events" class="mt-8 h-20">
+                    <GameIcon
+                        name="Track World Events"
+                        iconAsset="GeneratedIcons/Other/GeneratedIcons/Other/Buildings/Crafting/Bank"
+                        shape="square"
+                        small
+                        noInteract
+                        rarity={{tag: "Mythic"}}
+                        tier={-1}
+                    />
+                    <span>Track World Event Timers</span>
+                </Button>
             </div>
         </MainLayout>
     );
