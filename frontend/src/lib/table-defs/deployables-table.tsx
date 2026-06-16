@@ -183,7 +183,11 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
             filterFn: includedIn<DeployableDesc>(),
         },
         statsColumn(),
-        rowActions(),
+        rowActions({accessorKey: "id"}, "col", undefined,
+            { accessorFn: (dep) => {
+                return BitCraftTables.CollectibleDesc.indexedBy("id")?.()?.get(dep.deployFromCollectibleId)?.id;
+            }
+        }),
     ],
     facetedFilters: [
         uniqueValuesFilter("Type"),
