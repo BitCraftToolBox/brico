@@ -109,7 +109,8 @@ export function extractionRecipeForResource(resourceId: number): ExtractionRecip
 export function extractionRecipesDropping(itemId: number, itemType: string): ExtractionRecipeDesc[] {
     const all = BitCraftTables.ExtractionRecipeDesc.get();
     if (!all) return [];
-    return all.filter(r => anyProbStackMatches(r.extractedItemStacks, itemId, itemType))
+    // there's 5 legacy recipes of cargo extraction - instead of futzing with sorting and locks, just exclude them
+    return all.filter(r => r.resourceId !== 0 && anyProbStackMatches(r.extractedItemStacks, itemId, itemType))
         .sort(artOfCheatingThen<ExtractionRecipeDesc>("verbPhrase"));
 }
 
