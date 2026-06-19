@@ -389,7 +389,11 @@ export default function Events() {
             buildRegionCard("Southern Islands", "lg:col-start-2 lg:row-start-3", southTimers),
             buildRegionCard("Western Islands", "lg:col-start-1 lg:row-start-2", westTimers),
             buildRegionCard("Eastern Islands", "lg:col-start-3 lg:row-start-2", eastTimers),
-        ];
+        ].sort((a, b) => {
+            const firstA = a.timers()[0]?.endTimestamp.toMillis() ?? 0n;
+            const firstB = b.timers()[0]?.endTimestamp.toMillis() ?? 0n;
+            return Number(firstA - firstB);
+        });
     });
 
     createEffect(() => {
@@ -517,12 +521,12 @@ export default function Events() {
                                     <For each={region.timers()} fallback={<p class="text-sm text-muted-foreground">No active world events.</p>}>
                                         {(timer) => (
                                             <div
-                                                class={`flex items-center gap-3 rounded-md border bg-background/40 p-2 ${
+                                                class={`flex items-center gap-3 rounded-md border p-2 ${
                                                     globalHighlight().activeEntityIds.has(timer.entityId)
-                                                        ? "border-green-600"
+                                                        ? "border-success-foreground bg-success"
                                                         : globalHighlight().closestInactiveEntityId === timer.entityId
-                                                            ? "border-blue-600"
-                                                            : "border-border/70"
+                                                            ? "border-info-foreground bg-info"
+                                                            : "border-border/70 bg-background/40"
                                                 }`}
                                             >
                                                 <GameIcon
