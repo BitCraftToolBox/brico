@@ -425,7 +425,7 @@ export default function Events() {
     });
 
     return (
-        <MainLayout title="Uncharted Islands Events" hideSearch>
+        <MainLayout title="Uncharted Islands Events">
             <div class="w-full px-4 pb-6">
                 <div class="mb-2 flex items-center justify-center gap-3">
                     <h1 class="text-4xl font-bold text-foreground text-center">Uncharted Islands Events</h1>

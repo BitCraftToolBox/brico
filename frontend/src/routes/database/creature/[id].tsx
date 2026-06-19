@@ -11,6 +11,7 @@ import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {breadcrumb, ItemListLink, SkillLinkById} from "~/lib/game-links";
+import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
 import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
@@ -170,7 +171,7 @@ export default function CreatureDetail() {
                                 },
                                 {
                                     header: "Weighted",
-                                    cell: ([loot]) => <span>{loot.weighted ? "Yes" : "No"}</span>,
+                                    cell: ([loot]) => <span>{itemListLootWeightedComponent(loot.weighted)}</span>,
                                 },
                                 {
                                     header: "Output",
@@ -180,7 +181,7 @@ export default function CreatureDetail() {
                                         return (
                                             <div class="flex flex-row flex-wrap gap-1">
                                                 <Show when={questDrops.length} fallback={listComp}>
-                                                    <div class="mt-4">{listComp}</div>
+                                                    <div>{listComp}</div>
                                                 </Show>
                                                 <For each={questDrops}>
                                                     {(drop) => <QuestDropDisplay questDrop={drop} chances={1}/>}

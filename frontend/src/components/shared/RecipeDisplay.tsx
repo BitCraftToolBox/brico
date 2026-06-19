@@ -43,6 +43,7 @@ import {
     extractionStatLines,
     growthStatLines,
     interactionStatLines,
+    itemListStatLines,
     placementStatLines,
     prospectingForResource,
     StatLine,
@@ -358,6 +359,7 @@ export const ItemListPanel: Component<{ list: ItemListDesc }> = (props) => {
                     </For>
                 </>
             }
+            stats={itemListStatLines(props.list)}
         />
     );
 };

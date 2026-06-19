@@ -16,6 +16,7 @@ import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_des
 import {ExperienceStackF32} from "~/bindings/src/experience_stack_f_32_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
+import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {LevelRequirement} from "~/bindings/src/level_requirement_type";
@@ -31,7 +32,7 @@ import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {BiomeLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
-import {getTravelerNpcName} from "~/lib/relations";
+import {getItemListSource, getTravelerNpcName} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -249,6 +250,30 @@ export function travelerTradeStatLines(trade: TravelerTradeOrderDesc): StatLine[
     });
     addKnowledgeRequirements(lines, trade as any);
     return lines;
+}
+
+export function itemListLootWeightedComponent(weighted: boolean) {
+    return weighted ? (
+        <Tooltip>
+            <TooltipTrigger class="decoration-dotted underline">Yes</TooltipTrigger>
+            <TooltipContent>Output is rolled a number of times equal to your contribution. One full HP bar of the enemy is worth 1000 contribution.</TooltipContent>
+        </Tooltip>
+    ) : (
+        <Tooltip>
+            <TooltipTrigger class="decoration-dotted underline">No</TooltipTrigger>
+            <TooltipContent>Output is rolled once, regardless of damage dealt, as long as the minimum threshold is reached.</TooltipContent>
+        </Tooltip>
+    )
+}
+
+export function itemListStatLines(list: ItemListDesc): StatLine[] {
+    const source = getItemListSource(list);
+    if (source.type !== "Enemy") return [];
+    const loot = source.loot;
+    return [
+        ["Minimum Contribution", loot.minimumContribution],
+        ["Weighted", itemListLootWeightedComponent(loot.weighted)],
+    ];
 }
 
 // ─── Placeable Stat Line Extractors ─────────────────────────────
