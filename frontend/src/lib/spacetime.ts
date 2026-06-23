@@ -20,6 +20,7 @@ import {DeployableAppearanceOverrideDesc} from "~/bindings/src/deployable_appear
 import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
 import {EnemyAiParamsDesc} from "~/bindings/src/enemy_ai_params_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
+import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
 import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {FoodDesc} from "~/bindings/src/food_desc_type";
@@ -237,6 +238,7 @@ export const BitCraftTables = {
     'PlaceablePlacementDesc': cache<PlaceablePlacementDesc>('placeable_placement_desc', PlaceablePlacementDesc),
     'NpcDesc': cache<NpcDesc>('npc_desc', NpcDesc),
     'DeployableAppearanceOverrideDesc': cache<DeployableAppearanceOverrideDesc>('deployable_appearance_override_desc', DeployableAppearanceOverrideDesc),
+    'EnemyScalingDesc': cache<EnemyScalingDesc>('enemy_scaling_desc', EnemyScalingDesc),
 };
 
 /**

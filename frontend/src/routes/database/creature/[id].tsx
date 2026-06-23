@@ -2,6 +2,7 @@ import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
 import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
+import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon} from "~/components/shared/GameIcon";
@@ -12,7 +13,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {breadcrumb, ItemListLink, SkillLinkById} from "~/lib/game-links";
 import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
-import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList} from "~/lib/relations";
+import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList, scalingDescsFromEnemy} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
@@ -44,6 +45,8 @@ export default function CreatureDetail() {
     const extractedItems = createMemo(() => creature()?.extractedItemStacks ?? []);
     const questDrops = createMemo(() => creature() ? questDropsForEnemy(creature()!.enemyType) : []);
     const contributionLists = createMemo(() => creature() ? contributionLootFromEnemy(creature()!) : []);
+
+    const scaling = createMemo(() => creature() ? scalingDescsFromEnemy(creature()!) : []);
 
     const {labels: pathfindingLabels} = checkStepHeight(pathfinding);
 
@@ -194,6 +197,48 @@ export default function CreatureDetail() {
                         />
                     ),
                 },
+                {
+                    id: "scaling",
+                    label: "Stat Scaling",
+                    count: scaling().length,
+                    showWhenEmpty: false,
+                    content: () => (
+                        <RelTable<EnemyScalingDesc>
+                            data={scaling().sort((a, b) => a.requiredPlayersCount - b.requiredPlayersCount)}
+                            columns={[
+                                {
+                                    header: "Required Players",
+                                    cell: (scaling) => <span>{scaling.requiredPlayersCount}</span>,
+                                },
+                                {
+                                    header: "Stat Bonuses",
+                                    cell: (scaling) => {
+                                        const pairs = [
+                                            ["Scaled Armor", scaling.scaledArmorBonus],
+                                            ["Strength", scaling.strengthBonus],
+                                            ["Accuracy", scaling.accuracyBonus],
+                                            ["Evasion", scaling.evasionBonus],
+                                            ["Min. Damage", scaling.minDamageBonus],
+                                            ["Max. Damage", scaling.maxDamageBonus],
+                                        ].filter((p) => !!p[1]);
+                                        return (
+                                            <div class="flex flex-row flex-wrap gap-1">
+                                                <For each={pairs}>
+                                                    {p => (
+                                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs bg-muted text-muted-foreground whitespace-nowrap">
+                                                            <span class="font-medium">{p[0]}</span>
+                                                            <span class="opacity-70">{p[1]}</span>
+                                                        </span>
+                                                    )}
+                                                </For>
+                                            </div>
+                                        )
+                                    },
+                                },
+                            ]}
+                        />
+                    )
+                }
             ]}
         />
     );
