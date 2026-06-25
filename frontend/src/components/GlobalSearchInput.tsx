@@ -14,7 +14,8 @@ import {useNavigate} from "@solidjs/router";
 import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
 import {createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
 import {useIsMobile} from "~/components/ui/sidebar";
-import {ObjectMatch, quickSearch} from "~/lib/global-search";
+import {ObjectMatch} from "~/lib/global-search";
+import {useGlobalSearch} from "~/lib/global-search-context";
 import {cn} from "~/lib/utils";
 
 interface GlobalSearchInputProps {
@@ -32,6 +33,7 @@ interface TabDef {
 
 export default function GlobalSearchInput(props: GlobalSearchInputProps) {
     const navigate = useNavigate();
+    const {quickSearch} = useGlobalSearch();
     const [query, setQuery] = createSignal("");
     const [dropdownOpen, setDropdownOpen] = createSignal(false);
     const [activeIndex, setActiveIndex] = createSignal(-1);
@@ -148,9 +150,13 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
             const nextIdx = Math.min(tabList.length - 1, currentTabIdx + 1);
             switchTab(tabList[nextIdx].id, true);
         } else if (e.key === "Enter" && activeIndex() >= 0) {
-            e.preventDefault();
-            const item = items[activeIndex()];
-            if (item) commitSuggestion(item);
+            if (e.shiftKey) {
+                handleSearch(e);
+            } else {
+                e.preventDefault();
+                const item = items[activeIndex()];
+                if (item) commitSuggestion(item);
+            }
         }
     };
 
@@ -286,7 +292,7 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
 
                     {/* Footer */}
                     <div class="px-3 py-1 text-xs text-muted-foreground border-t border-border flex justify-between items-center">
-                        <span>Enter for full results · ←→ switch tabs</span>
+                        <span><kbd>Shift</kbd>+<kbd>Enter</kbd> for full results · ←→ switch tabs</span>
                     </div>
                 </div>
             </Show>

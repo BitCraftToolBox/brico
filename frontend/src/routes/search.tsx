@@ -12,10 +12,12 @@ import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
 import {createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show} from "solid-js";
 import MainLayout from "~/components/MainLayout";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
-import {globalSearch, type GroupedResults, type ObjectMatch} from "~/lib/global-search";
+import {type GroupedResults, type ObjectMatch} from "~/lib/global-search";
+import {useGlobalSearch} from "~/lib/global-search-context";
 
 export default function SearchPage() {
     const location = useLocation();
+    const {globalSearch} = useGlobalSearch();
     const initQ = new URLSearchParams(location.search).get("q") ?? "";
     const [query, setQuery] = createSignal(initQ);
     let searchInputRef: HTMLInputElement | undefined;

@@ -16,6 +16,7 @@ import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
+import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {InputItemStack} from "~/bindings/src/input_item_stack_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
@@ -268,6 +269,12 @@ export function contributionLootFromEnemy(enemy: EnemyDesc | undefined): [Contri
     return matchedLoot.map(cl => [cl, itemListIndex.get(cl.itemListId)])
         .filter((p): p is [ContributionLootDesc, ItemListDesc] => !!p[1])
         .sort((a, b) => b[0].minimumContribution - a[0].minimumContribution);
+}
+
+export function scalingDescsFromEnemy(enemy: EnemyDesc | undefined): EnemyScalingDesc[] {
+    if (!enemy) return [];
+    const scalingDescs = BitCraftTables.EnemyScalingDesc.indexedByMulti("enemyTypeId");
+    return scalingDescs()?.get(enemy.enemyType) ?? [];
 }
 
 // ─── Resource Depletion ─────────────────────────────────────────

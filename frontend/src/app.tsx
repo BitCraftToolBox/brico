@@ -8,6 +8,7 @@ import {createEffect, createMemo, Show} from "solid-js";
 import {AppSidebar} from "~/components/app-sidebar"
 import AppLoadingScreen from "~/components/AppLoadingScreen";
 import {SidebarProvider} from "~/components/ui/sidebar";
+import {GlobalSearchProvider} from "~/lib/global-search-context";
 import {SettingsProvider, useSettings} from "~/lib/settings";
 import {BitCraftTables, useGameDataReady, useLoadingProgress, useTablesLoading} from "~/lib/spacetime";
 
@@ -42,15 +43,17 @@ function AppRoot(props: { children: any }) {
         <>
             <ColorModeScript storageType="localStorage" storageKey="brico:theme"/>
             <ColorModeProvider storageManager={colorStorageManager}>
-                <Show when={!isReady()}>
-                    <AppLoadingScreen loaded={progress().loaded} total={progress().total}/>
-                </Show>
-                <Show when={isReady()}>
-                    <SidebarProvider defaultOpen={!sidebarStartsCollapsed()}>
-                        <AppSidebar/>
-                        {props.children}
-                    </SidebarProvider>
-                </Show>
+                <GlobalSearchProvider isReady={allReady}>
+                    <Show when={!isReady()}>
+                        <AppLoadingScreen loaded={progress().loaded} total={progress().total}/>
+                    </Show>
+                    <Show when={isReady()}>
+                        <SidebarProvider defaultOpen={!sidebarStartsCollapsed()}>
+                            <AppSidebar/>
+                            {props.children}
+                        </SidebarProvider>
+                    </Show>
+                </GlobalSearchProvider>
             </ColorModeProvider>
         </>
     );

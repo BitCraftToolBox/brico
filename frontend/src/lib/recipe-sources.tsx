@@ -86,7 +86,7 @@ type RecipeWithKnowledge = {
 function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge) {
     if ('requiredKnowledges' in recipe && Array.isArray(recipe.requiredKnowledges) && recipe.requiredKnowledges.length) {
         lines.push([
-            <IconSpan icon={knowledgeStatIcon()}>Required Knowledge</IconSpan>,
+            <IconSpan icon={knowledgeStatIcon()}>Required Knowledge:</IconSpan>,
             <LinkedList>
                 {Array.from(new Set(recipe.requiredKnowledges)).map((id) => (
                     <KnowledgeLinkById id={id} showIcon={false}/>
@@ -96,7 +96,7 @@ function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge
     }
     if ('blockingKnowledges' in recipe && Array.isArray(recipe.blockingKnowledges) && recipe.blockingKnowledges.length) {
         lines.push([
-            <IconSpan icon={knowledgeStatIcon()}>Blocking Knowledge</IconSpan>,
+            <IconSpan icon={knowledgeStatIcon()}>Blocking Knowledge:</IconSpan>,
             <LinkedList>
                 {Array.from(new Set(recipe.blockingKnowledges)).map((id) => (
                     <KnowledgeLinkById id={id} showIcon={false}/>
