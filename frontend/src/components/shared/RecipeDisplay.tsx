@@ -45,7 +45,6 @@ import {
     interactionStatLines,
     itemListStatLines,
     placementStatLines,
-    prospectingForResource,
     StatLine,
     travelerTaskStatLines,
     travelerTradeStatLines,
@@ -207,6 +206,7 @@ const ExtractedPlaceableIcons: Component<{ drops: ExtractionSpawnedPlaceable[], 
 export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> = (props) => {
     const resource = () => resourceForExtraction(props.recipe);
     const questDrops = () => questDropsForExtraction(props.recipe.id);
+    const chances = () => resource()?.ignoreDamage ? undefined : resource()?.maxHealth;
 
     return (
         <RecipeVisual
@@ -230,18 +230,16 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                              <Show when={!resource()?.onDestroyYieldResourceId && !questDrops().length}>No Outputs</Show>
                          }
                     >
-                        {(stack) => expandStack(stack,
-                            resource()?.showTimeLeft || prospectingForResource(resource()?.id)?.length ? undefined : resource()?.maxHealth)
-                        }
+                        {(stack) => expandStack(stack, chances())}
                     </For>
                     <Show when={props.recipe.spawnedPlaceables}>
-                        {p => <ExtractedPlaceableIcons drops={p()} showLabel={true} chances={resource()?.maxHealth}/>}
+                        {p => <ExtractedPlaceableIcons drops={p()} showLabel={true} chances={chances()}/>}
                     </Show>
                     <Show when={resource()}>
                         {r => <ResourceDepletionIcons resource={r()} showLabel={true}/>}
                     </Show>
                     <For each={questDrops()}>
-                        {(drop) => <QuestDropDisplay questDrop={drop} chances={resource()?.maxHealth}/>}
+                        {(drop) => <QuestDropDisplay questDrop={drop} chances={chances()}/>}
                     </For>
                 </>
             }

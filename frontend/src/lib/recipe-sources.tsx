@@ -167,25 +167,32 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
         if (resource?.showTimeLeft) {
             // TODO growth_recipe_desc is private
             lines.push(["Timed Node", "? min"])
-            totalEffort = 0;
-        } else {
-            const prospectingDescs = prospectingForResource(recipe.resourceId);
-            if (prospectingDescs?.length) {
-                if (prospectingDescs.length == 1) {
-                    const prospect = prospectingDescs[0];
-                    const perNode = prospect.contributionPerVisitedBreadCrumb;
-                    const [min, max] = prospect.breadCrumbCount;
-                    lines.push(["Prospecting Hits",
-                        <Tooltip>
-                            <TooltipTrigger>{min * perNode} - {max * perNode}</TooltipTrigger>
-                            <TooltipContent class="max-w-[90svw]">{perNode} contribution per node, {min} - {max} nodes, {(min + max) / 2 * perNode} hits average</TooltipContent>
-                        </Tooltip>
-                    ]);
-                }
-                totalEffort = 0;
+        }
+        const prospectingDescs = prospectingForResource(recipe.resourceId);
+        if (prospectingDescs?.length) {
+            if (prospectingDescs.length == 1) {
+                const prospect = prospectingDescs[0];
+                const perNode = prospect.contributionPerVisitedBreadCrumb;
+                const [min, max] = prospect.breadCrumbCount;
+                lines.push(["Prospecting Hits",
+                    <Tooltip>
+                        <TooltipTrigger>{min * perNode} - {max * perNode}</TooltipTrigger>
+                        <TooltipContent class="max-w-[90svw]">{perNode} contribution per node, {min} - {max} nodes, {(min + max) / 2 * perNode} hits average</TooltipContent>
+                    </Tooltip>
+                ]);
             }
         }
-        lines.push(["Total HP", resource.maxHealth]);
+        if (resource.ignoreDamage) {
+            lines.push(["Total HP",
+                <Tooltip>
+                    <TooltipTrigger class="decoration-dotted underline">{resource.maxHealth}</TooltipTrigger>
+                    <TooltipContent>Resource ignores regular damage.</TooltipContent>
+                </Tooltip>
+            ]);
+            totalEffort = 0;
+        } else {
+            lines.push(["Total HP", resource.maxHealth]);
+        }
     }
     lines.push(["Time:", fixFloat(recipe.timeRequirement)]);
     lines.push(["Stamina:", fixFloat(recipe.staminaRequirement)]);
