@@ -37,8 +37,8 @@ export default function BuffDetail() {
                 {label: "Warn Time", value: b.warnTime ? `${fixFloat(b.warnTime)}s` : undefined},
                 {
                     label: "Online Timestamp",
-                    value: <Tooltip>
-                        <TooltipTrigger>{b.onlineTimestamp ? "Yes" : "No"}</TooltipTrigger>
+                    value: <Tooltip openOnTouchStart>
+                        <TooltipTrigger class="decoration-dotted underline">{b.onlineTimestamp ? "Yes" : "No"}</TooltipTrigger>
                         <TooltipContent class="max-w-[90svw]">If No, buff ticks down while offline.</TooltipContent>
                     </Tooltip>
                 },

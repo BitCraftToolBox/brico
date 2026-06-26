@@ -102,7 +102,7 @@ export function KnowledgeLink(props: { id: number; name?: string; class?: string
     const show = () => props.showIcon !== false;
     const isDevLocked = () => props.id === AOC_ID;
     return (
-        <Tooltip disabled={!isDevLocked()}>
+        <Tooltip disabled={!isDevLocked()} openOnTouchStart>
             <TooltipTrigger
                 as={A}
                 href={`/database/knowledge/${props.id}`}

@@ -109,7 +109,7 @@ export function ProbBadge(props: { probability: number, chances?: number, extraT
     return (
         <Show when={props.chances === 1} fallback={
             <Show when={displayProbabilityAsAverage() && props.chances !== undefined} fallback={
-                <Tooltip>
+                <Tooltip openOnTouchStart>
                     <TooltipTrigger class={badgeClass} onclick={() => setDisplayProbabilityAsAverage(!displayProbabilityAsAverage())}>
                         {pct()}%
                     </TooltipTrigger>
@@ -119,7 +119,7 @@ export function ProbBadge(props: { probability: number, chances?: number, extraT
                     </TooltipContent>
                 </Tooltip>
             }>
-                <Tooltip>
+                <Tooltip openOnTouchStart>
                     <TooltipTrigger class={badgeClass} onclick={() => setDisplayProbabilityAsAverage(!displayProbabilityAsAverage())}>
                         {ev()}
                     </TooltipTrigger>
@@ -350,7 +350,7 @@ export const ItemListDisplay: Component<{
                     </span>
                 </PopoverTrigger>
             </div>
-            <PopoverContent class="min-w-80 max-w-[90svw] max-h-[60vh] overflow-y-auto" onOpenAutoFocus={e => e.preventDefault()}>
+            <PopoverContent class="min-w-80 max-w-[90svw] max-h-[60vh] overflow-y-auto" onOpenAutoFocus={e => e.preventDefault()} onCloseAutoFocus={e => e.preventDefault()}>
                 <ItemListPopover
                     itemList={props.itemList}
                     possibilities={sorted()}
@@ -500,7 +500,7 @@ export const QuestDropDisplay: Component<{
                         <span class="text-[10px] text-muted-foreground italic">quest</span>
                     </PopoverTrigger>
                 </div>
-                <PopoverContent class="w-auto min-w-56" onOpenAutoFocus={e => e.preventDefault()}>
+                <PopoverContent class="w-auto min-w-56" onOpenAutoFocus={e => e.preventDefault()} onCloseAutoFocus={e => e.preventDefault()}>
                     <div class="flex flex-col gap-1.5 p-1">
                         <span class="text-xs text-muted-foreground font-medium">Quest Conditional Drop</span>
                         <QuestChainLinkById id={props.questDrop.requiredQuestId}/>

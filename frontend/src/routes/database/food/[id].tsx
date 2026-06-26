@@ -3,9 +3,10 @@ import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb, BuffLink} from "~/lib/game-links";
+import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {fixFloat, splitCamelCase, undefinedIfZero} from "~/lib/utils";
+import {buffsGroups} from "~/lib/table-utils/detail-group-builders";
+import {fixFloat, undefinedIfZero} from "~/lib/utils";
 
 export default function FoodDetail() {
     const params = useParams();
@@ -37,15 +38,7 @@ export default function FoodDetail() {
 
     const statGroups = createMemo(() => {
         let groups: DetailGroup[] = [];
-        buffs().forEach(b => {
-            groups.push({
-                heading: <BuffLink buffId={b.buffId} label={b.label}/>,
-                properties: b.buff?.stats.map(s => ({
-                    label: splitCamelCase(s.id?.tag ?? ""),
-                    value: `${fixFloat(s.value * (s.isPct ? 100 : 1))}${s.isPct ? "%" : ""}`,
-                })) || [],
-            })
-        })
+        groups.push(...buffsGroups(buffs()))
         return groups;
     });
 
