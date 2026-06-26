@@ -69,7 +69,7 @@ export const ItemDescDefs: BitCraftToDataDef<ItemDesc> = {
             accessorKey: "volume",
             filterFn: 'inNumberRange',
             cell: (props) => (
-                <Tooltip>
+                <Tooltip openOnTouchStart>
                     <TooltipTrigger>{props.row.original.volume}</TooltipTrigger>
                     <TooltipContent class="max-w-[90svw]">
                         Inventory stack: {6000 / props.row.original.volume}

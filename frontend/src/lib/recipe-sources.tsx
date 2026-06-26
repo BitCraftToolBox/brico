@@ -20,6 +20,7 @@ import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {LevelRequirement} from "~/bindings/src/level_requirement_type";
+import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
@@ -133,6 +134,17 @@ function addCommonRequirements(
     });
 }
 
+function addUseHandsInformation(lines: StatLine[], recipe: { toolRequirements: ToolRequirement[], allowUseHands: boolean }) {
+    if (!recipe.toolRequirements.length && recipe.allowUseHands) {
+        lines.push([<IconSpan icon={toolStatIcon()}>Tool:</IconSpan>,
+            <Tooltip openOnTouchStart>
+                <TooltipTrigger class="underline decoration-dotted">No tool</TooltipTrigger>
+                <TooltipContent class="max-w-[50ch]">This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power.</TooltipContent>
+            </Tooltip>
+        ])
+    }
+}
+
 // ─── Per-Type Stat Line Extractors ──────────────────────────────
 
 export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
@@ -143,6 +155,7 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
         ["Stamina:", fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
+    addUseHandsInformation(lines, recipe);
     if (recipe.buildingRequirement) {
         const name = buildingData.get(recipe.buildingRequirement.buildingType)?.name ?? "Unknown";
         lines.push([<IconSpan icon={pageIcon("Structures")}>Building:</IconSpan>, `Tier ${recipe.buildingRequirement.tier} ${name}`]);
@@ -175,8 +188,8 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
                 const perNode = prospect.contributionPerVisitedBreadCrumb;
                 const [min, max] = prospect.breadCrumbCount;
                 lines.push(["Prospecting Hits",
-                    <Tooltip>
-                        <TooltipTrigger>{min * perNode} - {max * perNode}</TooltipTrigger>
+                    <Tooltip openOnTouchStart>
+                        <TooltipTrigger class="decoration-dotted underline">{min * perNode} - {max * perNode}</TooltipTrigger>
                         <TooltipContent class="max-w-[90svw]">{perNode} contribution per node, {min} - {max} nodes, {(min + max) / 2 * perNode} hits average</TooltipContent>
                     </Tooltip>
                 ]);
@@ -184,7 +197,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
         }
         if (resource.ignoreDamage) {
             lines.push(["Total HP",
-                <Tooltip>
+                <Tooltip openOnTouchStart>
                     <TooltipTrigger class="decoration-dotted underline">{resource.maxHealth}</TooltipTrigger>
                     <TooltipContent>Resource ignores regular damage.</TooltipContent>
                 </Tooltip>
@@ -197,6 +210,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
     lines.push(["Time:", fixFloat(recipe.timeRequirement)]);
     lines.push(["Stamina:", fixFloat(recipe.staminaRequirement)]);
     addCommonRequirements(lines, recipe, totalEffort);
+    addUseHandsInformation(lines, recipe);
     addKnowledgeRequirements(lines, recipe);
     return lines;
 }
@@ -261,12 +275,12 @@ export function travelerTradeStatLines(trade: TravelerTradeOrderDesc): StatLine[
 
 export function itemListLootWeightedComponent(weighted: boolean) {
     return weighted ? (
-        <Tooltip>
+        <Tooltip openOnTouchStart>
             <TooltipTrigger class="decoration-dotted underline">Yes</TooltipTrigger>
             <TooltipContent>Output is rolled a number of times equal to your contribution. One full HP bar of the enemy is worth 1000 contribution.</TooltipContent>
         </Tooltip>
     ) : (
-        <Tooltip>
+        <Tooltip openOnTouchStart>
             <TooltipTrigger class="decoration-dotted underline">No</TooltipTrigger>
             <TooltipContent>Output is rolled once, regardless of damage dealt, as long as the minimum threshold is reached.</TooltipContent>
         </Tooltip>
@@ -345,11 +359,15 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
     return lines;
 }
 
-export function interactionStatLines(interaction: PlaceableInteractionDesc): StatLine[] {
+export function interactionStatLines(interaction: PlaceableInteractionDesc, sourcePlaceable: PlaceableDesc | undefined): StatLine[] {
     const lines: StatLine[] = [
         ["Time:", fixFloat(interaction.timeRequirement)],
         ["Stamina:", fixFloat(interaction.staminaRequirement)],
     ];
+
+    if (sourcePlaceable?.maxHealth) {
+        lines.push(["Actions Required:", sourcePlaceable?.maxHealth]);
+    }
 
     if (interaction.range > 1) {
         lines.push(["Range:", interaction.range]);
@@ -357,6 +375,7 @@ export function interactionStatLines(interaction: PlaceableInteractionDesc): Sta
 
     // Common requirements (level, xp, tool)
     addCommonRequirements(lines, interaction);
+    addUseHandsInformation(lines, interaction);
     addKnowledgeRequirements(lines, interaction);
 
     return lines;

@@ -1,7 +1,7 @@
 import {TbOutlineExternalLink as IconExternal, TbOutlineInfoCircle as IconCurrent, TbOutlineInfoTriangle as IconOutdated} from "solid-icons/tb";
 import {createResource, onCleanup, onMount, Show} from "solid-js";
 import {Button} from "~/components/ui/button";
-import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
 import {CURRENT_VERSION, type VersionInfo} from "~/lib/version";
 
 async function fetchLatestVersion(): Promise<VersionInfo | undefined> {
@@ -53,9 +53,9 @@ export function VersionChecker() {
 
     return (
         <div class="w-full flex justify-center py-1">
-            <Tooltip placement="right">
-                <TooltipTrigger>
-                    <Button variant="ghost" size="sm" class="h-8 max-w-full px-2 flex items-center gap-0">
+            <Popover placement="right">
+                <PopoverTrigger>
+                    <Button variant="ghost" size="sm" class="h-8 max-w-full px-2 flex items-center gap-0 cursor-pointer">
                         <Show when={showWarning()} fallback={<IconCurrent class="size-4 shrink-0"/>}>
                             <IconOutdated class="size-4 shrink-0 text-warning-foreground"/>
                         </Show>
@@ -68,8 +68,8 @@ export function VersionChecker() {
                             {versionSummary(CURRENT_VERSION, true)}
                         </span>
                     </Button>
-                </TooltipTrigger>
-                <TooltipContent class="max-w-80 text-xs space-y-2">
+                </PopoverTrigger>
+                <PopoverContent class="max-w-80 text-xs space-y-2" onOpenAutoFocus={e => e.preventDefault()} onCloseAutoFocus={e => e.preventDefault()}>
                     <div class="font-medium">Current data version</div>
                     <div>{versionSummary(CURRENT_VERSION)}</div>
                     <Show when={hasDescription(CURRENT_VERSION)}>
@@ -98,8 +98,8 @@ export function VersionChecker() {
                             </>
                         )}
                     </Show>
-                </TooltipContent>
-            </Tooltip>
+                </PopoverContent>
+            </Popover>
         </div>
     );
 }

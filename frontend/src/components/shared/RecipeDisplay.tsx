@@ -140,7 +140,7 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                     <div class="flex flex-col items-center gap-0.5">
                         {/* size and positioning copied from ProbItemStackIcon/ProbBadge to align with the extracted item stacks */}
                         <Show when={props.showLabel}>
-                            <Tooltip>
+                            <Tooltip openOnTouchStart>
                                 <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
                                     deplete
                                 </TooltipTrigger>
@@ -165,7 +165,7 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                     return (
                         <div class="flex flex-col items-center gap-0.5">
                             <Show when={props.showLabel}>
-                                <Tooltip>
+                                <Tooltip openOnTouchStart>
                                     <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
                                         {label}
                                     </TooltipTrigger>
@@ -517,11 +517,12 @@ export const PlacementPanel: Component<{ placement: PlaceablePlacementDesc }> = 
 // ─── Placeable Interaction Panel ────────────────────────────────
 
 export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc }> = (props) => {
-    const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(props.interaction.placeableId);
+    const idx = BitCraftTables.PlaceableDesc.indexedBy("id");
+    const placeable = () => idx().get(props.interaction.placeableId);
     const spawnedPlaceable = () => {
         const id = props.interaction.onDestroySpawnedPlaceableId;
         if (!id) return undefined;
-        return BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(id);
+        return idx().get(id);
     };
 
     return (
@@ -561,7 +562,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                     </Show>
                 </>
             }
-            stats={interactionStatLines(props.interaction)}
+            stats={interactionStatLines(props.interaction, placeable())}
         />
     );
 };
