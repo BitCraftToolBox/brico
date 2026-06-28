@@ -4,7 +4,7 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {lootTabWith} from "~/components/fun/BricoLootBox";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
-import {breadcrumb, BuffLink, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
+import {breadcrumb, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
     constructionRecipesConsuming,
@@ -29,6 +29,7 @@ import {
 } from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
+import {buffsGroups} from "~/lib/table-utils/detail-group-builders";
 import {
     collectiblesTab,
     constructionCombinedTab,
@@ -47,7 +48,7 @@ import {
     travelerTasksTab,
     travelerTradesTab,
 } from "~/lib/table-utils/detail-tab-builders";
-import {fixFloat, readableSeconds, splitCamelCase} from "~/lib/utils";
+import {fixFloat, splitCamelCase} from "~/lib/utils";
 
 export function questDropAugmentedLists(itemId: () => number | undefined, itemType: string) {
     const questSources = createMemo(() => itemId() != null ? questDropSourcesFor(itemId()!, itemType) : {extractionRecipes: [], enemies: [], itemLists: []});
@@ -119,22 +120,8 @@ export default function ItemDetail() {
     const foodBuffGroups = createMemo((): DetailGroup[] => {
         const food = foodData();
         if (!food?.buffs?.length) return [];
-        const buffIndex = BitCraftTables.BuffDesc.indexedBy("id");
-        return food.buffs.map(b => {
-            const buff = buffIndex()?.get(b.buffId);
-            const props = [{
-                label: "Duration",
-                value: readableSeconds(fixFloat(b.duration ?? buff?.duration)) ?? "Infinite"
-            }];
-            props.push(...buff?.stats?.map(s => ({
-                label: splitCamelCase(s.id?.tag ?? ""),
-                value: `${fixFloat(s.value * (s.isPct ? 100 : 1))}${s.isPct ? "%" : ""}`,
-            })) ?? []);
-            return {
-                heading: <BuffLink buffId={b.buffId} label={buff?.description ?? `Buff #${b.buffId}`}/>,
-                properties: props,
-            };
-        });
+        const buffs = food.buffs;
+        return buffsGroups(buffs);
     });
 
     // ─── Per-type recipe/relationship finders ───────────────────

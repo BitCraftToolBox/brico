@@ -540,7 +540,7 @@ export default function Events() {
                                                 />
                                                 <div class="flex flex-col min-w-0">
                                                     <span class="text-sm font-medium text-foreground">{timer.resource.name}</span>
-                                                    <Tooltip placement="bottom-start">
+                                                    <Tooltip placement="bottom-start" openOnTouchStart>
                                                         <TooltipTrigger as="span" class="text-xs text-muted-foreground w-fit cursor-help">
                                                             {getTimeLeftText(timer, nowMs())}
                                                         </TooltipTrigger>

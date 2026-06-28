@@ -91,8 +91,8 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
             header: (props) => {
                 return (
                     <TableColumnHeader column={props.column} title={props.column.id} table={props.table}>
-                        <Tooltip>
-                            <TooltipTrigger>
+                        <Tooltip openOnTouchStart>
+                            <TooltipTrigger class="decoration-dotted underline">
                                 Total Item Size
                             </TooltipTrigger>
                             <TooltipContent class="max-w-[90svw]">

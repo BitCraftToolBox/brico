@@ -45,7 +45,6 @@ import {
     interactionStatLines,
     itemListStatLines,
     placementStatLines,
-    prospectingForResource,
     StatLine,
     travelerTaskStatLines,
     travelerTradeStatLines,
@@ -141,7 +140,7 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                     <div class="flex flex-col items-center gap-0.5">
                         {/* size and positioning copied from ProbItemStackIcon/ProbBadge to align with the extracted item stacks */}
                         <Show when={props.showLabel}>
-                            <Tooltip>
+                            <Tooltip openOnTouchStart>
                                 <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
                                     deplete
                                 </TooltipTrigger>
@@ -166,7 +165,7 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                     return (
                         <div class="flex flex-col items-center gap-0.5">
                             <Show when={props.showLabel}>
-                                <Tooltip>
+                                <Tooltip openOnTouchStart>
                                     <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
                                         {label}
                                     </TooltipTrigger>
@@ -207,6 +206,7 @@ const ExtractedPlaceableIcons: Component<{ drops: ExtractionSpawnedPlaceable[], 
 export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> = (props) => {
     const resource = () => resourceForExtraction(props.recipe);
     const questDrops = () => questDropsForExtraction(props.recipe.id);
+    const chances = () => resource()?.ignoreDamage ? undefined : resource()?.maxHealth;
 
     return (
         <RecipeVisual
@@ -230,18 +230,16 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                              <Show when={!resource()?.onDestroyYieldResourceId && !questDrops().length}>No Outputs</Show>
                          }
                     >
-                        {(stack) => expandStack(stack,
-                            resource()?.showTimeLeft || prospectingForResource(resource()?.id)?.length ? undefined : resource()?.maxHealth)
-                        }
+                        {(stack) => expandStack(stack, chances())}
                     </For>
                     <Show when={props.recipe.spawnedPlaceables}>
-                        {p => <ExtractedPlaceableIcons drops={p()} showLabel={true} chances={resource()?.maxHealth}/>}
+                        {p => <ExtractedPlaceableIcons drops={p()} showLabel={true} chances={chances()}/>}
                     </Show>
                     <Show when={resource()}>
                         {r => <ResourceDepletionIcons resource={r()} showLabel={true}/>}
                     </Show>
                     <For each={questDrops()}>
-                        {(drop) => <QuestDropDisplay questDrop={drop} chances={resource()?.maxHealth}/>}
+                        {(drop) => <QuestDropDisplay questDrop={drop} chances={chances()}/>}
                     </For>
                 </>
             }
@@ -519,11 +517,12 @@ export const PlacementPanel: Component<{ placement: PlaceablePlacementDesc }> = 
 // ─── Placeable Interaction Panel ────────────────────────────────
 
 export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc }> = (props) => {
-    const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(props.interaction.placeableId);
+    const idx = BitCraftTables.PlaceableDesc.indexedBy("id");
+    const placeable = () => idx().get(props.interaction.placeableId);
     const spawnedPlaceable = () => {
         const id = props.interaction.onDestroySpawnedPlaceableId;
         if (!id) return undefined;
-        return BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(id);
+        return idx().get(id);
     };
 
     return (
@@ -563,7 +562,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                     </Show>
                 </>
             }
-            stats={interactionStatLines(props.interaction)}
+            stats={interactionStatLines(props.interaction, placeable())}
         />
     );
 };

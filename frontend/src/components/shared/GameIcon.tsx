@@ -259,7 +259,7 @@ export const GameIcon: Component<GameIconProps> = (props) => {
     );
 
     return (
-        <Tooltip disabled={noInteract()}>
+        <Tooltip disabled={noInteract()} openOnTouchStart>
             <div class="flex flex-col items-center">
                 <Show when={local.href && !noInteract()}
                       fallback={<TooltipTrigger as={"span"}>{iconDiv()}</TooltipTrigger>}

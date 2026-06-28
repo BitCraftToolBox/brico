@@ -1189,21 +1189,52 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
                     <For each={routedEdges()}>
                         {(edge) => {
                             const isHov = () => hoveredEdge() === edge.index;
+                            
+                            // Split tooltip text at spaces and wrap lines if needed
+                            const getTextLines = () => {
+                                const text = edge.tooltip || '';
+                                const maxCharsPerLine = 30;
+                                const lines: string[] = [];
+                                const words = text.split(' ');
+                                let currentLine = '';
+                                
+                                for (const word of words) {
+                                    if ((currentLine + word).length > maxCharsPerLine && currentLine) {
+                                        lines.push(currentLine.trim());
+                                        currentLine = word;
+                                    } else {
+                                        currentLine += (currentLine ? ' ' : '') + word;
+                                    }
+                                }
+                                if (currentLine) lines.push(currentLine.trim());
+                                return lines;
+                            };
+                            
+                            const textLines = createMemo(() => getTextLines());
+                            const boxWidth = createMemo(() => Math.max(140, Math.min(220, (textLines().reduce((max, line) => Math.max(max, line.length), 0) * 6.2 + 16))));
+                            const boxHeight = createMemo(() => Math.max(20, (textLines().length * 12) + 8));
+                            
                             return (
                                 <Show when={isHov() && edge.tooltip}>
                                     <g style="pointer-events:none">
                                         <rect
-                                            x={edge.mid.x - 70} y={edge.mid.y + 14}
-                                            width={140} height={20} rx={3}
+                                            x={edge.mid.x - boxWidth() / 2} y={edge.mid.y + 14}
+                                            width={boxWidth()} height={boxHeight()} rx={3}
                                             class="fill-background stroke-border"
                                             opacity={0.95}
                                             stroke-width={0.5}
                                         />
-                                        <text x={edge.mid.x} y={edge.mid.y + 24} text-anchor="middle"
-                                              dominant-baseline="middle" font-size="9"
+                                        <text x={edge.mid.x} y={edge.mid.y + 20} text-anchor="middle"
+                                              dominant-baseline="hanging" font-size="9"
                                               fill="currentColor"
                                               style="font-family:system-ui">
-                                            {edge.tooltip}
+                                            <For each={textLines()}>
+                                                {(line, i) => (
+                                                    <tspan x={edge.mid.x} dy={i() === 0 ? 0 : 12}>
+                                                        {line}
+                                                    </tspan>
+                                                )}
+                                            </For>
                                         </text>
                                     </g>
                                 </Show>
@@ -1350,14 +1381,17 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
             // only where this is the input
             if (ia.placeableId !== plcId) continue;
 
-            // Tooltip: consumed items
+            // Tooltip: consumed items and actions required
+            const maxHp = placeableIndex.get(plcId)?.maxHealth ?? 0;
+            const hasTool = ia.toolRequirements.length > 0;
+            const effortReq = maxHp ? `, ${maxHp} effort required, ${hasTool ? "using tool power" : "ignoring base tool power"}` : "";
             const tooltip = ia.consumedItemStacks.length
                 ? ia.consumedItemStacks.map(s => {
-                    const name = s.itemType.tag === "Cargo"
-                        ? cargoIndex?.get(s.itemId)?.name ?? `Cargo #${s.itemId}`
-                        : itemIndex?.get(s.itemId)?.name ?? `Item #${s.itemId}`;
-                    return `${s.quantity}× ${name}`;
-                }).join(", ")
+                        const name = s.itemType.tag === "Cargo"
+                            ? cargoIndex?.get(s.itemId)?.name ?? `Cargo #${s.itemId}`
+                            : itemIndex?.get(s.itemId)?.name ?? `Item #${s.itemId}`;
+                        return `${s.quantity}× ${name} per action${effortReq}`;
+                    }).join(", ")
                 : undefined;
 
             // Output items
@@ -1375,8 +1409,9 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
                 edges.push({
                     source: plcNodeId,
                     target: nodeId,
-                    label: `${ia.verbPhrase} → ${output.quantity}×`,
+                    label: `${ia.verbPhrase}`,
                     edgeType: "interaction",
+                    tooltip: `→ ${output.quantity}× ${nodes.find(n => n.id === nodeId)?.label}`
                 });
             }
 

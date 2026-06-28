@@ -54,7 +54,7 @@ export default function CreatureDetail() {
         const c = creature();
         if (!c?.experiencePerDamageDealt?.length) return undefined;
         return c.experiencePerDamageDealt.filter(exp => exp.skillId).map(exp => {
-            return <><SkillLinkById skillId={exp.skillId}/>: <Tooltip>
+            return <><SkillLinkById skillId={exp.skillId}/>: <Tooltip openOnTouchStart>
                     <TooltipTrigger class={"decoration-dotted underline"}>{fixFloat(exp.quantity)}</TooltipTrigger>
                     <TooltipContent>
                         Experience per Damage Dealt<br/>

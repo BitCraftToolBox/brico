@@ -176,6 +176,8 @@ function createSettings(): AppSettings {
     const [easterEggs, setEasterEggs] = makePersisted(createSignal<boolean>(false), {name: KEYS.easterEggs});
     const [tf2Mode, setTf2Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.tf2Mode});
     const [r9Mode, setR9Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.r9Mode});
+
+    // temp/event
     const [unchartedNotifications, setUnchartedNotifications] = makePersisted(
         createSignal<UnchartedNotifications>({
             notifyAtStart: false,
