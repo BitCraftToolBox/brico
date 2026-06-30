@@ -24,7 +24,6 @@ import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {ToolRequirement} from "~/bindings/src/tool_requirement_type";
@@ -164,13 +163,12 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
     return lines;
 }
 
-export function prospectingForResource(resource: number | undefined) {
-    if (resource === undefined) return undefined;
-    const prospecting = BitCraftTables.ProspectingDesc.indexedBy("resourceClumpId")();
+export function prospectingForResource(resource: number) {
+    const prospecting = BitCraftTables.ProspectingDesc.indexedByMulti("resourceClumpId")();
     const clumps = BitCraftTables.ResourceClumpDesc.get();
     return clumps?.filter(c => c.resourceId.includes(resource))
-        .map(c => prospecting.get(c.id))
-        .filter((v: ProspectingDesc | undefined): v is NonNullable<typeof v> => !!v);
+        .flatMap(c => prospecting.get(c.id))
+        .filter((p): p is NonNullable<typeof p> => !!p) ?? [];
 }
 
 export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: ResourceDesc): StatLine[] {
@@ -181,7 +179,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
             // TODO growth_recipe_desc is private
             lines.push(["Timed Node", "? min"])
         }
-        const prospectingDescs = prospectingForResource(recipe.resourceId);
+        const prospectingDescs = prospectingForResource(resource.id);
         if (prospectingDescs?.length) {
             if (prospectingDescs.length == 1) {
                 const prospect = prospectingDescs[0];
@@ -190,7 +188,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
                 lines.push(["Prospecting Hits",
                     <Tooltip openOnTouchStart>
                         <TooltipTrigger class="decoration-dotted underline">{min * perNode} - {max * perNode}</TooltipTrigger>
-                        <TooltipContent class="max-w-[90svw]">{perNode} contribution per node, {min} - {max} nodes, {(min + max) / 2 * perNode} hits average</TooltipContent>
+                        <TooltipContent class="max-w-[90svw]">{perNode} contribution per node, {min == max ? `${min} nodes` : `${min} - ${max} nodes`}, {(min + max) / 2 * perNode} hits average</TooltipContent>
                     </Tooltip>
                 ]);
             }

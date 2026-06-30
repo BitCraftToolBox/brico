@@ -1,8 +1,9 @@
 import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
+import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {breadcrumb} from "~/lib/game-links";
+import {breadcrumb, IconLink} from "~/lib/game-links";
 import {prospectingForBiome} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -45,10 +46,13 @@ export default function BiomeDetail() {
                         <RelTable<ProspectingDesc>
                             data={prospectingEntries()}
                             columns={[
-                                {header: "Name", cell: (row) => <span>{row.name}</span>},
+                                {header: "Name", cell: (row) => (
+                                    <IconLink href={`/database/prospecting/${row.id}`} icon={<FontIcon codepoint={row.iconAssetPath} class="size-4 inline"/>}>
+                                        {row.name}
+                                    </IconLink>
+                                )},
                                 {header: "Description", cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
                             ]}
-                            onRowClick={(row) => navigate(`/database/prospecting/${row.id}`)}
                         />
                     ),
                 },
