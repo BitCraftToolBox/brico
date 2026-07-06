@@ -100,8 +100,7 @@ export class Tiers {
     }
 }
 
-// e.g. /assets/bitcraft/sprites if checked out as submodule
-const SPRITE_CDN_BASE = import.meta.env.VITE_SPRITE_CDN_BASE ?? "https://cdn.brico.app/sprites";
+export const ASSET_CDN_BASE = import.meta.env.VITE_SPRITE_CDN_BASE ?? "https://cdn.brico.app";
 
 export function getAssetURL(path: string, quantity?: number) {
     if (!path) {
@@ -131,7 +130,7 @@ export function getAssetURL(path: string, quantity?: number) {
             path = `${baseName}${selected !== undefined ? selected : ''}`;
         }
     }
-    return `${SPRITE_CDN_BASE}/${path}.webp`;
+    return `${ASSET_CDN_BASE}/sprites/${path}.webp`;
 }
 
 export function getBuildingTier(building: BuildingDesc) {

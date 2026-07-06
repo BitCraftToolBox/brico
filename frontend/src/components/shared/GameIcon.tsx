@@ -17,7 +17,7 @@ import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {Rarity} from "~/bindings/src/rarity_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {getAssetURL, getBuildingTier, Rarities, Tiers} from "~/lib/bitcraft-utils";
+import {ASSET_CDN_BASE, getAssetURL, getBuildingTier, Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {getItemListSource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables} from "~/lib/spacetime";
@@ -143,7 +143,7 @@ export const TierIcon: Component<TierIconProps> = (props) => {
         <div class={cn("inline-block relative", props.class)} title={`Tier ${props.tier}`}>
             <img
                 class={"w-4 h-4"}
-                src={`/assets/Badges/badge-tier-container.webp`}
+                src={`${ASSET_CDN_BASE}/UI/Badges/badge-tier-container.webp`}
                 alt={`Tier ${props.tier}`}
                 style={{filter: t0Filter()}}
             />
@@ -157,12 +157,11 @@ export const TierIcon: Component<TierIconProps> = (props) => {
     return (
         <img
             class={cn(`inline w-4 h-4 ${Tiers.getBackgroundColorClass(props.tier)}`, props.class)}
-            src={`/assets/Badges/badge-tier-number-${props.tier}.webp`}
+            src={`${ASSET_CDN_BASE}/UI/Badges/badge-tier-number-${props.tier}.webp`}
             alt={`Tier ${props.tier}`}
             title={`Tier ${props.tier}`}
             style={{
-                mask: "url('/assets/Badges/badge-tier-container.webp')",
-                "mask-size": "contain"
+                mask: `url('${ASSET_CDN_BASE}/UI/Badges/badge-tier-container.webp') 0 0/contain`,
             }}
         />
     )
@@ -196,7 +195,7 @@ export const GameIcon: Component<GameIconProps> = (props) => {
         const prefix = FRAME_PREFIX[local.shape];
         const slug = rarityToFrameSlug(local.rarity);
         const theme = colorMode() === "dark" ? "dark" : "light";
-        return `/assets/Frames/${prefix}-${slug}-${theme}.webp`;
+        return `${ASSET_CDN_BASE}/UI/Frames/${prefix}-${slug}-${theme}.webp`;
     };
 
     const defaultTooltip = () => (
