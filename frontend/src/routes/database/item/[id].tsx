@@ -4,6 +4,7 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {lootTabWith} from "~/components/fun/BricoLootBox";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
+import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {breadcrumb, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
@@ -164,7 +165,14 @@ export default function ItemDetail() {
         // General
         groups.push({
             properties: [
-                {label: "Volume", value: i.volume},
+                {label: "Volume", value: (
+                    <Tooltip openOnTouchStart>
+                        <TooltipTrigger class="decoration-dotted underline">{i.volume}</TooltipTrigger>
+                        <TooltipContent class="max-w-[90svw]">
+                            Inventory stack: {6000 / i.volume}
+                        </TooltipContent>
+                    </Tooltip>
+                )},
                 {label: "Durability", value: i.durability > 0 ? i.durability : undefined},
                 {label: "Compendium Entry", value: !i.compendiumEntry ? false : undefined},
             ],
