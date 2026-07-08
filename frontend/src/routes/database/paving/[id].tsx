@@ -3,7 +3,8 @@ import {createMemo, Show} from "solid-js";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
-import {InputItemStackTable, KnowledgeTable, StatTable} from "~/components/shared/RelTablePresets";
+import {InputItemStackArray} from "~/components/shared/ItemStacks";
+import {KnowledgeTable, StatTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
@@ -58,7 +59,13 @@ export default function PavingDetail() {
             spacetimeTable={BitCraftTables.PavingTileDesc.st_name}
             objectId={tile()?.id}
             tabs={[
-                {id: "consumed", label: "Consumed Items", count: tile()?.consumedItemStacks?.length ?? 0, content: () => <InputItemStackTable data={tile()!.consumedItemStacks}/>},
+                {
+                    id: "consumed",
+                    label: "Consumed Items",
+                    count: tile()?.consumedItemStacks?.reduce((p, iis) => p + iis.quantity, 0) ?? 0,
+                    showWhenEmpty: false,
+                    content: () => <InputItemStackArray stacks={tile()!.consumedItemStacks}/>,
+                },
                 {id: "knowledge", label: "Required Knowledge", count: requiredKnowledges().length, content: () => <KnowledgeTable data={requiredKnowledges()}/>},
                 {id: "stats", label: "Stat Effects", count: tile()?.statEffects?.length ?? 0, content: () => <StatTable data={tile()!.statEffects}/>},
             ]}

@@ -121,6 +121,7 @@ export type GameIconProps = Omit<ComponentProps<"div">, "children"> & {
      */
     clickParams?: string | [string, string];
     showFallbackText?: boolean;
+    alwaysLabel?: boolean
 };
 
 type TierIconProps = ComponentProps<"img" | "div"> & {
@@ -171,7 +172,7 @@ export const GameIcon: Component<GameIconProps> = (props) => {
     const [local, others] = splitProps(props, [
         "class", "name", "iconAsset", "shape", "small", "tier", "rarity",
         "href", "noInteract", "tooltipContent", "quantity", "clickParams",
-        "showFallbackText"
+        "showFallbackText", "alwaysLabel"
     ]);
 
     const small = () => local.small ?? true;
@@ -271,7 +272,7 @@ export const GameIcon: Component<GameIconProps> = (props) => {
                         {iconDiv()}
                     </TooltipTrigger>
                 </Show>
-                <Show when={props.showFallbackText && iconFailed()}>
+                <Show when={props.alwaysLabel || (props.showFallbackText && iconFailed())}>
                     <div class={cn(sizeEntry().icon[0], "text-muted-foreground text-xs text-center")}>{local.name}</div>
                 </Show>
             </div>
@@ -286,16 +287,13 @@ export const GameIcon: Component<GameIconProps> = (props) => {
 // These provide typed, domain-specific interfaces while delegating to GameIcon.
 
 
-type ItemIconProps = Omit<ComponentProps<"div">, "children"> & {
+type ItemIconProps = Omit<GameIconProps, "name" | "iconAsset" | "tier" | "rarity" | "href" | "shape"> & {
     item: ItemDesc;
-    small?: boolean;
-    noInteract?: boolean;
-    quantity?: number;
 };
 
 const HATS = ["soldier", "pyro", "sniper", "demoman", "scout", "medic", "heavy", "engineer", "spy"];
 export const ItemIcon: Component<ItemIconProps> = (props) => {
-    const [local, others] = splitProps(props, ["item", "quantity"]);
+    const [local, others] = splitProps(props, ["item"]);
     const { tf2Mode } = useSettings();
     const hatIcon = () => {
         if (tf2Mode()) {
@@ -310,12 +308,11 @@ export const ItemIcon: Component<ItemIconProps> = (props) => {
 
     return (
         <GameIcon
-            name={props.item.name}
+            name={local.item.name}
             iconAsset={asset()}
-            tier={props.item.tier}
-            rarity={props.item.rarity}
-            href={`/database/item/${props.item.id}`}
-            quantity={local.quantity}
+            tier={local.item.tier}
+            rarity={local.item.rarity}
+            href={`/database/item/${local.item.id}`}
             shape="tall"
             clickParams={["detail=crafts-from", "detail=crafts-into"]}
             {...others}
@@ -323,24 +320,20 @@ export const ItemIcon: Component<ItemIconProps> = (props) => {
     );
 };
 
-type CargoIconProps = Omit<ComponentProps<"div">, "children"> & {
+type CargoIconProps = Omit<GameIconProps, "name" | "iconAsset" | "tier" | "rarity" | "href" | "shape"> & {
     cargo: CargoDesc;
-    quantity?: number;
-    small?: boolean;
-    noInteract?: boolean;
 };
 
 export const CargoIcon: Component<CargoIconProps> = (props) => {
-    const [local, others] = splitProps(props, ["cargo", "quantity"]);
+    const [local, others] = splitProps(props, ["cargo"]);
 
     return (
         <GameIcon
-            name={props.cargo.name}
-            iconAsset={props.cargo.iconAssetName}
-            tier={props.cargo.tier}
-            rarity={props.cargo.rarity}
-            quantity={local.quantity}
-            href={`/database/cargo/${props.cargo.id}`}
+            name={local.cargo.name}
+            iconAsset={local.cargo.iconAssetName}
+            tier={local.cargo.tier}
+            rarity={local.cargo.rarity}
+            href={`/database/cargo/${local.cargo.id}`}
             shape="wide"
             clickParams={["detail=crafts-from", "detail=crafts-into"]}
             {...others}
@@ -348,10 +341,8 @@ export const CargoIcon: Component<CargoIconProps> = (props) => {
     )
 };
 
-type BuildingIconProps = Omit<ComponentProps<"div">, "children"> & {
+type BuildingIconProps = Omit<GameIconProps, "name" | "iconAsset" | "tier" | "href" | "shape"> & {
     building: BuildingDesc;
-    small?: boolean;
-    noInteract?: boolean;
 };
 
 export const BuildingIcon: Component<BuildingIconProps> = (props) => {
@@ -369,11 +360,8 @@ export const BuildingIcon: Component<BuildingIconProps> = (props) => {
     );
 };
 
-type ResourceIconProps = Omit<ComponentProps<"div">, "children"> & {
+type ResourceIconProps = Omit<GameIconProps, "name" | "iconAsset" | "tier" | "rarity" | "href" | "shape"> & {
     res: ResourceDesc;
-    small?: boolean;
-    noInteract?: boolean;
-    showFallbackText?: boolean;
 };
 
 export const ResourceIcon: Component<ResourceIconProps> = (props) => {
@@ -392,10 +380,8 @@ export const ResourceIcon: Component<ResourceIconProps> = (props) => {
     );
 };
 
-type EnemyIconProps = Omit<ComponentProps<"div">, "children"> & {
+type EnemyIconProps = Omit<GameIconProps, "name" | "iconAsset" | "tier" | "rarity" | "href" | "shape"> & {
     enemy: EnemyDesc;
-    small?: boolean;
-    noInteract?: boolean;
 };
 
 export const EnemyIcon: Component<EnemyIconProps> = (props) => {
@@ -413,10 +399,8 @@ export const EnemyIcon: Component<EnemyIconProps> = (props) => {
     );
 };
 
-type CollectibleIconProps = Omit<ComponentProps<"div">, "children"> & {
+type CollectibleIconProps = Omit<GameIconProps, "name" | "iconAsset" | "rarity" | "href" | "shape"> & {
     collectible: CollectibleDesc;
-    small?: boolean;
-    noInteract?: boolean;
 };
 
 export const CollectibleIcon: Component<CollectibleIconProps> = (props) => {
@@ -433,10 +417,8 @@ export const CollectibleIcon: Component<CollectibleIconProps> = (props) => {
     )
 };
 
-type PlaceableIconProps = Omit<ComponentProps<"div">, "children"> & {
+type PlaceableIconProps = Omit<GameIconProps, "name" | "iconAsset" | "tier" | "rarity" | "href" | "shape"> & {
     placeable: PlaceableDesc;
-    small?: boolean;
-    noInteract?: boolean;
 };
 
 export const PlaceableIcon: Component<PlaceableIconProps> = (props) => {
@@ -454,10 +436,8 @@ export const PlaceableIcon: Component<PlaceableIconProps> = (props) => {
     );
 };
 
-type ItemListSourceIconProps = Omit<ComponentProps<"div">, "children"> & {
+type ItemListSourceIconProps = Omit<GameIconProps, "name" | "iconAsset" | "tier" | "rarity" | "href" | "shape"> & {
     list: ItemListDesc;
-    small?: boolean;
-    noInteract?: boolean;
 }
 
 export const ItemListSourceIcon: Component<ItemListSourceIconProps> = (props) => {

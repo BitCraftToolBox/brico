@@ -21,8 +21,6 @@ import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {ExtractionSpawnedPlaceable} from "~/bindings/src/extraction_spawned_placeable_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ItemType} from "~/bindings/src/item_type_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
@@ -214,12 +212,13 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                 <>
                     <InputItemStackArray stacks={props.recipe.consumedItemStacks}/>
                     <Show when={resource()}>
-                        {(res) => <ResourceIcon res={res()} showFallbackText/>}
-                    </Show>
-                    <Show when={props.recipe.cargoId}>
-                        <ItemStackIcon
-                            stack={{itemId: props.recipe.cargoId, itemType: ItemType.Cargo, quantity: 1} as ItemStack}
-                        />
+                        {res =>
+                            <ResourceIcon
+                                res={res()} showFallbackText
+                                // this is technically half a pixel off but whatever
+                                class={props.recipe.consumedItemStacks.some(c => c.consumptionChance < 1) ? "mt-4" : ""}
+                            />
+                        }
                     </Show>
                 </>
             }

@@ -208,8 +208,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
                                         {(header) => (
                                             <TableHead colSpan={header.colSpan}>
                                                 <Show when={!header.isPlaceholder}>
-                                                    <Dynamic component={header.column.columnDef.header}
-                                                             {...header.getContext()}
+                                                    <Dynamic
+                                                        component={header.column.columnDef.header}
+                                                        {...header.getContext()}
                                                     />
                                                 </Show>
                                             </TableHead>
@@ -236,8 +237,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
                                         <For each={row.getVisibleCells()}>
                                             {(cell: any) => (
                                                 <TableCell>
-                                                    <Dynamic component={cell.column.columnDef.cell}
-                                                             {...cell.getContext()}
+                                                    <Dynamic
+                                                        component={cell.column.columnDef.cell}
+                                                        {...cell.getContext()}
                                                     />
                                                 </TableCell>
                                             )}

@@ -8,7 +8,7 @@
  * Shared helpers: skillReqPair, toolReqPair, skillExpPair for common stat patterns.
  */
 
-import {JSX} from "solid-js";
+import {JSX, Show} from "solid-js";
 import {Biome} from "~/bindings/src/biome_type";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
@@ -186,10 +186,17 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
                 const perNode = prospect.contributionPerVisitedBreadCrumb;
                 const [min, max] = prospect.breadCrumbCount;
                 lines.push(["Prospecting Hits",
-                    <Tooltip openOnTouchStart>
-                        <TooltipTrigger class="decoration-dotted underline">{min * perNode} - {max * perNode}</TooltipTrigger>
-                        <TooltipContent class="max-w-[90svw]">{perNode} contribution per node, {min == max ? `${min} nodes` : `${min} - ${max} nodes`}, {(min + max) / 2 * perNode} hits average</TooltipContent>
-                    </Tooltip>
+                    <Show when={prospect.singleContributionOnly} fallback={
+                        <Tooltip openOnTouchStart>
+                            <TooltipTrigger class="decoration-dotted underline">{min * perNode}{min != max ? `- ${max * perNode}` : ""}</TooltipTrigger>
+                            <TooltipContent class="max-w-[90svw]">{perNode} contribution per node × {min == max ? `${min} nodes` : `${min} - ${max} nodes`} = {(min + max) / 2 * perNode} hits{min == max ? "" : " average"}</TooltipContent>
+                        </Tooltip>
+                    }>
+                        <Tooltip openOnTouchStart>
+                            <TooltipTrigger class="decoration-dotted underline">1</TooltipTrigger>
+                            <TooltipContent class="max-w-[90svw]">This prospecting is fixed at one contribution, regardless of bread crumb count.</TooltipContent>
+                        </Tooltip>
+                    </Show>
                 ]);
             }
         }
@@ -364,7 +371,7 @@ export function interactionStatLines(interaction: PlaceableInteractionDesc, sour
     ];
 
     if (sourcePlaceable?.maxHealth) {
-        lines.push(["Actions Required:", sourcePlaceable?.maxHealth]);
+        lines.push(["Effort Required:", sourcePlaceable?.maxHealth]);
     }
 
     if (interaction.range > 1) {

@@ -1,8 +1,9 @@
 import {useParams} from "@solidjs/router";
-import {createMemo} from "solid-js";
+import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
-import {ItemStackTable} from "~/components/shared/RelTablePresets";
+import {RecipeSelect, TravelerTaskPanel} from "~/components/shared/RecipeDisplay";
 import {breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {getTravelerTaskName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
@@ -47,8 +48,23 @@ export default function TravelerTaskDetail() {
             spacetimeTable={BitCraftTables.TravelerTaskDesc.st_name}
             objectId={task()?.id}
             tabs={[
-                {id: "required", label: "Required Items", count: task()?.requiredItems?.length ?? 0, content: () => <ItemStackTable data={task()!.requiredItems}/>},
-                {id: "rewarded", label: "Rewarded Items", count: task()?.rewardedItems?.length ?? 0, content: () => <ItemStackTable data={task()!.rewardedItems}/>},
+                {
+                    id: "traveler-task",
+                    label: "Traveler Task",
+                    content: () => (
+                        <div class="space-y-4">
+                            <Show when={task()}>
+                                {t =>
+                                    <RecipeSelect
+                                        recipes={[t()]}
+                                        nameFor={getTravelerTaskName}
+                                        render={tt => <TravelerTaskPanel task={tt}/>}
+                                    />
+                                }
+                            </Show>
+                        </div>
+                    )
+                }
             ]}
         />
     );

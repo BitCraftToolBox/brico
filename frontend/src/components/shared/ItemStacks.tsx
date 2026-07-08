@@ -465,7 +465,19 @@ export const InputItemStackArray: Component<{
     <div class={cn("flex flex-row flex-wrap items-end justify-center gap-0.5", props.class)}>
         <For each={props.stacks}>
             {(stack) => (
-                <ItemStackIcon stack={stack} small={props.small ?? true}/>
+                <div class="flex flex-col items-center gap-0.5">
+                    <Show when={stack.consumptionChance < 1}>
+                        <Tooltip openOnTouchStart>
+                            <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
+                                {fixFloat(stack.consumptionChance * 100)}%
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Chance of consumption per hit
+                            </TooltipContent>
+                        </Tooltip>
+                    </Show>
+                    <ItemStackIcon stack={stack} small={props.small ?? true}/>
+                </div>
             )}
         </For>
     </div>

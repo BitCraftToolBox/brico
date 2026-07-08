@@ -9,49 +9,10 @@ import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuffEffect} from "~/bindings/src/buff_effect_type";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
 import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
-import {InputItemStack} from "~/bindings/src/input_item_stack_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {RelTable, RelTableColumn} from "~/components/shared/DetailPageLayout";
-import {ItemStackIcon, ProbItemStackIcon} from "~/components/shared/ItemStacks";
 import {AchievementLink, BuffLink, CombatActionLink, KnowledgeLink} from "~/lib/game-links";
 import {fixFloat, splitCamelCase} from "~/lib/utils";
-
-// ─── Item Stack Table ───────────────────────────────────────────
-
-const itemStackColumns: RelTableColumn<ItemStack>[] = [
-    {header: "Item", cell: (row) => <ItemStackIcon stack={row} small/>},
-    {header: "Qty", cell: (row) => <span>{row.quantity}</span>},
-];
-
-export const ItemStackTable: Component<{ data: ItemStack[] }> = (props) => (
-    <RelTable<ItemStack> data={props.data} columns={itemStackColumns}/>
-);
-
-// ─── Input Item Stack Table (includes consumption chance) ───────
-
-const inputItemStackColumns: RelTableColumn<InputItemStack>[] = [
-    {header: "Item", cell: (row) => <ItemStackIcon stack={row} small/>},
-    {header: "Qty", cell: (row) => <span>{row.quantity}</span>},
-    {header: "Consumption", cell: (row) => <span>{fixFloat(row.consumptionChance * 100)}%</span>},
-];
-
-export const InputItemStackTable: Component<{ data: InputItemStack[] }> = (props) => (
-    <RelTable<InputItemStack> data={props.data} columns={inputItemStackColumns}/>
-);
-
-// ─── Probabilistic Item Stack Table ─────────────────────────────
-
-const probItemStackColumns: RelTableColumn<ProbabilisticItemStack>[] = [
-    {header: "Item", cell: (row) => row.itemStack ? <ProbItemStackIcon probStack={row} small/> : <span>—</span>},
-    {header: "Qty", cell: (row) => <span>{row.itemStack?.quantity ?? "—"}</span>},
-    {header: "Probability", cell: (row) => <span>{fixFloat(row.probability * 100)}%</span>},
-];
-
-export const ProbItemStackTable: Component<{ data: ProbabilisticItemStack[] }> = (props) => (
-    <RelTable<ProbabilisticItemStack> data={props.data} columns={probItemStackColumns}/>
-);
 
 // ─── Stat Entry Table ───────────────────────────────────────────
 

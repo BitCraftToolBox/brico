@@ -53,7 +53,7 @@ export default function ResourceDetail() {
             title={resource()?.name ?? `Resource #${params.id}`}
             breadcrumb={breadcrumb("/database/resource")}
             loading={isLoading() && !resource()}
-            icon={<Show when={resource()}>{(r) =>
+            icon={<Show when={resource()}>{r =>
                 <ResourceIcon res={r()} small={false} noInteract/>
             }</Show>}
             name={resource()?.name ?? "Resource not found"}
@@ -82,7 +82,7 @@ export default function ResourceDetail() {
                     label: "Extraction",
                     count: extractionRecipe() ? 1 : 0,
                     content: () => <Show when={extractionRecipe()}>
-                        {(r) => <ExtractionRecipePanel recipe={r()}/>}
+                        {r => <ExtractionRecipePanel recipe={r()}/>}
                     </Show>,
                 },
                 {
@@ -91,7 +91,7 @@ export default function ResourceDetail() {
                     count: extractionRecipe() ? 0 : (resource()?.onDestroyYield?.length ?? 0) + (resource()?.onDestroyYieldResourceId ? 1 : 0),
                     showWhenEmpty: false,
                     content: () => <Show when={resource() && (hasDepletion() || hasDepletionResource())}>
-                        {<ResourceDepletionPanel resource={resource()!}/>}
+                        <ResourceDepletionPanel resource={resource()!}/>
                     </Show>,
                 },
                 {
