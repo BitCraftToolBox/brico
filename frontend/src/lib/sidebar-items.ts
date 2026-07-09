@@ -69,6 +69,7 @@ const sidebarGroups = [
             {href: '/database/prospecting',    title: 'Prospecting',     icon: makeFontIcon("FFB0")},
             {href: '/database/biome',          title: 'Biomes',          icon: makeFontIcon("FFF1")},
             {href: '/database/paving',         title: 'Paving',          icon: makeFontIcon("0041")},
+            {href: '/database/terraforming',   title: 'Terraforming',    icon: makeFontIcon("0034")},
         ] as const
     },
     {

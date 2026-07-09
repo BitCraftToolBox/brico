@@ -21,13 +21,12 @@ import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {ExtractionSpawnedPlaceable} from "~/bindings/src/extraction_spawned_placeable_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ItemType} from "~/bindings/src/item_type_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {BuildingIcon, EnemyIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon} from "~/components/shared/GameIcon";
@@ -51,7 +50,7 @@ import {
 } from "~/lib/recipe-sources";
 import {buildingForConstruction, buildingForDeconstruction, questDropsForEnemy, questDropsForExtraction, questDropsForItemList, resourceForExtraction} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
-import {fixFloat} from "~/lib/utils";
+import {fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Display ─────────────────────────────────────────
 
@@ -214,12 +213,13 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                 <>
                     <InputItemStackArray stacks={props.recipe.consumedItemStacks}/>
                     <Show when={resource()}>
-                        {(res) => <ResourceIcon res={res()} showFallbackText/>}
-                    </Show>
-                    <Show when={props.recipe.cargoId}>
-                        <ItemStackIcon
-                            stack={{itemId: props.recipe.cargoId, itemType: ItemType.Cargo, quantity: 1} as ItemStack}
-                        />
+                        {res =>
+                            <ResourceIcon
+                                res={res()} showFallbackText
+                                // this is technically half a pixel off but whatever
+                                class={props.recipe.consumedItemStacks.some(c => c.consumptionChance < 1) ? "mt-4" : ""}
+                            />
+                        }
                     </Show>
                 </>
             }
@@ -335,6 +335,21 @@ export const ResourceDepletionPanel: Component<{ resource: ResourceDesc }> = (pr
         <RecipeVisual
             inputs={<ResourceIcon res={props.resource} showFallbackText/>}
             outputs={<ResourceDepletionIcons resource={props.resource} showLabel={true}/>}
+        />
+    );
+};
+
+export const ResourceGrowthPanel: Component<{ growth: ResourceGrowthRecipeDesc }> = (props) => {
+    const growth = props.growth;
+    const resIdx = BitCraftTables.ResourceDesc.indexedBy("id");
+    const from = () => resIdx().get(growth.resourceId)!;
+    const to = () => growth.grownResourceId === 0 ? undefined : resIdx().get(growth.grownResourceId);
+    const [min, max] = growth.time;
+    return (
+        <RecipeVisual
+            inputs={<ResourceIcon res={from()} alwaysLabel={from().iconAssetName === to()?.iconAssetName}/>}
+            outputs={<Show when={to()} fallback={"Despawns"}>{t => <ResourceIcon res={t()} alwaysLabel={from().iconAssetName === to()?.iconAssetName}/>}</Show>}
+            stats={[["Time", min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`]]}
         />
     );
 };

@@ -1,15 +1,50 @@
-import {useNavigate, useParams} from "@solidjs/router";
-import {createMemo} from "solid-js";
+import {useParams} from "@solidjs/router";
+import {createMemo, For} from "solid-js";
+import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {TierIcon} from "~/components/shared/GameIcon";
-import {ItemStackTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb} from "~/lib/game-links";
+import {EnemyIcon, ResourceIcon} from "~/components/shared/GameIcon";
+import {ItemStackArray} from "~/components/shared/ItemStacks";
+import {BiomeLink, breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
+function ProspectingItemsPanel(props: { prospecting: ProspectingDesc }) {
+    const requiredOnUse = createMemo(() => {
+        if (!props.prospecting.requiredItemsToStart.length) return null;
+        return (
+            <div class="flex flex-col gap-2 align-items-center">
+                <div class="text-center w-full h-10 text-sm">Required to Start</div>
+                <ItemStackArray stacks={props.prospecting.requiredItemsToStart}/>
+            </div>
+        );
+    });
+    const consumedOnUse = createMemo(() => {
+        if (!props.prospecting.consumedItemsByAbilityTrigger.length) return null;
+        return (
+            <div class="flex flex-col gap-2 align-items-center">
+                <div class="text-center w-full h-10 text-sm">Consumed on Ability Use</div>
+                <ItemStackArray stacks={props.prospecting.consumedItemsByAbilityTrigger}/>
+            </div>
+        );
+    });
+    const requiredForInteraction = createMemo(() => {
+        if (!props.prospecting.requiredItemsToInteractWithReward.length) return null;
+        return (
+            <div class="flex flex-col gap-2 align-items-center">
+                <div class="text-center w-full h-10 text-sm">Required for Reward</div>
+                <ItemStackArray stacks={props.prospecting.requiredItemsToInteractWithReward}/>
+            </div>
+        )
+    });
+    return <div class="flex flex-row flex-wrap gap-8 items-center justify-center">
+        {requiredOnUse()}
+        {consumedOnUse()}
+        {requiredForInteraction()}
+    </div>;
+}
+
 export default function ProspectingDetail() {
     const params = useParams();
-    const navigate = useNavigate();
     const isLoading = useTablesLoading(BitCraftTables.ProspectingDesc);
     const index = BitCraftTables.ProspectingDesc.indexedBy("id");
     const biomeIndex = BitCraftTables.BiomeDesc.indexedBy("biomeType");
@@ -35,7 +70,7 @@ export default function ProspectingDetail() {
         if (!p?.biomeRequirements?.length) return [];
         const idx = biomeIndex();
         if (!idx) return [];
-        return p.biomeRequirements.map(id => idx.get(id)).filter(Boolean) as any[];
+        return p.biomeRequirements.map(id => idx.get(id)).filter((b): b is NonNullable<typeof b> => !!b);
     });
 
     const experienceStr = createMemo(() => {
@@ -79,6 +114,7 @@ export default function ProspectingDetail() {
                 {label: "Breadcrumb Count", value: breadCrumbCount()},
                 {label: "Contribution Per Crumb", value: prospecting()?.contributionPerVisitedBreadCrumb},
                 {label: "% Nodes for Max Contribution", value: (prospecting()?.pctNodesForMaxContribution ?? 0) * 100},
+                {label: "Single Contribution Only", value: prospecting()?.singleContributionOnly},
                 {label: "Experience Per Node", value: experienceStr()},
                 {label: "Deadzone Angle", value: prospecting()?.deadzoneAngleBetweenCrumbs},
                 {label: "Join Radius", value: prospecting()!.joinRadius},
@@ -93,43 +129,38 @@ export default function ProspectingDetail() {
             objectId={prospecting()?.id}
             tabs={[
                 {
+                    id: "biomes", label: "Biomes", count: biomes().length,
+                    content: () => (
+                        <RelTable data={biomes()} columns={[
+                            {
+                                header: "Biome",
+                                cell: (biome) => <BiomeLink {...biome} />,
+                            }
+                        ]}/>
+                    ),
+                },
+                {
                     id: "spawns", label: "Spawns", count: spawnInfo()?.items.length ?? 0,
                     content: () => {
                         const info = spawnInfo()!;
                         if (info.type === "resource") {
-                            return <RelTable data={info.items} columns={[
-                                {header: "Resource", cell: (row: any) => <span>{row.name}</span>},
-                                {header: "Tier", cell: (row: any) => <span><TierIcon tier={row.tier}/></span>},
-                            ]} onRowClick={(row: any) => navigate(`/database/resource/${row.id}`)}/>;
+                            return <For each={info.items}>
+                                {res => <ResourceIcon res={res} alwaysLabel/>}
+                            </For>;
                         }
-                        return <RelTable data={info.items} columns={[
-                            {header: "Enemy", cell: (row: any) => <span>{row.name}</span>},
-                            {header: "Tier", cell: (row: any) => <span>{row.tier}</span>},
-                        ]} onRowClick={(row: any) => navigate(`/database/creature/${row.enemyType}`)}/>;
+                        return <For each={info.items}>
+                            {enemy => <EnemyIcon enemy={enemy} alwaysLabel/>}
+                        </For>;
                     },
                 },
                 {
-                    id: "biomes", label: "Biomes", count: biomes().length,
-                    content: () => <RelTable data={biomes()} columns={[{header: "Biome", cell: (row: any) => <span>{row.name}</span>}]}
-                                             onRowClick={(row: any) => navigate(`/database/biome/${row.biomeType}`)}/>,
-                },
-                {
-                    id: "start-items",
-                    label: "Required Start Items",
-                    count: prospecting()?.requiredItemsToStart?.length ?? 0,
-                    content: () => <ItemStackTable data={prospecting()!.requiredItemsToStart}/>
-                },
-                {
-                    id: "interact-items",
-                    label: "Required Interact Items",
-                    count: prospecting()?.requiredItemsToInteractWithReward?.length ?? 0,
-                    content: () => <ItemStackTable data={prospecting()!.requiredItemsToInteractWithReward}/>
-                },
-                {
-                    id: "consumed-items",
-                    label: "Consumed Items",
-                    count: prospecting()?.consumedItemsByAbilityTrigger?.length ?? 0,
-                    content: () => <ItemStackTable data={prospecting()!.consumedItemsByAbilityTrigger}/>
+                    id: "items",
+                    label: "Required Items",
+                    count: (prospecting()?.requiredItemsToStart?.length ?? 0) +
+                        (prospecting()?.requiredItemsToInteractWithReward.length ?? 0) +
+                        (prospecting()?.consumedItemsByAbilityTrigger.length ?? 0),
+                    showWhenEmpty: false,
+                    content: () => <ProspectingItemsPanel prospecting={prospecting()!} />
                 },
             ]}
         />

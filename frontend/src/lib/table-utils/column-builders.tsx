@@ -45,8 +45,10 @@ export function headerColumn<T, V extends JSX.Element>({
         cell: (props) => {
             const r = route(props.row.original);
             return (
-                <Button variant="ghost" class="w-full h-full justify-start" as={A}
-                        href={`/database/${r[0]}/${r[1]}`}>
+                <Button
+                    variant="ghost" class="w-full h-full justify-start" as={A}
+                    href={`/database/${r[0]}/${r[1]}`}
+                >
                     {prefixElement(props.row.original)} {customRender(props.getValue())}
                 </Button>
             );
@@ -180,16 +182,18 @@ export function rowActions<T, V extends string | number>(
             return (
                 <TableRowActions row={props.row}>
                     <DropdownMenuItem>
-                        <Button class="w-full" variant="ghost"
-                                onclick={() => navigator.clipboard.writeText(String(rowId))}
+                        <Button
+                            class="w-full" variant="ghost"
+                            onclick={() => navigator.clipboard.writeText(String(rowId))}
                         >
                             Copy ID <IconClipboardCopy/>
                         </Button>
                     </DropdownMenuItem>
                     <Show when={chatLinkPrefix && chatLinkId}>
                         <DropdownMenuItem>
-                            <Button class="w-full" variant="ghost"
-                                    onclick={() => navigator.clipboard.writeText(`(${chatLinkPrefix}=${chatLinkId})`)}
+                            <Button
+                                class="w-full" variant="ghost"
+                                onclick={() => navigator.clipboard.writeText(`(${chatLinkPrefix}=${chatLinkId})`)}
                             >
                                 Copy Chat Link <IconLink/>
                             </Button>
@@ -197,9 +201,9 @@ export function rowActions<T, V extends string | number>(
                     </Show>
                     <Show when={mapUrlPrefix}>
                         <DropdownMenuItem>
-                            <Button class="w-full" variant="ghost" as={A}
-                                    href={`https://bitcraftmap.com/?${mapUrlPrefix}=${rowId}`}
-                                    target={"_blank"}
+                            <Button
+                                class="w-full" variant="ghost" as={A} target={"_blank"}
+                                href={`https://bitcraftmap.com/?${mapUrlPrefix}=${rowId}`}
                             >
                                 View Map <IconExternal/>
                             </Button>

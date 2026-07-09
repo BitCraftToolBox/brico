@@ -2,7 +2,7 @@ import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {ItemStackTable} from "~/components/shared/RelTablePresets";
+import {ItemStackArray} from "~/components/shared/ItemStacks";
 import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {readableSeconds, undefinedIfZero} from "~/lib/utils";
@@ -52,6 +52,7 @@ export default function ClaimResearchDetail() {
                 {
                     heading: "Cost",
                     properties: [
+                        {label: "Item Cost", value: tech()?.input.length ? <ItemStackArray stacks={tech()!.input}/> : undefined},
                         {label: "Supply Cost", value: tech()?.suppliesCost},
                         {label: "Research Time", value: readableSeconds(undefinedIfZero(tech()?.researchTime))},
                     ]
@@ -62,7 +63,7 @@ export default function ClaimResearchDetail() {
                         {label: "Members", value: undefinedIfZero(tech()?.members)},
                         {label: "Area", value: undefinedIfZero(tech()?.area)},
                         {label: "Supplies", value: undefinedIfZero(tech()?.supplies)},
-                        {label: "XP to Mint HexCoin", value: undefinedIfZero(tech()?.xpToMintHexCoin)},
+                        {label: "XP to mint Hex Coin", value: undefinedIfZero(tech()?.xpToMintHexCoin)},
                     ]
                 }
             ]}
@@ -70,7 +71,6 @@ export default function ClaimResearchDetail() {
             spacetimeTable={BitCraftTables.ClaimTechDesc.st_name}
             objectId={tech()?.id}
             tabs={[
-                {id: "cost", label: "Item Cost", count: tech()?.input?.length ?? 0, content: () => <ItemStackTable data={tech()!.input}/>},
                 {
                     id: "requirements",
                     label: "Requirements",

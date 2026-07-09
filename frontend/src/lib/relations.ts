@@ -8,6 +8,7 @@
  *   ItemStack, InputItemStack, ProbabilisticItemStack, ItemListPossibility, cargo IDs
  */
 
+import {createMemo} from "solid-js";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
@@ -30,6 +31,8 @@ import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
 import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
+import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {BitCraftTables} from "~/lib/spacetime";
@@ -101,6 +104,14 @@ export function craftingRecipesConsuming(itemId: number, itemType: string): Craf
 
 // ─── Extraction Recipes ─────────────────────────────────────────
 
+export function resourceGrowthFrom(resourceId: number): ResourceGrowthRecipeDesc[] | undefined {
+    return BitCraftTables.ResourceGrowthRecipeDesc.indexedByMulti("grownResourceId")?.()?.get(resourceId);
+}
+
+export function resourceGrowthInto(resourceId: number): ResourceGrowthRecipeDesc | undefined {
+    return BitCraftTables.ResourceGrowthRecipeDesc.indexedBy("resourceId")?.()?.get(resourceId);
+}
+
 /** The extraction recipe for a given resource */
 export function extractionRecipeForResource(resourceId: number): ExtractionRecipeDesc | undefined {
     return BitCraftTables.ExtractionRecipeDesc.indexedBy("resourceId")()?.get(resourceId);
@@ -122,6 +133,17 @@ export function extractionRecipesConsuming(itemId: number, itemType: string): Ex
     return all.filter(r => {
         return anyStackMatches(r.consumedItemStacks, itemId, itemType);
     });
+}
+
+// Terraforming recipes
+
+export function terraformRecipesDropping(itemId: number, itemType: string): TerraformRecipeDesc[] {
+    const all = BitCraftTables.TerraformRecipeDesc.get();
+    if (!all) return [];
+    return all.filter(r => {
+        if (!r.outputItemStacks) return false;
+        return anyProbStackMatches(r.outputItemStacks, itemId, itemType);
+    })
 }
 
 // ─── Construction Recipes ───────────────────────────────────────
@@ -538,15 +560,21 @@ export function questsRequiringItem(itemId: number, itemType: string): QuestChai
 
 /** Quest chains that reward this item/cargo in any reward/implicit reward ItemStack */
 export function questsRewardingItem(itemId: number, itemType: string): QuestChainDesc[] {
-    const all = BitCraftTables.QuestChainDesc.get();
-    if (!all) return [];
-    return all.filter(q =>
+    const quests = BitCraftTables.QuestChainDesc.get();
+    const stages = BitCraftTables.StageRewardsDesc.get();
+    if (!quests && !stages) return [];
+    const questRewards = createMemo(() => quests?.filter(q =>
         [...(q.rewards ?? []), ...(q.implicitRewards ?? [])].some(r => {
             if (r.tag !== "ItemStack") return false;
             const s = r.value as ItemStack;
             return s.itemId === itemId && s.itemType.tag === itemType;
         })
-    );
+    ) ?? []);
+    const questIndex = BitCraftTables.QuestChainDesc.indexedBy("id");
+    const stageRewards = createMemo(() => stages?.filter(s =>
+        s.rewards.some(is => is.itemId === itemId && is.itemType.tag === itemType)
+    ).map(sr => questIndex().get(sr.chainDescId)).filter(q => !!q) ?? []);
+    return [...questRewards(), ...stageRewards()];
 }
 
 /** Quest chains whose stages have a CompletionCondition matching the given tag + value */

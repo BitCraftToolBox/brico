@@ -8,7 +8,7 @@
  * Shared helpers: skillReqPair, toolReqPair, skillExpPair for common stat patterns.
  */
 
-import {JSX} from "solid-js";
+import {JSX, Show} from "solid-js";
 import {Biome} from "~/bindings/src/biome_type";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
@@ -24,7 +24,6 @@ import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {ToolRequirement} from "~/bindings/src/tool_requirement_type";
@@ -164,34 +163,44 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
     return lines;
 }
 
-export function prospectingForResource(resource: number | undefined) {
-    if (resource === undefined) return undefined;
-    const prospecting = BitCraftTables.ProspectingDesc.indexedBy("resourceClumpId")();
+export function prospectingForResource(resource: number) {
+    const prospecting = BitCraftTables.ProspectingDesc.indexedByMulti("resourceClumpId")();
     const clumps = BitCraftTables.ResourceClumpDesc.get();
     return clumps?.filter(c => c.resourceId.includes(resource))
-        .map(c => prospecting.get(c.id))
-        .filter((v: ProspectingDesc | undefined): v is NonNullable<typeof v> => !!v);
+        .flatMap(c => prospecting.get(c.id))
+        .filter((p): p is NonNullable<typeof p> => !!p) ?? [];
 }
 
 export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: ResourceDesc): StatLine[] {
     const lines: StatLine[] = [];
     let totalEffort = resource?.maxHealth;
     if (resource) {
-        if (resource?.showTimeLeft) {
-            // TODO growth_recipe_desc is private
+        const growths = BitCraftTables.ResourceGrowthRecipeDesc.indexedBy("resourceId");
+        const gd = growths().get(resource.id);
+        if (gd) {
+            const [min, max] = gd.time;
+            lines.push(["Timed Node", min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`]);
+        } else if (resource.showTimeLeft) { // unsure if any resource has this flag but doesn't have a growth desc, but fallback anyway
             lines.push(["Timed Node", "? min"])
         }
-        const prospectingDescs = prospectingForResource(recipe.resourceId);
+        const prospectingDescs = prospectingForResource(resource.id);
         if (prospectingDescs?.length) {
             if (prospectingDescs.length == 1) {
                 const prospect = prospectingDescs[0];
                 const perNode = prospect.contributionPerVisitedBreadCrumb;
                 const [min, max] = prospect.breadCrumbCount;
                 lines.push(["Prospecting Hits",
-                    <Tooltip openOnTouchStart>
-                        <TooltipTrigger class="decoration-dotted underline">{min * perNode} - {max * perNode}</TooltipTrigger>
-                        <TooltipContent class="max-w-[90svw]">{perNode} contribution per node, {min} - {max} nodes, {(min + max) / 2 * perNode} hits average</TooltipContent>
-                    </Tooltip>
+                    <Show when={prospect.singleContributionOnly} fallback={
+                        <Tooltip openOnTouchStart>
+                            <TooltipTrigger class="decoration-dotted underline">{min * perNode}{min != max ? `- ${max * perNode}` : ""}</TooltipTrigger>
+                            <TooltipContent class="max-w-[90svw]">{perNode} contribution per node × {min == max ? `${min} nodes` : `${min} - ${max} nodes`} = {(min + max) / 2 * perNode} hits{min == max ? "" : " average"}</TooltipContent>
+                        </Tooltip>
+                    }>
+                        <Tooltip openOnTouchStart>
+                            <TooltipTrigger class="decoration-dotted underline">1</TooltipTrigger>
+                            <TooltipContent class="max-w-[90svw]">This prospecting is fixed at one contribution, regardless of bread crumb count.</TooltipContent>
+                        </Tooltip>
+                    </Show>
                 ]);
             }
         }
@@ -366,7 +375,7 @@ export function interactionStatLines(interaction: PlaceableInteractionDesc, sour
     ];
 
     if (sourcePlaceable?.maxHealth) {
-        lines.push(["Actions Required:", sourcePlaceable?.maxHealth]);
+        lines.push(["Effort Required:", sourcePlaceable?.maxHealth]);
     }
 
     if (interaction.range > 1) {

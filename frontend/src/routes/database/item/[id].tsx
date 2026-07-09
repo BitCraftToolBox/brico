@@ -4,6 +4,7 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {lootTabWith} from "~/components/fun/BricoLootBox";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
+import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {breadcrumb, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
@@ -22,6 +23,7 @@ import {
     questsRewardingItem,
     questsWithStageConditionItem,
     resourcesYielding,
+    terraformRecipesDropping,
     travelerTasksRequiring,
     travelerTasksRewarding,
     travelerTradesOffering,
@@ -45,6 +47,7 @@ import {
     placeablePlacementTab,
     questRequirementsTab,
     questRewardsTab,
+    terraformDropsTab,
     travelerTasksTab,
     travelerTradesTab,
 } from "~/lib/table-utils/detail-tab-builders";
@@ -131,6 +134,7 @@ export default function ItemDetail() {
 
     const craftedFrom = createMemo(() => itemId() != null ? craftingRecipesProducing(itemId()!, itemType) : []);
     const craftsInto = createMemo(() => itemId() != null ? craftingRecipesConsuming(itemId()!, itemType) : []);
+    const terraformOutputs = createMemo(() => itemId() != null ? terraformRecipesDropping(itemId()!, itemType) : []);
     const extractionUses = createMemo(() => itemId() != null ? extractionRecipesConsuming(itemId()!, itemType) : []);
     const constructsInto = createMemo(() => itemId() != null ? constructionRecipesConsuming(itemId()!, itemType) : []);
     const deconstructedFrom = createMemo(() => itemId() != null ? deconstructionRecipesProducing(itemId()!, itemType) : []);
@@ -164,7 +168,14 @@ export default function ItemDetail() {
         // General
         groups.push({
             properties: [
-                {label: "Volume", value: i.volume},
+                {label: "Volume", value: (
+                    <Tooltip openOnTouchStart>
+                        <TooltipTrigger class="decoration-dotted underline">{i.volume}</TooltipTrigger>
+                        <TooltipContent class="max-w-[90svw]">
+                            Inventory stack: {6000 / i.volume}
+                        </TooltipContent>
+                    </Tooltip>
+                )},
                 {label: "Durability", value: i.durability > 0 ? i.durability : undefined},
                 {label: "Compendium Entry", value: !i.compendiumEntry ? false : undefined},
             ],
@@ -297,6 +308,7 @@ export default function ItemDetail() {
                 extractionTab(extractionDrops(), extractionUses()),
                 depletionTab(extractionDrops(), extractionUses(), depletionSources()),
                 enemyDropsTab(enemyDrops()),
+                terraformDropsTab(terraformOutputs()),
                 constructionCombinedTab(constructsInto(), deconstructedFrom()),
                 conversionTab(conversionInputs(), conversionOutputs()),
                 travelerTasksTab(taskRewards(), taskRequires()),

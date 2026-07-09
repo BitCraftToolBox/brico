@@ -18,6 +18,7 @@ import {
     questsRewardingItem,
     questsWithStageConditionItem,
     resourcesYielding,
+    terraformRecipesDropping,
     travelerTasksRequiring,
     travelerTasksRewarding,
     travelerTradesOffering,
@@ -38,6 +39,7 @@ import {
     placeablePlacementTab,
     questRequirementsTab,
     questRewardsTab,
+    terraformDropsTab,
     travelerTasksTab,
     travelerTradesTab,
 } from "~/lib/table-utils/detail-tab-builders";
@@ -70,6 +72,7 @@ export default function CargoDetail() {
 
     const craftedFrom = createMemo(() => cargoId() != null ? craftingRecipesProducing(cargoId()!, cargoType) : []);
     const craftsInto = createMemo(() => cargoId() != null ? craftingRecipesConsuming(cargoId()!, cargoType) : []);
+    const terraformOutputs = createMemo(() => cargoId() != null ? terraformRecipesDropping(cargoId()!, cargoType) : []);
     const extractionUses = createMemo(() => cargoId() != null ? extractionRecipesConsuming(cargoId()!, cargoType) : []);
     const constructsInto = createMemo(() => cargoId() != null ? constructionRecipesConsuming(cargoId()!, cargoType) : []);
     const deconstructedFrom = createMemo(() => cargoId() != null ? deconstructionRecipesProducing(cargoId()!, cargoType) : []);
@@ -128,6 +131,7 @@ export default function CargoDetail() {
                 extractionTab(extractionDrops(), extractionUses()),
                 depletionTab(extractionDrops(), extractionUses(), depletionSources()),
                 enemyDropsTab(enemyDrops()),
+                terraformDropsTab(terraformOutputs()),
                 constructionCombinedTab(constructsInto(), deconstructedFrom()),
                 conversionTab(conversionInputs(), conversionOutputs()),
                 travelerTasksTab(taskRewards(), taskRequires()),

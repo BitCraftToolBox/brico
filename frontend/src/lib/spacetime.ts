@@ -43,8 +43,11 @@ import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
 import {QuestStageDesc} from "~/bindings/src/quest_stage_desc_type";
 import {ResourceClumpDesc} from "~/bindings/src/resource_clump_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
+import {StageRewardsDesc} from "~/bindings/src/stage_rewards_desc_type";
+import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {ToolDesc} from "~/bindings/src/tool_desc_type";
 import {ToolTypeDesc} from "~/bindings/src/tool_type_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
@@ -85,14 +88,14 @@ function cache<T>(n: string, b: { getTypeScriptAlgebraicType: () => AlgebraicTyp
 
 
 function createIndex<TData, TIdx extends keyof TData & string, TValue extends TData[TIdx] & (string | number)>(
-    tbl: Accessor<TData[] | undefined>, field: TIdx
+    tbl: Accessor<TData[] | undefined>, field: TIdx, allowZero: boolean
 ): Accessor<Map<TValue, TData>> {
     return createMemo(() => {
         const data = tbl() ?? [];
         const map = new Map<TValue, TData>();
         for (const item of data) {
             const key = item[field] as TValue;
-            if (key !== null && key !== 0) map.set(key, item);
+            if (key !== null && (allowZero || key !== 0)) map.set(key, item);
         }
         return map;
     });
@@ -145,10 +148,10 @@ export class BitCraftTable<TData> {
         this.#tagOrdinalCache = new Map<string, Map<string, number>>();
     }
 
-    indexedBy<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx): Accessor<Map<any, TData>> {
+    indexedBy<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx, allowZero: boolean = false): Accessor<Map<any, TData>> {
         let res = this.#idxCache.get(key);
         if (!res) {
-            res = createIndex<TData, TIdx, TValue>(this.get, key);
+            res = createIndex<TData, TIdx, TValue>(this.get, key, allowZero);
             this.#idxCache.set(key, res)
         }
         return res;
@@ -229,6 +232,7 @@ export const BitCraftTables = {
     'ContributionLootDesc': cache<ContributionLootDesc>('contribution_loot_desc', ContributionLootDesc),
     'QuestDropDesc': cache<QuestDropDesc>('quest_drop_desc', QuestDropDesc),
     'QuestChainDesc': cache<QuestChainDesc>('quest_chain_desc', QuestChainDesc),
+    'StageRewardsDesc': cache<StageRewardsDesc>('stage_rewards_desc', StageRewardsDesc),
     'BuffTypeDesc': cache<BuffTypeDesc>('buff_type_desc', BuffTypeDesc),
     'QuestStageDesc': cache<QuestStageDesc>('quest_stage_desc', QuestStageDesc),
     'PlaceableDesc': cache<PlaceableDesc>('placeable_desc', PlaceableDesc),
@@ -239,6 +243,8 @@ export const BitCraftTables = {
     'NpcDesc': cache<NpcDesc>('npc_desc', NpcDesc),
     'DeployableAppearanceOverrideDesc': cache<DeployableAppearanceOverrideDesc>('deployable_appearance_override_desc', DeployableAppearanceOverrideDesc),
     'EnemyScalingDesc': cache<EnemyScalingDesc>('enemy_scaling_desc', EnemyScalingDesc),
+    'ResourceGrowthRecipeDesc': cache<ResourceGrowthRecipeDesc>('resource_growth_recipe_desc', ResourceGrowthRecipeDesc),
+    'TerraformRecipeDesc': cache<TerraformRecipeDesc>('terraform_recipe_desc', TerraformRecipeDesc),
 };
 
 /**

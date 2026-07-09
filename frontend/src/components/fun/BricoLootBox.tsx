@@ -7,7 +7,7 @@ import type {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import Rarity from "~/bindings/src/rarity_type";
 import {CargoIcon, ItemIcon, rarityToFrameSlug} from "~/components/shared/GameIcon";
-import {getAssetURL, Tiers} from "~/lib/bitcraft-utils";
+import {ASSET_CDN_BASE, getAssetURL, Tiers} from "~/lib/bitcraft-utils";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables} from "~/lib/spacetime";
 
@@ -256,7 +256,7 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
 
     const frameSrc = () => {
         const theme = colorMode() === "dark" ? "dark" : "light";
-        return `/assets/Frames/creaturebuildingresource-frame-${rarityToFrameSlug(chestRarity())}-${theme}.webp`;
+        return `${ASSET_CDN_BASE}/UI/Frames/creaturebuildingresource-frame-${rarityToFrameSlug(chestRarity())}-${theme}.webp`;
     };
 
     const chestIconSrc = () => getAssetURL(chestAsset());

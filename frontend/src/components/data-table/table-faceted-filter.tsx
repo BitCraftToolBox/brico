@@ -672,24 +672,24 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                 <Show when={isBoolBased()}>
                     <Command class="w-full h-full">
                         <CommandList>
-                        <div class="flex flex-row w-full justify-around px-2 py-2">
-                            <BoolFilterItem
-                                value={true}
-                                column={props.column}
-                                table={props.table}
-                                selectedValues={selectedValues()}
-                                resolvedOptions={resolvedOptions() as ValueBasedOption[]}
-                                facets={facets() as Map<any, number>}
-                            />
-                            <BoolFilterItem
-                                value={false}
-                                column={props.column}
-                                table={props.table}
-                                selectedValues={selectedValues()}
-                                resolvedOptions={resolvedOptions() as ValueBasedOption[]}
-                                facets={facets() as Map<any, number>}
-                            />
-                        </div>
+                            <div class="flex flex-col w-full justify-around px-2 py-2">
+                                <BoolFilterItem
+                                    value={true}
+                                    column={props.column}
+                                    table={props.table}
+                                    selectedValues={selectedValues()}
+                                    resolvedOptions={resolvedOptions() as ValueBasedOption[]}
+                                    facets={facets() as Map<any, number>}
+                                />
+                                <BoolFilterItem
+                                    value={false}
+                                    column={props.column}
+                                    table={props.table}
+                                    selectedValues={selectedValues()}
+                                    resolvedOptions={resolvedOptions() as ValueBasedOption[]}
+                                    facets={facets() as Map<any, number>}
+                                />
+                            </div>
                         </CommandList>
                     </Command>
                 </Show>

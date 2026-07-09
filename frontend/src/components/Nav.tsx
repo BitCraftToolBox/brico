@@ -61,7 +61,7 @@ export default function Nav(props: NavProps) {
             <div class="flex flex-row items-center h-10 w-full gap-2 px-2">
                 <SidebarTrigger class="shrink-0"/>
                 {/* hack so overflow is to the left - the last part of the title is the most important */}
-                <div class="max-w-[calc(90svw-5rem)] overflow-hidden" style="direction: rtl">
+                <div class="max-w-[calc(90svw-5rem)] overflow-x-clip" style="direction: rtl">
                     <h1 class="text-lg text-center text-nowrap leading-none">{props.title}</h1>
                 </div>
                 <div class="flex-1"/>
