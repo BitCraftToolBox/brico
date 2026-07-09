@@ -5,7 +5,9 @@
  * shared across multiple detail pages.
  */
 
+import {A} from "@solidjs/router";
 import {createSignal, Show} from "solid-js";
+import {TerraformRecipeDesc} from "~/bindings/src";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
@@ -21,6 +23,7 @@ import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {RelationshipTab, RelTable} from "~/components/shared/DetailPageLayout";
+import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
 import {
     ConstructionRecipePanel,
     ConversionRecipePanel,
@@ -37,6 +40,7 @@ import {
     TravelerTaskPanel,
     TravelerTradePanel,
 } from "~/components/shared/RecipeDisplay";
+import {Button} from "~/components/ui/button";
 import {CollectibleLink, QuestChainLink} from "~/lib/game-links";
 import {getInteractionName, getPlacementName} from "~/lib/placeables";
 import {
@@ -91,6 +95,30 @@ export function craftsIntoTab(
             />
         ),
     };
+}
+
+export function terraformDropsTab(
+    recipes: TerraformRecipeDesc[],
+    showWhenEmpty: boolean = false
+): RelationshipTab {
+    return {
+        id: "terraforming",
+        label: "Terraforming Drops",
+        count: recipes.length,
+        showWhenEmpty,
+        content: () => (
+            <RelTable data={recipes} columns={[
+                {header: "Elevation Difference", cell: tr => (
+                    <Button variant="ghost" class="w-full" as={A} href={`/database/terraforming/${tr.difference}`}>{tr.difference}</Button>
+                )},
+                {header: "Drops", cell: tr => (
+                    <Show when={tr.outputItemStacks?.length}>
+                        <ProbabilisticItemStackArray stacks={tr.outputItemStacks!}/>
+                    </Show>
+                )}
+            ]}/>
+        )
+    }
 }
 
 export function extractionTab(

@@ -8,7 +8,7 @@
  *   ItemStack, InputItemStack, ProbabilisticItemStack, ItemListPossibility, cargo IDs
  */
 
-import {ResourceGrowthRecipeDesc} from "~/bindings/src";
+import {ResourceGrowthRecipeDesc, TerraformRecipeDesc} from "~/bindings/src";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
@@ -131,6 +131,17 @@ export function extractionRecipesConsuming(itemId: number, itemType: string): Ex
     return all.filter(r => {
         return anyStackMatches(r.consumedItemStacks, itemId, itemType);
     });
+}
+
+// Terraforming recipes
+
+export function terraformRecipesDropping(itemId: number, itemType: string): TerraformRecipeDesc[] {
+    const all = BitCraftTables.TerraformRecipeDesc.get();
+    if (!all) return [];
+    return all.filter(r => {
+        if (!r.outputItemStacks) return false;
+        return anyProbStackMatches(r.outputItemStacks, itemId, itemType);
+    })
 }
 
 // ─── Construction Recipes ───────────────────────────────────────

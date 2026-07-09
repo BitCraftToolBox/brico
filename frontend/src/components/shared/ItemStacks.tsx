@@ -483,6 +483,21 @@ export const InputItemStackArray: Component<{
     </div>
 );
 
+export const ProbabilisticItemStackArray: Component<{
+    stacks: ProbabilisticItemStack[];
+    small?: boolean;
+    chances?: number;
+    class?: string;
+}> = (props) => (
+    <div class={cn("flex flex-row flex-wrap items-end justify-center gap-0.5", props.class)}>
+        <For each={props.stacks}>
+            {(stack) => (
+                <ProbItemStackIcon probStack={stack} small={props.small ?? true} chances={props.chances}/>
+            )}
+        </For>
+    </div>
+);
+
 // ─── QuestDropDisplay ──────────────────────────────────────────
 // Renders a quest-conditional drop: warning-colored group + popover with quest/stage info.
 
