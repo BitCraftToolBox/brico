@@ -88,14 +88,14 @@ function cache<T>(n: string, b: { getTypeScriptAlgebraicType: () => AlgebraicTyp
 
 
 function createIndex<TData, TIdx extends keyof TData & string, TValue extends TData[TIdx] & (string | number)>(
-    tbl: Accessor<TData[] | undefined>, field: TIdx
+    tbl: Accessor<TData[] | undefined>, field: TIdx, allowZero: boolean
 ): Accessor<Map<TValue, TData>> {
     return createMemo(() => {
         const data = tbl() ?? [];
         const map = new Map<TValue, TData>();
         for (const item of data) {
             const key = item[field] as TValue;
-            if (key !== null && key !== 0) map.set(key, item);
+            if (key !== null && (allowZero || key !== 0)) map.set(key, item);
         }
         return map;
     });
@@ -148,10 +148,10 @@ export class BitCraftTable<TData> {
         this.#tagOrdinalCache = new Map<string, Map<string, number>>();
     }
 
-    indexedBy<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx): Accessor<Map<any, TData>> {
+    indexedBy<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx, allowZero: boolean = false): Accessor<Map<any, TData>> {
         let res = this.#idxCache.get(key);
         if (!res) {
-            res = createIndex<TData, TIdx, TValue>(this.get, key);
+            res = createIndex<TData, TIdx, TValue>(this.get, key, allowZero);
             this.#idxCache.set(key, res)
         }
         return res;

@@ -25,6 +25,7 @@ export const TerraformingDefs: BitCraftToDataDef<TerraformRecipeDesc> = {
         rowActions(),
     ],
     facetedFilters: [
+        rangeFilter("Difference"),
         rangeFilter("Effort")
     ],
 };

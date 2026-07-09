@@ -10,7 +10,7 @@ import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 export default function TerraformingDetail() {
     const params = useParams();
     const isLoading = useTablesLoading(BitCraftTables.TerraformRecipeDesc);
-    const index = BitCraftTables.TerraformRecipeDesc.indexedBy("difference");
+    const index = BitCraftTables.TerraformRecipeDesc.indexedBy("difference", true);
     const toolIndex = BitCraftTables.ToolTypeDesc.indexedBy("id");
 
     const recipe = createMemo(() => {
@@ -32,7 +32,7 @@ export default function TerraformingDetail() {
             breadcrumb={breadcrumb("/database/terraforming")}
             loading={isLoading() && !recipe()}
             icon={<FontIcon codepoint="0034" class="size-8"/>}
-            name={"Terraform Difference " + recipe()?.difference}
+            name={"Terraform Elevation Difference " + recipe()?.difference}
             description={"Elevation difference calculated from original world gen elevation."}
             details={[
                 {label: "Effort", value: recipe()?.actionsCount},
