@@ -1,15 +1,16 @@
 import {A, useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {CompletionCondition} from "~/bindings/src/completion_condition_type";
-import {QuestStageDesc} from "~/bindings/src/quest_stage_desc_type";
+import {ItemStack} from "~/bindings/src/item_stack_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {LinkedList, pageIcon, QuestChainLink} from "~/lib/game-links";
+import {ItemStackLink, LinkedList, pageIcon, QuestChainLink} from "~/lib/game-links";
 import {computeQuestTree, questChainCompleter, stagesByChain} from "~/lib/quests";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {ReqOrRewardLink, reqOrRewardTagLabel} from "~/lib/table-defs/quests-table";
 
 type StageConditionRow = { condition: CompletionCondition; stageName: string; chainId: number };
+type StageRewardsRow = { stageName: string; items: ItemStack[] };
 
 export default function QuestChainDetail() {
     const params = useParams();
@@ -26,9 +27,9 @@ export default function QuestChainDetail() {
     const stages = createMemo(() => {
         const q = quest();
         if (!q) return [];
-        const all = BitCraftTables.QuestStageDesc.get();
+        const all = BitCraftTables.QuestStageDesc.indexedByMulti("chainDescId");
         if (!all) return [];
-        return all.filter((s: QuestStageDesc) => s.chainDescId === q.id);
+        return all().get(q.id)?.sort((a, b) => q.stages.indexOf(a.id) - q.stages.indexOf(b.id)) ?? [];
     });
 
     const details = createMemo((): DetailGroup[] => {
@@ -67,6 +68,15 @@ export default function QuestChainDetail() {
             }
         }
         return rows;
+    });
+
+    const stageRewards = createMemo(() => {
+        const q = quest();
+        if (!q) return [];
+        const all = BitCraftTables.StageRewardsDesc.indexedByMulti("chainDescId");
+        const rewards = all().get(q.id);
+        if (!rewards?.length) return [];
+        return rewards.flatMap(r => r.rewards);
     });
 
     const isComplete = () => completedQuests().has(quest()?.id ?? 0);
@@ -232,6 +242,17 @@ export default function QuestChainDetail() {
                         ]}/>
                     ),
                 },
+                {
+                    id: "stage-rewards",
+                    label: "Stage Rewards",
+                    count: stageRewards().length,
+                    showWhenEmpty: false,
+                    content: () => (
+                        <RelTable<ItemStack> data={stageRewards()} columns={[
+                            {header: "Item", cell: row => <ItemStackLink stack={row}/>},
+                        ]}/>
+                    )
+                }
             ]}
         />
     );

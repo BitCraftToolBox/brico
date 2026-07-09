@@ -13,7 +13,6 @@
 
 import {TbOutlineArrowBigDownLines as IconDown, TbOutlineLock as IconLock} from "solid-icons/tb";
 import {Accessor, Component, createEffect, createSignal, For, JSX, Show} from "solid-js";
-import {ResourceGrowthRecipeDesc} from "~/bindings/src";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
@@ -27,6 +26,7 @@ import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_des
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {BuildingIcon, EnemyIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon} from "~/components/shared/GameIcon";

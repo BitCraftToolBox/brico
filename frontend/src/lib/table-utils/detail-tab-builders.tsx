@@ -7,7 +7,6 @@
 
 import {A} from "@solidjs/router";
 import {createSignal, Show} from "solid-js";
-import {TerraformRecipeDesc} from "~/bindings/src";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
@@ -20,6 +19,7 @@ import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_des
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {RelationshipTab, RelTable} from "~/components/shared/DetailPageLayout";

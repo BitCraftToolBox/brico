@@ -46,6 +46,7 @@ import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
+import {StageRewardsDesc} from "~/bindings/src/stage_rewards_desc_type";
 import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {ToolDesc} from "~/bindings/src/tool_desc_type";
 import {ToolTypeDesc} from "~/bindings/src/tool_type_desc_type";
@@ -231,6 +232,7 @@ export const BitCraftTables = {
     'ContributionLootDesc': cache<ContributionLootDesc>('contribution_loot_desc', ContributionLootDesc),
     'QuestDropDesc': cache<QuestDropDesc>('quest_drop_desc', QuestDropDesc),
     'QuestChainDesc': cache<QuestChainDesc>('quest_chain_desc', QuestChainDesc),
+    'StageRewardsDesc': cache<StageRewardsDesc>('stage_rewards_desc', StageRewardsDesc),
     'BuffTypeDesc': cache<BuffTypeDesc>('buff_type_desc', BuffTypeDesc),
     'QuestStageDesc': cache<QuestStageDesc>('quest_stage_desc', QuestStageDesc),
     'PlaceableDesc': cache<PlaceableDesc>('placeable_desc', PlaceableDesc),
