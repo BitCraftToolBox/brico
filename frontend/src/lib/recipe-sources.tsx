@@ -175,8 +175,12 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
     const lines: StatLine[] = [];
     let totalEffort = resource?.maxHealth;
     if (resource) {
-        if (resource?.showTimeLeft) {
-            // TODO growth_recipe_desc is private
+        const growths = BitCraftTables.ResourceGrowthRecipeDesc.indexedBy("resourceId");
+        const gd = growths().get(resource.id);
+        if (gd) {
+            const [min, max] = gd.time;
+            lines.push(["Timed Node", min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`]);
+        } else if (resource.showTimeLeft) { // unsure if any resource has this flag but doesn't have a growth desc, but fallback anyway
             lines.push(["Timed Node", "? min"])
         }
         const prospectingDescs = prospectingForResource(resource.id);

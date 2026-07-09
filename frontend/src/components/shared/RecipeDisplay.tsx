@@ -13,6 +13,7 @@
 
 import {TbOutlineArrowBigDownLines as IconDown, TbOutlineLock as IconLock} from "solid-icons/tb";
 import {Accessor, Component, createEffect, createSignal, For, JSX, Show} from "solid-js";
+import {ResourceGrowthRecipeDesc} from "~/bindings/src";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
@@ -49,7 +50,7 @@ import {
 } from "~/lib/recipe-sources";
 import {buildingForConstruction, buildingForDeconstruction, questDropsForEnemy, questDropsForExtraction, questDropsForItemList, resourceForExtraction} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
-import {fixFloat} from "~/lib/utils";
+import {fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Display ─────────────────────────────────────────
 
@@ -334,6 +335,21 @@ export const ResourceDepletionPanel: Component<{ resource: ResourceDesc }> = (pr
         <RecipeVisual
             inputs={<ResourceIcon res={props.resource} showFallbackText/>}
             outputs={<ResourceDepletionIcons resource={props.resource} showLabel={true}/>}
+        />
+    );
+};
+
+export const ResourceGrowthPanel: Component<{ growth: ResourceGrowthRecipeDesc }> = (props) => {
+    const growth = props.growth;
+    const resIdx = BitCraftTables.ResourceDesc.indexedBy("id");
+    const from = () => resIdx().get(growth.resourceId)!;
+    const to = () => growth.grownResourceId === 0 ? undefined : resIdx().get(growth.grownResourceId);
+    const [min, max] = growth.time;
+    return (
+        <RecipeVisual
+            inputs={<ResourceIcon res={from()} alwaysLabel={from().iconAssetName === to()?.iconAssetName}/>}
+            outputs={<Show when={to()} fallback={"Despawns"}>{t => <ResourceIcon res={t()} alwaysLabel={from().iconAssetName === to()?.iconAssetName}/>}</Show>}
+            stats={[["Time", min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`]]}
         />
     );
 };

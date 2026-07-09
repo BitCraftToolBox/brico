@@ -43,6 +43,7 @@ import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
 import {QuestStageDesc} from "~/bindings/src/quest_stage_desc_type";
 import {ResourceClumpDesc} from "~/bindings/src/resource_clump_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {ToolDesc} from "~/bindings/src/tool_desc_type";
@@ -239,6 +240,7 @@ export const BitCraftTables = {
     'NpcDesc': cache<NpcDesc>('npc_desc', NpcDesc),
     'DeployableAppearanceOverrideDesc': cache<DeployableAppearanceOverrideDesc>('deployable_appearance_override_desc', DeployableAppearanceOverrideDesc),
     'EnemyScalingDesc': cache<EnemyScalingDesc>('enemy_scaling_desc', EnemyScalingDesc),
+    'ResourceGrowthRecipeDesc': cache<ResourceGrowthRecipeDesc>('resource_growth_recipe_desc', ResourceGrowthRecipeDesc),
 };
 
 /**

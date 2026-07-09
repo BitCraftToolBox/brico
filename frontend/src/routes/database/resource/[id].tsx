@@ -6,10 +6,10 @@ import {lootTab} from "~/components/fun/BricoLootBox";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ResourceIcon} from "~/components/shared/GameIcon";
-import {ExtractionRecipePanel, ResourceDepletionPanel} from "~/components/shared/RecipeDisplay";
+import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGrowthPanel} from "~/components/shared/RecipeDisplay";
 import {breadcrumb, IconLink, pageIcon} from "~/lib/game-links";
 import {prospectingForResource} from "~/lib/recipe-sources";
-import {enemiesForResource, extractionRecipeForResource, resourcesYieldingResource} from "~/lib/relations";
+import {enemiesForResource, extractionRecipeForResource, resourceGrowthFrom, resourceGrowthInto, resourcesYieldingResource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
@@ -47,6 +47,14 @@ export default function ResourceDetail() {
     const hasDepletion = createMemo(() => (resource()?.onDestroyYield?.length ?? 0) > 0);
     const hasDepletionResource = createMemo(() => (resource()?.onDestroyYieldResourceId ?? 0) > 0);
     const yieldedByResource = createMemo(() => resource() ? resourcesYieldingResource(resource()!.id) : [])
+
+    const growthInto = createMemo(() => resource() ? resourceGrowthInto(resource()!.id) : undefined);
+    const growthFrom = createMemo(() => {
+        const r = resource();
+        if (!r) return undefined;
+        const descs = resourceGrowthFrom(r.id);
+        return descs?.sort((a, b) => a.time[0] - b.time[0])
+    });
 
     return (
         <DetailPageLayout
@@ -106,6 +114,32 @@ export default function ResourceDetail() {
                             </For>
                         </div>
                     )
+                },
+                {
+                  id: "growth",
+                  label: "Timed Growth",
+                  count: (growthFrom() ? 1 : 0) + (growthInto() ? 1 : 0),
+                  showWhenEmpty: false,
+                  content: () => (
+                      <div class="space-y-4">
+                          <Show when={growthFrom()}>{growthDescs =>
+                              <div>
+                                  <h4 class="text-sm text-muted-foreground mb-2">Grows From</h4>
+                                  <RecipeSelect
+                                      recipes={growthDescs()}
+                                      nameFor={gd => resourceIndex().get(gd.resourceId)?.name ?? "Resource #" + gd.resourceId}
+                                      render={gd => <ResourceGrowthPanel growth={gd}/>}
+                                  />
+                              </div>
+                          }</Show>
+                          <Show when={growthInto()}>{growthDesc =>
+                              <div>
+                                  <h4 class="text-sm text-muted-foreground mb-2">Grows Into</h4>
+                                  <ResourceGrowthPanel growth={growthDesc()}/>
+                              </div>
+                          }</Show>
+                      </div>
+                  )
                 },
                 {
                     id: "prospecting",

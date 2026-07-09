@@ -8,6 +8,7 @@
  *   ItemStack, InputItemStack, ProbabilisticItemStack, ItemListPossibility, cargo IDs
  */
 
+import {ResourceGrowthRecipeDesc} from "~/bindings/src";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
@@ -100,6 +101,14 @@ export function craftingRecipesConsuming(itemId: number, itemType: string): Craf
 }
 
 // ─── Extraction Recipes ─────────────────────────────────────────
+
+export function resourceGrowthFrom(resourceId: number): ResourceGrowthRecipeDesc[] | undefined {
+    return BitCraftTables.ResourceGrowthRecipeDesc.indexedByMulti("grownResourceId")?.()?.get(resourceId);
+}
+
+export function resourceGrowthInto(resourceId: number): ResourceGrowthRecipeDesc | undefined {
+    return BitCraftTables.ResourceGrowthRecipeDesc.indexedBy("resourceId")?.()?.get(resourceId);
+}
 
 /** The extraction recipe for a given resource */
 export function extractionRecipeForResource(resourceId: number): ExtractionRecipeDesc | undefined {
