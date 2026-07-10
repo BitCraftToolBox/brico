@@ -11,6 +11,7 @@
 import {createMemo} from "solid-js";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
+import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
@@ -315,6 +316,12 @@ export function resourcesYieldingResource(res: number): ResourceDesc[] {
 }
 
 // ─── Cross-Table Relationships ──────────────────────────────────
+
+export function claimResearchRequiring(itemId: number, itemType: string): ClaimTechDesc[] {
+    const all = BitCraftTables.ClaimTechDesc.get();
+    if (!all) return [];
+    return all.filter(t => anyStackMatches(t.input, itemId, itemType));
+}
 
 /** Enemies associated with a resource (via enemyParamsId -> EnemyAiParamsDesc -> EnemyDesc) */
 export function enemiesForResource(resource: ResourceDesc): EnemyDesc[] {

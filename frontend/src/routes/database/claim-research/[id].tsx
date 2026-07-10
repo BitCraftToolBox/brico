@@ -2,8 +2,7 @@ import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {ItemStackArray} from "~/components/shared/ItemStacks";
-import {breadcrumb} from "~/lib/game-links";
+import {breadcrumb, ItemStackLink, LinkedList} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {readableSeconds, undefinedIfZero} from "~/lib/utils";
 
@@ -52,7 +51,7 @@ export default function ClaimResearchDetail() {
                 {
                     heading: "Cost",
                     properties: [
-                        {label: "Item Cost", value: tech()?.input.length ? <ItemStackArray stacks={tech()!.input}/> : undefined},
+                        {label: "Item Cost", value: tech()?.input.length ? <LinkedList>{tech()!.input.map(is => <ItemStackLink stack={is}/>)}</LinkedList> : "None"},
                         {label: "Supply Cost", value: tech()?.suppliesCost},
                         {label: "Research Time", value: readableSeconds(undefinedIfZero(tech()?.researchTime))},
                     ]
@@ -81,6 +80,7 @@ export default function ClaimResearchDetail() {
                     id: "unlocks",
                     label: "Unlocks Techs",
                     count: unlocksTechs().length,
+                    showWhenEmpty: false,
                     content: () => <RelTable<ClaimTechDesc> data={unlocksTechs()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>
                 },
             ]}

@@ -7,6 +7,7 @@ import {CargoIcon} from "~/components/shared/GameIcon";
 import {breadcrumb} from "~/lib/game-links";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
+    claimResearchRequiring,
     constructionRecipesConsuming,
     conversionRecipesConsuming,
     conversionRecipesProducing,
@@ -27,6 +28,7 @@ import {
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {
+    claimResearchTab,
     constructionCombinedTab,
     conversionTab,
     craftedFromTab,
@@ -83,6 +85,7 @@ export default function CargoDetail() {
     const tradeRequires = createMemo(() => cargoId() != null ? travelerTradesRequiring(cargoId()!, cargoType) : []);
     const tradeOffers = createMemo(() => cargoId() != null ? travelerTradesOffering(cargoId()!, cargoType) : []);
     const depletionSources = createMemo(() => cargoId() != null ? resourcesYielding(cargoId()!, cargoType) : []);
+    const researchRequires = createMemo(() => cargoId() != null ? claimResearchRequiring(cargoId()!, cargoType) : []);
     const {extractionDrops, enemyDrops, inItemLists} = questDropAugmentedLists(cargoId, cargoType);
 
     const questRequires = createMemo(() => {
@@ -141,6 +144,7 @@ export default function CargoDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                claimResearchTab(researchRequires()),
                 ...(cargo()?.id === 92169812 && easterEggs() ? [lootTab()] : [])
             ]}
         />

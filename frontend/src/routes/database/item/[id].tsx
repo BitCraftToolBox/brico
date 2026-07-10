@@ -8,6 +8,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {breadcrumb, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
+    claimResearchRequiring,
     constructionRecipesConsuming,
     conversionRecipesConsuming,
     conversionRecipesProducing,
@@ -33,6 +34,7 @@ import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {buffsGroups} from "~/lib/table-utils/detail-group-builders";
 import {
+    claimResearchTab,
     collectiblesTab,
     constructionCombinedTab,
     conversionTab,
@@ -145,6 +147,7 @@ export default function ItemDetail() {
     const tradeRequires = createMemo(() => itemId() != null ? travelerTradesRequiring(itemId()!, itemType) : []);
     const tradeOffers = createMemo(() => itemId() != null ? travelerTradesOffering(itemId()!, itemType) : []);
     const depletionSources = createMemo(() => itemId() != null ? resourcesYielding(itemId()!, itemType) : []);
+    const researchRequires = createMemo(() => itemId() != null ? claimResearchRequiring(itemId()!, itemType) : []);
     const isItemList = createMemo(() => item() ? item()?.itemListId ? BitCraftTables.ItemListDesc.indexedBy("id")().get(item()?.itemListId) : undefined : undefined);
     const {extractionDrops, enemyDrops, inItemLists} = questDropAugmentedLists(itemId, itemType);
 
@@ -320,6 +323,7 @@ export default function ItemDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                claimResearchTab(researchRequires()),
                 ...(item()?.id === 164053808 && easterEggs() ? [lootTabWith({loot: [[1602206011, "Item", 1687372047]], chest: [item()!.iconAssetName, item()!.rarity, item()!.tier]})] : [])
             ]}
         />

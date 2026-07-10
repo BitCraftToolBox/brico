@@ -7,6 +7,7 @@
 
 import {A} from "@solidjs/router";
 import {createSignal, Show} from "solid-js";
+import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
@@ -41,7 +42,7 @@ import {
     TravelerTradePanel,
 } from "~/components/shared/RecipeDisplay";
 import {Button} from "~/components/ui/button";
-import {CollectibleLink, QuestChainLink} from "~/lib/game-links";
+import {CollectibleLink, IconLink, IconSpan, ItemStackLink, LinkedList, pageIcon, QuestChainLink} from "~/lib/game-links";
 import {getInteractionName, getPlacementName} from "~/lib/placeables";
 import {
     getConstructionRecipeName,
@@ -407,6 +408,36 @@ export function collectiblesTab(collectibles: CollectibleDesc[]) : RelationshipT
         ),
     }
 }
+
+export function claimResearchTab(techs: ClaimTechDesc[]) : RelationshipTab {
+    return {
+        id: "claim-tech",
+        label: "Claim Research",
+        count: techs.length,
+        showWhenEmpty: false,
+        content: () => (
+            <RelTable<ClaimTechDesc>
+                data={techs}
+                columns={[
+                    {header: "Claim Research", cell: c => (
+                        <IconLink href={`/database/claim-research/${c.id}`} icon={pageIcon("Claim Research")}>
+                            {c.name}
+                        </IconLink>
+                    )},
+                    {header: "Required", cell: c => (
+                        <LinkedList>
+                            {
+                                c.input.map(is => <ItemStackLink stack={is}/>)
+                                    .concat(c.suppliesCost > 0 ? [<IconSpan>Supplies <span class="text-muted-foreground">×{c.suppliesCost}</span></IconSpan>] : [])
+                            }
+                        </LinkedList>
+                    )}
+                ]}
+            />
+        ),
+    }
+}
+
 // ─── Single Recipe Tab Builders (for building page) ────────────
 
 export function constructionCombinedSingleTab(
