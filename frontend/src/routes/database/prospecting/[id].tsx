@@ -1,10 +1,11 @@
 import {useParams} from "@solidjs/router";
-import {createMemo, For} from "solid-js";
+import {createMemo, For, Show} from "solid-js";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
+import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon, ResourceIcon} from "~/components/shared/GameIcon";
 import {ItemStackArray} from "~/components/shared/ItemStacks";
-import {BiomeLink, breadcrumb} from "~/lib/game-links";
+import {BiomeLink, breadcrumb, SkillLinkById} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -48,7 +49,6 @@ export default function ProspectingDetail() {
     const isLoading = useTablesLoading(BitCraftTables.ProspectingDesc);
     const index = BitCraftTables.ProspectingDesc.indexedBy("id");
     const biomeIndex = BitCraftTables.BiomeDesc.indexedBy("biomeType");
-    const skillIndex = BitCraftTables.SkillDesc.indexedBy("id");
     const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
     const enemyParamsIndex = BitCraftTables.EnemyAiParamsDesc.indexedBy("id");
 
@@ -58,12 +58,11 @@ export default function ProspectingDetail() {
         return index()?.get(id);
     });
 
-    const breadCrumbCount = createMemo(() => {
-        const arr = prospecting()?.breadCrumbCount;
-        if (!arr || arr.length === 0) return "—";
-        if (arr.length >= 2 && arr[0] !== arr[arr.length - 1]) return `${prospecting()!.breadCrumbCount[0]}–${prospecting()!.breadCrumbCount[prospecting()!.breadCrumbCount.length - 1]}`;
+    const rangeStr = (arr: Array<number> | undefined) => {
+        if (!arr || arr.length === 0) return undefined;
+        if (arr.length >= 2 && arr[0] !== arr[arr.length - 1]) return `${arr[0]}–${arr[arr.length - 1]}`;
         return arr[0];
-    });
+    }
 
     const biomes = createMemo(() => {
         const p = prospecting();
@@ -77,8 +76,7 @@ export default function ProspectingDetail() {
         const p = prospecting();
         if (!p?.experiencePerNode) return undefined;
         if (!p.experiencePerNode.quantity) return undefined;
-        const name = skillIndex()?.get(p.experiencePerNode.skillId)?.name ?? `Skill ${p.experiencePerNode.skillId}`;
-        return `${name}: ${fixFloat(p.experiencePerNode.quantity)}`;
+        return <><SkillLinkById skillId={p.experiencePerNode.skillId}/>: ${fixFloat(p.experiencePerNode.quantity)}`</>;
     });
 
     const spawnInfo = createMemo(() => {
@@ -109,15 +107,18 @@ export default function ProspectingDetail() {
             breadcrumb={breadcrumb("/database/prospecting")}
             loading={isLoading() && !prospecting()}
             name={prospecting()?.name ?? "Prospecting entry not found"}
+            icon={<Show when={prospecting()?.iconAssetPath}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
             description={prospecting()?.description}
             details={[
-                {label: "Breadcrumb Count", value: breadCrumbCount()},
+                {label: "Breadcrumb Count", value: rangeStr(prospecting()?.breadCrumbCount)},
                 {label: "Contribution Per Crumb", value: prospecting()?.contributionPerVisitedBreadCrumb},
                 {label: "% Nodes for Max Contribution", value: (prospecting()?.pctNodesForMaxContribution ?? 0) * 100},
                 {label: "Single Contribution Only", value: prospecting()?.singleContributionOnly},
-                {label: "Experience Per Node", value: experienceStr()},
+                {label: "Breadcrumb Distance", value: rangeStr(prospecting()?.distanceBetweenBreadCrumbs)},
+                {label: "Breadcrumb Radius", value: rangeStr(prospecting()?.breadCrumbRadius)},
                 {label: "Deadzone Angle", value: prospecting()?.deadzoneAngleBetweenCrumbs},
-                {label: "Join Radius", value: prospecting()!.joinRadius},
+                {label: "Join Radius", value: prospecting()?.joinRadius},
+                {label: "Experience Per Node", value: experienceStr()},
                 {label: "Pointer Duration", value: readableSeconds(prospecting()?.pointerDuration)},
                 {label: "Prospecting Duration", value: readableSeconds(prospecting()?.prospectingDuration)},
                 {label: "Is Aquatic Resource", value: prospecting()?.isAquaticResource},

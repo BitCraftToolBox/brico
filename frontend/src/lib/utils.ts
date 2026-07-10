@@ -66,6 +66,7 @@ export function undefinedIfZero(val: number | undefined) {
 
 export function readableSeconds(seconds: number | undefined, shorten: boolean = false): string | undefined {
     if (seconds === undefined) return undefined;
+    if (seconds === -1) return "-1";
     seconds = Math.round(seconds);
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)

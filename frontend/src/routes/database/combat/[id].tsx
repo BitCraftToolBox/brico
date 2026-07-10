@@ -1,7 +1,8 @@
 import {useParams} from "@solidjs/router";
-import {createMemo} from "solid-js";
+import {createMemo, Show} from "solid-js";
 import {BuffEffect} from "~/bindings/src/buff_effect_type";
 import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
+import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {BuffTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
@@ -60,6 +61,7 @@ export default function CombatDetail() {
             breadcrumb={breadcrumb("/database/combat", "Combat Ability")}
             loading={isLoading() && !action()}
             name={action()?.name ?? "Combat action not found"}
+            icon={<Show when={action()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
             description={action()?.description}
             details={[
                 {
