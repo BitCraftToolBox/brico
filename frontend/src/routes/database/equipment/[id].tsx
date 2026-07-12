@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, splitCamelCase} from "~/lib/utils";
 
@@ -27,7 +28,7 @@ export default function EquipmentDetail() {
             {
                 properties: [
                     {label: "Slots", value: eq.slots?.map(s => splitCamelCase(s.tag)).join(", ")},
-                    {label: "Required Skill", value: eq.levelRequirement?.skillId ? <SkillLinkById skillId={eq.levelRequirement.skillId}/> : undefined},
+                    {label: "Required Skill", value: eq.levelRequirement?.skillId ? () => <SkillLinkById skillId={eq.levelRequirement!.skillId}/> : undefined},
                     {label: "Required Level", value: eq.levelRequirement?.level},
                     {label: "Show In Progression", value: eq.showInProgression ? "Yes" : undefined},
                 ],
@@ -56,6 +57,8 @@ export default function EquipmentDetail() {
             name={item()?.name ?? `Equipment #${params.id}`}
             tier={item()?.tier}
             rarity={item()?.rarity?.tag}
+            metaKind="equipment"
+            metaImage={ogImageForAsset(item()?.iconAssetName)}
             details={details()}
             rawData={equipment()}
             spacetimeTable={BitCraftTables.EquipmentDesc.spacetimeName}

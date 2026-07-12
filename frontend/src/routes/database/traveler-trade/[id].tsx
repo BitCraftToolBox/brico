@@ -4,6 +4,7 @@ import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {TravelerTradePanel} from "~/components/shared/RecipeDisplay";
 import {AchievementLink, breadcrumb, LinkedList, SkillLinkById} from "~/lib/game-links";
+import {ogImageForCodepoint} from "~/lib/og-meta";
 import {getTravelerNpcName, getTravelerTradeName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -33,12 +34,16 @@ export default function TravelerTradeDetail() {
     const npcName = createMemo(() => getTravelerNpcName(trade()?.traveler.tag ?? ""));
     const tradeName = createMemo(() => trade() ? getTravelerTradeName(trade()!) : `Trade #${params.id}`);
 
+    // Return render thunks (not pre-built elements): building this JSX inside the memo, off the
+    // render path, drifts Solid's SSR hydration ids and crashes the bot path. DetailPageLayout
+    // invokes the thunk where it renders the value.
     const levelReqsEl = createMemo(() => {
         const t = trade();
         if (!t?.levelRequirements?.length) return undefined;
-        return (
+        const reqs = t.levelRequirements;
+        return () => (
             <LinkedList>
-                {t.levelRequirements.map(req => (
+                {reqs.map(req => (
                     <SkillLinkById skillId={req.skillId} level={`Lv. ${req.level}`}/>
                 ))}
             </LinkedList>
@@ -48,9 +53,10 @@ export default function TravelerTradeDetail() {
     const achievementReqsEl = createMemo(() => {
         const t = trade();
         if (!t?.achievementRequirements?.length) return undefined;
-        return (
+        const reqs = t.achievementRequirements;
+        return () => (
             <LinkedList>
-                {t.achievementRequirements.map(id => {
+                {reqs.map(id => {
                     const ach = achievementIndex()?.get(id);
                     return <AchievementLink id={id} name={ach?.name}/>;
                 })}
@@ -66,6 +72,8 @@ export default function TravelerTradeDetail() {
             icon={npcDesc() ? <FontIcon codepoint={npcDesc()!.iconAddress} class="size-16"/> : undefined}
             name={`${npcName()} Trade`}
             description={tradeName()}
+            metaKind="traveler trade"
+            metaImage={ogImageForCodepoint(npcDesc()?.iconAddress)}
             details={[
                 {label: "Traveler", value: npcName()},
                 {label: "Starting Stock", value: trade() && trade()!.startingStock !== MAX_INT32 ? trade()!.startingStock : undefined},

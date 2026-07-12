@@ -12,7 +12,7 @@
  */
 
 import {TbOutlineArrowBigDownLines as IconDown, TbOutlineLock as IconLock} from "solid-icons/tb";
-import {Accessor, Component, createEffect, createSignal, For, JSX, Show} from "solid-js";
+import {Accessor, children, Component, createEffect, createMemo, createSignal, For, JSX, Show} from "solid-js";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
@@ -54,20 +54,29 @@ import {fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Display ─────────────────────────────────────────
 
-export const StatLineList: Component<{ stats: StatLine[] }> = (props) => (
-    <Show when={props.stats.length}>
-        <div class="flex flex-col items-center mt-4">
-            <For each={props.stats}>
-                {(pair) => (
-                    <div class="flex flex-row w-full max-w-100">
-                        <div class="text-nowrap mr-2">{pair[0]}</div>
-                        <div class="dots-before flex flex-1 text-nowrap">{typeof pair[1] === "number" ? String(pair[1]) : pair[1]}</div>
-                    </div>
-                )}
-            </For>
-        </div>
-    </Show>
-);
+export const StatLineList: Component<{ stats?: StatLine[] }> = (props) => {
+    const lines = createMemo(() => props.stats ?? []);
+    return (
+        <Show when={lines().length}>
+            <div class="flex flex-col items-center mt-4">
+                <For each={lines()}>
+                    {(pair) => (
+                        <div class="flex flex-row w-full max-w-100">
+                            <div class="text-nowrap mr-2">
+                                {typeof pair[0] === "function" ? (pair[0] as () => JSX.Element)() : pair[0]}
+                            </div>
+                            <div class="dots-before flex flex-1 text-nowrap">
+                                {typeof pair[1] === "function"
+                                    ? (pair[1] as () => JSX.Element)()
+                                    : typeof pair[1] === "number" ? String(pair[1]) : pair[1]}
+                            </div>
+                        </div>
+                    )}
+                </For>
+            </div>
+        </Show>
+    );
+};
 
 // ─── Recipe Visual (generic layout) ────────────────────────────
 
@@ -78,28 +87,30 @@ interface RecipeVisualProps {
 }
 
 /** Generic inputs → ↓ → outputs + stat lines layout */
-export const RecipeVisual: Component<RecipeVisualProps> = (props) => (
-    <div class="flex flex-col min-w-1/2 justify-center">
-        <Show when={props.inputs}>
-            <div class="grid grid-flow-col grid-rows-1 justify-center">
-                {props.inputs}
-            </div>
-        </Show>
-        <Show when={props.inputs && props.outputs}>
-            <div class="flex flex-row justify-center">
-                <IconDown class="w-8 h-8 my-2"/>
-            </div>
-        </Show>
-        <Show when={props.outputs}>
-            <div class="flex flex-row flex-wrap sm:flex-nowrap justify-center">
-                {props.outputs}
-            </div>
-        </Show>
-        <Show when={props.stats}>
-            <StatLineList stats={props.stats!}/>
-        </Show>
-    </div>
-);
+export const RecipeVisual: Component<RecipeVisualProps> = (props) => {
+    const inputs = children(() => props.inputs);
+    const outputs = children(() => props.outputs);
+    return (
+        <div class="flex flex-col min-w-1/2 justify-center">
+            <Show when={inputs()}>
+                <div class="grid grid-flow-col grid-rows-1 justify-center">
+                    {inputs()}
+                </div>
+            </Show>
+            <Show when={inputs() && outputs()}>
+                <div class="flex flex-row justify-center">
+                    <IconDown class="w-8 h-8 my-2"/>
+                </div>
+            </Show>
+            <Show when={outputs()}>
+                <div class="flex flex-row flex-wrap sm:flex-nowrap justify-center">
+                    {outputs()}
+                </div>
+            </Show>
+            <StatLineList stats={props.stats}/>
+        </div>
+    );
+};
 
 // ─── Crafting Recipe Panel ──────────────────────────────────────
 

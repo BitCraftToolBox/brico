@@ -55,21 +55,19 @@ export function VersionChecker() {
 
     return (
         <div class="w-full flex justify-center py-1">
-            <Popover placement="right" fitViewport={true} slide={true} overlap={true}>
-                <PopoverTrigger>
-                    <Button variant="ghost" size="sm" class="h-8 max-w-full px-2 flex items-center gap-0 cursor-pointer">
-                        <Show when={showWarning()} fallback={<IconCurrent class="size-4 shrink-0"/>}>
-                            <IconOutdated class="size-4 shrink-0 text-warning-foreground"/>
-                        </Show>
-                        <span
-                            class="overflow-hidden text-sm
-                                   transition-[max-width,opacity] duration-200 ease-linear
-                                   ml-1.5 max-w-40 opacity-100
-                                   group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:ml-0"
-                        >
-                            {versionSummary(CURRENT_VERSION, true)}
-                        </span>
-                    </Button>
+            <Popover placement="right" fitViewport={true} slide={true}>
+                <PopoverTrigger as={Button} variant="ghost" size="sm" class="h-8 max-w-full px-2 flex items-center gap-0 cursor-pointer">
+                    <Show when={showWarning()} fallback={<IconCurrent class="size-4 shrink-0"/>}>
+                        <IconOutdated class="size-4 shrink-0 text-warning-foreground"/>
+                    </Show>
+                    <span
+                        class="overflow-hidden text-sm
+                               transition-[max-width,opacity] duration-200 ease-linear
+                               ml-1.5 max-w-40 opacity-100
+                               group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:ml-0"
+                    >
+                        {versionSummary(CURRENT_VERSION, true)}
+                    </span>
                 </PopoverTrigger>
                 <PopoverContent class="max-w-80 text-xs space-y-2" onOpenAutoFocus={e => e.preventDefault()} onCloseAutoFocus={e => e.preventDefault()}>
                     <div class="font-medium">Current data version</div>

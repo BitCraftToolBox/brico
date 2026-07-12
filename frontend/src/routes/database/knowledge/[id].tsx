@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
@@ -88,6 +89,8 @@ export default function KnowledgeDetail() {
             name={knowledge()?.name ?? `Knowledge #${params.id}`}
             description={scroll()?.content}
             tag={scroll()?.tag}
+            metaKind="knowledge"
+            metaImage={ogImageForAsset(item()?.iconAssetName)}
             details={details()}
             rawData={knowledge()}
             spacetimeTable={BitCraftTables.SecondaryKnowledgeDesc.spacetimeName}

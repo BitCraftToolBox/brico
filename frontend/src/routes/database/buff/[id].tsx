@@ -4,6 +4,7 @@ import {FontIcon} from "~/components/icons/font-icons";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {breadcrumb, IconLink, pageIcon} from "~/lib/game-links";
+import {ogImageForCodepoint} from "~/lib/og-meta";
 import {SidebarPages} from "~/lib/sidebar-items";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds, splitCamelCase} from "~/lib/utils";
@@ -37,7 +38,7 @@ export default function BuffDetail() {
                 {label: "Warn Time", value: b.warnTime ? `${fixFloat(b.warnTime)}s` : undefined},
                 {
                     label: "Online Timestamp",
-                    value: <Tooltip openOnTouchStart>
+                    value: () => <Tooltip openOnTouchStart>
                         <TooltipTrigger class="decoration-dotted underline">{b.onlineTimestamp ? "Yes" : "No"}</TooltipTrigger>
                         <TooltipContent class="max-w-[90svw]">If No, buff ticks down while offline.</TooltipContent>
                     </Tooltip>
@@ -95,6 +96,8 @@ export default function BuffDetail() {
             name={buff()?.description ?? `Buff #${params.id}`}
             icon={<Show when={buff()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
             tag={buffType()?.name}
+            metaKind="buff"
+            metaImage={ogImageForCodepoint(buff()?.iconAssetName)}
             details={details()}
             rawData={buff()}
             spacetimeTable={BitCraftTables.BuffDesc.spacetimeName}

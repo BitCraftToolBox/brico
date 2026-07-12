@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {RecipeSelect, TravelerTaskPanel} from "~/components/shared/RecipeDisplay";
 import {breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {ogImageForPage} from "~/lib/og-meta";
 import {getTravelerTaskName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
@@ -39,8 +40,10 @@ export default function TravelerTaskDetail() {
             loading={isLoading() && !task()}
             name={`${skillName() ?? "Task"} Task`}
             description={task()?.description}
+            metaKind="traveler task"
+            metaImage={ogImageForPage("Traveler Tasks")}
             details={[
-                {label: "Skill", value: task()?.levelRequirement?.skillId ? <SkillLinkById skillId={task()!.levelRequirement.skillId}/> : undefined},
+                {label: "Skill", value: task()?.levelRequirement?.skillId ? () => <SkillLinkById skillId={task()!.levelRequirement.skillId}/> : undefined},
                 {label: "Level Range", value: task() ? `${task()!.levelRequirement.minLevel}–${task()!.levelRequirement.maxLevel}` : undefined},
                 {label: "XP Reward", value: xpStr()},
             ]}

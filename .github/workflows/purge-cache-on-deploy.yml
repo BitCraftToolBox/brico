@@ -1,0 +1,54 @@
+name: Purge Cache on Pages Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Pages deployment
+        run: |
+          for i in {1..120}; do
+            echo "Check $i/120..."
+            DEPLOYMENT=$(curl -s \
+              -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+              "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CF_ACCOUNT_ID }}/pages/projects/brico/deployments" \
+              | jq "[.result[] | select(.deployment_trigger.metadata.commit_hash == \"${{ github.sha }}\")] | first")
+
+            if [[ -z "$DEPLOYMENT" || "$DEPLOYMENT" == "null" ]]; then
+              echo "Deployment not found yet..."
+              sleep 5
+              continue
+            fi
+
+            LATEST_STAGE=$(echo "$DEPLOYMENT" | jq -r '.latest_stage.name')
+            LATEST_STATUS=$(echo "$DEPLOYMENT" | jq -r '.latest_stage.status')
+
+            # Check if any stage failed
+            if echo "$DEPLOYMENT" | jq -e '.stages[] | select(.status == "failed")' > /dev/null; then
+              echo "✗ Deployment failed"
+              exit 1
+            fi
+
+            # Success: deploy stage completed successfully
+            if [[ "$LATEST_STAGE" == "deploy" && "$LATEST_STATUS" == "success" ]]; then
+              echo "✓ Deployment successful"
+              exit 0
+            fi
+
+            echo "Stage: $LATEST_STAGE ($LATEST_STATUS), waiting..."
+            sleep 5
+          done
+
+          echo "✗ Timeout waiting for deployment"
+          exit 1
+
+      - name: Purge Cloudflare Cache
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"files": ["https://brico.app/*"]}' \
+            "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache"

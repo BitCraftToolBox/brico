@@ -111,7 +111,7 @@ export default function ColorsPage() {
         }, 0);
     });
     return (
-        <MainLayout title="Colors" hideSearch>
+        <MainLayout title="Colors" hideSearch description="Brico.app theme color reference.">
             <div class="w-full">
                 <h1 class="text-4xl font-bold mb-8 text-foreground">Theme Colors</h1>
 

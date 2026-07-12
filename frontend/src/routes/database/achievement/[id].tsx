@@ -4,6 +4,7 @@ import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {AchievementTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb, CollectibleLink} from "~/lib/game-links";
+import {ogImageForPage} from "~/lib/og-meta";
 import {achievementPrereqs, collectibleRewards, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
@@ -54,6 +55,8 @@ export default function AchievementDetail() {
             name={achievement()?.name ?? "Achievement not found"}
             description={achievement()?.description}
             tag={`${achievement()?.pointsReward} points`}
+            metaKind="achievement"
+            metaImage={ogImageForPage("Achievements")}
             rawData={achievement()}
             spacetimeTable={BitCraftTables.AchievementDesc.spacetimeName}
             objectId={achievement()?.id}

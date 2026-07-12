@@ -6,6 +6,7 @@ import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {BuffTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForCodepoint} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, undefinedIfZero} from "~/lib/utils";
 
@@ -61,6 +62,8 @@ export default function CombatDetail() {
             name={action()?.name ?? "Combat action not found"}
             icon={<Show when={action()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
             description={action()?.description}
+            metaKind="combat ability"
+            metaImage={ogImageForCodepoint(action()?.iconAssetName)}
             details={[
                 {
                     properties: [

@@ -1,7 +1,7 @@
 import {ColorModeStorageManager, ConfigColorMode} from "@kobalte/core";
-import {makePersisted} from "@solid-primitives/storage";
 import {ColumnFiltersState, PaginationState, SortingState} from "@tanstack/solid-table";
-import {Accessor, createContext, createMemo, createSignal, JSX, onCleanup, Setter, useContext} from "solid-js";
+import {Accessor, createContext, createEffect, createMemo, createSignal, JSX, onCleanup, onMount, Setter, useContext} from "solid-js";
+import {isServer} from "solid-js/web";
 import {ALL_SIDEBAR_HREFS} from "~/lib/sidebar-items";
 
 // ── Types ─────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ export type AppSettings = {
 // ── Factory ───────────────────────────────────────────────────
 
 /** All localStorage keys and defaults in one place */
-const KEYS = {
+export const KEYS = {
     theme: "brico:theme",
     midnightDark: "brico:theme:midnightDark",
     sidebarShowControls: "brico:sidebar:show-controls",
@@ -127,10 +127,69 @@ const KEYS = {
     unchartedNotifications: "brico:uncharted:notifications",
 } as const;
 
+/**
+ * SSR-safe persisted signal. On the server, and at the first client render, it holds the
+ * provided default so server-rendered and hydrated markup match exactly. After mount it reads
+ * the saved value from localStorage (applying it with a brief post-hydration update) and writes
+ * subsequent changes back. Must be called during a component's render — createSettings() is.
+ */
+function persist<T>([get, set]: [Accessor<T>, Setter<T>], name: string): [Accessor<T>, Setter<T>] {
+    if (!isServer) {
+        onMount(() => {
+            try {
+                const raw = localStorage.getItem(name);
+                if (raw != null) set(() => JSON.parse(raw) as T);
+            } catch { /* malformed or unavailable — keep default */ }
+            // Start write-through only after the initial read so we never clobber the saved value.
+            createEffect(() => {
+                try {
+                    localStorage.setItem(name, JSON.stringify(get()));
+                } catch { /* storage unavailable — ignore */ }
+            });
+        });
+    }
+    return [get, set];
+}
+
+/**
+ * Raw (non-JSON) localStorage-backed signal for the color-mode `theme` value. It must match
+ * the plain, unquoted string format the pre-hydration ColorModeScript reads/writes — the
+ * generic `persist()` above JSON-encodes everything (so a saved "dark" is literally the
+ * 6-character string `"dark"`), which the script's raw `localStorage.getItem()` can't parse:
+ * it ends up assigning `style.colorScheme = '"dark"'`, an invalid CSS value the CSSOM silently
+ * drops, while `dataset.kbTheme` happily stores the garbled value anyway.
+ *
+ * Unlike `persist()`, the client's initial value is read synchronously (not deferred to
+ * onMount): theme has no server-rendered markup to stay consistent with, since the
+ * ColorModeScript already applies it to <html> before hydration runs. Deferring it would
+ * leave `ColorModeProvider`'s own initial value resolving to the OS color-scheme preference
+ * for one tick, causing a visible flash whenever the saved theme differs from it.
+ */
+function persistThemeRaw(key: string): [Accessor<ConfigColorMode>, Setter<ConfigColorMode>] {
+    let initial: ConfigColorMode = "system";
+    if (!isServer) {
+        try {
+            initial = (localStorage.getItem(key) as ConfigColorMode) || "system";
+        } catch { /* storage unavailable — keep default */ }
+    }
+
+    const [theme, setTheme] = createSignal<ConfigColorMode>(initial);
+
+    if (!isServer) {
+        createEffect(() => {
+            try {
+                localStorage.setItem(key, theme());
+            } catch { /* storage unavailable — ignore */ }
+        });
+    }
+
+    return [theme, setTheme];
+}
+
 function createSettings(): AppSettings {
 
     // cross-tab sync
-    type PersistedSync<T> = { key: string; get: Accessor<T>; set: (v: T) => void };
+    type PersistedSync<T> = { key: string; get: Accessor<T>; set: (v: T) => void; raw?: boolean };
     const persistedSyncs: PersistedSync<any>[] = [];
 
     const onStorageChange = (e: StorageEvent) => {
@@ -138,8 +197,8 @@ function createSettings(): AppSettings {
         for (const sync of persistedSyncs) {
             if (e.key !== sync.key) continue;
             try {
-                // prevent looping
-                const parsed = JSON.parse(e.newValue);
+                // prevent looping — theme is stored raw (unquoted), everything else JSON-encoded
+                const parsed = sync.raw ? e.newValue : JSON.parse(e.newValue);
                 if (parsed !== sync.get()) sync.set(parsed);
             } catch {
                 // malformed value in storage — ignore
@@ -147,39 +206,41 @@ function createSettings(): AppSettings {
             break;
         }
     };
-    window.addEventListener("storage", onStorageChange);
-    onCleanup(() => window.removeEventListener("storage", onStorageChange));
+    if (!isServer) {
+        window.addEventListener("storage", onStorageChange);
+        onCleanup(() => window.removeEventListener("storage", onStorageChange));
+    }
 
     // persisted signals
 
     // theme
-    const [theme, setTheme] = makePersisted(createSignal<ConfigColorMode>("system"), {name: KEYS.theme});
-    const [midnightDark, setMidnightDark] = makePersisted(createSignal<boolean>(false), {name: KEYS.midnightDark});
+    const [theme, setTheme] = persistThemeRaw(KEYS.theme);
+    const [midnightDark, setMidnightDark] = persist(createSignal<boolean>(false), KEYS.midnightDark);
 
     // sidebar
-    const [showSidebarControls, setShowSidebarControls] = makePersisted(createSignal(true), {name: KEYS.sidebarShowControls});
-    const [sidebarStartsCollapsed, setSidebarStartsCollapsed] = makePersisted( createSignal(false), {name: KEYS.sidebarStartsCollapsed});
-    const [sidebarSort, setSidebarSort] = makePersisted(createSignal<SortMode>("tree"), {name: KEYS.sidebarSort});
-    const [sidebarView, setSidebarView] = makePersisted(createSignal<ViewMode>("list"), {name: KEYS.sidebarView});
-    const [sidebarFavoritesOnly, setSidebarFavoritesOnly] = makePersisted(createSignal<boolean>(false), {name: KEYS.sidebarFavoritesOnly});
-    const [sidebarHiddenItems, setSidebarHiddenItems] = makePersisted(createSignal<string[]>([]), {name: KEYS.sidebarHiddenItems});
-    const [sidebarCollapsedGroups, setSidebarCollapsedGroups] = makePersisted(createSignal<string[]>([]), {name: KEYS.sidebarCollapsedGroups});
+    const [showSidebarControls, setShowSidebarControls] = persist(createSignal(true), KEYS.sidebarShowControls);
+    const [sidebarStartsCollapsed, setSidebarStartsCollapsed] = persist(createSignal(false), KEYS.sidebarStartsCollapsed);
+    const [sidebarSort, setSidebarSort] = persist(createSignal<SortMode>("tree"), KEYS.sidebarSort);
+    const [sidebarView, setSidebarView] = persist(createSignal<ViewMode>("list"), KEYS.sidebarView);
+    const [sidebarFavoritesOnly, setSidebarFavoritesOnly] = persist(createSignal<boolean>(false), KEYS.sidebarFavoritesOnly);
+    const [sidebarHiddenItems, setSidebarHiddenItems] = persist(createSignal<string[]>([]), KEYS.sidebarHiddenItems);
+    const [sidebarCollapsedGroups, setSidebarCollapsedGroups] = persist(createSignal<string[]>([]), KEYS.sidebarCollapsedGroups);
 
     // tables
-    const [tablePageSize, setTablePageSize] = makePersisted(createSignal<number>(10), {name: KEYS.tablePageSize});
-    const [tableHiddenColumns, setTableHiddenColumns] = makePersisted(createSignal<Record<string, string[]>>({}), {name: KEYS.tableHiddenColumns});
-    const [tableActionsFirst, setTableActionsFirst] = makePersisted(createSignal(false), {name: KEYS.tableActionsFirst});
+    const [tablePageSize, setTablePageSize] = persist(createSignal<number>(10), KEYS.tablePageSize);
+    const [tableHiddenColumns, setTableHiddenColumns] = persist(createSignal<Record<string, string[]>>({}), KEYS.tableHiddenColumns);
+    const [tableActionsFirst, setTableActionsFirst] = persist(createSignal(false), KEYS.tableActionsFirst);
 
     // game data?
-    const [completedQuestsRaw, setCompletedQuestsRaw] = makePersisted(createSignal<number[]>([]), {name: KEYS.completedQuests});
+    const [completedQuestsRaw, setCompletedQuestsRaw] = persist(createSignal<number[]>([]), KEYS.completedQuests);
 
     // easter eggs
-    const [easterEggs, setEasterEggs] = makePersisted(createSignal<boolean>(false), {name: KEYS.easterEggs});
-    const [tf2Mode, setTf2Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.tf2Mode});
-    const [r9Mode, setR9Mode] = makePersisted(createSignal<boolean>(false), {name: KEYS.r9Mode});
+    const [easterEggs, setEasterEggs] = persist(createSignal<boolean>(false), KEYS.easterEggs);
+    const [tf2Mode, setTf2Mode] = persist(createSignal<boolean>(false), KEYS.tf2Mode);
+    const [r9Mode, setR9Mode] = persist(createSignal<boolean>(false), KEYS.r9Mode);
 
     // temp/event
-    const [unchartedNotifications, setUnchartedNotifications] = makePersisted(
+    const [unchartedNotifications, setUnchartedNotifications] = persist(
         createSignal<UnchartedNotifications>({
             notifyAtStart: false,
             notifyAt5m: false,
@@ -187,7 +248,7 @@ function createSettings(): AppSettings {
             notifyAt60m: false,
             soundEnabled: false,
         }),
-        {name: KEYS.unchartedNotifications}
+        KEYS.unchartedNotifications
     );
 
 
@@ -242,7 +303,7 @@ function createSettings(): AppSettings {
 
     // Register all persisted signals for cross-tab synchronization.
     persistedSyncs.push(
-        {key: KEYS.theme, get: theme, set: setTheme},
+        {key: KEYS.theme, get: theme, set: setTheme, raw: true},
         {key: KEYS.midnightDark, get: midnightDark, set: setMidnightDark},
         {key: KEYS.sidebarShowControls, get: showSidebarControls, set: setShowSidebarControls},
         {key: KEYS.sidebarSort, get: sidebarSort, set: setSidebarSort},

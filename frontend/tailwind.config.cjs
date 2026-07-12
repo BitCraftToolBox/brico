@@ -133,7 +133,7 @@ module.exports = {
         "caret-blink": "caret-blink 1.25s ease-out infinite"
       },
       fontFamily: {
-        sans: ["Inter", ...fontFamily.sans]
+        sans: ["Inter Variable", ...fontFamily.sans]
       },
     }
   },

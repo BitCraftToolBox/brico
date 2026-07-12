@@ -43,7 +43,7 @@ export default function QuestGraphTool() {
     });
 
     return (
-        <MainLayout title="Quest Graph" navTitle={
+        <MainLayout title="Quest Graph" description="Interactive BitCraft quest chain graph — visualize quest progression and rewards on Brico.app." navTitle={
             <>
                 {breadcrumb("/database/quest-chain", "Quests")}
                 {"Graph"}

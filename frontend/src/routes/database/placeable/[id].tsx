@@ -4,6 +4,7 @@ import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/share
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, GrowthPanel, InteractionPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {
     findRootPlacement,
     getInteractionName,
@@ -183,6 +184,8 @@ export default function PlaceableDetail() {
             rarity={placeable()?.rarity?.tag}
             tag={placeable()?.tag}
             description={placeable()?.description}
+            metaKind="placeable"
+            metaImage={ogImageForAsset(placeable()?.iconAssetName)}
             details={detailGroups()}
             summaryContent={graphPlacementId() ? () => (
                 <div class="flex flex-col items-center gap-2 py-2">

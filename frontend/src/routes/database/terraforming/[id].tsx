@@ -4,7 +4,7 @@ import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
 import {breadcrumb} from "~/lib/game-links";
-import {toolReqPair} from "~/lib/recipe-sources";
+import {ogImageForCodepoint} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function TerraformingDetail() {
@@ -19,11 +19,16 @@ export default function TerraformingDetail() {
         return index().get(id);
     });
 
+    // Compute the tool string directly rather than via toolReqPair(): that helper eagerly builds
+    // an <IconSpan> element (its label half, unused here), and creating JSX inside this memo — off
+    // the render path — drifts Solid's SSR hydration ids and crashes the bot path.
     const tool = createMemo(() => {
         const r = recipe();
-        if (!r) return undefined;
-        if (!r.toolRequirement) return undefined;
-        return toolReqPair(r.toolRequirement, toolIndex());
+        if (!r?.toolRequirement) return undefined;
+        const req = r.toolRequirement;
+        const tt = toolIndex()?.get(req.toolType);
+        if (!tt) return undefined;
+        return `Level ${req.level} ${tt.name}${req.power > 1 ? ` (Power >= ${req.power})` : ""}`;
     })
 
     return (
@@ -34,11 +39,13 @@ export default function TerraformingDetail() {
             icon={<FontIcon codepoint="0034" class="size-8"/>}
             name={"Terraform Elevation Difference " + recipe()?.difference}
             description={"Elevation difference calculated from original world gen elevation."}
+            metaKind="terraforming"
+            metaImage={ogImageForCodepoint("0034")}
             details={[
                 {label: "Effort", value: recipe()?.actionsCount},
                 {label: "Stamina", value: recipe()?.staminaPerAction},
                 {label: "Time", value: recipe()?.timePerAction},
-                {label: "Tool", value: tool() ? tool()![1] : undefined},
+                {label: "Tool", value: tool()},
             ]}
             rawData={recipe()}
             spacetimeTable={BitCraftTables.TerraformRecipeDesc.spacetimeName}

@@ -4,6 +4,7 @@ import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/Detai
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {buffsGroups} from "~/lib/table-utils/detail-group-builders";
 import {fixFloat, undefinedIfZero} from "~/lib/utils";
@@ -53,6 +54,8 @@ export default function FoodDetail() {
             name={item()?.name ?? `Food #${params.id}`}
             tier={item()?.tier}
             rarity={item()?.rarity?.tag}
+            metaKind="food"
+            metaImage={ogImageForAsset(item()?.iconAssetName)}
             details={[
                 {
                     properties: [

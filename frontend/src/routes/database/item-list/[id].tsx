@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemListSourceIcon} from "~/components/shared/GameIcon";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForPage} from "~/lib/og-meta";
 import {getItemListSource, ItemListSource} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {itemListTab} from "~/lib/table-utils/detail-tab-builders";
@@ -41,6 +42,8 @@ export default function ItemListDetail() {
             loading={isLoading() && !itemList()}
             name={itemList()?.name || `Item List #${params.id}`}
             tag={"Item List"}
+            metaKind="item list"
+            metaImage={ogImageForPage("Item Lists")}
             icon={<Show when={itemList()}>{il => <ItemListSourceIcon list={il()} noInteract={true}/>}</Show>}
             rawData={itemList()}
             spacetimeTable={BitCraftTables.ItemListDesc.spacetimeName}

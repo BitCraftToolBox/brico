@@ -4,6 +4,7 @@ import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {breadcrumb, IconLink} from "~/lib/game-links";
+import {ogImageForPage} from "~/lib/og-meta";
 import {prospectingForBiome} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -31,6 +32,8 @@ export default function BiomeDetail() {
             loading={isLoading() && !biome()}
             name={biome()?.name ?? "Biome not found"}
             description={biome()?.description}
+            metaKind="biome"
+            metaImage={ogImageForPage("Biomes")}
             details={[
                 {label: "Hazard Level", value: biome()?.hazardLevel},
                 {label: "Disallow Player Build", value: biome()?.disallowPlayerBuild},

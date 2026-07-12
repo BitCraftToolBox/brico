@@ -6,6 +6,7 @@ import {GameIcon} from "~/components/shared/GameIcon";
 import {InputItemStackArray} from "~/components/shared/ItemStacks";
 import {KnowledgeTable, StatTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
@@ -50,6 +51,8 @@ export default function PavingDetail() {
             name={tile()?.name ?? "Paving tile not found"}
             tier={tile()?.tier}
             description={tile()?.description}
+            metaKind="paving"
+            metaImage={ogImageForAsset(tile()?.iconAddress)}
             details={[
                 {label: "Experience", value: experienceStr()},
                 {label: "Build Time", value: tile() ? `${fixFloat(tile()!.pavingDuration)}s` : undefined},

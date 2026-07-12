@@ -13,7 +13,7 @@
 
 import {A} from "@solidjs/router";
 import {TbOutlineLock as IconLock} from "solid-icons/tb";
-import {For, JSX, Show} from "solid-js";
+import {children, For, JSX, Show} from "solid-js";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
@@ -370,13 +370,14 @@ export function ItemStackLink(props: { stack: ItemStack; class?: string; showIco
 
 /** Renders a list of elements separated by commas. Handles wrapping cleanly. */
 export function LinkedList(props: { children: JSX.Element[] }) {
+    const items = children(() => props.children);
     return (
         <span class="inline-flex flex-wrap items-center">
-            <For each={props.children}>
+            <For each={items.toArray()}>
                 {(child, i) => (
                     <span class="text-nowrap">
                         {child}
-                        <Show when={i() < props.children.length - 1}>
+                        <Show when={i() < items.toArray().length - 1}>
                             <span class="text-muted-foreground mr-1 align-bottom">,</span>
                         </Show>
                     </span>

@@ -8,6 +8,7 @@ import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ResourceIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGrowthPanel} from "~/components/shared/RecipeDisplay";
 import {breadcrumb, IconLink, pageIcon} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {prospectingForResource} from "~/lib/recipe-sources";
 import {enemiesForResource, extractionRecipeForResource, resourceGrowthFrom, resourceGrowthInto, resourcesYieldingResource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
@@ -69,6 +70,8 @@ export default function ResourceDetail() {
             rarity={resource()?.rarity?.tag}
             description={resource()?.description}
             tag={resource()?.tag}
+            metaKind="resource"
+            metaImage={ogImageForAsset(resource()?.iconAssetName)}
             details={[
                 {label: "Max Health", value: resource()?.maxHealth},
                 {label: "Ignores Damage", value: resource()?.ignoreDamage ? true : undefined},

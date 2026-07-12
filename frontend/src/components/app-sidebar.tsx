@@ -33,6 +33,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {VersionChecker} from "~/components/version-checker";
 import {useSettings} from "~/lib/settings";
 import {SIDEBAR_GROUPS, type SidebarItemDef} from "~/lib/sidebar-items";
+import {cn} from "~/lib/utils";
 
 // ── Toggle button helpers ───────────────────────────────────────
 
@@ -45,26 +46,21 @@ function IconToggleButton<T>(props: {
     title?: JSX.Element;
 }) {
     const isSelected = () => props.value === props.selectedValue;
-    const handleClick = () => {
+    const handleClick = (e) => {
         if (isSelected() && props.offValue !== undefined) {
             props.onChange(props.offValue);
         } else {
             props.onChange(props.value);
         }
     };
+    const classes = () => isSelected() ? "bg-sidebar-foreground text-sidebar-accent-foreground" : "border-sidebar-foreground text-sidebar-foreground hover:bg-sidebar-accent/50";
     return (
         <Tooltip>
-            <TooltipTrigger>
-                <button
-                    class={`size-8 flex items-center justify-center rounded transition-colors ${
-                        isSelected()
-                            ? "bg-sidebar-foreground text-sidebar-accent-foreground"
-                            : "border-sidebar-foreground text-sidebar-foreground hover:bg-sidebar-accent/50"
-                    }`}
-                    onClick={handleClick}
-                >
-                    {props.icon({class: "size-4"})}
-                </button>
+            <TooltipTrigger as={"button"}
+                class={cn("size-8 flex items-center justify-center rounded transition-colors", classes())}
+                onClick={handleClick}
+            >
+                {props.icon({class: "size-4"})}
             </TooltipTrigger>
             <TooltipContent>{props.title}</TooltipContent>
         </Tooltip>
@@ -149,7 +145,7 @@ export function AppSidebar() {
                         </div>
 
                         {/* Favorites toggle */}
-                        <div class="border rounded-md">
+                        <div class="flex border rounded-md">
                             <IconToggleButton<boolean>
                                 icon={sidebarFavoritesOnly() ? IconStarFilled : IconStarOutline}
                                 value={true}
@@ -158,7 +154,7 @@ export function AppSidebar() {
                                 onChange={setSidebarFavoritesOnly}
                                 title={
                                     <div class="text-sm">
-                                        {sidebarFavoritesOnly() ? "Showing favorites" : "Show all items"}<br/>
+                                        {sidebarFavoritesOnly() ? "Showing favorites" : "Showing all items"}<br/>
                                         <div class="text-xs text-muted-foreground">
                                             Favorites can be set in the <A href="/settings"><IconSettings class="inline"/> Settings</A>
                                         </div>
@@ -254,20 +250,16 @@ export function AppSidebar() {
                                 group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
                         <a href={"https://github.com/BitCraftToolBox/brico"} target={"_blank"}>
                             <Tooltip>
-                                <TooltipTrigger>
-                                    <Button variant="ghost" size="sm" class="w-9 px-0">
-                                        <IconGithub/>
-                                    </Button>
+                                <TooltipTrigger as={Button} variant="ghost" size="sm" class="w-9 px-0">
+                                    <IconGithub/>
                                 </TooltipTrigger>
                                 <TooltipContent>GitHub</TooltipContent>
                             </Tooltip>
                         </a>
                         <a href={"https://cereal.brico.app"} target={"_blank"}>
                             <Tooltip>
-                                <TooltipTrigger>
-                                    <Button variant="ghost" size="sm" class="w-9 px-0">
-                                        🥣
-                                    </Button>
+                                <TooltipTrigger as={Button} variant="ghost" size="sm" class="w-9 px-0">
+                                    🥣
                                 </TooltipTrigger>
                                 <TooltipContent>cereal - Raw Data Browser</TooltipContent>
                             </Tooltip>
@@ -275,10 +267,8 @@ export function AppSidebar() {
                     </div>
                     <a href={"https://discord.gg/MJGD2hZDGv"} target={"_blank"}>
                         <Tooltip placement="right">
-                            <TooltipTrigger>
-                                <Button variant="ghost" size="sm" class="w-9 px-0">
-                                    <IconDiscord/>
-                                </Button>
+                            <TooltipTrigger as={Button} variant="ghost" size="sm" class="w-9 px-0">
+                                <IconDiscord/>
                             </TooltipTrigger>
                             <TooltipContent>Brico's Toolbox Discord</TooltipContent>
                         </Tooltip>

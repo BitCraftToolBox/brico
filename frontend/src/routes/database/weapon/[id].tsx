@@ -5,6 +5,7 @@ import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
@@ -44,6 +45,8 @@ export default function WeaponDetail() {
             tier={weapon()?.tier}
             rarity={item()?.rarity?.tag}
             tag={weaponType()?.name}
+            metaKind="weapon"
+            metaImage={ogImageForAsset(item()?.iconAssetName)}
             details={[
                 {label: "Min Damage", value: weapon()?.minDamage},
                 {label: "Max Damage", value: weapon()?.maxDamage},

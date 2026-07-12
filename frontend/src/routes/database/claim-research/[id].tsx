@@ -3,6 +3,7 @@ import {createMemo} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {breadcrumb, ItemStackLink, LinkedList} from "~/lib/game-links";
+import {ogImageForPage} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {readableSeconds, undefinedIfZero} from "~/lib/utils";
 
@@ -45,11 +46,13 @@ export default function ClaimResearchDetail() {
             name={tech()?.name ?? "Claim research not found"}
             tier={tech()?.tier}
             description={tech()?.description}
+            metaKind="claim research"
+            metaImage={ogImageForPage("Claim Research")}
             details={[
                 {
                     heading: "Cost",
                     properties: [
-                        {label: "Item Cost", value: tech()?.input.length ? <LinkedList>{tech()!.input.map(is => <ItemStackLink stack={is}/>)}</LinkedList> : "None"},
+                        {label: "Item Cost", value: tech()?.input.length ? () => <LinkedList>{tech()!.input.map(is => <ItemStackLink stack={is}/>)}</LinkedList> : "None"},
                         {label: "Supply Cost", value: tech()?.suppliesCost},
                         {label: "Research Time", value: readableSeconds(undefinedIfZero(tech()?.researchTime))},
                     ]

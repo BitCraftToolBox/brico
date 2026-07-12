@@ -1,5 +1,6 @@
 import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
-import {Accessor, createMemo, createResource} from "solid-js";
+import {Accessor, createMemo, createSignal} from "solid-js";
+import {isServer} from "solid-js/web";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BiomeDesc} from "~/bindings/src/biome_desc_type";
 import {BuffDesc} from "~/bindings/src/buff_desc_type";
@@ -54,6 +55,7 @@ import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {WeaponDesc} from "~/bindings/src/weapon_desc_type";
 import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
+import {CURRENT_VERSION} from "~/lib/version";
 
 interface FetchParams {
     name: string;
@@ -62,28 +64,33 @@ interface FetchParams {
 
 const bsatnPath = "/bsatn/static";
 
-
-async function fetchBSATN<T>(params: FetchParams) {
-    const data = await fetch(
-        `${bsatnPath}/${params.name}.bsatn`
-    );
+/**
+ * Fetch + deserialize one BSATN table array from `${baseUrl}/<name>.bsatn`.
+ * `baseUrl` is the relative static path on the client and an absolute origin-qualified
+ * path on the server (the Workers runtime has no ambient origin for relative fetch).
+ * A version query busts caches on deploy so the files can be served immutably.
+ */
+async function fetchBSATNFrom<T>(baseUrl: string, params: FetchParams): Promise<T[]> {
+    const data = await fetch(`${baseUrl}/${params.name}.bsatn?v=${encodeURIComponent(CURRENT_VERSION.tag)}`);
     if (!data.ok) {
-        throw Error("Couldn't fetch BSATN data." + await data.text())
+        throw Error("Couldn't fetch BSATN data." + await data.text());
     }
-    const reader = new BinaryReader(new Uint8Array((await data.arrayBuffer())));
+    const reader = new BinaryReader(new Uint8Array(await data.arrayBuffer()));
     return AlgebraicType.createArrayType(params.itemType).deserialize(reader) as T[];
 }
 
+// ── Dual-mode table store ─────────────────────────────────────
+// Every constructed table registers here so the server/client preloads can populate them.
+const allTables: BitCraftTable<any>[] = [];
+
+// Server: successfully parsed tables are memoized per isolate (shared across requests on a warm
+// isolate). Only successes are cached — a failed fetch is retried on the next request so a
+// transient error (e.g. an asset layer not yet ready) never permanently poisons the isolate.
+const serverCache = new Map<string, any[]>();
+
 
 function cache<T>(n: string, b: { getTypeScriptAlgebraicType: () => AlgebraicType }) {
-    const base = new BitCraftTable<T>(n, b.getTypeScriptAlgebraicType());
-    const [resource] = createResource(async () =>
-        fetchBSATN<T>({name: base.spacetimeName, itemType: base.spacetimeType})
-    );
-    base.get = resource;
-    base.loading = () => resource.loading;
-    base.error = () => resource.error;
-    return base;
+    return new BitCraftTable<T>(n, b.getTypeScriptAlgebraicType());
 }
 
 
@@ -124,7 +131,11 @@ function createIndexMulti<TData, TIdx extends keyof TData & string, TValue exten
 }
 
 export function loadTableAdHoc<T>(n: string, b: { getTypeScriptAlgebraicType: () => AlgebraicType }) {
-    return cache<T>(n, b);
+    const table = cache<T>(n, b);
+    // Ad-hoc tables are typically created after the bulk preload (e.g. inside a lazily
+    // imported route module), so kick off their own client load immediately.
+    if (!isServer) void table.ensureClientLoaded();
+    return table;
 }
 
 export class BitCraftTable<TData> {
@@ -133,6 +144,10 @@ export class BitCraftTable<TData> {
     get: Accessor<TData[] | undefined>;
     loading: Accessor<boolean>;
     error: Accessor<any>;
+    #setData?: (d: TData[]) => void;
+    #setError?: (e: any) => void;
+    #clientLoad?: Promise<void>;
+    #serverLoad?: Promise<void>;
     #idxCache: Map<string, Accessor<Map<any, TData>>>;
     #idxCacheMulti: Map<string, Accessor<Map<any, TData[]>>>;
     #tagOrdinalCache: Map<string, Map<string, number>>;
@@ -140,12 +155,58 @@ export class BitCraftTable<TData> {
     constructor(spacetimeName: string, spacetimeType: AlgebraicType) {
         this.spacetimeName = spacetimeName;
         this.spacetimeType = spacetimeType;
-        this.get = () => undefined;
-        this.loading = () => true;
-        this.error = () => undefined;
+        if (isServer) {
+            // Reads from the per-isolate memo, populated by preloadAllTablesServer().
+            this.get = () => serverCache.get(spacetimeName) as TData[] | undefined;
+            this.loading = () => !serverCache.has(spacetimeName);
+            this.error = () => undefined;
+        } else {
+            // Reactive signal, populated by ensureClientLoaded() / preloadAllTablesClient().
+            const [data, setData] = createSignal<TData[] | undefined>(undefined);
+            const [error, setError] = createSignal<any>(undefined);
+            this.get = data;
+            this.loading = () => data() === undefined && error() === undefined;
+            this.error = error;
+            this.#setData = setData;
+            this.#setError = setError;
+        }
         this.#idxCache = new Map<string, Accessor<Map<any, TData>>>();
         this.#idxCacheMulti = new Map<string, Accessor<Map<any, TData[]>>>();
         this.#tagOrdinalCache = new Map<string, Map<string, number>>();
+        allTables.push(this);
+    }
+
+    /** Client: fetch + populate this table's signal exactly once. */
+    ensureClientLoaded(): Promise<void> {
+        if (isServer) return Promise.resolve();
+        if (!this.#clientLoad) {
+            this.#clientLoad = fetchBSATNFrom<TData>(bsatnPath, {name: this.spacetimeName, itemType: this.spacetimeType})
+                .then(d => this.#setData!(d))
+                .catch(e => this.#setError!(e));
+        }
+        return this.#clientLoad;
+    }
+
+    /**
+     * Server: fetch + memoize this table in the per-isolate cache. Successes are cached
+     * permanently; a failure clears the in-flight promise so the next request retries.
+     * Concurrent requests share a single in-flight fetch.
+     */
+    ensureServerLoaded(baseUrl: string): Promise<void> {
+        if (serverCache.has(this.spacetimeName)) return Promise.resolve();
+        if (!this.#serverLoad) {
+            this.#serverLoad = fetchBSATNFrom<TData>(baseUrl, {name: this.spacetimeName, itemType: this.spacetimeType})
+                .then(d => {
+                    serverCache.set(this.spacetimeName, d);
+                })
+                .catch(e => {
+                    console.error(`[spacetime] failed to load ${this.spacetimeName}:`, e);
+                })
+                .finally(() => {
+                    this.#serverLoad = undefined;
+                });
+        }
+        return this.#serverLoad;
     }
 
     indexedBy<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx, allowZero: boolean = false): Accessor<Map<any, TData>> {
@@ -246,6 +307,31 @@ export const BitCraftTables = {
     'ResourceGrowthRecipeDesc': cache<ResourceGrowthRecipeDesc>('resource_growth_recipe_desc', ResourceGrowthRecipeDesc),
     'TerraformRecipeDesc': cache<TerraformRecipeDesc>('terraform_recipe_desc', TerraformRecipeDesc),
 };
+
+// ── Preloads ──────────────────────────────────────────────────
+
+/**
+ * Server: ensure every registered table is fetched + parsed for this isolate. Cheap once warm
+ * (cached tables short-circuit); previously-failed tables are retried. `origin` is the request
+ * origin (e.g. https://brico.app) used to build absolute asset URLs.
+ */
+export async function preloadAllTablesServer(origin: string): Promise<void> {
+    const baseUrl = `${origin}${bsatnPath}`;
+    await Promise.all(allTables.map(t => t.ensureServerLoaded(baseUrl)));
+}
+
+let clientPreload: Promise<void> | undefined;
+
+/**
+ * Client: fetch + parse every registered table once, populating the reactive store. Awaited in
+ * entry-client before hydration so the first client render matches the server-rendered HTML.
+ */
+export function preloadAllTablesClient(): Promise<void> {
+    if (!clientPreload) {
+        clientPreload = Promise.all(allTables.map(t => t.ensureClientLoaded())).then(() => {});
+    }
+    return clientPreload;
+}
 
 /**
  * Returns true when ALL game tables have finished loading (regardless of success/failure).

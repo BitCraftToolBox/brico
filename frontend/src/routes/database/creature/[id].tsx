@@ -12,6 +12,7 @@ import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {breadcrumb, ItemListLink, SkillLinkById} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
 import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList, scalingDescsFromEnemy} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -52,7 +53,9 @@ export default function CreatureDetail() {
     const experience = createMemo(() => {
         const c = creature();
         if (!c?.experiencePerDamageDealt?.length) return undefined;
-        return c.experiencePerDamageDealt.filter(exp => exp.skillId).map(exp => {
+        const entries = c.experiencePerDamageDealt.filter(exp => exp.skillId);
+        if (!entries.length) return undefined;
+        return () => entries.map(exp => {
             return <><SkillLinkById skillId={exp.skillId}/>: <Tooltip openOnTouchStart>
                     <TooltipTrigger class={"decoration-dotted underline"}>{fixFloat(exp.quantity)}</TooltipTrigger>
                     <TooltipContent>
@@ -127,6 +130,8 @@ export default function CreatureDetail() {
             rarity={creature()?.rarity?.tag}
             description={creature()?.description}
             tag={creature()?.tag}
+            metaKind="creature"
+            metaImage={ogImageForAsset(creature()?.iconAddress)}
             details={detailGroups()}
             rawData={creature()}
             spacetimeTable={BitCraftTables.EnemyDesc.spacetimeName}
@@ -173,7 +178,7 @@ export default function CreatureDetail() {
                                 },
                                 {
                                     header: "Weighted",
-                                    cell: ([loot]) => <span>{itemListLootWeightedComponent(loot.weighted)}</span>,
+                                    cell: ([loot]) => itemListLootWeightedComponent(loot.weighted),
                                 },
                                 {
                                     header: "Output",

@@ -4,6 +4,7 @@ import {CompletionCondition} from "~/bindings/src/completion_condition_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemStackLink, LinkedList, pageIcon, QuestChainLink} from "~/lib/game-links";
+import {ogImageForPage} from "~/lib/og-meta";
 import {computeQuestTree, questChainCompleter, stagesByChain} from "~/lib/quests";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -117,6 +118,8 @@ export default function QuestChainDetail() {
             loading={isLoading() && !quest()}
             name={quest()?.name ?? `Quest #${params.id}`}
             icon={pageIcon("Quest Chains", "size-16")}
+            metaKind="quest chain"
+            metaImage={ogImageForPage("Quest Chains")}
             details={details()}
             summaryContent={stages().length || (quest() && !quest()!.unstartable && !quest()!.isHint) ? () => (
                 <div class="flex flex-col gap-3 px-1 py-2">

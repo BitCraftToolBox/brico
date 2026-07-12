@@ -77,7 +77,7 @@ export default function PlaceableGraphTool() {
     }
 
     return (
-        <MainLayout title="Placeable Graph" navTitle={
+        <MainLayout title="Placeable Graph" description="Interactive BitCraft placeable lifecycle graph — trace placement, interaction, and conversion chains on Brico.app." navTitle={
             <>
                 {breadcrumb("/database/placeable", "Placeables")}
                 <span>Graph</span>

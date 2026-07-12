@@ -10,7 +10,8 @@ import {
     TbOutlineMoon as IconMoon,
     TbOutlineSun as IconSun,
 } from "solid-icons/tb";
-import {createMemo, createSignal, For, JSX, onCleanup, onMount, Show} from "solid-js";
+import {children, createMemo, createSignal, For, JSX, onCleanup, onMount, Show} from "solid-js";
+import {isServer} from "solid-js/web";
 import MainLayout from "~/components/MainLayout";
 import {Button} from "~/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
@@ -21,13 +22,14 @@ import {SIDEBAR_GROUPS, SidebarGroupDef, type SidebarItemDef} from "~/lib/sideba
 // ── Shared UI helpers ─────────────────────────────────────────
 
 function SettingsSection(props: {title: string; description?: string; children: JSX.Element}) {
+    const description = children(() => props.description);
     return (
         <section class="flex flex-col gap-3">
             <div>
                 <h2 class="text-base font-semibold">{props.title}</h2>
-                {props.description && (
-                    <p class="text-sm text-muted-foreground">{props.description}</p>
-                )}
+                <Show when={description()}>
+                    <p class="text-sm text-muted-foreground">{description()}</p>
+                </Show>
             </div>
             <div class="rounded-lg border bg-card p-4 flex flex-col gap-4">
                 {props.children}
@@ -37,13 +39,14 @@ function SettingsSection(props: {title: string; description?: string; children: 
 }
 
 function SettingsRow(props: {label: string; description?: JSX.Element; children: JSX.Element}) {
+    const description = children(() => props.description);
     return (
         <div class="flex flex-row items-center justify-between gap-4">
             <div class="flex flex-col gap-0.5">
                 <span class="text-sm font-medium">{props.label}</span>
-                {props.description && (
-                    <span class="text-xs text-muted-foreground">{props.description}</span>
-                )}
+                <Show when={description()}>
+                    <span class="text-xs text-muted-foreground">{description()}</span>
+                </Show>
             </div>
             <div class="shrink-0">{props.children}</div>
         </div>
@@ -178,8 +181,10 @@ export default function SettingsPage() {
             konamiIdx = e.key === KONAMI_CODE[0] ? 1 : 0;
         }
     };
-    onMount(() => window.addEventListener("keydown", onKeyDown));
-    onCleanup(() => window.removeEventListener("keydown", onKeyDown));
+    if (!isServer) {
+        onMount(() => window.addEventListener("keydown", onKeyDown));
+        onCleanup(() => window.removeEventListener("keydown", onKeyDown));
+    }
     const [developerMode, setDeveloperMode] = createSignal(false);
     const [taps, setTaps] = createSignal(0);
     const [showDevModeUnlock, setShowDevModeUnlock] = createSignal(false);
@@ -205,7 +210,7 @@ export default function SettingsPage() {
     });
 
     return (
-        <MainLayout title="Settings" hideSearch>
+        <MainLayout title="Settings" hideSearch description="Configure Brico.app — theme, favorites, and display preferences for the BitCraft compendium.">
             <div class="max-w-3xl mx-auto flex flex-col gap-4 px-4 pb-6">
                 <h1 class="text-2xl font-bold" onclick={incUnlockCounter}><Show when={showDevModeUnlock()} fallback="Settings">You are now a developer!</Show></h1>
 

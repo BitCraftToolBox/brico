@@ -5,6 +5,7 @@ import {lootTab} from "~/components/fun/BricoLootBox";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
     claimResearchRequiring,
@@ -114,6 +115,8 @@ export default function CargoDetail() {
             rarity={cargo()?.rarity?.tag}
             description={cargo()?.description}
             tag={cargo()?.tag}
+            metaKind="cargo"
+            metaImage={ogImageForAsset(cargo()?.iconAssetName)}
             details={[
                 {label: "Volume", value: cargo()?.volume},
                 {label: "Pick Up Time", value: readableSeconds(fixFloat(cargo()?.pickUpTime))},
