@@ -10,7 +10,7 @@
  *   - Enter navigates to full /search page
  */
 
-import {useNavigate} from "@solidjs/router";
+import {A, useNavigate} from "@solidjs/router";
 import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
 import {createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
 import {useIsMobile} from "~/components/ui/sidebar";
@@ -97,11 +97,15 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
         tabButtonRefs.get(tabId)?.scrollIntoView({block: "nearest", inline: "nearest"});
     };
 
-    const commitSuggestion = (match: ObjectMatch) => {
+    const closeSuggestions = () => {
         setQuery("");
         setDropdownOpen(false);
         setActiveIndex(-1);
         if (inputRef) inputRef.value = "";
+    };
+
+    const commitSuggestion = (match: ObjectMatch) => {
+        closeSuggestions();
         navigate(match.route);
     };
 
@@ -260,30 +264,28 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
                             {(match, i) => {
                                 const isActive = () => activeIndex() === i();
                                 return (
-                                    <li
-                                        role="option"
-                                        aria-selected={isActive()}
-                                        class={cn(
-                                            "px-3 py-1.5 text-sm cursor-pointer transition-colors flex flex-col gap-0.5",
-                                            isActive() ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
-                                        )}
-                                        onPointerDown={(e) => {
-                                            e.preventDefault();
-                                            commitSuggestion(match);
-                                        }}
-                                        onMouseEnter={() => setActiveIndex(i())}
-                                    >
-                                        <Show when={activeTab() === "all"}>
-                                            <span class="text-xs text-muted-foreground">{match.label}</span>
-                                        </Show>
-                                        <span class="font-medium truncate">
-                                            {match.displayName}
-                                            <Show when={match.matchField !== "name" && match.matchField !== "id"}>
-                                                <span class="text-xs text-muted-foreground ml-2">
-                                                    ({match.matchField}: {match.matchValue.length > 50 ? match.matchValue.slice(0, 50) + "…" : match.matchValue})
-                                                </span>
+                                    <li role="option" aria-selected={isActive()}>
+                                        <A
+                                            href={match.route}
+                                            class={cn(
+                                                "px-3 py-1.5 text-sm cursor-pointer transition-colors flex flex-col gap-0.5",
+                                                isActive() ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
+                                            )}
+                                            onClick={closeSuggestions}
+                                            onMouseEnter={() => setActiveIndex(i())}
+                                        >
+                                            <Show when={activeTab() === "all"}>
+                                                <span class="text-xs text-muted-foreground">{match.label}</span>
                                             </Show>
-                                        </span>
+                                            <span class="font-medium truncate">
+                                                {match.displayName}
+                                                <Show when={match.matchField !== "name" && match.matchField !== "id"}>
+                                                    <span class="text-xs text-muted-foreground ml-2">
+                                                        ({match.matchField}: {match.matchValue.length > 50 ? match.matchValue.slice(0, 50) + "…" : match.matchValue})
+                                                    </span>
+                                                </Show>
+                                            </span>
+                                        </A>
                                     </li>
                                 );
                             }}
