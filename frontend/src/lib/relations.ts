@@ -66,9 +66,9 @@ function anyProbStackMatches(stacks: ProbabilisticItemStack[], itemId: number, i
         if (matchesStack(s.itemStack, itemId, itemType)) return true;
         // Also check if the inner item resolves to an item list containing the target
         if (s.itemStack.itemType.tag === ItemType.Item.tag) {
-            const item = BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(s.itemStack.itemId);
+            const item = BitCraftTables.ItemDesc.indexedBy("id")().get(s.itemStack.itemId);
             if (item?.itemListId) {
-                const list = BitCraftTables.ItemListDesc.indexedBy("id")?.()?.get(item.itemListId);
+                const list = BitCraftTables.ItemListDesc.indexedBy("id")().get(item.itemListId);
                 if (list) return anyPossibilityMatches(list.possibilities, itemId, itemType);
             }
         }
@@ -106,16 +106,16 @@ export function craftingRecipesConsuming(itemId: number, itemType: string): Craf
 // ─── Extraction Recipes ─────────────────────────────────────────
 
 export function resourceGrowthFrom(resourceId: number): ResourceGrowthRecipeDesc[] | undefined {
-    return BitCraftTables.ResourceGrowthRecipeDesc.indexedByMulti("grownResourceId")?.()?.get(resourceId);
+    return BitCraftTables.ResourceGrowthRecipeDesc.indexedByMulti("grownResourceId")().get(resourceId);
 }
 
 export function resourceGrowthInto(resourceId: number): ResourceGrowthRecipeDesc | undefined {
-    return BitCraftTables.ResourceGrowthRecipeDesc.indexedBy("resourceId")?.()?.get(resourceId);
+    return BitCraftTables.ResourceGrowthRecipeDesc.indexedBy("resourceId")().get(resourceId);
 }
 
 /** The extraction recipe for a given resource */
 export function extractionRecipeForResource(resourceId: number): ExtractionRecipeDesc | undefined {
-    return BitCraftTables.ExtractionRecipeDesc.indexedBy("resourceId")()?.get(resourceId);
+    return BitCraftTables.ExtractionRecipeDesc.indexedBy("resourceId")().get(resourceId);
 }
 
 /** Extraction recipes that drop this item/cargo */
@@ -151,7 +151,7 @@ export function terraformRecipesDropping(itemId: number, itemType: string): Terr
 
 /** The construction recipe for a given building */
 export function constructionRecipeForBuilding(buildingId: number): ConstructionRecipeDesc | undefined {
-    return BitCraftTables.ConstructionRecipeDesc.indexedBy("buildingDescriptionId")()?.get(buildingId);
+    return BitCraftTables.ConstructionRecipeDesc.indexedBy("buildingDescriptionId")().get(buildingId);
 }
 
 /** Construction recipes that consume this item/cargo */
@@ -168,7 +168,7 @@ export function constructionRecipesConsuming(itemId: number, itemType: string): 
 
 /** The deconstruction recipe for a given building */
 export function deconstructionRecipeForBuilding(buildingId: number): DeconstructionRecipeDesc | undefined {
-    return BitCraftTables.DeconstructionRecipeDesc.indexedBy("consumedBuilding")()?.get(buildingId);
+    return BitCraftTables.DeconstructionRecipeDesc.indexedBy("consumedBuilding")().get(buildingId);
 }
 
 /** Deconstruction recipes that produce this item/cargo as output */
@@ -277,7 +277,7 @@ export function getItemListSource(il: ItemListDesc | undefined): ItemListSource 
     // NB should also be multi but doesn't happen in practice
     const lootDescs = BitCraftTables.ContributionLootDesc.indexedBy("itemListId");
     const matchedLoot = lootDescs().get(il.id);
-    if (matchedLoot) return {type: "Enemy", loot: matchedLoot, enemy: enemyIndex()?.get(matchedLoot.enemyTypeId)};
+    if (matchedLoot) return {type: "Enemy", loot: matchedLoot, enemy: enemyIndex().get(matchedLoot.enemyTypeId)};
 
     return {type: "Unknown"};
 }
@@ -328,7 +328,6 @@ export function enemiesForResource(resource: ResourceDesc): EnemyDesc[] {
     if (!resource.enemyParamsId?.length) return [];
     const paramIdx = BitCraftTables.EnemyAiParamsDesc.indexedBy("id")();
     const enemyIdx = BitCraftTables.EnemyDesc.indexedBy("enemyType")();
-    if (!paramIdx || !enemyIdx) return [];
     return resource.enemyParamsId
         .map(id => {
             const p = paramIdx.get(id);
@@ -348,7 +347,6 @@ export function prospectingForBiome(biomeType: number): ProspectingDesc[] {
 export function achievementPrereqs(requisites: number[]): AchievementDesc[] {
     if (!requisites?.length) return [];
     const idx = BitCraftTables.AchievementDesc.indexedBy("id")();
-    if (!idx) return [];
     return requisites.map(id => idx.get(id)).filter((v): v is AchievementDesc => !!v);
 }
 
@@ -356,7 +354,6 @@ export function achievementPrereqs(requisites: number[]): AchievementDesc[] {
 export function collectibleRewards(collectibleIds: number[]): CollectibleDesc[] {
     if (!collectibleIds?.length) return [];
     const idx = BitCraftTables.CollectibleDesc.indexedBy("id")();
-    if (!idx) return [];
     return collectibleIds.map(id => idx.get(id)).filter((v): v is CollectibleDesc => !!v);
 }
 
@@ -364,8 +361,8 @@ export function collectibleRewards(collectibleIds: number[]): CollectibleDesc[] 
 
 /** Resolve a crafting recipe's display name, substituting item names into the template */
 export function getCraftingRecipeName(recipe: CraftingRecipeDesc): string {
-    const itemData = BitCraftTables.ItemDesc.indexedBy("id")()!;
-    const cargoData = BitCraftTables.CargoDesc.indexedBy("id")()!;
+    const itemData = BitCraftTables.ItemDesc.indexedBy("id")();
+    const cargoData = BitCraftTables.CargoDesc.indexedBy("id")();
     const mainOutput = recipe.craftedItemStacks.at(0);
     const mainInput = recipe.consumedItemStacks.at(0);
     if (!mainOutput) return recipe.name;
@@ -388,10 +385,10 @@ export function getCraftingRecipeName(recipe: CraftingRecipeDesc): string {
 /** Display name for an extraction recipe */
 export function getExtractionRecipeName(recipe: ExtractionRecipeDesc): string {
     const resource = recipe.resourceId
-        ? BitCraftTables.ResourceDesc.indexedBy("id")()?.get(recipe.resourceId)
+        ? BitCraftTables.ResourceDesc.indexedBy("id")().get(recipe.resourceId)
         : undefined;
     const cargo = recipe.cargoId
-        ? BitCraftTables.CargoDesc.indexedBy("id")()?.get(recipe.cargoId)
+        ? BitCraftTables.CargoDesc.indexedBy("id")().get(recipe.cargoId)
         : undefined;
     return recipe.verbPhrase + " " + (resource?.name ?? cargo?.name ?? "Unknown");
 }
@@ -399,12 +396,12 @@ export function getExtractionRecipeName(recipe: ExtractionRecipeDesc): string {
 /** Display name for a construction recipe */
 export function getConstructionRecipeName(recipe: ConstructionRecipeDesc): string {
     // wild RHS but it doesn't ever occur
-    return recipe.name || ("Construct " + (BitCraftTables.BuildingDesc.indexedBy("id")()?.get(recipe.buildingDescriptionId)?.name ?? ("Building #" + recipe.buildingDescriptionId)));
+    return recipe.name || ("Construct " + (BitCraftTables.BuildingDesc.indexedBy("id")().get(recipe.buildingDescriptionId)?.name ?? ("Building #" + recipe.buildingDescriptionId)));
 }
 
 /** Display name for a deconstruction recipe */
 export function getDeconstructionRecipeName(recipe: DeconstructionRecipeDesc): string {
-    const building = BitCraftTables.BuildingDesc.indexedBy("id")()?.get(recipe.consumedBuilding);
+    const building = BitCraftTables.BuildingDesc.indexedBy("id")().get(recipe.consumedBuilding);
     return "Deconstruct " + (building?.name ?? "Unknown");
 }
 
@@ -415,7 +412,7 @@ export function getConversionRecipeName(recipe: ItemConversionRecipeDesc): strin
 
 /** Display name for a traveler task */
 export function getTravelerTaskName(task: TravelerTaskDesc): string {
-    const skill = BitCraftTables.SkillDesc.indexedBy("id")()?.get(task.levelRequirement.skillId);
+    const skill = BitCraftTables.SkillDesc.indexedBy("id")().get(task.levelRequirement.skillId);
     const firstItem = task.requiredItems.find(s => !isHexCoin(s)) ?? task.rewardedItems.find(s => !isHexCoin(s));
     const pfx = (skill?.name ? skill.name + " " : "") + " Task: ";
     return pfx + getItemStackName(firstItem);
@@ -426,7 +423,7 @@ export function getTravelerNpcName(travelerTag: string): string {
     const tagOrdinal = BitCraftTables.TravelerTradeOrderDesc.tagToOrdinal("traveler");
     const npcOrdinal = tagOrdinal.get(travelerTag);
     if (npcOrdinal !== undefined) {
-        return BitCraftTables.NpcDesc.indexedBy("npcType")()?.get(npcOrdinal)?.name ?? travelerTag;
+        return BitCraftTables.NpcDesc.indexedBy("npcType")().get(npcOrdinal)?.name ?? travelerTag;
     }
     return travelerTag;
 }
@@ -483,17 +480,17 @@ export function getResourceDepletionName(resource: ResourceDesc): string {
 /** Get the resource associated with an extraction recipe (if any) */
 export function resourceForExtraction(recipe: ExtractionRecipeDesc): ResourceDesc | undefined {
     if (!recipe.resourceId) return undefined;
-    return BitCraftTables.ResourceDesc.indexedBy("id")()?.get(recipe.resourceId);
+    return BitCraftTables.ResourceDesc.indexedBy("id")().get(recipe.resourceId);
 }
 
 /** Get the building associated with a deconstruction recipe */
 export function buildingForDeconstruction(recipe: DeconstructionRecipeDesc): BuildingDesc | undefined {
-    return BitCraftTables.BuildingDesc.indexedBy("id")()?.get(recipe.consumedBuilding);
+    return BitCraftTables.BuildingDesc.indexedBy("id")().get(recipe.consumedBuilding);
 }
 
 /** Get the building associated with a construction recipe */
 export function buildingForConstruction(recipe: ConstructionRecipeDesc): BuildingDesc | undefined {
-    return BitCraftTables.BuildingDesc.indexedBy("id")()?.get(recipe.buildingDescriptionId);
+    return BitCraftTables.BuildingDesc.indexedBy("id")().get(recipe.buildingDescriptionId);
 }
 
 // ─── Enemy Drops ─────────────────────────────────────────────────
@@ -596,7 +593,7 @@ export function questsWithStageCondition(tag: string, id: number): QuestChainDes
     }
     if (!chainIds.size) return [];
     const chainIndex = BitCraftTables.QuestChainDesc.indexedBy("id")();
-    return Array.from(chainIds).map(id => chainIndex?.get(id)).filter((q): q is QuestChainDesc => !!q);
+    return Array.from(chainIds).map(id => chainIndex.get(id)).filter((q): q is QuestChainDesc => !!q);
 }
 
 /** Quest chains whose stages require this item/cargo via ItemStack or EquippedItem conditions */
@@ -616,7 +613,7 @@ export function questsWithStageConditionItem(itemId: number, itemType: string): 
     }
     if (!chainIds.size) return [];
     const chainIndex = BitCraftTables.QuestChainDesc.indexedBy("id")();
-    return Array.from(chainIds).map(id => chainIndex?.get(id)).filter((q): q is QuestChainDesc => !!q);
+    return Array.from(chainIds).map(id => chainIndex.get(id)).filter((q): q is QuestChainDesc => !!q);
 }
 
 /**
@@ -644,17 +641,17 @@ export function questDropSourcesFor(itemId: number, itemType: string): {
     for (const qd of drops) {
         if (qd.extractionId > 0 && !exIds.has(qd.extractionId)) {
             exIds.add(qd.extractionId);
-            const r = exIndex?.get(qd.extractionId);
+            const r = exIndex.get(qd.extractionId);
             if (r) extractionRecipes.push(r);
         }
         if (qd.enemyId > 0 && !enIds.has(qd.enemyId)) {
             enIds.add(qd.enemyId);
-            const e = enIndex?.get(qd.enemyId);
+            const e = enIndex.get(qd.enemyId);
             if (e) enemies.push(e);
         }
         if (qd.itemListId > 0 && !ilIds.has(qd.itemListId)) {
             ilIds.add(qd.itemListId);
-            const l = ilIndex?.get(qd.itemListId);
+            const l = ilIndex.get(qd.itemListId);
             if (l) itemLists.push(l);
         }
     }

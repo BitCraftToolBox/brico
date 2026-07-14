@@ -19,20 +19,18 @@ export default function CombatDetail() {
     const action = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const weaponTypes = createMemo(() => {
         const a = action();
         if (!a?.weaponTypeRequirements?.length) return [];
         const idx = weaponTypeIndex();
-        if (!idx) return [];
         return a.weaponTypeRequirements.map(id => idx.get(id)).filter((v): v is WeaponTypeDesc => !!v);
     });
 
     const mapBuffEffects = (effects: BuffEffect[]) => {
         const idx = buffIndex();
-        if (!idx) return [];
         return effects.map((be) => {
             let buffDesc = idx.get(be.buffId);
             return ({
@@ -104,7 +102,7 @@ export default function CombatDetail() {
 
             ]}
             rawData={action()}
-            spacetimeTable={BitCraftTables.CombatActionDesc.st_name}
+            spacetimeTable={BitCraftTables.CombatActionDesc.spacetimeName}
             objectId={action()?.id}
             tabs={[
                 {id: "self-buffs", label: "Self Buffs", count: selfBuffs().length, content: () => <BuffTable data={selfBuffs()}/>},

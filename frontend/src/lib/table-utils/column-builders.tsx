@@ -81,7 +81,7 @@ export function knowledgeColumn<T, V extends number[] | undefined>(
         const ids = resolveAccessor(accessor, row);
         if (!ids?.length) return [];
         const idx = BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id")();
-        return ids.map(id => idx?.get(id)?.name ?? `#${id}`);
+        return ids.map(id => idx.get(id)?.name ?? `#${id}`);
     };
     return {
         id: title ?? "Required Knowledge",

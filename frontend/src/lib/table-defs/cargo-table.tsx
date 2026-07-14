@@ -27,7 +27,7 @@ export const CargoDescDefs: BitCraftToDataDef<CargoDesc> = {
         rarityColumn(),
         {
             id: "Supply",
-            accessorFn: (cargo: CargoDesc) => BitCraftTables.BuildingRepairsDesc.indexedBy("cargoId")?.()?.get(cargo.id)?.repairValue,
+            accessorFn: (cargo: CargoDesc) => BitCraftTables.BuildingRepairsDesc.indexedBy("cargoId")().get(cargo.id)?.repairValue,
             filterFn: 'inNumberRange',
             sortUndefined: 'last'
         },

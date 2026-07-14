@@ -10,22 +10,22 @@ export const ToolDefs: BitCraftToDataDef<ToolDesc> = {
     columns: [
         headerColumn<ToolDesc, any>({
             title: "Name",
-            accessor: {accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(tool.itemId)?.name ?? `Item #${tool.itemId}`},
+            accessor: {accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.name ?? `Item #${tool.itemId}`},
             route: tool => ["tool", tool.itemId],
             prefixElement: tool => {
-                const item = BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(tool.itemId);
+                const item = BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId);
                 return item ? <ItemIcon item={item} small noInteract={true}/> : <></>;
             },
         }),
         {
             id: "Tool Type",
-            accessorFn: row => BitCraftTables.ToolTypeDesc.indexedBy("id")?.()?.get(row.toolType)?.name ?? `#${row.toolType}`,
+            accessorFn: row => BitCraftTables.ToolTypeDesc.indexedBy("id")().get(row.toolType)?.name ?? `#${row.toolType}`,
             filterFn: includedIn<ToolDesc>(),
         },
         {id: "Power", accessorKey: "power", filterFn: "inNumberRange"},
         {id: "Level", accessorKey: "level", filterFn: "inNumberRange"},
-        tierColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")?.().get(tool.itemId)?.tier ?? -1}),
-        rarityColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")?.().get(tool.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}), // idk why TS needs this
+        tierColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.tier ?? -1}),
+        rarityColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}), // idk why TS needs this
         rowActions({accessorKey: "itemId"}, "item"),
     ],
     facetedFilters: [

@@ -34,9 +34,9 @@ import {cn, fixFloat} from "~/lib/utils";
 /** Resolve an ItemStack's itemId + itemType to the actual ItemDesc or CargoDesc */
 function resolveStack(itemId: number, itemType: ItemType): ItemDesc | CargoDesc | undefined {
     if (itemType.tag === ItemType.Item.tag) {
-        return BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(itemId);
+        return BitCraftTables.ItemDesc.indexedBy("id")().get(itemId);
     } else if (itemType.tag === ItemType.Cargo.tag) {
-        return BitCraftTables.CargoDesc.indexedBy("id")?.()?.get(itemId);
+        return BitCraftTables.CargoDesc.indexedBy("id")().get(itemId);
     }
     return undefined;
 }
@@ -159,7 +159,7 @@ export const ProbItemStackIcon: Component<{
         if (!obj || !isItem(obj)) return undefined;
         const listId = (obj as ItemDesc).itemListId;
         if (!listId) return undefined;
-        return BitCraftTables.ItemListDesc.indexedBy("id")?.()?.get(listId);
+        return BitCraftTables.ItemListDesc.indexedBy("id")().get(listId);
     });
 
     return (
@@ -239,8 +239,8 @@ function computeAveragesFlatExpanded(possibilities: ItemListPossibility[], multi
     const totalWeight = possibilities.reduce((sum, p) => sum + p.probability, 0);
     if (totalWeight === 0) return [];
 
-    const itemIndex = BitCraftTables.ItemDesc.indexedBy("id")?.();
-    const listIndex = BitCraftTables.ItemListDesc.indexedBy("id")?.();
+    const itemIndex = BitCraftTables.ItemDesc.indexedBy("id")();
+    const listIndex = BitCraftTables.ItemListDesc.indexedBy("id")();
 
     for (const poss of possibilities) {
         const selectProb = (poss.probability / totalWeight) * multiplier;
@@ -248,9 +248,9 @@ function computeAveragesFlatExpanded(possibilities: ItemListPossibility[], multi
             // Check if this stack resolves to an inner item list
             let handledAsInnerList = false;
             if (stack.itemType.tag === ItemType.Item.tag) {
-                const item = itemIndex?.get(stack.itemId);
+                const item = itemIndex.get(stack.itemId);
                 if (item?.itemListId) {
-                    const innerList = listIndex?.get(item.itemListId);
+                    const innerList = listIndex.get(item.itemListId);
                     if (innerList) {
                         // Recurse: multiply probability by select chance × stack quantity
                         const innerAvgs = computeAveragesFlatExpanded(innerList.possibilities, selectProb * stack.quantity);
@@ -301,14 +301,14 @@ export const ItemListDisplay: Component<{
 
     /** True if any possibility contains an item that resolves to an inner item list */
     const hasInnerLists = createMemo(() => {
-        const itemIndex = BitCraftTables.ItemDesc.indexedBy("id")?.();
-        const listIndex = BitCraftTables.ItemListDesc.indexedBy("id")?.();
+        const itemIndex = BitCraftTables.ItemDesc.indexedBy("id")();
+        const listIndex = BitCraftTables.ItemListDesc.indexedBy("id")();
         return sorted().some(poss =>
             poss.items.some(stack => {
                 if (stack.itemType.tag !== ItemType.Item.tag) return false;
-                const item = itemIndex?.get(stack.itemId);
+                const item = itemIndex.get(stack.itemId);
                 if (!item?.itemListId) return false;
-                return !!listIndex?.get(item.itemListId);
+                return !!listIndex.get(item.itemListId);
             })
         );
     });
@@ -508,7 +508,7 @@ export const QuestDropDisplay: Component<{
     class?: string;
 }> = (props) => {
     const questStage = () => props.questDrop.requiredStageId
-        ? BitCraftTables.QuestStageDesc.indexedBy("id")()?.get(props.questDrop.requiredStageId)
+        ? BitCraftTables.QuestStageDesc.indexedBy("id")().get(props.questDrop.requiredStageId)
         : undefined;
 
     return (
@@ -569,9 +569,9 @@ export function expandStack(
     // Plain ItemStack — check if it resolves to an item list
     const stack = input as ItemStack;
     if (stack.itemType.tag === ItemType.Item.tag) {
-        const item = BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(stack.itemId);
+        const item = BitCraftTables.ItemDesc.indexedBy("id")().get(stack.itemId);
         if (item?.itemListId) {
-            const list = BitCraftTables.ItemListDesc.indexedBy("id")?.()?.get(item.itemListId);
+            const list = BitCraftTables.ItemListDesc.indexedBy("id")().get(item.itemListId);
             if (list) {
                 return <ItemListDisplay itemList={list} chances={input.quantity} originalIcon={() => <ItemStackIcon stack={stack} hideSingle/>}/>;
             }

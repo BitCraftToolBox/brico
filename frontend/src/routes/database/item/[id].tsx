@@ -100,25 +100,25 @@ export default function ItemDetail() {
     const item = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return itemIndex()?.get(id);
+        return itemIndex().get(id);
     });
 
-    const toolData = createMemo(() => item() ? toolIndex()?.get(item()!.id) : undefined);
-    const equipData = createMemo(() => item() ? equipIndex()?.get(item()!.id) : undefined);
-    const foodData = createMemo(() => item() ? foodIndex()?.get(item()!.id) : undefined);
-    const weaponData = createMemo(() => item() ? weaponIndex()?.get(item()!.id) : undefined);
-    const scrollData = createMemo(() => item() ? knowledgeScrollIndex()?.get(item()!.id) : undefined);
+    const toolData = createMemo(() => item() ? toolIndex().get(item()!.id) : undefined);
+    const equipData = createMemo(() => item() ? equipIndex().get(item()!.id) : undefined);
+    const foodData = createMemo(() => item() ? foodIndex().get(item()!.id) : undefined);
+    const weaponData = createMemo(() => item() ? weaponIndex().get(item()!.id) : undefined);
+    const scrollData = createMemo(() => item() ? knowledgeScrollIndex().get(item()!.id) : undefined);
     const collectibleData = createMemo(() => {
-        const coll = collectibleIndex();
         const i = item();
-        if (!i || !coll) return [];
+        if (!i) return [];
+        const coll = collectibleIndex();
         return coll.get(i.id) ?? [];
     });
 
     const knowledgeStatData = createMemo(() => {
         const scroll = scrollData();
         if (!scroll) return undefined;
-        return BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")()?.get(scroll.secondaryKnowledgeId);
+        return BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")().get(scroll.secondaryKnowledgeId);
     });
 
     // Expanded food buff info (buff desc + stats)
@@ -187,7 +187,7 @@ export default function ItemDetail() {
         // Tool
         const tool = toolData();
         if (tool) {
-            const toolType = toolTypeIndex()?.get(tool.toolType);
+            const toolType = toolTypeIndex().get(tool.toolType);
             groups.push({
                 heading: <IconLink href={`/database/tool/${i.id}`} icon={pageIcon("Tools")}>Tool</IconLink>,
                 properties: [
@@ -293,7 +293,7 @@ export default function ItemDetail() {
             tag={item()?.tag}
             details={detailGroups()}
             rawData={item()}
-            spacetimeTable={BitCraftTables.ItemDesc.st_name}
+            spacetimeTable={BitCraftTables.ItemDesc.spacetimeName}
             objectId={item()?.id}
             chatLink={`(item=${item()?.id})`}
             summaryContent={placeablePlacements().length === 1 ? () => (

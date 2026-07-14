@@ -17,8 +17,8 @@ export const CombatDefs: BitCraftToDataDef<CombatActionDesc> = {
         {
             id: "Weapon Type",
             accessorFn: (row) => {
-                const idx = BitCraftTables.WeaponTypeDesc.indexedBy("id");
-                return row.weaponTypeRequirements?.map(id => idx?.()?.get(id)?.name ?? `#${id}`).join(", ");
+                const idx = BitCraftTables.WeaponTypeDesc.indexedBy("id")();
+                return row.weaponTypeRequirements?.map(id => idx.get(id)?.name ?? `#${id}`).join(", ");
             },
             filterFn: includedIn<CombatActionDesc>()
         },

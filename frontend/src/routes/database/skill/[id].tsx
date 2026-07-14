@@ -13,7 +13,7 @@ export default function SkillDetail() {
     const skill = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return skillIndex()?.get(id);
+        return skillIndex().get(id);
     });
     const skillTag = createMemo(() => {
         const s = skill();
@@ -36,7 +36,7 @@ export default function SkillDetail() {
                 {label: "Max Level", value: skill()?.maxLevel},
             ]}
             rawData={skill()}
-            spacetimeTable={BitCraftTables.SkillDesc.st_name}
+            spacetimeTable={BitCraftTables.SkillDesc.spacetimeName}
             objectId={skill()?.id}
             chatLink={`(prof=${skill()?.id})`}
             tabs={[]}

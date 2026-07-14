@@ -16,25 +16,25 @@ export default function KnowledgeDetail() {
     const knowledge = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return knowledgeIndex()?.get(id);
+        return knowledgeIndex().get(id);
     });
 
     const scroll = createMemo(() => {
         const k = knowledge();
         if (!k) return undefined;
-        return BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")()?.get(k.id);
+        return BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")().get(k.id);
     });
 
     const statMod = createMemo(() => {
         const k = knowledge();
         if (!k) return undefined;
-        return BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")()?.get(k.id);
+        return BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")().get(k.id);
     });
 
     const item = createMemo(() => {
         const s = scroll();
         if (!s) return undefined;
-        return BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(s.itemId);
+        return BitCraftTables.ItemDesc.indexedBy("id")().get(s.itemId);
     });
 
     const questRequires = createMemo(() => {
@@ -90,7 +90,7 @@ export default function KnowledgeDetail() {
             tag={scroll()?.tag}
             details={details()}
             rawData={knowledge()}
-            spacetimeTable={BitCraftTables.SecondaryKnowledgeDesc.st_name}
+            spacetimeTable={BitCraftTables.SecondaryKnowledgeDesc.spacetimeName}
             objectId={knowledge()?.id}
             chatLink={scroll() ? `(know=${scroll()!.itemId})` : undefined}
             tabs={[

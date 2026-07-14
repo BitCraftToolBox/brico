@@ -19,7 +19,7 @@ export const BuffDefs: BitCraftToDataDef<BuffDesc> = {
         descriptionColumn(),
         {
             id: "Buff Type",
-            accessorFn: row => row.buffTypeId ? BitCraftTables.BuffTypeDesc.indexedBy("id")?.()?.get(row.buffTypeId)?.name ?? `#${row.buffTypeId}` : undefined,
+            accessorFn: row => row.buffTypeId ? BitCraftTables.BuffTypeDesc.indexedBy("id")().get(row.buffTypeId)?.name ?? `#${row.buffTypeId}` : undefined,
             filterFn: includedIn<BuffDesc>(),
         },
         statsColumn<BuffDesc>(),

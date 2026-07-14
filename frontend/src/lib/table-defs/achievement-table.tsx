@@ -14,7 +14,7 @@ export const AchievementDefs: BitCraftToDataDef<AchievementDesc> = {
             id: "Prerequisites",
             accessorFn: (row) => {
                 const idx = BitCraftTables.AchievementDesc.indexedBy("id");
-                return row.requisites?.map(id => idx?.()?.get(id)?.name ?? `#${id}`).join(", ") || "";
+                return row.requisites?.map(id => idx().get(id)?.name ?? `#${id}`).join(", ") || "";
             },
             cell: (props) => {
                 const row = props.row.original;
@@ -23,7 +23,7 @@ export const AchievementDefs: BitCraftToDataDef<AchievementDesc> = {
                 return (
                     <LinkedList>
                         {row.requisites.map(id => {
-                            const ach = idx?.()?.get(id);
+                            const ach = idx().get(id);
                             return <AchievementLink id={id} name={ach?.name}/>;
                         })}
                     </LinkedList>

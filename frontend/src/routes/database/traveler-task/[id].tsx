@@ -16,13 +16,13 @@ export default function TravelerTaskDetail() {
     const task = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const skillName = createMemo(() => {
         const t = task();
         if (!t) return undefined;
-        return skillIndex()?.get(t.levelRequirement?.skillId)?.name;
+        return skillIndex().get(t.levelRequirement?.skillId)?.name;
     });
 
     const xpStr = createMemo(() => {
@@ -45,7 +45,7 @@ export default function TravelerTaskDetail() {
                 {label: "XP Reward", value: xpStr()},
             ]}
             rawData={task()}
-            spacetimeTable={BitCraftTables.TravelerTaskDesc.st_name}
+            spacetimeTable={BitCraftTables.TravelerTaskDesc.spacetimeName}
             objectId={task()?.id}
             tabs={[
                 {

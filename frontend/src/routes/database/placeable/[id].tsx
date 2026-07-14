@@ -33,7 +33,7 @@ export default function PlaceableDetail() {
     const placeable = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return placeableIndex()?.get(id);
+        return placeableIndex().get(id);
     });
 
     const placeableId = () => placeable()?.id;
@@ -194,7 +194,7 @@ export default function PlaceableDetail() {
                 </div>
             ) : undefined}
             rawData={placeable()}
-            spacetimeTable={BitCraftTables.PlaceableDesc.st_name}
+            spacetimeTable={BitCraftTables.PlaceableDesc.spacetimeName}
             objectId={placeable()?.id}
             tabs={tabs()}
         />

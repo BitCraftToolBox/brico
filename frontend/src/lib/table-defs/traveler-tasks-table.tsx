@@ -45,7 +45,7 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
         {
             id: "Skill",
             accessorFn: task => {
-                const skillIndex = BitCraftTables.SkillDesc.indexedBy("id")!()!;
+                const skillIndex = BitCraftTables.SkillDesc.indexedBy("id")();
                 if (!task.levelRequirement.skillId) return "";
                 const skillData = skillIndex.get(task.levelRequirement.skillId);
                 return skillData ? skillData.name : "Unknown";

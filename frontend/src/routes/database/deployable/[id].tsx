@@ -21,20 +21,19 @@ export default function DeployableDetail() {
     const deployable = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
-    const collectible = createMemo(() => deployable() ? collectibleIndex()?.get(deployable()!.deployFromCollectibleId) : undefined);
-    const itemDeed = createMemo(() => collectible() ? itemIndex()?.get(collectible()!.itemDeedId) : undefined);
-    const pathfinding = createMemo(() => deployable() ? pathfindingIndex()?.get(deployable()!.pathfindingId) : undefined);
+    const collectible = createMemo(() => deployable() ? collectibleIndex().get(deployable()!.deployFromCollectibleId) : undefined);
+    const itemDeed = createMemo(() => collectible() ? itemIndex().get(collectible()!.itemDeedId) : undefined);
+    const pathfinding = createMemo(() => deployable() ? pathfindingIndex().get(deployable()!.pathfindingId) : undefined);
     const appearances = createMemo(() => {
         const dep = deployable();
         if (!dep) return [];
         const model = dep.modelAddress;
         const overrides = BitCraftTables.DeployableAppearanceOverrideDesc.get();
-        const collectibles = BitCraftTables.CollectibleDesc.indexedBy("id")();
         return overrides?.filter(o => o.affectedModelAddress === model)
-            .map(dao => collectibles.get(dao.collectibleId))
+            .map(dao => collectibleIndex().get(dao.collectibleId))
             .filter((col): col is CollectibleDesc => !!col) ?? [];
     });
 
@@ -102,7 +101,7 @@ export default function DeployableDetail() {
             tag={deployable()?.deployableType?.tag}
             details={detailGroups()}
             rawData={deployable()}
-            spacetimeTable={BitCraftTables.DeployableDesc.st_name}
+            spacetimeTable={BitCraftTables.DeployableDesc.spacetimeName}
             objectId={deployable()?.id}
             chatLink={`(col=${collectible()?.id})`}
             tabs={[

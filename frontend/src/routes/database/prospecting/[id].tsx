@@ -48,14 +48,14 @@ export default function ProspectingDetail() {
     const params = useParams();
     const isLoading = useTablesLoading(BitCraftTables.ProspectingDesc);
     const index = BitCraftTables.ProspectingDesc.indexedBy("id");
-    const biomeIndex = BitCraftTables.BiomeDesc.indexedBy("biomeType");
+    const biomeIndex = BitCraftTables.BiomeDesc.indexedBy("biomeType", true);
     const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
     const enemyParamsIndex = BitCraftTables.EnemyAiParamsDesc.indexedBy("id");
 
     const prospecting = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const rangeStr = (arr: Array<number> | undefined) => {
@@ -68,7 +68,6 @@ export default function ProspectingDetail() {
         const p = prospecting();
         if (!p?.biomeRequirements?.length) return [];
         const idx = biomeIndex();
-        if (!idx) return [];
         return p.biomeRequirements.map(id => idx.get(id)).filter((b): b is NonNullable<typeof b> => !!b);
     });
 
@@ -91,11 +90,11 @@ export default function ProspectingDetail() {
             return {type: "resource" as const, items: matched ?? []};
         }
         if (p.enemyAiDescId > 0) {
-            const enemyParams = enemyParamsIndex()?.get(p.enemyAiDescId);
+            const enemyParams = enemyParamsIndex().get(p.enemyAiDescId);
             if (!enemyParams) return {type: "enemy" as const, items: []};
             const tagOrdinal = BitCraftTables.EnemyAiParamsDesc.tagToOrdinal("enemyType");
             const ordinal = tagOrdinal.get(enemyParams.enemyType.tag);
-            const enemy = ordinal !== undefined ? enemyIndex()?.get(ordinal) : undefined;
+            const enemy = ordinal !== undefined ? enemyIndex().get(ordinal) : undefined;
             return {type: "enemy" as const, items: enemy ? [enemy] : []};
         }
         return undefined;
@@ -126,7 +125,7 @@ export default function ProspectingDetail() {
                 {label: "Allow Aquatic Breadcrumb", value: prospecting()?.allowAquaticBreadCrumb},
             ]}
             rawData={prospecting()}
-            spacetimeTable={BitCraftTables.ProspectingDesc.st_name}
+            spacetimeTable={BitCraftTables.ProspectingDesc.spacetimeName}
             objectId={prospecting()?.id}
             tabs={[
                 {

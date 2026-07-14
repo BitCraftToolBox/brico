@@ -1,4 +1,4 @@
-import {useNavigate, useParams} from "@solidjs/router";
+import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
@@ -9,14 +9,13 @@ import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function BiomeDetail() {
     const params = useParams();
-    const navigate = useNavigate();
     const isLoading = useTablesLoading(BitCraftTables.BiomeDesc);
-    const index = BitCraftTables.BiomeDesc.indexedBy("biomeType");
+    const index = BitCraftTables.BiomeDesc.indexedBy("biomeType", true);
 
     const biome = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const prospectingEntries = createMemo(() => {
@@ -37,7 +36,7 @@ export default function BiomeDetail() {
                 {label: "Disallow Player Build", value: biome()?.disallowPlayerBuild},
             ]}
             rawData={biome()}
-            spacetimeTable={BitCraftTables.BiomeDesc.st_name}
+            spacetimeTable={BitCraftTables.BiomeDesc.spacetimeName}
             objectId={biome()?.biomeType}
             tabs={[
                 {

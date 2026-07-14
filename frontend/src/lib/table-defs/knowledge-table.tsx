@@ -11,43 +11,43 @@ export const KnowledgeDefs: BitCraftToDataDef<SecondaryKnowledgeDesc> = {
             route: k => ["knowledge", k.id],
             prefixElement: k => {
                 const scrollIdx = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId");
-                const scroll = scrollIdx()?.get(k.id);
+                const scroll = scrollIdx().get(k.id);
                 if (!scroll) return <></>;
-                const item = BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(scroll.itemId);
+                const item = BitCraftTables.ItemDesc.indexedBy("id")().get(scroll.itemId);
                 return item ? <ItemIcon item={item} small noInteract/> : <></>;
             },
         }),
         tagColumn(undefined, {
             accessorFn: row => {
-                const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")()?.get(row.id);
+                const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")().get(row.id);
                 return scroll?.tag ?? "";
             }
         }),
         tagColumn("Title", {
             accessorFn: row => {
-                const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")()?.get(row.id);
+                const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")().get(row.id);
                 return scroll?.title ?? "";
             }
         }),
         boolColumn("Known By Default", {
             accessorFn: row => {
-                const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")()?.get(row.id);
+                const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")().get(row.id);
                 return scroll?.knownByDefault;
             }
         }),
         boolColumn("Auto Collect", {
             accessorFn: row => {
-                const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")()?.get(row.id);
+                const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")().get(row.id);
                 return scroll?.autoCollect;
             }
         }),
         statsColumn<SecondaryKnowledgeDesc>(undefined, {
             accessorFn: row => {
-                const mod = BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")()?.get(row.id);
+                const mod = BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")().get(row.id);
                 return mod?.stats.length ? mod?.stats : undefined;
             }
         }),
-        rowActions(undefined, "know", undefined, { accessorFn: k => BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")()?.get(k.id)?.itemId?.toString() }),
+        rowActions(undefined, "know", undefined, { accessorFn: k => BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")().get(k.id)?.itemId?.toString() }),
     ],
     facetedFilters: [
         uniqueValuesFilter("Tag"),

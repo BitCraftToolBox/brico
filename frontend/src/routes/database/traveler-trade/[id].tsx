@@ -18,7 +18,7 @@ export default function TravelerTradeDetail() {
     const trade = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const npcDesc = createMemo(() => {
@@ -27,7 +27,7 @@ export default function TravelerTradeDetail() {
         const tagOrdinal = BitCraftTables.TravelerTradeOrderDesc.tagToOrdinal("traveler");
         const npcOrdinal = tagOrdinal.get(t.traveler.tag);
         if (npcOrdinal === undefined) return undefined;
-        return BitCraftTables.NpcDesc.indexedBy("npcType")()?.get(npcOrdinal);
+        return BitCraftTables.NpcDesc.indexedBy("npcType")().get(npcOrdinal);
     });
 
     const npcName = createMemo(() => getTravelerNpcName(trade()?.traveler.tag ?? ""));
@@ -76,7 +76,7 @@ export default function TravelerTradeDetail() {
             ]}
             summaryContent={() => trade() ? <TravelerTradePanel trade={trade()!}/> : <></>}
             rawData={trade()}
-            spacetimeTable={BitCraftTables.TravelerTradeOrderDesc.st_name}
+            spacetimeTable={BitCraftTables.TravelerTradeOrderDesc.spacetimeName}
             objectId={trade()?.id}
         />
     );

@@ -32,10 +32,10 @@ function rollItemList(list: ItemListDesc): LootResult | null {
         if (r <= 0 && poss.items.length > 0) {
             const stack = poss.items[Math.floor(Math.random() * poss.items.length)];
             if (stack.itemType.tag === ItemType.Cargo.tag) {
-                const cargo = cargoIdx?.get(stack.itemId);
+                const cargo = cargoIdx.get(stack.itemId);
                 return cargo ? { type: "cargo", cargo, quantity: stack.quantity } : null;
             }
-            const item = itemIdx?.get(stack.itemId);
+            const item = itemIdx.get(stack.itemId);
             return item ? { type: "item", item, quantity: stack.quantity } : null;
         }
     }
@@ -159,9 +159,9 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
         setResolvedItemId([targetItemId, targetItemType]);
 
         if (targetListId) {
-            const list = BitCraftTables.ItemListDesc.indexedBy("id")()?.get(targetListId);
+            const list = BitCraftTables.ItemListDesc.indexedBy("id")().get(targetListId);
             if (list) {
-                const item = BitCraftTables.ItemDesc.indexedBy("id")()?.get(targetItemId);
+                const item = BitCraftTables.ItemDesc.indexedBy("id")().get(targetItemId);
                 const result = rollItemList(list);
                 if (result && item?.itemListId === targetListId) {
                     // input was item list itself, just resolve to the rolled item
@@ -268,7 +268,7 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
             const cargo = BitCraftTables.CargoDesc.indexedBy("id")().get(id);
             return cargo ? {type: "cargo", cargo, quantity: 1} : null;
         } else {
-            const item = BitCraftTables.ItemDesc.indexedBy("id")()?.get(id);
+            const item = BitCraftTables.ItemDesc.indexedBy("id")().get(id);
             return item ? {type: "item", item, quantity: 1} : null;
         }
     };

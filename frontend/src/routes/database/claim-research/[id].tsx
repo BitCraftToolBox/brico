@@ -15,14 +15,13 @@ export default function ClaimResearchDetail() {
     const tech = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const requirements = createMemo(() => {
         const t = tech();
         if (!t?.requirements?.length) return [];
         const idx = index();
-        if (!idx) return [];
         return t.requirements.map(id => idx.get(id)).filter((v): v is ClaimTechDesc => !!v);
     });
 
@@ -30,7 +29,6 @@ export default function ClaimResearchDetail() {
         const t = tech();
         if (!t?.unlocksTechs?.length) return [];
         const idx = index();
-        if (!idx) return [];
         return t.unlocksTechs.map(id => idx.get(id)).filter((v): v is ClaimTechDesc => !!v);
     });
 
@@ -67,7 +65,7 @@ export default function ClaimResearchDetail() {
                 }
             ]}
             rawData={tech()}
-            spacetimeTable={BitCraftTables.ClaimTechDesc.st_name}
+            spacetimeTable={BitCraftTables.ClaimTechDesc.spacetimeName}
             objectId={tech()?.id}
             tabs={[
                 {

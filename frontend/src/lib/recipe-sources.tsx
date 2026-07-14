@@ -116,8 +116,8 @@ function addCommonRequirements(
     },
     totalEffort?: number
 ) {
-    const skillData = BitCraftTables.SkillDesc.indexedBy("id")()!;
-    const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")()!;
+    const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
+    const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")();
 
     recipe.levelRequirements.forEach(req => {
         const pair = skillReqPair(req, skillData);
@@ -147,7 +147,7 @@ function addUseHandsInformation(lines: StatLine[], recipe: { toolRequirements: T
 // ─── Per-Type Stat Line Extractors ──────────────────────────────
 
 export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
-    const buildingData = BitCraftTables.BuildingTypeDesc.indexedBy("id")()!;
+    const buildingData = BitCraftTables.BuildingTypeDesc.indexedBy("id")();
     const lines: StatLine[] = [
         ["Effort:", recipe.actionsRequired],
         ["Time:", fixFloat(recipe.timeRequirement)],
@@ -251,7 +251,7 @@ export function conversionStatLines(recipe: ItemConversionRecipeDesc): StatLine[
 }
 
 export function travelerTaskStatLines(task: TravelerTaskDesc): StatLine[] {
-    const skillData = BitCraftTables.SkillDesc.indexedBy("id")()!;
+    const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const skill = skillData.get(task.levelRequirement.skillId);
     let skillTag = skill?.skillCategory.tag ?? "";
     if (skillTag === "Adventure") skillTag = "Skill";
@@ -271,7 +271,7 @@ export function travelerTaskStatLines(task: TravelerTaskDesc): StatLine[] {
 }
 
 export function travelerTradeStatLines(trade: TravelerTradeOrderDesc): StatLine[] {
-    const skillData = BitCraftTables.SkillDesc.indexedBy("id")()!;
+    const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const npcName = getTravelerNpcName(trade.traveler.tag);
     const lines: StatLine[] = [["Traveler:", npcName]];
     trade.levelRequirements.forEach(req => {
@@ -316,7 +316,7 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
     // Biome requirements
     if (placement.requiredBiomes.length) {
         const biomeOrdinals = BitCraftTables.PlaceablePlacementDesc.tagToOrdinal("requiredBiomes");
-        const biomeIndex = BitCraftTables.BiomeDesc.indexedBy("biomeType");
+        const biomeIndex = BitCraftTables.BiomeDesc.indexedBy("biomeType", true);
         function tagToBiomeLink(tag: string) {
             const descId = biomeOrdinals.get(tag);
             const desc = biomeIndex().get(descId);
@@ -340,8 +340,8 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
     }
 
     // Level/tool/knowledge requirements
-    const skillData = BitCraftTables.SkillDesc.indexedBy("id")()!;
-    const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")()!;
+    const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
+    const toolData = BitCraftTables.ToolTypeDesc.indexedBy("id")();
     placement.levelRequirements.forEach(req => {
         const pair = skillReqPair(req, skillData);
         if (pair) lines.push(pair);
@@ -360,7 +360,7 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
     if (placement.buildings.length) {
         const buildingIndex = BitCraftTables.BuildingDesc.indexedBy("id")();
         const names = placement.buildings
-            .map(id => buildingIndex?.get(id)?.name ?? `Building #${id}`)
+            .map(id => buildingIndex.get(id)?.name ?? `Building #${id}`)
             .join(", ");
         lines.push([<IconSpan icon={pageIcon("Structures")}>Near Building:</IconSpan>, `${names} (≤${placement.maxDistanceToBuildings}m)`]);
     }

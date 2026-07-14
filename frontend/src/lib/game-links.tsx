@@ -87,7 +87,7 @@ export function SkillLink(props: { skill: SkillDesc; class?: string; showIcon?: 
 
 /** Resolves a skill ID to a SkillLink, or falls back to plain text. */
 export function SkillLinkById(props: { skillId: number; class?: string; showIcon?: boolean; level?: string }) {
-    const skill = () => BitCraftTables.SkillDesc.indexedBy("id")()?.get(props.skillId);
+    const skill = () => BitCraftTables.SkillDesc.indexedBy("id")().get(props.skillId);
     return (
         <Show when={skill()} fallback={<span>Skill #{props.skillId}</span>}>
             {s => <SkillLink skill={s()} class={props.class} showIcon={props.showIcon} level={props.level}/>}
@@ -123,7 +123,7 @@ export function KnowledgeLink(props: { id: number; name?: string; class?: string
 
 /** Resolves a knowledge ID to a KnowledgeLink. */
 export function KnowledgeLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
-    const knowledge = () => BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id")()?.get(props.id);
+    const knowledge = () => BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id")().get(props.id);
     return <KnowledgeLink id={props.id} name={knowledge()?.name} class={props.class} showIcon={props.showIcon}/>;
 }
 
@@ -144,7 +144,7 @@ export function BuffLink(props: { buffId: number; label?: string; class?: string
 }
 
 export function BuffLinkById(props: { buffId: number; class?: string; showIcon?: boolean, duration?: number }) {
-    const buff = () => BitCraftTables.BuffDesc.indexedBy("id")()?.get(props.buffId);
+    const buff = () => BitCraftTables.BuffDesc.indexedBy("id")().get(props.buffId);
     return <BuffLink buffId={props.buffId} label={buff()?.description} class={props.class} showIcon={props.showIcon} duration={props.duration ?? buff()?.duration ?? undefined}/>;
 }
 
@@ -166,7 +166,7 @@ export function BuildingLink(props: { id: number; name?: string; class?: string;
 
 /** Resolves a building ID to a BuildingLink. */
 export function BuildingLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
-    const building = () => BitCraftTables.BuildingDesc.indexedBy("id")()?.get(props.id);
+    const building = () => BitCraftTables.BuildingDesc.indexedBy("id")().get(props.id);
     return <BuildingLink id={props.id} name={building()?.name} class={props.class} showIcon={props.showIcon}/>;
 }
 
@@ -220,7 +220,7 @@ export function QuestChainLink(props: { id: number; name?: string; class?: strin
 
 /** Resolves a quest chain ID to a QuestChainLink. */
 export function QuestChainLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
-    const quest = () => BitCraftTables.QuestChainDesc.indexedBy("id")()?.get(props.id);
+    const quest = () => BitCraftTables.QuestChainDesc.indexedBy("id")().get(props.id);
     return <QuestChainLink id={props.id} name={quest()?.name} class={props.class} showIcon={props.showIcon}/>;
 }
 
@@ -242,7 +242,7 @@ export function CollectibleLink(props: { id: number; name?: string; class?: stri
 
 /** Resolves a collectible ID to a CollectibleLink. */
 export function CollectibleLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
-    const col = () => BitCraftTables.CollectibleDesc.indexedBy("id")()?.get(props.id);
+    const col = () => BitCraftTables.CollectibleDesc.indexedBy("id")().get(props.id);
     return <CollectibleLink id={props.id} name={col()?.name} class={props.class} showIcon={props.showIcon}/>;
 }
 
@@ -264,7 +264,7 @@ export function PlaceableLink(props: { id: number; name?: string; class?: string
 
 /** Resolves a placeable ID to a PlaceableLink. */
 export function PlaceableLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
-    const plc = () => BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(props.id);
+    const plc = () => BitCraftTables.PlaceableDesc.indexedBy("id")().get(props.id);
     return <PlaceableLink id={props.id} name={plc()?.name} class={props.class} showIcon={props.showIcon}/>;
 }
 
@@ -342,9 +342,9 @@ export function ItemStackLink(props: { stack: ItemStack; class?: string; showIco
 
     const name = () => {
         if (isCargo()) {
-            return BitCraftTables.CargoDesc.indexedBy("id")()?.get(props.stack.itemId)?.name ?? `Cargo #${props.stack.itemId}`;
+            return BitCraftTables.CargoDesc.indexedBy("id")().get(props.stack.itemId)?.name ?? `Cargo #${props.stack.itemId}`;
         }
-        return BitCraftTables.ItemDesc.indexedBy("id")()?.get(props.stack.itemId)?.name ?? `Item #${props.stack.itemId}`;
+        return BitCraftTables.ItemDesc.indexedBy("id")().get(props.stack.itemId)?.name ?? `Item #${props.stack.itemId}`;
     };
 
     const href = () => isCargo()

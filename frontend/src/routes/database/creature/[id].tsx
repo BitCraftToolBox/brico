@@ -29,16 +29,15 @@ export default function CreatureDetail() {
     const creature = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
-    const pathfinding = createMemo(() => creature() ? pathfindingIndex()?.get(creature()!.pathfindingId) : undefined);
+    const pathfinding = createMemo(() => creature() ? pathfindingIndex().get(creature()!.pathfindingId) : undefined);
 
     const combatActions = createMemo(() => {
         const c = creature();
         if (!c?.combatActionsIds?.length) return [];
         const idx = combatActionIndex();
-        if (!idx) return [];
         return c.combatActionsIds.map(id => idx.get(id)).filter((v): v is CombatActionDesc => !!v);
     });
 
@@ -130,7 +129,7 @@ export default function CreatureDetail() {
             tag={creature()?.tag}
             details={detailGroups()}
             rawData={creature()}
-            spacetimeTable={BitCraftTables.EnemyDesc.st_name}
+            spacetimeTable={BitCraftTables.EnemyDesc.spacetimeName}
             objectId={creature()?.enemyType}
             chatLink={`(mob=${creature()?.enemyType})`}
             tabs={[

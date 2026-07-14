@@ -21,7 +21,7 @@ export default function BuildingDetail() {
     const building = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return buildingIndex()?.get(id);
+        return buildingIndex().get(id);
     });
 
     const tier = createMemo(() => building() ? getBuildingTier(building()!) : undefined);
@@ -55,7 +55,7 @@ export default function BuildingDetail() {
         if (!b) return [];
         const idx = buildingTypeIndex();
         return b.functions.map(f => {
-            const bt = idx?.get(f.functionType);
+            const bt = idx.get(f.functionType);
             return bt ? `${bt.name} Lvl ${f.level}` : `#${f.functionType} Lvl ${f.level}`;
         });
     });
@@ -86,7 +86,7 @@ export default function BuildingDetail() {
         }
 
         b.functions.forEach(f => {
-            const bt = buildingTypeIndex()?.get(f.functionType);
+            const bt = buildingTypeIndex().get(f.functionType);
             const funcName = bt?.name ?? `Function #${f.functionType}`;
             const funcProps: DetailProperty[] = [];
             if (f.craftingSlots > 0) funcProps.push({label: "Crafting Slots", value: f.craftingSlots});
@@ -122,7 +122,7 @@ export default function BuildingDetail() {
             description={building()?.description}
             details={detailGroups()}
             rawData={building()}
-            spacetimeTable={BitCraftTables.BuildingDesc.st_name}
+            spacetimeTable={BitCraftTables.BuildingDesc.spacetimeName}
             objectId={building()?.id}
             chatLink={`(build=${building()?.id})`}
             tabs={[

@@ -58,13 +58,13 @@ export default function CargoDetail() {
     const cargo = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return cargoIndex()?.get(id);
+        return cargoIndex().get(id);
     });
 
     const knowledgeName = createMemo(() => {
         const c = cargo();
         if (!c?.secondaryKnowledgeId) return undefined;
-        return knowledgeIndex()?.get(c.secondaryKnowledgeId)?.name;
+        return knowledgeIndex().get(c.secondaryKnowledgeId)?.name;
     });
 
     // ─── Per-type recipe/relationship finders ───────────────────
@@ -125,7 +125,7 @@ export default function CargoDetail() {
                 {label: "Knowledge", value: knowledgeName()},
             ]}
             rawData={cargo()}
-            spacetimeTable={BitCraftTables.CargoDesc.st_name}
+            spacetimeTable={BitCraftTables.CargoDesc.spacetimeName}
             objectId={cargo()?.id}
             chatLink={`(cargo=${cargo()?.id})`}
             tabs={!cargo() ? [] : [
