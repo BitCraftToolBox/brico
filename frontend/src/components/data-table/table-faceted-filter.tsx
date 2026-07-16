@@ -441,11 +441,13 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
     }
 
     return (
-        <Popover placement="bottom-start" open={popoverOpen()}
-                 onOpenChange={(open) => {
-                     setPopoverOpen(open);
-                     setEditingWithNumberInputs(false);
-                 }}
+        <Popover
+            fitViewport={true} slide={true} overlap={true}
+            placement="bottom-start" open={popoverOpen()}
+            onOpenChange={(open) => {
+                setPopoverOpen(open);
+                setEditingWithNumberInputs(false);
+            }}
         >
             <PopoverTrigger
                 as={Button<"button">} variant="outline" size="sm" onclick={() => setPopoverOpen(!popoverOpen())}
