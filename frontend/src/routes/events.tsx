@@ -400,6 +400,7 @@ export default function Events() {
         const notificationSettings = unchartedNotifications();
         const thresholds = [
             {enabled: notificationSettings.notifyAtStart, minutes: 0, label: "event started"},
+            {enabled: notificationSettings.notifyAt5m ?? false, minutes: 5, label: "event starts in 5 minutes"},
             {enabled: notificationSettings.notifyAt15m, minutes: 15, label: "event starts in 15 minutes"},
             {enabled: notificationSettings.notifyAt60m, minutes: 60, label: "event starts in 60 minutes"},
         ];
@@ -414,7 +415,7 @@ export default function Events() {
                 for (const threshold of thresholds) {
                     if (!threshold.enabled) continue;
                     const isTriggered = threshold.minutes === 0
-                        ? remainingMs <= 0
+                        ? remainingMs <= 1000
                         : remainingMs <= threshold.minutes * 60_000 && remainingMs > 0;
                     if (!isTriggered) continue;
 
@@ -422,6 +423,12 @@ export default function Events() {
                     if (sentNotificationKeys.has(key)) continue;
 
                     sentNotificationKeys.add(key);
+                    for (const other of thresholds) {
+                        const otherKey = `${timer.entityId.toString()}:${endMs}:${other.minutes}`;
+                        if (other.minutes > threshold.minutes && !sentNotificationKeys.has(otherKey)) {
+                            sentNotificationKeys.add(otherKey);
+                        }
+                    }
                     notifyUser(`${region.title} ${threshold.label}.`);
                 }
             }
@@ -450,6 +457,15 @@ export default function Events() {
                                                 class="size-4 accent-primary"
                                                 checked={unchartedNotifications().notifyAtStart}
                                                 onChange={(e) => updateUnchartedNotifications({notifyAtStart: e.currentTarget.checked})}
+                                            />
+                                        </label>
+                                        <label class="flex items-center justify-between px-2 py-1.5 text-sm">
+                                            <span>5 minutes</span>
+                                            <input
+                                                type="checkbox"
+                                                class="size-4 accent-primary"
+                                                checked={unchartedNotifications().notifyAt5m ?? false}
+                                                onChange={(e) => updateUnchartedNotifications({notifyAt5m: e.currentTarget.checked})}
                                             />
                                         </label>
                                         <label class="flex items-center justify-between px-2 py-1.5 text-sm">

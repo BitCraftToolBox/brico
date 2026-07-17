@@ -10,6 +10,7 @@ export type SortMode = "tree" | "az";
 export type ViewMode = "list" | "grid";
 export type UnchartedNotifications = {
     notifyAtStart: boolean;
+    notifyAt5m: boolean;
     notifyAt15m: boolean;
     notifyAt60m: boolean;
     soundEnabled: boolean;
@@ -181,6 +182,7 @@ function createSettings(): AppSettings {
     const [unchartedNotifications, setUnchartedNotifications] = makePersisted(
         createSignal<UnchartedNotifications>({
             notifyAtStart: false,
+            notifyAt5m: false,
             notifyAt15m: false,
             notifyAt60m: false,
             soundEnabled: false,
