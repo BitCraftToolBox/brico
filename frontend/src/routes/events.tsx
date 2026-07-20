@@ -419,12 +419,12 @@ export default function Events() {
                         : remainingMs <= threshold.minutes * 60_000 && remainingMs > 0;
                     if (!isTriggered) continue;
 
-                    const key = `${timer.entityId.toString()}:${endMs}:${threshold.minutes}`;
+                    const key = `${timer.entityId.toString()}:${threshold.minutes}`;
                     if (sentNotificationKeys.has(key)) continue;
 
                     sentNotificationKeys.add(key);
                     for (const other of thresholds) {
-                        const otherKey = `${timer.entityId.toString()}:${endMs}:${other.minutes}`;
+                        const otherKey = `${timer.entityId.toString()}:${other.minutes}`;
                         if (other.minutes > threshold.minutes && !sentNotificationKeys.has(otherKey)) {
                             sentNotificationKeys.add(otherKey);
                         }
