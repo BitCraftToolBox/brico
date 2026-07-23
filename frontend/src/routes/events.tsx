@@ -160,7 +160,10 @@ export default function Events() {
         }
     }
 
-    function refreshRegionTimers(conn: DbConnection, regionId: number) {
+    function refreshRegionTimers(conn: DbConnection, regionId: number, row?: GrowthTimer) {
+        if (row && resourceById().get(row.resourceId)?.tag !== "World Event") {
+            return;
+        }
         if (!TRACKED_REGION_IDS.includes(regionId as (typeof TRACKED_REGION_IDS)[number])) {
             return;
         }
@@ -316,17 +319,19 @@ export default function Events() {
 
     function handleGrowthInsert(ctx: EventContext, row: GrowthTimer) {
         if (shouldSkipRealtimeEvent(ctx) || !connection) return;
-        refreshRegionTimers(connection, row.regionId);
+        refreshRegionTimers(connection, row.regionId, row);
     }
 
     function handleGrowthDelete(ctx: EventContext, row: GrowthTimer) {
         if (shouldSkipRealtimeEvent(ctx) || !connection) return;
-        refreshRegionTimers(connection, row.regionId);
+        refreshRegionTimers(connection, row.regionId, row);
     }
 
     function handleGrowthUpdate(ctx: EventContext, _oldRow: GrowthTimer, newRow: GrowthTimer) {
+        if (shouldSkipRealtimeEvent(ctx) || !connection) return;
         // essentially impossible for a resource to cross regions, so we only need to check the new row's region
-        handleGrowthInsert(ctx, newRow);
+        // in fact growth timers will essentially never update, only insert/delete, unless timers are manually loaded by devs.
+        refreshRegionTimers(connection, newRow.regionId, newRow);
     }
 
     onMount(() => {

@@ -158,11 +158,15 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
 
         setResolvedItemId([targetItemId, targetItemType]);
 
-        if (targetListId) {
+        while (targetListId) {
             const list = BitCraftTables.ItemListDesc.indexedBy("id")().get(targetListId);
             if (list) {
                 const item = BitCraftTables.ItemDesc.indexedBy("id")().get(targetItemId);
                 const result = rollItemList(list);
+                if (result?.type === "item" && result.item.itemListId !== 0) {
+                    targetListId = result.item.itemListId;
+                    continue;
+                }
                 if (result && item?.itemListId === targetListId) {
                     // input was item list itself, just resolve to the rolled item
                     setResolvedItemId(result.type === "item" ? [result.item.id, "Item"] : [result.cargo.id, "Cargo"]);
@@ -171,6 +175,7 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
                     setLootResult(result);
                 }
             }
+            targetListId = undefined;
         }
 
         setChestOrigin(anchorRef?.getBoundingClientRect() ?? null);
@@ -431,7 +436,9 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
 const loots = [
     [1086855799, "Item", 350062593], // party cracker
     [2139638761, "Cargo", 680933968], // coralith
-    [164053808, "Item", 1687372047],
+    [164053808, "Item", 1687372047], // roomba box
+    [833741484, "Item", 1451883043], // ice map
+    [1392782442, "Item", 1377289048], // pirate map
     // mythic t6 hit
     [1622627516, "Item", 1314539293],
     [181836937, "Item", 1382641800],
