@@ -19,14 +19,14 @@ export default function PavingDetail() {
     const tile = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const experienceStr = createMemo(() => {
         const t = tile();
         if (!t?.experiencePerProgress?.length) return undefined;
         return t.experiencePerProgress.map(exp => {
-            const name = skillIndex()?.get(exp.skillId)?.name ?? `Skill ${exp.skillId}`;
+            const name = skillIndex().get(exp.skillId)?.name ?? `Skill ${exp.skillId}`;
             return `${name}: ${fixFloat(exp.quantity, 4)}`;
         }).join(", ");
     });
@@ -35,7 +35,6 @@ export default function PavingDetail() {
         const t = tile();
         if (!t?.requiredKnowledges?.length) return [];
         const idx = knowledgeIndex();
-        if (!idx) return [];
         return t.requiredKnowledges.map(id => idx.get(id)).filter((v): v is SecondaryKnowledgeDesc => !!v);
     });
 
@@ -56,7 +55,7 @@ export default function PavingDetail() {
                 {label: "Build Time", value: tile() ? `${fixFloat(tile()!.pavingDuration)}s` : undefined},
             ]}
             rawData={tile()}
-            spacetimeTable={BitCraftTables.PavingTileDesc.st_name}
+            spacetimeTable={BitCraftTables.PavingTileDesc.spacetimeName}
             objectId={tile()?.id}
             tabs={[
                 {

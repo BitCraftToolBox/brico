@@ -129,7 +129,7 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
     }
     const depletionResource = () => {
         if (!r?.onDestroyYieldResourceId) return undefined;
-        return BitCraftTables.ResourceDesc.indexedBy("id")()?.get(r.onDestroyYieldResourceId);
+        return BitCraftTables.ResourceDesc.indexedBy("id")().get(r.onDestroyYieldResourceId);
     }
 
     return (
@@ -512,7 +512,7 @@ export const renderKnowledgeLockedItem = <T extends {requiredKnowledges: number[
 // ─── Placeable Placement Panel ──────────────────────────────────
 
 export const PlacementPanel: Component<{ placement: PlaceablePlacementDesc }> = (props) => {
-    const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(props.placement.placedPlaceableId);
+    const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")().get(props.placement.placedPlaceableId);
 
     return (
         <RecipeVisual
@@ -591,7 +591,7 @@ const GrowthOutcomeIcon: Component<{
     showPercent: Accessor<boolean>;
     onTogglePercent: () => void;
 }> = (props) => {
-    const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(props.placeableId);
+    const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")().get(props.placeableId);
     const pct = () => (props.probability / props.totalWeight) * 100;
 
     return (
@@ -617,7 +617,7 @@ const GrowthOutcomeIcon: Component<{
 
 export const GrowthPanel: Component<{ growth: PlaceableGrowthDesc }> = (props) => {
     const [showPercent, setShowPercent] = createSignal(true);
-    const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(props.growth.placeableId);
+    const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")().get(props.growth.placeableId);
     const totalWeight = () => props.growth.outcomes.reduce((sum, o) => sum + o.probability, 0);
 
     return (

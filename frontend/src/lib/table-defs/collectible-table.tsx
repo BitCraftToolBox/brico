@@ -27,10 +27,9 @@ export const CollectibleDefs: BitCraftToDataDef<CollectibleDesc> = {
             id: "Item Deed",
             accessorKey: "itemDeedId",
             cell: (props) => {
-                const itemIdx = BitCraftTables.ItemDesc.indexedBy("id");
                 const item = props.getValue();
                 if (!item) return <></>;
-                const itemDesc = itemIdx?.()?.get(item);
+                const itemDesc = BitCraftTables.ItemDesc.indexedBy("id")().get(item);
                 return itemDesc ? <ItemIcon item={itemDesc} small/> : <></>;
             },
         },

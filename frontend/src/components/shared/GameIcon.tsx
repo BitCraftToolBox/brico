@@ -297,7 +297,7 @@ export const ItemIcon: Component<ItemIconProps> = (props) => {
     const { tf2Mode } = useSettings();
     const hatIcon = () => {
         if (tf2Mode()) {
-            const eq = BitCraftTables.EquipmentDesc.indexedBy("itemId")?.()?.get(props.item.id);
+            const eq = BitCraftTables.EquipmentDesc.indexedBy("itemId")().get(props.item.id);
             if (eq && eq.slots.some(s => s.tag === "HeadClothing")) {
                 return `/assets/Hats/${HATS[Math.floor(Math.random() * HATS.length)]}.webp`;
             }

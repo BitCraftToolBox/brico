@@ -15,6 +15,7 @@ export interface SearchableTable {
     pk: string;
     name: (row: any) => string;
     fields?: { field: string; get: (row: any) => string | undefined }[];
+    tier?: (row: any) => number | undefined;
 }
 
 export interface ObjectMatch {
@@ -36,6 +37,7 @@ export interface GroupedResults {
 export interface GlobalSearchIndex {
     fuse: Fuse<SearchDocument>;
     metadataByTableName: Map<string, SearchDocumentMeta>;
+    documents: SearchDocument[];
 }
 
 // ─── Searchable Table Declarations ──────────────────────────────
@@ -45,21 +47,25 @@ export const searchableTables: SearchableTable[] = [
         label: "Items", route: "/database/item", tableKey: "ItemDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}, {field: "tag", get: (r) => r.tag}],
+        tier: (r) => r.tier,
     },
     {
         label: "Cargo", route: "/database/cargo", tableKey: "CargoDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}, {field: "tag", get: (r) => r.tag}],
+        tier: (r) => r.tier,
     },
     {
         label: "Creatures", route: "/database/creature", tableKey: "EnemyDesc",
         pk: "enemyType", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}, {field: "tag", get: (r) => r.tag}],
+        tier: (r) => r.tier,
     },
     {
         label: "Resources", route: "/database/resource", tableKey: "ResourceDesc",
         pk: "id", name: (r) => r.name,
-        fields: [{field: "tag", get: (r) => r.tag}]
+        fields: [{field: "tag", get: (r) => r.tag}],
+        tier: (r) => r.tier,
     },
     {
         label: "Structures", route: "/database/building", tableKey: "BuildingDesc",
@@ -88,6 +94,7 @@ export const searchableTables: SearchableTable[] = [
         label: "Claim Research", route: "/database/claim-research", tableKey: "ClaimTechDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
+        tier: (r) => r.tier,
     },
     {
         label: "Biomes", route: "/database/biome", tableKey: "BiomeDesc",
@@ -116,6 +123,7 @@ export const searchableTables: SearchableTable[] = [
         label: "Paving", route: "/database/paving", tableKey: "PavingTileDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
+        tier: (r) => r.tier,
     },
     {
         label: "Buffs", route: "/database/buff", tableKey: "BuffDesc",
@@ -138,6 +146,7 @@ export const searchableTables: SearchableTable[] = [
     {
         label: "Placeables", route: "/database/placeable", tableKey: "PlaceableDesc",
         pk: "id", name: (r) => r.name,
+        tier: (r) => r.tier,
     },
 ];
 
@@ -147,6 +156,7 @@ interface SearchDocument {
     primaryKey: string | number;
     name: string;
     fields: Record<string, string>;
+    tier?: number;
 }
 
 interface SearchDocumentMeta {
@@ -158,6 +168,34 @@ const PK_MIN = 0;
 const PK_MAX = 2147483647;
 const FALLBACK_FIELD = "name";
 const FALLBACK_SCORE = 1;
+const TIER_MIN = -1;
+const TIER_MAX = 10;
+const TIER_EXACT_SCORE = 0;
+
+// Matches a standalone "t6"/"t-1" token, a "tier 6" phrase, or the "untiered" alias for t-1.
+const TIER_TOKEN_RE = /\bt(-?\d{1,2})\b|\btier\s+(-?\d{1,2})\b|\buntiered\b/i;
+
+function formatTier(tier: number): string {
+    return tier === -1 ? "untiered" : `T${tier}`;
+}
+
+function extractTierFilter(query: string): { tier: number | undefined; remainder: string } {
+    const match = TIER_TOKEN_RE.exec(query);
+    if (!match) return {tier: undefined, remainder: query};
+
+    const tierToken = match[1] ?? match[2];
+    const tier = tierToken !== undefined ? parseInt(tierToken, 10) : -1; // unmatched group pair means "untiered"
+
+    if (Number.isNaN(tier) || tier < TIER_MIN || tier > TIER_MAX) {
+        return {tier: undefined, remainder: query};
+    }
+
+    const remainder = (query.slice(0, match.index) + query.slice(match.index + match[0].length))
+        .replace(/\s+/g, " ")
+        .trim();
+
+    return {tier, remainder};
+}
 
 const searchableFieldNames = [...new Set(
     searchableTables.flatMap((table) => table.fields?.map((field) => field.field) ?? [])
@@ -248,7 +286,6 @@ function collectPkExactMatches(query: string): ObjectMatch[] {
 }
 
 export function createGlobalSearchIndex(): GlobalSearchIndex {
-    console.log("Creating global search index...");
     const documents: SearchDocument[] = [];
     const metadataByTableName = new Map<string, SearchDocumentMeta>();
 
@@ -279,6 +316,7 @@ export function createGlobalSearchIndex(): GlobalSearchIndex {
                 primaryKey,
                 name,
                 fields,
+                tier: table.tier?.(row),
             });
         }
     }
@@ -287,6 +325,7 @@ export function createGlobalSearchIndex(): GlobalSearchIndex {
     return {
         fuse: new Fuse(documents, fuseOptions, fuseIndex),
         metadataByTableName,
+        documents,
     };
 }
 
@@ -307,28 +346,58 @@ export function globalSearch(
         matchByDocId.set(buildDocId(exact.tableName, exact.primaryKey), exact);
     }
 
-    const fuzzyMatches = index.fuse.search(q);
-    for (const result of fuzzyMatches) {
-        const score = result.score ?? FALLBACK_SCORE;
-        if (score > scoreCutoff) continue;
+    // Tier is pulled out of the query text and matched by exact equality on a
+    // dedicated (non-fuzzy) field — Fuse can't cross-match a tier token against
+    // one field and free text against another, so this can't be done in-index.
+    const {tier, remainder} = extractTierFilter(q);
 
-        const metadata = index.metadataByTableName.get(result.item.tableName);
-        if (!metadata) continue;
+    if (tier !== undefined && !remainder) {
+        for (const doc of index.documents) {
+            if (doc.tier !== tier) continue;
 
-        const existing = matchByDocId.get(result.item.id);
-        if (existing && existing.score <= score) continue;
+            const metadata = index.metadataByTableName.get(doc.tableName);
+            if (!metadata) continue;
 
-        const {matchField, matchValue} = resolveMatchField(result);
-        matchByDocId.set(result.item.id, {
-            tableName: result.item.tableName,
-            label: metadata.label,
-            route: `${metadata.routePrefix}/${result.item.primaryKey}`,
-            primaryKey: result.item.primaryKey,
-            displayName: result.item.name,
-            matchField,
-            matchValue,
-            score,
-        });
+            const existing = matchByDocId.get(doc.id);
+            if (existing && existing.score <= TIER_EXACT_SCORE) continue;
+
+            matchByDocId.set(doc.id, {
+                tableName: doc.tableName,
+                label: metadata.label,
+                route: `${metadata.routePrefix}/${doc.primaryKey}`,
+                primaryKey: doc.primaryKey,
+                displayName: doc.name,
+                matchField: "tier",
+                matchValue: formatTier(tier),
+                score: TIER_EXACT_SCORE,
+            });
+        }
+    } else {
+        const fuzzyMatches = index.fuse.search(tier !== undefined ? remainder : q);
+        for (const result of fuzzyMatches) {
+            if (tier !== undefined && result.item.tier !== tier) continue;
+
+            const score = result.score ?? FALLBACK_SCORE;
+            if (score > scoreCutoff) continue;
+
+            const metadata = index.metadataByTableName.get(result.item.tableName);
+            if (!metadata) continue;
+
+            const existing = matchByDocId.get(result.item.id);
+            if (existing && existing.score <= score) continue;
+
+            const {matchField, matchValue} = resolveMatchField(result);
+            matchByDocId.set(result.item.id, {
+                tableName: result.item.tableName,
+                label: metadata.label,
+                route: `${metadata.routePrefix}/${result.item.primaryKey}`,
+                primaryKey: result.item.primaryKey,
+                displayName: result.item.name,
+                matchField,
+                matchValue,
+                score,
+            });
+        }
     }
 
     const groupedMatches = new Map<string, { label: string; matches: ObjectMatch[] }>();

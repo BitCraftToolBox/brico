@@ -21,14 +21,13 @@ export default function QuestChainDetail() {
     const quest = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return questIndex()?.get(id);
+        return questIndex().get(id);
     });
 
     const stages = createMemo(() => {
         const q = quest();
         if (!q) return [];
         const all = BitCraftTables.QuestStageDesc.indexedByMulti("chainDescId");
-        if (!all) return [];
         return all().get(q.id)?.sort((a, b) => q.stages.indexOf(a.id) - q.stages.indexOf(b.id)) ?? [];
     });
 
@@ -191,7 +190,7 @@ export default function QuestChainDetail() {
                 );
             }]] : undefined}
             rawData={quest()}
-            spacetimeTable={BitCraftTables.QuestChainDesc.st_name}
+            spacetimeTable={BitCraftTables.QuestChainDesc.spacetimeName}
             objectId={quest()?.id}
             tabs={[
                 {

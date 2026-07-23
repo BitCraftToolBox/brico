@@ -16,7 +16,7 @@ export default function ItemListDetail() {
     const itemList = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const source = createMemo((): ItemListSource => {
@@ -43,7 +43,7 @@ export default function ItemListDetail() {
             tag={"Item List"}
             icon={<Show when={itemList()}>{il => <ItemListSourceIcon list={il()} noInteract={true}/>}</Show>}
             rawData={itemList()}
-            spacetimeTable={BitCraftTables.ItemListDesc.st_name}
+            spacetimeTable={BitCraftTables.ItemListDesc.spacetimeName}
             objectId={itemList()?.id}
             chatLink={chatLink()}
             tabs={[

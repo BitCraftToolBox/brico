@@ -16,7 +16,7 @@ export default function TerraformingDetail() {
     const recipe = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const tool = createMemo(() => {
@@ -41,7 +41,7 @@ export default function TerraformingDetail() {
                 {label: "Tool", value: tool() ? tool()![1] : undefined},
             ]}
             rawData={recipe()}
-            spacetimeTable={BitCraftTables.TerraformRecipeDesc.st_name}
+            spacetimeTable={BitCraftTables.TerraformRecipeDesc.spacetimeName}
             objectId={recipe()?.difference}
             tabs={[
                 {

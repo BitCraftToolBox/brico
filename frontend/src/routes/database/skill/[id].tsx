@@ -1,5 +1,6 @@
 import {useParams} from "@solidjs/router";
-import {createMemo} from "solid-js";
+import {createMemo, Show} from "solid-js";
+import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {breadcrumb} from "~/lib/game-links";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -12,7 +13,7 @@ export default function SkillDetail() {
     const skill = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return skillIndex()?.get(id);
+        return skillIndex().get(id);
     });
     const skillTag = createMemo(() => {
         const s = skill();
@@ -27,6 +28,7 @@ export default function SkillDetail() {
             breadcrumb={breadcrumb("/database/skill", skillTag())}
             loading={isLoading() && !skill()}
             name={skill()?.name ?? `Skill #${params.id}`}
+            icon={<Show when={skill()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
             description={skill()?.description}
             tag={skillTag()}
             details={[
@@ -34,7 +36,7 @@ export default function SkillDetail() {
                 {label: "Max Level", value: skill()?.maxLevel},
             ]}
             rawData={skill()}
-            spacetimeTable={BitCraftTables.SkillDesc.st_name}
+            spacetimeTable={BitCraftTables.SkillDesc.spacetimeName}
             objectId={skill()?.id}
             chatLink={`(prof=${skill()?.id})`}
             tabs={[]}

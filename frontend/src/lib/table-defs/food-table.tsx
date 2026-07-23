@@ -28,7 +28,7 @@ const foodToBuffNames = (food: FoodDesc, def: any) => {
     if (!food.buffs.length) return def;
     const buffIdx = BitCraftTables.BuffDesc.indexedBy("id");
     return food.buffs.map(b => {
-        const buff = buffIdx()?.get(b.buffId);
+        const buff = buffIdx().get(b.buffId);
         return buff?.description ?? `Buff #${b.buffId}`;
     });
 }
@@ -37,10 +37,10 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
     columns: [
         headerColumn<FoodDesc, any>({
             title: "Name",
-            accessor: {accessorFn: food => BitCraftTables.ItemDesc.indexedBy("id")()?.get(food.itemId)?.name ?? `Item #${food.itemId}`},
+            accessor: {accessorFn: food => BitCraftTables.ItemDesc.indexedBy("id")().get(food.itemId)?.name ?? `Item #${food.itemId}`},
             route: food => ["food", food.itemId],
             prefixElement: food => {
-                const item = BitCraftTables.ItemDesc.indexedBy("id")()?.get(food.itemId);
+                const item = BitCraftTables.ItemDesc.indexedBy("id")().get(food.itemId);
                 return item ? <ItemIcon item={item} small noInteract/> : <></>;
             },
         }),
@@ -52,8 +52,8 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
             cell: p => {
                 const food = p.row.original;
                 if (!food.buffs?.length) return undefined;
-                const buffIdx = BitCraftTables.BuffDesc.indexedBy("id");
-                const buffs = food.buffs.map(b => [b, buffIdx()?.get(b.buffId)]).filter((b) => !!b[1]) as [BuffEffect, BuffDesc][];
+                const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
+                const buffs = food.buffs.map(b => [b, buffIdx.get(b.buffId)]).filter((b) => !!b[1]) as [BuffEffect, BuffDesc][];
                 return (
                     <div class="flex flex-wrap gap-1">
                         <For each={buffs}>
@@ -66,8 +66,8 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
                 );
             },
             sortingFn: (a, b) => {
-                const buffIdx = BitCraftTables.BuffDesc.indexedBy("id");
-                const getMax = (food: FoodDesc) => Math.max(...food.buffs?.map(be => be.duration ?? buffIdx().get(be.buffId)?.duration ?? 0));
+                const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
+                const getMax = (food: FoodDesc) => Math.max(...food.buffs?.map(be => be.duration ?? buffIdx.get(be.buffId)?.duration ?? 0));
                 return getMax(a.original) - getMax(b.original);
             },
             sortUndefined: "last",
@@ -77,9 +77,9 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
             accessorFn: (food) => {
                 const buffs = food.buffs;
                 if (!buffs?.length) return undefined;
-                const buffIdx = BitCraftTables.BuffDesc.indexedBy("id");
+                const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
                 return consolidateStats(buffs.flatMap(buffEffect => {
-                    const buffDesc = buffIdx()?.get(buffEffect.buffId);
+                    const buffDesc = buffIdx.get(buffEffect.buffId);
                     if (!buffDesc) return null;
                     return buffDesc.stats;
                 }).filter((v): v is CsvStatEntry => v !== null));
@@ -91,8 +91,8 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
         {id: "Stamina", accessorKey: "stamina", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
         {id: "Up To Stamina", accessorKey: "upToStamina", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
         boolColumn<FoodDesc, boolean>("Consumable In Combat", {accessorKey: "consumableWhileInCombat"}),
-        tierColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")?.().get(tool.itemId)?.tier ?? -1}),
-        rarityColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")?.().get(tool.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}), // idk why TS needs this
+        tierColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.tier ?? -1}),
+        rarityColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}), // idk why TS needs this
         rowActions({accessorKey: "itemId"}, "item"),
     ],
     facetedFilters: [

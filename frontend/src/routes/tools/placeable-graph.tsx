@@ -66,7 +66,7 @@ export default function PlaceableGraphTool() {
     }
 
     function placementSelectionRow(placement: PlaceablePlacementDesc) {
-        const placeable = BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(placement.placedPlaceableId);
+        const placeable = BitCraftTables.PlaceableDesc.indexedBy("id")().get(placement.placedPlaceableId);
         const placeableName = placeable?.name;
         return (
             <>

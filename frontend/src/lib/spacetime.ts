@@ -78,7 +78,7 @@ async function fetchBSATN<T>(params: FetchParams) {
 function cache<T>(n: string, b: { getTypeScriptAlgebraicType: () => AlgebraicType }) {
     const base = new BitCraftTable<T>(n, b.getTypeScriptAlgebraicType());
     const [resource] = createResource(async () =>
-        fetchBSATN<T>({name: base.st_name, itemType: base.st_type})
+        fetchBSATN<T>({name: base.spacetimeName, itemType: base.spacetimeType})
     );
     base.get = resource;
     base.loading = () => resource.loading;
@@ -102,14 +102,14 @@ function createIndex<TData, TIdx extends keyof TData & string, TValue extends TD
 }
 
 function createIndexMulti<TData, TIdx extends keyof TData & string, TValue extends TData[TIdx] & (string | number)>(
-    tbl: Accessor<TData[] | undefined>, field: TIdx
+    tbl: Accessor<TData[] | undefined>, field: TIdx, allowZero: boolean
 ): Accessor<Map<TValue, TData[]>> {
     return createMemo(() => {
         const data = tbl() ?? [];
         const map = new Map<TValue, TData[]>();
         for (const item of data) {
             const key = item[field] as TValue;
-            if (key !== null && key !== 0) { // idk a big list of 0 values seems useless but if it's needed later I guess it's an easy change
+            if (key !== null && (allowZero || key !== 0)) {
                 let existing = map.get(key);
                 if (existing) {
                     existing.push(item);
@@ -128,8 +128,8 @@ export function loadTableAdHoc<T>(n: string, b: { getTypeScriptAlgebraicType: ()
 }
 
 export class BitCraftTable<TData> {
-    st_name: string;
-    st_type: AlgebraicType;
+    spacetimeName: string;
+    spacetimeType: AlgebraicType;
     get: Accessor<TData[] | undefined>;
     loading: Accessor<boolean>;
     error: Accessor<any>;
@@ -137,9 +137,9 @@ export class BitCraftTable<TData> {
     #idxCacheMulti: Map<string, Accessor<Map<any, TData[]>>>;
     #tagOrdinalCache: Map<string, Map<string, number>>;
 
-    constructor(st_name: string, st_type: AlgebraicType) {
-        this.st_name = st_name;
-        this.st_type = st_type;
+    constructor(spacetimeName: string, spacetimeType: AlgebraicType) {
+        this.spacetimeName = spacetimeName;
+        this.spacetimeType = spacetimeType;
         this.get = () => undefined;
         this.loading = () => true;
         this.error = () => undefined;
@@ -157,10 +157,10 @@ export class BitCraftTable<TData> {
         return res;
     }
 
-    indexedByMulti<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx): Accessor<Map<any, TData[]>> {
+    indexedByMulti<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx, allowZero: boolean = false): Accessor<Map<any, TData[]>> {
         let res = this.#idxCacheMulti.get(key);
         if (!res) {
-            res = createIndexMulti<TData, TIdx, TValue>(this.get, key);
+            res = createIndexMulti<TData, TIdx, TValue>(this.get, key, allowZero);
             this.#idxCacheMulti.set(key, res)
         }
         return res;
@@ -176,10 +176,10 @@ export class BitCraftTable<TData> {
         const cached = this.#tagOrdinalCache.get(field);
         if (cached) return cached;
 
-        const elements: any[] = (this.st_type as any).product?.elements ?? [];
+        const elements: any[] = (this.spacetimeType as any).product?.elements ?? [];
         const elem = elements.find((e: any) => e.name === field);
         if (!elem) {
-            throw new Error(`[BitCraftTable] Field '${field}' not found in type '${this.st_name}'`);
+            throw new Error(`[BitCraftTable] Field '${field}' not found in type '${this.spacetimeName}'`);
         }
         const rootType: AlgebraicType = elem.algebraicType;
         const variants: any[] = rootType.type == "ArrayType" ? rootType.array.sum.variants : rootType.sum.variants;

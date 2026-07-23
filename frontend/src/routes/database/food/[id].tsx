@@ -17,17 +17,17 @@ export default function FoodDetail() {
     const food = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return foodIndex()?.get(id);
+        return foodIndex().get(id);
     });
 
-    const item = createMemo(() => food() ? itemIndex()?.get(food()!.itemId) : undefined);
+    const item = createMemo(() => food() ? itemIndex().get(food()!.itemId) : undefined);
 
     const buffs = createMemo(() => {
         const f = food();
         if (!f?.buffs?.length) return [];
-        const buffIdx = BitCraftTables.BuffDesc.indexedBy("id");
+        const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
         return f.buffs.map(b => {
-            const buff = buffIdx()?.get(b.buffId);
+            const buff = buffIdx.get(b.buffId);
             return {
                 ...b,
                 buff,
@@ -68,7 +68,7 @@ export default function FoodDetail() {
                 ...statGroups()
             ]}
             rawData={food()}
-            spacetimeTable={BitCraftTables.FoodDesc.st_name}
+            spacetimeTable={BitCraftTables.FoodDesc.spacetimeName}
             objectId={food()?.itemId}
             chatLink={`(item=${item()?.id})`}
             tabs={[

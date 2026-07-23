@@ -1,3 +1,4 @@
+import {A, useLocation} from "@solidjs/router";
 import {TbOutlineExternalLink as IconExternal, TbOutlineInfoCircle as IconCurrent, TbOutlineInfoTriangle as IconOutdated} from "solid-icons/tb";
 import {createResource, onCleanup, onMount, Show} from "solid-js";
 import {Button} from "~/components/ui/button";
@@ -36,6 +37,7 @@ function hasDescription(version: VersionInfo): boolean {
 
 export function VersionChecker() {
     const [latestVersion, {refetch}] = createResource(fetchLatestVersion);
+    const location = useLocation();
 
     onMount(() => {
         let timer = setInterval(refetch, 15 * 60 * 1000); // 15 minutes
@@ -53,7 +55,7 @@ export function VersionChecker() {
 
     return (
         <div class="w-full flex justify-center py-1">
-            <Popover placement="right">
+            <Popover placement="right" fitViewport={true} slide={true} overlap={true}>
                 <PopoverTrigger>
                     <Button variant="ghost" size="sm" class="h-8 max-w-full px-2 flex items-center gap-0 cursor-pointer">
                         <Show when={showWarning()} fallback={<IconCurrent class="size-4 shrink-0"/>}>
@@ -87,9 +89,9 @@ export function VersionChecker() {
                                 <div class="border-t border-border"/>
                                 <div class="font-medium">
                                     Latest available{" "}
-                                    <a href="https://preview.brico.app" target="_blank" class="underline">
+                                    <A href={`https://preview.brico.app${location.pathname}${location.search}`} target="_blank" class="underline">
                                         (check preview <IconExternal class="inline"/>)
-                                    </a>
+                                    </A>
                                 </div>
                                 <div>{versionSummary(latest())}</div>
                                 <Show when={hasDescription(latest())}>

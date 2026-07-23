@@ -185,7 +185,7 @@ export function findRootPlacement(placeableId: number): PlaceablePlacementDesc |
 // ─── Naming Helpers ─────────────────────────────────────────────
 
 export function getPlaceableName(placeableId: number): string {
-    return BitCraftTables.PlaceableDesc.indexedBy("id")()?.get(placeableId)?.name ?? `Placeable #${placeableId}`;
+    return BitCraftTables.PlaceableDesc.indexedBy("id")().get(placeableId)?.name ?? `Placeable #${placeableId}`;
 }
 
 export function getPlacementName(p: PlaceablePlacementDesc): string {

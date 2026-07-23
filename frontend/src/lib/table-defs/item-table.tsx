@@ -29,25 +29,25 @@ function getConsolidatedItemStats(item: ItemDesc): CsvStatEntry[] | undefined {
     const allStats: CsvStatEntry[] = [];
 
     // Equipment stats
-    const equip = BitCraftTables.EquipmentDesc.indexedBy("itemId")?.()?.get(item.id);
+    const equip = BitCraftTables.EquipmentDesc.indexedBy("itemId")().get(item.id);
     if (equip?.stats?.length) {
         allStats.push(...equip.stats);
     }
 
     // Food buff stats
-    const food = BitCraftTables.FoodDesc.indexedBy("itemId")?.()?.get(item.id);
+    const food = BitCraftTables.FoodDesc.indexedBy("itemId")().get(item.id);
     if (food?.buffs?.length) {
-        const buffIdx = BitCraftTables.BuffDesc.indexedBy("id");
+        const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
         food.buffs.forEach(b => {
-            const buff = buffIdx?.()?.get(b.buffId);
+            const buff = buffIdx.get(b.buffId);
             if (buff?.stats?.length) allStats.push(...buff.stats);
         });
     }
 
     // Knowledge stat modifiers (via scroll -> secondary knowledge)
-    const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("itemId")?.()?.get(item.id);
+    const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("itemId")().get(item.id);
     if (scroll) {
-        const mod = BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")?.()?.get(scroll.secondaryKnowledgeId);
+        const mod = BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")().get(scroll.secondaryKnowledgeId);
         if (mod?.stats?.length) allStats.push(...mod.stats);
     }
 

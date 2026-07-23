@@ -18,17 +18,17 @@ export const ProspectingDefs: BitCraftToDataDef<ProspectingDesc> = {
         {
             id: "Biomes",
             accessorFn: (row) => {
-                const idx = BitCraftTables.BiomeDesc.indexedBy("biomeType");
-                return row.biomeRequirements?.map((id) => idx?.()?.get(id)?.name ?? `#${id}`) || [];
+                const idx = BitCraftTables.BiomeDesc.indexedBy("biomeType", true);
+                return row.biomeRequirements?.map((id) => idx().get(id)?.name ?? `#${id}`) || [];
             },
             cell: (props) => {
                 const row = props.row.original;
                 if (!row.biomeRequirements?.length) return <></>;
-                const idx = BitCraftTables.BiomeDesc.indexedBy("biomeType");
+                const idx = BitCraftTables.BiomeDesc.indexedBy("biomeType", true);
                 return (
                     <LinkedList>
                         {row.biomeRequirements.map(biomeType => {
-                            const biome = idx?.()?.get(biomeType);
+                            const biome = idx().get(biomeType);
                             return <BiomeLink biomeType={biomeType} name={biome?.name}/>;
                         })}
                     </LinkedList>

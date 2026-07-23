@@ -17,7 +17,7 @@ export default function AchievementDetail() {
     const achievement = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const prereqs = createMemo(() => {
@@ -55,7 +55,7 @@ export default function AchievementDetail() {
             description={achievement()?.description}
             tag={`${achievement()?.pointsReward} points`}
             rawData={achievement()}
-            spacetimeTable={BitCraftTables.AchievementDesc.st_name}
+            spacetimeTable={BitCraftTables.AchievementDesc.spacetimeName}
             objectId={achievement()?.id}
             tabs={[
                 {id: "prereqs", label: "Prerequisites", count: prereqs().length, content: () => <AchievementTable data={prereqs()}/>},

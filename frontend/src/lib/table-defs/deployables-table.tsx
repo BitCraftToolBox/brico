@@ -19,19 +19,19 @@ function requiredItemsForDeployable(dep: DeployableDesc): {
     deed: ItemDesc | undefined;
     training: SecondaryKnowledgeDesc[];
 } {
-    const collTable = BitCraftTables.CollectibleDesc.indexedBy("id")!()!;
+    const collTable = BitCraftTables.CollectibleDesc.indexedBy("id")();
     const collId = dep.deployFromCollectibleId;
     if (!collId) return {deed: undefined, training: []};
     const collectible = collTable.get(collId);
     if (!collectible) return {deed: undefined, training: []};
 
-    const itemIndex = BitCraftTables.ItemDesc.indexedBy("id")!()!;
+    const itemIndex = BitCraftTables.ItemDesc.indexedBy("id")();
     const deedItem = collectible.itemDeedId ? itemIndex.get(collectible.itemDeedId) : undefined;
 
     const knowledgeIds = collectible.requiredKnowledgesToUse ?? [];
     let knowledgeDescs: SecondaryKnowledgeDesc[] = [];
     if (knowledgeIds.length) {
-        const knowledgeIndex = BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id")!()!;
+        const knowledgeIndex = BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id")();
         knowledgeDescs = knowledgeIds
             .map(k => knowledgeIndex.get(k))
             .filter((k): k is SecondaryKnowledgeDesc => !!k);
@@ -40,7 +40,7 @@ function requiredItemsForDeployable(dep: DeployableDesc): {
 }
 
 function getStepHeight(deployable: DeployableDesc): number | null {
-    const pathfinding = BitCraftTables.PathfindingDesc.indexedBy("id")!()!;
+    const pathfinding = BitCraftTables.PathfindingDesc.indexedBy("id")();
     if (deployable.movementType.tag === MovementType.Water.tag) {
         return pathfinding.get(deployable.pathfindingId)?.maxSwimHeightDelta || null;
     }
@@ -65,7 +65,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
             route: dep => ["deployable", dep.id],
             prefixElement: dep => {
                 const collTable = BitCraftTables.CollectibleDesc.indexedBy("id");
-                const collectible = collTable?.()?.get(dep.deployFromCollectibleId);
+                const collectible = collTable().get(dep.deployFromCollectibleId);
                 // this should be noInteract because it links to the collectible rather than the deployable itself
                 return collectible?.iconAssetName ? <CollectibleIcon collectible={collectible} small noInteract/> : <></>;
             },
@@ -185,7 +185,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         statsColumn(),
         rowActions({accessorKey: "id"}, "col", undefined,
             { accessorFn: (dep) => {
-                return BitCraftTables.CollectibleDesc.indexedBy("id")?.()?.get(dep.deployFromCollectibleId)?.id;
+                return BitCraftTables.CollectibleDesc.indexedBy("id")().get(dep.deployFromCollectibleId)?.id;
             }
         }),
     ],

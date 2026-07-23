@@ -22,20 +22,19 @@ export default function CollectibleDetail() {
     const collectible = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const itemDeed = createMemo(() => {
         const c = collectible();
         if (!c?.itemDeedId) return undefined;
-        return itemIndex()?.get(c.itemDeedId);
+        return itemIndex().get(c.itemDeedId);
     });
 
     const knowledgesToUse = createMemo(() => {
         const c = collectible();
         if (!c?.requiredKnowledgesToUse?.length) return [];
         const idx = knowledgeIndex();
-        if (!idx) return [];
         return c.requiredKnowledgesToUse.map(id => idx.get(id)).filter((v): v is SecondaryKnowledgeDesc => !!v);
     });
 
@@ -43,7 +42,6 @@ export default function CollectibleDetail() {
         const c = collectible();
         if (!c?.requiredKnowledgesToConvert?.length) return [];
         const idx = knowledgeIndex();
-        if (!idx) return [];
         return c.requiredKnowledgesToConvert.map(id => idx.get(id)).filter((v): v is SecondaryKnowledgeDesc => !!v);
     });
 
@@ -66,7 +64,7 @@ export default function CollectibleDetail() {
         if (!c) return [];
         if (c.collectibleType.tag === "DeployableAppearanceOverride") {
             const appearances = BitCraftTables.DeployableAppearanceOverrideDesc.indexedBy("collectibleId")();
-            const appearance = appearances?.get(c.id);
+            const appearance = appearances.get(c.id);
             if (!appearance) return [];
             const model = appearance.affectedModelAddress;
             const deployables = BitCraftTables.DeployableDesc.get();
@@ -75,7 +73,7 @@ export default function CollectibleDetail() {
                 .filter((p): p is [DeployableDesc, CollectibleDesc] => !!p[1]) ?? [];
         } else if (c.collectibleType.tag === "Deployable") {
             const deployables = BitCraftTables.DeployableDesc.indexedBy("deployFromCollectibleId");
-            const dep = deployables()?.get(c.id);
+            const dep = deployables().get(c.id);
             return dep ? [[dep, c]] as [DeployableDesc, CollectibleDesc][] : [];
         } else {
             return [];
@@ -101,7 +99,7 @@ export default function CollectibleDetail() {
                 {label: "Max Equip Count", value: collectible()?.maxEquipCount},
             ]}
             rawData={collectible()}
-            spacetimeTable={BitCraftTables.CollectibleDesc.st_name}
+            spacetimeTable={BitCraftTables.CollectibleDesc.spacetimeName}
             objectId={collectible()?.id}
             chatLink={`(col=${collectible()?.id})`}
             tabs={[

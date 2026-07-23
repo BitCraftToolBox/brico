@@ -12,10 +12,10 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
     columns: [
         headerColumn<EquipmentDesc, any>({
             title: "Name",
-            accessor: {accessorFn: eq => BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(eq.itemId)?.name ?? `Item #${eq.itemId}`},
+            accessor: {accessorFn: eq => BitCraftTables.ItemDesc.indexedBy("id")().get(eq.itemId)?.name ?? `Item #${eq.itemId}`},
             route: eq => ["equipment", eq.itemId],
             prefixElement: eq => {
-                const item = BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(eq.itemId);
+                const item = BitCraftTables.ItemDesc.indexedBy("id")().get(eq.itemId);
                 return item ? <ItemIcon item={item} small noInteract/> : <></>;
             },
         }),
@@ -31,7 +31,7 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
             accessorFn: row => {
                 if (!row.levelRequirement) return undefined;
                 if (!row.levelRequirement.skillId) return undefined;
-                const skill = BitCraftTables.SkillDesc.indexedBy("id")?.()?.get(row.levelRequirement.skillId);
+                const skill = BitCraftTables.SkillDesc.indexedBy("id")().get(row.levelRequirement.skillId);
                 return skill?.name ?? `#${row.levelRequirement.skillId}`;
             },
             cell: (props) => {
@@ -47,8 +47,8 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
             filterFn: "inNumberRange",
         },
         statsColumn<EquipmentDesc>(),
-        tierColumn({accessorFn: equip => BitCraftTables.ItemDesc.indexedBy("id")?.().get(equip.itemId)?.tier ?? -1}),
-        rarityColumn({accessorFn: equip => BitCraftTables.ItemDesc.indexedBy("id")?.().get(equip.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}), // idk why TS needs this
+        tierColumn({accessorFn: equip => BitCraftTables.ItemDesc.indexedBy("id")().get(equip.itemId)?.tier ?? -1}),
+        rarityColumn({accessorFn: equip => BitCraftTables.ItemDesc.indexedBy("id")().get(equip.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}), // idk why TS needs this
         rowActions({accessorKey: "itemId"}, "item"),
     ],
     facetedFilters: [

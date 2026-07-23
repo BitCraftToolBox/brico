@@ -10,20 +10,20 @@ export const WeaponDefs: BitCraftToDataDef<WeaponDesc> = {
     columns: [
         headerColumn({
             title: "Name",
-            accessor: {accessorFn: wep => BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(wep.itemId)?.name ?? `Item #${wep.itemId}`},
+            accessor: {accessorFn: wep => BitCraftTables.ItemDesc.indexedBy("id")().get(wep.itemId)?.name ?? `Item #${wep.itemId}`},
             route: wep => ["weapon", wep.itemId],
             prefixElement: wep => {
-                const item = (() => BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(wep.itemId))();
+                const item = (() => BitCraftTables.ItemDesc.indexedBy("id")().get(wep.itemId))();
                 return item ? <ItemIcon item={item} small noInteract/> : <></>;
             },
         }),
         {
             id: "Weapon Type",
-            accessorFn: (row) => BitCraftTables.WeaponTypeDesc.indexedBy("id")?.()?.get(row.weaponType)?.name ?? `#${row.weaponType}`,
+            accessorFn: (row) => BitCraftTables.WeaponTypeDesc.indexedBy("id")().get(row.weaponType)?.name ?? `#${row.weaponType}`,
             filterFn: includedIn<WeaponDesc>()
         },
         tierColumn(),
-        rarityColumn({accessorFn: (row) => BitCraftTables.ItemDesc.indexedBy("id")?.()?.get(row.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}),
+        rarityColumn({accessorFn: (row) => BitCraftTables.ItemDesc.indexedBy("id")().get(row.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}),
         {id: "Min Damage", accessorKey: "minDamage", filterFn: "inNumberRange"},
         {id: "Max Damage", accessorKey: "maxDamage", filterFn: "inNumberRange"},
         {

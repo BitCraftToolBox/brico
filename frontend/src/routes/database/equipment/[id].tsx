@@ -15,10 +15,10 @@ export default function EquipmentDetail() {
     const equipment = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return eqIndex()?.get(id);
+        return eqIndex().get(id);
     });
 
-    const item = createMemo(() => equipment() ? itemIndex()?.get(equipment()!.itemId) : undefined);
+    const item = createMemo(() => equipment() ? itemIndex().get(equipment()!.itemId) : undefined);
 
     const details = createMemo((): DetailGroup[] => {
         const eq = equipment();
@@ -58,7 +58,7 @@ export default function EquipmentDetail() {
             rarity={item()?.rarity?.tag}
             details={details()}
             rawData={equipment()}
-            spacetimeTable={BitCraftTables.EquipmentDesc.st_name}
+            spacetimeTable={BitCraftTables.EquipmentDesc.spacetimeName}
             objectId={equipment()?.itemId}
             chatLink={`(item=${item()?.id})`}
             tabs={[

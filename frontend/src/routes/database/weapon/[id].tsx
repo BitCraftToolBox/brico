@@ -18,11 +18,11 @@ export default function WeaponDetail() {
     const weapon = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
-    const item = createMemo(() => weapon() ? itemIndex()?.get(weapon()!.itemId) : undefined);
-    const weaponType = createMemo(() => weapon() ? weaponTypeIndex()?.get(weapon()!.weaponType) : undefined);
+    const item = createMemo(() => weapon() ? itemIndex().get(weapon()!.itemId) : undefined);
+    const weaponType = createMemo(() => weapon() ? weaponTypeIndex().get(weapon()!.weaponType) : undefined);
 
     const combatActions = createMemo(() => {
         const w = weapon();
@@ -52,7 +52,7 @@ export default function WeaponDetail() {
                 {label: "Hunting", value: weaponType()?.hunting},
             ]}
             rawData={weapon()}
-            spacetimeTable={BitCraftTables.WeaponDesc.st_name}
+            spacetimeTable={BitCraftTables.WeaponDesc.spacetimeName}
             objectId={weapon()?.itemId}
             chatLink={`(item=${item()?.id})`}
             tabs={[

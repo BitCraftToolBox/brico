@@ -786,8 +786,8 @@ export function computeExpectedPath(
 
 function aggregateItemCosts(
     costs: { itemId: number; itemType: string; quantity: number }[],
-    itemIndex: Map<number, any> | undefined,
-    cargoIndex: Map<number, any> | undefined,
+    itemIndex: Map<number, any>,
+    cargoIndex: Map<number, any>,
 ): PathResult["itemCosts"] {
     const map = new Map<string, number>();
     for (const c of costs) {
@@ -798,8 +798,8 @@ function aggregateItemCosts(
         const [iType, iIdStr] = key.split("-");
         const iId = parseInt(iIdStr, 10);
         const name = iType === "Cargo"
-            ? cargoIndex?.get(iId)?.name ?? `Cargo #${iId}`
-            : itemIndex?.get(iId)?.name ?? `Item #${iId}`;
+            ? cargoIndex.get(iId)?.name ?? `Cargo #${iId}`
+            : itemIndex.get(iId)?.name ?? `Item #${iId}`;
         return {itemId: iId, itemType: iType, name, expectedQuantity: qty};
     });
 }
@@ -1043,7 +1043,7 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
 
                             const renderIcon = () => {
                                 if (node.type === "placeable") {
-                                    const desc = () => placeableIndex()?.get(node.gameId);
+                                    const desc = () => placeableIndex().get(node.gameId);
                                     return (
                                         <Show when={desc()}>
                                             {(d) => <PlaceableIcon placeable={d()} small noInteract/>}
@@ -1052,7 +1052,7 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
                                 } else {
                                     const isCargo = node.itemType === "Cargo";
                                     if (isCargo) {
-                                        const desc = () => cargoIndex()?.get(node.gameId);
+                                        const desc = () => cargoIndex().get(node.gameId);
                                         return (
                                             <Show when={desc()}>
                                                 {/* hardcoded to use the same size as square icons */}
@@ -1060,7 +1060,7 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
                                             </Show>
                                         );
                                     } else {
-                                        const desc = () => itemIndex()?.get(node.gameId);
+                                        const desc = () => itemIndex().get(node.gameId);
                                         return (
                                             <Show when={desc()}>
                                                 {(d) => <ItemIcon item={d()} small noInteract/>}
@@ -1285,7 +1285,7 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
         nodeIds.add(nodeId);
 
         const isCargo = itemType === "Cargo";
-        const desc = isCargo ? cargoIndex?.get(itemId) : itemIndex?.get(itemId);
+        const desc = isCargo ? cargoIndex.get(itemId) : itemIndex.get(itemId);
         const name = desc?.name ?? `${itemType} #${itemId}`;
         const pp = linkPlacement ? placementByItem.get(`${itemType}-${itemId}`) : undefined;
 
@@ -1308,7 +1308,7 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
         if (nodeIds.has(nodeId)) return nodeId;
         nodeIds.add(nodeId);
 
-        const desc = placeableIndex?.get(plcId);
+        const desc = placeableIndex.get(plcId);
         nodes.push({
             id: nodeId,
             label: desc?.name ?? `Placeable #${plcId}`,
@@ -1388,8 +1388,8 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
             const tooltip = ia.consumedItemStacks.length
                 ? ia.consumedItemStacks.map(s => {
                         const name = s.itemType.tag === "Cargo"
-                            ? cargoIndex?.get(s.itemId)?.name ?? `Cargo #${s.itemId}`
-                            : itemIndex?.get(s.itemId)?.name ?? `Item #${s.itemId}`;
+                            ? cargoIndex.get(s.itemId)?.name ?? `Cargo #${s.itemId}`
+                            : itemIndex.get(s.itemId)?.name ?? `Item #${s.itemId}`;
                         return `${s.quantity}× ${name} per action${effortReq}`;
                     }).join(", ")
                 : undefined;

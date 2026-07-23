@@ -37,34 +37,34 @@ export function reqOrRewardTagLabel(tag: string): string {
 export function reqOrRewardName(r: QuestEntry): string {
     switch (r.tag) {
         case "QuestChain":
-            return BitCraftTables.QuestChainDesc.indexedBy("id")()?.get(r.value as number)?.name ?? `Quest #${r.value}`;
+            return BitCraftTables.QuestChainDesc.indexedBy("id")().get(r.value as number)?.name ?? `Quest #${r.value}`;
         case "Achievement":
-            return BitCraftTables.AchievementDesc.indexedBy("id")()?.get(r.value as number)?.name ?? `Achievement #${r.value}`;
+            return BitCraftTables.AchievementDesc.indexedBy("id")().get(r.value as number)?.name ?? `Achievement #${r.value}`;
         case "Collectible":
-            return BitCraftTables.CollectibleDesc.indexedBy("id")()?.get(r.value as number)?.name ?? `Collectible #${r.value}`;
+            return BitCraftTables.CollectibleDesc.indexedBy("id")().get(r.value as number)?.name ?? `Collectible #${r.value}`;
         case "Level": {
             const lr = r.value as LevelRequirement;
-            return `${BitCraftTables.SkillDesc.indexedBy("id")()?.get(lr.skillId)?.name ?? "Skill"} Lv. ${lr.level}`;
+            return `${BitCraftTables.SkillDesc.indexedBy("id")().get(lr.skillId)?.name ?? "Skill"} Lv. ${lr.level}`;
         }
         case "Experience": {
             const e = r.value as { skillId: number; quantity: number };
-            return `${BitCraftTables.SkillDesc.indexedBy("id")()?.get(e.skillId)?.name ?? "Skill"}: ${fixFloat(e.quantity)}`;
+            return `${BitCraftTables.SkillDesc.indexedBy("id")().get(e.skillId)?.name ?? "Skill"}: ${fixFloat(e.quantity)}`;
         }
         case "ItemStack": {
             // CompletionCondition.ItemStack wraps ItemStackCompletionCondition; QuestRequirement/QuestReward wraps ItemStack directly
             const raw = r.value;
             const stack: ItemStack = "itemStack" in raw ? (raw as ItemStackCompletionCondition).itemStack : raw as ItemStack;
             if (stack.itemType.tag === ItemType.Cargo.tag) {
-                return BitCraftTables.CargoDesc.indexedBy("id")()?.get(stack.itemId)?.name ?? `Cargo #${stack.itemId}`;
+                return BitCraftTables.CargoDesc.indexedBy("id")().get(stack.itemId)?.name ?? `Cargo #${stack.itemId}`;
             }
-            return BitCraftTables.ItemDesc.indexedBy("id")()?.get(stack.itemId)?.name ?? `Item #${stack.itemId}`;
+            return BitCraftTables.ItemDesc.indexedBy("id")().get(stack.itemId)?.name ?? `Item #${stack.itemId}`;
         }
         case "EquippedItem": {
             const id = r.value as number;
-            return BitCraftTables.ItemDesc.indexedBy("id")()?.get(id)?.name ?? `Item #${id}`;
+            return BitCraftTables.ItemDesc.indexedBy("id")().get(id)?.name ?? `Item #${id}`;
         }
         case "SecondaryKnowledge":
-            return BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id")()?.get(r.value as number)?.name ?? `Knowledge #${r.value}`;
+            return BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id")().get(r.value as number)?.name ?? `Knowledge #${r.value}`;
         default:
             return "";
     }
@@ -77,7 +77,7 @@ export function ReqOrRewardLink(props: { qr: QuestEntry }) {
             return <QuestChainLinkById id={props.qr.value as number}/>;
         case "Achievement": {
             const id = props.qr.value as number;
-            const ach = () => BitCraftTables.AchievementDesc.indexedBy("id")()?.get(id);
+            const ach = () => BitCraftTables.AchievementDesc.indexedBy("id")().get(id);
             return <AchievementLink id={id} name={ach()?.name}/>;
         }
         case "Collectible":

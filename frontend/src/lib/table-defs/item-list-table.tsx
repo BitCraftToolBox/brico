@@ -33,7 +33,7 @@ export const ItemListDescDefs: BitCraftToDataDef<ItemListDesc> = {
                 const matchedLoot = lootDescs().get(list.id);
                 if (matchedLoot) {
                     const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
-                    const matchedEnemy = enemyIndex()?.get(matchedLoot.enemyTypeId);
+                    const matchedEnemy = enemyIndex().get(matchedLoot.enemyTypeId);
                     if (matchedEnemy) return <EnemyIcon enemy={matchedEnemy} small noInteract/>
                 }
                 return <></>;
@@ -56,7 +56,7 @@ export const ItemListDescDefs: BitCraftToDataDef<ItemListDesc> = {
                     const matchedLoot = lootDescs().get(props.row.original.id);
                     if (matchedLoot) {
                         const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
-                        const matchedEnemy = enemyIndex()?.get(matchedLoot.enemyTypeId);
+                        const matchedEnemy = enemyIndex().get(matchedLoot.enemyTypeId);
                         if (matchedEnemy) originalIcon = <EnemyIcon enemy={matchedEnemy} small noInteract/>;
                     }
                 }

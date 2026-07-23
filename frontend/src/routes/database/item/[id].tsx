@@ -8,6 +8,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {breadcrumb, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
+    claimResearchRequiring,
     constructionRecipesConsuming,
     conversionRecipesConsuming,
     conversionRecipesProducing,
@@ -33,6 +34,7 @@ import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {buffsGroups} from "~/lib/table-utils/detail-group-builders";
 import {
+    claimResearchTab,
     collectiblesTab,
     constructionCombinedTab,
     conversionTab,
@@ -98,25 +100,25 @@ export default function ItemDetail() {
     const item = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return itemIndex()?.get(id);
+        return itemIndex().get(id);
     });
 
-    const toolData = createMemo(() => item() ? toolIndex()?.get(item()!.id) : undefined);
-    const equipData = createMemo(() => item() ? equipIndex()?.get(item()!.id) : undefined);
-    const foodData = createMemo(() => item() ? foodIndex()?.get(item()!.id) : undefined);
-    const weaponData = createMemo(() => item() ? weaponIndex()?.get(item()!.id) : undefined);
-    const scrollData = createMemo(() => item() ? knowledgeScrollIndex()?.get(item()!.id) : undefined);
+    const toolData = createMemo(() => item() ? toolIndex().get(item()!.id) : undefined);
+    const equipData = createMemo(() => item() ? equipIndex().get(item()!.id) : undefined);
+    const foodData = createMemo(() => item() ? foodIndex().get(item()!.id) : undefined);
+    const weaponData = createMemo(() => item() ? weaponIndex().get(item()!.id) : undefined);
+    const scrollData = createMemo(() => item() ? knowledgeScrollIndex().get(item()!.id) : undefined);
     const collectibleData = createMemo(() => {
-        const coll = collectibleIndex();
         const i = item();
-        if (!i || !coll) return [];
+        if (!i) return [];
+        const coll = collectibleIndex();
         return coll.get(i.id) ?? [];
     });
 
     const knowledgeStatData = createMemo(() => {
         const scroll = scrollData();
         if (!scroll) return undefined;
-        return BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")()?.get(scroll.secondaryKnowledgeId);
+        return BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")().get(scroll.secondaryKnowledgeId);
     });
 
     // Expanded food buff info (buff desc + stats)
@@ -145,6 +147,7 @@ export default function ItemDetail() {
     const tradeRequires = createMemo(() => itemId() != null ? travelerTradesRequiring(itemId()!, itemType) : []);
     const tradeOffers = createMemo(() => itemId() != null ? travelerTradesOffering(itemId()!, itemType) : []);
     const depletionSources = createMemo(() => itemId() != null ? resourcesYielding(itemId()!, itemType) : []);
+    const researchRequires = createMemo(() => itemId() != null ? claimResearchRequiring(itemId()!, itemType) : []);
     const isItemList = createMemo(() => item() ? item()?.itemListId ? BitCraftTables.ItemListDesc.indexedBy("id")().get(item()?.itemListId) : undefined : undefined);
     const {extractionDrops, enemyDrops, inItemLists} = questDropAugmentedLists(itemId, itemType);
 
@@ -184,7 +187,7 @@ export default function ItemDetail() {
         // Tool
         const tool = toolData();
         if (tool) {
-            const toolType = toolTypeIndex()?.get(tool.toolType);
+            const toolType = toolTypeIndex().get(tool.toolType);
             groups.push({
                 heading: <IconLink href={`/database/tool/${i.id}`} icon={pageIcon("Tools")}>Tool</IconLink>,
                 properties: [
@@ -290,7 +293,7 @@ export default function ItemDetail() {
             tag={item()?.tag}
             details={detailGroups()}
             rawData={item()}
-            spacetimeTable={BitCraftTables.ItemDesc.st_name}
+            spacetimeTable={BitCraftTables.ItemDesc.spacetimeName}
             objectId={item()?.id}
             chatLink={`(item=${item()?.id})`}
             summaryContent={placeablePlacements().length === 1 ? () => (
@@ -320,6 +323,7 @@ export default function ItemDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                claimResearchTab(researchRequires()),
                 ...(item()?.id === 164053808 && easterEggs() ? [lootTabWith({loot: [[1602206011, "Item", 1687372047]], chest: [item()!.iconAssetName, item()!.rarity, item()!.tier]})] : [])
             ]}
         />

@@ -23,7 +23,7 @@ export default function ResourceDetail() {
     const resource = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return resourceIndex()?.get(id);
+        return resourceIndex().get(id);
     });
 
     const extractionRecipe = createMemo(() => {
@@ -81,7 +81,7 @@ export default function ResourceDetail() {
                 {label: "Compendium Entry", value: !resource()?.compendiumEntry ? false : undefined},
             ]}
             rawData={resource()}
-            spacetimeTable={BitCraftTables.ResourceDesc.st_name}
+            spacetimeTable={BitCraftTables.ResourceDesc.spacetimeName}
             objectId={resource()?.id}
             chatLink={`(res=${resource()?.id})`}
             tabs={[

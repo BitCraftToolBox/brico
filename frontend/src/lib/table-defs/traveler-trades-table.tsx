@@ -47,7 +47,7 @@ export const TravelerTradeDefs: BitCraftToDataDef<TravelerTradeOrderDesc> = {
             accessorFn: (trade) => {
                 const req = trade.levelRequirements[0];
                 if (!req?.skillId) return undefined;
-                return BitCraftTables.SkillDesc.indexedBy("id")()?.get(req.skillId)?.name ?? `#${req.skillId}`;
+                return BitCraftTables.SkillDesc.indexedBy("id")().get(req.skillId)?.name ?? `#${req.skillId}`;
             },
             cell: (props) => {
                 const req = props.row.original.levelRequirements[0];

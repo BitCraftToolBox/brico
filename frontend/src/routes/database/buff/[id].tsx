@@ -16,13 +16,13 @@ export default function BuffDetail() {
     const buff = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return buffIndex()?.get(id);
+        return buffIndex().get(id);
     });
 
     const buffType = createMemo(() => {
         const b = buff();
         if (!b) return undefined;
-        return BitCraftTables.BuffTypeDesc.indexedBy("id")?.()?.get(b.buffTypeId);
+        return BitCraftTables.BuffTypeDesc.indexedBy("id")().get(b.buffTypeId);
     });
 
     const details = createMemo((): DetailGroup[] => {
@@ -65,7 +65,7 @@ export default function BuffDetail() {
         const itemIdx = BitCraftTables.ItemDesc.indexedBy("id")();
         for (const food of BitCraftTables.FoodDesc.get() ?? []) {
             if (food.buffs.some(e => e.buffId === b.id)) {
-                const item = itemIdx?.get(food.itemId);
+                const item = itemIdx.get(food.itemId);
                 entries.push({
                     href: `/database/food/${food.itemId}`,
                     iconPage: "Food",
@@ -76,7 +76,7 @@ export default function BuffDetail() {
         const buildingIdx = BitCraftTables.BuildingDesc.indexedBy("id")();
         for (const bb of BitCraftTables.BuildingBuffDesc.get() ?? []) {
             if (bb.buffs.some(e => e.buffId === b.id)) {
-                const building = buildingIdx?.get(bb.buildingId);
+                const building = buildingIdx.get(bb.buildingId);
                 entries.push({
                     href: `/database/building/${bb.buildingId}`,
                     iconPage: "Structures",
@@ -97,7 +97,7 @@ export default function BuffDetail() {
             tag={buffType()?.name}
             details={details()}
             rawData={buff()}
-            spacetimeTable={BitCraftTables.BuffDesc.st_name}
+            spacetimeTable={BitCraftTables.BuffDesc.spacetimeName}
             objectId={buff()?.id}
             tabs={[
                 {

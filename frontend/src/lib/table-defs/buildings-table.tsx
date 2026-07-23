@@ -36,11 +36,11 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
             id: "Type",
             accessorFn: (bldg: BuildingDesc) => {
                 const bldgTypes = BitCraftTables.BuildingTypeDesc.indexedBy("id");
-                return bldg.functions.map(func => bldgTypes()!.get(func.functionType)?.name || "Unknown");
+                return bldg.functions.map(func => bldgTypes().get(func.functionType)?.name || "Unknown");
             },
             getUniqueValues: (bldg: BuildingDesc) => {
                 const bldgTypes = BitCraftTables.BuildingTypeDesc.indexedBy("id");
-                return bldg.functions.map(func => bldgTypes()!.get(func.functionType)?.name || "Unknown");
+                return bldg.functions.map(func => bldgTypes().get(func.functionType)?.name || "Unknown");
             },
             filterFn: "arrIncludesSome"
         },

@@ -15,11 +15,11 @@ export default function ToolDetail() {
     const tool = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return toolIndex()?.get(id);
+        return toolIndex().get(id);
     });
 
-    const item = createMemo(() => tool() ? itemIndex()?.get(tool()!.itemId) : undefined);
-    const toolType = createMemo(() => tool() ? toolTypeIndex()?.get(tool()!.toolType) : undefined);
+    const item = createMemo(() => tool() ? itemIndex().get(tool()!.itemId) : undefined);
+    const toolType = createMemo(() => tool() ? toolTypeIndex().get(tool()!.toolType) : undefined);
 
     return (
         <DetailPageLayout
@@ -39,7 +39,7 @@ export default function ToolDetail() {
                 {label: "Skill", value: toolType()?.skillId ? <SkillLinkById skillId={toolType()!.skillId}/> : undefined},
             ]}
             rawData={tool()}
-            spacetimeTable={BitCraftTables.ToolDesc.st_name}
+            spacetimeTable={BitCraftTables.ToolDesc.spacetimeName}
             objectId={tool()?.itemId}
             chatLink={`(item=${item()?.id})`}
             tabs={[

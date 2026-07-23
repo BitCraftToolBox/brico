@@ -160,7 +160,10 @@ export default function Events() {
         }
     }
 
-    function refreshRegionTimers(conn: DbConnection, regionId: number) {
+    function refreshRegionTimers(conn: DbConnection, regionId: number, row?: GrowthTimer) {
+        if (row && resourceById().get(row.resourceId)?.tag !== "World Event") {
+            return;
+        }
         if (!TRACKED_REGION_IDS.includes(regionId as (typeof TRACKED_REGION_IDS)[number])) {
             return;
         }
@@ -316,17 +319,19 @@ export default function Events() {
 
     function handleGrowthInsert(ctx: EventContext, row: GrowthTimer) {
         if (shouldSkipRealtimeEvent(ctx) || !connection) return;
-        refreshRegionTimers(connection, row.regionId);
+        refreshRegionTimers(connection, row.regionId, row);
     }
 
     function handleGrowthDelete(ctx: EventContext, row: GrowthTimer) {
         if (shouldSkipRealtimeEvent(ctx) || !connection) return;
-        refreshRegionTimers(connection, row.regionId);
+        refreshRegionTimers(connection, row.regionId, row);
     }
 
     function handleGrowthUpdate(ctx: EventContext, _oldRow: GrowthTimer, newRow: GrowthTimer) {
+        if (shouldSkipRealtimeEvent(ctx) || !connection) return;
         // essentially impossible for a resource to cross regions, so we only need to check the new row's region
-        handleGrowthInsert(ctx, newRow);
+        // in fact growth timers will essentially never update, only insert/delete, unless timers are manually loaded by devs.
+        refreshRegionTimers(connection, newRow.regionId, newRow);
     }
 
     onMount(() => {
@@ -400,6 +405,7 @@ export default function Events() {
         const notificationSettings = unchartedNotifications();
         const thresholds = [
             {enabled: notificationSettings.notifyAtStart, minutes: 0, label: "event started"},
+            {enabled: notificationSettings.notifyAt5m ?? false, minutes: 5, label: "event starts in 5 minutes"},
             {enabled: notificationSettings.notifyAt15m, minutes: 15, label: "event starts in 15 minutes"},
             {enabled: notificationSettings.notifyAt60m, minutes: 60, label: "event starts in 60 minutes"},
         ];
@@ -414,14 +420,20 @@ export default function Events() {
                 for (const threshold of thresholds) {
                     if (!threshold.enabled) continue;
                     const isTriggered = threshold.minutes === 0
-                        ? remainingMs <= 0
+                        ? remainingMs <= 1000
                         : remainingMs <= threshold.minutes * 60_000 && remainingMs > 0;
                     if (!isTriggered) continue;
 
-                    const key = `${timer.entityId.toString()}:${endMs}:${threshold.minutes}`;
+                    const key = `${timer.entityId.toString()}:${threshold.minutes}`;
                     if (sentNotificationKeys.has(key)) continue;
 
                     sentNotificationKeys.add(key);
+                    for (const other of thresholds) {
+                        const otherKey = `${timer.entityId.toString()}:${other.minutes}`;
+                        if (other.minutes > threshold.minutes && !sentNotificationKeys.has(otherKey)) {
+                            sentNotificationKeys.add(otherKey);
+                        }
+                    }
                     notifyUser(`${region.title} ${threshold.label}.`);
                 }
             }
@@ -450,6 +462,15 @@ export default function Events() {
                                                 class="size-4 accent-primary"
                                                 checked={unchartedNotifications().notifyAtStart}
                                                 onChange={(e) => updateUnchartedNotifications({notifyAtStart: e.currentTarget.checked})}
+                                            />
+                                        </label>
+                                        <label class="flex items-center justify-between px-2 py-1.5 text-sm">
+                                            <span>5 minutes</span>
+                                            <input
+                                                type="checkbox"
+                                                class="size-4 accent-primary"
+                                                checked={unchartedNotifications().notifyAt5m ?? false}
+                                                onChange={(e) => updateUnchartedNotifications({notifyAt5m: e.currentTarget.checked})}
                                             />
                                         </label>
                                         <label class="flex items-center justify-between px-2 py-1.5 text-sm">

@@ -7,6 +7,7 @@ import {CargoIcon} from "~/components/shared/GameIcon";
 import {breadcrumb} from "~/lib/game-links";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
+    claimResearchRequiring,
     constructionRecipesConsuming,
     conversionRecipesConsuming,
     conversionRecipesProducing,
@@ -27,6 +28,7 @@ import {
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {
+    claimResearchTab,
     constructionCombinedTab,
     conversionTab,
     craftedFromTab,
@@ -56,13 +58,13 @@ export default function CargoDetail() {
     const cargo = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return cargoIndex()?.get(id);
+        return cargoIndex().get(id);
     });
 
     const knowledgeName = createMemo(() => {
         const c = cargo();
         if (!c?.secondaryKnowledgeId) return undefined;
-        return knowledgeIndex()?.get(c.secondaryKnowledgeId)?.name;
+        return knowledgeIndex().get(c.secondaryKnowledgeId)?.name;
     });
 
     // ─── Per-type recipe/relationship finders ───────────────────
@@ -83,6 +85,7 @@ export default function CargoDetail() {
     const tradeRequires = createMemo(() => cargoId() != null ? travelerTradesRequiring(cargoId()!, cargoType) : []);
     const tradeOffers = createMemo(() => cargoId() != null ? travelerTradesOffering(cargoId()!, cargoType) : []);
     const depletionSources = createMemo(() => cargoId() != null ? resourcesYielding(cargoId()!, cargoType) : []);
+    const researchRequires = createMemo(() => cargoId() != null ? claimResearchRequiring(cargoId()!, cargoType) : []);
     const {extractionDrops, enemyDrops, inItemLists} = questDropAugmentedLists(cargoId, cargoType);
 
     const questRequires = createMemo(() => {
@@ -122,7 +125,7 @@ export default function CargoDetail() {
                 {label: "Knowledge", value: knowledgeName()},
             ]}
             rawData={cargo()}
-            spacetimeTable={BitCraftTables.CargoDesc.st_name}
+            spacetimeTable={BitCraftTables.CargoDesc.spacetimeName}
             objectId={cargo()?.id}
             chatLink={`(cargo=${cargo()?.id})`}
             tabs={!cargo() ? [] : [
@@ -141,6 +144,7 @@ export default function CargoDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                claimResearchTab(researchRequires()),
                 ...(cargo()?.id === 92169812 && easterEggs() ? [lootTab()] : [])
             ]}
         />

@@ -1,7 +1,8 @@
 import {useParams} from "@solidjs/router";
-import {createMemo} from "solid-js";
+import {createMemo, Show} from "solid-js";
 import {BuffEffect} from "~/bindings/src/buff_effect_type";
 import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
+import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {BuffTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb} from "~/lib/game-links";
@@ -18,20 +19,18 @@ export default function CombatDetail() {
     const action = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
-        return index()?.get(id);
+        return index().get(id);
     });
 
     const weaponTypes = createMemo(() => {
         const a = action();
         if (!a?.weaponTypeRequirements?.length) return [];
         const idx = weaponTypeIndex();
-        if (!idx) return [];
         return a.weaponTypeRequirements.map(id => idx.get(id)).filter((v): v is WeaponTypeDesc => !!v);
     });
 
     const mapBuffEffects = (effects: BuffEffect[]) => {
         const idx = buffIndex();
-        if (!idx) return [];
         return effects.map((be) => {
             let buffDesc = idx.get(be.buffId);
             return ({
@@ -60,6 +59,7 @@ export default function CombatDetail() {
             breadcrumb={breadcrumb("/database/combat", "Combat Ability")}
             loading={isLoading() && !action()}
             name={action()?.name ?? "Combat action not found"}
+            icon={<Show when={action()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
             description={action()?.description}
             details={[
                 {
@@ -102,7 +102,7 @@ export default function CombatDetail() {
 
             ]}
             rawData={action()}
-            spacetimeTable={BitCraftTables.CombatActionDesc.st_name}
+            spacetimeTable={BitCraftTables.CombatActionDesc.spacetimeName}
             objectId={action()?.id}
             tabs={[
                 {id: "self-buffs", label: "Self Buffs", count: selfBuffs().length, content: () => <BuffTable data={selfBuffs()}/>},
