@@ -1,5 +1,8 @@
 // @refresh reload
 import {createHandler, StartServer} from "@solidjs/start/server";
+import {KEYS} from "~/lib/settings";
+
+const preHydrationScript = `!function(){try{var t=localStorage.getItem("${KEYS.theme}");if(t&&t.charAt(0)==='"'){var p=JSON.parse(t);if(typeof p==="string")localStorage.setItem("${KEYS.theme}",p)}}catch(e){}try{var v=localStorage.getItem("${KEYS.midnightDark}");if(JSON.parse(v||"false"))document.documentElement.setAttribute("data-midnight-dark","")}catch(e){}}();`;
 
 export default createHandler(() => (
     <StartServer
@@ -15,6 +18,7 @@ export default createHandler(() => (
                 <meta property="og:site_name" content="Brico.app" />
                 <meta property="twitter:domain" content="brico.app"/>
                 <link rel="search" type="application/opensearchdescription+xml" title="Brico.app" href="/opensearch.xml"/>
+                <script id="pre-hydration-script" innerHTML={preHydrationScript}/>
                 {assets}
             </head>
             <body>

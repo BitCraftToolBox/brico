@@ -14,19 +14,6 @@ import {GlobalSearchProvider} from "~/lib/global-search-context";
 import {KEYS, SettingsProvider, useSettings} from "~/lib/settings";
 import {useGameDataReady, useLoadingProgress} from "~/lib/spacetime";
 
-/**
- * Pre-hydration script, run before ColorModeScript so its theme migration below applies
- * first. Does two things before the app renders:
- * 1. Migrates a legacy JSON-encoded `theme` value (e.g. `"dark"`, written before
- *    `persistThemeRaw` existed) to the raw unquoted string ColorModeScript expects.
- * 2. Sets `data-midnight-dark` on <html> from localStorage, so the midnight-dark styling
- *    (app.css) doesn't flash in only after hydration's `createEffect` in AppRoot runs.
- */
-function PreHydrationScript() {
-    const src = `!function(){try{var t=localStorage.getItem("${KEYS.theme}");if(t&&t.charAt(0)==='"'){var p=JSON.parse(t);if(typeof p==="string")localStorage.setItem("${KEYS.theme}",p)}}catch(e){}try{var v=localStorage.getItem("${KEYS.midnightDark}");if(JSON.parse(v||"false"))document.documentElement.setAttribute("data-midnight-dark","")}catch(e){}}();`;
-    return <script id="pre-hydration-script" innerHTML={src}/>;
-}
-
 /** Inner wrapper — needs to be a child of SettingsProvider so useSettings() resolves */
 function AppRoot(props: { children: any }) {
     const { sidebarStartsCollapsed, colorStorageManager, midnightDark } = useSettings();
@@ -49,7 +36,6 @@ function AppRoot(props: { children: any }) {
 
     return (
         <>
-            <PreHydrationScript/>
             <ColorModeScript storageType="localStorage" storageKey={KEYS.theme}/>
             <ColorModeProvider storageManager={colorStorageManager}>
                 <GlobalSearchProvider isReady={allReady}>
