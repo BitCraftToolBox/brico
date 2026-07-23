@@ -45,6 +45,7 @@ import {QuestStageDesc} from "~/bindings/src/quest_stage_desc_type";
 import {ResourceClumpDesc} from "~/bindings/src/resource_clump_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
+import {ResourcePlacementRecipeDesc} from "~/bindings/src/resource_placement_recipe_desc_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {StageRewardsDesc} from "~/bindings/src/stage_rewards_desc_type";
@@ -52,6 +53,7 @@ import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {ToolDesc} from "~/bindings/src/tool_desc_type";
 import {ToolTypeDesc} from "~/bindings/src/tool_type_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
+import {TravelerTaskKnowledgeRequirementDesc} from "~/bindings/src/traveler_task_knowledge_requirement_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {WeaponDesc} from "~/bindings/src/weapon_desc_type";
 import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
@@ -306,6 +308,8 @@ export const BitCraftTables = {
     'EnemyScalingDesc': cache<EnemyScalingDesc>('enemy_scaling_desc', EnemyScalingDesc),
     'ResourceGrowthRecipeDesc': cache<ResourceGrowthRecipeDesc>('resource_growth_recipe_desc', ResourceGrowthRecipeDesc),
     'TerraformRecipeDesc': cache<TerraformRecipeDesc>('terraform_recipe_desc', TerraformRecipeDesc),
+    'ResourcePlacementRecipeDesc': cache<ResourcePlacementRecipeDesc>('resource_placement_recipe_desc', ResourcePlacementRecipeDesc),
+    'TravelerTaskKnowledgeRequirementDesc': cache<TravelerTaskKnowledgeRequirementDesc>('traveler_task_knowledge_requirement_desc', TravelerTaskKnowledgeRequirementDesc),
 };
 
 // ── Preloads ──────────────────────────────────────────────────

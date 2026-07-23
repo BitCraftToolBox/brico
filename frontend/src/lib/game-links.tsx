@@ -370,14 +370,14 @@ export function ItemStackLink(props: { stack: ItemStack; class?: string; showIco
 
 /** Renders a list of elements separated by commas. Handles wrapping cleanly. */
 export function LinkedList(props: { children: JSX.Element[] }) {
-    const items = children(() => props.children);
+    const items = children(() => props.children).toArray().filter(v => !!v);
     return (
         <span class="inline-flex flex-wrap items-center">
-            <For each={items.toArray()}>
+            <For each={items}>
                 {(child, i) => (
                     <span class="text-nowrap">
                         {child}
-                        <Show when={i() < items.toArray().length - 1}>
+                        <Show when={i() < items.length - 1}>
                             <span class="text-muted-foreground mr-1 align-bottom">,</span>
                         </Show>
                     </span>

@@ -4,9 +4,9 @@ import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/Detai
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {breadcrumb} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
+import {knowledgeUsedBy, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
+import {knowledgeUsedByTab, questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
 import {fixFloat, splitCamelCase} from "~/lib/utils";
 
 export default function KnowledgeDetail() {
@@ -50,6 +50,12 @@ export default function KnowledgeDetail() {
         const k = knowledge();
         if (!k) return [];
         return questsRewarding("SecondaryKnowledge", k.id);
+    });
+
+    const usedBy = createMemo(() => {
+        const k = knowledge();
+        if (!k) return [];
+        return knowledgeUsedBy(k.id);
     });
 
     const details = createMemo((): DetailGroup[] => {
@@ -107,6 +113,7 @@ export default function KnowledgeDetail() {
                 },
                 questRequirementsTab(questRequires()),
                 questRewardsTab(questRewards()),
+                knowledgeUsedByTab(usedBy()),
             ]}
         />
     );

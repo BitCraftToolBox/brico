@@ -95,7 +95,7 @@ function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge
                 {ids.map((id) => (
                     <KnowledgeLinkById id={id} showIcon={false}/>
                 ))}
-            </LinkedList>,
+            </LinkedList>
         ]);
     }
     if ('blockingKnowledges' in recipe && Array.isArray(recipe.blockingKnowledges) && recipe.blockingKnowledges.length) {
@@ -106,7 +106,7 @@ function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge
                 {ids.map((id) => (
                     <KnowledgeLinkById id={id} showIcon={false}/>
                 ))}
-            </LinkedList>,
+            </LinkedList>
         ]);
     }
 }
@@ -271,7 +271,10 @@ export function travelerTaskStatLines(task: TravelerTaskDesc): StatLine[] {
             fixFloat(task.rewardedExperience.quantity),
         ],
     ];
-    addKnowledgeRequirements(lines, task as any);
+    const taskKnowledge = BitCraftTables.TravelerTaskKnowledgeRequirementDesc.indexedBy("travelerTaskId")().get(task.id);
+    if (taskKnowledge) {
+        addKnowledgeRequirements(lines, taskKnowledge);
+    }
     return lines;
 }
 
