@@ -562,6 +562,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
         }
         return props.interaction.onDestroyOutcomes;
     };
+    const totalWeight = () => outcomes()?.reduce((t, o) => t + o.probability, 0) ?? 0;
 
     return (
         <RecipeVisual
@@ -585,30 +586,37 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                     <Show when={props.interaction.outputItemStacks.length}>
                         <ItemStackArray stacks={props.interaction.outputItemStacks}/>
                     </Show>
-                    <Show when={outcomes()}>
-                        {(sp) => (
-                            <For each={outcomes()}>
-                                {outcome => {
-                                    const sp = idx().get(outcome.placeableId);
-                                    return sp ? (
-                                        <div class="flex flex-col items-center gap-0.5">
-                                            <Tooltip openOnTouchStart>
-                                                <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
-                                                    {Math.round(outcome.probability * 100)}%
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    {outcome.probability < 1 ? "Chance" : "Guaranteed"} to spawn on depletion.<br/>
-                                                    {outcome.radiusMin > 0 || outcome.radiusMax > 0 ? `Spawns within ${outcome.radiusMin}–${outcome.radiusMax} tiles.` : null}
-                                                </TooltipContent>
-                                            </Tooltip>
-                                            <PlaceableIcon placeable={sp} small/>
-                                            <span class="text-[10px] text-muted-foreground text-center max-w-14 leading-tight truncate" title={sp.name}>{sp.name}</span>
-                                        </div>
-                                    ) : null;
-                                }}
-                            </For>
-                        )}
-                    </Show>
+                    <div class="flex flex-row flex-wrap justify-center items-end gap-0.5 rounded-md px-1 py-0.5 bg-muted/40 border border-dashed border-muted-foreground">
+                        <For each={outcomes()}>
+                            {outcome => {
+                                const sp = idx().get(outcome.placeableId);
+                                const weight = fixFloat(outcome.probability / totalWeight());
+                                return sp ? (
+                                    <div class="flex flex-col items-center gap-0.5">
+                                        <Tooltip openOnTouchStart>
+                                            <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
+                                                {Math.round(weight * 100)}%
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                {weight < 1 ? "Chance" : "Guaranteed"} to spawn on depletion.<br/>
+                                                {outcome.radiusMin > 0 || outcome.radiusMax > 0 ? `Spawns within ${outcome.radiusMin}–${outcome.radiusMax} tiles.` : null}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        <PlaceableIcon placeable={sp} small/>
+                                        <span class="text-[10px] text-muted-foreground text-center max-w-14 leading-tight truncate" title={sp.name}>{sp.name}</span>
+                                    </div>
+                                ) : outcome.placeableId === 0 ? (
+                                    <div class="flex flex-col items-center gap-0.5">
+                                        <span class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
+                                            {Math.round(weight * 100)}%
+                                        </span>
+                                        <span class="w-[65px] h-[65px]"></span>
+                                        <span class="text-[10px] text-muted-foreground text-center max-w-14 leading-tight">Despawn</span>
+                                    </div>
+                                ) : undefined;
+                            }}
+                        </For>
+                    </div>
                 </>
             }
             stats={interactionStatLines(props.interaction, placeable())}
