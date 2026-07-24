@@ -99,7 +99,7 @@ export default function SearchPage() {
     );
 
     return (
-        <MainLayout title="Search" hideSearch={true}>
+        <MainLayout title="Search" hideSearch={true} description="Search BitCraft items, buildings, creatures, recipes, and more on Brico.app, the BitCraft online compendium.">
             <div class="max-w-3xl mx-auto space-y-4">
                 {/* Search bar */}
                 <form onSubmit={(e) => e.preventDefault()}>

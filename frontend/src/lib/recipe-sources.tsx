@@ -24,6 +24,7 @@ import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
+import {PlaceableSelfBuffChance} from "~/bindings/src/placeable_self_buff_chance_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {ToolRequirement} from "~/bindings/src/tool_requirement_type";
@@ -31,14 +32,17 @@ import {ToolTypeDesc} from "~/bindings/src/tool_type_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {BiomeLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
+import {BiomeLink, IconLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
 import {getItemListSource, getTravelerNpcName} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Type ─────────────────────────────────────────────
 
-export type StatLine = [JSX.Element | string, JSX.Element | string | number];
+export type StatLine = [
+    string | (() => JSX.Element),
+    string | number | (() => JSX.Element),
+];
 
 // ─── Shared Helpers ─────────────────────────────────────────────
 
@@ -48,8 +52,8 @@ export function skillReqPair(req: LevelRequirement, skillData: Map<any, SkillDes
     if (!skillTag || skillTag === "None") return null;
     if (skillTag === "Adventure") skillTag = "Skill";
     return [
-        <IconSpan icon={skillStatIcon(skill)}>{skillTag}:</IconSpan>,
-        <span>Lv. {req.level} {skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`}</span>,
+        () => <IconSpan icon={skillStatIcon(skill)}>{skillTag}:</IconSpan>,
+        () => <span>Lv. {req.level} {skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`}</span>,
     ];
 }
 
@@ -57,7 +61,7 @@ export function toolReqPair(req: ToolRequirement, toolData: Map<any, ToolTypeDes
     const tool = toolData.get(req.toolType);
     if (!tool) return null;
     return [
-        <IconSpan icon={toolStatIcon()}>Tool:</IconSpan>,
+        () => <IconSpan icon={toolStatIcon()}>Tool:</IconSpan>,
         `Level ${req.level} ${tool.name}${req.power > 1 ? ` (Power >= ${req.power})` : ''}`,
     ];
 }
@@ -69,7 +73,7 @@ export function skillExpPair(xp: ExperienceStackF32, total: number | undefined, 
     const elem = totalXp ? `${perHit} (Total: ${fixFloat(totalXp)})` : String(perHit);
     const skill = skillData.get(xp.skillId);
     return [
-        <IconSpan icon={skillStatIcon(skill)}>{skill?.name ?? "Skill"} XP/Progress:</IconSpan>,
+        () => <IconSpan icon={skillStatIcon(skill)}>{skill?.name ?? "Skill"} XP/Progress:</IconSpan>,
         elem,
     ];
 }
@@ -85,23 +89,25 @@ type RecipeWithKnowledge = {
 
 function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge) {
     if ('requiredKnowledges' in recipe && Array.isArray(recipe.requiredKnowledges) && recipe.requiredKnowledges.length) {
+        const ids = Array.from(new Set(recipe.requiredKnowledges));
         lines.push([
-            <IconSpan icon={knowledgeStatIcon()}>Required Knowledge:</IconSpan>,
-            <LinkedList>
-                {Array.from(new Set(recipe.requiredKnowledges)).map((id) => (
+            () => <IconSpan icon={knowledgeStatIcon()}>Required Knowledge:</IconSpan>,
+            () => <LinkedList>
+                {ids.map((id) => (
                     <KnowledgeLinkById id={id} showIcon={false}/>
                 ))}
-            </LinkedList>,
+            </LinkedList>
         ]);
     }
     if ('blockingKnowledges' in recipe && Array.isArray(recipe.blockingKnowledges) && recipe.blockingKnowledges.length) {
+        const ids = Array.from(new Set(recipe.blockingKnowledges));
         lines.push([
-            <IconSpan icon={knowledgeStatIcon()}>Blocking Knowledge:</IconSpan>,
-            <LinkedList>
-                {Array.from(new Set(recipe.blockingKnowledges)).map((id) => (
+            () => <IconSpan icon={knowledgeStatIcon()}>Blocking Knowledge:</IconSpan>,
+            () => <LinkedList>
+                {ids.map((id) => (
                     <KnowledgeLinkById id={id} showIcon={false}/>
                 ))}
-            </LinkedList>,
+            </LinkedList>
         ]);
     }
 }
@@ -135,8 +141,8 @@ function addCommonRequirements(
 
 function addUseHandsInformation(lines: StatLine[], recipe: { toolRequirements: ToolRequirement[], allowUseHands: boolean }) {
     if (!recipe.toolRequirements.length && recipe.allowUseHands) {
-        lines.push([<IconSpan icon={toolStatIcon()}>Tool:</IconSpan>,
-            <Tooltip openOnTouchStart>
+        lines.push([() => <IconSpan icon={toolStatIcon()}>Tool:</IconSpan>,
+            () => <Tooltip openOnTouchStart>
                 <TooltipTrigger class="underline decoration-dotted">No tool</TooltipTrigger>
                 <TooltipContent class="max-w-[50ch]">This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power.</TooltipContent>
             </Tooltip>
@@ -157,7 +163,7 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
     addUseHandsInformation(lines, recipe);
     if (recipe.buildingRequirement) {
         const name = buildingData.get(recipe.buildingRequirement.buildingType)?.name ?? "Unknown";
-        lines.push([<IconSpan icon={pageIcon("Structures")}>Building:</IconSpan>, `Tier ${recipe.buildingRequirement.tier} ${name}`]);
+        lines.push([() => <IconSpan icon={pageIcon("Structures")}>Building:</IconSpan>, `Tier ${recipe.buildingRequirement.tier} ${name}`]);
     }
     addKnowledgeRequirements(lines, recipe);
     return lines;
@@ -190,7 +196,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
                 const perNode = prospect.contributionPerVisitedBreadCrumb;
                 const [min, max] = prospect.breadCrumbCount;
                 lines.push(["Prospecting Hits",
-                    <Show when={prospect.singleContributionOnly} fallback={
+                    () => <Show when={prospect.singleContributionOnly} fallback={
                         <Tooltip openOnTouchStart>
                             <TooltipTrigger class="decoration-dotted underline">{min * perNode}{min != max ? `- ${max * perNode}` : ""}</TooltipTrigger>
                             <TooltipContent class="max-w-[90svw]">{perNode} contribution per node × {min == max ? `${min} nodes` : `${min} - ${max} nodes`} = {(min + max) / 2 * perNode} hits{min == max ? "" : " average"}</TooltipContent>
@@ -206,7 +212,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
         }
         if (resource.ignoreDamage) {
             lines.push(["Total HP",
-                <Tooltip openOnTouchStart>
+                () => <Tooltip openOnTouchStart>
                     <TooltipTrigger class="decoration-dotted underline">{resource.maxHealth}</TooltipTrigger>
                     <TooltipContent>Resource ignores regular damage.</TooltipContent>
                 </Tooltip>
@@ -258,15 +264,18 @@ export function travelerTaskStatLines(task: TravelerTaskDesc): StatLine[] {
 
     const lines: StatLine[] = [
         [
-            <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} {skillTag}:</span>,
-            <span>Lv. {task.levelRequirement.minLevel}-{task.levelRequirement.maxLevel} {skill ? <SkillLink skill={skill} showIcon={false}/> : "Unknown"}</span>,
+            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} {skillTag}:</span>,
+            () => <span>Lv. {task.levelRequirement.minLevel}-{task.levelRequirement.maxLevel} {skill ? <SkillLink skill={skill} showIcon={false}/> : "Unknown"}</span>,
         ],
         [
-            <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} {skill?.name ?? "Skill"} Exp:</span>,
+            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} {skill?.name ?? "Skill"} Exp:</span>,
             fixFloat(task.rewardedExperience.quantity),
         ],
     ];
-    addKnowledgeRequirements(lines, task as any);
+    const taskKnowledge = BitCraftTables.TravelerTaskKnowledgeRequirementDesc.indexedBy("travelerTaskId")().get(task.id);
+    if (taskKnowledge) {
+        addKnowledgeRequirements(lines, taskKnowledge);
+    }
     return lines;
 }
 
@@ -302,7 +311,7 @@ export function itemListStatLines(list: ItemListDesc): StatLine[] {
     const loot = source.loot;
     return [
         ["Minimum Contribution", loot.minimumContribution],
-        ["Weighted", itemListLootWeightedComponent(loot.weighted)],
+        ["Weighted", () => itemListLootWeightedComponent(loot.weighted)],
     ];
 }
 
@@ -323,8 +332,8 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
             return descId ? <BiomeLink biomeType={descId} name={desc?.name} showIcon={false}/> : tag;
         }
         lines.push([
-            <IconSpan icon={pageIcon("Biomes")}>Biomes:</IconSpan>,
-            <LinkedList>{placement.requiredBiomes.map((b: Biome) => tagToBiomeLink(b.tag))}</LinkedList>
+            () => <IconSpan icon={pageIcon("Biomes")}>Biomes:</IconSpan>,
+            () => <LinkedList>{placement.requiredBiomes.map((b: Biome) => tagToBiomeLink(b.tag))}</LinkedList>
         ]);
     }
 
@@ -336,7 +345,7 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
         lines.push(["Interior Tier:", placement.requiredInteriorTier]);
     }
     if (placement.requiredClaimTier > 0) {
-        lines.push([<IconSpan icon={pageIcon("Claim Research")}>Claim Tier:</IconSpan>, placement.requiredClaimTier]);
+        lines.push([() => <IconSpan icon={pageIcon("Claim Research")}>Claim Tier:</IconSpan>, placement.requiredClaimTier]);
     }
 
     // Level/tool/knowledge requirements
@@ -354,7 +363,7 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
 
     // Distance constraints
     if (placement.minDistanceToPlayerClaims > 0) {
-        lines.push([<IconSpan icon={pageIcon("Claim Research")}>Min Dist to Claims:</IconSpan>, placement.minDistanceToPlayerClaims]);
+        lines.push([() => <IconSpan icon={pageIcon("Claim Research")}>Min Dist to Claims:</IconSpan>, placement.minDistanceToPlayerClaims]);
     }
     // Building proximity
     if (placement.buildings.length) {
@@ -362,10 +371,34 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
         const names = placement.buildings
             .map(id => buildingIndex.get(id)?.name ?? `Building #${id}`)
             .join(", ");
-        lines.push([<IconSpan icon={pageIcon("Structures")}>Near Building:</IconSpan>, `${names} (≤${placement.maxDistanceToBuildings}m)`]);
+        lines.push([() => <IconSpan icon={pageIcon("Structures")}>Near Building:</IconSpan>, `${names} (≤${placement.maxDistanceToBuildings}m)`]);
     }
 
+    addPlaceableSelfBuffs(lines, placement.selfBuffs);
+
     return lines;
+}
+
+function addPlaceableSelfBuffs(lines: StatLine[], placeableBuffs: PlaceableSelfBuffChance[] | undefined) {
+    if (placeableBuffs?.length) {
+        const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
+        lines.push(...placeableBuffs.map(b => {
+            const buff = buffIdx.get(b.buffId);
+            const duration = b.duration ?? buff?.duration;
+            return [
+                () => (
+                    <IconSpan icon={pageIcon("Buffs")}>Buff</IconSpan>
+                ),
+                () => (
+                    <IconLink href={`/database/buff/${b.buffId}`}>
+                        {buff?.description ?? `Buff #${b.buffId}`}
+                        {duration ? <span class="text-muted-foreground">{readableSeconds(fixFloat(duration))}</span> : null}
+                        {<span class="text-muted-foreground">({fixFloat(b.chance * 100)}%)</span>}
+                    </IconLink>
+                )
+            ] satisfies StatLine;
+        }));
+    }
 }
 
 export function interactionStatLines(interaction: PlaceableInteractionDesc, sourcePlaceable: PlaceableDesc | undefined): StatLine[] {
@@ -386,6 +419,7 @@ export function interactionStatLines(interaction: PlaceableInteractionDesc, sour
     addCommonRequirements(lines, interaction);
     addUseHandsInformation(lines, interaction);
     addKnowledgeRequirements(lines, interaction);
+    addPlaceableSelfBuffs(lines, interaction.selfBuffs);
 
     return lines;
 }

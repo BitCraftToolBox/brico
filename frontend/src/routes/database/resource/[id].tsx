@@ -8,6 +8,7 @@ import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ResourceIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGrowthPanel} from "~/components/shared/RecipeDisplay";
 import {breadcrumb, IconLink, pageIcon} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {prospectingForResource} from "~/lib/recipe-sources";
 import {enemiesForResource, extractionRecipeForResource, resourceGrowthFrom, resourceGrowthInto, resourcesYieldingResource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
@@ -56,6 +57,33 @@ export default function ResourceDetail() {
         return descs?.sort((a, b) => a.time[0] - b.time[0])
     });
 
+    const details = createMemo(() => {
+        const r = resource();
+        if (!r) return undefined;
+        return [
+            {
+                properties: [
+                    {label: "Max Health", value: r.maxHealth},
+                    {label: "Ignores Damage", value: r.ignoreDamage ? true : undefined},
+                    {label: "Show Time Left", value: r.showTimeLeft ? true : undefined},
+                    {label: "Flattenable", value: r.flattenable ? true : undefined},
+                    {label: "Compendium Entry", value: !r.compendiumEntry ? false : undefined},
+                ]
+            },
+            {
+                heading: "Resource Spawning",
+                properties: [
+                    {label: "Despawn Time", value: r.despawnTime ? `${fixFloat(r.despawnTime)}s` : undefined},
+                    {label: "Scheduled Respawn", value: r.scheduledRespawnTime ? `${fixFloat(r.scheduledRespawnTime)}s` : undefined},
+                    {label: "Not Respawning", value: r.notRespawning ? true : undefined},
+                    {label: "Spawn Priority", value: r.spawnPriority},
+                    ...(r.spawnsOnLand ? [{label: "Land Elevation", value: `${r.landElevationMin}-${r.landElevationMax}`}] : []),
+                    ...(r.spawnsInWater ? [{label: "Water Depth", value: `${r.waterDepthMin}-${r.waterDepthMax}`}] : []),
+                ]
+            }
+        ]
+    });
+
     return (
         <DetailPageLayout
             title={resource()?.name ?? `Resource #${params.id}`}
@@ -69,17 +97,9 @@ export default function ResourceDetail() {
             rarity={resource()?.rarity?.tag}
             description={resource()?.description}
             tag={resource()?.tag}
-            details={[
-                {label: "Max Health", value: resource()?.maxHealth},
-                {label: "Ignores Damage", value: resource()?.ignoreDamage ? true : undefined},
-                {label: "Show Time Left", value: resource()?.showTimeLeft ? true : undefined},
-                {label: "Despawn Time", value: resource()?.despawnTime ? `${fixFloat(resource()!.despawnTime)}s` : undefined},
-                {label: "Scheduled Respawn", value: resource()?.scheduledRespawnTime ? `${fixFloat(resource()!.scheduledRespawnTime)}s` : undefined},
-                {label: "Not Respawning", value: resource()?.notRespawning ? true : undefined},
-                {label: "Flattenable", value: resource()?.flattenable ? true : undefined},
-                {label: "Spawn Priority", value: resource()?.spawnPriority},
-                {label: "Compendium Entry", value: !resource()?.compendiumEntry ? false : undefined},
-            ]}
+            metaKind="resource"
+            metaImage={ogImageForAsset(resource()?.iconAssetName)}
+            details={details()}
             rawData={resource()}
             spacetimeTable={BitCraftTables.ResourceDesc.spacetimeName}
             objectId={resource()?.id}

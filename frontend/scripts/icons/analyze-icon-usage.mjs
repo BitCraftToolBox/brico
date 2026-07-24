@@ -8,7 +8,8 @@
  * 1. Reads font_icons.json — for each table/field pair, deserializes the
  *    BSATN file using the SpacetimeDB SDK and extracts icon field values,
  *    converting them to uppercase hex codepoints.
- * 2. Scans source files for static makeFontIcon("...") and FontIcon codepoint="..." calls.
+ * 2. Scans source files for static makeFontIcon("..."), FontIcon codepoint="...", and
+ *    codepoint: "..." (e.g. sidebar-items.ts data entries) references.
  * 3. Prints a summary of used vs total icons.
  *
  * Also exports collectUsedCodepoints() for use by the Vite tree-shake plugin.
@@ -154,7 +155,8 @@ function findFiles(dir, pattern) {
 }
 
 /**
- * Scan source files for static makeFontIcon("...") and FontIcon codepoint="..." calls.
+ * Scan source files for static makeFontIcon("..."), FontIcon codepoint="...", and
+ * codepoint: "..." (e.g. sidebar-items.ts data entries) references.
  *
  * @param {string} srcDir  Source directory to scan.
  * @returns {Set<string>}  Raw argument strings found.
@@ -173,6 +175,11 @@ export function scanSourceForIconUsage(srcDir) {
 
         // <FontIcon codepoint="XXXX"
         for (const m of content.matchAll(/codepoint=["']([^"']+)["']/g)) {
+            usedRaw.add(m[1]);
+        }
+
+        // codepoint: "XXXX" (e.g. sidebar-items.ts data entries)
+        for (const m of content.matchAll(/codepoint:\s*["']([^"']+)["']/g)) {
             usedRaw.add(m[1]);
         }
     }

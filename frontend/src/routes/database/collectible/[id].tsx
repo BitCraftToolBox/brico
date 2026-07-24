@@ -8,6 +8,7 @@ import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
 import {breadcrumb, IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
@@ -90,6 +91,8 @@ export default function CollectibleDetail() {
             description={collectible()?.description}
             rarity={collectible()?.collectibleRarity?.tag}
             tag={collectible()?.tag}
+            metaKind="collectible"
+            metaImage={ogImageForAsset(collectible()?.iconAssetName)}
             details={[
                 {label: "Collectible Type", value: collectible()?.collectibleType?.tag},
                 {label: "Invalidates Type", value: collectible()?.invalidatesType?.tag == CollectibleType.Default.tag ? undefined : collectible()?.invalidatesType?.tag},

@@ -14,7 +14,7 @@
 
 import * as d3Selection from "d3-selection";
 import * as d3Zoom from "d3-zoom";
-import {TbOutlineArrowBarRight as IconStart, TbOutlineArrowBarToRight as IconEnd, TbOutlineArrowGuide as IconPath} from "solid-icons/tb";
+import {TbOutlineArrowBarRight as IconStart, TbOutlineArrowBarToRight as IconEnd} from "solid-icons/tb";
 import {createEffect, createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
@@ -661,7 +661,7 @@ export function computeExpectedPath(
         const growth = growthByPlaceable.get(plcId);
         if (!growth) continue;
 
-        for (const outcome of growth.outcomes) {
+        for (const outcome of growth.outcomesV2 ?? []) {
             if (outcome.placeableId === plcId) continue;
             const trace = traceInstant(
                 outcome.placeableId, endId, distToEnd,
@@ -689,12 +689,12 @@ export function computeExpectedPath(
             continue;
         }
 
-        const totalWeight = growth.outcomes.reduce((s, o) => s + o.probability, 0);
+        const totalWeight = growth.outcomesV2?.reduce((s, o) => s + o.probability, 0) ?? 0;
         const meanTime = ((growth.time[0] ?? 0) + (growth.time[1] ?? growth.time[0] ?? 0)) / 2;
         stateMeanTimes.push(meanTime);
 
         const transitions: TransitionInfo[] = [];
-        for (const outcome of growth.outcomes) {
+        for (const outcome of growth.outcomesV2 ?? []) {
             const prob = outcome.probability / totalWeight;
             if (outcome.placeableId === plcId) {
                 transitions.push({targetIdx: stateIndex.get(plcId)!, probability: prob, costs: []});
@@ -919,6 +919,7 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
             </div>
             {/* Path calculator toggle */}
             <div class="absolute top-3 right-3 z-10 flex flex-col items-end gap-2">
+                {/* disabled for now since calculations are bork
                 <button
                     class={`text-xs px-3 py-1.5 rounded-md border transition-colors ${
                         pathMode()
@@ -929,6 +930,7 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
                 >
                     {pathMode() ? "✕ Exit Path Mode" : <><IconPath class="text-blue-500 inline"/> Path Calculator</>}
                 </button>
+                */}
                 <Show when={pathMode() && !pathStart()}>
                     <div class="text-xs text-muted-foreground bg-background/90 border rounded-md px-3 py-1.5 select-none">
                         Click a start node
@@ -1349,12 +1351,12 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
         // Growth
         const growth = growthByPlaceable.get(plcId);
         if (growth) {
-            const totalWeight = growth.outcomes.reduce((s, o) => s + o.probability, 0);
+            const totalWeight = growth.outcomesV2?.reduce((s, o) => s + o.probability, 0) ?? 0;
             const minTime = growth.time[0] ?? 0;
             const maxTime = growth.time[1] ?? minTime;
             const timeString = minTime === maxTime ? readableSeconds(minTime) : `${readableSeconds(minTime)}–${readableSeconds(maxTime)}`;
 
-            for (const outcome of growth.outcomes) {
+            for (const outcome of growth.outcomesV2 ?? []) {
                 if (outcome.placeableId === 0) continue;
                 const pct = totalWeight > 0 ? (outcome.probability / totalWeight) * 100 : 0;
                 const isSelf = outcome.placeableId === plcId;
@@ -1430,6 +1432,25 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
 
                 if (!visitedPlaceables.has(ia.onDestroySpawnedPlaceableId)) {
                     queue.push({plcId: ia.onDestroySpawnedPlaceableId, column: column + 1});
+                }
+            }
+            if (ia.onDestroyOutcomes?.length) {
+                const totalWeight = ia.onDestroyOutcomes.reduce((t, o) => t + o.probability, 0);
+                for (const outcome of ia.onDestroyOutcomes) {
+                    const spawnNodeId = addPlaceableNode(outcome.placeableId, column + 1);
+                    const chance = outcome.probability / totalWeight;
+                    const chanceStr = chance < 1 ? ` (${Math.round(chance * 100)}%)` : "";
+                    edges.push({
+                        source: plcNodeId,
+                        target: spawnNodeId,
+                        label: `${ia.verbPhrase}${chanceStr}`,
+                        edgeType: "interaction",
+                        tooltip,
+                    });
+
+                    if (!visitedPlaceables.has(outcome.placeableId)) {
+                        queue.push({plcId: outcome.placeableId, column: column + 1});
+                    }
                 }
             }
         }

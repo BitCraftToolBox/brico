@@ -441,7 +441,8 @@ export default function Events() {
     });
 
     return (
-        <MainLayout title="Uncharted Islands Events">
+        <MainLayout title="Uncharted Islands Events" description="Live Uncharted Islands world event timers for BitCraft — track spawns and set notifications on Brico.app.">
+
             <div class="w-full px-4 pb-6">
                 <div class="mb-2 flex items-center justify-center gap-3">
                     <h1 class="text-4xl font-bold text-foreground text-center">Uncharted Islands Events</h1>

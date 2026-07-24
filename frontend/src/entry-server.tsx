@@ -1,5 +1,8 @@
 // @refresh reload
 import {createHandler, StartServer} from "@solidjs/start/server";
+import {KEYS} from "~/lib/settings";
+
+const preHydrationScript = `!function(){try{var t=localStorage.getItem("${KEYS.theme}");if(t&&t.charAt(0)==='"'){var p=JSON.parse(t);if(typeof p==="string")localStorage.setItem("${KEYS.theme}",p)}}catch(e){}try{var v=localStorage.getItem("${KEYS.midnightDark}");if(JSON.parse(v||"false"))document.documentElement.setAttribute("data-midnight-dark","")}catch(e){}}();`;
 
 export default createHandler(() => (
     <StartServer
@@ -9,19 +12,13 @@ export default createHandler(() => (
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <link rel="icon" href="/favicon.ico"/>
-                <meta name="description" content="The BitCraft online compendium and companion app"/>
-                <meta property="og:url" content="https://brico.app"/>
+                <link rel="icon" type="image/svg+xml" href="/brico-face.svg" />
+                <meta name="theme-color" content="#15557d" />
                 <meta property="og:type" content="website"/>
-                <meta property="og:title" content="Brico's Toolbox"/>
-                <meta property="og:description" content="The BitCraft online compendium and companion app"/>
-                <meta property="og:image" content="/brico.png"/>
-                <meta name="twitter:card" content="summary_large_image"/>
+                <meta property="og:site_name" content="Brico.app" />
                 <meta property="twitter:domain" content="brico.app"/>
-                <meta property="twitter:url" content="https://brico.app"/>
-                <meta name="twitter:title" content="Brico's Toolbox"/>
-                <meta name="twitter:description" content="The BitCraft online compendium and companion app"/>
-                <meta name="twitter:image" content="/brico.png"/>
                 <link rel="search" type="application/opensearchdescription+xml" title="Brico.app" href="/opensearch.xml"/>
+                <script id="pre-hydration-script" innerHTML={preHydrationScript}/>
                 {assets}
             </head>
             <body>

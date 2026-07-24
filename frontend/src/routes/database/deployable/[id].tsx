@@ -6,6 +6,7 @@ import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {StatTable} from "~/components/shared/RelTablePresets";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {breadcrumb, IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {collectiblesTab} from "~/lib/table-utils/detail-tab-builders";
 import {fixFloat, readableSeconds, undefinedIfZero} from "~/lib/utils";
@@ -99,6 +100,8 @@ export default function DeployableDetail() {
             icon={<Show when={collectible()}>{c => <CollectibleIcon collectible={c()} small={false} noInteract/>}</Show>}
             name={deployable()?.name ?? "Deployable not found"}
             tag={deployable()?.deployableType?.tag}
+            metaKind="deployable"
+            metaImage={ogImageForAsset(collectible()?.iconAssetName)}
             details={detailGroups()}
             rawData={deployable()}
             spacetimeTable={BitCraftTables.DeployableDesc.spacetimeName}

@@ -5,8 +5,10 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {DetailGroup, DetailPageLayout, DetailProperty, RelTable} from "~/components/shared/DetailPageLayout";
 import {BuildingIcon} from "~/components/shared/GameIcon";
 import {ItemStackIcon} from "~/components/shared/ItemStacks";
+import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
 import {breadcrumb, BuffLinkById, LinkedList} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {constructionRecipeForBuilding, deconstructionRecipeForBuilding,} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {constructionCombinedSingleTab} from "~/lib/table-utils/detail-tab-builders";
@@ -97,7 +99,16 @@ export default function BuildingDetail() {
             if (f.cargoSlots > 0) funcProps.push({label: "Cargo Slots", value: `${f.cargoSlots} × ${f.cargoSlotSize / 6000}`});
             if (f.tradeOrders > 0) funcProps.push({label: "Trade Orders", value: f.tradeOrders});
             if (f.housingSlots > 0) funcProps.push({label: "Housing Slots", value: f.housingSlots});
-            if (f.housingIncome > 0) funcProps.push({label: "Housing Income", value: <span title={"hex coin per day per occupied slot"}>{f.housingIncome}</span>});
+            if (f.housingIncome > 0) funcProps.push({label: "Housing Income", value: () => (
+                <Tooltip openOnTouchStart>
+                    <TooltipTrigger class="decoration-dotted underline">
+                        {f.housingIncome}
+                    </TooltipTrigger>
+                    <TooltipContent class="max-w-[90svw]">
+                        hex coin per day per occupied slot
+                    </TooltipContent>
+                </Tooltip>
+            )});
             if (f.terraform) funcProps.push({label: "Terraform", value: true});
 
             if (funcProps.length > 0) {
@@ -120,6 +131,8 @@ export default function BuildingDetail() {
             tier={tier()}
             tag={functionNames().length > 0 ? functionNames().join(", ") : undefined}
             description={building()?.description}
+            metaKind="structure"
+            metaImage={ogImageForAsset(building()?.iconAssetName)}
             details={detailGroups()}
             rawData={building()}
             spacetimeTable={BitCraftTables.BuildingDesc.spacetimeName}

@@ -145,7 +145,7 @@ export const TierIcon: Component<TierIconProps> = (props) => {
             <img
                 class={"w-4 h-4"}
                 src={`${ASSET_CDN_BASE}/UI/Badges/badge-tier-container.webp`}
-                alt={`Tier ${props.tier}`}
+                alt={`T${props.tier}`}
                 style={{filter: t0Filter()}}
             />
             <p class={"absolute text-xs select-none " +
@@ -159,7 +159,7 @@ export const TierIcon: Component<TierIconProps> = (props) => {
         <img
             class={cn(`inline w-4 h-4 ${Tiers.getBackgroundColorClass(props.tier)}`, props.class)}
             src={`${ASSET_CDN_BASE}/UI/Badges/badge-tier-number-${props.tier}.webp`}
-            alt={`Tier ${props.tier}`}
+            alt={`T${props.tier}`}
             title={`Tier ${props.tier}`}
             style={{
                 mask: `url('${ASSET_CDN_BASE}/UI/Badges/badge-tier-container.webp') 0 0/contain`,

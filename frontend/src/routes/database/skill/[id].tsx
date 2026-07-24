@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForCodepoint} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function SkillDetail() {
@@ -31,6 +32,8 @@ export default function SkillDetail() {
             icon={<Show when={skill()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
             description={skill()?.description}
             tag={skillTag()}
+            metaKind="skill"
+            metaImage={ogImageForCodepoint(skill()?.iconAssetName)}
             details={[
                 {label: "Title", value: skill()?.title},
                 {label: "Max Level", value: skill()?.maxLevel},

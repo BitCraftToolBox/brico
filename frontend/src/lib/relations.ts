@@ -19,6 +19,7 @@ import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
+import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {InputItemStack} from "~/bindings/src/input_item_stack_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
@@ -27,14 +28,19 @@ import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemListPossibility} from "~/bindings/src/item_list_possibility_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
+import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
+import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
+import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
 import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
+import {ResourcePlacementRecipeDesc} from "~/bindings/src/resource_placement_recipe_desc_type";
 import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
+import {TravelerTaskKnowledgeRequirementDesc} from "~/bindings/src/traveler_task_knowledge_requirement_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {BitCraftTables} from "~/lib/spacetime";
 
@@ -355,6 +361,68 @@ export function collectibleRewards(collectibleIds: number[]): CollectibleDesc[] 
     if (!collectibleIds?.length) return [];
     const idx = BitCraftTables.CollectibleDesc.indexedBy("id")();
     return collectibleIds.map(id => idx.get(id)).filter((v): v is CollectibleDesc => !!v);
+}
+
+// ─── Knowledge Usage ─────────────────────────────────────────────
+
+export type KnowledgeUsage =
+    | { type: "collectible"; collectible: CollectibleDesc }
+    | { type: "constructionRecipe"; constructionRecipe: ConstructionRecipeDesc }
+    | { type: "craftingRecipe"; craftingRecipe: CraftingRecipeDesc }
+    | { type: "equipment"; equipment: EquipmentDesc }
+    | { type: "extractionRecipe"; extractionRecipe: ExtractionRecipeDesc }
+    | { type: "pavingTile"; pavingTile: PavingTileDesc }
+    | { type: "placeableInteraction"; placeableInteraction: PlaceableInteractionDesc }
+    | { type: "placeablePlacement"; placeablePlacement: PlaceablePlacementDesc }
+    | { type: "resourcePlacementRecipe"; resourcePlacementRecipe: ResourcePlacementRecipeDesc }
+    | { type: "travelerTrade"; travelerTrade: TravelerTradeOrderDesc }
+    | { type: "travelerTaskKnowledgeRequirement"; travelerTaskKnowledgeRequirement: TravelerTaskKnowledgeRequirementDesc };
+
+function requiresOrBlocksKnowledge(o: { requiredKnowledges?: number[]; blockingKnowledges?: number[] }, knowledgeId: number): boolean {
+    return !!o.requiredKnowledges?.includes(knowledgeId) || !!o.blockingKnowledges?.includes(knowledgeId);
+}
+
+/** Every object across the database that requires or is blocked by this knowledge */
+export function knowledgeUsedBy(knowledgeId: number): KnowledgeUsage[] {
+    const usages: KnowledgeUsage[] = [];
+
+    for (const collectible of BitCraftTables.CollectibleDesc.get() ?? []) {
+        if (collectible.requiredKnowledgesToUse.includes(knowledgeId) || collectible.requiredKnowledgesToConvert.includes(knowledgeId)) {
+            usages.push({type: "collectible", collectible});
+        }
+    }
+    for (const constructionRecipe of BitCraftTables.ConstructionRecipeDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(constructionRecipe, knowledgeId)) usages.push({type: "constructionRecipe", constructionRecipe});
+    }
+    for (const craftingRecipe of BitCraftTables.CraftingRecipeDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(craftingRecipe, knowledgeId)) usages.push({type: "craftingRecipe", craftingRecipe});
+    }
+    for (const equipment of BitCraftTables.EquipmentDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(equipment, knowledgeId)) usages.push({type: "equipment", equipment});
+    }
+    for (const extractionRecipe of BitCraftTables.ExtractionRecipeDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(extractionRecipe, knowledgeId)) usages.push({type: "extractionRecipe", extractionRecipe});
+    }
+    for (const pavingTile of BitCraftTables.PavingTileDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(pavingTile, knowledgeId)) usages.push({type: "pavingTile", pavingTile});
+    }
+    for (const placeableInteraction of BitCraftTables.PlaceableInteractionDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(placeableInteraction, knowledgeId)) usages.push({type: "placeableInteraction", placeableInteraction});
+    }
+    for (const placeablePlacement of BitCraftTables.PlaceablePlacementDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(placeablePlacement, knowledgeId)) usages.push({type: "placeablePlacement", placeablePlacement});
+    }
+    for (const resourcePlacementRecipe of BitCraftTables.ResourcePlacementRecipeDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(resourcePlacementRecipe, knowledgeId)) usages.push({type: "resourcePlacementRecipe", resourcePlacementRecipe});
+    }
+    for (const travelerTrade of BitCraftTables.TravelerTradeOrderDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(travelerTrade, knowledgeId)) usages.push({type: "travelerTrade", travelerTrade});
+    }
+    for (const travelerTaskKnowledgeRequirement of BitCraftTables.TravelerTaskKnowledgeRequirementDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(travelerTaskKnowledgeRequirement, knowledgeId)) usages.push({type: "travelerTaskKnowledgeRequirement", travelerTaskKnowledgeRequirement});
+    }
+
+    return usages;
 }
 
 // ─── Display Name Helpers ───────────────────────────────────────

@@ -88,7 +88,7 @@ export const ItemStackIcon: Component<ItemStackIconProps> = (props) => {
                             <ItemIcon item={obj() as ItemDesc} quantity={qty()} small={props.small} noInteract={props.noInteract}/>
                         </Show>
                         <Show when={nameText()}>
-                            <span class="text-xs text-center leading-tight max-w-20 truncate" title={obj().name}>
+                            <span class="text-xs text-center leading-tight max-w-20 truncate" title={nameText()}>
                                 {nameText()}
                             </span>
                         </Show>

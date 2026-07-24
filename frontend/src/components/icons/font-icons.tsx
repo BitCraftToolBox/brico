@@ -61,36 +61,46 @@ function renderIconSvg(tree: IconTree, props: IconProps & Record<string, unknown
 }
 
 /**
- * Normalize an arbitrary identifier to a FontIconEntry, or undefined if not found.
+ * Normalize an arbitrary icon identifier to its uppercase hex codepoint key —
+ * the key used in GLYPH_ICONS and the `<codepoint>.svg` filename (e.g. "FFFA").
+ * Returns undefined if the id isn't a recognizable codepoint form.
  *
  * Accepts:
- *   - single Unicode character
- *   - 4–5 char hex string
+ *   - single Unicode character (e.g. "￮")
+ *   - 4–5 char hex string (e.g. "FFFA", "fffa")
  *   - "\uXXXX" escape sequence
  */
-function resolveEntry(id: string): FontIconEntry {
-    const fallback = GLYPH_ICONS["xxxx"]; // .notdef
-
-    if (!id) return fallback;
+export function codepointKey(id: string): string | undefined {
+    if (!id) return undefined;
 
     // Single character → convert to hex codepoint
     if (id.length === 1) {
-        const cp = id.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0");
-        return GLYPH_ICONS[cp] ?? fallback;
+        return id.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0");
     }
 
     // Looks like a bare hex codepoint (e.g. "FFFA", "fffa")
     if (/^[0-9A-Fa-f]{4,5}$/.test(id)) {
-        return GLYPH_ICONS[id.toUpperCase()] ?? fallback;
+        return id.toUpperCase();
     }
 
     // Literal escape sequence (e.g. "\\uFFFA" or "\\uFFEE")
     const escapeMatch = id.match(/^\\u([0-9A-Fa-f]{4,5})$/);
     if (escapeMatch) {
-        return GLYPH_ICONS[escapeMatch[1].toUpperCase()] ?? fallback;
+        return escapeMatch[1].toUpperCase();
     }
 
-    return fallback;
+    return undefined;
+}
+
+/**
+ * Normalize an arbitrary identifier to a FontIconEntry, falling back to .notdef
+ * when the id is unrecognized or the glyph is absent.
+ */
+function resolveEntry(id: string): FontIconEntry {
+    const fallback = GLYPH_ICONS["xxxx"]; // .notdef
+    const key = codepointKey(id);
+    if (!key) return fallback;
+    return GLYPH_ICONS[key] ?? fallback;
 }
 
 /**

@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function ToolDetail() {
@@ -32,11 +33,13 @@ export default function ToolDetail() {
             name={item()?.name ?? `Tool #${params.id}`}
             tier={item()?.tier}
             rarity={item()?.rarity?.tag}
+            metaKind="tool"
+            metaImage={ogImageForAsset(item()?.iconAssetName)}
             details={[
                 {label: "Tool Type", value: toolType()?.name},
                 {label: "Power", value: tool()?.power},
                 {label: "Level", value: tool()?.level},
-                {label: "Skill", value: toolType()?.skillId ? <SkillLinkById skillId={toolType()!.skillId}/> : undefined},
+                {label: "Skill", value: toolType()?.skillId ? () => <SkillLinkById skillId={toolType()!.skillId}/> : undefined},
             ]}
             rawData={tool()}
             spacetimeTable={BitCraftTables.ToolDesc.spacetimeName}

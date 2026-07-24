@@ -6,6 +6,7 @@ import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayou
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {breadcrumb, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
     claimResearchRequiring,
@@ -171,7 +172,7 @@ export default function ItemDetail() {
         // General
         groups.push({
             properties: [
-                {label: "Volume", value: (
+                {label: "Volume", value: () => (
                     <Tooltip openOnTouchStart>
                         <TooltipTrigger class="decoration-dotted underline">{i.volume}</TooltipTrigger>
                         <TooltipContent class="max-w-[90svw]">
@@ -189,12 +190,12 @@ export default function ItemDetail() {
         if (tool) {
             const toolType = toolTypeIndex().get(tool.toolType);
             groups.push({
-                heading: <IconLink href={`/database/tool/${i.id}`} icon={pageIcon("Tools")}>Tool</IconLink>,
+                heading: () => <IconLink href={`/database/tool/${i.id}`} icon={pageIcon("Tools")}>Tool</IconLink>,
                 properties: [
                     {label: "Type", value: toolType?.name ?? `#${tool.toolType}`},
                     {label: "Power", value: tool.power},
                     {label: "Level", value: tool.level},
-                    {label: "Skill", value: toolType?.skillId ? <SkillLinkById skillId={toolType.skillId}/> : undefined},
+                    {label: "Skill", value: toolType?.skillId ? () => <SkillLinkById skillId={toolType.skillId}/> : undefined},
                 ],
             });
         }
@@ -206,14 +207,14 @@ export default function ItemDetail() {
                 {label: "Slots", value: equip.slots?.map((s: any) => splitCamelCase(s.tag)).join(", ")},
             ];
             if (equip.levelRequirement) {
-                eqProps.push({label: "Required Skill", value: <SkillLinkById skillId={equip.levelRequirement.skillId}/>});
+                eqProps.push({label: "Required Skill", value: () => <SkillLinkById skillId={equip.levelRequirement!.skillId}/>});
                 eqProps.push({label: "Required Level", value: equip.levelRequirement.level});
             }
-            const eqGroup: DetailGroup = {heading: <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>Equipment</IconLink>, properties: eqProps};
+            const eqGroup: DetailGroup = {heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>Equipment</IconLink>, properties: eqProps};
             groups.push(eqGroup);
             if (equip.stats?.length) {
                 groups.push({
-                    heading: <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>Equipment Stats</IconLink>,
+                    heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>Equipment Stats</IconLink>,
                     properties: equip.stats.map((stat: any) => ({
                         label: splitCamelCase(stat.id?.tag ?? ""),
                         value: `${fixFloat(stat.value * (stat.isPct ? 100 : 1))}${stat.isPct ? "%" : ""}`,
@@ -227,7 +228,7 @@ export default function ItemDetail() {
         if (weapon) {
             const wt = weaponTypeIndex()?.get(weapon.weaponType);
             groups.push({
-                heading: <IconLink href={`/database/weapon/${i.id}`} icon={pageIcon("Weapons")}>Weapon</IconLink>,
+                heading: () => <IconLink href={`/database/weapon/${i.id}`} icon={pageIcon("Weapons")}>Weapon</IconLink>,
                 properties: [
                     {label: "Type", value: wt?.name ?? `#${weapon.weaponType}`},
                     {label: "Min Damage", value: weapon.minDamage},
@@ -242,7 +243,7 @@ export default function ItemDetail() {
         const food = foodData();
         if (food) {
             groups.push({
-                heading: <IconLink href={`/database/food/${i.id}`} icon={pageIcon("Food")}>Food</IconLink>,
+                heading: () => <IconLink href={`/database/food/${i.id}`} icon={pageIcon("Food")}>Food</IconLink>,
                 properties: [
                     {label: "Satiation", value: food.hunger ? fixFloat(food.hunger) : undefined},
                     {label: "HP", value: food.hp ? fixFloat(food.hp) : undefined},
@@ -263,7 +264,7 @@ export default function ItemDetail() {
             const itemTag = i.tag;
             const statMod = knowledgeStatData();
             groups.push({
-                heading: <IconLink href={`/database/knowledge/${scroll.secondaryKnowledgeId}`} icon={pageIcon("Knowledge")}>Knowledge Scroll</IconLink>,
+                heading: () => <IconLink href={`/database/knowledge/${scroll.secondaryKnowledgeId}`} icon={pageIcon("Knowledge")}>Knowledge Scroll</IconLink>,
                 properties: [
                     {label: "Title", value: scroll.title},
                     {label: "Tag", value: scroll.tag !== itemTag ? scroll.tag : undefined},
@@ -291,6 +292,8 @@ export default function ItemDetail() {
             rarity={item()?.rarity?.tag}
             description={item()?.description}
             tag={item()?.tag}
+            metaKind="item"
+            metaImage={ogImageForAsset(item()?.iconAssetName)}
             details={detailGroups()}
             rawData={item()}
             spacetimeTable={BitCraftTables.ItemDesc.spacetimeName}

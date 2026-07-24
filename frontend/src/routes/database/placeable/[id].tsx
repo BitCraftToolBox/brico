@@ -4,6 +4,7 @@ import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/share
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, GrowthPanel, InteractionPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
 import {breadcrumb} from "~/lib/game-links";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {
     findRootPlacement,
     getInteractionName,
@@ -85,6 +86,14 @@ export default function PlaceableDetail() {
             }
         }
 
+        result.push({
+            heading: "Spawn Conditions",
+            properties: [
+                ...(p.spawnsOnLand ? [{label: "Land Elevation", value: `${p.landElevationMin}-${p.landElevationMax}`}] : []),
+                ...(p.spawnsInWater ? [{label: "Water Depth", value: `${p.waterDepthMin}-${p.waterDepthMax}`}] : []),
+            ]
+        })
+
         return result;
     });
 
@@ -146,7 +155,7 @@ export default function PlaceableDetail() {
             result.push({
                 id: "grows-into",
                 label: "Grows into",
-                count: g.outcomes.length,
+                count: g.outcomesV2?.length ?? 0,
                 content: () => <GrowthPanel growth={g}/>,
             });
         }
@@ -183,6 +192,8 @@ export default function PlaceableDetail() {
             rarity={placeable()?.rarity?.tag}
             tag={placeable()?.tag}
             description={placeable()?.description}
+            metaKind="placeable"
+            metaImage={ogImageForAsset(placeable()?.iconAssetName)}
             details={detailGroups()}
             summaryContent={graphPlacementId() ? () => (
                 <div class="flex flex-col items-center gap-2 py-2">

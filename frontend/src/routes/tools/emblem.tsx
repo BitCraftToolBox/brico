@@ -134,7 +134,7 @@ export default function EmblemEditor() {
     const SHADOW_PX = Math.round(ICON_SIZE * 0.07);
 
     return (
-        <MainLayout title="Emblem Editor">
+        <MainLayout title="Emblem Editor" description="BitCraft emblem editor — design, customize, and preview empire emblems on Brico.app.">
             <div class="flex flex-col items-center gap-4 w-full max-w-3xl mx-auto h-full">
                 <div
                     class="shrink-0 relative"

@@ -6,6 +6,7 @@ import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon, ResourceIcon} from "~/components/shared/GameIcon";
 import {ItemStackArray} from "~/components/shared/ItemStacks";
 import {BiomeLink, breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {ogImageForCodepoint} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -75,7 +76,8 @@ export default function ProspectingDetail() {
         const p = prospecting();
         if (!p?.experiencePerNode) return undefined;
         if (!p.experiencePerNode.quantity) return undefined;
-        return <><SkillLinkById skillId={p.experiencePerNode.skillId}/>: ${fixFloat(p.experiencePerNode.quantity)}`</>;
+        const exp = p.experiencePerNode;
+        return () => <><SkillLinkById skillId={exp.skillId}/>: ${fixFloat(exp.quantity)}`</>;
     });
 
     const spawnInfo = createMemo(() => {
@@ -108,6 +110,8 @@ export default function ProspectingDetail() {
             name={prospecting()?.name ?? "Prospecting entry not found"}
             icon={<Show when={prospecting()?.iconAssetPath}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
             description={prospecting()?.description}
+            metaKind="prospecting node"
+            metaImage={ogImageForCodepoint(prospecting()?.iconAssetPath)}
             details={[
                 {label: "Breadcrumb Count", value: rangeStr(prospecting()?.breadCrumbCount)},
                 {label: "Contribution Per Crumb", value: prospecting()?.contributionPerVisitedBreadCrumb},

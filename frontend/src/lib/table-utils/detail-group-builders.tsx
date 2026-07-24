@@ -20,7 +20,7 @@ export function buffsGroups(buffs: BuffEffect[]): DetailGroup[] {
             value: `${fixFloat(s.value * (s.isPct ? 100 : 1))}${s.isPct ? "%" : ""}`,
         })) ?? []);
         return {
-            heading: <BuffLink buffId={buffEffect.buffId} label={label}/>,
+            heading: () => <BuffLink buffId={buffEffect.buffId} label={label}/>,
             properties: props,
         };
     });

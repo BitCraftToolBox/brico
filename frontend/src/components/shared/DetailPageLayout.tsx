@@ -23,17 +23,18 @@ import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardHeader} from "~/components/ui/card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
 import {Rarities} from "~/lib/bitcraft-utils";
+import {detailMetaDescription, metaKeywords} from "~/lib/og-meta";
 import {cn} from "~/lib/utils";
 
 // ─── Types ──────────────────────────────────────────────────────
 
 export interface DetailProperty {
-    label: JSX.Element | string;
-    value: JSX.Element | string | number | boolean | undefined | null;
+    label: string | (() => JSX.Element);
+    value: string | number | boolean | undefined | null | (() => JSX.Element);
 }
 
 export interface DetailGroup {
-    heading?: JSX.Element | string;
+    heading?: string | (() => JSX.Element);
     properties: DetailProperty[];
 }
 
@@ -65,6 +66,13 @@ export interface DetailPageProps {
     description?: string;
     /** Tag/category label */
     tag?: string;
+    /**
+     * Noun for this entity type (e.g. "resource", "item", "skill"), used to build the SEO/social
+     * meta description + keywords from tier/rarity/tag. Defaults to a generic term.
+     */
+    metaKind?: string;
+    /** OG/Twitter thumbnail (absolute or root-relative). Defaults to the branded thumbnail. */
+    metaImage?: string;
     /**
      * Detailed info — either a flat list of properties (rendered as one group)
      * or an array of DetailGroup with optional subheadings.
@@ -114,11 +122,15 @@ const PropertyGrid: Component<{ properties: DetailProperty[] }> = (props) => (
         <For each={visibleProps(props.properties)}>
             {(prop) => (
                 <div class="flex flex-col">
-                    <span class="text-muted-foreground text-xs">{prop.label}</span>
+                    <span class="text-muted-foreground text-xs">
+                        {typeof prop.label === "function" ? (prop.label as () => JSX.Element)() : prop.label}
+                    </span>
                     <span class="font-medium">
                         {typeof prop.value === "boolean"
                             ? (prop.value ? "Yes" : "No")
-                            : prop.value}
+                            : typeof prop.value === "function"
+                                ? (prop.value as () => JSX.Element)()
+                                : prop.value}
                     </span>
                 </div>
             )}
@@ -180,6 +192,14 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
 
     const availableTabs = () => props.tabs?.filter(t => t.count === undefined || t.count > 0) ?? [];
     const disabledTabs = () => props.tabs?.filter(t => t.count !== undefined && t.count === 0 && (t.showWhenEmpty ?? true)) ?? [];
+    const metaArgs = () => ({
+        kind: props.metaKind ?? "entry",
+        tier: props.tier,
+        rarity: props.rarity,
+        tag: props.tag,
+        description: props.description,
+    });
+
     const groups = () => normalizeGroups(props.details);
     const hasDetails = () => groups().some(g => visibleProps(g.properties).length > 0);
     const hasInfoSection = () => hasDetails() || props.summaryContent || props.rawData || props.infoTabs;
@@ -236,7 +256,13 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     });
 
     return (
-        <MainLayout title={props.title} navTitle={<>{props.breadcrumb}{props.title}</>}>
+        <MainLayout
+            title={props.title}
+            description={detailMetaDescription(metaArgs())}
+            keywords={metaKeywords(metaArgs())}
+            image={props.metaImage}
+            navTitle={<>{props.breadcrumb}{props.title}</>}
+        >
             <Show when={!props.loading} fallback={
                 <div class="flex items-center justify-center py-20">
                     <Spinner type={SpinnerType.ballTriangle} class="mx-auto"/>
@@ -245,9 +271,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                 <div class="max-w-5xl mx-auto flex flex-col gap-4 px-4 pb-6">
                     {/* Header Section */}
                     <div class={`flex ${props.iconIsWide ? "flex-col items-center sm:flex-row sm:items-start" : "flex-row items-start"} gap-4`}>
-                        <Show when={props.icon}>
-                            {props.icon}
-                        </Show>
+                        {props.icon}
                         <div class="flex flex-col gap-1">
                             <h1 class="text-2xl font-bold flex items-center gap-2 flex-wrap">
                                 {props.name}
@@ -306,7 +330,9 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                                     <div>
                                                         <Show when={group.heading}>
                                                             <h3 class="text-sm font-semibold text-muted-foreground mb-2 border-b pb-1">
-                                                                {group.heading}
+                                                                {typeof group.heading === "function"
+                                                                    ? (group.heading as () => JSX.Element)()
+                                                                    : group.heading}
                                                             </h3>
                                                         </Show>
                                                         <PropertyGrid properties={group.properties}/>

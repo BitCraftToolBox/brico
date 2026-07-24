@@ -3,6 +3,7 @@ import {Accessor, Show} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
 import {DataTable, FilterSetupProps} from "~/components/data-table/data-table";
 import MainLayout from "~/components/MainLayout";
+import {tableMetaDescription} from "~/lib/og-meta";
 
 interface TableLayoutProps<TData> {
     title: string;
@@ -17,7 +18,11 @@ interface TableLayoutProps<TData> {
 
 export default function TableLayout<TData>(props: TableLayoutProps<TData>) {
     return (
-        <MainLayout title={props.title}>
+        <MainLayout
+            title={props.title}
+            description={tableMetaDescription(props.title, props.items()?.length)}
+            keywords={`bitcraft, ${props.title.toLowerCase()}`}
+        >
             <Show when={props.items()} fallback={
                 <Spinner type={SpinnerType.ballTriangle} class="mx-auto mt-25%"/>
             }>

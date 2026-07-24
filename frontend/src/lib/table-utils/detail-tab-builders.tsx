@@ -16,6 +16,7 @@ import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
+import {ItemType} from "~/bindings/src/item_type_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
@@ -42,9 +43,10 @@ import {
     TravelerTradePanel,
 } from "~/components/shared/RecipeDisplay";
 import {Button} from "~/components/ui/button";
-import {CollectibleLink, IconLink, IconSpan, ItemStackLink, LinkedList, pageIcon, QuestChainLink} from "~/lib/game-links";
+import {BuildingLink, CargoLink, CollectibleLink, IconLink, IconSpan, ItemLink, ItemStackLink, LinkedList, pageIcon, PlaceableLink, QuestChainLink} from "~/lib/game-links";
 import {getInteractionName, getPlacementName} from "~/lib/placeables";
 import {
+    buildingForConstruction,
     getConstructionRecipeName,
     getConversionRecipeName,
     getCraftingRecipeName,
@@ -54,7 +56,10 @@ import {
     getResourceDepletionName,
     getTravelerTaskName,
     getTravelerTradeName,
+    KnowledgeUsage,
+    resourceForExtraction,
 } from "~/lib/relations";
+import {BitCraftTables} from "~/lib/spacetime";
 
 // ─── Individual Recipe Tab Builders ─────────────────────────────────
 
@@ -540,6 +545,90 @@ export function placeableInteractionsTab(
                 nameFor={getInteractionName}
                 render={ia => <InteractionPanel interaction={ia}/>}
                 renderSelectItem={renderKnowledgeLockedItem}
+            />
+        ),
+    };
+}
+
+// ─── Knowledge Usage Tab ─────────────────────────────────────────
+
+const KNOWLEDGE_USAGE_TYPE_LABELS: Record<KnowledgeUsage["type"], string> = {
+    collectible: "Collectible",
+    constructionRecipe: "Construction Recipe",
+    craftingRecipe: "Crafting Recipe",
+    equipment: "Equipment",
+    extractionRecipe: "Extraction Recipe",
+    pavingTile: "Paving Tile",
+    placeableInteraction: "Placeable Interaction",
+    placeablePlacement: "Placeable Placement",
+    resourcePlacementRecipe: "Resource Placement Recipe",
+    travelerTrade: "Traveler Trade",
+    travelerTaskKnowledgeRequirement: "Traveler Task",
+};
+
+function knowledgeUsageLink(usage: KnowledgeUsage) {
+    switch (usage.type) {
+        case "collectible":
+            return <CollectibleLink id={usage.collectible.id} name={usage.collectible.name}/>;
+        case "constructionRecipe": {
+            const building = buildingForConstruction(usage.constructionRecipe);
+            return building
+                ? <BuildingLink id={building.id} name={building.name}/>
+                : <span class="text-muted-foreground">Building #{usage.constructionRecipe.buildingDescriptionId}</span>;
+        }
+        case "craftingRecipe": {
+            const stack = usage.craftingRecipe.craftedItemStacks[0];
+            const name = getCraftingRecipeName(usage.craftingRecipe);
+            if (!stack) return <span>{name}</span>;
+            return stack.itemType.tag === ItemType.Cargo.tag
+                ? <CargoLink id={stack.itemId} name={name}/>
+                : <ItemLink id={stack.itemId} name={name}/>;
+        }
+        case "equipment": {
+            const item = BitCraftTables.ItemDesc.indexedBy("id")().get(usage.equipment.itemId);
+            return <ItemLink id={usage.equipment.itemId} name={item?.name}/>;
+        }
+        case "extractionRecipe": {
+            const resource = resourceForExtraction(usage.extractionRecipe);
+            return resource
+                ? <IconLink href={`/database/resource/${resource.id}`} icon={pageIcon("Resources")}>{getExtractionRecipeName(usage.extractionRecipe)}</IconLink>
+                : <span class="text-muted-foreground">{getExtractionRecipeName(usage.extractionRecipe)}</span>;
+        }
+        case "pavingTile":
+            return <IconLink href={`/database/paving/${usage.pavingTile.id}`} icon={pageIcon("Paving")}>{usage.pavingTile.name}</IconLink>;
+        case "placeableInteraction":
+            return <PlaceableLink id={usage.placeableInteraction.placeableId}/>;
+        case "placeablePlacement":
+            return <PlaceableLink id={usage.placeablePlacement.placedPlaceableId}/>;
+        case "resourcePlacementRecipe": {
+            const resourceId = usage.resourcePlacementRecipe.resourceDescriptionId;
+            const resource = BitCraftTables.ResourceDesc.indexedBy("id")().get(resourceId);
+            return <IconLink href={`/database/resource/${resourceId}`} icon={pageIcon("Resources")}>{resource?.name ?? usage.resourcePlacementRecipe.name}</IconLink>;
+        }
+        case "travelerTrade":
+            return <IconLink href={`/database/traveler-trade/${usage.travelerTrade.id}`} icon={pageIcon("Traveler Trades")}>{getTravelerTradeName(usage.travelerTrade)}</IconLink>;
+        case "travelerTaskKnowledgeRequirement": {
+            const taskId = usage.travelerTaskKnowledgeRequirement.travelerTaskId;
+            const task = BitCraftTables.TravelerTaskDesc.indexedBy("id")().get(taskId);
+            const label = task ? getTravelerTaskName(task) : `Traveler Task #${taskId}`;
+            return <IconLink href={`/database/traveler-task/${taskId}`} icon={pageIcon("Traveler Tasks")}>{label}</IconLink>;
+        }
+    }
+}
+
+export function knowledgeUsedByTab(usages: KnowledgeUsage[]): RelationshipTab {
+    return {
+        id: "used-by",
+        label: "Used By",
+        count: usages.length,
+        showWhenEmpty: false,
+        content: () => (
+            <RelTable<KnowledgeUsage>
+                data={usages}
+                columns={[
+                    {header: "Type", cell: usage => <span>{KNOWLEDGE_USAGE_TYPE_LABELS[usage.type]}</span>},
+                    {header: "Used By", cell: knowledgeUsageLink},
+                ]}
             />
         ),
     };
