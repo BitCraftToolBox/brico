@@ -362,6 +362,9 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
     addKnowledgeRequirements(lines, placement);
 
     // Distance constraints
+    if (placement.minDistanceToGroup > 0) {
+        lines.push([() => <IconSpan icon={pageIcon("Placeables")}>Min Dist to Placeable Group:</IconSpan>, placement.minDistanceToGroup])
+    }
     if (placement.minDistanceToPlayerClaims > 0) {
         lines.push([() => <IconSpan icon={pageIcon("Claim Research")}>Min Dist to Claims:</IconSpan>, placement.minDistanceToPlayerClaims]);
     }
