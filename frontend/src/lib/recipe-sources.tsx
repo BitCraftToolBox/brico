@@ -190,6 +190,15 @@ export function prospectingForResource(resource: number) {
         .filter((p): p is NonNullable<typeof p> => !!p) ?? [];
 }
 
+export function prospectingForEnemy(enemyType: number) {
+    const prospecting = BitCraftTables.ProspectingDesc.indexedByMulti("enemyAiDescId")();
+    const enemyAiParams = BitCraftTables.EnemyAiParamsDesc.get();
+    if (!enemyAiParams) return [];
+    const typeMap = BitCraftTables.EnemyAiParamsDesc.tagToOrdinal("enemyType");
+    return enemyAiParams.filter(par => typeMap.get(par.enemyType.tag) === enemyType)
+        .flatMap(par => prospecting.get(par.id) ?? []) ?? [];
+}
+
 export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: ResourceDesc): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [];

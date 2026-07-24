@@ -2,7 +2,7 @@ import {AlgebraicType} from "@clockworklabs/spacetimedb-sdk";
 import {csvParse} from "d3-dsv";
 import {Accessor, createEffect, createRoot, createSignal} from "solid-js";
 import {isServer} from "solid-js/web";
-import {ASSET_CDN_BASE} from "~/lib/bitcraft-utils";
+import {ASSET_CDN_BASE} from "~/lib/constants";
 
 /**
  * Translation of **game data** text (item names, descriptions, tags, …).

@@ -40,7 +40,7 @@ export const CreatureDefs: BitCraftToDataDef<EnemyDesc> = {
         {id: "Attack Level", meta: {label: msg`Attack Level`}, accessorKey: "attackLevel", filterFn: includedIn()},
         {id: "Defense Level", meta: {label: msg`Defense Level`}, accessorKey: "defenseLevel", filterFn: includedIn()},
         descriptionColumn(),
-        rowActions({accessorKey: "enemyType" as any}, "mob"),
+        rowActions({accessorKey: "enemyType" as any}, "mob", "enemyId"),
     ],
     facetedFilters: [
         tagFilter(),

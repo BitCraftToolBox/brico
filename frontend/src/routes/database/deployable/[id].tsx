@@ -67,7 +67,7 @@ export default function DeployableDetail() {
                 properties: [
                     ...pathfindingLabels(),
                     {label: msg`Water Depth`, value: undefinedIfZero(pathfinding()?.maxWaterDepth)},
-                    {label: msg`Can Auto Follow`, value: d.canAutoFollow},
+                    {label: msg`Can Auto-Follow`, value: d.canAutoFollow},
                     {label: msg`Wind Multiplier`, value: undefinedIfZero(fixFloat(d.affectedByWind))},
                     {label: msg`Can Enter Portals`, value: d.canEnterPortals},
                     {label: msg`Mounting Radius`, value: d.mountingRadius},

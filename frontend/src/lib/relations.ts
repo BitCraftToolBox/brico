@@ -19,6 +19,7 @@ import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_ty
 import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
+import {EnemyAiParamsDesc} from "~/bindings/src/enemy_ai_params_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
 import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
@@ -346,6 +347,14 @@ export function enemiesForResource(resource: ResourceDesc): EnemyDesc[] {
             return p ? enemyIdx.get(p.enemyType as any) : undefined;
         })
         .filter((e): e is EnemyDesc => !!e);
+}
+
+/** Herd spawn definitions (EnemyAiParamsDesc) that spawn a given creature */
+export function herdParamsForEnemy(enemyType: number): EnemyAiParamsDesc[] {
+    const all = BitCraftTables.EnemyAiParamsDesc.get();
+    if (!all) return [];
+    const tagOrdinal = BitCraftTables.EnemyAiParamsDesc.tagToOrdinal("enemyType");
+    return all.filter(p => tagOrdinal.get(p.enemyType.tag) === enemyType);
 }
 
 /** Prospecting entries for a given biome */

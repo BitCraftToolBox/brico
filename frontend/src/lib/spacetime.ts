@@ -306,7 +306,7 @@ export class BitCraftTable<TData> {
         return res;
     }
 
-    indexedByMulti<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx, allowZero: boolean = false): Accessor<Map<any, TData[]>> {
+    indexedByMulti<TIdx extends string & keyof TData, TValue extends TData[TIdx] & (string | number)>(key: TIdx, allowZero: boolean = false): Accessor<Map<TValue, TData[]>> {
         let res = this.#idxCacheMulti.get(key);
         if (!res) {
             res = createIndexMulti<TData, TIdx, TValue>(this.get, key, allowZero);

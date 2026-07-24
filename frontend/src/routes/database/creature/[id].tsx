@@ -1,24 +1,27 @@
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
-import {createMemo, For, Show} from "solid-js";
+import {createMemo, createResource, For, Show} from "solid-js";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
 import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
 import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon} from "~/components/shared/GameIcon";
+import {HeatmapTab} from "~/components/shared/HeatmapPanel";
 import {ItemListDisplay, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {EnemyDropPanel} from "~/components/shared/RecipeDisplay";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {checkStepHeight} from "~/lib/bitcraft-utils";
+import {checkStepHeight, Tiers} from "~/lib/bitcraft-utils";
 import {ItemListLink, SkillLinkById} from "~/lib/game-links";
+import {fetchHeatmapPoints, herdHeatmapPath} from "~/lib/heatmap-data";
 import {useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
+import {itemListLootWeightedComponent, prospectingForEnemy} from "~/lib/recipe-sources";
 import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList, scalingDescsFromEnemy} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
+import {spawnedByProspectingTab} from "~/lib/table-utils/detail-tab-builders";
 import {fixFloat} from "~/lib/utils";
 
 type LootRow = [ContributionLootDesc, ItemListDesc];
@@ -51,6 +54,14 @@ export default function CreatureDetail() {
     const contributionLists = createMemo(() => creature() ? contributionLootFromEnemy(creature()!) : []);
 
     const scaling = createMemo(() => creature() ? scalingDescsFromEnemy(creature()!) : []);
+
+    const prospecting = createMemo(() => {
+        const c = creature();
+        if (!c) return [];
+        return prospectingForEnemy(c.enemyType);
+    });
+
+    const [heatmapPoints] = createResource(() => creature()?.enemyType, (id) => fetchHeatmapPoints(herdHeatmapPath(id)));
 
     const {labels: pathfindingLabels} = checkStepHeight(pathfinding);
 
@@ -205,6 +216,7 @@ export default function CreatureDetail() {
                         />
                     ),
                 },
+                spawnedByProspectingTab(prospecting()),
                 {
                     id: "scaling",
                     label: msg`Stat Scaling`,
@@ -247,7 +259,26 @@ export default function CreatureDetail() {
                             ]}
                         />
                     )
-                }
+                },
+                {
+                    id: "map",
+                    label: "Map",
+                    content: () => (
+                        <HeatmapTab
+                            loading={heatmapPoints.loading}
+                            disabledReason={prospecting().length > 0
+                                ? msg`This creature is found via prospecting and doesn't have fixed spawn locations to show on a map.`
+                                : undefined}
+                            layers={[{
+                                id: "resource",
+                                label: creature()?.name,
+                                color: creature()?.tag === "Monster" ? "#ff0000" : Tiers.getMapColor(creature()?.tier ?? 0),
+                                points: heatmapPoints() ?? [],
+                            }]}
+                            mapUrl={`https://bitcraftmap.com/?enemyId=${creature()?.enemyType}`}
+                        />
+                    ),
+                },
             ]}
         />
     );

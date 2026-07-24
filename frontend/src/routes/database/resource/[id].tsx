@@ -1,20 +1,21 @@
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
-import {createMemo, For, Show} from "solid-js";
+import {createMemo, createResource, For, Show} from "solid-js";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {lootTab} from "~/components/fun/BricoLootBox";
-import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ResourceIcon} from "~/components/shared/GameIcon";
+import {HeatmapTab} from "~/components/shared/HeatmapPanel";
 import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGrowthPanel} from "~/components/shared/RecipeDisplay";
 import {IconLink, pageIcon} from "~/lib/game-links";
+import {fetchHeatmapPoints, resourceHeatmapPath} from "~/lib/heatmap-data";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {prospectingForResource} from "~/lib/recipe-sources";
 import {enemiesForResource, extractionRecipeForResource, resourceGrowthFrom, resourceGrowthInto, resourcesYieldingResource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
+import {spawnedByProspectingTab} from "~/lib/table-utils/detail-tab-builders";
 import {fixFloat} from "~/lib/utils";
 
 export default function ResourceDetail() {
@@ -46,6 +47,8 @@ export default function ResourceDetail() {
        if (!r) return [];
        return prospectingForResource(r.id);
     });
+
+    const [heatmapPoints] = createResource(() => resource()?.id, (id) => fetchHeatmapPoints(resourceHeatmapPath(id)));
 
     const hasDepletion = createMemo(() => (resource()?.onDestroyYield?.length ?? 0) > 0);
     const hasDepletionResource = createMemo(() => (resource()?.onDestroyYieldResourceId ?? 0) > 0);
@@ -163,25 +166,7 @@ export default function ResourceDetail() {
                       </div>
                   )
                 },
-                {
-                    id: "prospecting",
-                    label: msg`Spawned from Prospecting`,
-                    count: prospecting().length,
-                    showWhenEmpty: false,
-                    content: () => (
-                        <RelTable<ProspectingDesc>
-                            data={prospecting()}
-                            columns={[
-                                {header: msg`Name`, cell: (row) => (
-                                    <IconLink href={`/database/prospecting/${row.id}`} icon={<FontIcon codepoint={row.iconAssetPath} class="size-4 inline"/>}>
-                                        {row.name}
-                                    </IconLink>
-                                )},
-                                {header: msg`Description`, cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
-                            ]}
-                        />
-                    ),
-                },
+                spawnedByProspectingTab(prospecting()),
                 {
                     id: "enemies",
                     label: msg`Spawns Enemies`,
@@ -199,6 +184,25 @@ export default function ResourceDetail() {
                                 {header: msg`Tier`, cell: (row) => <span>{row.tier}</span>},
                                 {header: msg`Max HP`, cell: (row) => <span>{row.maxHealth}</span>},
                             ]}
+                        />
+                    ),
+                },
+                {
+                    id: "map",
+                    label: msg`Map`,
+                    content: () => (
+                        <HeatmapTab
+                            loading={heatmapPoints.loading}
+                            disabledReason={prospecting().length > 0
+                                ? msg`This resource is found via prospecting and doesn't have fixed spawn locations to show on a map.`
+                                : undefined}
+                            layers={[{
+                                id: "resource",
+                                label: resource()?.name,
+                                color: resource()?.spawnsInWater ? "#F050B0" : "#50B0F0",
+                                points: heatmapPoints() ?? [],
+                            }]}
+                            mapUrl={`https://bitcraftmap.com/?resourceId=${resource()?.id}`}
                         />
                     ),
                 },

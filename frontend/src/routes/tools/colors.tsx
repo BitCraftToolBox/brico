@@ -49,7 +49,7 @@ const sidebarColors: ColorConfig[] = [
     {name: "sidebar-ring", varName: "--sidebar-ring"},
 ];
 
-const bitcolorColors: ColorConfig[] = [
+const bitcraftColors: ColorConfig[] = [
     {name: "bc-tier-color-0", varName: "--bc-tier-color-0"},
     {name: "bc-tier-color-1", varName: "--bc-tier-color-1"},
     {name: "bc-tier-color-2", varName: "--bc-tier-color-2"},
@@ -122,7 +122,7 @@ export default function ColorsPage() {
 
                 <ColorGroup title="Base Colors" colors={baseColors} mode={"HSL"}/>
                 <ColorGroup title="Sidebar Colors" colors={sidebarColors} mode={"HSL"}/>
-                <ColorGroup title="BitCraft Tier Colors" colors={bitcolorColors} mode={"RGB"}/>
+                <ColorGroup title="BitCraft Tier Colors" colors={bitcraftColors} mode={"RGB"}/>
             </div>
         </MainLayout>
     );

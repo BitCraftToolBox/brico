@@ -22,11 +22,13 @@ import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
+import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
+import {FontIcon} from "~/components/icons/font-icons";
 import {RelationshipTab, RelTable} from "~/components/shared/DetailPageLayout";
 import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
 import {
@@ -147,6 +149,30 @@ export function terraformDropsTab(
             ]}/>
         )
     }
+}
+
+export function spawnedByProspectingTab(
+    prospecting: ProspectingDesc[]
+): RelationshipTab {
+    return {
+        id: "prospecting",
+        label: "Spawned from Prospecting",
+        count: prospecting.length,
+        showWhenEmpty: false,
+        content: () => (
+            <RelTable<ProspectingDesc>
+                data={prospecting}
+                columns={[
+                    {header: "Name", cell: (row) => (
+                            <IconLink href={`/database/prospecting/${row.id}`} icon={<FontIcon codepoint={row.iconAssetPath} class="size-4 inline"/>}>
+                                {row.name}
+                            </IconLink>
+                        )},
+                    {header: "Description", cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
+                ]}
+            />
+        )
+    };
 }
 
 export function extractionTab(

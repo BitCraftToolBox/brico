@@ -2,6 +2,7 @@ import {Accessor, createMemo} from "solid-js";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {PathfindingDesc} from "~/bindings/src/pathfinding_desc_type";
 import {Rarity} from "~/bindings/src/rarity_type";
+import {ASSET_CDN_BASE} from "~/lib/constants";
 
 
 export class Rarities {
@@ -98,11 +99,23 @@ export class Tiers {
                 return "bg-tier-bg0";
         }
     }
-}
 
-// `import.meta.env?.` (rather than `.`) so this module can also be imported outside Vite — the
-// scripts in scripts/i18n/ pull it in via tsx, where `import.meta.env` is undefined.
-export const ASSET_CDN_BASE = import.meta.env?.VITE_SPRITE_CDN_BASE ?? "https://cdn.brico.app";
+    static getMapColor(tier: number) {
+        switch (tier) {
+            case 1: return "#838e9e";
+            case 2: return "#a8663a";
+            case 3: return "#00f630";
+            case 4: return "#2d6bff";
+            case 5: return "#a349af";
+            case 6: return "#bd2c3b";
+            case 7: return "#c09015";
+            case 8: return "#5ae2e2";
+            case 9: return "#1f1f1f";
+            case 10: return "#deffff"
+        }
+        return "#413a64";
+    }
+}
 
 export function getAssetURL(path: string, quantity?: number) {
     if (!path) {
