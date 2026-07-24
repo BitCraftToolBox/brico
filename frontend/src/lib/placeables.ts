@@ -76,7 +76,7 @@ export function useGrowthByOutcome() {
         const all = BitCraftTables.PlaceableGrowthDesc.get() ?? [];
         const map = new Map<number, PlaceableGrowthDesc[]>();
         for (const g of all) {
-            for (const outcome of g.outcomes) {
+            for (const outcome of g.outcomesV2 ?? []) {
                 const arr = map.get(outcome.placeableId);
                 if (arr) arr.push(g);
                 else map.set(outcome.placeableId, [g]);
@@ -116,10 +116,16 @@ export function useInteractionsByPlaceable() {
             const arr = map.get(ia.placeableId);
             if (arr) arr.push(ia);
             else map.set(ia.placeableId, [ia]);
+
             if (ia.onDestroySpawnedPlaceableId) {
                 const outArr = map.get(ia.onDestroySpawnedPlaceableId);
                 if (outArr) outArr.push(ia);
                 else map.set(ia.onDestroySpawnedPlaceableId, [ia]);
+            }
+            for (const outcome of ia.onDestroyOutcomes ?? []) {
+                const outArr = map.get(outcome.placeableId);
+                if (outArr) outArr.push(ia);
+                else map.set(outcome.placeableId, [ia]);
             }
         }
         return map;
@@ -162,7 +168,7 @@ export function findRootPlacement(placeableId: number): PlaceablePlacementDesc |
 
         // Check growth outcomes that produce this placeable
         for (const g of growths) {
-            if (g.outcomes.some(o => o.placeableId === current) && !visited.has(g.placeableId)) {
+            if (g.outcomesV2?.some(o => o.placeableId === current) && !visited.has(g.placeableId)) {
                 const p = placements.find(pp => pp.placedPlaceableId === g.placeableId);
                 if (p) return p;
                 queue.push(g.placeableId);

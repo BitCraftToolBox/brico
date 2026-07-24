@@ -22,6 +22,7 @@ import {ExtractionSpawnedPlaceable} from "~/bindings/src/extraction_spawned_plac
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
+import {PlaceableGrowthOutcomeV2} from "~/bindings/src/placeable_growth_outcome_v_2_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
@@ -238,7 +239,7 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                 <>
                     <For each={props.recipe.extractedItemStacks.filter((s: ProbabilisticItemStack) => !!s)}
                          fallback={
-                             <Show when={!resource()?.onDestroyYieldResourceId && !questDrops().length}>No Outputs</Show>
+                             <Show when={!resource()?.onDestroyYieldResourceId && !questDrops().length && !props.recipe.spawnedPlaceables}>No Outputs</Show>
                          }
                     >
                         {(stack) => expandStack(stack, chances())}
@@ -360,7 +361,11 @@ export const ResourceGrowthPanel: Component<{ growth: ResourceGrowthRecipeDesc }
         <RecipeVisual
             inputs={<ResourceIcon res={from()} alwaysLabel={from().iconAssetName === to()?.iconAssetName}/>}
             outputs={<Show when={to()} fallback={"Despawns"}>{t => <ResourceIcon res={t()} alwaysLabel={from().iconAssetName === to()?.iconAssetName}/>}</Show>}
-            stats={[["Time", min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`]]}
+            stats={[
+                ["Time", min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`],
+                ["Chance", `${fixFloat(growth.grownResourceChance * 100)}%`],
+                ["Radius", `${growth.grownResourceMinRadius}-${growth.grownResourceMaxRadius}`]
+            ]}
         />
     );
 };
@@ -545,10 +550,17 @@ export const PlacementPanel: Component<{ placement: PlaceablePlacementDesc }> = 
 export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc }> = (props) => {
     const idx = BitCraftTables.PlaceableDesc.indexedBy("id");
     const placeable = () => idx().get(props.interaction.placeableId);
-    const spawnedPlaceable = () => {
+    const outcomes = () => {
         const id = props.interaction.onDestroySpawnedPlaceableId;
-        if (!id) return undefined;
-        return idx().get(id);
+        if (id) {
+            return [{
+                placeableId: id,
+                probability: 1,
+                radiusMin: 0,
+                radiusMax: 0,
+            } satisfies PlaceableGrowthOutcomeV2];
+        }
+        return props.interaction.onDestroyOutcomes;
     };
 
     return (
@@ -573,17 +585,28 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                     <Show when={props.interaction.outputItemStacks.length}>
                         <ItemStackArray stacks={props.interaction.outputItemStacks}/>
                     </Show>
-                    <Show when={spawnedPlaceable()}>
+                    <Show when={outcomes()}>
                         {(sp) => (
-                            <div class="flex flex-col items-center gap-0.5">
-                                <Show when={props.interaction.onDestroySpawnedPlaceableChance < 1}>
-                                    <span class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
-                                        {Math.round(props.interaction.onDestroySpawnedPlaceableChance * 100)}%
-                                    </span>
-                                </Show>
-                                <PlaceableIcon placeable={sp()} small/>
-                                <span class="text-[10px] text-muted-foreground text-center max-w-14 leading-tight truncate" title={sp().name}>{sp().name}</span>
-                            </div>
+                            <For each={outcomes()}>
+                                {outcome => {
+                                    const sp = idx().get(outcome.placeableId);
+                                    return sp ? (
+                                        <div class="flex flex-col items-center gap-0.5">
+                                            <Tooltip openOnTouchStart>
+                                                <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
+                                                    {Math.round(outcome.probability * 100)}%
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {outcome.probability < 1 ? "Chance" : "Guaranteed"} to spawn on depletion.<br/>
+                                                    {outcome.radiusMin > 0 || outcome.radiusMax > 0 ? `Spawns within ${outcome.radiusMin}–${outcome.radiusMax} tiles.` : null}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                            <PlaceableIcon placeable={sp} small/>
+                                            <span class="text-[10px] text-muted-foreground text-center max-w-14 leading-tight truncate" title={sp.name}>{sp.name}</span>
+                                        </div>
+                                    ) : null;
+                                }}
+                            </For>
                         )}
                     </Show>
                 </>
@@ -629,7 +652,7 @@ const GrowthOutcomeIcon: Component<{
 export const GrowthPanel: Component<{ growth: PlaceableGrowthDesc }> = (props) => {
     const [showPercent, setShowPercent] = createSignal(true);
     const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")().get(props.growth.placeableId);
-    const totalWeight = () => props.growth.outcomes.reduce((sum, o) => sum + o.probability, 0);
+    const totalWeight = () => props.growth.outcomesV2?.reduce((sum, o) => sum + o.probability, 0) ?? 0;
 
     return (
         <RecipeVisual
@@ -645,7 +668,7 @@ export const GrowthPanel: Component<{ growth: PlaceableGrowthDesc }> = (props) =
             }
             outputs={
                 <div class="flex flex-row flex-wrap gap-2 justify-center">
-                    <For each={props.growth.outcomes}>
+                    <For each={props.growth.outcomesV2}>
                         {(outcome) => (
                             <GrowthOutcomeIcon
                                 placeableId={outcome.placeableId}

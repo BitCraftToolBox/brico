@@ -24,6 +24,7 @@ import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
+import {PlaceableSelfBuffChance} from "~/bindings/src/placeable_self_buff_chance_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {ToolRequirement} from "~/bindings/src/tool_requirement_type";
@@ -31,7 +32,7 @@ import {ToolTypeDesc} from "~/bindings/src/tool_type_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {BiomeLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
+import {BiomeLink, IconLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
 import {getItemListSource, getTravelerNpcName} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
@@ -373,7 +374,31 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
         lines.push([() => <IconSpan icon={pageIcon("Structures")}>Near Building:</IconSpan>, `${names} (≤${placement.maxDistanceToBuildings}m)`]);
     }
 
+    addPlaceableSelfBuffs(lines, placement.selfBuffs);
+
     return lines;
+}
+
+function addPlaceableSelfBuffs(lines: StatLine[], placeableBuffs: PlaceableSelfBuffChance[] | undefined) {
+    if (placeableBuffs?.length) {
+        const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
+        lines.push(...placeableBuffs.map(b => {
+            const buff = buffIdx.get(b.buffId);
+            const duration = b.duration ?? buff?.duration;
+            return [
+                () => (
+                    <IconSpan icon={pageIcon("Buffs")}>Buff</IconSpan>
+                ),
+                () => (
+                    <IconLink href={`/database/buff/${b.buffId}`}>
+                        {buff?.description ?? `Buff #${b.buffId}`}
+                        {duration ? <span class="text-muted-foreground">{readableSeconds(fixFloat(duration))}</span> : null}
+                        {<span class="text-muted-foreground">({fixFloat(b.chance * 100)}%)</span>}
+                    </IconLink>
+                )
+            ] satisfies StatLine;
+        }));
+    }
 }
 
 export function interactionStatLines(interaction: PlaceableInteractionDesc, sourcePlaceable: PlaceableDesc | undefined): StatLine[] {
@@ -394,6 +419,7 @@ export function interactionStatLines(interaction: PlaceableInteractionDesc, sour
     addCommonRequirements(lines, interaction);
     addUseHandsInformation(lines, interaction);
     addKnowledgeRequirements(lines, interaction);
+    addPlaceableSelfBuffs(lines, interaction.selfBuffs);
 
     return lines;
 }

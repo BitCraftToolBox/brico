@@ -85,6 +85,27 @@ export default function BuffDetail() {
                 });
             }
         }
+        const placeableIdx = BitCraftTables.PlaceableDesc.indexedBy("id")();
+        for (const interaction of BitCraftTables.PlaceableInteractionDesc.get() ?? []) {
+            if (interaction.selfBuffs?.some(e => e.buffId === b.id)) {
+                const placeable = placeableIdx.get(interaction.placeableId);
+                entries.push({
+                    href: `/database/placeable/${interaction.placeableId}`,
+                    iconPage: "Placeables",
+                    name: placeable?.name ?? `Placeable #${interaction.placeableId}`,
+                })
+            }
+        }
+        for (const placement of BitCraftTables.PlaceablePlacementDesc.get() ?? []) {
+            if (placement.selfBuffs?.some(e => e.buffId === b.id)) {
+                const placeable = placeableIdx.get(placement.placedPlaceableId);
+                entries.push({
+                    href: `/database/placeable/${placement.placedPlaceableId}`,
+                    iconPage: "Placeables",
+                    name: placeable?.name ?? `Placeable #${placement.placedPlaceableId}`,
+                })
+            }
+        }
         return entries;
     });
 
