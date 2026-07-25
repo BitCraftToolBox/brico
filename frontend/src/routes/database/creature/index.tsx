@@ -7,6 +7,7 @@ export default function Creatures() {
     return (
         <TableLayout<EnemyDesc>
             title="Creatures"
+            idAccessor={{accessorKey: "enemyType"}}
             items={BitCraftTables.EnemyDesc.get}
             colDefs={CreatureDefs}
         />

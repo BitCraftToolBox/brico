@@ -7,6 +7,7 @@ export default function Equipment() {
     return (
         <TableLayout<EquipmentDesc>
             title="Equipment"
+            idAccessor={{accessorKey: "itemId"}}
             items={BitCraftTables.EquipmentDesc.get}
             colDefs={EquipmentDefs}
         />

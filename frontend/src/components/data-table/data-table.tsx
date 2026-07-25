@@ -15,13 +15,14 @@ import {
     InitialTableState,
     VisibilityState
 } from "@tanstack/solid-table"
-import {createMemo, createSignal, For, Show, splitProps} from "solid-js"
+import {createEffect, createMemo, createSignal, For, Show, splitProps} from "solid-js"
 import {Dynamic} from "solid-js/web";
 import {TableColumnHeader} from "~/components/data-table/table-column-header";
 import {TableFacetedFilterProps} from "~/components/data-table/table-faceted-filter";
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "~/components/ui/table"
 import {useSettings} from "~/lib/settings";
+import {AccessorProp} from "~/lib/table-utils/base";
 
 import {TablePagination} from "./table-pagination"
 import {TableToolbar} from "./table-toolbar"
@@ -30,6 +31,7 @@ type OptionsFnOrValue<TData, TResult> = ((col: Column<TData> | undefined) => TRe
 
 type DataTableProps<TData> = {
     name: string
+    idAccessor: AccessorProp<TData, any>
     columns: ColumnDef<TData>[]
     data: TData[]
     facetedFilters?: FilterSetupProps<TData, any>[]
@@ -43,13 +45,29 @@ export type FilterSetupProps<TData, TResult> = Omit<TableFacetedFilterProps<TDat
 }
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
-    const {tableHiddenColumns, tableActionsFirst, getTableSession} = useSettings();
+    const {tableHiddenColumns, tableActionsFirst, getTableSession, tableNaturalSort} = useSettings();
     const [searchParams, setSearchParams] = useSearchParams()
+
+    const columns = createMemo(() => {
+        const idCol = {
+            id: "pk",
+            ...props.idAccessor,
+            header: () => <></>,
+        } satisfies ColumnDef<TData>;
+        const cols = props.columns;
+        if (tableActionsFirst()) {
+            let actionsCol = cols.find(c => c.id === "actions");
+            if (actionsCol) {
+                return [idCol, actionsCol, ...cols.filter(c => c.id !== "actions")]
+            }
+        }
+        return [idCol, ...cols]
+    });
 
     // Restore persisted hidden columns for this table as the initial visibility state
     const persistedHidden: string[] = tableHiddenColumns()[props.name] ?? [];
     const initialColumnVisibility: VisibilityState = Object.fromEntries(
-        persistedHidden.map((id) => [id, false])
+        persistedHidden.concat(["pk"]).map((id) => [id, false])
     );
 
     const [columnVisibility, setColumnVisibility] = createSignal<VisibilityState>(initialColumnVisibility)
@@ -100,6 +118,17 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         setSorting(urlSorting);
     }
 
+    createEffect(() => {
+        const current = sorting();
+        const naturalOrder = tableNaturalSort();
+        if (!current.length && naturalOrder === "pk") {
+            setSorting([{id: "pk", desc: false}]);
+        } else if (current.length === 1 && current[0].id === "pk" && naturalOrder === "db") {
+            setSorting([]);
+        } else if (current.length > 1 && current.some(s => s.id === "pk")) {
+            setSorting(current.filter(s => s.id !== "pk"));
+        }
+    });
 
     // Custom global filter function for multi-column search
     const globalFilterFn: FilterFn<TData> = (row, _columnId, value) => {
@@ -125,13 +154,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
             return props.data
         },
         get columns() {
-            if (tableActionsFirst()) {
-                let actionsCol = props.columns.find(c => c.id === "actions");
-                if (actionsCol) {
-                    return [actionsCol, ...props.columns.filter(c => c.id !== "actions")]
-                }
-            }
-            return props.columns
+            return columns()
         },
         state: {
             get sorting() {

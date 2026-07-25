@@ -38,14 +38,14 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
         } else {
             const allIds = props.table
                 .getAllColumns()
-                .filter(c => typeof c.accessorFn !== "undefined" && c.getCanHide())
+                .filter(c => typeof c.accessorFn !== "undefined" && c.getCanHide() && c.id !== "pk")
                 .map(c => c.id);
             setTableHiddenColumns({...tableHiddenColumns(), [name]: allIds});
         }
     };
 
     const toggleAllVisible = (visible: boolean) => {
-        props.table.getAllColumns().forEach(c => c.toggleVisibility(visible));
+        props.table.getAllColumns().forEach(c => c.toggleVisibility(c.id !== "pk" && visible));
         persistAll(visible);
     };
 
@@ -62,7 +62,7 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
                 size="sm"
                 class="h-8 w-auto px-2 sm:px-3"
             >
-                <Show when={props.table.getIsAllColumnsVisible()} fallback={<IconEyeOff/>}><IconEye/></Show>
+                <Show when={props.table.getAllLeafColumns().every(c => c.id === "pk" || c.getIsVisible())} fallback={<IconEyeOff/>}><IconEye/></Show>
                 View
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -80,7 +80,7 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
                 <For
                     each={props.table
                         .getAllColumns()
-                        .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())}
+                        .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide() && column.id !== "pk")}
                 >
                     {(column) => (
                         <DropdownMenuCheckboxItem

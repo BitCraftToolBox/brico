@@ -176,6 +176,7 @@ export function rowActions<T, V extends string | number>(
         ...accessor,
         header: () => <></>,
         enableHiding: false,
+        enableSorting: false,
         cell: (props: CellContext<T, V>) => {
             const rowId = props.getValue();
             const chatLinkId = chatLinkIdAccessor ? resolveAccessor(chatLinkIdAccessor, props.row.original) : rowId;

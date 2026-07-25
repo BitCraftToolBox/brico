@@ -7,6 +7,8 @@ import {
     TbOutlineDeviceLaptop as IconSystem,
     TbOutlineDots as IconDots,
     TbOutlineList as IconViewList,
+    TbOutlineList as IconSortData,
+    TbOutlineListNumbers as IconSortPK,
     TbOutlineMoon as IconMoon,
     TbOutlineSun as IconSun,
 } from "solid-icons/tb";
@@ -16,7 +18,7 @@ import MainLayout from "~/components/MainLayout";
 import {Button} from "~/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
-import {type SortMode, useSettings, type ViewMode} from "~/lib/settings";
+import {NaturalSortOrder, type SortMode, useSettings, type ViewMode} from "~/lib/settings";
 import {SIDEBAR_GROUPS, SidebarGroupDef, type SidebarItemDef} from "~/lib/sidebar-items";
 
 // ── Shared UI helpers ─────────────────────────────────────────
@@ -328,6 +330,21 @@ export default function SettingsPage() {
                         <Switch checked={settings.tableActionsFirst()} onChange={settings.setTableActionsFirst}>
                             <SwitchControl><SwitchThumb/></SwitchControl>
                         </Switch>
+                    </SettingsRow>
+                    <SettingsRow
+                        label="Table natural sort order"
+                        description={<>Naturally sort tables by their primary ID, or use the internal database ordering.
+                            <br/><span class="text-muted-foreground">Any manually applied column sort will override this.</span>
+                        </>}
+                    >
+                        <ButtonGroup<NaturalSortOrder>
+                            value={settings.tableNaturalSort()}
+                            onChange={settings.setTableNaturalSort}
+                            options={[
+                                {value: "pk", icon: IconSortPK, label: "Object ID"},
+                                {value: "db", icon: IconSortData, label: "Database Order"},
+                            ]}
+                        />
                     </SettingsRow>
                     <SettingsRow
                         label="Reset hidden columns"

@@ -7,6 +7,7 @@ export default function Weapons() {
     return (
         <TableLayout<WeaponDesc>
             title="Weapons"
+            idAccessor={{accessorKey: "itemId"}}
             items={BitCraftTables.WeaponDesc.get}
             colDefs={WeaponDefs}
         />

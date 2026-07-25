@@ -7,6 +7,7 @@ export default function Biomes() {
     return (
         <TableLayout<BiomeDesc>
             title="Biomes"
+            idAccessor={{accessorKey: "biomeType"}}
             items={BitCraftTables.BiomeDesc.get}
             colDefs={BiomeDefs}
         />

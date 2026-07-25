@@ -4,10 +4,11 @@ import {Accessor, createContext, createEffect, createMemo, createSignal, JSX, on
 import {isServer} from "solid-js/web";
 import {ALL_SIDEBAR_HREFS} from "~/lib/sidebar-items";
 
-// ── Types ─────────────────────────────────────────────────────
-
 export type SortMode = "tree" | "az";
 export type ViewMode = "list" | "grid";
+
+export type NaturalSortOrder = "pk" | "db";
+
 export type UnchartedNotifications = {
     notifyAtStart: boolean;
     notifyAt5m: boolean;
@@ -27,7 +28,6 @@ export type TableSessionState = {
     globalFilter: Accessor<string>;
     setGlobalFilter: Setter<string>;
 };
-
 
 export type AppSettings = {
     /** Color mode storage manager */
@@ -73,6 +73,9 @@ export type AppSettings = {
     /** Show row action buttons in the first column instead of the last */
     tableActionsFirst: () => boolean;
     setTableActionsFirst: (v: boolean) => void;
+    /** Default sort for tables is primary key or database order */
+    tableNaturalSort: () => NaturalSortOrder;
+    setTableNaturalSort: (v: NaturalSortOrder) => void;
 
     /** Quest chain IDs the user has marked as completed. */
     completedQuests: () => Set<number>;
@@ -104,8 +107,6 @@ export type AppSettings = {
     getTableSession: (name: string) => TableSessionState;
 };
 
-// ── Factory ───────────────────────────────────────────────────
-
 /** All localStorage keys and defaults in one place */
 export const KEYS = {
     theme: "brico:theme",
@@ -120,6 +121,7 @@ export const KEYS = {
     tablePageSize: "brico:table:page-size",
     tableHiddenColumns: "brico:table:hidden-columns",
     tableActionsFirst: "brico:table:actions-first",
+    tableNaturalSort: "brico:table:natural-sort",
     completedQuests: "brico:quests:completed",
     easterEggs: "brico:easter-eggs",
     tf2Mode: "brico:easter-eggs:tf2-mode",
@@ -230,6 +232,7 @@ function createSettings(): AppSettings {
     const [tablePageSize, setTablePageSize] = persist(createSignal<number>(10), KEYS.tablePageSize);
     const [tableHiddenColumns, setTableHiddenColumns] = persist(createSignal<Record<string, string[]>>({}), KEYS.tableHiddenColumns);
     const [tableActionsFirst, setTableActionsFirst] = persist(createSignal(false), KEYS.tableActionsFirst);
+    const [tableNaturalSort, setTableNaturalSort] = persist(createSignal<NaturalSortOrder>("pk"), KEYS.tableNaturalSort);
 
     // game data?
     const [completedQuestsRaw, setCompletedQuestsRaw] = persist(createSignal<number[]>([]), KEYS.completedQuests);
@@ -312,6 +315,7 @@ function createSettings(): AppSettings {
         {key: KEYS.sidebarHiddenItems, get: sidebarHiddenItems, set: setSidebarHiddenItems},
         {key: KEYS.tablePageSize, get: tablePageSize, set: setTablePageSize},
         {key: KEYS.tableActionsFirst, get: tableActionsFirst, set: setTableActionsFirst},
+        {key: KEYS.tableNaturalSort, get: tableNaturalSort, set: setTableNaturalSort},
         {key: KEYS.completedQuests, get: completedQuestsRaw, set: setCompletedQuestsRaw},
         {key: KEYS.easterEggs, get: easterEggs, set: setEasterEggs},
         {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
@@ -345,6 +349,8 @@ function createSettings(): AppSettings {
         setTableHiddenColumns,
         tableActionsFirst,
         setTableActionsFirst,
+        tableNaturalSort,
+        setTableNaturalSort,
         displayProbabilityAsAverage,
         setDisplayProbabilityAsAverage,
         flattenItemListOutputs,

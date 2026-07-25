@@ -7,6 +7,7 @@ export default function Terraforming() {
     return (
         <TableLayout<TerraformRecipeDesc>
             title="Terraforming"
+            idAccessor={{accessorKey: "difference"}}
             items={BitCraftTables.TerraformRecipeDesc.get}
             colDefs={TerraformingDefs}
         />

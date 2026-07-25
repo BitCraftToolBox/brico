@@ -7,6 +7,7 @@ export default function Food() {
     return (
         <TableLayout<FoodDesc>
             title="Food"
+            idAccessor={{accessorKey: "itemId"}}
             items={BitCraftTables.FoodDesc.get}
             colDefs={FoodDefs}
         />

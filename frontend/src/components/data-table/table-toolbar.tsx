@@ -23,7 +23,7 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
     const { tablePageSize } = useSettings();
     const isFiltered = () => props.table.getState().columnFilters.length > 0
         || props.table.getState().globalFilter
-        || props.table.getState().sorting.length > 0;
+        || props.table.getState().sorting.length > 0 && (props.table.getState().sorting.length !== 1 || props.table.getState().sorting[0].id !== "pk");
 
     const getSearchPlaceholder = () => {
         if (!props.searchColumns || props.searchColumns.length === 0) {
