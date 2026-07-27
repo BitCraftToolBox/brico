@@ -204,7 +204,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     const hasDetails = () => groups().some(g => visibleProps(g.properties).length > 0);
     const hasInfoSection = () => hasDetails() || props.summaryContent || props.rawData || props.infoTabs;
 
-    const [infoTab, setInfoTabRaw] = createSignal<InfoTab>("summary");
+    const [infoTab, setInfoTabRaw] = createSignal<InfoTab>("details");
     const setInfoTab = (info: string) => {
         setInfoTabRaw(info);
         setSearchParams({info}, {replace: true});
@@ -231,9 +231,9 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                 return; // skip the default-details logic below
             }
         }
-        // Default: prefer Details when there is no Summary
-        if (hasDetails() && !props.summaryContent) {
-            setInfoTab("details");
+        // Default: prefer Summary when there is no Details
+        if (!hasDetails() && props.summaryContent) {
+            setInfoTab("summary");
         }
     });
 

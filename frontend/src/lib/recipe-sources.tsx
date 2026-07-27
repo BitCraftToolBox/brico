@@ -361,12 +361,21 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
     });
     addKnowledgeRequirements(lines, placement);
 
+    const groupIdx = BitCraftTables.PlaceableGroupDesc.get();
+    const groupLimits = (groupIdx ?? [])
+        .filter(g => g.placeableIds.includes(placement.placedPlaceableId))
+        .filter(g => g.placementLimit);
+
+    for (const group of groupLimits) {
+        lines.push([() => <IconSpan icon={pageIcon("Placeables")}>Group limit for {group.name}:</IconSpan>, group.placementLimit]);
+    }
+
     // Distance constraints
     if (placement.minDistanceToGroup > 0) {
-        lines.push([() => <IconSpan icon={pageIcon("Placeables")}>Min Dist to Placeable Group:</IconSpan>, placement.minDistanceToGroup])
+        lines.push([() => <IconSpan icon={pageIcon("Placeables")}>Minimum distance to Group:</IconSpan>, placement.minDistanceToGroup])
     }
     if (placement.minDistanceToPlayerClaims > 0) {
-        lines.push([() => <IconSpan icon={pageIcon("Claim Research")}>Min Dist to Claims:</IconSpan>, placement.minDistanceToPlayerClaims]);
+        lines.push([() => <IconSpan icon={pageIcon("Claim Research")}>Minimum distance to Claims:</IconSpan>, placement.minDistanceToPlayerClaims]);
     }
     // Building proximity
     if (placement.buildings.length) {
