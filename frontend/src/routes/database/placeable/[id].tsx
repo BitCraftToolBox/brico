@@ -2,23 +2,24 @@ import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/shared/DetailPageLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
-import {ExtractionRecipePanel, GrowthPanel, InteractionPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
+import {ExtractionRecipePanel, GrowthPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
 import {breadcrumb} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {
     findRootPlacement,
-    getInteractionName,
     getPlaceableName,
     getPlacementName,
     useExtractionsByPlaceable,
     useGroupsByPlaceable,
     useGrowthByOutcome,
     useGrowthByPlaceable,
+    useInteractionsByOutcome,
     useInteractionsByPlaceable,
     usePlacementsByPlaceable,
 } from "~/lib/placeables";
 import {getExtractionRecipeName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
+import {placeableInteractionsCombinedTab} from "~/lib/table-utils/detail-tab-builders";
 
 export default function PlaceableDetail() {
     const params = useParams();
@@ -45,13 +46,15 @@ export default function PlaceableDetail() {
     const growthMap = useGrowthByPlaceable();
     const growthByOutcomeMap = useGrowthByOutcome();
     const interactionsMap = useInteractionsByPlaceable();
+    const interactionsByOutcomeMap = useInteractionsByOutcome();
     const extractionsMap = useExtractionsByPlaceable();
 
     const groups = createMemo(() => placeableId() != null ? groupsMap()?.get(placeableId()!) ?? [] : []);
     const placements = createMemo(() => placeableId() != null ? placementsMap()?.get(placeableId()!) ?? [] : []);
     const growth = createMemo(() => placeableId() != null ? growthMap()?.get(placeableId()!) : undefined);
     const growthSources = createMemo(() => placeableId() != null ? growthByOutcomeMap()?.get(placeableId()!) ?? [] : []);
-    const interactions = createMemo(() => placeableId() != null ? interactionsMap()?.get(placeableId()!) ?? [] : []);
+    const interactionsWith = createMemo(() => placeableId() != null ? interactionsMap()?.get(placeableId()!) ?? [] : []);
+    const interactionsResultingIn = createMemo(() => placeableId() != null ? interactionsByOutcomeMap()?.get(placeableId()!) ?? [] : []);
     const extractions = createMemo(() => placeableId() != null ? extractionsMap()?.get(placeableId()!) ?? [] : []);
 
     // Root placement (for "View in Graph" link)
@@ -118,20 +121,10 @@ export default function PlaceableDetail() {
             });
         }
 
-        const ia = interactions();
-        if (ia.length) {
-            result.push({
-                id: "interactions",
-                label: "Interactions",
-                count: ia.length,
-                content: () => (
-                    <RecipeSelect
-                        recipes={ia}
-                        nameFor={getInteractionName}
-                        render={i => <InteractionPanel interaction={i}/>}
-                    />
-                ),
-            });
+        const iaWith = interactionsWith();
+        const iaResultingIn = interactionsResultingIn();
+        if (iaWith.length || iaResultingIn.length) {
+            result.push(placeableInteractionsCombinedTab(iaWith, iaResultingIn));
         }
 
         const ext = extractions();

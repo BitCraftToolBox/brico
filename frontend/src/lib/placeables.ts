@@ -107,7 +107,7 @@ export function useExtractionsByPlaceable() {
 
 // ─── Interaction Lookup ─────────────────────────────────────────
 
-/** Builds a map: placeableId → PlaceableInteractionDesc[] */
+/** Builds a map: placeableId → PlaceableInteractionDesc[] (interactions performed on that placeable) */
 export function useInteractionsByPlaceable() {
     return createMemo(() => {
         const all = BitCraftTables.PlaceableInteractionDesc.get() ?? [];
@@ -116,15 +116,25 @@ export function useInteractionsByPlaceable() {
             const arr = map.get(ia.placeableId);
             if (arr) arr.push(ia);
             else map.set(ia.placeableId, [ia]);
+        }
+        return map;
+    });
+}
 
+/** Builds a map: outcomePlaceableId → PlaceableInteractionDesc[] (interactions that spawn this placeable when their target is destroyed) */
+export function useInteractionsByOutcome() {
+    return createMemo(() => {
+        const all = BitCraftTables.PlaceableInteractionDesc.get() ?? [];
+        const map = new Map<number, PlaceableInteractionDesc[]>();
+        for (const ia of all) {
             if (ia.onDestroySpawnedPlaceableId) {
-                const outArr = map.get(ia.onDestroySpawnedPlaceableId);
-                if (outArr) outArr.push(ia);
+                const arr = map.get(ia.onDestroySpawnedPlaceableId);
+                if (arr) arr.push(ia);
                 else map.set(ia.onDestroySpawnedPlaceableId, [ia]);
             }
             for (const outcome of ia.onDestroyOutcomes ?? []) {
-                const outArr = map.get(outcome.placeableId);
-                if (outArr) outArr.push(ia);
+                const arr = map.get(outcome.placeableId);
+                if (arr) arr.push(ia);
                 else map.set(outcome.placeableId, [ia]);
             }
         }

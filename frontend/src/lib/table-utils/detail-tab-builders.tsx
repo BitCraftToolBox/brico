@@ -550,6 +550,47 @@ export function placeableInteractionsTab(
     };
 }
 
+/**
+ * Combined interactions tab for a single placeable - separates interactions performed
+ * on this placeable from interactions on other placeables that spawn this one on destroy
+ */
+export function placeableInteractionsCombinedTab(
+    interactionsWith: PlaceableInteractionDesc[],
+    interactionsResultingIn: PlaceableInteractionDesc[],
+    showWhenEmpty: boolean = false,
+): RelationshipTab {
+    return {
+        id: "interactions",
+        label: "Interactions",
+        count: interactionsWith.length + interactionsResultingIn.length,
+        showWhenEmpty,
+        content: () => (
+            <div class="space-y-4">
+                <Show when={interactionsWith.length}>
+                    <div>
+                        <h4 class="text-sm text-muted-foreground mb-2">Interact with this placeable</h4>
+                        <RecipeSelect
+                            recipes={interactionsWith}
+                            nameFor={getInteractionName}
+                            render={ia => <InteractionPanel interaction={ia}/>}
+                        />
+                    </div>
+                </Show>
+                <Show when={interactionsResultingIn.length}>
+                    <div>
+                        <h4 class="text-sm text-muted-foreground mb-2">Result of other placeable interaction</h4>
+                        <RecipeSelect
+                            recipes={interactionsResultingIn}
+                            nameFor={getInteractionName}
+                            render={ia => <InteractionPanel interaction={ia}/>}
+                        />
+                    </div>
+                </Show>
+            </div>
+        ),
+    };
+}
+
 // ─── Knowledge Usage Tab ─────────────────────────────────────────
 
 const KNOWLEDGE_USAGE_TYPE_LABELS: Record<KnowledgeUsage["type"], string> = {

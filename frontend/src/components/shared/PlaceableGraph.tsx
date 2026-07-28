@@ -20,7 +20,7 @@ import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {CargoIcon, ItemIcon, PlaceableIcon} from "~/components/shared/GameIcon";
-import {useGrowthByPlaceable, useInteractionsByPlaceable} from "~/lib/placeables";
+import {useGrowthByPlaceable, useInteractionsByOutcome, useInteractionsByPlaceable} from "~/lib/placeables";
 import {BitCraftTables} from "~/lib/spacetime";
 import {readableSeconds} from "~/lib/utils";
 
@@ -1272,7 +1272,18 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
 
     // Build indexes
     const growthByPlaceable = useGrowthByPlaceable()();
-    const interactionsByPlaceable = useInteractionsByPlaceable()();
+
+    // Combine "interactions on this placeable" and "interactions that spawn this placeable on destroy"
+    // into a single lookup, since the BFS below walks both directions from a given placeable id.
+    const interactionsByPlaceable = new Map<number, PlaceableInteractionDesc[]>();
+    for (const [id, ias] of useInteractionsByPlaceable()()) {
+        interactionsByPlaceable.set(id, [...ias]);
+    }
+    for (const [id, ias] of useInteractionsByOutcome()()) {
+        const existing = interactionsByPlaceable.get(id);
+        if (existing) existing.push(...ias);
+        else interactionsByPlaceable.set(id, [...ias]);
+    }
 
     // Check if an item also has a placement
     const placementByItem = new Map<string, PlaceablePlacementDesc>();
