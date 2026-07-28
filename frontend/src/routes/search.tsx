@@ -7,7 +7,7 @@
  *   - One tab per matching group, sorted by best score
  */
 
-import {A, useLocation} from "@solidjs/router";
+import {A, useLocation, useNavigate} from "@solidjs/router";
 import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
 import {createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show} from "solid-js";
 import MainLayout from "~/components/MainLayout";
@@ -17,6 +17,7 @@ import {useGlobalSearch} from "~/lib/global-search-context";
 
 export default function SearchPage() {
     const location = useLocation();
+    const navigate = useNavigate();
     const {globalSearch} = useGlobalSearch();
     const initQ = new URLSearchParams(location.search).get("q") ?? "";
     const [query, setQuery] = createSignal(initQ);
@@ -25,6 +26,17 @@ export default function SearchPage() {
     onMount(() => {
         if (searchInputRef && initQ) searchInputRef.value = initQ;
         searchInputRef?.focus();
+
+        if (initQ.trim()) {
+            const r = globalSearch(initQ.trim(), 50);
+            if (r.totalMatches === 1) {
+                const only = [...r.groups.values()][0]?.matches[0];
+                if (String(only?.primaryKey ?? "") === initQ.trim()) {
+                    navigate(only.route, {replace: true});
+                    return;
+                }
+            }
+        }
 
         const onKeyDown = (e: KeyboardEvent) => {
             if (e.key !== "/") return;
