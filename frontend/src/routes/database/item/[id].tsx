@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {ItemType} from "~/bindings/src/item_type_type";
@@ -6,6 +7,7 @@ import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayou
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {breadcrumb, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
+import {equipmentSlotLabel, statLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
@@ -54,7 +56,7 @@ import {
     travelerTasksTab,
     travelerTradesTab,
 } from "~/lib/table-utils/detail-tab-builders";
-import {fixFloat, splitCamelCase} from "~/lib/utils";
+import {fixFloat} from "~/lib/utils";
 
 export function questDropAugmentedLists(itemId: () => number | undefined, itemType: string) {
     const questSources = createMemo(() => itemId() != null ? questDropSourcesFor(itemId()!, itemType) : {extractionRecipes: [], enemies: [], itemLists: []});
@@ -172,7 +174,7 @@ export default function ItemDetail() {
         // General
         groups.push({
             properties: [
-                {label: "Volume", value: () => (
+                {label: msg`Volume`, value: () => (
                     <Tooltip openOnTouchStart>
                         <TooltipTrigger class="decoration-dotted underline">{i.volume}</TooltipTrigger>
                         <TooltipContent class="max-w-[90svw]">
@@ -180,8 +182,8 @@ export default function ItemDetail() {
                         </TooltipContent>
                     </Tooltip>
                 )},
-                {label: "Durability", value: i.durability > 0 ? i.durability : undefined},
-                {label: "Compendium Entry", value: !i.compendiumEntry ? false : undefined},
+                {label: msg`Durability`, value: i.durability > 0 ? i.durability : undefined},
+                {label: msg`Compendium Entry`, value: !i.compendiumEntry ? false : undefined},
             ],
         });
 
@@ -192,10 +194,10 @@ export default function ItemDetail() {
             groups.push({
                 heading: () => <IconLink href={`/database/tool/${i.id}`} icon={pageIcon("Tools")}>Tool</IconLink>,
                 properties: [
-                    {label: "Type", value: toolType?.name ?? `#${tool.toolType}`},
-                    {label: "Power", value: tool.power},
-                    {label: "Level", value: tool.level},
-                    {label: "Skill", value: toolType?.skillId ? () => <SkillLinkById skillId={toolType.skillId}/> : undefined},
+                    {label: msg`Type`, value: toolType?.name ?? `#${tool.toolType}`},
+                    {label: msg`Power`, value: tool.power},
+                    {label: msg`Level`, value: tool.level},
+                    {label: msg`Skill`, value: toolType?.skillId ? () => <SkillLinkById skillId={toolType.skillId}/> : undefined},
                 ],
             });
         }
@@ -204,11 +206,11 @@ export default function ItemDetail() {
         const equip = equipData();
         if (equip) {
             const eqProps: DetailGroup["properties"] = [
-                {label: "Slots", value: equip.slots?.map((s: any) => splitCamelCase(s.tag)).join(", ")},
+                {label: msg`Slots`, value: equip.slots?.map((s: any) => equipmentSlotLabel(s.tag)).join(", ")},
             ];
             if (equip.levelRequirement) {
-                eqProps.push({label: "Required Skill", value: () => <SkillLinkById skillId={equip.levelRequirement!.skillId}/>});
-                eqProps.push({label: "Required Level", value: equip.levelRequirement.level});
+                eqProps.push({label: msg`Required Skill`, value: () => <SkillLinkById skillId={equip.levelRequirement!.skillId}/>});
+                eqProps.push({label: msg`Required Level`, value: equip.levelRequirement.level});
             }
             const eqGroup: DetailGroup = {heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>Equipment</IconLink>, properties: eqProps};
             groups.push(eqGroup);
@@ -216,7 +218,7 @@ export default function ItemDetail() {
                 groups.push({
                     heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>Equipment Stats</IconLink>,
                     properties: equip.stats.map((stat: any) => ({
-                        label: splitCamelCase(stat.id?.tag ?? ""),
+                        label: statLabel(stat.id?.tag),
                         value: `${fixFloat(stat.value * (stat.isPct ? 100 : 1))}${stat.isPct ? "%" : ""}`,
                     })),
                 });
@@ -230,11 +232,11 @@ export default function ItemDetail() {
             groups.push({
                 heading: () => <IconLink href={`/database/weapon/${i.id}`} icon={pageIcon("Weapons")}>Weapon</IconLink>,
                 properties: [
-                    {label: "Type", value: wt?.name ?? `#${weapon.weaponType}`},
-                    {label: "Min Damage", value: weapon.minDamage},
-                    {label: "Max Damage", value: weapon.maxDamage},
-                    {label: "Cooldown", value: fixFloat(weapon.cooldown)},
-                    {label: "Stamina Mult", value: `${fixFloat(weapon.staminaUseMultiplier)}x`},
+                    {label: msg`Type`, value: wt?.name ?? `#${weapon.weaponType}`},
+                    {label: msg`Min Damage`, value: weapon.minDamage},
+                    {label: msg`Max Damage`, value: weapon.maxDamage},
+                    {label: msg`Cooldown`, value: fixFloat(weapon.cooldown)},
+                    {label: msg`Stamina Mult`, value: `${fixFloat(weapon.staminaUseMultiplier)}x`},
                 ],
             });
         }
@@ -245,13 +247,13 @@ export default function ItemDetail() {
             groups.push({
                 heading: () => <IconLink href={`/database/food/${i.id}`} icon={pageIcon("Food")}>Food</IconLink>,
                 properties: [
-                    {label: "Satiation", value: food.hunger ? fixFloat(food.hunger) : undefined},
-                    {label: "HP", value: food.hp ? fixFloat(food.hp) : undefined},
-                    {label: "Up To HP", value: food.upToHp ? fixFloat(food.upToHp) : undefined},
-                    {label: "Stamina", value: food.stamina ? fixFloat(food.stamina) : undefined},
-                    {label: "Up To Stamina", value: food.upToStamina ? fixFloat(food.upToStamina) : undefined},
-                    {label: "Teleportation Energy", value: food.teleportationEnergy ? fixFloat(food.teleportationEnergy) : undefined},
-                    {label: "Consumable In Combat", value: food.consumableWhileInCombat || undefined},
+                    {label: msg`Satiation`, value: food.hunger ? fixFloat(food.hunger) : undefined},
+                    {label: msg`HP`, value: food.hp ? fixFloat(food.hp) : undefined},
+                    {label: msg`Up To HP`, value: food.upToHp ? fixFloat(food.upToHp) : undefined},
+                    {label: msg`Stamina`, value: food.stamina ? fixFloat(food.stamina) : undefined},
+                    {label: msg`Up To Stamina`, value: food.upToStamina ? fixFloat(food.upToStamina) : undefined},
+                    {label: msg`Teleportation Energy`, value: food.teleportationEnergy ? fixFloat(food.teleportationEnergy) : undefined},
+                    {label: msg`Consumable In Combat`, value: food.consumableWhileInCombat || undefined},
                 ],
             });
             // Food buff stat groups
@@ -266,12 +268,12 @@ export default function ItemDetail() {
             groups.push({
                 heading: () => <IconLink href={`/database/knowledge/${scroll.secondaryKnowledgeId}`} icon={pageIcon("Knowledge")}>Knowledge Scroll</IconLink>,
                 properties: [
-                    {label: "Title", value: scroll.title},
-                    {label: "Tag", value: scroll.tag !== itemTag ? scroll.tag : undefined},
-                    {label: "Known By Default", value: scroll.knownByDefault || undefined},
-                    {label: "Auto Collect", value: scroll.autoCollect || undefined},
+                    {label: msg`Title`, value: scroll.title},
+                    {label: msg`Tag`, value: scroll.tag !== itemTag ? scroll.tag : undefined},
+                    {label: msg`Known By Default`, value: scroll.knownByDefault || undefined},
+                    {label: msg`Auto Collect`, value: scroll.autoCollect || undefined},
                     ...(statMod?.stats?.length ? statMod.stats.map((s: any) => ({
-                        label: splitCamelCase(s.id?.tag ?? ""),
+                        label: statLabel(s.id?.tag),
                         value: `${fixFloat(s.value * (s.isPct ? 100 : 1))}${s.isPct ? "%" : ""}`,
                     })) : [])
                 ],

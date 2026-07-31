@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
@@ -13,18 +14,19 @@ export const SkillDefs: BitCraftToDataDef<SkillDesc> = {
             )
         }),
         descriptionColumn(),
-        {id: "Title", accessorKey: "title"},
+        {id: "Title", meta: {label: msg`Title`}, accessorKey: "title"},
         {
             id: "Category",
+            meta: {label: msg`Category`},
             accessorKey: "skillCategory.tag",
             filterFn: includedIn<SkillDesc>(),
         },
-        {id: "Max Level", accessorKey: "maxLevel", filterFn: "inNumberRange"},
+        {id: "Max Level", meta: {label: msg`Max Level`}, accessorKey: "maxLevel", filterFn: "inNumberRange"},
         rowActions(undefined, "prof"),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Category"),
-        rangeFilter("Max Level"),
+        uniqueValuesFilter("Category", msg`Category`),
+        rangeFilter("Max Level", msg`Max Level`),
     ],
     searchColumns: ["Name", "Description", "Title"],
 };

@@ -1,7 +1,11 @@
 import {ConfigColorMode} from "@kobalte/core";
 import * as SelectPrimitive from "@kobalte/core/select";
+import {msg} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
+import {Plural, Trans} from "@lingui/solid/macro";
 import {type IconTypes} from "solid-icons";
 import {FaSolidArrowDownAZ as IconSortAZ, FaSolidFolderTree as IconSortTree} from "solid-icons/fa";
+import {SiCrowdin as IconCrowdin} from "solid-icons/si";
 import {
     TbFillLayoutGrid as IconViewGrid,
     TbOutlineDeviceLaptop as IconSystem,
@@ -15,15 +19,67 @@ import {
 import {children, createMemo, createSignal, For, JSX, onCleanup, onMount, Show} from "solid-js";
 import {isServer} from "solid-js/web";
 import MainLayout from "~/components/MainLayout";
+import BricoFace from "~/components/ui/brico-face";
 import {Button} from "~/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
-import {NaturalSortOrder, type SortMode, useSettings, type ViewMode} from "~/lib/settings";
+import {DATA_LOCALES, dataTranslationsPending, displayLocaleTag} from "~/lib/data-translation";
+import {PSEUDOLOCALE_ENABLED, UI_LOCALES, uiLocaleLoading} from "~/lib/i18n";
+import {useLabel} from "~/lib/labels";
+import {AUTO_LOCALE, NaturalSortOrder, type SortMode, useSettings, type ViewMode} from "~/lib/settings";
 import {SIDEBAR_GROUPS, SidebarGroupDef, type SidebarItemDef} from "~/lib/sidebar-items";
 
 // ── Shared UI helpers ─────────────────────────────────────────
 
-function SettingsSection(props: {title: string; description?: string; children: JSX.Element}) {
+/**
+ * Labels a locale in its own language ("Deutsch", "日本語"), falling back to the raw code if
+ * `Intl.DisplayNames` can't resolve it. Note `displayLocaleTag()` — the game-data list ships
+ * Japanese under the non-BCP-47 filename `jp`, which `Intl` would otherwise reject.
+ *
+ * Each language is named in itself rather than in the current UI language, so someone who has
+ * landed in a language they can't read can still find their way out.
+ */
+function localeLabel(locale: string): string {
+    if (PSEUDOLOCALE_ENABLED && locale === "zu") return "Pseudolocale";
+    const tag = displayLocaleTag(locale);
+    try {
+        return new Intl.DisplayNames([tag], {type: "language"}).of(tag) ?? locale;
+    } catch {
+        return locale;
+    }
+}
+
+/**
+ * A language `Select` over `options`, with `AUTO_LOCALE` first and labelled by `autoLabel`.
+ *
+ * Both language rows share this; the only differences are the option list and what "automatic"
+ * means (the browser's preference for the UI, the interface language for game data).
+ */
+function LocaleSelect(props: {
+    value: string;
+    onChange: (v: string) => void;
+    options: readonly string[];
+    autoLabel: string;
+}) {
+    const options = () => [AUTO_LOCALE, ...props.options];
+    const label = (locale: string) => locale === AUTO_LOCALE ? props.autoLabel : localeLabel(locale);
+    return (
+        <Select
+            value={props.value}
+            onChange={(v) => v && props.onChange(v)}
+            options={options()}
+            itemComponent={(p) => <SelectItem item={p.item}>{label(p.item.rawValue)}</SelectItem>}
+        >
+            <SelectTrigger class="h-8 w-[200px]">
+                <SelectValue<string>>{(s) => label(s.selectedOption())}</SelectValue>
+            </SelectTrigger>
+            <SelectContent/>
+        </Select>
+    );
+}
+
+// `title`/`description` are JSX rather than `string` so callers can pass <Trans> directly.
+function SettingsSection(props: {title: JSX.Element; description?: JSX.Element; children: JSX.Element}) {
     const description = children(() => props.description);
     return (
         <section class="flex flex-col gap-3">
@@ -40,7 +96,7 @@ function SettingsSection(props: {title: string; description?: string; children: 
     );
 }
 
-function SettingsRow(props: {label: string; description?: JSX.Element; children: JSX.Element}) {
+function SettingsRow(props: {label: JSX.Element; description?: JSX.Element; children: JSX.Element}) {
     const description = children(() => props.description);
     return (
         <div class="flex flex-row items-center justify-between gap-4">
@@ -56,6 +112,8 @@ function SettingsRow(props: {label: string; description?: JSX.Element; children:
 }
 
 function ButtonGroup<T extends string>(props: {
+    // `label` is a plain string, not JSX: it is used as `title`/`aria-label` as well as visible
+    // text, so callers resolve it with `useLingui()._(msg\`…\`)` rather than wrapping in <Trans>.
     options: {value: T; icon: IconTypes; label: string}[];
     value: T;
     onChange: (v: T) => void;
@@ -105,6 +163,7 @@ const KONAMI_CODE = [
  */
 function SidebarFavoritesSelect() {
     const settings = useSettings();
+    const label = useLabel();
 
     const allItems = createMemo(() => SIDEBAR_GROUPS.flatMap(g => g.items));
     const selectedItems = createMemo(() =>
@@ -114,21 +173,22 @@ function SidebarFavoritesSelect() {
     return (
         <div class="flex flex-col gap-1.5">
             <div>
-                <span class="text-sm font-medium">Favorite items</span>
+                <span class="text-sm font-medium"><Trans>Favorite items</Trans></span>
                 <p class="text-xs text-muted-foreground mt-0.5">
-                    Checked items appear in the sidebar. New items are always visible by default.
+                    <Trans>Checked items appear in the sidebar. New items are always visible by default.</Trans>
                 </p>
             </div>
             <Select<SidebarItemDef, SidebarGroupDef>
                 multiple
                 options={SIDEBAR_GROUPS}
                 optionValue={(item) => item.href}
-                optionTextValue={(item) => item.title}
+                optionTextValue={(item) => label(item.titleLabel)}
                 optionGroupChildren="items"
                 value={selectedItems()}
                 placeholder={<>
-                    No items visible
-                    {" "}<span class="text-xs text-muted-foreground">(You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?)</span>
+                    <Trans>No items visible
+                    {" "}<span class="text-xs text-muted-foreground">You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?</span>
+                    </Trans>
                 </>}
                 onChange={(items: SidebarItemDef[]) =>
                     settings.setSidebarFavorites(items.map(i => i.href))
@@ -139,13 +199,13 @@ function SidebarFavoritesSelect() {
                             <Show when={itemProps.item.rawValue.icon}>
                                 {(icon) => icon()({class: "size-4 shrink-0"})}
                             </Show>
-                            <span>{itemProps.item.rawValue.title}</span>
+                            <span>{label(itemProps.item.rawValue.titleLabel)}</span>
                         </div>
                     </SelectItem>
                 )}
                 sectionComponent={(secProps) => (
                     <SelectPrimitive.Section class="px-2 pt-2 pb-0.5 text-[0.65rem] font-semibold uppercase tracking-wider text-muted-foreground">
-                        {secProps.section.rawValue.name}
+                        {label(secProps.section.rawValue.nameLabel)}
                     </SelectPrimitive.Section>
                 )}
             >
@@ -155,8 +215,8 @@ function SidebarFavoritesSelect() {
                             const count = state.selectedOptions().length;
                             const total = allItems().length;
                             return count >= total
-                                ? "All items visible"
-                                : `${count} of ${total} items visible`;
+                                ? <Trans>All items visible</Trans>
+                                : <Trans>{count} of {total} items visible</Trans>;
                         }}
                     </SelectValue>
                 </SelectTrigger>
@@ -168,6 +228,7 @@ function SidebarFavoritesSelect() {
 
 export default function SettingsPage() {
     const settings = useSettings();
+    const {_} = useLingui();
 
     const [konamiUnlocked, setKonamiUnlocked] = createSignal(false);
     let konamiIdx = 0;
@@ -214,39 +275,95 @@ export default function SettingsPage() {
     return (
         <MainLayout title="Settings" hideSearch description="Configure Brico.app — theme, favorites, and display preferences for the BitCraft compendium.">
             <div class="max-w-3xl mx-auto flex flex-col gap-4 px-4 pb-6">
-                <h1 class="text-2xl font-bold" onclick={incUnlockCounter}><Show when={showDevModeUnlock()} fallback="Settings">You are now a developer!</Show></h1>
+                <h1 class="text-2xl font-bold" onclick={incUnlockCounter}><Show when={showDevModeUnlock()} fallback={<Trans>Settings</Trans>}><Trans>You are now a developer!</Trans></Show></h1>
 
                 {/* ── Theme ──────────────────────────────── */}
                 <SettingsSection
-                    title="Theme"
-                    description="Choose how Brico's Toolbox looks."
+                    title={<Trans>Theme</Trans>}
+                    description={<Trans>Choose how Brico's Toolbox looks.</Trans>}
                 >
-                    <SettingsRow label="Color mode" description="Light, dark, or follow your system preference.">
+                    <SettingsRow label={<Trans>Color mode</Trans>} description={<Trans>Light, dark, or follow your system preference.</Trans>}>
                         <ButtonGroup<ConfigColorMode>
                             value={settings.colorStorageManager.get() ?? "system"}
                             onChange={settings.colorStorageManager.set}
                             options={[
-                                {value: "light",  icon: IconSun,    label: "Light"},
-                                {value: "dark",   icon: IconMoon,   label: "Dark"},
-                                {value: "system", icon: IconSystem, label: "System"},
+                                {value: "light",  icon: IconSun,    label: _(msg`Light`)},
+                                {value: "dark",   icon: IconMoon,   label: _(msg`Dark`)},
+                                {value: "system", icon: IconSystem, label: _(msg`System`)},
                             ]}
                         />
                     </SettingsRow>
-                    <SettingsRow label="Midnight" description="High contrast for vampires and OLED enjoyers. Only affects dark mode.">
+                    <SettingsRow label={<Trans>Midnight</Trans>} description={<Trans>High contrast for vampires and OLED enjoyers. Only affects dark mode.</Trans>}>
                         <Switch checked={settings.midnightDark()} onChange={settings.setMidnightDark}>
                             <SwitchControl><SwitchThumb/></SwitchControl>
                         </Switch>
                     </SettingsRow>
                 </SettingsSection>
 
-                {/* ── Sidebar ────────────────────────────── */}
+                {/* ── Language ───────────────────────────── */}
                 <SettingsSection
-                    title="Sidebar"
-                    description="Customize how the navigation sidebar is organized and displayed."
+                    title={<Trans>Language</Trans>}
+                    description={<Trans>Choose the languages used for Brico's own text and for in-game text.</Trans>}
                 >
                     <SettingsRow
-                        label="Show sidebar controls"
-                        description="When disabled, hides the quick controls for the sort order/view style/favorites."
+                        label={<Trans>Interface language</Trans>}
+                        description={<><Trans>Language for Brico's own labels, menus, and settings.</Trans>
+                            <Show when={uiLocaleLoading()}>
+                                {" "}<span class="text-muted-foreground"><Trans>Loading…</Trans></span>
+                            </Show>
+                        </>}
+                    >
+                        <LocaleSelect
+                            value={settings.uiLocale()}
+                            onChange={settings.setUILocale}
+                            options={UI_LOCALES}
+                            autoLabel={_(msg`Automatic`)}
+                        />
+                    </SettingsRow>
+                    <SettingsRow
+                        label={<Trans>Game data language</Trans>}
+                        description={<>
+                            <Trans>Language for in-game names, descriptions, etc.<br/>
+                                <span class="text-muted-foreground">
+                                    Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text,
+                                    and are not controlled by Brico.app.
+                                </span>
+                            </Trans>
+                            <Show when={dataTranslationsPending()}>
+                                <br/><span class="text-muted-foreground"><Trans>Loading translations…</Trans></span>
+                            </Show>
+                        </>}
+                    >
+                        <LocaleSelect
+                            value={settings.dataLocale()}
+                            onChange={settings.setDataLocale}
+                            options={DATA_LOCALES}
+                            autoLabel={_(msg`Same as interface`)}
+                        />
+                    </SettingsRow>
+                    <SettingsRow label={<Trans>Want to help translate Brico.app?</Trans>}
+                                 description={<Trans>
+                                     Join the project on Crowdin and contribute by using <span class="font-mono">translate.brico.app</span>.
+                                 </Trans>}>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <Button as={"a"} variant="outline" href="https://crowdin.com/project/brico">
+                                <IconCrowdin class="size-4 shrink-0"/> <span>Crowdin</span>
+                            </Button>
+                            <Button as={"a"} variant="outline" href="https://translate.brico.app">
+                                <BricoFace class="inline size-4 shrink-0 align-bottom"/> <span>Translate</span>
+                            </Button>
+                        </div>
+                    </SettingsRow>
+                </SettingsSection>
+
+                {/* ── Sidebar ────────────────────────────── */}
+                <SettingsSection
+                    title={<Trans>Sidebar</Trans>}
+                    description={<Trans>Customize how the navigation sidebar is organized and displayed.</Trans>}
+                >
+                    <SettingsRow
+                        label={<Trans>Show sidebar controls</Trans>}
+                        description={<Trans>When disabled, hides the quick controls for the sort order/view style/favorites.</Trans>}
                     >
                         <Switch
                             checked={settings.showSidebarControls()}
@@ -256,8 +373,8 @@ export default function SettingsPage() {
                         </Switch>
                     </SettingsRow>
                     <SettingsRow
-                        label="Collapse sidebar by default"
-                        description="Whether to show the sidebar in its collapsed (icon only) state on initial load."
+                        label={<Trans>Collapse sidebar by default</Trans>}
+                        description={<Trans>Whether to show the sidebar in its collapsed (icon only) state on initial load.</Trans>}
                     >
                         <Switch
                             checked={settings.sidebarStartsCollapsed()}
@@ -266,29 +383,29 @@ export default function SettingsPage() {
                             <SwitchControl><SwitchThumb/></SwitchControl>
                         </Switch>
                     </SettingsRow>
-                    <SettingsRow label="Sort order" description="Show items grouped by category (tree) or sorted alphabetically.">
+                    <SettingsRow label={<Trans>Sort order</Trans>} description={<Trans>Show items grouped by category (tree) or sorted alphabetically.</Trans>}>
                         <ButtonGroup<SortMode>
                             value={settings.sidebarSort()}
                             onChange={settings.setSidebarSort}
                             options={[
-                                {value: "tree", icon: IconSortTree, label: "Tree"},
-                                {value: "az",   icon: IconSortAZ,   label: "A–Z"},
+                                {value: "tree", icon: IconSortTree, label: _(msg`Tree`)},
+                                {value: "az",   icon: IconSortAZ,   label: _(msg`A–Z`)},
                             ]}
                         />
                     </SettingsRow>
-                    <SettingsRow label="View style" description="Compact list or icon grid.">
+                    <SettingsRow label={<Trans>View style</Trans>} description={<Trans>Compact list or icon grid.</Trans>}>
                         <ButtonGroup<ViewMode>
                             value={settings.sidebarView()}
                             onChange={settings.setSidebarView}
                             options={[
-                                {value: "list", icon: IconViewList, label: "List"},
-                                {value: "grid", icon: IconViewGrid, label: "Grid"},
+                                {value: "list", icon: IconViewList, label: _(msg`List`)},
+                                {value: "grid", icon: IconViewGrid, label: _(msg`Grid`)},
                             ]}
                         />
                     </SettingsRow>
                     <SettingsRow
-                        label="Favorites only"
-                        description="When enabled, only your favorite items are shown in the sidebar."
+                        label={<Trans>Favorites only</Trans>}
+                        description={<Trans>When enabled, only your favorite items are shown in the sidebar.</Trans>}
                     >
                         <Switch
                             checked={settings.sidebarFavoritesOnly()}
@@ -302,12 +419,12 @@ export default function SettingsPage() {
 
                 {/* ── Tables ─────────────────────────────── */}
                 <SettingsSection
-                    title="Tables"
-                    description="Options for data tables across the app."
+                    title={<Trans>Tables</Trans>}
+                    description={<Trans>Options for data tables across the app.</Trans>}
                 >
                     <SettingsRow
-                        label="Default rows per page"
-                        description="How many rows are shown per page when a table first loads."
+                        label={<Trans>Default rows per page</Trans>}
+                        description={<Trans>How many rows are shown per page when a table first loads.</Trans>}
                     >
                         <Select
                             value={settings.tablePageSize()}
@@ -324,31 +441,37 @@ export default function SettingsPage() {
                         </Select>
                     </SettingsRow>
                     <SettingsRow
-                        label="Show row actions first"
-                        description={<>Moves the <IconDots class="inline"/> menu to the first column instead of the last.</>}
+                        label={<Trans>Show row actions first</Trans>}
+                        description={<Trans>Moves the <IconDots class="inline"/> menu to the first column instead of the last.</Trans>}
                     >
                         <Switch checked={settings.tableActionsFirst()} onChange={settings.setTableActionsFirst}>
                             <SwitchControl><SwitchThumb/></SwitchControl>
                         </Switch>
                     </SettingsRow>
                     <SettingsRow
-                        label="Table natural sort order"
-                        description={<>Naturally sort tables by their primary ID, or use the internal database ordering.
-                            <br/><span class="text-muted-foreground">Any manually applied column sort will override this.</span>
+                        label={<Trans>Table natural sort order</Trans>}
+                        description={<><Trans>Naturally sort tables by their primary ID, or use the internal database ordering.</Trans>
+                            <br/><span class="text-muted-foreground"><Trans>Any manually applied column sort will override this.</Trans></span>
                         </>}
                     >
                         <ButtonGroup<NaturalSortOrder>
                             value={settings.tableNaturalSort()}
                             onChange={settings.setTableNaturalSort}
                             options={[
-                                {value: "pk", icon: IconSortPK, label: "Object ID"},
-                                {value: "db", icon: IconSortData, label: "Database Order"},
+                                {value: "pk", icon: IconSortPK, label: _(msg`Object ID`)},
+                                {value: "db", icon: IconSortData, label: _(msg`Database Order`)},
                             ]}
                         />
                     </SettingsRow>
                     <SettingsRow
-                        label="Reset hidden columns"
-                        description={`Un-hide ${hiddenColumnStats().columns} table column${hiddenColumnStats().columns !== 1 ? "s" : ""} across ${hiddenColumnStats().tables} table page${hiddenColumnStats().tables !== 1 ? "s" : ""}.`}
+                        label={<Trans>Reset hidden columns</Trans>}
+                        // Two nested plurals: languages differ both in *which* plural categories
+                        // exist and in agreement, so this must stay one message with two ICU
+                        // plurals rather than concatenated fragments.
+                        description={<Trans>
+                            Un-hide <Plural value={hiddenColumnStats().columns} one="# table column" other="# table columns"/>
+                            {" "}across <Plural value={hiddenColumnStats().tables} one="# table page" other="# table pages"/>.
+                        </Trans>}
                     >
                         <Button
                             variant="destructive"
@@ -356,30 +479,30 @@ export default function SettingsPage() {
                             disabled={hiddenColumnStats().columns === 0}
                             onClick={() => settings.setTableHiddenColumns({})}
                         >
-                            Reset
+                            <Trans>Reset</Trans>
                         </Button>
                     </SettingsRow>
                 </SettingsSection>
 
                 <Show when={showEasterSection()}>
                     <SettingsSection
-                        title="🥚 Easter Eggs"
-                        description="Secret features. How did you even find this?"
+                        title={<Trans>🥚 Easter Eggs</Trans>}
+                        description={<Trans>Secret features. How did you even find this?</Trans>}
                     >
                         <SettingsRow
-                            label="Enable easter eggs"
-                            description="Unlocks hidden easter-egg features scattered across the site."
+                            label={<Trans>Enable easter eggs</Trans>}
+                            description={<Trans>Unlocks hidden easter-egg features scattered across the site.</Trans>}
                         >
                             <Switch checked={settings.easterEggs()} onChange={settings.setEasterEggs}>
                                 <SwitchControl><SwitchThumb/></SwitchControl>
                             </Switch>
                         </SettingsRow>
-                        <SettingsRow label="TF2 Mode" description="Hats">
+                        <SettingsRow label={<Trans>TF2 Mode</Trans>} description={<Trans>Hats</Trans>}>
                             <Switch checked={settings.tf2Mode()} onChange={settings.setTf2Mode}>
                                 <SwitchControl><SwitchThumb/></SwitchControl>
                             </Switch>
                         </SettingsRow>
-                        <SettingsRow label="Region 9 Mode" description="Jamba Be Praised">
+                        <SettingsRow label={<Trans>Region 9 Mode</Trans>} description={<Trans>Jamba Be Praised</Trans>}>
                             <Switch checked={settings.r9Mode()} onChange={settings.setR9Mode}>
                                 <SwitchControl><SwitchThumb/></SwitchControl>
                             </Switch>

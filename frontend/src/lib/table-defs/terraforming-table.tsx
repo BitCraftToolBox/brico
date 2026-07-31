@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {CellContext} from "@tanstack/solid-table";
 import {JSX} from "solid-js";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
@@ -10,12 +11,13 @@ export const TerraformingDefs: BitCraftToDataDef<TerraformRecipeDesc> = {
     columns: [
         headerColumn({
             title: "Difference",
+            label: msg`Difference`,
             accessor: {accessorKey: "difference"},
             route: terraform => ["terraforming", terraform.difference],
         }),
-        {id: "Effort", accessorKey: "actionsCount", filterFn: "inNumberRange"},
+        {id: "Effort", meta: {label: msg`Effort`}, accessorKey: "actionsCount", filterFn: "inNumberRange"},
         {
-            id: "Drops", accessorKey: "outputItemStacks",
+            id: "Drops", meta: {label: msg`Drops`}, accessorKey: "outputItemStacks",
             cell: (props: CellContext<TerraformRecipeDesc, ProbabilisticItemStack[] | undefined>): JSX.Element => {
                 const v = props.getValue();
                 if (typeof v === "undefined") return <>No Outputs</>;
@@ -25,7 +27,7 @@ export const TerraformingDefs: BitCraftToDataDef<TerraformRecipeDesc> = {
         rowActions(),
     ],
     facetedFilters: [
-        rangeFilter("Difference"),
-        rangeFilter("Effort")
+        rangeFilter("Difference", msg`Difference`),
+        rangeFilter("Effort", msg`Effort`)
     ],
 };

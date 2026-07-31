@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
@@ -5,6 +6,7 @@ import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
 import {breadcrumb} from "~/lib/game-links";
 import {ogImageForCodepoint} from "~/lib/og-meta";
+import {toolRequirementText} from "~/lib/recipe-sources";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function TerraformingDetail() {
@@ -28,7 +30,7 @@ export default function TerraformingDetail() {
         const req = r.toolRequirement;
         const tt = toolIndex()?.get(req.toolType);
         if (!tt) return undefined;
-        return `Level ${req.level} ${tt.name}${req.power > 1 ? ` (Power >= ${req.power})` : ""}`;
+        return toolRequirementText(req.level, tt.name, req.power);
     })
 
     return (
@@ -42,10 +44,10 @@ export default function TerraformingDetail() {
             metaKind="terraforming"
             metaImage={ogImageForCodepoint("0034")}
             details={[
-                {label: "Effort", value: recipe()?.actionsCount},
-                {label: "Stamina", value: recipe()?.staminaPerAction},
-                {label: "Time", value: recipe()?.timePerAction},
-                {label: "Tool", value: tool()},
+                {label: msg`Effort`, value: recipe()?.actionsCount},
+                {label: msg`Stamina`, value: recipe()?.staminaPerAction},
+                {label: msg`Time`, value: recipe()?.timePerAction},
+                {label: msg`Tool`, value: tool()},
             ]}
             rawData={recipe()}
             spacetimeTable={BitCraftTables.TerraformRecipeDesc.spacetimeName}

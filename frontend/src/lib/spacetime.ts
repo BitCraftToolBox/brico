@@ -1,5 +1,5 @@
 import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
-import {Accessor, createMemo, createSignal} from "solid-js";
+import {Accessor, createMemo, createRoot, createSignal} from "solid-js";
 import {isServer} from "solid-js/web";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BiomeDesc} from "~/bindings/src/biome_desc_type";
@@ -57,6 +57,7 @@ import {TravelerTaskKnowledgeRequirementDesc} from "~/bindings/src/traveler_task
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {WeaponDesc} from "~/bindings/src/weapon_desc_type";
 import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
+import {activeDataLocale, TranslatableField, translatableFieldsOf, translateRow, translationsFor} from "~/lib/data-translation";
 import {CURRENT_VERSION} from "~/lib/version";
 
 interface FetchParams {
@@ -96,11 +97,69 @@ function cache<T>(n: string, b: { getTypeScriptAlgebraicType: () => AlgebraicTyp
 }
 
 
+// ── Derived lookups ───────────────────────────────────────────
+
+/** Shared empty array so an unloaded table keeps a stable identity for the check below. */
+const NO_ROWS: readonly any[] = [];
+
+/**
+ * Builds a derived lookup over a table's rows, rebuilt only when the row array's *identity*
+ * changes.
+ *
+ * Deliberately **not** a `createMemo`. Lookups are cached for the lifetime of the table (see
+ * `#idxCache`), but `indexedBy()` is first called from whichever component happens to need it
+ * first — so a memo would be *owned* by that component, and Solid disposes a memo when its owner
+ * unmounts: it detaches from its sources but keeps its last computed value. The cached accessor
+ * would then hand out frozen rows forever, from the first navigation onward. That is what made
+ * translated text update only partially on a data-locale switch: an extraction recipe's own
+ * `verbPhrase` came from `get()` (reactive) while the interpolated resource name came from a
+ * long-since-disposed index, so `"Loot Ancient Decayed Pot"` → `"Bergen Zerbrochene antike
+ * Töpfe"` → `"Botín Verfallene antike Töpfe"`.
+ *
+ * A plain function has no owner to be disposed by and is still fully reactive by transitivity:
+ * reading it inside a tracked scope reads `get()` as well, so the caller subscribes to the
+ * underlying signal directly. The identity check keeps it as cheap as a memo, because `get()`
+ * only returns a new array when the data or the data locale actually changed.
+ *
+ * It also fixes the server, where `get` is a plain non-reactive read of `serverCache`: a memo
+ * created during the first request would have pinned that request's rows — possibly still empty,
+ * if that table's fetch had failed — for the isolate's entire life.
+ */
+function derivedFromRows<TData, TOut>(
+    rows: Accessor<TData[] | undefined>,
+    build: (rows: readonly TData[]) => TOut,
+): Accessor<TOut> {
+    let lastRows: readonly TData[] | undefined;
+    let cached: TOut;
+    return () => {
+        const current: readonly TData[] = rows() ?? NO_ROWS;
+        if (current !== lastRows) {
+            lastRows = current;
+            cached = build(current);
+        }
+        return cached;
+    };
+}
+
+/**
+ * `derivedFromRows` for lookups that `indexedBy`/`indexedByMulti` can't express — grouping by an
+ * *array* field, for instance (`PlaceableGroupDesc.placeableIds`).
+ *
+ * Call this once at module scope and share the returned accessor. Never wrap the result in a
+ * component-owned `createMemo`, and never build one lazily inside a component: it would be
+ * disposed with that component and freeze, exactly as described above.
+ */
+export function derivedTableLookup<TData, TOut>(
+    table: BitCraftTable<TData>,
+    build: (rows: readonly TData[]) => TOut,
+): Accessor<TOut> {
+    return derivedFromRows(table.get, build);
+}
+
 function createIndex<TData, TIdx extends keyof TData & string, TValue extends TData[TIdx] & (string | number)>(
     tbl: Accessor<TData[] | undefined>, field: TIdx, allowZero: boolean
 ): Accessor<Map<TValue, TData>> {
-    return createMemo(() => {
-        const data = tbl() ?? [];
+    return derivedFromRows(tbl, data => {
         const map = new Map<TValue, TData>();
         for (const item of data) {
             const key = item[field] as TValue;
@@ -113,8 +172,7 @@ function createIndex<TData, TIdx extends keyof TData & string, TValue extends TD
 function createIndexMulti<TData, TIdx extends keyof TData & string, TValue extends TData[TIdx] & (string | number)>(
     tbl: Accessor<TData[] | undefined>, field: TIdx, allowZero: boolean
 ): Accessor<Map<TValue, TData[]>> {
-    return createMemo(() => {
-        const data = tbl() ?? [];
+    return derivedFromRows(tbl, data => {
         const map = new Map<TValue, TData[]>();
         for (const item of data) {
             const key = item[field] as TValue;
@@ -153,6 +211,7 @@ export class BitCraftTable<TData> {
     #idxCache: Map<string, Accessor<Map<any, TData>>>;
     #idxCacheMulti: Map<string, Accessor<Map<any, TData[]>>>;
     #tagOrdinalCache: Map<string, Map<string, number>>;
+    #translatableFieldsCache?: TranslatableField[];
 
     constructor(spacetimeName: string, spacetimeType: AlgebraicType) {
         this.spacetimeName = spacetimeName;
@@ -166,7 +225,25 @@ export class BitCraftTable<TData> {
             // Reactive signal, populated by ensureClientLoaded() / preloadAllTablesClient().
             const [data, setData] = createSignal<TData[] | undefined>(undefined);
             const [error, setError] = createSignal<any>(undefined);
-            this.get = data;
+            // Game text is translated here, at the single point every consumer already reads
+            // through — table defs, detail routes, global search, relations.ts and GameIcon all
+            // call get()/indexedBy()/indexedByMulti() (both of which are memos over this.get), so
+            // they pick up translated rows with no call-site changes. Comparisons that need the
+            // canonical English value use `sourceRow()` from data-translation.ts instead.
+            // `createRoot` because tables are constructed at module-load time, outside any render:
+            // an unowned createMemo triggers Solid's "will never be disposed" dev warning. Never
+            // disposing is exactly right here — a table lives as long as the app does.
+            this.get = createRoot(() => createMemo(() => {
+                const raw = data();
+                const locale = activeDataLocale();
+                if (raw === undefined || locale === "en") return raw;
+                const map = translationsFor(locale)();
+                // Still downloading (or the fetch failed) — show English rather than nothing.
+                if (map === undefined) return raw;
+                const fields = this.#translatableFields();
+                if (fields.length === 0) return raw;
+                return raw.map(row => translateRow(row as any, fields, map)) as TData[];
+            }));
             this.loading = () => data() === undefined && error() === undefined;
             this.error = error;
             this.#setData = setData;
@@ -176,6 +253,15 @@ export class BitCraftTable<TData> {
         this.#idxCacheMulti = new Map<string, Accessor<Map<any, TData[]>>>();
         this.#tagOrdinalCache = new Map<string, Map<string, number>>();
         allTables.push(this);
+    }
+
+    /**
+     * Which of this table's fields carry translatable text, resolved once by reflecting on the
+     * AlgebraicType. Most tables have none, which lets `get` skip translation entirely.
+     */
+    #translatableFields(): TranslatableField[] {
+        this.#translatableFieldsCache ??= translatableFieldsOf(this.spacetimeType);
+        return this.#translatableFieldsCache;
     }
 
     /** Client: fetch + populate this table's signal exactly once. */

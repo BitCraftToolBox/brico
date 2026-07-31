@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {A, useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {CompletionCondition} from "~/bindings/src/completion_condition_type";
@@ -37,10 +38,10 @@ export default function QuestChainDetail() {
         if (!q) return [];
         return [{
             properties: [
-                {label: "Is Hint", value: q.isHint},
-                {label: "Unstartable", value: q.unstartable},
-                {label: "Is Secret", value: q.isSecret},
-                {label: "Stages", value: q.stages?.length ?? 0},
+                {label: msg`Is Hint`, value: q.isHint},
+                {label: msg`Unstartable`, value: q.unstartable},
+                {label: msg`Is Secret`, value: q.isSecret},
+                {label: msg`Stages`, value: q.stages?.length ?? 0},
             ],
         }];
     });
@@ -198,39 +199,39 @@ export default function QuestChainDetail() {
             tabs={[
                 {
                     id: "requirements",
-                    label: "Requirements",
+                    label: msg`Requirements`,
                     count: allRequirements().length,
                     showWhenEmpty: true,
                     content: () => (
                         <RelTable data={allRequirements()} columns={[
-                            {header: "Type", cell: r => <span class="text-muted-foreground text-sm">{reqOrRewardTagLabel(r.tag)}</span>},
-                            {header: "Requirement", cell: r => <ReqOrRewardLink qr={r}/>},
+                            {header: msg`Type`, cell: r => <span class="text-muted-foreground text-sm">{reqOrRewardTagLabel(r.tag)}</span>},
+                            {header: msg`Requirement`, cell: r => <ReqOrRewardLink qr={r}/>},
                         ]}/>
                     ),
                 },
                 {
                     id: "rewards",
-                    label: "Rewards",
+                    label: msg`Rewards`,
                     count: allRewards().length,
                     showWhenEmpty: true,
                     content: () => (
                         <RelTable data={allRewards()} columns={[
-                            {header: "Type", cell: r => <span class="text-muted-foreground text-sm">{reqOrRewardTagLabel(r.tag)}</span>},
-                            {header: "Reward", cell: r => <ReqOrRewardLink qr={r}/>},
+                            {header: msg`Type`, cell: r => <span class="text-muted-foreground text-sm">{reqOrRewardTagLabel(r.tag)}</span>},
+                            {header: msg`Reward`, cell: r => <ReqOrRewardLink qr={r}/>},
                         ]}/>
                     ),
                 },
                 {
                     id: "stage-conditions",
-                    label: "Stage Requirements",
+                    label: msg`Stage Requirements`,
                     count: stageConditions().length,
                     showWhenEmpty: false,
                     content: () => (
                         <RelTable<StageConditionRow> data={stageConditions()} columns={[
-                            {header: "Stage", cell: row => <span class="text-sm">{row.stageName}</span>},
-                            {header: "Type", cell: row => <span class="text-muted-foreground text-sm">{reqOrRewardTagLabel(row.condition.tag)}</span>},
+                            {header: msg`Stage`, cell: row => <span class="text-sm">{row.stageName}</span>},
+                            {header: msg`Type`, cell: row => <span class="text-muted-foreground text-sm">{reqOrRewardTagLabel(row.condition.tag)}</span>},
                             {
-                                header: "Requirement", cell: row => {
+                                header: msg`Requirement`, cell: row => {
                                     return (
                                         <div class="flex gap-1">
                                             <ReqOrRewardLink qr={row.condition}/>
@@ -246,12 +247,12 @@ export default function QuestChainDetail() {
                 },
                 {
                     id: "stage-rewards",
-                    label: "Stage Rewards",
+                    label: msg`Stage Rewards`,
                     count: stageRewards().length,
                     showWhenEmpty: false,
                     content: () => (
                         <RelTable<ItemStack> data={stageRewards()} columns={[
-                            {header: "Item", cell: row => <ItemStackLink stack={row}/>},
+                            {header: msg`Item`, cell: row => <ItemStackLink stack={row}/>},
                         ]}/>
                     )
                 }

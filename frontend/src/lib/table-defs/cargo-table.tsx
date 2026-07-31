@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {CargoDesc} from "~/bindings/src/cargo_desc_type";
 import {CargoIcon} from "~/components/shared/GameIcon";
 import {BitCraftTables} from "~/lib/spacetime";
@@ -27,6 +28,7 @@ export const CargoDescDefs: BitCraftToDataDef<CargoDesc> = {
         rarityColumn(),
         {
             id: "Supply",
+            meta: {label: msg`Supply`},
             accessorFn: (cargo: CargoDesc) => BitCraftTables.BuildingRepairsDesc.indexedBy("cargoId")().get(cargo.id)?.repairValue,
             filterFn: 'inNumberRange',
             sortUndefined: 'last'
@@ -38,7 +40,7 @@ export const CargoDescDefs: BitCraftToDataDef<CargoDesc> = {
         tagFilter(),
         tierFilter(),
         rarityFilter(),
-        rangeFilter("Supply"),
+        rangeFilter("Supply", msg`Supply`),
     ],
     searchColumns: ["Name", "Description"],
 }

@@ -1,13 +1,15 @@
+import {msg} from "@lingui/core/macro";
 import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {breadcrumb} from "~/lib/game-links";
+import {statLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {knowledgeUsedBy, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {knowledgeUsedByTab, questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
-import {fixFloat, splitCamelCase} from "~/lib/utils";
+import {fixFloat} from "~/lib/utils";
 
 export default function KnowledgeDetail() {
     const params = useParams();
@@ -64,19 +66,19 @@ export default function KnowledgeDetail() {
         if (s) {
             groups.push({
                 properties: [
-                    {label: "Title", value: s.title},
-                    {label: "Tag", value: s.tag},
-                    {label: "Known By Default", value: s.knownByDefault},
-                    {label: "Auto Collect", value: s.autoCollect},
+                    {label: msg`Title`, value: s.title},
+                    {label: msg`Tag`, value: s.tag},
+                    {label: msg`Known By Default`, value: s.knownByDefault},
+                    {label: msg`Auto Collect`, value: s.autoCollect},
                 ],
             });
         }
         const mod = statMod();
         if (mod?.stats?.length) {
             groups.push({
-                heading: "Stats",
+                heading: msg`Stats`,
                 properties: mod.stats.map(s => ({
-                    label: splitCamelCase(s.id?.tag ?? ""),
+                    label: statLabel(s.id?.tag),
                     value: `${fixFloat(s.value * (s.isPct ? 100 : 1))}${s.isPct ? "%" : ""}`,
                 })),
             });
@@ -107,7 +109,7 @@ export default function KnowledgeDetail() {
                     id: "item", label: "Item", count: item() ? 1 : 0,
                     content: () => <Show when={item()}>
                         <RelTable data={[item()!]} columns={[
-                            {header: "Item", cell: row => <A href={`/database/item/${row.id}`}>{row.name}</A>},
+                            {header: msg`Item`, cell: row => <A href={`/database/item/${row.id}`}>{row.name}</A>},
                         ]}/>
                     </Show>,
                 },

@@ -10,6 +10,7 @@ import {NumberField, NumberFieldDecrementTrigger, NumberFieldGroup, NumberFieldI
 import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover"
 import {Separator} from "~/components/ui/separator"
 import {Slider, SliderFill, SliderLabel, SliderThumb, SliderTrack, SliderValueLabel} from "~/components/ui/slider";
+import {type Label, useLabel} from "~/lib/labels";
 import {cn, ensurePagesVisible} from "~/lib/utils"
 import {Switch, SwitchControl, SwitchLabel, SwitchThumb} from "../ui/switch"
 
@@ -62,7 +63,7 @@ type StatProps<TData> = {
 export type TableFacetedFilterProps<TData> = {
     table: Table<TData>
     column?: Column<TData>
-    title?: string
+    title?: Label | string
 } & (ValueProps<TData> | BoolProps<TData> | RangeProps<TData> | StatProps<TData>);
 
 type BadgeOpts<TData> = ParentProps<{
@@ -336,6 +337,9 @@ function BoolFilterItem(props: {
 }
 
 export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>) {
+    const label = useLabel();
+    const title = () => props.title === undefined ? "" : label(props.title);
+
     // Resolve options reactively — if options is a function, re-evaluate it
     // whenever TanStack's faceted values change (e.g., when data loads)
     const resolvedOptions = createMemo(() => {
@@ -344,6 +348,17 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
         }
         return props.options;
     });
+
+    /**
+     * Display text for one selected value. Value-based filters store the canonical value (English
+     * game text, a rarity tag, a group id) so links stay locale-stable, so the badge has to look
+     * the label up rather than print the value.
+     */
+    const optionLabel = (value: any): string => {
+        const match = (resolvedOptions() as ValueBasedOption[]).find?.(o => o.value === value);
+        if (match) return match.label;
+        return typeof value === "boolean" ? String(value) : String(value ?? "");
+    };
 
     const isValueBased = () => props.type === "value";
     const isStatsBased = () => props.type === "stat";
@@ -454,7 +469,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                 class={`h-8 border-dashed ${selectedValues().length ? "border-muted-foreground border-solid" : ""}`}
             >
                 <IconCirclePlus/>
-                {props.title}
+                {title()}
                 <Show when={selectedValues().length}>
                     <Separator orientation="vertical" class="mx-2 h-4"/>
                     <Show when={isStatsBased()}>
@@ -512,7 +527,9 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                                     {(option: any) =>
                                         <FilterBadge values={selectedValues} table={props.table} column={props.column}
                                                      option={option as string}>
-                                            {typeof option === "boolean" ? (option ? "Yes" : "No") : option}
+                                            {/* Selected values are canonical (English game text,
+                                                or a raw boolean), so show the option's label. */}
+                                            {optionLabel(option)}
                                         </FilterBadge>
                                     }
                                 </For>
@@ -607,7 +624,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                 {/* Value-based filter */}
                 <Show when={isValueBased()}>
                     <Command shouldFilter={false}>
-                        <CommandInput placeholder={props.title} value={search()} onValueChange={setSearch}/>
+                        <CommandInput placeholder={title()} value={search()} onValueChange={setSearch}/>
                         <CommandList>
                             <CommandEmpty>No results found.</CommandEmpty>
                             <CommandGroup>

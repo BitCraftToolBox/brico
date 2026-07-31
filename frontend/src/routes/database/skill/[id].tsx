@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
@@ -35,8 +36,8 @@ export default function SkillDetail() {
             metaKind="skill"
             metaImage={ogImageForCodepoint(skill()?.iconAssetName)}
             details={[
-                {label: "Title", value: skill()?.title},
-                {label: "Max Level", value: skill()?.maxLevel},
+                {label: msg`Title`, value: skill()?.title},
+                {label: msg`Max Level`, value: skill()?.maxLevel},
             ]}
             rawData={skill()}
             spacetimeTable={BitCraftTables.SkillDesc.spacetimeName}

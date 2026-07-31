@@ -1,3 +1,4 @@
+import {Trans} from "@lingui/solid/macro"
 import type {Column, Table} from "@tanstack/solid-table"
 
 import {
@@ -77,27 +78,27 @@ export function TableColumnHeader<TData>(props: TableColumnHeaderProps<TData>) {
                     <DropdownMenuContent>
                         <DropdownMenuItem onClick={handleSortClick(false)} title="Shift+Click to multi-sort">
                             <IconArrowUp class="size-3.5 text-muted-foreground/70"/>
-                            Asc
+                            <Trans>Asc</Trans>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={handleSortClick(true)} title="Shift+Click to multi-sort">
                             <IconArrowDown class="size-3.5 text-muted-foreground/70"/>
-                            Desc
+                            <Trans>Desc</Trans>
                         </DropdownMenuItem>
                         <Show when={props.column.getCanMultiSort()}>
                             <DropdownMenuItem class="sm:hidden" onClick={() => setSort(false, true)}>
                                 <IconArrowUpMulti class="size-3.5 text-muted-foreground/70"/>
-                                Asc Multi
+                                <Trans>Asc Multi</Trans>
                             </DropdownMenuItem>
                             <DropdownMenuItem class="sm:hidden" onClick={() => setSort(true, true)}>
                                 <IconArrowDownMulti class="size-3.5 text-muted-foreground/70"/>
-                                Desc Multi
+                                <Trans>Desc Multi</Trans>
                             </DropdownMenuItem>
                         </Show>
                         <Show when={props.column.getCanHide()}>
                             <DropdownMenuSeparator/>
                             <DropdownMenuItem onClick={hideColumn}>
                                 <IconEyeOff class="size-3.5 text-muted-foreground/70"/>
-                                Hide
+                                <Trans>Hide</Trans>
                             </DropdownMenuItem>
                         </Show>
                     </DropdownMenuContent>

@@ -4,6 +4,7 @@ import {TbOutlineEye as IconEye, TbOutlineEyeClosed as IconEyeOff} from "solid-i
 import {For, Show} from "solid-js"
 import {Button} from "~/components/ui/button"
 import {DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from "~/components/ui/dropdown-menu"
+import {useLabel} from "~/lib/labels";
 import {useSettings} from "~/lib/settings";
 
 type TableViewOptionsProps<TData> = {
@@ -14,6 +15,7 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
     // @ts-ignore this should be added via module augmentation but that breaks things somehow
     const name: string | undefined = props.table.options.meta?.["name"];
 
+    const label = useLabel();
     const {tableHiddenColumns, setTableHiddenColumns} = useSettings();
 
     /** Persist a single column visibility change. */
@@ -87,7 +89,7 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
                             checked={column.getIsVisible()}
                             onChange={(value) => toggleVisibility(column, value)}
                         >
-                            {column.id}
+                            {label(column.columnDef.meta?.label ?? column.id)}
                         </DropdownMenuCheckboxItem>
                     )}
                 </For>

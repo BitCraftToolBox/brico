@@ -1,0 +1,27 @@
+# Crowdin configuration for Brico's *UI* strings (Lingui catalogs).
+#
+# Game-data text (item/building names, descriptions, …) is NOT translated here — that comes from
+# BitCraft's own CSVs pulled from the asset CDN, see frontend/src/lib/data-translation.ts.
+#
+# Source is the English PO catalog produced by `npm run i18n:extract`; translations come back as
+# one PO per locale under the same directory layout Lingui expects
+# (frontend/src/locales/<locale>/messages.po), which the Vite plugin compiles at build time.
+#
+# `%locale%` (Crowdin's dash-separated BCP-47 form) rather than `%two_letters_code%`, because the
+# target list includes regional and script variants — pt-BR, zh-Hans, zh-Hant — which a two-letter
+# code cannot express. `languages_mapping` pins the codes where Crowdin's own spelling differs from
+# the directory names Lingui expects (see `locales` in frontend/lingui.config.ts and `UI_LOCALES`
+# in frontend/src/lib/i18n.ts — all three lists must agree).
+"preserve_hierarchy": true
+
+files:
+  - source: /frontend/src/locales/en/messages.po
+    translation: /frontend/src/locales/%locale%/messages.po
+    languages_mapping:
+      locale:
+        # <crowdin language id>: <directory name>
+        zh-CN: zh-Hans
+        zh-TW: zh-Hant
+    # Lingui writes the source string as msgid and carries translator context in PO comments,
+    # which Crowdin surfaces natively.
+    update_option: update_as_unapproved

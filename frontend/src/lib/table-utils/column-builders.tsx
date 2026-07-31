@@ -5,6 +5,9 @@
  * shared across multiple table definitions.
  */
 
+import type {MessageDescriptor} from "@lingui/core";
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {CellContext, Column, ColumnDef} from "@tanstack/solid-table";
 import {TbOutlineClipboardCopy as IconClipboardCopy, TbOutlineExternalLink as IconExternal, TbOutlineLink as IconLink} from "solid-icons/tb";
@@ -17,15 +20,57 @@ import {TierIcon} from "~/components/shared/GameIcon";
 import {Button} from "~/components/ui/button";
 import {DropdownMenuItem} from "~/components/ui/dropdown-menu";
 import {Rarities, Tiers} from "~/lib/bitcraft-utils";
+import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {KnowledgeLinkById, LinkedList} from "~/lib/game-links";
+import {rarityLabel} from "~/lib/game-strings";
+import {compareText, i18n, trackUILocale} from "~/lib/i18n";
+import {gameText, Label} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {AccessorKey, AccessorProp, resolveAccessor} from "~/lib/table-utils/base";
 import {cn, compareBasic, includedIn} from "~/lib/utils";
+
+/**
+ * Game-text columns keep the **English** value and translate only for display.
+ *
+ * A column's value is its identity everywhere it matters outside the screen: it is the filter
+ * state, the faceted-value key, and — via `saveFilters()` in table-toolbar.tsx — a query parameter
+ * in a link the user shares or bookmarks. Storing translated text there meant a filter URL created
+ * under one data locale silently failed to apply under another: no error, the filter just didn't
+ * stick. Column *ids* are already load-bearing English (they key `settings.tableHiddenColumns` and
+ * name the query params), so the values matching them is also the more consistent design.
+ *
+ * So: `accessorFn` reads through `sourceRow()`, and the cell plus the filter-option label run the
+ * value back through `translateGameText()`. Round-tripping like that works because the game
+ * catalogs are keyed by the English source — going forward is exact, going backward would not be.
+ */
+
+/**
+ * Resolves an accessor against the row's untranslated form, for columns whose value must stay
+ * canonical English.
+ *
+ * Note this un-translates the row being accessed, not rows an `accessorFn` looks up in *other*
+ * tables — an accessor that reaches through an index has to wrap that lookup in `sourceRow()`
+ * itself. Grep the table-defs for `indexedBy(...)().get(...)?.name` when adding one.
+ */
+function sourceValue<T, V>(accessor: AccessorProp<T, V>, row: T): V | undefined {
+    return resolveAccessor(accessor, sourceRow(row));
+}
+
+/**
+ * Resolves a `msg` descriptor outside a component, for filter options — which are built by plain
+ * factory functions but evaluated inside a memo in `TableFacetedFilter`. `trackUILocale()` is what
+ * makes that memo re-run on a locale change; see the note on `uiLocale` in ~/lib/i18n.
+ */
+function uiText(descriptor: MessageDescriptor): string {
+    trackUILocale();
+    return i18n._(descriptor);
+}
 
 // ─── Common Column Builders ─────────────────────────────────────
 
 interface HeaderColumnParams<T, V extends JSX.Element> {
     title?: string;
+    label?: Label | string;
     accessor?: AccessorProp<T, V>;
     route: (row: T) => [string, string | number];
     prefixElement?: (row: T) => JSX.Element;
@@ -34,6 +79,7 @@ interface HeaderColumnParams<T, V extends JSX.Element> {
 
 export function headerColumn<T, V extends JSX.Element>({
    title = "Name",
+   label = title === "Name" ? gameText(msg`Name`) : title,
    accessor = {accessorKey: "name" as AccessorKey<T>},
    route,
    prefixElement = () => <></>,
@@ -41,6 +87,7 @@ export function headerColumn<T, V extends JSX.Element>({
 }: HeaderColumnParams<T, V>): ColumnDef<T, V> {
     return {
         id: title,
+        meta: {label},
         ...accessor,
         cell: (props) => {
             const r = route(props.row.original);
@@ -59,15 +106,17 @@ export function headerColumn<T, V extends JSX.Element>({
 
 export function boolColumn<T, V extends boolean | undefined>(
     title: string,
-    accessor: AccessorProp<T, V>
+    accessor: AccessorProp<T, V>,
+    label: Label | string = title,
 ) {
     return {
         id: title,
+        meta: {label},
         ...accessor,
         cell: (props: CellContext<T, boolean | undefined>): JSX.Element => {
             const v = props.getValue();
             if (typeof v === "undefined") return <></>;
-            return v ? "Yes" : "No";
+            return v ? translateGameText("Yes") : translateGameText("No");
         },
         filterFn: includedIn<T>(),
     }
@@ -75,16 +124,20 @@ export function boolColumn<T, V extends boolean | undefined>(
 
 export function knowledgeColumn<T, V extends number[] | undefined>(
     title?: string,
-    accessor: AccessorProp<T, V> = { accessorKey: "requiredKnowledges" as AccessorKey<T> }
+    accessor: AccessorProp<T, V> = { accessorKey: "requiredKnowledges" as AccessorKey<T> },
+    label: Label | string = title ?? msg`Required Knowledge`,
 ): ColumnDef<T, string[]> {
+    // English names — this column is filterable, so its values end up in shareable URLs.
+    // The cell renders KnowledgeLinkById, which resolves the translated name for display.
     const getNames = (row: T): string[] => {
         const ids = resolveAccessor(accessor, row);
         if (!ids?.length) return [];
         const idx = BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id")();
-        return ids.map(id => idx.get(id)?.name ?? `#${id}`);
+        return ids.map(id => sourceRow(idx.get(id))?.name ?? `#${id}`);
     };
     return {
         id: title ?? "Required Knowledge",
+        meta: {label},
         accessorFn: getNames,
         getUniqueValues: getNames,
         cell: (props) => {
@@ -105,9 +158,11 @@ export function knowledgeColumn<T, V extends number[] | undefined>(
 export function descriptionColumn<T>(
     title: string = "Description",
     accessor: AccessorProp<T, string> = {accessorKey: "description" as AccessorKey<T>},
+    label: Label | string = title === "Description" ? gameText(msg`Description`) : title,
 ) {
     return {
         id: title,
+        meta: {label},
         ...accessor,
         cell: (props: CellContext<T, string | undefined>): JSX.Element => {
             const v = props.getValue();
@@ -119,11 +174,15 @@ export function descriptionColumn<T>(
 
 export function tagColumn<T>(
     title: string = "Tag",
-    accessor: AccessorProp<T, string> = {accessorKey: title.toLowerCase() as AccessorKey<T>}
-): ColumnDef<T> {
+    accessor: AccessorProp<T, string> = {accessorKey: title.toLowerCase() as AccessorKey<T>},
+    label: Label | string = title === "Tag" ? gameText(msg`Tags`) : title,
+): ColumnDef<T, string | undefined> {
     return {
         id: title,
-        ...accessor,
+        meta: {label},
+        // English value, translated cell — see the note at the top of this file.
+        accessorFn: row => sourceValue(accessor, row),
+        cell: (props: CellContext<T, string | undefined>): JSX.Element => translateGameText(props.getValue() ?? ""),
         filterFn: includedIn<T>(),
     };
 }
@@ -136,7 +195,11 @@ export function rarityColumn<T, V extends Rarity["tag"]>(
 ): ColumnDef<T, V> {
     return {
         id: "Rarity",
+        meta: {label: gameText(msg`Rarity`)},
         ...accessor,
+        // The value stays the `Rarity` tag: it drives the frame/border colors, the rarity sort
+        // order below, and the query param. Only the displayed text is localized.
+        cell: (props: CellContext<T, V>): JSX.Element => rarityLabel(props.getValue()),
         filterFn: includedIn<T>(),
         sortingFn: (rowA, rowB, columnId) => {
             const rA = rowA.getValue<V>(columnId);
@@ -157,6 +220,7 @@ export function tierColumn<T>(
 ): ColumnDef<T, number> {
     return {
         id: "Tier",
+        meta: {label: gameText(msg`Tier`)},
         ...accessor,
         filterFn: includedIn<T>(),
     };
@@ -187,7 +251,7 @@ export function rowActions<T, V extends string | number>(
                             class="w-full" variant="ghost"
                             onclick={() => navigator.clipboard.writeText(String(rowId))}
                         >
-                            Copy ID <IconClipboardCopy/>
+                            <Trans>Copy ID</Trans> <IconClipboardCopy/>
                         </Button>
                     </DropdownMenuItem>
                     <Show when={chatLinkPrefix && chatLinkId}>
@@ -196,7 +260,7 @@ export function rowActions<T, V extends string | number>(
                                 class="w-full" variant="ghost"
                                 onclick={() => navigator.clipboard.writeText(`(${chatLinkPrefix}=${chatLinkId})`)}
                             >
-                                Copy Chat Link <IconLink/>
+                                <Trans>Copy Chat Link</Trans> <IconLink/>
                             </Button>
                         </DropdownMenuItem>
                     </Show>
@@ -206,7 +270,7 @@ export function rowActions<T, V extends string | number>(
                                 class="w-full" variant="ghost" as={A} target={"_blank"}
                                 href={`https://bitcraftmap.com/?${mapUrlPrefix}=${rowId}`}
                             >
-                                View Map <IconExternal/>
+                                <Trans>View Map</Trans> <IconExternal/>
                             </Button>
                         </DropdownMenuItem>
                     </Show>
@@ -224,13 +288,15 @@ export function rowActions<T, V extends string | number>(
 export function tagFilter<T>(): FilterSetupProps<T, ValueBasedOption<string>[]> {
     return {
         column: "Tag",
-        title: "Tag",
+        title: gameText(msg`Tags`),
         type: "value",
+        // `value` is the English tag (stable in URLs and filter state), `label` its translation.
+        // Sorted by the translated label so the list reads alphabetically in the user's language.
         options: (col: Column<T> | undefined) => {
             if (!col) return [];
             return col.getFacetedUniqueValues().keys().map((v) => ({
-                label: v, value: v,
-            })).toArray().sort((a, b) => a.label.localeCompare(b.label));
+                label: translateGameText(v), value: v,
+            })).toArray().sort((a, b) => compareText(a.label, b.label));
         },
     };
 }
@@ -241,9 +307,12 @@ export function tagFilter<T>(): FilterSetupProps<T, ValueBasedOption<string>[]> 
 export function rarityFilter<T>(): FilterSetupProps<T, ValueBasedOption<Rarity["tag"]>[]> {
     return {
         column: "Rarity",
-        title: "Rarity",
+        title: gameText(msg`Rarity`),
         type: "value",
-        options: Rarities.rarities.map(r => ({label: r, value: r})),
+        // A function, not a baked array: the labels are translated, so they have to be resolved
+        // inside TableFacetedFilter's memo rather than frozen at module-eval time. Order stays
+        // Rarities.rarities (Common → Mythic), which is meaningful and not alphabetical.
+        options: () => Rarities.rarities.map(r => ({label: rarityLabel(r), value: r})),
     };
 }
 
@@ -253,7 +322,7 @@ export function rarityFilter<T>(): FilterSetupProps<T, ValueBasedOption<Rarity["
 export function tierFilter<T>(): FilterSetupProps<T, ValueBasedOption<number>[]> {
     return {
         column: "Tier",
-        title: "Tier",
+        title: gameText(msg`Tier`),
         type: "value",
         options: Tiers.tiers.map(t => ({
             label: String(t.value),
@@ -266,14 +335,14 @@ export function tierFilter<T>(): FilterSetupProps<T, ValueBasedOption<number>[]>
 /**
  * Creates a numeric range filter
  */
-export function rangeFilter<T>(column: string, title?: string): FilterSetupProps<T, RangedBasedOption> {
+export function rangeFilter<T>(column: string, title?: Label | string): FilterSetupProps<T, RangedBasedOption> {
     return {
         column,
         title: title ?? column,
         type: "range",
         options: (col: Column<T> | undefined) => {
             const minMax = col ? col.getFacetedMinMaxValues() : null;
-            return {label: title ?? column, minMax: minMax || [0, 0]};
+            return {label: typeof title === "string" ? title : column, minMax: minMax || [0, 0]};
         },
     };
 }
@@ -285,9 +354,10 @@ type OptionType = { label: string, value: any };
 
 export function uniqueValuesFilter<T>(
     column: string,
-    title?: string,
+    title?: Label | string,
     sortFn?: (a: OptionType, b: OptionType) => number,
     iconFn?: (props: any) => JSX.Element,
+    labelFn?: (label: string) => string,
 ): FilterSetupProps<T, ValueBasedOption[]> {
     return {
         column,
@@ -296,9 +366,13 @@ export function uniqueValuesFilter<T>(
         options: (col: Column<T> | undefined) => {
             if (!col) return [];
             const opts = col.getFacetedUniqueValues().keys().map((v: any) => {
-                if (v === null || v === "" || typeof v === "undefined") return {label: "<empty>", value: undefined};
-                return {label: String(v), value: v, icon: iconFn};
+                if (v === null || v === "" || typeof v === "undefined") return {label: uiText(msg`<empty>`), value: undefined};
+                // `translateGameText` on the stringified value: a hit localizes a game-text column
+                // (Type, Skill, Traveler, …), a miss leaves numbers and app values untouched.
+                return {label: labelFn ? labelFn(String(v)) : translateGameText(String(v)), value: v, icon: iconFn};
             }).toArray();
+            // No default sort — facet order follows row order, which several numeric columns rely
+            // on. Pass `compareOptions` to sort (numerically by value, else by translated label).
             if (!sortFn) return opts;
             return opts.sort(sortFn);
         },
@@ -307,14 +381,19 @@ export function uniqueValuesFilter<T>(
 
 export function boolFilter<T>(
     column: string,
-    title?: string,
-    trueLabel = "Yes",
-    falseLabel = "No",
+    title?: Label | string,
+    trueLabel?: MessageDescriptor,
+    falseLabel?: MessageDescriptor,
 ): FilterSetupProps<T, ValueBasedOption<boolean>[]> {
     return {
         column,
         title: title ?? column,
         type: "bool",
-        options: [{label: trueLabel, value: true}, {label: falseLabel, value: false}],
+        // Descriptors rather than strings, resolved lazily: a default of `"Yes"` computed here
+        // would be frozen at module-eval time, since filter arrays are built at table-def scope.
+        options: () => [
+            {label: trueLabel ? uiText(msg`Yes`) : translateGameText("Yes"), value: true},
+            {label: falseLabel ? uiText(msg`No`) : translateGameText("No"), value: false},
+        ],
     }
 }

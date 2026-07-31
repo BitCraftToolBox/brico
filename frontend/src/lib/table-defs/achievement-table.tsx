@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {AchievementLink, LinkedList} from "~/lib/game-links";
 import {BitCraftTables} from "~/lib/spacetime";
@@ -12,6 +13,7 @@ export const AchievementDefs: BitCraftToDataDef<AchievementDesc> = {
         descriptionColumn(),
         {
             id: "Prerequisites",
+            meta: {label: msg`Prerequisites`},
             accessorFn: (row) => {
                 const idx = BitCraftTables.AchievementDesc.indexedBy("id");
                 return row.requisites?.map(id => idx().get(id)?.name ?? `#${id}`).join(", ") || "";
@@ -30,11 +32,11 @@ export const AchievementDefs: BitCraftToDataDef<AchievementDesc> = {
                 );
             },
         },
-        {id: "Points", accessorKey: "pointsReward", filterFn: "inNumberRange"},
+        {id: "Points", meta: {label: msg`Points`}, accessorKey: "pointsReward", filterFn: "inNumberRange"},
         rowActions(),
     ],
     facetedFilters: [
-        rangeFilter("Points")
+        rangeFilter("Points", msg`Points`)
     ],
     searchColumns: ["Name", "Description", "Prerequisites"],
 };

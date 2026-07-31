@@ -5,14 +5,18 @@
  * Includes multi-stat filtering support.
  */
 
+import {msg} from "@lingui/core/macro";
 import {CellContext, Column, ColumnDef, FilterFn, Row} from "@tanstack/solid-table";
 import {For, JSX} from "solid-js";
 import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
 import {FilterSetupProps} from "~/components/data-table/data-table";
 import {StatsBasedOption, StatsFilterValue, StatsOptionEntry} from "~/components/data-table/table-faceted-filter";
+import {statLabel} from "~/lib/game-strings";
+import {compareText} from "~/lib/i18n";
+import {gameText, Label} from "~/lib/labels";
 
 import {AccessorFunction, AccessorProp, resolveAccessor} from "~/lib/table-utils/base";
-import {fixFloat, splitCamelCase} from "~/lib/utils";
+import {fixFloat} from "~/lib/utils";
 import CharacterStatType from "../../bindings/src/character_stat_type_type";
 
 // ─── Formatting helpers ─────────────────────────────────────────
@@ -22,8 +26,13 @@ export function formatStatValue(stat: CsvStatEntry): string {
     return stat.isPct ? `${val}%` : String(val);
 }
 
+/**
+ * Player-facing name for a stat. `statLabel` maps the tag to its official English name and then
+ * through the game catalogs, so `MaxHealth` reads "Maximum Health" / "Maximale Gesundheit" rather
+ * than the split tag. Reactive — call it in a computation or JSX, not once up front.
+ */
 export function formatStatLabel(stat: CsvStatEntry): string {
-    return splitCamelCase(stat.id?.tag ?? "");
+    return statLabel(stat.id?.tag);
 }
 
 // ─── Stats Pill ─────────────────────────────────────────────────
@@ -165,7 +174,7 @@ function computeStatOptions<T>(col: Column<T>, columnId: string): StatsOptionEnt
                 existing.max = Math.max(existing.max, val);
             } else {
                 statRanges.set(key, {
-                    label: splitCamelCase(stat.id.tag) + (stat.isPct ? ' %' : ''),
+                    label: statLabel(stat.id.tag) + (stat.isPct ? ' %' : ''),
                     isPct: stat.isPct,
                     min: val,
                     max: val,
@@ -181,17 +190,17 @@ function computeStatOptions<T>(col: Column<T>, columnId: string): StatsOptionEnt
             isPct: v.isPct,
             minMax: [v.min, v.max] as [number, number],
         }))
-        .sort((a, b) => a.label.localeCompare(b.label));
+        .sort((a, b) => compareText(a.label, b.label));
 }
 
 /**
  * Creates a stats faceted filter for CsvStatEntry[] columns.
  * Supports multi-stat filtering with per-stat ranges.
  */
-export function statsFilter<T>(column: string = "Stats"): FilterSetupProps<T, StatsBasedOption> {
+export function statsFilter<T>(column: string = "Stats", title?: Label | string): FilterSetupProps<T, StatsBasedOption> {
     return {
         column,
-        title: column,
+        title: title ?? column,
         type: "stat",
         options: (col: Column<T> | undefined) => {
             if (!col) return {label: column, stats: []};
@@ -215,14 +224,17 @@ function statsOrUndefined(row: { stats: CsvStatEntry[] }): CsvStatEntry[] | unde
  * @param id - optional column id override (default: "Stats")
  * @param accessor - optional function or key to get the stat array from the row
  *                   the default function requires a `stats` property on the row
+ * @param label Header label, if not id text
  */
 export function statsColumn<T>(
     id: string = "Stats",
     accessor: AccessorProp<T, CsvStatEntry[] | undefined> = {accessorFn: statsOrUndefined as AccessorFunction<T, CsvStatEntry[] | undefined>},
+    label: Label | string = id === "Stats" ? gameText(msg`Stats`) : id,
 ): ColumnDef<T, CsvStatEntry[]> {
     return {
         id,
         ...accessor,
+        meta: {label},
         cell: (props: CellContext<T, CsvStatEntry[]>): JSX.Element => {
             const stats = props.getValue();
             if (!stats?.length) return undefined;

@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {CompletionCondition} from "~/bindings/src/completion_condition_type";
 import {ItemStackCompletionCondition} from "~/bindings/src/item_stack_completion_condition_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
@@ -7,6 +8,7 @@ import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
 import {QuestRequirement} from "~/bindings/src/quest_requirement_type";
 import {QuestReward} from "~/bindings/src/quest_reward_type";
 import {AchievementLink, CollectibleLinkById, ItemStackLink, KnowledgeLinkById, LinkedList, QuestChainLinkById, SkillLinkById,} from "~/lib/game-links";
+import {Label} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {boolColumn, boolFilter, headerColumn, rangeFilter, rowActions} from "~/lib/table-utils/column-builders";
@@ -119,9 +121,11 @@ export function ReqOrRewardLink(props: { qr: QuestEntry }) {
 function reqOrRewardColumn(
     id: string,
     getEntries: (row: QuestChainDesc) => (QuestRequirement | QuestReward)[],
+    label: Label,
 ) {
     return {
         id,
+        meta: {label},
         accessorFn: (row: QuestChainDesc) =>
             getEntries(row)
                 .filter(r => r.tag !== "PaddingNone")
@@ -146,21 +150,22 @@ export const QuestChainDefs: BitCraftToDataDef<QuestChainDesc> = {
         }),
         {
             id: "Stages",
+            meta: {label: msg`Stages`},
             accessorFn: row => row.stages?.length ?? 0,
             filterFn: "inNumberRange",
         },
-        reqOrRewardColumn("Requirements", row => row.requirements ?? []),
-        reqOrRewardColumn("Rewards", row => [...(row.rewards ?? []), ...(row.implicitRewards ?? [])]),
-        boolColumn<QuestChainDesc, boolean>("Is Hint", {accessorKey: "isHint"}),
-        boolColumn<QuestChainDesc, boolean>("Unstartable", {accessorKey: "unstartable"}),
-        boolColumn<QuestChainDesc, boolean>("Is Secret", {accessorKey: "isSecret"}),
+        reqOrRewardColumn("Requirements", row => row.requirements ?? [], msg`Requirements`),
+        reqOrRewardColumn("Rewards", row => [...(row.rewards ?? []), ...(row.implicitRewards ?? [])], msg`Rewards`),
+        boolColumn<QuestChainDesc, boolean>("Is Hint", {accessorKey: "isHint"}, msg`Is Hint`),
+        boolColumn<QuestChainDesc, boolean>("Unstartable", {accessorKey: "unstartable"}, msg`Unstartable`),
+        boolColumn<QuestChainDesc, boolean>("Is Secret", {accessorKey: "isSecret"}, msg`Is Secret`),
         rowActions(),
     ],
     facetedFilters: [
-        rangeFilter("Stages"),
-        boolFilter("Is Hint"),
-        boolFilter("Unstartable"),
-        boolFilter("Is Secret"),
+        rangeFilter("Stages", msg`Stages`),
+        boolFilter("Is Hint", msg`Is Hint`),
+        boolFilter("Unstartable", msg`Unstartable`),
+        boolFilter("Is Secret", msg`Is Secret`),
     ],
     searchColumns: ["Name", "Requirements", "Rewards"],
 };

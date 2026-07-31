@@ -1,0 +1,2332 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-07-30 21:51-0400\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: zu\n"
+"Project-Id-Version: brico\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-07-31 20:36\n"
+"Last-Translator: \n"
+"Language-Team: Zulu\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: brico\n"
+"X-Crowdin-Project-ID: 916887\n"
+"X-Crowdin-Language: zu\n"
+"X-Crowdin-File: messages.po\n"
+"X-Crowdin-File-ID: 2\n"
+
+#. placeholder {0}: props.loaded
+#. placeholder {1}: props.total
+#: src/components/AppLoadingScreen.tsx:18
+msgid "Loading game data… {0}/{1}"
+msgstr "crwdns2:0{0}crwdnd2:0{1}crwdne2:0"
+
+#: src/components/app-sidebar.tsx:141
+msgid "Tree view"
+msgstr "crwdns4:0crwdne4:0"
+
+#: src/components/app-sidebar.tsx:148
+msgid "Alphabetical"
+msgstr "crwdns6:0crwdne6:0"
+
+#: src/components/app-sidebar.tsx:162
+msgid "Showing favorites"
+msgstr "crwdns8:0crwdne8:0"
+
+#: src/components/app-sidebar.tsx:162
+msgid "Showing all items"
+msgstr "crwdns10:0crwdne10:0"
+
+#: src/components/app-sidebar.tsx:164
+msgid "Favorites can be set in the <0><1/> Settings</0>"
+msgstr "crwdns12:0crwdne12:0"
+
+#: src/components/app-sidebar.tsx:178
+msgid "List view"
+msgstr "crwdns14:0crwdne14:0"
+
+#: src/components/app-sidebar.tsx:185
+msgid "Grid view"
+msgstr "crwdns16:0crwdne16:0"
+
+#: src/components/app-sidebar.tsx:269
+msgid "cereal - Raw Data Browser"
+msgstr "crwdns18:0crwdne18:0"
+
+#: src/components/app-sidebar.tsx:287
+msgid "Not affiliated with Clockwork Labs"
+msgstr "crwdns20:0crwdne20:0"
+
+#: src/components/data-table/table-column-header.tsx:81
+msgid "Asc"
+msgstr "crwdns22:0crwdne22:0"
+
+#: src/components/data-table/table-column-header.tsx:85
+msgid "Desc"
+msgstr "crwdns24:0crwdne24:0"
+
+#: src/components/data-table/table-column-header.tsx:90
+msgid "Asc Multi"
+msgstr "crwdns26:0crwdne26:0"
+
+#: src/components/data-table/table-column-header.tsx:94
+msgid "Desc Multi"
+msgstr "crwdns28:0crwdne28:0"
+
+#: src/components/data-table/table-column-header.tsx:101
+msgid "Hide"
+msgstr "crwdns30:0crwdne30:0"
+
+#: src/components/shared/DetailPageLayout.tsx:142
+#: src/lib/recipe-sources.tsx:323
+#: src/lib/table-utils/column-builders.tsx:395
+msgid "Yes"
+msgstr "crwdns32:0crwdne32:0"
+
+#: src/components/shared/DetailPageLayout.tsx:142
+#: src/lib/recipe-sources.tsx:328
+#: src/lib/recipe-sources.tsx:478
+#: src/lib/table-utils/column-builders.tsx:396
+msgid "No"
+msgstr "crwdns34:0crwdne34:0"
+
+#: src/components/shared/RecipeDisplay.tsx:125
+#: src/components/shared/RecipeDisplay.tsx:250
+msgid "No Outputs"
+msgstr "crwdns36:0crwdne36:0"
+
+#: src/components/shared/RecipeDisplay.tsx:159
+#: src/components/shared/RecipeDisplay.tsx:181
+msgid "deplete"
+msgstr "crwdns38:0crwdne38:0"
+
+#: src/components/shared/RecipeDisplay.tsx:162
+msgid "Guaranteed drop on last hit of resource extraction"
+msgstr "crwdns40:0crwdne40:0"
+
+#: src/components/shared/RecipeDisplay.tsx:186
+msgid "Guaranteed spawn on last hit of resource extraction."
+msgstr "crwdns42:0crwdne42:0"
+
+#: src/components/shared/RecipeDisplay.tsx:187
+msgid "Chance to spawn on last hit of resource extraction."
+msgstr "crwdns44:0crwdne44:0"
+
+#: src/components/shared/RecipeDisplay.tsx:190
+msgid "Guaranteed spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
+msgstr "crwdns46:0{minRad}crwdnd46:0{maxRad}crwdne46:0"
+
+#: src/components/shared/RecipeDisplay.tsx:191
+msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
+msgstr "crwdns48:0{minRad}crwdnd48:0{maxRad}crwdne48:0"
+
+#. placeholder {0}: esp.radiusMin
+#. placeholder {1}: esp.radiusMax
+#: src/components/shared/RecipeDisplay.tsx:211
+msgid "Drops within {0}–{1} tiles."
+msgstr "crwdns50:0{0}crwdnd50:0{1}crwdne50:0"
+
+#. placeholder {0}: props.recipe.buildingDescriptionId
+#. placeholder {0}: props.recipe.consumedBuilding
+#: src/components/shared/RecipeDisplay.tsx:284
+#: src/components/shared/RecipeDisplay.tsx:303
+msgid "Building #{0}"
+msgstr "crwdns52:0#{0}crwdne52:0"
+
+#: src/components/shared/RecipeDisplay.tsx:321
+msgid "No Output"
+msgstr "crwdns54:0crwdne54:0"
+
+#: src/components/shared/RecipeDisplay.tsx:371
+msgid "Despawns"
+msgstr "crwdns56:0crwdne56:0"
+
+#: src/components/shared/RecipeDisplay.tsx:373
+#: src/routes/database/terraforming/[id].tsx:49
+msgid "Time"
+msgstr "crwdns58:0crwdne58:0"
+
+#: src/components/shared/RecipeDisplay.tsx:374
+msgid "Chance"
+msgstr "crwdns60:0crwdne60:0"
+
+#: src/components/shared/RecipeDisplay.tsx:375
+#: src/routes/database/creature/[id].tsx:92
+#: src/routes/database/deployable/[id].tsx:73
+msgid "Radius"
+msgstr "crwdns62:0crwdne62:0"
+
+#: src/components/shared/RecipeDisplay.tsx:417
+msgid "No drops"
+msgstr "crwdns64:0crwdne64:0"
+
+#: src/components/shared/RecipeDisplay.tsx:456
+msgid "None"
+msgstr "crwdns66:0crwdne66:0"
+
+#: src/components/shared/RecipeDisplay.tsx:488
+msgid "Select a recipe"
+msgstr "crwdns68:0crwdne68:0"
+
+#: src/components/shared/RecipeDisplay.tsx:502
+msgid "Recipe option"
+msgstr "crwdns70:0crwdne70:0"
+
+#. placeholder {0}: props.placement.placedPlaceableId
+#: src/components/shared/RecipeDisplay.tsx:548
+msgid "Placeable #{0}"
+msgstr "crwdns72:0#{0}crwdne72:0"
+
+#: src/components/shared/RecipeDisplay.tsx:611
+msgid "Chance to spawn on depletion."
+msgstr "crwdns74:0crwdne74:0"
+
+#: src/components/shared/RecipeDisplay.tsx:611
+msgid "Guaranteed to spawn on depletion."
+msgstr "crwdns76:0crwdne76:0"
+
+#. placeholder {0}: outcome.radiusMin
+#. placeholder {1}: outcome.radiusMax
+#: src/components/shared/RecipeDisplay.tsx:613
+msgid "Spawns within {0}–{1} tiles."
+msgstr "crwdns78:0{0}crwdnd78:0{1}crwdne78:0"
+
+#: src/components/shared/RecipeDisplay.tsx:626
+#: src/components/shared/RecipeDisplay.tsx:664
+msgid "Despawn"
+msgstr "crwdns80:0crwdne80:0"
+
+#: src/components/shared/RecipeDisplay.tsx:659
+msgid "Click to toggle between percentage and weight"
+msgstr "crwdns82:0crwdne82:0"
+
+#: src/lib/game-links.tsx:123
+msgid "Developer-locked / inaccessible"
+msgstr "crwdns84:0crwdne84:0"
+
+#: src/lib/placeables.ts:202
+msgid "Place {plcName}"
+msgstr "crwdns86:0{plcName}crwdne86:0"
+
+#: src/lib/placeables.ts:209
+msgid "{verbPhrase} ({plcName})"
+msgstr "crwdns88:0{verbPhrase}crwdnd88:0{plcName}crwdne88:0"
+
+#: src/lib/recipe-sources.tsx:58
+#: src/lib/recipe-sources.tsx:292
+msgid "{skillTag}:"
+msgstr "crwdns90:0{skillTag}crwdne90:0"
+
+#. placeholder {0}: req.level
+#. placeholder {1}: skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`
+#: src/lib/recipe-sources.tsx:59
+msgid "Lv. {0} {1}"
+msgstr "crwdns92:0{0}crwdnd92:0{1}crwdne92:0"
+
+#: src/lib/recipe-sources.tsx:66
+msgid "Level {level} {toolName} (Power >= {power})"
+msgstr "crwdns94:0{level}crwdnd94:0{toolName}crwdnd94:0{power}crwdne94:0"
+
+#: src/lib/recipe-sources.tsx:66
+msgid "Level {level} {toolName}"
+msgstr "crwdns96:0{level}crwdnd96:0{toolName}crwdne96:0"
+
+#: src/lib/recipe-sources.tsx:73
+#: src/lib/recipe-sources.tsx:155
+msgid "Tool:"
+msgstr "crwdns98:0crwdne98:0"
+
+#. placeholder {0}: fixFloat(totalXp)
+#: src/lib/recipe-sources.tsx:83
+msgid "{perHit} (Total: {0})"
+msgstr "crwdns100:0{perHit}crwdnd100:0{0}crwdne100:0"
+
+#: src/lib/recipe-sources.tsx:85
+#: src/lib/recipe-sources.tsx:288
+#: src/lib/table-defs/equipment-table.tsx:37
+#: src/lib/table-defs/equipment-table.tsx:65
+#: src/lib/table-defs/traveler-tasks-table.tsx:53
+#: src/lib/table-defs/traveler-tasks-table.tsx:89
+#: src/lib/table-defs/traveler-trades-table.tsx:56
+#: src/lib/table-defs/traveler-trades-table.tsx:82
+#: src/routes/database/item/[id].tsx:200
+#: src/routes/database/tool/[id].tsx:43
+#: src/routes/database/traveler-task/[id].tsx:47
+msgid "Skill"
+msgstr "crwdns102:0crwdne102:0"
+
+#: src/lib/recipe-sources.tsx:87
+msgid "{skillName} XP/Progress:"
+msgstr "crwdns104:0{skillName}crwdne104:0"
+
+#: src/lib/recipe-sources.tsx:105
+msgid "Required Knowledge:"
+msgstr "crwdns106:0crwdne106:0"
+
+#: src/lib/recipe-sources.tsx:116
+msgid "Blocking Knowledge:"
+msgstr "crwdns108:0crwdne108:0"
+
+#: src/lib/recipe-sources.tsx:157
+msgid "No tool"
+msgstr "crwdns110:0crwdne110:0"
+
+#: src/lib/recipe-sources.tsx:158
+msgid "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
+msgstr "crwdns112:0crwdne112:0"
+
+#: src/lib/recipe-sources.tsx:170
+#: src/lib/recipe-sources.tsx:256
+msgid "Effort:"
+msgstr "crwdns114:0crwdne114:0"
+
+#: src/lib/recipe-sources.tsx:171
+#: src/lib/recipe-sources.tsx:245
+#: src/lib/recipe-sources.tsx:257
+#: src/lib/recipe-sources.tsx:268
+#: src/lib/recipe-sources.tsx:277
+#: src/lib/recipe-sources.tsx:350
+#: src/lib/recipe-sources.tsx:447
+#: src/lib/recipe-sources.tsx:473
+msgid "Time:"
+msgstr "crwdns116:0crwdne116:0"
+
+#: src/lib/recipe-sources.tsx:172
+#: src/lib/recipe-sources.tsx:246
+#: src/lib/recipe-sources.tsx:258
+#: src/lib/recipe-sources.tsx:278
+#: src/lib/recipe-sources.tsx:448
+msgid "Stamina:"
+msgstr "crwdns118:0crwdne118:0"
+
+#: src/lib/recipe-sources.tsx:177
+#: src/lib/recipe-sources.tsx:293
+#: src/lib/relations.ts:477
+#: src/lib/relations.ts:495
+#: src/lib/relations.ts:571
+#: src/lib/relations.ts:580
+msgid "Unknown"
+msgstr "crwdns120:0crwdne120:0"
+
+#: src/lib/recipe-sources.tsx:179
+msgid "Building:"
+msgstr "crwdns122:0crwdne122:0"
+
+#: src/lib/recipe-sources.tsx:179
+msgid "Tier {tier} {name}"
+msgstr "crwdns124:0{tier}crwdnd124:0{name}crwdne124:0"
+
+#: src/lib/recipe-sources.tsx:202
+#: src/lib/recipe-sources.tsx:204
+msgid "Timed Node"
+msgstr "crwdns126:0crwdne126:0"
+
+#: src/lib/recipe-sources.tsx:204
+msgid "? min"
+msgstr "crwdns128:0crwdne128:0"
+
+#: src/lib/recipe-sources.tsx:212
+msgid "Prospecting Hits"
+msgstr "crwdns130:0crwdne130:0"
+
+#. placeholder {0}: (min + max) / 2 * perNode
+#: src/lib/recipe-sources.tsx:218
+msgid "{perNode} contribution per node × {min} - {max} nodes = {0} hits average"
+msgstr "crwdns132:0{perNode}crwdnd132:0{min}crwdnd132:0{max}crwdnd132:0{0}crwdne132:0"
+
+#. placeholder {0}: (min + max) / 2 * perNode
+#: src/lib/recipe-sources.tsx:220
+msgid "{perNode} contribution per node × {min} nodes = {0} hits"
+msgstr "crwdns134:0{perNode}crwdnd134:0{min}crwdnd134:0{0}crwdne134:0"
+
+#: src/lib/recipe-sources.tsx:227
+msgid "This prospecting is fixed at one contribution, regardless of bread crumb count."
+msgstr "crwdns136:0crwdne136:0"
+
+#: src/lib/recipe-sources.tsx:234
+#: src/lib/recipe-sources.tsx:242
+msgid "Total HP"
+msgstr "crwdns138:0crwdne138:0"
+
+#: src/lib/recipe-sources.tsx:237
+msgid "Resource ignores regular damage."
+msgstr "crwdns140:0crwdne140:0"
+
+#. placeholder {0}: task.levelRequirement.minLevel
+#. placeholder {1}: task.levelRequirement.maxLevel
+#. placeholder {2}: skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>
+#: src/lib/recipe-sources.tsx:293
+msgid "Lv. {0}-{1} {2}"
+msgstr "crwdns142:0{0}crwdnd142:0{1}crwdnd142:0{2}crwdne142:0"
+
+#: src/lib/recipe-sources.tsx:296
+msgid "{skillName} Exp:"
+msgstr "crwdns144:0{skillName}crwdne144:0"
+
+#: src/lib/recipe-sources.tsx:311
+msgid "Traveler:"
+msgstr "crwdns146:0crwdne146:0"
+
+#: src/lib/recipe-sources.tsx:324
+msgid "Output is rolled a number of times equal to your contribution. One full HP bar of the enemy is worth 1000 contribution."
+msgstr "crwdns148:0crwdne148:0"
+
+#: src/lib/recipe-sources.tsx:329
+msgid "Output is rolled once, regardless of damage dealt, as long as the minimum threshold is reached."
+msgstr "crwdns150:0crwdne150:0"
+
+#: src/lib/recipe-sources.tsx:340
+msgid "Minimum Contribution"
+msgstr "crwdns152:0crwdne152:0"
+
+#: src/lib/recipe-sources.tsx:341
+#: src/routes/database/creature/[id].tsx:181
+msgid "Weighted"
+msgstr "crwdns154:0crwdne154:0"
+
+#: src/lib/recipe-sources.tsx:363
+msgid "Biomes:"
+msgstr "crwdns156:0crwdne156:0"
+
+#: src/lib/recipe-sources.tsx:370
+msgid "Paving Tier:"
+msgstr "crwdns158:0crwdne158:0"
+
+#: src/lib/recipe-sources.tsx:373
+msgid "Interior Tier:"
+msgstr "crwdns160:0crwdne160:0"
+
+#: src/lib/recipe-sources.tsx:376
+msgid "Claim Tier:"
+msgstr "crwdns162:0crwdne162:0"
+
+#. placeholder {0}: group.name
+#: src/lib/recipe-sources.tsx:398
+msgid "Group limit for {0}:"
+msgstr "crwdns164:0{0}crwdne164:0"
+
+#: src/lib/recipe-sources.tsx:403
+msgid "Minimum distance to Group:"
+msgstr "crwdns166:0crwdne166:0"
+
+#: src/lib/recipe-sources.tsx:406
+msgid "Minimum distance to Claims:"
+msgstr "crwdns168:0crwdne168:0"
+
+#: src/lib/recipe-sources.tsx:414
+msgid "Near Building:"
+msgstr "crwdns170:0crwdne170:0"
+
+#: src/lib/recipe-sources.tsx:430
+msgid "Buff"
+msgstr "crwdns172:0crwdne172:0"
+
+#: src/lib/recipe-sources.tsx:452
+msgid "Effort Required:"
+msgstr "crwdns174:0crwdne174:0"
+
+#: src/lib/recipe-sources.tsx:456
+msgid "Range:"
+msgstr "crwdns176:0crwdne176:0"
+
+#: src/lib/recipe-sources.tsx:478
+msgid "Shows Time Left:"
+msgstr "crwdns178:0crwdne178:0"
+
+#: src/lib/relations.ts:478
+msgid "{verbPhrase} {targetName}"
+msgstr "crwdns180:0{verbPhrase}crwdnd180:0{targetName}crwdne180:0"
+
+#: src/lib/relations.ts:488
+msgid "Construct {buildingName}"
+msgstr "crwdns182:0{buildingName}crwdne182:0"
+
+#: src/lib/relations.ts:496
+msgid "Deconstruct {buildingName}"
+msgstr "crwdns184:0{buildingName}crwdne184:0"
+
+#: src/lib/relations.ts:513
+msgid "{skillName} Task: {itemName}"
+msgstr "crwdns186:0{skillName}crwdnd186:0{itemName}crwdne186:0"
+
+#: src/lib/relations.ts:513
+msgid "Task: {itemName}"
+msgstr "crwdns188:0{itemName}crwdne188:0"
+
+#: src/lib/relations.ts:551
+msgid "Buy {itemName} from {npcName}"
+msgstr "crwdns190:0{itemName}crwdnd190:0{npcName}crwdne190:0"
+
+#: src/lib/relations.ts:556
+msgid "Sell {itemName} to {npcName}"
+msgstr "crwdns192:0{itemName}crwdnd192:0{npcName}crwdne192:0"
+
+#: src/lib/relations.ts:561
+msgid "Trade {reqName} for {offerName} to {npcName}"
+msgstr "crwdns194:0{reqName}crwdnd194:0{offerName}crwdnd194:0{npcName}crwdne194:0"
+
+#: src/lib/relations.ts:587
+msgid "Deplete {resourceName}"
+msgstr "crwdns196:0{resourceName}crwdne196:0"
+
+#: src/lib/sidebar-items.ts:51
+msgid "Compendium"
+msgstr "crwdns198:0crwdne198:0"
+
+#: src/lib/sidebar-items.ts:53
+msgid "Items"
+msgstr "crwdns200:0crwdne200:0"
+
+#: src/lib/sidebar-items.ts:54
+msgid "Cargo"
+msgstr "crwdns202:0crwdne202:0"
+
+#: src/lib/sidebar-items.ts:55
+msgid "Creatures"
+msgstr "crwdns204:0crwdne204:0"
+
+#: src/lib/sidebar-items.ts:56
+msgid "Resources"
+msgstr "crwdns206:0crwdne206:0"
+
+#: src/lib/sidebar-items.ts:57
+msgid "Structures"
+msgstr "crwdns208:0crwdne208:0"
+
+#: src/lib/sidebar-items.ts:58
+msgid "Collection"
+msgstr "crwdns210:0crwdne210:0"
+
+#: src/lib/sidebar-items.ts:59
+#: src/routes/database/cargo/[id].tsx:129
+msgid "Knowledge"
+msgstr "crwdns212:0crwdne212:0"
+
+#: src/lib/sidebar-items.ts:63
+msgid "Item Details"
+msgstr "crwdns214:0crwdne214:0"
+
+#: src/lib/sidebar-items.ts:65
+msgid "Food"
+msgstr "crwdns216:0crwdne216:0"
+
+#: src/lib/sidebar-items.ts:67
+msgid "Tools"
+msgstr "crwdns218:0crwdne218:0"
+
+#: src/lib/sidebar-items.ts:68
+msgid "Weapons"
+msgstr "crwdns220:0crwdne220:0"
+
+#: src/lib/sidebar-items.ts:69
+#: src/lib/table-utils/detail-tab-builders.tsx:604
+msgid "Equipment"
+msgstr "crwdns222:0crwdne222:0"
+
+#: src/lib/sidebar-items.ts:70
+msgid "Item Lists"
+msgstr "crwdns224:0crwdne224:0"
+
+#: src/lib/sidebar-items.ts:74
+msgid "Progression"
+msgstr "crwdns226:0crwdne226:0"
+
+#: src/lib/sidebar-items.ts:76
+msgid "Achievements"
+msgstr "crwdns228:0crwdne228:0"
+
+#: src/lib/sidebar-items.ts:78
+#: src/lib/table-utils/detail-tab-builders.tsx:424
+#: src/lib/table-utils/detail-tab-builders.tsx:431
+msgid "Claim Research"
+msgstr "crwdns230:0crwdne230:0"
+
+#: src/lib/sidebar-items.ts:79
+msgid "Quests"
+msgstr "crwdns232:0crwdne232:0"
+
+#: src/lib/sidebar-items.ts:80
+msgid "Skills"
+msgstr "crwdns234:0crwdne234:0"
+
+#: src/lib/sidebar-items.ts:84
+msgid "Character"
+msgstr "crwdns236:0crwdne236:0"
+
+#: src/lib/sidebar-items.ts:86
+#: src/routes/database/collectible/[id].tsx:112
+msgid "Deployables"
+msgstr "crwdns238:0crwdne238:0"
+
+#: src/lib/sidebar-items.ts:87
+msgid "Placeables"
+msgstr "crwdns240:0crwdne240:0"
+
+#: src/lib/sidebar-items.ts:88
+msgid "Combat Abilities"
+msgstr "crwdns242:0crwdne242:0"
+
+#: src/lib/sidebar-items.ts:89
+#: src/lib/table-defs/food-table.tsx:54
+#: src/lib/table-defs/food-table.tsx:105
+#: src/routes/database/building/[id].tsx:174
+#: src/routes/database/food/[id].tsx:88
+msgid "Buffs"
+msgstr "crwdns244:0crwdne244:0"
+
+#: src/lib/sidebar-items.ts:93
+msgid "World"
+msgstr "crwdns246:0crwdne246:0"
+
+#: src/lib/sidebar-items.ts:95
+#: src/lib/table-utils/detail-tab-builders.tsx:289
+msgid "Traveler Tasks"
+msgstr "crwdns248:0crwdne248:0"
+
+#: src/lib/sidebar-items.ts:97
+#: src/lib/table-utils/detail-tab-builders.tsx:322
+msgid "Traveler Trades"
+msgstr "crwdns250:0crwdne250:0"
+
+#: src/lib/sidebar-items.ts:98
+#: src/routes/database/biome/[id].tsx:47
+msgid "Prospecting"
+msgstr "crwdns252:0crwdne252:0"
+
+#: src/lib/sidebar-items.ts:99
+#: src/lib/table-defs/prospecting-table.tsx:21
+#: src/routes/database/prospecting/[id].tsx:137
+msgid "Biomes"
+msgstr "crwdns254:0crwdne254:0"
+
+#: src/lib/sidebar-items.ts:100
+msgid "Paving"
+msgstr "crwdns256:0crwdne256:0"
+
+#: src/lib/sidebar-items.ts:101
+msgid "Terraforming"
+msgstr "crwdns258:0crwdne258:0"
+
+#: src/lib/sidebar-items.ts:105
+msgid "Toolbox"
+msgstr "crwdns260:0crwdne260:0"
+
+#: src/lib/sidebar-items.ts:107
+msgid "Event Timers"
+msgstr "crwdns262:0crwdne262:0"
+
+#: src/lib/sidebar-items.ts:108
+msgid "Emblem Editor"
+msgstr "crwdns264:0crwdne264:0"
+
+#: src/lib/sidebar-items.ts:109
+msgid "Placeable Graph"
+msgstr "crwdns266:0crwdne266:0"
+
+#: src/lib/sidebar-items.ts:110
+msgid "Quest Graph"
+msgstr "crwdns268:0crwdne268:0"
+
+#: src/lib/table-defs/achievement-table.tsx:16
+#: src/routes/database/achievement/[id].tsx:65
+msgid "Prerequisites"
+msgstr "crwdns270:0crwdne270:0"
+
+#: src/lib/table-defs/achievement-table.tsx:35
+#: src/lib/table-defs/achievement-table.tsx:39
+msgid "Points"
+msgstr "crwdns272:0crwdne272:0"
+
+#: src/lib/table-defs/biome-table.tsx:12
+msgid "Hazard"
+msgstr "crwdns274:0crwdne274:0"
+
+#: src/lib/table-defs/buffs-table.tsx:23
+#: src/lib/table-defs/buffs-table.tsx:34
+#: src/routes/database/buff/[id].tsx:36
+msgid "Buff Type"
+msgstr "crwdns276:0crwdne276:0"
+
+#: src/lib/table-defs/buildings-table.tsx:48
+#: src/lib/table-defs/buildings-table.tsx:107
+#: src/lib/table-defs/claim-research-table.tsx:13
+#: src/lib/table-defs/claim-research-table.tsx:22
+#: src/lib/table-defs/collectible-table.tsx:45
+#: src/lib/table-defs/collectible-table.tsx:57
+#: src/lib/table-defs/deployables-table.tsx:77
+#: src/lib/table-defs/deployables-table.tsx:209
+#: src/lib/table-utils/detail-tab-builders.tsx:679
+#: src/routes/database/achievement/[id].tsx:73
+#: src/routes/database/item/[id].tsx:197
+#: src/routes/database/item/[id].tsx:235
+#: src/routes/database/quest-chain/[id].tsx:207
+#: src/routes/database/quest-chain/[id].tsx:219
+#: src/routes/database/quest-chain/[id].tsx:232
+msgid "Type"
+msgstr "crwdns278:0crwdne278:0"
+
+#: src/lib/table-defs/buildings-table.tsx:57
+#: src/lib/table-defs/buildings-table.tsx:109
+#: src/lib/table-defs/deployables-table.tsx:83
+#: src/lib/table-defs/deployables-table.tsx:210
+#: src/routes/database/deployable/[id].tsx:59
+msgid "Item Slots"
+msgstr "crwdns280:0crwdne280:0"
+
+#: src/lib/table-defs/buildings-table.tsx:60
+#: src/lib/table-defs/buildings-table.tsx:110
+#: src/lib/table-defs/deployables-table.tsx:89
+#: src/lib/table-defs/deployables-table.tsx:211
+msgid "Item Stack Size"
+msgstr "crwdns282:0crwdne282:0"
+
+#: src/lib/table-defs/buildings-table.tsx:73
+#: src/lib/table-defs/buildings-table.tsx:111
+#: src/lib/table-defs/deployables-table.tsx:115
+#: src/lib/table-defs/deployables-table.tsx:213
+#: src/routes/database/building/[id].tsx:107
+#: src/routes/database/deployable/[id].tsx:60
+msgid "Cargo Slots"
+msgstr "crwdns284:0crwdne284:0"
+
+#: src/lib/table-defs/buildings-table.tsx:76
+#: src/lib/table-defs/buildings-table.tsx:112
+#: src/lib/table-defs/deployables-table.tsx:121
+#: src/lib/table-defs/deployables-table.tsx:214
+msgid "Cargo Stack Size"
+msgstr "crwdns286:0crwdne286:0"
+
+#: src/lib/table-defs/buildings-table.tsx:87
+#: src/lib/table-defs/buildings-table.tsx:113
+#: src/routes/database/building/[id].tsx:108
+msgid "Trade Orders"
+msgstr "crwdns288:0crwdne288:0"
+
+#: src/lib/table-defs/buildings-table.tsx:88
+#: src/routes/database/building/[id].tsx:105
+msgid "Crafts per Player"
+msgstr "crwdns290:0crwdne290:0"
+
+#: src/lib/table-defs/buildings-table.tsx:91
+#: src/lib/table-defs/buildings-table.tsx:114
+#: src/routes/database/building/[id].tsx:102
+msgid "Crafting Slots"
+msgstr "crwdns292:0crwdne292:0"
+
+#: src/lib/table-defs/buildings-table.tsx:102
+#: src/lib/table-defs/buildings-table.tsx:115
+#: src/routes/database/building/[id].tsx:109
+msgid "Housing Slots"
+msgstr "crwdns294:0crwdne294:0"
+
+#: src/lib/table-defs/buildings-table.tsx:103
+#: src/lib/table-defs/buildings-table.tsx:116
+#: src/routes/database/building/[id].tsx:110
+msgid "Housing Income"
+msgstr "crwdns296:0crwdne296:0"
+
+#: src/lib/table-defs/cargo-table.tsx:31
+#: src/lib/table-defs/cargo-table.tsx:43
+msgid "Supply"
+msgstr "crwdns298:0crwdne298:0"
+
+#: src/lib/table-defs/claim-research-table.tsx:15
+#: src/routes/database/claim-research/[id].tsx:57
+msgid "Supply Cost"
+msgstr "crwdns300:0crwdne300:0"
+
+#: src/lib/table-defs/claim-research-table.tsx:16
+#: src/routes/database/claim-research/[id].tsx:64
+msgid "Members"
+msgstr "crwdns302:0crwdne302:0"
+
+#: src/lib/table-defs/claim-research-table.tsx:17
+#: src/routes/database/claim-research/[id].tsx:65
+msgid "Area"
+msgstr "crwdns304:0crwdne304:0"
+
+#: src/lib/table-defs/claim-research-table.tsx:18
+msgid "Supply Cap"
+msgstr "crwdns306:0crwdne306:0"
+
+#: src/lib/table-defs/collectible-table.tsx:33
+#: src/routes/database/collectible/[id].tsx:123
+#: src/routes/database/deployable/[id].tsx:136
+msgid "Item Deed"
+msgstr "crwdns308:0crwdne308:0"
+
+#: src/lib/table-defs/collectible-table.tsx:51
+#: src/lib/table-defs/collectible-table.tsx:59
+#: src/lib/table-defs/knowledge-table.tsx:47
+#: src/lib/table-defs/knowledge-table.tsx:59
+#: src/routes/database/collectible/[id].tsx:100
+#: src/routes/database/item/[id].tsx:274
+#: src/routes/database/knowledge/[id].tsx:72
+msgid "Auto Collect"
+msgstr "crwdns310:0crwdne310:0"
+
+#: src/lib/table-defs/collectible-table.tsx:52
+#: src/lib/table-defs/collectible-table.tsx:60
+#: src/routes/database/collectible/[id].tsx:101
+msgid "Locked"
+msgstr "crwdns312:0crwdne312:0"
+
+#: src/lib/table-defs/combat-table.tsx:18
+#: src/lib/table-defs/combat-table.tsx:44
+#: src/routes/database/combat/[id].tsx:71
+msgid "Player Ability"
+msgstr "crwdns314:0crwdne314:0"
+
+#: src/lib/table-defs/combat-table.tsx:21
+#: src/lib/table-defs/combat-table.tsx:45
+#: src/lib/table-defs/weapon-table.tsx:24
+#: src/lib/table-defs/weapon-table.tsx:47
+#: src/routes/database/combat/[id].tsx:72
+msgid "Weapon Type"
+msgstr "crwdns316:0crwdne316:0"
+
+#: src/lib/table-defs/combat-table.tsx:31
+#: src/routes/database/combat/[id].tsx:81
+msgid "Max Range"
+msgstr "crwdns318:0crwdne318:0"
+
+#: src/lib/table-defs/combat-table.tsx:33
+#: src/lib/table-defs/weapon-table.tsx:36
+#: src/lib/table-defs/weapon-table.tsx:52
+#: src/routes/database/combat/[id].tsx:91
+#: src/routes/database/combat/[id].tsx:93
+#: src/routes/database/item/[id].tsx:238
+#: src/routes/database/weapon/[id].tsx:54
+msgid "Cooldown"
+msgstr "crwdns320:0crwdne320:0"
+
+#: src/lib/table-defs/combat-table.tsx:38
+#: src/routes/database/combat/[id].tsx:82
+msgid "Strength Multiplier"
+msgstr "crwdns322:0crwdne322:0"
+
+#: src/lib/table-defs/creature-table.tsx:31
+#: src/lib/table-defs/creature-table.tsx:48
+#: src/lib/table-defs/food-table.tsx:95
+#: src/lib/table-defs/food-table.tsx:109
+#: src/lib/table-defs/placeables-table.tsx:77
+#: src/routes/database/building/[id].tsx:83
+#: src/routes/database/creature/[id].tsx:80
+#: src/routes/database/placeable/[id].tsx:66
+#: src/routes/database/resource/[id].tsx:67
+msgid "Max Health"
+msgstr "crwdns324:0crwdne324:0"
+
+#: src/lib/table-defs/creature-table.tsx:32
+#: src/lib/table-defs/creature-table.tsx:49
+#: src/routes/database/creature/[id].tsx:83
+msgid "Armor"
+msgstr "crwdns326:0crwdne326:0"
+
+#: src/lib/table-defs/creature-table.tsx:33
+#: src/lib/table-defs/creature-table.tsx:50
+#: src/routes/database/creature/[id].tsx:84
+msgid "Accuracy"
+msgstr "crwdns328:0crwdne328:0"
+
+#: src/lib/table-defs/creature-table.tsx:34
+#: src/lib/table-defs/creature-table.tsx:51
+#: src/routes/database/creature/[id].tsx:85
+msgid "Evasion"
+msgstr "crwdns330:0crwdne330:0"
+
+#: src/lib/table-defs/creature-table.tsx:35
+#: src/lib/table-defs/creature-table.tsx:52
+#: src/routes/database/creature/[id].tsx:86
+msgid "Strength"
+msgstr "crwdns332:0crwdne332:0"
+
+#: src/lib/table-defs/creature-table.tsx:36
+#: src/lib/table-defs/creature-table.tsx:53
+#: src/lib/table-defs/weapon-table.tsx:33
+#: src/lib/table-defs/weapon-table.tsx:50
+#: src/routes/database/creature/[id].tsx:87
+#: src/routes/database/item/[id].tsx:236
+#: src/routes/database/weapon/[id].tsx:52
+msgid "Min Damage"
+msgstr "crwdns334:0crwdne334:0"
+
+#: src/lib/table-defs/creature-table.tsx:37
+#: src/lib/table-defs/creature-table.tsx:54
+#: src/lib/table-defs/weapon-table.tsx:34
+#: src/lib/table-defs/weapon-table.tsx:51
+#: src/routes/database/creature/[id].tsx:88
+#: src/routes/database/item/[id].tsx:237
+#: src/routes/database/weapon/[id].tsx:53
+msgid "Max Damage"
+msgstr "crwdns336:0crwdne336:0"
+
+#: src/lib/table-defs/creature-table.tsx:38
+#: src/lib/table-defs/creature-table.tsx:55
+msgid "Huntable"
+msgstr "crwdns338:0crwdne338:0"
+
+#: src/lib/table-defs/creature-table.tsx:39
+#: src/lib/table-defs/creature-table.tsx:56
+#: src/routes/database/creature/[id].tsx:90
+msgid "Attack Level"
+msgstr "crwdns340:0crwdne340:0"
+
+#: src/lib/table-defs/creature-table.tsx:40
+#: src/lib/table-defs/creature-table.tsx:57
+#: src/routes/database/building/[id].tsx:85
+#: src/routes/database/creature/[id].tsx:91
+msgid "Defense Level"
+msgstr "crwdns342:0crwdne342:0"
+
+#: src/lib/table-defs/deployables-table.tsx:95
+#: src/lib/table-defs/deployables-table.tsx:212
+msgid "Total Item Size"
+msgstr "crwdns344:0crwdne344:0"
+
+#: src/lib/table-defs/deployables-table.tsx:127
+#: src/lib/table-defs/deployables-table.tsx:215
+msgid "Total Cargo Size"
+msgstr "crwdns346:0crwdne346:0"
+
+#: src/lib/table-defs/deployables-table.tsx:133
+msgid "Deed"
+msgstr "crwdns348:0crwdne348:0"
+
+#: src/lib/table-defs/deployables-table.tsx:144
+#: src/lib/table-defs/deployables-table.tsx:216
+msgid "Training"
+msgstr "crwdns350:0crwdne350:0"
+
+#: src/lib/table-defs/deployables-table.tsx:148
+#: src/lib/table-defs/deployables-table.tsx:217
+#: src/routes/database/deployable/[id].tsx:50
+msgid "Occupants"
+msgstr "crwdns352:0crwdne352:0"
+
+#: src/lib/table-defs/deployables-table.tsx:154
+#: src/lib/table-defs/deployables-table.tsx:218
+#: src/routes/database/creature/[id].tsx:96
+#: src/routes/database/deployable/[id].tsx:65
+msgid "Movement"
+msgstr "crwdns354:0crwdne354:0"
+
+#: src/lib/table-defs/deployables-table.tsx:160
+#: src/routes/database/deployable/[id].tsx:77
+msgid "Speed"
+msgstr "crwdns356:0crwdne356:0"
+
+#: src/lib/table-defs/deployables-table.tsx:185
+#: src/lib/table-defs/deployables-table.tsx:219
+msgid "Step Height"
+msgstr "crwdns358:0crwdne358:0"
+
+#: src/lib/table-defs/deployables-table.tsx:191
+#: src/lib/table-defs/deployables-table.tsx:220
+msgid "Can Auto-Follow"
+msgstr "crwdns360:0crwdne360:0"
+
+#: src/lib/table-defs/deployables-table.tsx:197
+#: src/lib/table-defs/deployables-table.tsx:221
+msgid "Affected By Wind"
+msgstr "crwdns362:0crwdne362:0"
+
+#: src/lib/table-defs/equipment-table.tsx:27
+#: src/lib/table-defs/equipment-table.tsx:64
+#: src/routes/database/equipment/[id].tsx:32
+#: src/routes/database/item/[id].tsx:209
+msgid "Slots"
+msgstr "crwdns364:0crwdne364:0"
+
+#: src/lib/table-defs/equipment-table.tsx:54
+#: src/lib/table-defs/equipment-table.tsx:66
+#: src/lib/table-defs/tools-table.tsx:32
+#: src/lib/table-defs/tools-table.tsx:40
+#: src/lib/table-defs/traveler-trades-table.tsx:72
+#: src/lib/table-defs/traveler-trades-table.tsx:83
+#: src/routes/database/item/[id].tsx:199
+#: src/routes/database/tool/[id].tsx:42
+msgid "Level"
+msgstr "crwdns366:0crwdne366:0"
+
+#: src/lib/table-defs/food-table.tsx:51
+#: src/lib/table-defs/food-table.tsx:104
+#: src/routes/database/food/[id].tsx:63
+#: src/routes/database/item/[id].tsx:250
+msgid "Satiation"
+msgstr "crwdns368:0crwdne368:0"
+
+#: src/lib/table-defs/food-table.tsx:92
+#: src/lib/table-defs/food-table.tsx:106
+msgid "Food Buffs"
+msgstr "crwdns370:0crwdne370:0"
+
+#: src/lib/table-defs/food-table.tsx:93
+#: src/lib/table-defs/food-table.tsx:107
+msgid "TP Energy"
+msgstr "crwdns372:0crwdne372:0"
+
+#: src/lib/table-defs/food-table.tsx:94
+#: src/lib/table-defs/food-table.tsx:108
+#: src/routes/database/food/[id].tsx:64
+#: src/routes/database/item/[id].tsx:251
+msgid "HP"
+msgstr "crwdns374:0crwdne374:0"
+
+#: src/lib/table-defs/food-table.tsx:96
+#: src/lib/table-defs/food-table.tsx:110
+#: src/routes/database/food/[id].tsx:66
+#: src/routes/database/item/[id].tsx:253
+#: src/routes/database/terraforming/[id].tsx:48
+msgid "Stamina"
+msgstr "crwdns376:0crwdne376:0"
+
+#: src/lib/table-defs/food-table.tsx:97
+#: src/lib/table-defs/food-table.tsx:111
+msgid "Max Stamina"
+msgstr "crwdns378:0crwdne378:0"
+
+#: src/lib/table-defs/food-table.tsx:98
+#: src/lib/table-defs/food-table.tsx:112
+#: src/routes/database/food/[id].tsx:69
+#: src/routes/database/item/[id].tsx:256
+msgid "Consumable In Combat"
+msgstr "crwdns380:0crwdne380:0"
+
+#: src/lib/table-defs/item-list-table.tsx:48
+msgid "Possible Items"
+msgstr "crwdns382:0crwdne382:0"
+
+#: src/lib/table-defs/item-table.tsx:71
+#: src/lib/table-defs/item-table.tsx:92
+#: src/routes/database/cargo/[id].tsx:122
+#: src/routes/database/item/[id].tsx:177
+msgid "Volume"
+msgstr "crwdns384:0crwdne384:0"
+
+#. placeholder {0}: 6000 / props.row.original.volume
+#: src/lib/table-defs/item-table.tsx:78
+msgid "Inventory stack: {0}"
+msgstr "crwdns386:0{0}crwdne386:0"
+
+#: src/lib/table-defs/item-table.tsx:84
+#: src/lib/table-defs/item-table.tsx:93
+msgid "Is Item List"
+msgstr "crwdns388:0crwdne388:0"
+
+#: src/lib/table-defs/knowledge-table.tsx:35
+#: src/lib/table-defs/skills-table.tsx:17
+#: src/routes/database/item/[id].tsx:271
+#: src/routes/database/knowledge/[id].tsx:69
+#: src/routes/database/skill/[id].tsx:39
+msgid "Title"
+msgstr "crwdns390:0crwdne390:0"
+
+#: src/lib/table-defs/knowledge-table.tsx:41
+#: src/lib/table-defs/knowledge-table.tsx:58
+#: src/routes/database/item/[id].tsx:273
+#: src/routes/database/knowledge/[id].tsx:71
+msgid "Known By Default"
+msgstr "crwdns392:0crwdne392:0"
+
+#: src/lib/table-defs/knowledge-table.tsx:57
+#: src/routes/database/item/[id].tsx:272
+#: src/routes/database/knowledge/[id].tsx:70
+msgid "Tag"
+msgstr "crwdns394:0crwdne394:0"
+
+#: src/lib/table-defs/paving-table.tsx:21
+#: src/lib/table-defs/traveler-trades-table.tsx:84
+#: src/lib/table-utils/column-builders.tsx:128
+#: src/routes/database/collectible/[id].tsx:134
+#: src/routes/database/paving/[id].tsx:72
+msgid "Required Knowledge"
+msgstr "crwdns396:0crwdne396:0"
+
+#: src/lib/table-defs/placeables-table.tsx:50
+#: src/lib/table-defs/placeables-table.tsx:92
+#: src/routes/database/placeable/[id].tsx:78
+msgid "Group"
+msgstr "crwdns398:0crwdne398:0"
+
+#: src/lib/table-defs/placeables-table.tsx:80
+#: src/routes/database/placeable/[id].tsx:67
+msgid "Visible to Others"
+msgstr "crwdns400:0crwdne400:0"
+
+#: src/lib/table-defs/prospecting-table.tsx:44
+#: src/routes/database/prospecting/[id].tsx:117
+msgid "Breadcrumb Count"
+msgstr "crwdns402:0crwdne402:0"
+
+#: src/lib/table-defs/prospecting-table.tsx:55
+msgid "Contribution"
+msgstr "crwdns404:0crwdne404:0"
+
+#: src/lib/table-defs/prospecting-table.tsx:61
+msgid "Experience Per Breadcrumb"
+msgstr "crwdns406:0crwdne406:0"
+
+#: src/lib/table-defs/quests-table.tsx:153
+#: src/lib/table-defs/quests-table.tsx:165
+#: src/routes/database/quest-chain/[id].tsx:44
+msgid "Stages"
+msgstr "crwdns408:0crwdne408:0"
+
+#: src/lib/table-defs/quests-table.tsx:157
+#: src/lib/table-defs/traveler-tasks-table.tsx:34
+#: src/routes/database/claim-research/[id].tsx:77
+#: src/routes/database/quest-chain/[id].tsx:202
+msgid "Requirements"
+msgstr "crwdns410:0crwdne410:0"
+
+#: src/lib/table-defs/quests-table.tsx:158
+#: src/lib/table-defs/traveler-tasks-table.tsx:40
+#: src/routes/database/achievement/[id].tsx:67
+#: src/routes/database/quest-chain/[id].tsx:214
+msgid "Rewards"
+msgstr "crwdns412:0crwdne412:0"
+
+#: src/lib/table-defs/quests-table.tsx:159
+#: src/lib/table-defs/quests-table.tsx:166
+#: src/routes/database/quest-chain/[id].tsx:41
+msgid "Is Hint"
+msgstr "crwdns414:0crwdne414:0"
+
+#: src/lib/table-defs/quests-table.tsx:160
+#: src/lib/table-defs/quests-table.tsx:167
+#: src/routes/database/quest-chain/[id].tsx:42
+msgid "Unstartable"
+msgstr "crwdns416:0crwdne416:0"
+
+#: src/lib/table-defs/quests-table.tsx:161
+#: src/lib/table-defs/quests-table.tsx:168
+#: src/routes/database/quest-chain/[id].tsx:43
+msgid "Is Secret"
+msgstr "crwdns418:0crwdne418:0"
+
+#: src/lib/table-defs/skills-table.tsx:20
+#: src/lib/table-defs/skills-table.tsx:28
+msgid "Category"
+msgstr "crwdns420:0crwdne420:0"
+
+#: src/lib/table-defs/skills-table.tsx:24
+#: src/lib/table-defs/skills-table.tsx:29
+#: src/lib/table-defs/traveler-tasks-table.tsx:82
+#: src/lib/table-defs/traveler-tasks-table.tsx:92
+#: src/routes/database/skill/[id].tsx:40
+msgid "Max Level"
+msgstr "crwdns422:0crwdne422:0"
+
+#: src/lib/table-defs/terraforming-table.tsx:14
+#: src/lib/table-defs/terraforming-table.tsx:30
+msgid "Difference"
+msgstr "crwdns424:0crwdne424:0"
+
+#: src/lib/table-defs/terraforming-table.tsx:18
+#: src/lib/table-defs/terraforming-table.tsx:31
+#: src/routes/database/terraforming/[id].tsx:47
+msgid "Effort"
+msgstr "crwdns426:0crwdne426:0"
+
+#: src/lib/table-defs/terraforming-table.tsx:20
+#: src/lib/table-utils/detail-tab-builders.tsx:124
+#: src/routes/database/creature/[id].tsx:150
+msgid "Drops"
+msgstr "crwdns428:0crwdne428:0"
+
+#: src/lib/table-defs/tools-table.tsx:24
+#: src/lib/table-defs/tools-table.tsx:38
+#: src/routes/database/tool/[id].tsx:40
+msgid "Tool Type"
+msgstr "crwdns430:0crwdne430:0"
+
+#: src/lib/table-defs/tools-table.tsx:31
+#: src/lib/table-defs/tools-table.tsx:39
+#: src/routes/database/item/[id].tsx:198
+#: src/routes/database/tool/[id].tsx:41
+msgid "Power"
+msgstr "crwdns432:0crwdne432:0"
+
+#: src/lib/table-defs/traveler-tasks-table.tsx:27
+#: src/lib/table-defs/traveler-trades-table.tsx:28
+#: src/lib/table-utils/column-builders.tsx:161
+#: src/routes/database/biome/[id].tsx:57
+#: src/routes/database/resource/[id].tsx:179
+msgid "Description"
+msgstr "crwdns434:0crwdne434:0"
+
+#: src/lib/table-defs/traveler-tasks-table.tsx:70
+#: src/lib/table-defs/traveler-tasks-table.tsx:90
+#: src/routes/database/creature/[id].tsx:82
+msgid "Exp"
+msgstr "crwdns436:0crwdne436:0"
+
+#: src/lib/table-defs/traveler-tasks-table.tsx:76
+#: src/lib/table-defs/traveler-tasks-table.tsx:91
+msgid "Min Level"
+msgstr "crwdns438:0crwdne438:0"
+
+#: src/lib/table-defs/traveler-trades-table.tsx:35
+#: src/lib/table-defs/traveler-trades-table.tsx:81
+#: src/routes/database/traveler-trade/[id].tsx:79
+msgid "Traveler"
+msgstr "crwdns440:0crwdne440:0"
+
+#: src/lib/table-defs/traveler-trades-table.tsx:44
+#: src/routes/database/prospecting/[id].tsx:163
+msgid "Required Items"
+msgstr "crwdns442:0crwdne442:0"
+
+#: src/lib/table-defs/traveler-trades-table.tsx:50
+msgid "Offer Items"
+msgstr "crwdns444:0crwdne444:0"
+
+#: src/lib/table-defs/traveler-trades-table.tsx:77
+#: src/lib/table-defs/traveler-trades-table.tsx:85
+msgid "Blocking Knowledge"
+msgstr "crwdns446:0crwdne446:0"
+
+#: src/lib/table-defs/weapon-table.tsx:41
+#: src/lib/table-defs/weapon-table.tsx:53
+msgid "Stamina Use Multiplier"
+msgstr "crwdns448:0crwdne448:0"
+
+#: src/lib/table-utils/column-builders.tsx:82
+#: src/routes/database/biome/[id].tsx:52
+#: src/routes/database/collectible/[id].tsx:118
+#: src/routes/database/deployable/[id].tsx:121
+#: src/routes/database/resource/[id].tsx:174
+#: src/routes/database/resource/[id].tsx:193
+msgid "Name"
+msgstr "crwdns450:0crwdne450:0"
+
+#: src/lib/table-utils/column-builders.tsx:178
+#: src/lib/table-utils/column-builders.tsx:291
+msgid "Tags"
+msgstr "crwdns452:0crwdne452:0"
+
+#: src/lib/table-utils/column-builders.tsx:198
+#: src/lib/table-utils/column-builders.tsx:310
+msgid "Rarity"
+msgstr "crwdns454:0crwdne454:0"
+
+#: src/lib/table-utils/column-builders.tsx:223
+#: src/lib/table-utils/column-builders.tsx:325
+#: src/routes/database/claim-research/[id].tsx:39
+#: src/routes/database/resource/[id].tsx:198
+msgid "Tier"
+msgstr "crwdns456:0crwdne456:0"
+
+#: src/lib/table-utils/column-builders.tsx:254
+msgid "Copy ID"
+msgstr "crwdns458:0crwdne458:0"
+
+#: src/lib/table-utils/column-builders.tsx:263
+msgid "Copy Chat Link"
+msgstr "crwdns460:0crwdne460:0"
+
+#: src/lib/table-utils/column-builders.tsx:273
+msgid "View Map"
+msgstr "crwdns462:0crwdne462:0"
+
+#: src/lib/table-utils/column-builders.tsx:369
+msgid "<empty>"
+msgstr "crwdns464:0crwdne464:0"
+
+#: src/lib/table-utils/detail-group-builders.tsx:17
+#: src/routes/database/buff/[id].tsx:37
+msgid "Duration"
+msgstr "crwdns466:0crwdne466:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:76
+msgid "Crafted From"
+msgstr "crwdns468:0crwdne468:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:96
+msgid "Crafts Into"
+msgstr "crwdns470:0crwdne470:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:116
+msgid "Terraforming Drops"
+msgstr "crwdns472:0crwdne472:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:121
+msgid "Elevation Difference"
+msgstr "crwdns474:0crwdne474:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:141
+msgid "Extraction"
+msgstr "crwdns476:0crwdne476:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:148
+msgid "Dropped from"
+msgstr "crwdns478:0crwdne478:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:158
+msgid "Used in"
+msgstr "crwdns480:0crwdne480:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:179
+msgid "Resource Depletion"
+msgstr "crwdns482:0crwdne482:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:203
+#: src/lib/table-utils/detail-tab-builders.tsx:458
+msgid "Construction"
+msgstr "crwdns484:0crwdne484:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:224
+msgid "Builds into"
+msgstr "crwdns486:0crwdne486:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:237
+#: src/lib/table-utils/detail-tab-builders.tsx:470
+msgid "Deconstruction returns"
+msgstr "crwdns488:0crwdne488:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:256
+msgid "Conversion"
+msgstr "crwdns490:0crwdne490:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:263
+msgid "Converted from"
+msgstr "crwdns492:0crwdne492:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:273
+msgid "Converts into"
+msgstr "crwdns494:0crwdne494:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:296
+msgid "Rewarded by"
+msgstr "crwdns496:0crwdne496:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:306
+#: src/lib/table-utils/detail-tab-builders.tsx:340
+msgid "Required for"
+msgstr "crwdns498:0crwdne498:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:329
+msgid "Offered by"
+msgstr "crwdns500:0crwdne500:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:357
+msgid "In Item Lists"
+msgstr "crwdns502:0crwdne502:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:373
+msgid "Item List Output"
+msgstr "crwdns504:0crwdne504:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:377
+msgid "Item list missing"
+msgstr "crwdns506:0crwdne506:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:391
+msgid "Enemy Drops"
+msgstr "crwdns508:0crwdne508:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:407
+msgid "Collectibles"
+msgstr "crwdns510:0crwdne510:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:414
+#: src/lib/table-utils/detail-tab-builders.tsx:601
+#: src/routes/database/achievement/[id].tsx:72
+#: src/routes/database/deployable/[id].tsx:120
+msgid "Collectible"
+msgstr "crwdns512:0crwdne512:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:436
+msgid "Required"
+msgstr "crwdns514:0crwdne514:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:440
+#: src/routes/database/claim-research/[id].tsx:66
+msgid "Supplies"
+msgstr "crwdns516:0crwdne516:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:462
+msgid "No construction recipe"
+msgstr "crwdns518:0crwdne518:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:464
+msgid "Builds from"
+msgstr "crwdns520:0crwdne520:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:468
+msgid "No deconstruction recipe"
+msgstr "crwdns522:0crwdne522:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:484
+msgid "Required for Quests"
+msgstr "crwdns524:0crwdne524:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:491
+#: src/lib/table-utils/detail-tab-builders.tsx:508
+msgid "Quest"
+msgstr "crwdns526:0crwdne526:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:501
+msgid "Rewarded from Quests"
+msgstr "crwdns528:0crwdne528:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:523
+#: src/lib/table-utils/detail-tab-builders.tsx:608
+msgid "Placeable Placement"
+msgstr "crwdns530:0crwdne530:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:543
+msgid "Placeable Interactions"
+msgstr "crwdns532:0crwdne532:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:568
+msgid "Interactions"
+msgstr "crwdns534:0crwdne534:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:575
+msgid "Interact with this placeable"
+msgstr "crwdns536:0crwdne536:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:585
+msgid "Result of other placeable interaction"
+msgstr "crwdns538:0crwdne538:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:602
+msgid "Construction Recipe"
+msgstr "crwdns540:0crwdne540:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:603
+msgid "Crafting Recipe"
+msgstr "crwdns542:0crwdne542:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:605
+msgid "Extraction Recipe"
+msgstr "crwdns544:0crwdne544:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:606
+msgid "Paving Tile"
+msgstr "crwdns546:0crwdne546:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:607
+msgid "Placeable Interaction"
+msgstr "crwdns548:0crwdne548:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:609
+msgid "Resource Placement Recipe"
+msgstr "crwdns550:0crwdne550:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:610
+msgid "Traveler Trade"
+msgstr "crwdns552:0crwdne552:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:611
+#: src/routes/database/traveler-task/[id].tsx:57
+msgid "Traveler Task"
+msgstr "crwdns554:0crwdne554:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx:672
+#: src/lib/table-utils/detail-tab-builders.tsx:680
+msgid "Used By"
+msgstr "crwdns556:0crwdne556:0"
+
+#: src/lib/table-utils/stats-column-builder.tsx:232
+#: src/routes/database/buff/[id].tsx:52
+#: src/routes/database/deployable/[id].tsx:128
+#: src/routes/database/equipment/[id].tsx:41
+#: src/routes/database/knowledge/[id].tsx:79
+msgid "Stats"
+msgstr "crwdns558:0crwdne558:0"
+
+#: src/routes/database/biome/[id].tsx:39
+msgid "Hazard Level"
+msgstr "crwdns560:0crwdne560:0"
+
+#: src/routes/database/biome/[id].tsx:40
+msgid "Disallow Player Build"
+msgstr "crwdns562:0crwdne562:0"
+
+#: src/routes/database/buff/[id].tsx:38
+msgid "Priority"
+msgstr "crwdns564:0crwdne564:0"
+
+#: src/routes/database/buff/[id].tsx:39
+msgid "Beneficial"
+msgstr "crwdns566:0crwdne566:0"
+
+#: src/routes/database/buff/[id].tsx:40
+msgid "Warn Time"
+msgstr "crwdns568:0crwdne568:0"
+
+#: src/routes/database/buff/[id].tsx:42
+msgid "Online Timestamp"
+msgstr "crwdns570:0crwdne570:0"
+
+#: src/routes/database/buff/[id].tsx:137
+msgid "Source"
+msgstr "crwdns572:0crwdne572:0"
+
+#: src/routes/database/building/[id].tsx:68
+msgid "{name} Lvl {level}"
+msgstr "crwdns574:0{name}crwdnd574:0{level}crwdne574:0"
+
+#: src/routes/database/building/[id].tsx:84
+msgid "Ignore Damage"
+msgstr "crwdns576:0crwdne576:0"
+
+#: src/routes/database/building/[id].tsx:86
+msgid "Decay"
+msgstr "crwdns578:0crwdne578:0"
+
+#: src/routes/database/building/[id].tsx:87
+msgid "Maintenance"
+msgstr "crwdns580:0crwdne580:0"
+
+#: src/routes/database/building/[id].tsx:88
+msgid "Light Radius"
+msgstr "crwdns582:0crwdne582:0"
+
+#: src/routes/database/building/[id].tsx:89
+msgid "Rested Buff Duration"
+msgstr "crwdns584:0crwdne584:0"
+
+#: src/routes/database/building/[id].tsx:90
+msgid "Wilderness"
+msgstr "crwdns586:0crwdne586:0"
+
+#: src/routes/database/building/[id].tsx:91
+msgid "Unenterable"
+msgstr "crwdns588:0crwdne588:0"
+
+#: src/routes/database/building/[id].tsx:92
+msgid "Not Deconstructible"
+msgstr "crwdns590:0crwdne590:0"
+
+#: src/routes/database/building/[id].tsx:93
+msgid "Destroy On Unclaim"
+msgstr "crwdns592:0crwdne592:0"
+
+#: src/routes/database/building/[id].tsx:103
+msgid "Total Passive Slots"
+msgstr "crwdns594:0crwdne594:0"
+
+#: src/routes/database/building/[id].tsx:106
+msgid "Storage Slots"
+msgstr "crwdns596:0crwdne596:0"
+
+#: src/routes/database/building/[id].tsx:120
+msgid "Terraform"
+msgstr "crwdns598:0crwdne598:0"
+
+#. placeholder {0}: f.level
+#: src/routes/database/building/[id].tsx:123
+msgid "{funcName} Lvl {0}"
+msgstr "crwdns600:0{funcName}crwdnd600:0{0}crwdne600:0"
+
+#: src/routes/database/building/[id].tsx:161
+#: src/routes/database/claim-research/[id].tsx:54
+msgid "Cost"
+msgstr "crwdns602:0crwdne602:0"
+
+#: src/routes/database/cargo/[id].tsx:123
+msgid "Pick Up Time"
+msgstr "crwdns604:0crwdne604:0"
+
+#: src/routes/database/cargo/[id].tsx:124
+msgid "Place Time"
+msgstr "crwdns606:0crwdne606:0"
+
+#: src/routes/database/cargo/[id].tsx:125
+msgid "Movement Modifier"
+msgstr "crwdns608:0crwdne608:0"
+
+#: src/routes/database/cargo/[id].tsx:126
+msgid "Blocks Path"
+msgstr "crwdns610:0crwdne610:0"
+
+#: src/routes/database/cargo/[id].tsx:127
+msgid "Not Pickupable"
+msgstr "crwdns612:0crwdne612:0"
+
+#: src/routes/database/claim-research/[id].tsx:38
+msgid "Tech"
+msgstr "crwdns614:0crwdne614:0"
+
+#: src/routes/database/claim-research/[id].tsx:56
+msgid "Item Cost"
+msgstr "crwdns616:0crwdne616:0"
+
+#: src/routes/database/claim-research/[id].tsx:58
+msgid "Research Time"
+msgstr "crwdns618:0crwdne618:0"
+
+#: src/routes/database/claim-research/[id].tsx:62
+msgid "Unlocks"
+msgstr "crwdns620:0crwdne620:0"
+
+#: src/routes/database/claim-research/[id].tsx:67
+msgid "XP to mint Hex Coin"
+msgstr "crwdns622:0crwdne622:0"
+
+#: src/routes/database/claim-research/[id].tsx:83
+msgid "Unlocks Techs"
+msgstr "crwdns624:0crwdne624:0"
+
+#: src/routes/database/collectible/[id].tsx:98
+msgid "Collectible Type"
+msgstr "crwdns626:0crwdne626:0"
+
+#: src/routes/database/collectible/[id].tsx:99
+msgid "Invalidates Type"
+msgstr "crwdns628:0crwdne628:0"
+
+#: src/routes/database/collectible/[id].tsx:102
+msgid "Starting Loadout"
+msgstr "crwdns630:0crwdne630:0"
+
+#: src/routes/database/collectible/[id].tsx:103
+msgid "Max Equip Count"
+msgstr "crwdns632:0crwdne632:0"
+
+#: src/routes/database/collectible/[id].tsx:117
+msgid "Deployable"
+msgstr "crwdns634:0crwdne634:0"
+
+#: src/routes/database/collectible/[id].tsx:141
+msgid "Required Knowledge (Convert)"
+msgstr "crwdns636:0crwdne636:0"
+
+#: src/routes/database/combat/[id].tsx:73
+msgid "Auto-cast"
+msgstr "crwdns638:0crwdne638:0"
+
+#: src/routes/database/combat/[id].tsx:74
+msgid "Is Self Targeting"
+msgstr "crwdns640:0crwdne640:0"
+
+#: src/routes/database/combat/[id].tsx:78
+msgid "Combat Stats"
+msgstr "crwdns642:0crwdne642:0"
+
+#: src/routes/database/combat/[id].tsx:80
+msgid "Stamina Use"
+msgstr "crwdns644:0crwdne644:0"
+
+#: src/routes/database/combat/[id].tsx:83
+msgid "Accuracy Multiplier"
+msgstr "crwdns646:0crwdne646:0"
+
+#: src/routes/database/combat/[id].tsx:84
+msgid "Lead In Time"
+msgstr "crwdns648:0crwdne648:0"
+
+#: src/routes/database/combat/[id].tsx:85
+msgid "Inaction Time"
+msgstr "crwdns650:0crwdne650:0"
+
+#: src/routes/database/combat/[id].tsx:86
+msgid "Projectile Speed"
+msgstr "crwdns652:0crwdne652:0"
+
+#: src/routes/database/combat/[id].tsx:87
+msgid "Weapon Durability Lost"
+msgstr "crwdns654:0crwdne654:0"
+
+#: src/routes/database/combat/[id].tsx:94
+msgid "Global Cooldown"
+msgstr "crwdns656:0crwdne656:0"
+
+#: src/routes/database/combat/[id].tsx:95
+msgid "Ignores Global Cooldown"
+msgstr "crwdns658:0crwdne658:0"
+
+#: src/routes/database/combat/[id].tsx:99
+msgid "Threat"
+msgstr "crwdns660:0crwdne660:0"
+
+#: src/routes/database/combat/[id].tsx:101
+msgid "Base Threat"
+msgstr "crwdns662:0crwdne662:0"
+
+#: src/routes/database/combat/[id].tsx:102
+msgid "Threat Per Damage"
+msgstr "crwdns664:0crwdne664:0"
+
+#: src/routes/database/combat/[id].tsx:103
+msgid "Is Taunt"
+msgstr "crwdns666:0crwdne666:0"
+
+#: src/routes/database/combat/[id].tsx:112
+msgid "Self Buffs"
+msgstr "crwdns668:0crwdne668:0"
+
+#: src/routes/database/combat/[id].tsx:113
+msgid "Target Buffs"
+msgstr "crwdns670:0crwdne670:0"
+
+#: src/routes/database/creature/[id].tsx:78
+msgid "Combat"
+msgstr "crwdns672:0crwdne672:0"
+
+#: src/routes/database/creature/[id].tsx:81
+msgid "Health Regen"
+msgstr "crwdns674:0crwdne674:0"
+
+#: src/routes/database/creature/[id].tsx:89
+msgid "Cooldown Multiplier"
+msgstr "crwdns676:0crwdne676:0"
+
+#: src/routes/database/creature/[id].tsx:98
+msgid "Min Speed"
+msgstr "crwdns678:0crwdne678:0"
+
+#: src/routes/database/creature/[id].tsx:99
+msgid "Max Speed"
+msgstr "crwdns680:0crwdne680:0"
+
+#: src/routes/database/creature/[id].tsx:101
+msgid "Evade Range"
+msgstr "crwdns682:0crwdne682:0"
+
+#: src/routes/database/creature/[id].tsx:105
+msgid "Awareness & Aggro"
+msgstr "crwdns684:0crwdne684:0"
+
+#: src/routes/database/creature/[id].tsx:107
+msgid "Day Detect Range"
+msgstr "crwdns686:0crwdne686:0"
+
+#: src/routes/database/creature/[id].tsx:108
+msgid "Day Aggro Range"
+msgstr "crwdns688:0crwdne688:0"
+
+#: src/routes/database/creature/[id].tsx:109
+msgid "Day Deaggro Range"
+msgstr "crwdns690:0crwdne690:0"
+
+#: src/routes/database/creature/[id].tsx:110
+msgid "Night Detect Range"
+msgstr "crwdns692:0crwdne692:0"
+
+#: src/routes/database/creature/[id].tsx:111
+msgid "Night Aggro Range"
+msgstr "crwdns694:0crwdne694:0"
+
+#: src/routes/database/creature/[id].tsx:112
+msgid "Night Deaggro Range"
+msgstr "crwdns696:0crwdne696:0"
+
+#: src/routes/database/creature/[id].tsx:113
+msgid "Deaggro Health"
+msgstr "crwdns698:0crwdne698:0"
+
+#: src/routes/database/creature/[id].tsx:114
+msgid "Awareness Threshold"
+msgstr "crwdns700:0crwdne700:0"
+
+#: src/routes/database/creature/[id].tsx:115
+msgid "Awareness Tick"
+msgstr "crwdns702:0crwdne702:0"
+
+#: src/routes/database/creature/[id].tsx:144
+#: src/routes/database/weapon/[id].tsx:63
+msgid "Combat Actions"
+msgstr "crwdns704:0crwdne704:0"
+
+#: src/routes/database/creature/[id].tsx:159
+msgid "Contribution Loot"
+msgstr "crwdns706:0crwdne706:0"
+
+#: src/routes/database/creature/[id].tsx:167
+msgid "Item List"
+msgstr "crwdns708:0crwdne708:0"
+
+#: src/routes/database/creature/[id].tsx:177
+msgid "Min Contribution"
+msgstr "crwdns710:0crwdne710:0"
+
+#: src/routes/database/creature/[id].tsx:185
+msgid "Output"
+msgstr "crwdns712:0crwdne712:0"
+
+#: src/routes/database/creature/[id].tsx:207
+msgid "Stat Scaling"
+msgstr "crwdns714:0crwdne714:0"
+
+#: src/routes/database/creature/[id].tsx:215
+msgid "Required Players"
+msgstr "crwdns716:0crwdne716:0"
+
+#: src/routes/database/creature/[id].tsx:219
+msgid "Stat Bonuses"
+msgstr "crwdns718:0crwdne718:0"
+
+#: src/routes/database/deployable/[id].tsx:51
+msgid "Allow Hunting"
+msgstr "crwdns720:0crwdne720:0"
+
+#: src/routes/database/deployable/[id].tsx:52
+msgid "Allow Gathering"
+msgstr "crwdns722:0crwdne722:0"
+
+#: src/routes/database/deployable/[id].tsx:53
+msgid "Show After Logout"
+msgstr "crwdns724:0crwdne724:0"
+
+#: src/routes/database/deployable/[id].tsx:57
+msgid "Inventory"
+msgstr "crwdns726:0crwdne726:0"
+
+#: src/routes/database/deployable/[id].tsx:61
+msgid "Barter Slots"
+msgstr "crwdns728:0crwdne728:0"
+
+#: src/routes/database/deployable/[id].tsx:68
+#: src/routes/database/placeable/[id].tsx:89
+#: src/routes/database/resource/[id].tsx:82
+msgid "Water Depth"
+msgstr "crwdns730:0crwdne730:0"
+
+#: src/routes/database/deployable/[id].tsx:69
+msgid "Can Auto Follow"
+msgstr "crwdns732:0crwdne732:0"
+
+#: src/routes/database/deployable/[id].tsx:70
+msgid "Wind Multiplier"
+msgstr "crwdns734:0crwdne734:0"
+
+#: src/routes/database/deployable/[id].tsx:71
+msgid "Can Enter Portals"
+msgstr "crwdns736:0crwdne736:0"
+
+#: src/routes/database/deployable/[id].tsx:72
+msgid "Mounting Radius"
+msgstr "crwdns738:0crwdne738:0"
+
+#: src/routes/database/deployable/[id].tsx:86
+msgid "Placement"
+msgstr "crwdns740:0crwdne740:0"
+
+#: src/routes/database/deployable/[id].tsx:88
+msgid "Placeable on Land"
+msgstr "crwdns742:0crwdne742:0"
+
+#: src/routes/database/deployable/[id].tsx:89
+msgid "Placeable in Water"
+msgstr "crwdns744:0crwdne744:0"
+
+#: src/routes/database/deployable/[id].tsx:90
+msgid "Deploy time"
+msgstr "crwdns746:0crwdne746:0"
+
+#: src/routes/database/deployable/[id].tsx:114
+msgid "Appearances"
+msgstr "crwdns748:0crwdne748:0"
+
+#: src/routes/database/equipment/[id].tsx:33
+#: src/routes/database/item/[id].tsx:212
+msgid "Required Skill"
+msgstr "crwdns750:0crwdne750:0"
+
+#: src/routes/database/equipment/[id].tsx:34
+#: src/routes/database/item/[id].tsx:213
+msgid "Required Level"
+msgstr "crwdns752:0crwdne752:0"
+
+#: src/routes/database/equipment/[id].tsx:35
+msgid "Show In Progression"
+msgstr "crwdns754:0crwdne754:0"
+
+#: src/routes/database/equipment/[id].tsx:74
+#: src/routes/database/food/[id].tsx:80
+#: src/routes/database/food/[id].tsx:83
+#: src/routes/database/knowledge/[id].tsx:112
+#: src/routes/database/quest-chain/[id].tsx:255
+#: src/routes/database/tool/[id].tsx:51
+#: src/routes/database/tool/[id].tsx:54
+msgid "Item"
+msgstr "crwdns756:0crwdne756:0"
+
+#: src/routes/database/food/[id].tsx:65
+#: src/routes/database/item/[id].tsx:252
+msgid "Up To HP"
+msgstr "crwdns758:0crwdne758:0"
+
+#: src/routes/database/food/[id].tsx:67
+#: src/routes/database/item/[id].tsx:254
+msgid "Up To Stamina"
+msgstr "crwdns760:0crwdne760:0"
+
+#: src/routes/database/food/[id].tsx:68
+#: src/routes/database/item/[id].tsx:255
+msgid "Teleportation Energy"
+msgstr "crwdns762:0crwdne762:0"
+
+#: src/routes/database/item/[id].tsx:185
+msgid "Durability"
+msgstr "crwdns764:0crwdne764:0"
+
+#: src/routes/database/item/[id].tsx:186
+#: src/routes/database/resource/[id].tsx:71
+msgid "Compendium Entry"
+msgstr "crwdns766:0crwdne766:0"
+
+#: src/routes/database/item/[id].tsx:239
+#: src/routes/database/weapon/[id].tsx:55
+msgid "Stamina Mult"
+msgstr "crwdns768:0crwdne768:0"
+
+#: src/routes/database/paving/[id].tsx:58
+msgid "Experience"
+msgstr "crwdns770:0crwdne770:0"
+
+#: src/routes/database/paving/[id].tsx:59
+msgid "Build Time"
+msgstr "crwdns772:0crwdne772:0"
+
+#: src/routes/database/paving/[id].tsx:67
+msgid "Consumed Items"
+msgstr "crwdns774:0crwdne774:0"
+
+#: src/routes/database/paving/[id].tsx:73
+msgid "Stat Effects"
+msgstr "crwdns776:0crwdne776:0"
+
+#: src/routes/database/placeable/[id].tsx:76
+msgid "Placement Group"
+msgstr "crwdns778:0crwdne778:0"
+
+#: src/routes/database/placeable/[id].tsx:79
+msgid "Limit"
+msgstr "crwdns780:0crwdne780:0"
+
+#: src/routes/database/placeable/[id].tsx:86
+msgid "Spawn Conditions"
+msgstr "crwdns782:0crwdne782:0"
+
+#: src/routes/database/placeable/[id].tsx:88
+#: src/routes/database/resource/[id].tsx:81
+msgid "Land Elevation"
+msgstr "crwdns784:0crwdne784:0"
+
+#: src/routes/database/prospecting/[id].tsx:118
+msgid "Contribution Per Crumb"
+msgstr "crwdns786:0crwdne786:0"
+
+#: src/routes/database/prospecting/[id].tsx:119
+msgid "% Nodes for Max Contribution"
+msgstr "crwdns788:0crwdne788:0"
+
+#: src/routes/database/prospecting/[id].tsx:120
+msgid "Single Contribution Only"
+msgstr "crwdns790:0crwdne790:0"
+
+#: src/routes/database/prospecting/[id].tsx:121
+msgid "Breadcrumb Distance"
+msgstr "crwdns792:0crwdne792:0"
+
+#: src/routes/database/prospecting/[id].tsx:122
+msgid "Breadcrumb Radius"
+msgstr "crwdns794:0crwdne794:0"
+
+#: src/routes/database/prospecting/[id].tsx:123
+msgid "Deadzone Angle"
+msgstr "crwdns796:0crwdne796:0"
+
+#: src/routes/database/prospecting/[id].tsx:124
+msgid "Join Radius"
+msgstr "crwdns798:0crwdne798:0"
+
+#: src/routes/database/prospecting/[id].tsx:125
+msgid "Experience Per Node"
+msgstr "crwdns800:0crwdne800:0"
+
+#: src/routes/database/prospecting/[id].tsx:126
+msgid "Pointer Duration"
+msgstr "crwdns802:0crwdne802:0"
+
+#: src/routes/database/prospecting/[id].tsx:127
+msgid "Prospecting Duration"
+msgstr "crwdns804:0crwdne804:0"
+
+#: src/routes/database/prospecting/[id].tsx:128
+msgid "Is Aquatic Resource"
+msgstr "crwdns806:0crwdne806:0"
+
+#: src/routes/database/prospecting/[id].tsx:129
+msgid "Allow Aquatic Prospecting"
+msgstr "crwdns808:0crwdne808:0"
+
+#: src/routes/database/prospecting/[id].tsx:130
+msgid "Allow Aquatic Breadcrumb"
+msgstr "crwdns810:0crwdne810:0"
+
+#: src/routes/database/prospecting/[id].tsx:141
+msgid "Biome"
+msgstr "crwdns812:0crwdne812:0"
+
+#: src/routes/database/prospecting/[id].tsx:148
+msgid "Spawns"
+msgstr "crwdns814:0crwdne814:0"
+
+#: src/routes/database/quest-chain/[id].tsx:208
+#: src/routes/database/quest-chain/[id].tsx:234
+msgid "Requirement"
+msgstr "crwdns816:0crwdne816:0"
+
+#: src/routes/database/quest-chain/[id].tsx:220
+msgid "Reward"
+msgstr "crwdns818:0crwdne818:0"
+
+#: src/routes/database/quest-chain/[id].tsx:226
+msgid "Stage Requirements"
+msgstr "crwdns820:0crwdne820:0"
+
+#: src/routes/database/quest-chain/[id].tsx:231
+msgid "Stage"
+msgstr "crwdns822:0crwdne822:0"
+
+#: src/routes/database/quest-chain/[id].tsx:250
+msgid "Stage Rewards"
+msgstr "crwdns824:0crwdne824:0"
+
+#: src/routes/database/resource/[id].tsx:68
+msgid "Ignores Damage"
+msgstr "crwdns826:0crwdne826:0"
+
+#: src/routes/database/resource/[id].tsx:69
+msgid "Show Time Left"
+msgstr "crwdns828:0crwdne828:0"
+
+#: src/routes/database/resource/[id].tsx:70
+msgid "Flattenable"
+msgstr "crwdns830:0crwdne830:0"
+
+#: src/routes/database/resource/[id].tsx:75
+msgid "Resource Spawning"
+msgstr "crwdns832:0crwdne832:0"
+
+#: src/routes/database/resource/[id].tsx:77
+msgid "Despawn Time"
+msgstr "crwdns834:0crwdne834:0"
+
+#: src/routes/database/resource/[id].tsx:78
+msgid "Scheduled Respawn"
+msgstr "crwdns836:0crwdne836:0"
+
+#: src/routes/database/resource/[id].tsx:79
+msgid "Not Respawning"
+msgstr "crwdns838:0crwdne838:0"
+
+#: src/routes/database/resource/[id].tsx:80
+msgid "Spawn Priority"
+msgstr "crwdns840:0crwdne840:0"
+
+#: src/routes/database/resource/[id].tsx:199
+msgid "Max HP"
+msgstr "crwdns842:0crwdne842:0"
+
+#: src/routes/database/terraforming/[id].tsx:50
+msgid "Tool"
+msgstr "crwdns844:0crwdne844:0"
+
+#: src/routes/database/traveler-task/[id].tsx:48
+msgid "Level Range"
+msgstr "crwdns846:0crwdne846:0"
+
+#: src/routes/database/traveler-task/[id].tsx:49
+msgid "XP Reward"
+msgstr "crwdns848:0crwdne848:0"
+
+#: src/routes/database/traveler-trade/[id].tsx:80
+msgid "Starting Stock"
+msgstr "crwdns850:0crwdne850:0"
+
+#: src/routes/database/traveler-trade/[id].tsx:81
+msgid "Always Offered"
+msgstr "crwdns852:0crwdne852:0"
+
+#: src/routes/database/traveler-trade/[id].tsx:82
+msgid "Level Requirements"
+msgstr "crwdns854:0crwdne854:0"
+
+#: src/routes/database/traveler-trade/[id].tsx:83
+msgid "Achievement Requirements"
+msgstr "crwdns856:0crwdne856:0"
+
+#: src/routes/database/traveler-trade/[id].tsx:84
+msgid "Hide If Requirements Not Met"
+msgstr "crwdns858:0crwdne858:0"
+
+#: src/routes/database/weapon/[id].tsx:56
+msgid "Hunting"
+msgstr "crwdns860:0crwdne860:0"
+
+#: src/routes/settings.tsx:177
+msgid "Favorite items"
+msgstr "crwdns862:0crwdne862:0"
+
+#: src/routes/settings.tsx:179
+msgid "Checked items appear in the sidebar. New items are always visible by default."
+msgstr "crwdns864:0crwdne864:0"
+
+#: src/routes/settings.tsx:190
+msgid "No items visible <0>You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?</0>"
+msgstr "crwdns866:0crwdne866:0"
+
+#: src/routes/settings.tsx:219
+msgid "All items visible"
+msgstr "crwdns868:0crwdne868:0"
+
+#: src/routes/settings.tsx:220
+msgid "{count} of {total} items visible"
+msgstr "crwdns870:0{count}crwdnd870:0{total}crwdne870:0"
+
+#: src/routes/settings.tsx:279
+msgid "Settings"
+msgstr "crwdns872:0crwdne872:0"
+
+#: src/routes/settings.tsx:279
+msgid "You are now a developer!"
+msgstr "crwdns874:0crwdne874:0"
+
+#: src/routes/settings.tsx:283
+msgid "Theme"
+msgstr "crwdns876:0crwdne876:0"
+
+#: src/routes/settings.tsx:284
+msgid "Choose how Brico's Toolbox looks."
+msgstr "crwdns878:0crwdne878:0"
+
+#: src/routes/settings.tsx:286
+msgid "Color mode"
+msgstr "crwdns880:0crwdne880:0"
+
+#: src/routes/settings.tsx:286
+msgid "Light, dark, or follow your system preference."
+msgstr "crwdns882:0crwdne882:0"
+
+#: src/routes/settings.tsx:291
+msgid "Light"
+msgstr "crwdns884:0crwdne884:0"
+
+#: src/routes/settings.tsx:292
+msgid "Dark"
+msgstr "crwdns886:0crwdne886:0"
+
+#: src/routes/settings.tsx:293
+msgid "System"
+msgstr "crwdns888:0crwdne888:0"
+
+#: src/routes/settings.tsx:297
+msgid "Midnight"
+msgstr "crwdns890:0crwdne890:0"
+
+#: src/routes/settings.tsx:297
+msgid "High contrast for vampires and OLED enjoyers. Only affects dark mode."
+msgstr "crwdns892:0crwdne892:0"
+
+#: src/routes/settings.tsx:306
+msgid "Language"
+msgstr "crwdns894:0crwdne894:0"
+
+#: src/routes/settings.tsx:307
+msgid "Choose the languages used for Brico's own text and for in-game text."
+msgstr "crwdns896:0crwdne896:0"
+
+#: src/routes/settings.tsx:310
+msgid "Interface language"
+msgstr "crwdns898:0crwdne898:0"
+
+#: src/routes/settings.tsx:311
+msgid "Language for Brico's own labels, menus, and settings."
+msgstr "crwdns900:0crwdne900:0"
+
+#: src/routes/settings.tsx:313
+msgid "Loading…"
+msgstr "crwdns902:0crwdne902:0"
+
+#: src/routes/settings.tsx:321
+msgid "Automatic"
+msgstr "crwdns904:0crwdne904:0"
+
+#: src/routes/settings.tsx:325
+msgid "Game data language"
+msgstr "crwdns906:0crwdne906:0"
+
+#: src/routes/settings.tsx:327
+msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
+msgstr "crwdns908:0crwdne908:0"
+
+#: src/routes/settings.tsx:334
+msgid "Loading translations…"
+msgstr "crwdns910:0crwdne910:0"
+
+#: src/routes/settings.tsx:342
+msgid "Same as interface"
+msgstr "crwdns912:0crwdne912:0"
+
+#: src/routes/settings.tsx:345
+msgid "Want to help translate Brico.app?"
+msgstr ""
+
+#: src/routes/settings.tsx:346
+msgid "Join the project on Crowdin and contribute by using <0>translate.brico.app</0>."
+msgstr ""
+
+#: src/routes/settings.tsx:362
+msgid "Sidebar"
+msgstr "crwdns914:0crwdne914:0"
+
+#: src/routes/settings.tsx:363
+msgid "Customize how the navigation sidebar is organized and displayed."
+msgstr "crwdns916:0crwdne916:0"
+
+#: src/routes/settings.tsx:366
+msgid "Show sidebar controls"
+msgstr "crwdns918:0crwdne918:0"
+
+#: src/routes/settings.tsx:367
+msgid "When disabled, hides the quick controls for the sort order/view style/favorites."
+msgstr "crwdns920:0crwdne920:0"
+
+#: src/routes/settings.tsx:377
+msgid "Collapse sidebar by default"
+msgstr "crwdns922:0crwdne922:0"
+
+#: src/routes/settings.tsx:378
+msgid "Whether to show the sidebar in its collapsed (icon only) state on initial load."
+msgstr "crwdns924:0crwdne924:0"
+
+#: src/routes/settings.tsx:387
+msgid "Sort order"
+msgstr "crwdns926:0crwdne926:0"
+
+#: src/routes/settings.tsx:387
+msgid "Show items grouped by category (tree) or sorted alphabetically."
+msgstr "crwdns928:0crwdne928:0"
+
+#: src/routes/settings.tsx:392
+msgid "Tree"
+msgstr "crwdns930:0crwdne930:0"
+
+#: src/routes/settings.tsx:393
+msgid "A–Z"
+msgstr "crwdns932:0crwdne932:0"
+
+#: src/routes/settings.tsx:397
+msgid "View style"
+msgstr "crwdns934:0crwdne934:0"
+
+#: src/routes/settings.tsx:397
+msgid "Compact list or icon grid."
+msgstr "crwdns936:0crwdne936:0"
+
+#: src/routes/settings.tsx:402
+msgid "List"
+msgstr "crwdns938:0crwdne938:0"
+
+#: src/routes/settings.tsx:403
+msgid "Grid"
+msgstr "crwdns940:0crwdne940:0"
+
+#: src/routes/settings.tsx:408
+msgid "Favorites only"
+msgstr "crwdns942:0crwdne942:0"
+
+#: src/routes/settings.tsx:409
+msgid "When enabled, only your favorite items are shown in the sidebar."
+msgstr "crwdns944:0crwdne944:0"
+
+#: src/routes/settings.tsx:423
+msgid "Tables"
+msgstr "crwdns946:0crwdne946:0"
+
+#: src/routes/settings.tsx:424
+msgid "Options for data tables across the app."
+msgstr "crwdns948:0crwdne948:0"
+
+#: src/routes/settings.tsx:427
+msgid "Default rows per page"
+msgstr "crwdns950:0crwdne950:0"
+
+#: src/routes/settings.tsx:428
+msgid "How many rows are shown per page when a table first loads."
+msgstr "crwdns952:0crwdne952:0"
+
+#: src/routes/settings.tsx:445
+msgid "Show row actions first"
+msgstr "crwdns954:0crwdne954:0"
+
+#: src/routes/settings.tsx:446
+msgid "Moves the <0/> menu to the first column instead of the last."
+msgstr "crwdns956:0crwdne956:0"
+
+#: src/routes/settings.tsx:453
+msgid "Table natural sort order"
+msgstr "crwdns958:0crwdne958:0"
+
+#: src/routes/settings.tsx:454
+msgid "Naturally sort tables by their primary ID, or use the internal database ordering."
+msgstr "crwdns960:0crwdne960:0"
+
+#: src/routes/settings.tsx:455
+msgid "Any manually applied column sort will override this."
+msgstr "crwdns962:0crwdne962:0"
+
+#: src/routes/settings.tsx:462
+msgid "Object ID"
+msgstr "crwdns964:0crwdne964:0"
+
+#: src/routes/settings.tsx:463
+msgid "Database Order"
+msgstr "crwdns966:0crwdne966:0"
+
+#: src/routes/settings.tsx:468
+msgid "Reset hidden columns"
+msgstr "crwdns968:0crwdne968:0"
+
+#. placeholder {0}: hiddenColumnStats().columns
+#. placeholder {1}: hiddenColumnStats().tables
+#: src/routes/settings.tsx:472
+msgid "Un-hide {0, plural, one {# table column} other {# table columns}} across {1, plural, one {# table page} other {# table pages}}."
+msgstr "crwdns970:00={0}crwdnd970:01={1}crwdne970:0"
+
+#: src/routes/settings.tsx:483
+msgid "Reset"
+msgstr "crwdns972:0crwdne972:0"
+
+#: src/routes/settings.tsx:490
+msgid "🥚 Easter Eggs"
+msgstr "crwdns974:0crwdne974:0"
+
+#: src/routes/settings.tsx:491
+msgid "Secret features. How did you even find this?"
+msgstr "crwdns976:0crwdne976:0"
+
+#: src/routes/settings.tsx:494
+msgid "Enable easter eggs"
+msgstr "crwdns978:0crwdne978:0"
+
+#: src/routes/settings.tsx:495
+msgid "Unlocks hidden easter-egg features scattered across the site."
+msgstr "crwdns980:0crwdne980:0"
+
+#: src/routes/settings.tsx:501
+msgid "TF2 Mode"
+msgstr "crwdns982:0crwdne982:0"
+
+#: src/routes/settings.tsx:501
+msgid "Hats"
+msgstr "crwdns984:0crwdne984:0"
+
+#: src/routes/settings.tsx:506
+msgid "Region 9 Mode"
+msgstr "crwdns986:0crwdne986:0"
+
+#: src/routes/settings.tsx:506
+msgid "Jamba Be Praised"
+msgstr "crwdns988:0crwdne988:0"

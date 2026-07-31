@@ -1,3 +1,4 @@
+import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {type IconTypes} from "solid-icons";
 import {FaSolidArrowDownAZ as IconSortAZ, FaSolidFolderTree as IconSortTree, FaSolidToolbox as IconTools} from "solid-icons/fa"
@@ -31,6 +32,8 @@ import {
 } from "~/components/ui/sidebar"
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {VersionChecker} from "~/components/version-checker";
+import {compareText} from "~/lib/i18n";
+import {useLabel} from "~/lib/labels";
 import {useSettings} from "~/lib/settings";
 import {SIDEBAR_GROUPS, type SidebarItemDef} from "~/lib/sidebar-items";
 import {cn} from "~/lib/utils";
@@ -69,6 +72,7 @@ function IconToggleButton<T>(props: {
 
 export function AppSidebar() {
     const state = useSidebar();
+    const label = useLabel();
     const activeMenuItemClasses = "bg-sidebar-foreground text-sidebar-accent-foreground rounded-none";
 
     const {
@@ -103,7 +107,8 @@ export function AppSidebar() {
         const filtered = sidebarFavoritesOnly()
             ? all.filter(i => favoriteHrefs().has(i.href))
             : all;
-        return filtered.sort((a, b) => a.title.localeCompare(b.title));
+        // Sort on the *displayed* label, so A–Z order matches what the user actually sees.
+        return filtered.sort((a, b) => compareText(label(a.titleLabel), label(b.titleLabel)));
     });
 
     return (
@@ -133,14 +138,14 @@ export function AppSidebar() {
                                 value="tree"
                                 selectedValue={sidebarSort()}
                                 onChange={setSidebarSort}
-                                title="Tree view"
+                                title={<Trans>Tree view</Trans>}
                             />
                             <IconToggleButton
                                 icon={IconSortAZ}
                                 value="az"
                                 selectedValue={sidebarSort()}
                                 onChange={setSidebarSort}
-                                title="Alphabetical"
+                                title={<Trans>Alphabetical</Trans>}
                             />
                         </div>
 
@@ -154,9 +159,9 @@ export function AppSidebar() {
                                 onChange={setSidebarFavoritesOnly}
                                 title={
                                     <div class="text-sm">
-                                        {sidebarFavoritesOnly() ? "Showing favorites" : "Showing all items"}<br/>
+                                        {sidebarFavoritesOnly() ? <Trans>Showing favorites</Trans> : <Trans>Showing all items</Trans>}<br/>
                                         <div class="text-xs text-muted-foreground">
-                                            Favorites can be set in the <A href="/settings"><IconSettings class="inline"/> Settings</A>
+                                            <Trans>Favorites can be set in the <A href="/settings"><IconSettings class="inline"/> Settings</A></Trans>
                                         </div>
                                     </div>
                                 }
@@ -170,14 +175,14 @@ export function AppSidebar() {
                                 value="list"
                                 selectedValue={sidebarView()}
                                 onChange={setSidebarView}
-                                title="List view"
+                                title={<Trans>List view</Trans>}
                             />
                             <IconToggleButton
                                 icon={IconViewGrid}
                                 value="grid"
                                 selectedValue={sidebarView()}
                                 onChange={setSidebarView}
-                                title="Grid view"
+                                title={<Trans>Grid view</Trans>}
                             />
                         </div>
                     </div>
@@ -196,7 +201,7 @@ export function AppSidebar() {
                                 <CollapsibleTrigger class="group/collapsible w-full">
                                     <div class="flex flex-row items-center h-8">
                                         <SidebarGroupLabel class="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
-                                            {group.name}
+                                            {label(group.nameLabel)}
                                         </SidebarGroupLabel>
                                         <IconChevronDown
                                             class="mr-2 ml-auto shrink-0 transition-transform group-data-closed/collapsible:rotate-180 group-data-[collapsible=icon]:mx-auto"
@@ -261,7 +266,7 @@ export function AppSidebar() {
                                 <TooltipTrigger as={Button} variant="ghost" size="sm" class="w-9 px-0">
                                     🥣
                                 </TooltipTrigger>
-                                <TooltipContent>cereal - Raw Data Browser</TooltipContent>
+                                <TooltipContent><Trans>cereal - Raw Data Browser</Trans></TooltipContent>
                             </Tooltip>
                         </a>
                     </div>
@@ -279,7 +284,7 @@ export function AppSidebar() {
                             transition-[max-height,opacity] duration-200 ease-linear
                             max-h-6 opacity-100
                             group-data-[collapsible=icon]:max-h-0 group-data-[collapsible=icon]:opacity-0">
-                    <div class="text-muted-foreground text-sm text-center">Not affiliated with Clockwork Labs</div>
+                    <div class="text-muted-foreground text-sm text-center"><Trans>Not affiliated with Clockwork Labs</Trans></div>
                 </div>
             </SidebarFooter>
             <SidebarRail/>
@@ -291,24 +296,26 @@ export function AppSidebar() {
 
 function SidebarListItem(props: { item: SidebarItemDef; activeClass: string }) {
     const item = props.item;
+    const label = useLabel();
     return (
         <SidebarMenuItem>
             <SidebarMenuButton
                 as={A} href={item.href}
                 class={`group-data-[collapsible=icon]:ml-2 ${item.disabled ? "text-muted-foreground pointer-events-none" : ""}`}
                 activeClass={props.activeClass}
-                tooltip={item.title}
+                tooltip={label(item.titleLabel)}
             >
                 <Show when={item.icon} fallback={<IconTools class="size-5"/>}>
                     {(icon) => icon()({class: "size-5 shrink-0"})}
                 </Show>
-                <span class={item.disabled ? "text-muted-foreground" : ""}>{item.title}</span>
+                <span class={item.disabled ? "text-muted-foreground" : ""}>{label(item.titleLabel)}</span>
             </SidebarMenuButton>
         </SidebarMenuItem>
     );
 }
 
 function SidebarGridGroup(props: { items: SidebarItemDef[]; activeClass: string }) {
+    const label = useLabel();
     return (
         <div class="grid grid-cols-3 gap-1 px-1 py-1">
             <For each={props.items}>
@@ -321,7 +328,7 @@ function SidebarGridGroup(props: { items: SidebarItemDef[]; activeClass: string 
                         <Show when={item.icon} fallback={<IconTools class="size-7"/>}>
                             {(icon) => icon()({class: "size-7 shrink-0"})}
                         </Show>
-                        <span class="text-[0.6rem] leading-tight line-clamp-2 w-full">{item.title}</span>
+                        <span class="text-[0.6rem] leading-tight line-clamp-2 w-full">{label(item.titleLabel)}</span>
                     </A>
                 )}
             </For>

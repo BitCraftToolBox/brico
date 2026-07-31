@@ -3,18 +3,25 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
-    "build": "node scripts/check-barrel-imports.mjs && node scripts/gen-version-info.mjs && node scripts/icons/gen-og-icons.mjs && vinxi build",
+    "build": "node scripts/check-barrel-imports.mjs && vinxi build",
+    "build:ci": "node scripts/check-barrel-imports.mjs && node scripts/gen-version-info.mjs && node scripts/icons/gen-og-icons.mjs && vinxi build",
     "start": "vinxi start",
     "typecheck": "node scripts/check-barrel-imports.mjs && tsc --noEmit",
     "gen-version": "node scripts/gen-version-info.mjs",
     "gen-icons": "node scripts/icons/gen-font-icons.mjs",
     "gen-og-icons": "node scripts/icons/gen-og-icons.mjs",
-    "analyze-icons": "npx tsx scripts/icons/analyze-icon-usage.mjs"
+    "analyze-icons": "npx tsx scripts/icons/analyze-icon-usage.mjs",
+    "i18n:extract": "node scripts/i18n/extract.mjs",
+    "i18n:extract-check": "node scripts/i18n/extract.mjs --check",
+    "i18n:audit-fields": "npx tsx scripts/i18n/list-translatable-fields.mjs",
+    "i18n:verify": "npx tsx scripts/i18n/verify-translations.mjs"
   },
   "dependencies": {
     "@clockworklabs/spacetimedb-sdk": "^1.3.0",
     "@fontsource-variable/inter": "^5.2.8",
     "@kobalte/core": "^0.13.10",
+    "@lingui/core": "^6.6.0",
+    "@lingui/solid": "^6.6.0",
     "@solid-primitives/scheduled": "^1.5.3",
     "@solid-primitives/storage": "^4.3.4",
     "@solidjs/meta": "^0.29.4",
@@ -22,12 +29,14 @@
     "@solidjs/start": "^1.3.2",
     "@tanstack/solid-table": "^8.21.3",
     "@tanstack/solid-virtual": "^3.13.10",
+    "@types/d3-dsv": "^3.0.7",
     "@types/d3-selection": "^3.0.11",
     "@types/d3-transition": "^3.0.9",
     "@types/d3-zoom": "^3.0.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk-solid": "^1.1.2",
+    "d3-dsv": "^3.0.1",
     "d3-selection": "^3.0.0",
     "d3-transition": "^3.0.1",
     "d3-zoom": "^3.0.0",
@@ -41,9 +50,13 @@
     "vinxi": "^0.5.8"
   },
   "devDependencies": {
+    "@lingui/babel-plugin-lingui-macro": "^6.6.0",
+    "@lingui/cli": "^6.6.0",
+    "@lingui/vite-plugin": "^6.6.0",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.0.7",
-    "tailwindcss": "^4.0.7"
+    "tailwindcss": "^4.0.7",
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=22"

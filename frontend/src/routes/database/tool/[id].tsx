@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
@@ -36,10 +37,10 @@ export default function ToolDetail() {
             metaKind="tool"
             metaImage={ogImageForAsset(item()?.iconAssetName)}
             details={[
-                {label: "Tool Type", value: toolType()?.name},
-                {label: "Power", value: tool()?.power},
-                {label: "Level", value: tool()?.level},
-                {label: "Skill", value: toolType()?.skillId ? () => <SkillLinkById skillId={toolType()!.skillId}/> : undefined},
+                {label: msg`Tool Type`, value: toolType()?.name},
+                {label: msg`Power`, value: tool()?.power},
+                {label: msg`Level`, value: tool()?.level},
+                {label: msg`Skill`, value: toolType()?.skillId ? () => <SkillLinkById skillId={toolType()!.skillId}/> : undefined},
             ]}
             rawData={tool()}
             spacetimeTable={BitCraftTables.ToolDesc.spacetimeName}
@@ -47,10 +48,10 @@ export default function ToolDetail() {
             chatLink={`(item=${item()?.id})`}
             tabs={[
                 {
-                    id: "item", label: "Item", count: item() ? 1 : 0,
+                    id: "item", label: msg`Item`, count: item() ? 1 : 0,
                     content: () => <Show when={item()}>
                         <RelTable data={[item()!]} columns={[
-                            {header: "Item", cell: row => <A href={`/database/item/${row.id}`}>{row.name}</A>},
+                            {header: msg`Item`, cell: row => <A href={`/database/item/${row.id}`}>{row.name}</A>},
                         ]}/>
                     </Show>,
                 },

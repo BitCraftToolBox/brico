@@ -1,0 +1,4 @@
+# Lingui always writes message catalogs with LF. Pin them so that on machines with
+# core.autocrlf=true the checked-out file doesn't differ from what `lingui extract` regenerates,
+# which would make `npm run i18n:extract-check` report a spurious whole-file diff.
+*.po text eol=lf

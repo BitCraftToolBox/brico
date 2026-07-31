@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {BiomeLink, LinkedList, SkillLinkById} from "~/lib/game-links";
@@ -17,6 +18,7 @@ export const ProspectingDefs: BitCraftToDataDef<ProspectingDesc> = {
         descriptionColumn(),
         {
             id: "Biomes",
+            meta: {label: msg`Biomes`},
             accessorFn: (row) => {
                 const idx = BitCraftTables.BiomeDesc.indexedBy("biomeType", true);
                 return row.biomeRequirements?.map((id) => idx().get(id)?.name ?? `#${id}`) || [];
@@ -39,6 +41,7 @@ export const ProspectingDefs: BitCraftToDataDef<ProspectingDesc> = {
         },
         {
             id: "Breadcrumb Count",
+            meta: {label: msg`Breadcrumb Count`},
             accessorFn: (row) => {
                 const arr = row.breadCrumbCount;
                 if (!arr || arr.length === 0) return undefined;
@@ -49,11 +52,13 @@ export const ProspectingDefs: BitCraftToDataDef<ProspectingDesc> = {
         },
         {
             id: "Contribution",
+            meta: {label: msg`Contribution`},
             accessorKey: "contributionPerVisitedBreadCrumb",
             cell: (props) => <span>{fixFloat(props.row.original.contributionPerVisitedBreadCrumb)}</span>,
         },
         {
             id: "Experience Per Breadcrumb",
+            meta: {label: msg`Experience Per Breadcrumb`},
             accessorFn: (row) => {
                 if (!row.experiencePerNode) return undefined;
                 if (row.experiencePerNode.skillId <= 1) return undefined;

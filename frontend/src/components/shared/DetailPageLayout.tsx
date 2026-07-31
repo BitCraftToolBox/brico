@@ -7,6 +7,7 @@
  * 3. Relationship Tabs: Each tab renders a mini table of related objects
  */
 
+import {Trans} from "@lingui/solid/macro";
 import {useSearchParams} from "@solidjs/router";
 import {
     TbOutlineClipboardCheck as IconClipboardCheck,
@@ -23,24 +24,33 @@ import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardHeader} from "~/components/ui/card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
 import {Rarities} from "~/lib/bitcraft-utils";
+import {sourceRow} from "~/lib/data-translation";
+import {rarityLabel} from "~/lib/game-strings";
+import {type Label, useLabel} from "~/lib/labels";
 import {detailMetaDescription, metaKeywords} from "~/lib/og-meta";
 import {cn} from "~/lib/utils";
 
 // ─── Types ──────────────────────────────────────────────────────
 
 export interface DetailProperty {
-    label: string | (() => JSX.Element);
+    /** A `Label` (see `~/lib/labels`), a plain string, or arbitrary markup. */
+    label: Label | string | (() => JSX.Element);
     value: string | number | boolean | undefined | null | (() => JSX.Element);
 }
 
 export interface DetailGroup {
-    heading?: string | (() => JSX.Element);
+    heading?: Label | string | (() => JSX.Element);
     properties: DetailProperty[];
 }
 
 export interface RelationshipTab {
     id: string;
-    label: string;
+    /**
+     * A `Label` — preferred, because tabs are built by plain factory functions outside any
+     * component, so the text has to be resolved at render time rather than baked in — or a plain
+     * string for call sites not yet migrated.
+     */
+    label: Label | string;
     showWhenEmpty?: boolean;
     count?: number;
     content: () => JSX.Element;
@@ -117,26 +127,29 @@ function visibleProps(props: DetailProperty[]): DetailProperty[] {
 
 // ─── Property Grid ──────────────────────────────────────────────
 
-const PropertyGrid: Component<{ properties: DetailProperty[] }> = (props) => (
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-2 text-sm">
-        <For each={visibleProps(props.properties)}>
-            {(prop) => (
-                <div class="flex flex-col">
-                    <span class="text-muted-foreground text-xs">
-                        {typeof prop.label === "function" ? (prop.label as () => JSX.Element)() : prop.label}
-                    </span>
-                    <span class="font-medium">
-                        {typeof prop.value === "boolean"
-                            ? (prop.value ? "Yes" : "No")
-                            : typeof prop.value === "function"
-                                ? (prop.value as () => JSX.Element)()
-                                : prop.value}
-                    </span>
-                </div>
-            )}
-        </For>
-    </div>
-);
+const PropertyGrid: Component<{ properties: DetailProperty[] }> = (props) => {
+    const label = useLabel();
+    return (
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-2 text-sm">
+            <For each={visibleProps(props.properties)}>
+                {(prop) => (
+                    <div class="flex flex-col">
+                        <span class="text-muted-foreground text-xs">
+                            {typeof prop.label === "function" ? (prop.label as () => JSX.Element)() : label(prop.label)}
+                        </span>
+                        <span class="font-medium">
+                            {typeof prop.value === "boolean"
+                                ? (prop.value ? <Trans>Yes</Trans> : <Trans>No</Trans>)
+                                : typeof prop.value === "function"
+                                    ? (prop.value as () => JSX.Element)()
+                                    : prop.value}
+                        </span>
+                    </div>
+                )}
+            </For>
+        </div>
+    );
+};
 
 // ─── Pseudo-Tab Link ────────────────────────────────────────────
 
@@ -189,6 +202,14 @@ const CopyButton: Component<{
 
 export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     const [searchParams, setSearchParams] = useSearchParams();
+    const tabLabel = useLabel();
+
+    /**
+     * The Raw Data tab shows the *untranslated* row — it is raw. `sourceRow()` returns the original
+     * English row for anything the data layer rewrote, and the row itself when nothing matched, so
+     * callers can keep passing whatever they already render from.
+     */
+    const rawData = () => sourceRow(props.rawData);
 
     const availableTabs = () => props.tabs?.filter(t => t.count === undefined || t.count > 0) ?? [];
     const disabledTabs = () => props.tabs?.filter(t => t.count !== undefined && t.count === 0 && (t.showWhenEmpty ?? true)) ?? [];
@@ -279,8 +300,10 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                     <TierIcon tier={props.tier!}/>
                                 </Show>
                                 <Show when={props.rarity}>
+                                    {/* `rarity` stays the canonical tag — it drives the border color and is what
+                                        URLs/filters carry — so only the displayed text is translated. */}
                                     <span class={`text-sm font-medium px-2 py-0.5 rounded ${Rarities.getBorderColorClass({tag: props.rarity!} as any)} border`}>
-                                        {props.rarity}
+                                        {rarityLabel(props.rarity)}
                                     </span>
                                 </Show>
                             </h1>
@@ -332,7 +355,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                                             <h3 class="text-sm font-semibold text-muted-foreground mb-2 border-b pb-1">
                                                                 {typeof group.heading === "function"
                                                                     ? (group.heading as () => JSX.Element)()
-                                                                    : group.heading}
+                                                                    : tabLabel(group.heading!)}
                                                             </h3>
                                                         </Show>
                                                         <PropertyGrid properties={group.properties}/>
@@ -343,11 +366,11 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                     </div>
                                 </Show>
                                 {/* Raw Data tab */}
-                                <Show when={infoTab() === "raw" && props.rawData}>
+                                <Show when={infoTab() === "raw" && rawData()}>
                                     <div class="flex flex-col gap-3">
                                         <div class="flex gap-2 items-center flex-wrap">
                                             <CopyButton
-                                                content={JSON.stringify(props.rawData, null, 2)}
+                                                content={JSON.stringify(rawData(), null, 2)}
                                                 copyElement={<><IconClipboardText/> Copy JSON</>}
                                             />
                                             <Show when={props.objectId !== undefined}>
@@ -373,7 +396,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                             </Show>
                                         </div>
                                         <pre class="text-xs bg-muted/50 rounded p-3 overflow-auto max-h-[500px] whitespace-pre-wrap break-all">
-                                            {JSON.stringify(props.rawData, null, 2)}
+                                            {JSON.stringify(rawData(), null, 2)}
                                         </pre>
                                     </div>
                                 </Show>
@@ -391,7 +414,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                             <For each={availableTabs()}>
                                                 {(tab) => (
                                                     <TabsTrigger value={tab.id} class="text-sm items-baseline">
-                                                        {tab.label}
+                                                        {tabLabel(tab.label)}
                                                         <Show when={tab.count !== undefined}>
                                                             <span class="ml-1 text-xs text-muted-foreground">({tab.count})</span>
                                                         </Show>
@@ -405,7 +428,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                             <For each={disabledTabs()}>
                                                 {(tab) => (
                                                     <TabsTrigger value={tab.id} disabled class="text-sm opacity-50">
-                                                        {tab.label} (0)
+                                                        {tabLabel(tab.label)} (0)
                                                     </TabsTrigger>
                                                 )}
                                             </For>
@@ -431,7 +454,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
 // ─── Helper: Simple Relationship Table ──────────────────────────
 
 export interface RelTableColumn<T> {
-    header: string;
+    header: Label | string;
     cell: (row: T) => JSX.Element;
     class?: string;
 }
@@ -443,6 +466,7 @@ interface RelTableProps<T> {
 }
 
 export function RelTable<T>(props: RelTableProps<T>) {
+    const label = useLabel();
     return (
         <div class="overflow-auto max-h-[90svh] rounded border">
             <table class="w-full text-sm">
@@ -451,7 +475,7 @@ export function RelTable<T>(props: RelTableProps<T>) {
                     <For each={props.columns}>
                         {(col) => (
                             <th class={cn("text-left px-3 py-2 font-medium text-muted-foreground", col.class)}>
-                                {col.header}
+                                {label(col.header)}
                             </th>
                         )}
                     </For>

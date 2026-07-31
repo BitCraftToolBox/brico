@@ -1,6 +1,10 @@
-import {createMemo, For} from "solid-js";
+import {msg} from "@lingui/core/macro";
+import {Column} from "@tanstack/solid-table";
+import {For} from "solid-js";
 import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
+import {compareText} from "~/lib/i18n";
+import {groupsByPlaceable} from "~/lib/placeables";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {
@@ -14,31 +18,14 @@ import {
     tagFilter,
     tierColumn,
     tierFilter,
-    uniqueValuesFilter,
 } from "~/lib/table-utils/column-builders";
 
-// ─── Group Lookup (for table column) ────────────────────────────
-
-function useGroupMap() {
-    return createMemo(() => {
-        const groups = BitCraftTables.PlaceableGroupDesc.get() ?? [];
-        const map = new Map<number, string[]>();
-        for (const g of groups) {
-            for (const pid of g.placeableIds) {
-                const arr = map.get(pid);
-                if (arr) arr.push(g.name);
-                else map.set(pid, [g.name]);
-            }
-        }
-        return map;
-    });
-}
-
-let _groupMap: ReturnType<typeof useGroupMap> | undefined;
-function getGroupMap() {
-    if (!_groupMap) _groupMap = useGroupMap();
-    return _groupMap;
-}
+// The group lookup is the shared accessor from ~/lib/placeables. It used to be a private
+// `createMemo` cached in a module-level `let`, built lazily from inside whichever row's accessorFn
+// ran first — which meant Solid owned it from that component and disposed it on unmount, freezing
+// the map. See the doc comment on `derivedTableLookup` in ~/lib/spacetime.
+const groupIdsFor = (placeableId: number): number[] =>
+    groupsByPlaceable().get(placeableId)?.map(g => g.id) ?? [];
 
 export const PlaceableDefs: BitCraftToDataDef<PlaceableDesc> = {
     columns: [
@@ -55,25 +42,26 @@ export const PlaceableDefs: BitCraftToDataDef<PlaceableDesc> = {
         tierColumn(),
         rarityColumn(),
         {
+            // Group *ids*, not names. The name is translated game text, so identifying a group by
+            // it meant two groups whose names collapse in some locale became indistinguishable —
+            // the wrong `placementLimit` would show — and it put translated text in the filter's
+            // query param. Ids are canonical and locale-stable; the cell resolves names for display.
             id: 'Group',
-            accessorFn: (row: PlaceableDesc) => {
-                return getGroupMap()()?.get(row.id) ?? [];
-            },
-            getUniqueValues: (row: PlaceableDesc) => {
-                return getGroupMap()()?.get(row.id) ?? [];
-            },
+            meta: {label: msg`Group`},
+            accessorFn: (row: PlaceableDesc) => groupIdsFor(row.id),
+            getUniqueValues: (row: PlaceableDesc) => groupIdsFor(row.id),
             cell: (props: any) => {
-                const groups = props.getValue() as string[];
-                if (!groups?.length) return <></>;
-                const allGroups = BitCraftTables.PlaceableGroupDesc.get() ?? [];
+                const ids = props.getValue() as number[];
+                if (!ids?.length) return <></>;
+                const groupIndex = BitCraftTables.PlaceableGroupDesc.indexedBy("id");
                 return (
                     <div class="flex flex-col gap-0.5">
-                        <For each={groups}>
-                            {(name) => {
-                                const g = allGroups.find(gr => gr.name === name);
+                        <For each={ids}>
+                            {(id) => {
+                                const g = groupIndex().get(id);
                                 return (
                                     <span class="text-xs">
-                                        {name}
+                                        {g?.name ?? `#${id}`}
                                         {g ? <span class="text-muted-foreground ml-1">(limit: {g.placementLimit})</span> : null}
                                     </span>
                                 );
@@ -86,16 +74,32 @@ export const PlaceableDefs: BitCraftToDataDef<PlaceableDesc> = {
         },
         {
             id: 'Max Health',
+            meta: {label: msg`Max Health`},
             accessorKey: "maxHealth",
         },
-        boolColumn("Visible to Others", {accessorKey: "visibleToOthers"}),
+        boolColumn("Visible to Others", {accessorKey: "visibleToOthers"}, msg`Visible to Others`),
         rowActions(),
     ],
     facetedFilters: [
         tagFilter(),
         tierFilter(),
         rarityFilter(),
-        uniqueValuesFilter("Group")
+        {
+            // Bespoke rather than `uniqueValuesFilter("Group")`: the column's values are group ids,
+            // so the label has to be resolved through the group table (translated) while the value
+            // stays the id.
+            column: "Group",
+            title: msg`Group`,
+            type: "value",
+            options: (col: Column<PlaceableDesc> | undefined) => {
+                if (!col) return [];
+                const groupIndex = BitCraftTables.PlaceableGroupDesc.indexedBy("id")();
+                return col.getFacetedUniqueValues().keys()
+                    .map((id: any) => ({label: groupIndex.get(id)?.name ?? `#${id}`, value: id}))
+                    .toArray()
+                    .sort((a, b) => compareText(a.label, b.label));
+            },
+        },
     ],
     searchColumns: ["Name", "Description"],
 };

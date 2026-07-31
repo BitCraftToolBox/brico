@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
@@ -48,18 +49,18 @@ export default function WeaponDetail() {
             metaKind="weapon"
             metaImage={ogImageForAsset(item()?.iconAssetName)}
             details={[
-                {label: "Min Damage", value: weapon()?.minDamage},
-                {label: "Max Damage", value: weapon()?.maxDamage},
-                {label: "Cooldown", value: weapon() ? fixFloat(weapon()!.cooldown) : undefined},
-                {label: "Stamina Mult", value: weapon() ? `${fixFloat(weapon()!.staminaUseMultiplier)}x` : undefined},
-                {label: "Hunting", value: weaponType()?.hunting},
+                {label: msg`Min Damage`, value: weapon()?.minDamage},
+                {label: msg`Max Damage`, value: weapon()?.maxDamage},
+                {label: msg`Cooldown`, value: weapon() ? fixFloat(weapon()!.cooldown) : undefined},
+                {label: msg`Stamina Mult`, value: weapon() ? `${fixFloat(weapon()!.staminaUseMultiplier)}x` : undefined},
+                {label: msg`Hunting`, value: weaponType()?.hunting},
             ]}
             rawData={weapon()}
             spacetimeTable={BitCraftTables.WeaponDesc.spacetimeName}
             objectId={weapon()?.itemId}
             chatLink={`(item=${item()?.id})`}
             tabs={[
-                {id: "combat", label: "Combat Actions", count: combatActions().length, content: () => <CombatActionTable data={combatActions()}/>},
+                {id: "combat", label: msg`Combat Actions`, count: combatActions().length, content: () => <CombatActionTable data={combatActions()}/>},
             ]}
         />
     );

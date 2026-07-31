@@ -1,3 +1,4 @@
+import {msg, t} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {ItemType} from "~/bindings/src/item_type_type";
@@ -7,7 +8,9 @@ import {BuildingIcon} from "~/components/shared/GameIcon";
 import {ItemStackIcon} from "~/components/shared/ItemStacks";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
+import {sourceRow} from "~/lib/data-translation";
 import {breadcrumb, BuffLinkById, LinkedList} from "~/lib/game-links";
+import {trackUILocale} from "~/lib/i18n";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {constructionRecipeForBuilding, deconstructionRecipeForBuilding,} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -48,23 +51,28 @@ export default function BuildingDetail() {
         buildingBuffDescs().reduce((sum, b) => sum + b.buffs.length, 0)
     );
 
+    // `tag` is a game concept here, not display text, so match the untranslated value.
     const empireCurrencyId = createMemo(() =>
-        BitCraftTables.ItemDesc.get()?.find(i => i.tag === "Empire Currency")?.id
+        BitCraftTables.ItemDesc.get()?.find(i => sourceRow(i).tag === "Empire Currency")?.id
     );
 
     const functionNames = createMemo(() => {
         const b = building();
         if (!b) return [];
+        trackUILocale();
         const idx = buildingTypeIndex();
         return b.functions.map(f => {
             const bt = idx.get(f.functionType);
-            return bt ? `${bt.name} Lvl ${f.level}` : `#${f.functionType} Lvl ${f.level}`;
+            const name = bt?.name ?? `#${f.functionType}`;
+            const level = f.level;
+            return t`${name} Lvl ${level}`;
         });
     });
 
     const detailGroups = createMemo((): DetailGroup[] => {
         const b = building();
         if (!b) return [];
+        trackUILocale();
         const groups: DetailGroup[] = [];
 
         const lightRadius = b.lightRadius > 0 ? fixFloat(b.lightRadius) : undefined;
@@ -72,17 +80,17 @@ export default function BuildingDetail() {
         if (lightRadius || restedBuff || b.wilderness || b.unenterable || b.notDeconstructible || b.destroyOnUnclaim) {
             groups.push({
                 properties: [
-                    {label: "Max Health", value: b.maxHealth},
-                    {label: "Ignore Damage", value: b.ignoreDamage ? true : undefined},
-                    {label: "Defense Level", value: b.defenseLevel},
-                    {label: "Decay", value: b.decay > 0 ? fixFloat(b.decay) : undefined},
-                    {label: "Maintenance", value: b.maintenance > 0 ? fixFloat(b.maintenance) : undefined},
-                    {label: "Light Radius", value: lightRadius},
-                    {label: "Rested Buff Duration", value: restedBuff},
-                    {label: "Wilderness", value: b.wilderness ? true : undefined},
-                    {label: "Unenterable", value: b.unenterable ? true : undefined},
-                    {label: "Not Deconstructible", value: b.notDeconstructible ? true : undefined},
-                    {label: "Destroy On Unclaim", value: b.destroyOnUnclaim ? true : undefined},
+                    {label: msg`Max Health`, value: b.maxHealth},
+                    {label: msg`Ignore Damage`, value: b.ignoreDamage ? true : undefined},
+                    {label: msg`Defense Level`, value: b.defenseLevel},
+                    {label: msg`Decay`, value: b.decay > 0 ? fixFloat(b.decay) : undefined},
+                    {label: msg`Maintenance`, value: b.maintenance > 0 ? fixFloat(b.maintenance) : undefined},
+                    {label: msg`Light Radius`, value: lightRadius},
+                    {label: msg`Rested Buff Duration`, value: restedBuff},
+                    {label: msg`Wilderness`, value: b.wilderness ? true : undefined},
+                    {label: msg`Unenterable`, value: b.unenterable ? true : undefined},
+                    {label: msg`Not Deconstructible`, value: b.notDeconstructible ? true : undefined},
+                    {label: msg`Destroy On Unclaim`, value: b.destroyOnUnclaim ? true : undefined},
                 ],
             });
         }
@@ -91,15 +99,15 @@ export default function BuildingDetail() {
             const bt = buildingTypeIndex().get(f.functionType);
             const funcName = bt?.name ?? `Function #${f.functionType}`;
             const funcProps: DetailProperty[] = [];
-            if (f.craftingSlots > 0) funcProps.push({label: "Crafting Slots", value: f.craftingSlots});
-            if (f.refiningSlots > 0) funcProps.push({label: "Total Passive Slots", value: f.refiningSlots});
+            if (f.craftingSlots > 0) funcProps.push({label: msg`Crafting Slots`, value: f.craftingSlots});
+            if (f.refiningSlots > 0) funcProps.push({label: msg`Total Passive Slots`, value: f.refiningSlots});
             if ((f.craftingSlots > 0 && f.concurrentCraftsPerPlayer > 1) || f.refiningSlots > 0)
-                funcProps.push({label: "Crafts per Player", value: f.concurrentCraftsPerPlayer});
-            if (f.storageSlots > 0) funcProps.push({label: "Storage Slots", value: `${f.storageSlots} × ${f.itemSlotSize / 6000}`});
-            if (f.cargoSlots > 0) funcProps.push({label: "Cargo Slots", value: `${f.cargoSlots} × ${f.cargoSlotSize / 6000}`});
-            if (f.tradeOrders > 0) funcProps.push({label: "Trade Orders", value: f.tradeOrders});
-            if (f.housingSlots > 0) funcProps.push({label: "Housing Slots", value: f.housingSlots});
-            if (f.housingIncome > 0) funcProps.push({label: "Housing Income", value: () => (
+                funcProps.push({label: msg`Crafts per Player`, value: f.concurrentCraftsPerPlayer});
+            if (f.storageSlots > 0) funcProps.push({label: msg`Storage Slots`, value: `${f.storageSlots} × ${f.itemSlotSize / 6000}`});
+            if (f.cargoSlots > 0) funcProps.push({label: msg`Cargo Slots`, value: `${f.cargoSlots} × ${f.cargoSlotSize / 6000}`});
+            if (f.tradeOrders > 0) funcProps.push({label: msg`Trade Orders`, value: f.tradeOrders});
+            if (f.housingSlots > 0) funcProps.push({label: msg`Housing Slots`, value: f.housingSlots});
+            if (f.housingIncome > 0) funcProps.push({label: msg`Housing Income`, value: () => (
                 <Tooltip openOnTouchStart>
                     <TooltipTrigger class="decoration-dotted underline">
                         {f.housingIncome}
@@ -109,10 +117,10 @@ export default function BuildingDetail() {
                     </TooltipContent>
                 </Tooltip>
             )});
-            if (f.terraform) funcProps.push({label: "Terraform", value: true});
+            if (f.terraform) funcProps.push({label: msg`Terraform`, value: true});
 
             if (funcProps.length > 0) {
-                groups.push({heading: `${funcName} Lvl ${f.level}`, properties: funcProps});
+                groups.push({heading: t`${funcName} Lvl ${f.level}`, properties: funcProps});
             }
         });
 
@@ -150,7 +158,7 @@ export default function BuildingDetail() {
                             data={buildingBuffDescs()}
                             columns={[
                                 {
-                                    header: "Cost",
+                                    header: msg`Cost`,
                                     cell: row => (
                                         <Show when={row.empireCurrencyCost} fallback={"None"}>
                                             <Show when={empireCurrencyId()}>{id => (
@@ -163,7 +171,7 @@ export default function BuildingDetail() {
                                     ),
                                 },
                                 {
-                                    header: "Buffs",
+                                    header: msg`Buffs`,
                                     cell: row => <LinkedList>
                                         {row.buffs.map(e => (
                                             <BuffLinkById buffId={e.buffId} duration={e.duration}/>

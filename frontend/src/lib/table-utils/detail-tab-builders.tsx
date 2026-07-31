@@ -5,6 +5,9 @@
  * shared across multiple detail pages.
  */
 
+import type {MessageDescriptor} from "@lingui/core";
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {createSignal, Show} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
@@ -44,6 +47,7 @@ import {
 } from "~/components/shared/RecipeDisplay";
 import {Button} from "~/components/ui/button";
 import {BuildingLink, CargoLink, CollectibleLink, IconLink, IconSpan, ItemLink, ItemStackLink, LinkedList, pageIcon, PlaceableLink, QuestChainLink} from "~/lib/game-links";
+import {i18n, trackUILocale} from "~/lib/i18n";
 import {getInteractionName, getPlacementName} from "~/lib/placeables";
 import {
     buildingForConstruction,
@@ -69,7 +73,7 @@ export function craftedFromTab(
 ): RelationshipTab {
     return {
         id: "crafted-from",
-        label: "Crafted From",
+        label: msg`Crafted From`,
         count: recipes.length,
         showWhenEmpty,
         content: () => (
@@ -89,7 +93,7 @@ export function craftsIntoTab(
 ): RelationshipTab {
     return {
         id: "crafts-into",
-        label: "Crafts Into",
+        label: msg`Crafts Into`,
         count: recipes.length,
         showWhenEmpty,
         content: () => (
@@ -109,15 +113,15 @@ export function terraformDropsTab(
 ): RelationshipTab {
     return {
         id: "terraforming",
-        label: "Terraforming Drops",
+        label: msg`Terraforming Drops`,
         count: recipes.length,
         showWhenEmpty,
         content: () => (
             <RelTable data={recipes} columns={[
-                {header: "Elevation Difference", cell: tr => (
+                {header: msg`Elevation Difference`, cell: tr => (
                     <Button variant="ghost" class="w-full" as={A} href={`/database/terraforming/${tr.difference}`}>{tr.difference}</Button>
                 )},
-                {header: "Drops", cell: tr => (
+                {header: msg`Drops`, cell: tr => (
                     <Show when={tr.outputItemStacks?.length}>
                         <ProbabilisticItemStackArray stacks={tr.outputItemStacks!}/>
                     </Show>
@@ -134,14 +138,14 @@ export function extractionTab(
 ): RelationshipTab {
     return {
         id: "extraction",
-        label: "Extraction",
+        label: msg`Extraction`,
         count: drops.length + uses.length,
         showWhenEmpty,
         content: () => (
             <div class="space-y-4">
                 <Show when={drops.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Dropped from</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Dropped from</Trans></h4>
                         <RecipeSelect
                             recipes={drops}
                             nameFor={getExtractionRecipeName}
@@ -151,7 +155,7 @@ export function extractionTab(
                 </Show>
                 <Show when={uses.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Used in</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Used in</Trans></h4>
                         <RecipeSelect
                             recipes={uses}
                             nameFor={getExtractionRecipeName}
@@ -172,7 +176,7 @@ export function depletionTab(
 ): RelationshipTab {
     return {
         id: "depletion",
-        label: "Resource Depletion",
+        label: msg`Resource Depletion`,
         showWhenEmpty,
         count: (extractionDrops.length + extractionUses.length) ? 0 : depletionSources.length,
         content: () => (
@@ -196,7 +200,7 @@ export function constructionCombinedTab(
 ): RelationshipTab {
     return {
         id: "construction",
-        label: "Construction",
+        label: msg`Construction`,
         count: constructsInto.length + deconstructedFrom.length,
         showWhenEmpty,
         content: () => {
@@ -217,7 +221,7 @@ export function constructionCombinedTab(
                 <div class="space-y-4">
                     <Show when={constructsInto.length}>
                         <div>
-                            <h4 class="text-sm text-muted-foreground mb-2">Builds into</h4>
+                            <h4 class="text-sm text-muted-foreground mb-2"><Trans>Builds into</Trans></h4>
                             <RecipeSelect
                                 recipes={constructsInto}
                                 nameFor={getConstructionRecipeName}
@@ -230,7 +234,7 @@ export function constructionCombinedTab(
                     </Show>
                     <Show when={deconstructedFrom.length}>
                         <div>
-                            <h4 class="text-sm text-muted-foreground mb-2">Deconstruction returns</h4>
+                            <h4 class="text-sm text-muted-foreground mb-2"><Trans>Deconstruction returns</Trans></h4>
                             <RecipeSelect
                                 recipes={deconstructedFrom}
                                 nameFor={getDeconstructionRecipeName}
@@ -249,14 +253,14 @@ export function constructionCombinedTab(
 export function conversionTab(inputs: ItemConversionRecipeDesc[], outputs: ItemConversionRecipeDesc[]): RelationshipTab {
     return {
         id: "conversion",
-        label: "Conversion",
+        label: msg`Conversion`,
         count: inputs.length + outputs.length,
         showWhenEmpty: false,
         content: () => (
             <div class="space-y-4">
                 <Show when={outputs.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Converted from</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Converted from</Trans></h4>
                         <RecipeSelect
                             recipes={outputs}
                             nameFor={getConversionRecipeName}
@@ -266,7 +270,7 @@ export function conversionTab(inputs: ItemConversionRecipeDesc[], outputs: ItemC
                 </Show>
                 <Show when={inputs.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Converts into</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Converts into</Trans></h4>
                         <RecipeSelect
                             recipes={inputs}
                             nameFor={getConversionRecipeName}
@@ -282,14 +286,14 @@ export function conversionTab(inputs: ItemConversionRecipeDesc[], outputs: ItemC
 export function travelerTasksTab(taskRewards: TravelerTaskDesc[], taskRequires: TravelerTaskDesc[]): RelationshipTab {
     return {
         id: "traveler-task",
-        label: "Traveler Tasks",
+        label: msg`Traveler Tasks`,
         count: taskRequires.length + taskRewards.length,
         showWhenEmpty: false,
         content: () => (
             <div class="space-y-4">
                 <Show when={taskRewards.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Rewarded by</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Rewarded by</Trans></h4>
                         <RecipeSelect
                             recipes={taskRewards}
                             nameFor={getTravelerTaskName}
@@ -299,7 +303,7 @@ export function travelerTasksTab(taskRewards: TravelerTaskDesc[], taskRequires: 
                 </Show>
                 <Show when={taskRequires.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Required for</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Required for</Trans></h4>
                         <RecipeSelect
                             recipes={taskRequires}
                             nameFor={getTravelerTaskName}
@@ -315,14 +319,14 @@ export function travelerTasksTab(taskRewards: TravelerTaskDesc[], taskRequires: 
 export function travelerTradesTab(tradeOffers: TravelerTradeOrderDesc[], tradeRequires: TravelerTradeOrderDesc[]): RelationshipTab {
     return {
         id: "traveler-trade",
-        label: "Traveler Trades",
+        label: msg`Traveler Trades`,
         count: tradeRequires.length + tradeOffers.length,
         showWhenEmpty: false,
         content: () => (
             <div class="space-y-4">
                 <Show when={tradeOffers.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Offered by</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Offered by</Trans></h4>
                         <RecipeSelect
                             recipes={tradeOffers}
                             nameFor={getTravelerTradeName}
@@ -333,7 +337,7 @@ export function travelerTradesTab(tradeOffers: TravelerTradeOrderDesc[], tradeRe
                 </Show>
                 <Show when={tradeRequires.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Required for</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Required for</Trans></h4>
                         <RecipeSelect
                             recipes={tradeRequires}
                             nameFor={getTravelerTradeName}
@@ -350,7 +354,7 @@ export function travelerTradesTab(tradeOffers: TravelerTradeOrderDesc[], tradeRe
 export function itemListsTab(recipes: ItemListDesc[]): RelationshipTab {
     return {
         id: "item-lists",
-        label: "In Item Lists",
+        label: msg`In Item Lists`,
         count: recipes.length,
         showWhenEmpty: false,
         content: () => (
@@ -366,11 +370,11 @@ export function itemListsTab(recipes: ItemListDesc[]): RelationshipTab {
 export function itemListTab(list: ItemListDesc | undefined): RelationshipTab {
     return {
         id: "item-list",
-        label: "Item List Output",
+        label: msg`Item List Output`,
         count: list ? 1 : 0,
         showWhenEmpty: false,
         content: () => (
-            <Show when={list} fallback={<h4 class="text-sm text-muted-foreground mb-2">Item list missing</h4>}>
+            <Show when={list} fallback={<h4 class="text-sm text-muted-foreground mb-2"><Trans>Item list missing</Trans></h4>}>
                 <RecipeSelect
                     recipes={[list!]}
                     nameFor={getItemListName}
@@ -384,7 +388,7 @@ export function itemListTab(list: ItemListDesc | undefined): RelationshipTab {
 export function enemyDropsTab(enemies: EnemyDesc[]): RelationshipTab {
     return {
         id: "enemy-drops",
-        label: "Enemy Drops",
+        label: msg`Enemy Drops`,
         count: enemies.length,
         showWhenEmpty: false,
         content: () => (
@@ -400,14 +404,14 @@ export function enemyDropsTab(enemies: EnemyDesc[]): RelationshipTab {
 export function collectiblesTab(collectibles: CollectibleDesc[]) : RelationshipTab {
     return {
         id: "collectibles",
-        label: "Collectibles",
+        label: msg`Collectibles`,
         count: collectibles.length,
         showWhenEmpty: false,
         content: () => (
             <RelTable<CollectibleDesc>
                 data={collectibles}
                 columns={[
-                    {header: "Collectible", cell: c => <CollectibleLink id={c.id} name={c.name}/>},
+                    {header: msg`Collectible`, cell: c => <CollectibleLink id={c.id} name={c.name}/>},
                 ]}
             />
         ),
@@ -417,23 +421,23 @@ export function collectiblesTab(collectibles: CollectibleDesc[]) : RelationshipT
 export function claimResearchTab(techs: ClaimTechDesc[]) : RelationshipTab {
     return {
         id: "claim-tech",
-        label: "Claim Research",
+        label: msg`Claim Research`,
         count: techs.length,
         showWhenEmpty: false,
         content: () => (
             <RelTable<ClaimTechDesc>
                 data={techs}
                 columns={[
-                    {header: "Claim Research", cell: c => (
+                    {header: msg`Claim Research`, cell: c => (
                         <IconLink href={`/database/claim-research/${c.id}`} icon={pageIcon("Claim Research")}>
                             {c.name}
                         </IconLink>
                     )},
-                    {header: "Required", cell: c => (
+                    {header: msg`Required`, cell: c => (
                         <LinkedList>
                             {
                                 c.input.map(is => <ItemStackLink stack={is}/>)
-                                    .concat(c.suppliesCost > 0 ? [<IconSpan>Supplies <span class="text-muted-foreground">×{c.suppliesCost}</span></IconSpan>] : [])
+                                    .concat(c.suppliesCost > 0 ? [<IconSpan><Trans>Supplies</Trans> <span class="text-muted-foreground">×{c.suppliesCost}</span></IconSpan>] : [])
                             }
                         </LinkedList>
                     )}
@@ -451,19 +455,19 @@ export function constructionCombinedSingleTab(
 ): RelationshipTab {
     return {
         id: "construction",
-        label: "Construction",
+        label: msg`Construction`,
         count: (constructionRecipe ? 1 : 0) + (deconstructionRecipe ? 1 : 0),
         content: () => (
             <div class="space-y-4">
-                <Show when={constructionRecipe} fallback={<h4 class="text-sm text-muted-foreground mb-2">No construction recipe</h4>}>{cr =>
+                <Show when={constructionRecipe} fallback={<h4 class="text-sm text-muted-foreground mb-2"><Trans>No construction recipe</Trans></h4>}>{cr =>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Builds from</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Builds from</Trans></h4>
                         <ConstructionRecipePanel recipe={cr()}/>
                     </div>
                 }</Show>
-                <Show when={deconstructionRecipe} fallback={<h4 class="text-sm text-muted-foreground mb-2">No deconstruction recipe</h4>}>{dr =>
+                <Show when={deconstructionRecipe} fallback={<h4 class="text-sm text-muted-foreground mb-2"><Trans>No deconstruction recipe</Trans></h4>}>{dr =>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Deconstruction returns</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Deconstruction returns</Trans></h4>
                         <DeconstructionRecipePanel recipe={dr()}/>
                     </div>
                 }</Show>
@@ -477,14 +481,14 @@ export function constructionCombinedSingleTab(
 export function questRequirementsTab(quests: QuestChainDesc[]): RelationshipTab {
     return {
         id: "quest-requirements",
-        label: "Required for Quests",
+        label: msg`Required for Quests`,
         count: quests.length,
         showWhenEmpty: false,
         content: () => (
             <RelTable<QuestChainDesc>
                 data={quests}
                 columns={[
-                    {header: "Quest", cell: q => <QuestChainLink id={q.id} name={q.name}/>},
+                    {header: msg`Quest`, cell: q => <QuestChainLink id={q.id} name={q.name}/>},
                 ]}
             />
         ),
@@ -494,14 +498,14 @@ export function questRequirementsTab(quests: QuestChainDesc[]): RelationshipTab 
 export function questRewardsTab(quests: QuestChainDesc[]): RelationshipTab {
     return {
         id: "quest-rewards",
-        label: "Rewarded from Quests",
+        label: msg`Rewarded from Quests`,
         count: quests.length,
         showWhenEmpty: false,
         content: () => (
             <RelTable<QuestChainDesc>
                 data={quests}
                 columns={[
-                    {header: "Quest", cell: q => <QuestChainLink id={q.id} name={q.name}/>},
+                    {header: msg`Quest`, cell: q => <QuestChainLink id={q.id} name={q.name}/>},
                 ]}
             />
         ),
@@ -516,7 +520,7 @@ export function placeablePlacementTab(
 ): RelationshipTab {
     return {
         id: "placeable-placement",
-        label: "Placeable Placement",
+        label: msg`Placeable Placement`,
         count: placements.length,
         showWhenEmpty,
         content: () => (
@@ -536,7 +540,7 @@ export function placeableInteractionsTab(
 ): RelationshipTab {
     return {
         id: "placeable-interactions",
-        label: "Placeable Interactions",
+        label: msg`Placeable Interactions`,
         count: interactions.length,
         showWhenEmpty,
         content: () => (
@@ -561,14 +565,14 @@ export function placeableInteractionsCombinedTab(
 ): RelationshipTab {
     return {
         id: "interactions",
-        label: "Interactions",
+        label: msg`Interactions`,
         count: interactionsWith.length + interactionsResultingIn.length,
         showWhenEmpty,
         content: () => (
             <div class="space-y-4">
                 <Show when={interactionsWith.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Interact with this placeable</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Interact with this placeable</Trans></h4>
                         <RecipeSelect
                             recipes={interactionsWith}
                             nameFor={getInteractionName}
@@ -578,7 +582,7 @@ export function placeableInteractionsCombinedTab(
                 </Show>
                 <Show when={interactionsResultingIn.length}>
                     <div>
-                        <h4 class="text-sm text-muted-foreground mb-2">Result of other placeable interaction</h4>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Result of other placeable interaction</Trans></h4>
                         <RecipeSelect
                             recipes={interactionsResultingIn}
                             nameFor={getInteractionName}
@@ -593,19 +597,24 @@ export function placeableInteractionsCombinedTab(
 
 // ─── Knowledge Usage Tab ─────────────────────────────────────────
 
-const KNOWLEDGE_USAGE_TYPE_LABELS: Record<KnowledgeUsage["type"], string> = {
-    collectible: "Collectible",
-    constructionRecipe: "Construction Recipe",
-    craftingRecipe: "Crafting Recipe",
-    equipment: "Equipment",
-    extractionRecipe: "Extraction Recipe",
-    pavingTile: "Paving Tile",
-    placeableInteraction: "Placeable Interaction",
-    placeablePlacement: "Placeable Placement",
-    resourcePlacementRecipe: "Resource Placement Recipe",
-    travelerTrade: "Traveler Trade",
-    travelerTaskKnowledgeRequirement: "Traveler Task",
+const KNOWLEDGE_USAGE_TYPE_LABELS: Record<KnowledgeUsage["type"], MessageDescriptor> = {
+    collectible: msg`Collectible`,
+    constructionRecipe: msg`Construction Recipe`,
+    craftingRecipe: msg`Crafting Recipe`,
+    equipment: msg`Equipment`,
+    extractionRecipe: msg`Extraction Recipe`,
+    pavingTile: msg`Paving Tile`,
+    placeableInteraction: msg`Placeable Interaction`,
+    placeablePlacement: msg`Placeable Placement`,
+    resourcePlacementRecipe: msg`Resource Placement Recipe`,
+    travelerTrade: msg`Traveler Trade`,
+    travelerTaskKnowledgeRequirement: msg`Traveler Task`,
 };
+
+function usageTypeLabel(type: KnowledgeUsage["type"]): string {
+    trackUILocale();
+    return i18n._(KNOWLEDGE_USAGE_TYPE_LABELS[type]);
+}
 
 function knowledgeUsageLink(usage: KnowledgeUsage) {
     switch (usage.type) {
@@ -660,15 +669,15 @@ function knowledgeUsageLink(usage: KnowledgeUsage) {
 export function knowledgeUsedByTab(usages: KnowledgeUsage[]): RelationshipTab {
     return {
         id: "used-by",
-        label: "Used By",
+        label: msg`Used By`,
         count: usages.length,
         showWhenEmpty: false,
         content: () => (
             <RelTable<KnowledgeUsage>
                 data={usages}
                 columns={[
-                    {header: "Type", cell: usage => <span>{KNOWLEDGE_USAGE_TYPE_LABELS[usage.type]}</span>},
-                    {header: "Used By", cell: knowledgeUsageLink},
+                    {header: msg`Type`, cell: usage => <span>{usageTypeLabel(usage.type)}</span>},
+                    {header: msg`Used By`, cell: knowledgeUsageLink},
                 ]}
             />
         ),

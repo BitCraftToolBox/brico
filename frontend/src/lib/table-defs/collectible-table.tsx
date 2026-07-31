@@ -1,5 +1,10 @@
+import {msg} from "@lingui/core/macro";
+import {CellContext} from "@tanstack/solid-table";
+import {JSX} from "solid-js";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
+import type CollectibleType from "~/bindings/src/collectible_type_type";
 import {CollectibleIcon, ItemIcon} from "~/components/shared/GameIcon";
+import {collectibleTypeLabel} from "~/lib/game-strings";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {
@@ -25,6 +30,7 @@ export const CollectibleDefs: BitCraftToDataDef<CollectibleDesc> = {
         descriptionColumn(),
         {
             id: "Item Deed",
+            meta: {label: msg`Item Deed`},
             accessorKey: "itemDeedId",
             cell: (props) => {
                 const item = props.getValue();
@@ -34,18 +40,24 @@ export const CollectibleDefs: BitCraftToDataDef<CollectibleDesc> = {
             },
         },
         tagColumn(),
-        {id: "Type", accessorKey: "collectibleType.tag", filterFn: includedIn<CollectibleDesc>()},
+        {
+            id: "Type",
+            meta: {label: msg`Type`},
+            accessorKey: "collectibleType.tag",
+            cell: (props: CellContext<any, CollectibleType["tag"]>): JSX.Element => collectibleTypeLabel(props.getValue()),
+            filterFn: includedIn<CollectibleDesc>()
+        },
         rarityColumn({accessorKey: "collectibleRarity.tag"}),
-        boolColumn("Auto Collect", {accessorKey: "autoCollect"}),
-        boolColumn("Locked", {accessorKey: "locked"}),
+        boolColumn("Auto Collect", {accessorKey: "autoCollect"}, msg`Auto Collect`),
+        boolColumn("Locked", {accessorKey: "locked"}, msg`Locked`),
         rowActions(undefined, "col"),
     ],
     facetedFilters: [
         tagFilter(),
-        uniqueValuesFilter("Type"),
+        uniqueValuesFilter("Type", msg`Type`),
         rarityFilter(),
-        boolFilter("Auto Collect"),
-        boolFilter("Locked"),
+        boolFilter("Auto Collect", msg`Auto Collect`),
+        boolFilter("Locked", msg`Locked`),
     ],
     searchColumns: ["Name", "Description"],
 };

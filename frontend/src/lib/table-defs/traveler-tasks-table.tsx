@@ -1,9 +1,12 @@
+import {msg} from "@lingui/core/macro";
 import {CellContext} from "@tanstack/solid-table";
 import {Show} from "solid-js";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {ItemStackArray} from "~/components/shared/ItemStacks";
+import {sourceRow} from "~/lib/data-translation";
 import {SkillLinkById} from "~/lib/game-links";
+import {gameText} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
@@ -21,17 +24,20 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
     columns: [
         headerColumn({
             title: "Description",
+            label: gameText(msg`Description`),
             accessor: {accessorKey: "description"},
             route: tt => ["traveler-task", tt.id],
             customRender: (val) => <span class="text-sm text-balance">{val}</span>,
         }),
         {
             id: "Requirements",
+            meta: {label: msg`Requirements`},
             accessorKey: "requiredItems",
             cell: renderItemStackArray,
         },
         {
             id: "Rewards",
+            meta: {label: msg`Rewards`},
             accessorKey: "rewardedItems",
             cell: renderItemStackArray,
             sortingFn: (rowA, rowB) => {
@@ -44,10 +50,13 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
         },
         {
             id: "Skill",
+            meta: {label: msg`Skill`},
             accessorFn: task => {
+                // English value — filterable, so it ends up in shared URLs. The cell renders
+                // SkillLinkById, which localizes for display. See table-utils/column-builders.tsx.
                 const skillIndex = BitCraftTables.SkillDesc.indexedBy("id")();
                 if (!task.levelRequirement.skillId) return "";
-                const skillData = skillIndex.get(task.levelRequirement.skillId);
+                const skillData = sourceRow(skillIndex.get(task.levelRequirement.skillId));
                 return skillData ? skillData.name : "Unknown";
             },
             cell: (props) => {
@@ -58,26 +67,29 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
         },
         {
             id: "Exp",
+            meta: {label: msg`Exp`},
             accessorKey: "rewardedExperience.quantity",
             filterFn: 'inNumberRange'
         },
         {
             id: "Min Level",
+            meta: {label: msg`Min Level`},
             accessorKey: "levelRequirement.minLevel",
             filterFn: 'inNumberRange'
         },
         {
             id: "Max Level",
+            meta: {label: msg`Max Level`},
             accessorKey: "levelRequirement.maxLevel",
             filterFn: 'inNumberRange'
         },
         rowActions(),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Skill"),
-        rangeFilter("Exp"),
-        rangeFilter("Min Level"),
-        rangeFilter("Max Level"),
+        uniqueValuesFilter("Skill", msg`Skill`),
+        rangeFilter("Exp", msg`Exp`),
+        rangeFilter("Min Level", msg`Min Level`),
+        rangeFilter("Max Level", msg`Max Level`),
     ],
     searchColumns: ["Description"],
 }

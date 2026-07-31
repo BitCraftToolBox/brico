@@ -1,3 +1,4 @@
+import {Trans} from "@lingui/solid/macro";
 import {Component} from "solid-js";
 
 interface AppLoadingScreenProps {
@@ -14,7 +15,7 @@ const AppLoadingScreen: Component<AppLoadingScreenProps> = (props) => {
             <div class="flex flex-col items-center gap-2">
                 <p class="text-lg font-semibold tracking-wide">Brico's Toolbox</p>
                 <p class="text-sm text-muted-foreground">
-                    Loading game data… {props.loaded}/{props.total}
+                    <Trans>Loading game data… {props.loaded}/{props.total}</Trans>
                 </p>
             </div>
             <div class="w-64 overflow-hidden rounded-full bg-muted h-2">

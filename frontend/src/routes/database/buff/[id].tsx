@@ -1,13 +1,15 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {breadcrumb, IconLink, pageIcon} from "~/lib/game-links";
+import {statLabel} from "~/lib/game-strings";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {SidebarPages} from "~/lib/sidebar-items";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {fixFloat, readableSeconds, splitCamelCase} from "~/lib/utils";
+import {fixFloat, readableSeconds} from "~/lib/utils";
 
 export default function BuffDetail() {
     const params = useParams();
@@ -31,13 +33,13 @@ export default function BuffDetail() {
         if (!b) return [];
         const groups: DetailGroup[] = [{
             properties: [
-                {label: "Buff Type", value: buffType()?.name},
-                {label: "Duration", value: b.duration ? readableSeconds(b.duration) : "Unspecified"},
-                {label: "Priority", value: b.priority},
-                {label: "Beneficial", value: b.beneficial},
-                {label: "Warn Time", value: b.warnTime ? `${fixFloat(b.warnTime)}s` : undefined},
+                {label: msg`Buff Type`, value: buffType()?.name},
+                {label: msg`Duration`, value: b.duration ? readableSeconds(b.duration) : "Unspecified"},
+                {label: msg`Priority`, value: b.priority},
+                {label: msg`Beneficial`, value: b.beneficial},
+                {label: msg`Warn Time`, value: b.warnTime ? `${fixFloat(b.warnTime)}s` : undefined},
                 {
-                    label: "Online Timestamp",
+                    label: msg`Online Timestamp`,
                     value: () => <Tooltip openOnTouchStart>
                         <TooltipTrigger class="decoration-dotted underline">{b.onlineTimestamp ? "Yes" : "No"}</TooltipTrigger>
                         <TooltipContent class="max-w-[90svw]">If No, buff ticks down while offline.</TooltipContent>
@@ -47,9 +49,9 @@ export default function BuffDetail() {
         }];
         if (b.stats?.length) {
             groups.push({
-                heading: "Stats",
+                heading: msg`Stats`,
                 properties: b.stats.map(s => ({
-                    label: splitCamelCase(s.id?.tag ?? ""),
+                    label: statLabel(s.id?.tag),
                     value: `${fixFloat(s.value * (s.isPct ? 100 : 1))}${s.isPct ? "%" : ""}`,
                 })),
             });
@@ -132,7 +134,7 @@ export default function BuffDetail() {
                     content: () => <RelTable
                         data={sources()}
                         columns={[{
-                            header: "Source",
+                            header: msg`Source`,
                             cell: row => <IconLink href={row.href} icon={pageIcon(row.iconPage)}>{row.name}</IconLink>,
                         }]}
                     />,
