@@ -20,8 +20,15 @@ files:
     languages_mapping:
       locale:
         # <crowdin language id>: <directory name>
+        de-DE: de
+        es-ES: es
+        fr-FR: fr
+        ja-JP: ja
+        pl-PL: pl
+        ru-RU: ru
         zh-CN: zh-Hans
         zh-TW: zh-Hant
+        zu-ZA: zu
     # Lingui writes the source string as msgid and carries translator context in PO comments,
     # which Crowdin surfaces natively.
     update_option: update_as_unapproved

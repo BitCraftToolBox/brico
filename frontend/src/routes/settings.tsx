@@ -346,7 +346,7 @@ export default function SettingsPage() {
                                      Join the project on Crowdin and contribute by using <span class="font-mono">translate.brico.app</span>.
                                  </Trans>}>
                         <div class="flex flex-col sm:flex-row gap-2">
-                            <Button as={"a"} variant="outline" href="https://crowdin.com/project/brico">
+                            <Button as={"a"} variant="outline" href="https://crowdin.com/project/brico" target="_blank">
                                 <IconCrowdin class="size-4 shrink-0"/> <span>Crowdin</span>
                             </Button>
                             <Button as={"a"} variant="outline" href="https://translate.brico.app">
