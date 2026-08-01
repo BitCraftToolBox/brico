@@ -3,7 +3,7 @@ import {ColumnFiltersState, PaginationState, SortingState} from "@tanstack/solid
 import {Accessor, createContext, createEffect, createMemo, createSignal, JSX, onCleanup, onMount, Setter, useContext} from "solid-js";
 import {isServer} from "solid-js/web";
 import {dataLocaleFor, isDataLocale} from "~/lib/data-translation";
-import {detectUILocale, isUILocale, type UILocale} from "~/lib/i18n";
+import {crowdinTargetUILocale, DEFAULT_UI_LOCALE, detectUILocale, isUILocale, PSEUDOLOCALE_ENABLED, type UILocale} from "~/lib/i18n";
 import {ALL_SIDEBAR_HREFS} from "~/lib/sidebar-items";
 
 /**
@@ -318,11 +318,21 @@ function createSettings(): AppSettings {
     };
 
     // language
+    //
+    // Under Crowdin's in-context editor (`PSEUDOLOCALE_ENABLED`), both resolved locales ignore
+    // the persisted setting entirely rather than merely defaulting: a translator's browser may
+    // carry a `uiLocale`/`dataLocale` saved from an earlier, ordinary visit to the site, and
+    // without this override that stale preference — not the pseudolocale / target-language pair
+    // the review session needs — would win. Forcing at the *resolved* layer (rather than e.g.
+    // only changing what "auto" means) also means flipping the Settings selects during a review
+    // session can't desync the two systems either.
     const resolvedUILocale = createMemo<UILocale>(() => {
+        if (PSEUDOLOCALE_ENABLED) return "zu";
         const stored = uiLocale();
         return isUILocale(stored) ? stored : detectUILocale();
     });
     const resolvedDataLocale = createMemo<string>(() => {
+        if (PSEUDOLOCALE_ENABLED) return dataLocaleFor(crowdinTargetUILocale() ?? DEFAULT_UI_LOCALE);
         const stored = dataLocale();
         // Anything unrecognized — the AUTO_LOCALE sentinel, but also a locale dropped from
         // DATA_LOCALES upstream — follows the UI language rather than requesting a CSV that 404s.

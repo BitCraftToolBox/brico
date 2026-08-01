@@ -60,6 +60,7 @@ function LocaleSelect(props: {
     onChange: (v: string) => void;
     options: readonly string[];
     autoLabel: string;
+    disabled?: boolean;
 }) {
     const options = () => [AUTO_LOCALE, ...props.options];
     const label = (locale: string) => locale === AUTO_LOCALE ? props.autoLabel : localeLabel(locale);
@@ -68,6 +69,7 @@ function LocaleSelect(props: {
             value={props.value}
             onChange={(v) => v && props.onChange(v)}
             options={options()}
+            disabled={props.disabled}
             itemComponent={(p) => <SelectItem item={p.item}>{label(p.item.rawValue)}</SelectItem>}
         >
             <SelectTrigger class="h-8 w-[200px]">
@@ -311,6 +313,9 @@ export default function SettingsPage() {
                             <Show when={uiLocaleLoading()}>
                                 {" "}<span class="text-muted-foreground"><Trans>Loading…</Trans></span>
                             </Show>
+                            <Show when={PSEUDOLOCALE_ENABLED}>
+                                <br/><span class="text-muted-foreground"><Trans>Forced to the pseudolocale for Crowdin review.</Trans></span>
+                            </Show>
                         </>}
                     >
                         <LocaleSelect
@@ -318,6 +323,7 @@ export default function SettingsPage() {
                             onChange={settings.setUILocale}
                             options={UI_LOCALES}
                             autoLabel={_(msg`Automatic`)}
+                            disabled={PSEUDOLOCALE_ENABLED}
                         />
                     </SettingsRow>
                     <SettingsRow
@@ -332,6 +338,9 @@ export default function SettingsPage() {
                             <Show when={dataTranslationsPending()}>
                                 <br/><span class="text-muted-foreground"><Trans>Loading translations…</Trans></span>
                             </Show>
+                            <Show when={PSEUDOLOCALE_ENABLED}>
+                                <br/><span class="text-muted-foreground"><Trans>Forced to Crowdin's target language for review.</Trans></span>
+                            </Show>
                         </>}
                     >
                         <LocaleSelect
@@ -339,12 +348,15 @@ export default function SettingsPage() {
                             onChange={settings.setDataLocale}
                             options={DATA_LOCALES}
                             autoLabel={_(msg`Same as interface`)}
+                            disabled={PSEUDOLOCALE_ENABLED}
                         />
                     </SettingsRow>
-                    <SettingsRow label={<Trans>Want to help translate Brico.app?</Trans>}
-                                 description={<Trans>
-                                     Join the project on Crowdin and contribute by using <span class="font-mono">translate.brico.app</span>.
-                                 </Trans>}>
+                    <SettingsRow
+                        label={<Trans>Want to help translate Brico.app?</Trans>}
+                        description={<Trans>
+                            Join the project on Crowdin and contribute by using <span class="font-mono">translate.brico.app</span>.
+                        </Trans>}
+                    >
                         <div class="flex flex-col sm:flex-row gap-2">
                             <Button as={"a"} variant="outline" href="https://crowdin.com/project/brico" target="_blank">
                                 <IconCrowdin class="size-4 shrink-0"/> <span>Crowdin</span>

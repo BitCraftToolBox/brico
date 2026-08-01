@@ -62,7 +62,7 @@ const REGION_ALIASES: Record<string, UILocale> = {
 };
 
 /** Best `UI_LOCALES` match for one BCP-47 tag, or `undefined` if nothing fits. */
-function matchUILocale(tag: string): UILocale | undefined {
+export function matchUILocale(tag: string): UILocale | undefined {
     const lower = tag.toLowerCase();
     const exact = UI_LOCALES.find(l => l.toLowerCase() === lower);
     if (exact) return exact;
@@ -88,6 +88,40 @@ export function detectUILocale(): UILocale {
         if (match) return match;
     }
     return DEFAULT_UI_LOCALE;
+}
+
+// ── Crowdin in-context editor ────────────────────────────────
+
+declare global {
+    interface Window {
+        /**
+         * Set synchronously by `//cdn.crowdin.com/jipt/jipt.js` (loaded in `entry-server.tsx`'s
+         * `<head>`, before the app bundle) once a translator opens the in-context overlay from
+         * Crowdin with a target language selected.
+         */
+        jipt?: {target_language?: string};
+    }
+}
+
+/**
+ * The UI locale Crowdin's in-context editor is currently proofreading in, read from
+ * `window.jipt.target_language` (a Crowdin locale code, e.g. `de-DE`, `zh-CN`).
+ *
+ * `matchUILocale` already normalizes BCP-47-ish tags the same way it does for
+ * `navigator.languages` (`de-DE` → `de`, `zh-CN` → `zh-Hans`, …), so no separate table mirroring
+ * `crowdin.yml`'s `languages_mapping` is needed here — that one only tells Crowdin which
+ * *directory* to write catalogs into, and every code it uses already round-trips through the same
+ * region-alias rules.
+ *
+ * Read once rather than exposed as a reactive signal: Crowdin's overlay reloads the whole page
+ * when the translator switches languages, so `window.jipt.target_language` is effectively
+ * constant for the lifetime of a given load. `undefined` outside pseudolocale mode, on the
+ * server, or before the JIPT script has attached (e.g. it failed to load).
+ */
+export function crowdinTargetUILocale(): UILocale | undefined {
+    if (!PSEUDOLOCALE_ENABLED || isServer || typeof window === "undefined") return undefined;
+    const target = window.jipt?.target_language;
+    return target ? matchUILocale(target) : undefined;
 }
 
 // ── Catalogs ──────────────────────────────────────────────────

@@ -17,9 +17,19 @@ export default defineConfig({
   // Babel pass (there is no separate Babel step in this build). Babel applies plugins before
   // presets, so the macro expands to plain `Trans`/`i18n._` calls before babel-preset-solid's
   // JSX transform sees the tree.
+  //
+  // `descriptorFields: "message"` pins the macro's default ("auto", which drops `message` and
+  // leaves only the hashed `id` whenever `NODE_ENV === "production"`) so a compiled `msg`
+  // descriptor always carries its English source text, in every build mode. `~/lib/labels`'s
+  // `gameText()` reads `fallback.message` at runtime to match the game-data CSVs by exact English
+  // string — under the default "auto" setting that lookup silently degraded to matching against
+  // the opaque hash id in production, so every `gameText(msg\`...\`)` call without an explicit
+  // `source` override missed the CSV and fell back to the (untranslated) Lingui catalog. Only
+  // `id`/`message` are needed here (no call site uses macro `context`); `comment` is
+  // extraction-only and never read at runtime.
   solid: {
     babel: {
-      plugins: ["@lingui/babel-plugin-lingui-macro"]
+      plugins: [["@lingui/babel-plugin-lingui-macro", {descriptorFields: "message"}]]
     }
   },
   server: {
