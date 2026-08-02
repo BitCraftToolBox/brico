@@ -23,31 +23,13 @@ import BricoFace from "~/components/ui/brico-face";
 import {Button} from "~/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
-import {DATA_LOCALES, dataTranslationsPending, displayLocaleTag} from "~/lib/data-translation";
-import {PSEUDOLOCALE_ENABLED, UI_LOCALES, uiLocaleLoading} from "~/lib/i18n";
+import {DATA_LOCALES, dataTranslationsPending} from "~/lib/data-translation";
+import {localeLabel, PSEUDOLOCALE_ENABLED, UI_LOCALES, uiLocaleLoading} from "~/lib/i18n";
 import {useLabel} from "~/lib/labels";
 import {AUTO_LOCALE, NaturalSortOrder, type SortMode, useSettings, type ViewMode} from "~/lib/settings";
 import {SIDEBAR_GROUPS, SidebarGroupDef, type SidebarItemDef} from "~/lib/sidebar-items";
 
 // ── Shared UI helpers ─────────────────────────────────────────
-
-/**
- * Labels a locale in its own language ("Deutsch", "日本語"), falling back to the raw code if
- * `Intl.DisplayNames` can't resolve it. Note `displayLocaleTag()` — the game-data list ships
- * Japanese under the non-BCP-47 filename `jp`, which `Intl` would otherwise reject.
- *
- * Each language is named in itself rather than in the current UI language, so someone who has
- * landed in a language they can't read can still find their way out.
- */
-function localeLabel(locale: string): string {
-    if (PSEUDOLOCALE_ENABLED && locale === "zu") return "Pseudolocale";
-    const tag = displayLocaleTag(locale);
-    try {
-        return new Intl.DisplayNames([tag], {type: "language"}).of(tag) ?? locale;
-    } catch {
-        return locale;
-    }
-}
 
 /**
  * A language `Select` over `options`, with `AUTO_LOCALE` first and labelled by `autoLabel`.

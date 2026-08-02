@@ -1,3 +1,6 @@
+import {msg} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
+import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import GlobalSearchInput from "~/components/GlobalSearchInput";
 import MainLayout from "~/components/MainLayout";
@@ -7,6 +10,7 @@ import {Button} from "~/components/ui/button";
 import {OG_LARGE} from "~/lib/og-meta";
 
 export default function Home() {
+    const {_} = useLingui();
     return (
         <MainLayout
             title={"Brico's Toolbox"}
@@ -20,13 +24,13 @@ export default function Home() {
                 <BricoFace class="max-w-[90svw] max-h-[30svh] dark:text-[#E9DFC4] text-[#15567E]"/>
                 <GlobalSearchInput
                     class="w-full max-w-lg"
-                    placeholder="Search items, buildings, creatures..."
+                    placeholder={_(msg`Search items, buildings, creatures...`)}
                     large
                     autofocus
                 />
                 <Button variant="ghost" as={A} href="/events" class="mt-8 h-20">
                     <GameIcon
-                        name="Track World Events"
+                        name={_(msg`Track World Events`)}
                         iconAsset="GeneratedIcons/Other/GeneratedIcons/Other/Buildings/Crafting/Bank"
                         shape="square"
                         small
@@ -34,7 +38,7 @@ export default function Home() {
                         rarity={{tag: "Mythic"}}
                         tier={-1}
                     />
-                    <span>Track World Event Timers</span>
+                    <span><Trans>Track World Event Timers</Trans></span>
                 </Button>
             </div>
         </MainLayout>

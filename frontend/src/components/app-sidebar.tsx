@@ -275,7 +275,7 @@ export function AppSidebar() {
                             <TooltipTrigger as={Button} variant="ghost" size="sm" class="w-9 px-0">
                                 <IconDiscord/>
                             </TooltipTrigger>
-                            <TooltipContent>Brico's Toolbox Discord</TooltipContent>
+                            <TooltipContent><Trans>Brico's Toolbox Discord</Trans></TooltipContent>
                         </Tooltip>
                     </a>
                 </div>

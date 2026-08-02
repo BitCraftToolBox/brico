@@ -3,6 +3,7 @@ import {Rarity} from "~/bindings/src/rarity_type";
 import {ToolDesc} from "~/bindings/src/tool_desc_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
+import {gameText} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rarityColumn, rarityFilter, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
@@ -28,16 +29,16 @@ export const ToolDefs: BitCraftToDataDef<ToolDesc> = {
             cell: props => translateGameText(props.getValue() as string ?? ""),
             filterFn: includedIn<ToolDesc>(),
         },
-        {id: "Power", meta: {label: msg`Power`}, accessorKey: "power", filterFn: "inNumberRange"},
-        {id: "Level", meta: {label: msg`Level`}, accessorKey: "level", filterFn: "inNumberRange"},
+        {id: "Power", meta: {label: gameText(msg`Power`)}, accessorKey: "power", filterFn: "inNumberRange"},
+        {id: "Level", meta: {label: gameText(msg`Level`)}, accessorKey: "level", filterFn: "inNumberRange"},
         tierColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.tier ?? -1}),
         rarityColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}), // idk why TS needs this
         rowActions({accessorKey: "itemId"}, "item"),
     ],
     facetedFilters: [
         uniqueValuesFilter("Tool Type", msg`Tool Type`),
-        rangeFilter("Power", msg`Power`),
-        rangeFilter("Level", msg`Level`),
+        rangeFilter("Power", gameText(msg`Power`)),
+        rangeFilter("Level", gameText(msg`Level`)),
         tierFilter(),
         rarityFilter()
     ],

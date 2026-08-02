@@ -1,4 +1,5 @@
 import {msg, t} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {ItemType} from "~/bindings/src/item_type_type";
@@ -113,7 +114,7 @@ export default function BuildingDetail() {
                         {f.housingIncome}
                     </TooltipTrigger>
                     <TooltipContent class="max-w-[90svw]">
-                        hex coin per day per occupied slot
+                        <Trans>hex coin per day per occupied slot</Trans>
                     </TooltipContent>
                 </Tooltip>
             )});
@@ -130,7 +131,7 @@ export default function BuildingDetail() {
     return (
         <DetailPageLayout
             title={building()?.name ?? `Building #${params.id}`}
-            breadcrumb={breadcrumb("/database/building", "Structure")}
+            breadcrumb={breadcrumb("/database/building", msg`Structure`)}
             loading={isLoading() && !building()}
             icon={<Show when={building()}>{(b) =>
                 <BuildingIcon building={b()} small={false} noInteract/>
@@ -150,7 +151,7 @@ export default function BuildingDetail() {
                 constructionCombinedSingleTab(constructionRecipe(), deconstructionRecipe()),
                 {
                     id: "buffs",
-                    label: "Buffs",
+                    label: msg`Buffs`,
                     count: buffCount(),
                     showWhenEmpty: false,
                     content: () => {

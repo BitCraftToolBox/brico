@@ -1,4 +1,5 @@
 import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {ItemType} from "~/bindings/src/item_type_type";
@@ -8,6 +9,7 @@ import {ItemIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {breadcrumb, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {equipmentSlotLabel, statLabel} from "~/lib/game-strings";
+import {gameText, useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
@@ -170,6 +172,7 @@ export default function ItemDetail() {
         const i = item();
         if (!i) return [];
         const groups: DetailGroup[] = [];
+        const label = useLabel();
 
         // General
         groups.push({
@@ -178,7 +181,7 @@ export default function ItemDetail() {
                     <Tooltip openOnTouchStart>
                         <TooltipTrigger class="decoration-dotted underline">{i.volume}</TooltipTrigger>
                         <TooltipContent class="max-w-[90svw]">
-                            Inventory stack: {6000 / i.volume}
+                            <Trans>Inventory stack: {6000 / i.volume}</Trans>
                         </TooltipContent>
                     </Tooltip>
                 )},
@@ -192,12 +195,12 @@ export default function ItemDetail() {
         if (tool) {
             const toolType = toolTypeIndex().get(tool.toolType);
             groups.push({
-                heading: () => <IconLink href={`/database/tool/${i.id}`} icon={pageIcon("Tools")}>Tool</IconLink>,
+                heading: () => <IconLink href={`/database/tool/${i.id}`} icon={pageIcon("Tools")}>{label(gameText(msg`Tool`))}</IconLink>,
                 properties: [
                     {label: msg`Type`, value: toolType?.name ?? `#${tool.toolType}`},
-                    {label: msg`Power`, value: tool.power},
-                    {label: msg`Level`, value: tool.level},
-                    {label: msg`Skill`, value: toolType?.skillId ? () => <SkillLinkById skillId={toolType.skillId}/> : undefined},
+                    {label: gameText(msg`Power`), value: tool.power},
+                    {label: gameText(msg`Level`), value: tool.level},
+                    {label: gameText(msg`Skill`), value: toolType?.skillId ? () => <SkillLinkById skillId={toolType.skillId}/> : undefined},
                 ],
             });
         }
@@ -212,11 +215,11 @@ export default function ItemDetail() {
                 eqProps.push({label: msg`Required Skill`, value: () => <SkillLinkById skillId={equip.levelRequirement!.skillId}/>});
                 eqProps.push({label: msg`Required Level`, value: equip.levelRequirement.level});
             }
-            const eqGroup: DetailGroup = {heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>Equipment</IconLink>, properties: eqProps};
+            const eqGroup: DetailGroup = {heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>{label(gameText(msg`Equipment`))}</IconLink>, properties: eqProps};
             groups.push(eqGroup);
             if (equip.stats?.length) {
                 groups.push({
-                    heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>Equipment Stats</IconLink>,
+                    heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>{label(gameText(msg`Stats`))}</IconLink>,
                     properties: equip.stats.map((stat: any) => ({
                         label: statLabel(stat.id?.tag),
                         value: `${fixFloat(stat.value * (stat.isPct ? 100 : 1))}${stat.isPct ? "%" : ""}`,
@@ -230,13 +233,13 @@ export default function ItemDetail() {
         if (weapon) {
             const wt = weaponTypeIndex()?.get(weapon.weaponType);
             groups.push({
-                heading: () => <IconLink href={`/database/weapon/${i.id}`} icon={pageIcon("Weapons")}>Weapon</IconLink>,
+                heading: () => <IconLink href={`/database/weapon/${i.id}`} icon={pageIcon("Weapons")}>{label(gameText(msg`Weapon`))}</IconLink>,
                 properties: [
                     {label: msg`Type`, value: wt?.name ?? `#${weapon.weaponType}`},
                     {label: msg`Min Damage`, value: weapon.minDamage},
                     {label: msg`Max Damage`, value: weapon.maxDamage},
-                    {label: msg`Cooldown`, value: fixFloat(weapon.cooldown)},
-                    {label: msg`Stamina Mult`, value: `${fixFloat(weapon.staminaUseMultiplier)}x`},
+                    {label: gameText(msg`Cooldown`), value: fixFloat(weapon.cooldown)},
+                    {label: gameText(msg`Stamina`), value: `${fixFloat(weapon.staminaUseMultiplier)}x`},
                 ],
             });
         }
@@ -245,14 +248,14 @@ export default function ItemDetail() {
         const food = foodData();
         if (food) {
             groups.push({
-                heading: () => <IconLink href={`/database/food/${i.id}`} icon={pageIcon("Food")}>Food</IconLink>,
+                heading: () => <IconLink href={`/database/food/${i.id}`} icon={pageIcon("Food")}>{label(gameText(msg`Food`))}</IconLink>,
                 properties: [
-                    {label: msg`Satiation`, value: food.hunger ? fixFloat(food.hunger) : undefined},
-                    {label: msg`HP`, value: food.hp ? fixFloat(food.hp) : undefined},
-                    {label: msg`Up To HP`, value: food.upToHp ? fixFloat(food.upToHp) : undefined},
-                    {label: msg`Stamina`, value: food.stamina ? fixFloat(food.stamina) : undefined},
-                    {label: msg`Up To Stamina`, value: food.upToStamina ? fixFloat(food.upToStamina) : undefined},
-                    {label: msg`Teleportation Energy`, value: food.teleportationEnergy ? fixFloat(food.teleportationEnergy) : undefined},
+                    {label: gameText(msg`Satiation`), value: food.hunger ? fixFloat(food.hunger) : undefined},
+                    {label: gameText(msg`HP`, "Health"), value: food.hp ? fixFloat(food.hp) : undefined},
+                    {label: gameText(msg`Max Health`), value: food.upToHp ? fixFloat(food.upToHp) : undefined},
+                    {label: gameText(msg`Stamina`), value: food.stamina ? fixFloat(food.stamina) : undefined},
+                    {label: gameText(msg`Max Stamina`), value: food.upToStamina ? fixFloat(food.upToStamina) : undefined},
+                    {label: gameText(msg`TP Energy`, "Teleportation Energy"), value: food.teleportationEnergy ? fixFloat(food.teleportationEnergy) : undefined},
                     {label: msg`Consumable In Combat`, value: food.consumableWhileInCombat || undefined},
                 ],
             });
@@ -266,10 +269,10 @@ export default function ItemDetail() {
             const itemTag = i.tag;
             const statMod = knowledgeStatData();
             groups.push({
-                heading: () => <IconLink href={`/database/knowledge/${scroll.secondaryKnowledgeId}`} icon={pageIcon("Knowledge")}>Knowledge Scroll</IconLink>,
+                heading: () => <IconLink href={`/database/knowledge/${scroll.secondaryKnowledgeId}`} icon={pageIcon("Knowledge")}>{label(gameText(msg`Knowledge Scroll`))}</IconLink>,
                 properties: [
-                    {label: msg`Title`, value: scroll.title},
-                    {label: msg`Tag`, value: scroll.tag !== itemTag ? scroll.tag : undefined},
+                    {label: gameText(msg`Title`), value: scroll.title},
+                    {label: gameText(msg`Tag`), value: scroll.tag !== itemTag ? scroll.tag : undefined},
                     {label: msg`Known By Default`, value: scroll.knownByDefault || undefined},
                     {label: msg`Auto Collect`, value: scroll.autoCollect || undefined},
                     ...(statMod?.stats?.length ? statMod.stats.map((s: any) => ({

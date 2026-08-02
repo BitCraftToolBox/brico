@@ -9,6 +9,7 @@
  *   expandStack()       — Smart dispatcher: resolves item lists, renders the right component
  */
 
+import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {Component, createMemo, For, JSX, Show} from "solid-js";
 import {CargoDesc} from "~/bindings/src/cargo_desc_type";
@@ -114,7 +115,7 @@ export function ProbBadge(props: { probability: number, chances?: number, extraT
                         {pct()}%
                     </TooltipTrigger>
                     <TooltipContent class="max-w-[90svw]">
-                        Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently.
+                        <Trans>Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently.</Trans>
                         {props.extraTooltip}
                     </TooltipContent>
                 </Tooltip>
@@ -124,7 +125,7 @@ export function ProbBadge(props: { probability: number, chances?: number, extraT
                         {ev()}
                     </TooltipTrigger>
                     <TooltipContent class="max-w-[90svw]">
-                        Average number of drops for a full bar (resource health, dungeon contribution, etc.): {fixFloat(props.probability * 100)}% * {props.chances} = {ev()}.
+                        <Trans>Average number of drops for a full bar (resource health, dungeon contribution, etc.): {fixFloat(props.probability * 100)}% * {props.chances} = {ev()}.</Trans>
                         {props.extraTooltip}
                     </TooltipContent>
                 </Tooltip>
@@ -469,7 +470,7 @@ export const InputItemStackArray: Component<{
                                 {fixFloat(stack.consumptionChance * 100)}%
                             </TooltipTrigger>
                             <TooltipContent>
-                                Chance of consumption per hit
+                                <Trans>Chance of consumption per hit</Trans>
                             </TooltipContent>
                         </Tooltip>
                     </Show>

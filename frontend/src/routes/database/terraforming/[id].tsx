@@ -1,4 +1,4 @@
-import {msg} from "@lingui/core/macro";
+import {msg, t} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
@@ -39,7 +39,7 @@ export default function TerraformingDetail() {
             breadcrumb={breadcrumb("/database/terraforming")}
             loading={isLoading() && !recipe()}
             icon={<FontIcon codepoint="0034" class="size-8"/>}
-            name={"Terraform Elevation Difference " + recipe()?.difference}
+            name={t`Terraform Elevation Difference ${recipe()?.difference ?? ""}`}
             description={"Elevation difference calculated from original world gen elevation."}
             metaKind="terraforming"
             metaImage={ogImageForCodepoint("0034")}

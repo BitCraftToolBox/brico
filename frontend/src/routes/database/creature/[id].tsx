@@ -1,4 +1,5 @@
 import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
@@ -13,6 +14,7 @@ import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {breadcrumb, ItemListLink, SkillLinkById} from "~/lib/game-links";
+import {useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
 import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList, scalingDescsFromEnemy} from "~/lib/relations";
@@ -23,6 +25,7 @@ type LootRow = [ContributionLootDesc, ItemListDesc];
 
 export default function CreatureDetail() {
     const params = useParams();
+    const label = useLabel();
     const isLoading = useTablesLoading(BitCraftTables.EnemyDesc);
     const index = BitCraftTables.EnemyDesc.indexedBy("enemyType");
     const pathfindingIndex = BitCraftTables.PathfindingDesc.indexedBy("id");
@@ -60,9 +63,9 @@ export default function CreatureDetail() {
             return <><SkillLinkById skillId={exp.skillId}/>: <Tooltip openOnTouchStart>
                     <TooltipTrigger class={"decoration-dotted underline"}>{fixFloat(exp.quantity)}</TooltipTrigger>
                     <TooltipContent>
-                        Experience per Damage Dealt<br/>
+                        <Trans>Experience per Damage Dealt</Trans><br/>
                         {c.maxHealth} HP * {fixFloat(exp.quantity)} = {c.maxHealth * fixFloat(exp.quantity)} XP<br/>
-                        <span class="text-muted-foreground">Note: overkill damage also grants XP. This is the minimum.</span>
+                        <span class="text-muted-foreground"><Trans>Note: overkill damage also grants XP. This is the minimum.</Trans></span>
                     </TooltipContent>
                 </Tooltip>
             </>;
@@ -219,19 +222,20 @@ export default function CreatureDetail() {
                                     header: msg`Stat Bonuses`,
                                     cell: (scaling) => {
                                         const pairs = [
-                                            ["Scaled Armor", scaling.scaledArmorBonus],
-                                            ["Strength", scaling.strengthBonus],
-                                            ["Accuracy", scaling.accuracyBonus],
-                                            ["Evasion", scaling.evasionBonus],
-                                            ["Min. Damage", scaling.minDamageBonus],
-                                            ["Max. Damage", scaling.maxDamageBonus],
-                                        ].filter((p) => !!p[1]);
+                                            [msg`Scaled Armor`, scaling.scaledArmorBonus],
+                                            [msg`Strength`, scaling.strengthBonus],
+                                            [msg`Accuracy`, scaling.accuracyBonus],
+                                            [msg`Evasion`, scaling.evasionBonus],
+                                            [msg`Min Damage`, scaling.minDamageBonus],
+                                            [msg`Max Damage`, scaling.maxDamageBonus],
+                                        ] as const;
+                                        const shown = pairs.filter((p) => !!p[1]);
                                         return (
                                             <div class="flex flex-row flex-wrap gap-1">
-                                                <For each={pairs}>
+                                                <For each={shown}>
                                                     {p => (
                                                         <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs bg-muted text-muted-foreground whitespace-nowrap">
-                                                            <span class="font-medium">{p[0]}</span>
+                                                            <span class="font-medium">{label(p[0])}</span>
                                                             <span class="opacity-70">{p[1]}</span>
                                                         </span>
                                                     )}

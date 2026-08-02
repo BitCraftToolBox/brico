@@ -73,6 +73,7 @@ export default function TravelerTradeDetail() {
             icon={npcDesc() ? <FontIcon codepoint={npcDesc()!.iconAddress} class="size-16"/> : undefined}
             name={`${npcName()} Trade`}
             description={tradeName()}
+            defaultTab="summary"
             metaKind="traveler trade"
             metaImage={ogImageForCodepoint(npcDesc()?.iconAddress)}
             details={[

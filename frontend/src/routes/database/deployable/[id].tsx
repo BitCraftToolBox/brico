@@ -7,6 +7,7 @@ import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {StatTable} from "~/components/shared/RelTablePresets";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {breadcrumb, IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {surfaceTypeLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {collectiblesTab} from "~/lib/table-utils/detail-tab-builders";
@@ -77,7 +78,7 @@ export default function DeployableDetail() {
                 heading: msg`Speed`,
                 properties: [
                     ...(deployable()?.speed?.map((ms) => ({
-                        label: ms.surfaceType.tag,
+                        label: surfaceTypeLabel(ms.surfaceType.tag),
                         value: undefinedIfZero(ms.speed),
                     })) ?? [])
                 ]

@@ -1,10 +1,12 @@
 import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {A, useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {CompletionCondition} from "~/bindings/src/completion_condition_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ItemStackLink, LinkedList, pageIcon, QuestChainLink} from "~/lib/game-links";
+import {useLabel} from "~/lib/labels";
 import {ogImageForPage} from "~/lib/og-meta";
 import {computeQuestTree, questChainCompleter, stagesByChain} from "~/lib/quests";
 import {useSettings} from "~/lib/settings";
@@ -16,6 +18,7 @@ type StageRewardsRow = { stageName: string; items: ItemStack[] };
 
 export default function QuestChainDetail() {
     const params = useParams();
+    const label = useLabel();
     const isLoading = useTablesLoading(BitCraftTables.QuestChainDesc);
     const questIndex = BitCraftTables.QuestChainDesc.indexedBy("id");
     const {completedQuests, setCompletedQuests} = useSettings();
@@ -122,6 +125,7 @@ export default function QuestChainDetail() {
             metaKind="quest chain"
             metaImage={ogImageForPage("Quest Chains")}
             details={details()}
+            defaultTab={"summary"}
             summaryContent={stages().length || (quest() && !quest()!.unstartable && !quest()!.isHint) ? () => (
                 <div class="flex flex-col gap-3 px-1 py-2">
                     {graphControls()}
@@ -204,7 +208,7 @@ export default function QuestChainDetail() {
                     showWhenEmpty: true,
                     content: () => (
                         <RelTable data={allRequirements()} columns={[
-                            {header: msg`Type`, cell: r => <span class="text-muted-foreground text-sm">{reqOrRewardTagLabel(r.tag)}</span>},
+                            {header: msg`Type`, cell: r => <span class="text-muted-foreground text-sm">{label(reqOrRewardTagLabel(r.tag))}</span>},
                             {header: msg`Requirement`, cell: r => <ReqOrRewardLink qr={r}/>},
                         ]}/>
                     ),
@@ -216,7 +220,7 @@ export default function QuestChainDetail() {
                     showWhenEmpty: true,
                     content: () => (
                         <RelTable data={allRewards()} columns={[
-                            {header: msg`Type`, cell: r => <span class="text-muted-foreground text-sm">{reqOrRewardTagLabel(r.tag)}</span>},
+                            {header: msg`Type`, cell: r => <span class="text-muted-foreground text-sm">{label(reqOrRewardTagLabel(r.tag))}</span>},
                             {header: msg`Reward`, cell: r => <ReqOrRewardLink qr={r}/>},
                         ]}/>
                     ),
@@ -229,14 +233,14 @@ export default function QuestChainDetail() {
                     content: () => (
                         <RelTable<StageConditionRow> data={stageConditions()} columns={[
                             {header: msg`Stage`, cell: row => <span class="text-sm">{row.stageName}</span>},
-                            {header: msg`Type`, cell: row => <span class="text-muted-foreground text-sm">{reqOrRewardTagLabel(row.condition.tag)}</span>},
+                            {header: msg`Type`, cell: row => <span class="text-muted-foreground text-sm">{label(reqOrRewardTagLabel(row.condition.tag))}</span>},
                             {
                                 header: msg`Requirement`, cell: row => {
                                     return (
                                         <div class="flex gap-1">
                                             <ReqOrRewardLink qr={row.condition}/>
                                             <Show when={row.condition.tag === "ItemStack" && row.condition.value.isConsumed}>
-                                                <span class="text-muted-foreground text-sm">(consumed)</span>
+                                                <span class="text-muted-foreground text-sm"><Trans>(consumed)</Trans></span>
                                             </Show>
                                         </div>
                                     )

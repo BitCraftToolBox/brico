@@ -36,7 +36,7 @@ export default function BiomeDetail() {
             metaKind="biome"
             metaImage={ogImageForPage("Biomes")}
             details={[
-                {label: msg`Hazard Level`, value: biome()?.hazardLevel},
+                {label: msg`Hazard`, value: biome()?.hazardLevel},
                 {label: msg`Disallow Player Build`, value: biome()?.disallowPlayerBuild},
             ]}
             rawData={biome()}

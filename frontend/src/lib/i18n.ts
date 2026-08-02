@@ -1,6 +1,7 @@
 import {i18n, type Messages} from "@lingui/core";
 import {createSignal} from "solid-js";
 import {isServer} from "solid-js/web";
+import {displayLocaleTag} from "~/lib/data-translation";
 import {messages as messagesEn} from "~/locales/en/messages.po";
 
 /**
@@ -88,6 +89,25 @@ export function detectUILocale(): UILocale {
         if (match) return match;
     }
     return DEFAULT_UI_LOCALE;
+}
+
+/**
+ * Labels a locale in its own language ("Deutsch", "日本語"), falling back to the raw code if
+ * `Intl.DisplayNames` can't resolve it. Works for both `UI_LOCALES` and `DATA_LOCALES` — note
+ * `displayLocaleTag()`, since the game-data list ships Japanese under the non-BCP-47 filename `jp`,
+ * which `Intl` would otherwise reject.
+ *
+ * Each language is named in itself rather than in the current UI language, so someone who has
+ * landed in a language they can't read can still find their way out.
+ */
+export function localeLabel(locale: string): string {
+    if (PSEUDOLOCALE_ENABLED && locale === "zu") return "Pseudolocale";
+    const tag = displayLocaleTag(locale);
+    try {
+        return new Intl.DisplayNames([tag], {type: "language"}).of(tag) ?? locale;
+    } catch {
+        return locale;
+    }
 }
 
 // ── Crowdin in-context editor ────────────────────────────────

@@ -14,7 +14,8 @@
     "i18n:extract": "node scripts/i18n/extract.mjs",
     "i18n:extract-check": "node scripts/i18n/extract.mjs --check",
     "i18n:audit-fields": "npx tsx scripts/i18n/list-translatable-fields.mjs",
-    "i18n:verify": "npx tsx scripts/i18n/verify-translations.mjs"
+    "i18n:verify": "npx tsx scripts/i18n/verify-translations.mjs",
+    "i18n:backfill-game-translations": "node scripts/i18n/backfill-game-translations.mjs"
   },
   "dependencies": {
     "@clockworklabs/spacetimedb-sdk": "^1.3.0",
@@ -55,6 +56,7 @@
     "@lingui/vite-plugin": "^6.6.0",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.0.7",
+    "pofile-ts": "^4.0.3",
     "tailwindcss": "^4.0.7",
     "typescript": "^7.0.2"
   },

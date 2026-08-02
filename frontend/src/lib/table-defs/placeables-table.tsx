@@ -4,6 +4,7 @@ import {For} from "solid-js";
 import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {compareText} from "~/lib/i18n";
+import {gameText} from "~/lib/labels";
 import {groupsByPlaceable} from "~/lib/placeables";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
@@ -74,7 +75,7 @@ export const PlaceableDefs: BitCraftToDataDef<PlaceableDesc> = {
         },
         {
             id: 'Max Health',
-            meta: {label: msg`Max Health`},
+            meta: {label: gameText(msg`Max Health`)},
             accessorKey: "maxHealth",
         },
         boolColumn("Visible to Others", {accessorKey: "visibleToOthers"}, msg`Visible to Others`),

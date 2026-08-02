@@ -7,6 +7,9 @@
  *   - One tab per matching group, sorted by best score
  */
 
+import {msg} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
+import {Plural, Trans} from "@lingui/solid/macro";
 import {A, useLocation, useNavigate} from "@solidjs/router";
 import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
 import {createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show} from "solid-js";
@@ -16,6 +19,7 @@ import {type GroupedResults, type ObjectMatch} from "~/lib/global-search";
 import {useGlobalSearch} from "~/lib/global-search-context";
 
 export default function SearchPage() {
+    const {_} = useLingui();
     const location = useLocation();
     const navigate = useNavigate();
     const {globalSearch} = useGlobalSearch();
@@ -120,10 +124,10 @@ export default function SearchPage() {
                         <input
                             ref={searchInputRef}
                             type="search"
-                            placeholder="Search items, buildings, creatures, recipes..."
+                            placeholder={_(msg`Search items, buildings, creatures, recipes...`)}
                             onInput={(e) => handleInput(e.currentTarget.value)}
                             class="w-full pl-10 pr-12 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring text-base"
-                            aria-label="Search"
+                            aria-label={_(msg`Search`)}
                         />
                         <kbd class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hidden sm:inline">/</kbd>
                     </div>
@@ -136,13 +140,13 @@ export default function SearchPage() {
                         fallback={
                             <Show when={results()}>
                                 <p class="text-sm text-muted-foreground text-center py-8">
-                                    No results found for "{query().trim()}"
+                                    <Trans>No results found for "{query().trim()}"</Trans>
                                 </p>
                             </Show>
                         }
                     >
                         <div class="text-sm text-muted-foreground">
-                            {results()!.totalMatches} result{results()!.totalMatches !== 1 ? "s" : ""}
+                            <Plural value={results()!.totalMatches} one="# result" other="# results"/>
                         </div>
 
                         <Tabs defaultValue="all">
@@ -151,7 +155,7 @@ export default function SearchPage() {
                                     value="all"
                                     class="data-[selected]:border-b-2 data-[selected]:border-primary rounded-none data-[selected]:bg-transparent data-[selected]:shadow-none"
                                 >
-                                    All
+                                    <Trans>All</Trans>
                                     <span class="ml-1 text-xs opacity-60">{allMatches().length}</span>
                                 </TabsTrigger>
                                 <For each={sortedGroups()}>
@@ -183,7 +187,7 @@ export default function SearchPage() {
                                         </For>
                                         <Show when={group.total > group.matches.length}>
                                             <div class="text-xs text-muted-foreground pl-3 py-1">
-                                                +{group.total - group.matches.length} more results (refine your query)
+                                                <Trans>+{group.total - group.matches.length} more results (refine your query)</Trans>
                                             </div>
                                         </Show>
                                     </TabsContent>

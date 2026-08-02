@@ -2,6 +2,7 @@ import {msg} from "@lingui/core/macro";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {sourceRow} from "~/lib/data-translation";
+import {gameText} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {boolColumn, boolFilter, headerColumn, rowActions, tagColumn, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
@@ -32,7 +33,7 @@ export const KnowledgeDefs: BitCraftToDataDef<SecondaryKnowledgeDesc> = {
                 const scroll = sourceRow(BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")().get(row.id));
                 return scroll?.title ?? "";
             }
-        }, msg`Title`),
+        }, gameText(msg`Title`)),
         boolColumn("Known By Default", {
             accessorFn: row => {
                 const scroll = BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")().get(row.id);
@@ -54,7 +55,7 @@ export const KnowledgeDefs: BitCraftToDataDef<SecondaryKnowledgeDesc> = {
         rowActions(undefined, "know", undefined, { accessorFn: k => BitCraftTables.KnowledgeScrollDesc.indexedBy("secondaryKnowledgeId")().get(k.id)?.itemId?.toString() }),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Tag", msg`Tag`),
+        uniqueValuesFilter("Tag", gameText(msg`Tag`)),
         boolFilter("Known By Default", msg`Known By Default`),
         boolFilter("Auto Collect", msg`Auto Collect`),
         statsFilter(),

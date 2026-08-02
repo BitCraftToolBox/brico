@@ -2,6 +2,7 @@ import {msg} from "@lingui/core/macro";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
+import {gameText} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {boolColumn, boolFilter, headerColumn, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
@@ -28,14 +29,14 @@ export const CombatDefs: BitCraftToDataDef<CombatActionDesc> = {
             cell: props => translateGameText(props.getValue() as string ?? ""),
             filterFn: includedIn<CombatActionDesc>()
         },
-        {id: "Max Range", meta: {label: msg`Max Range`}, accessorKey: "maxRange", filterFn: "inNumberRange"},
+        {id: "Max Range", meta: {label: gameText(msg`Range`)}, accessorKey: "maxRange", filterFn: "inNumberRange"},
         {
-            id: "Cooldown", meta: {label: msg`Cooldown`}, accessorKey: "cooldown",
+            id: "Cooldown", meta: {label: gameText(msg`Cooldown`)}, accessorKey: "cooldown",
             cell: (props) => <span>{fixFloat(props.row.original.cooldown)}</span>,
             filterFn: "inNumberRange",
         },
         {
-            id: "Strength Multiplier", meta: {label: msg`Strength Multiplier`}, accessorKey: "strengthMultiplier",
+            id: "Strength Multiplier", meta: {label: gameText(msg`Strength`)}, accessorKey: "strengthMultiplier",
             cell: (props) => <span>{fixFloat(props.row.original.strengthMultiplier)}x</span>,
         },
         rowActions(),

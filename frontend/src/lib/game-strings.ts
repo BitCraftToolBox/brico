@@ -28,8 +28,11 @@
 
 import type CharacterStatType from "~/bindings/src/character_stat_type_type";
 import type CollectibleType from "~/bindings/src/collectible_type_type";
+import DeployableType from "~/bindings/src/deployable_type_type";
 import type EquipmentSlotType from "~/bindings/src/equipment_slot_type_type";
-import type {Rarity} from "~/bindings/src/rarity_type";
+import type Rarity from "~/bindings/src/rarity_type";
+import type SkillCategory from "~/bindings/src/skill_category_type";
+import type SurfaceType from "~/bindings/src/surface_type_type";
 import {translateGameText} from "~/lib/data-translation";
 import {splitCamelCase} from "~/lib/utils";
 
@@ -141,3 +144,44 @@ export function equipmentSlotLabel(tag: string | undefined): string {
     return translateGameText(equipmentSlotName(tag));
 }
 
+// ── Skill Category ────────────────────────────────────────────────
+
+export const SKILL_CATEGORY_NAMES: NameTable<SkillCategory["tag"]> = {
+    Adventure: "Skill"
+};
+
+export function skillCategoryName(tag: string | undefined): string {
+    return nameOf(SKILL_CATEGORY_NAMES, tag);
+}
+
+export function skillCategoryLabel(tag: string | undefined): string {
+    return translateGameText(skillCategoryName(tag));
+}
+
+// ── Deployable Type ────────────────────────────────────────────────
+
+// all match splitCamelCase
+export const DEPLOYABLE_TYPE_NAMES: NameTable<DeployableType["tag"]> = {};
+
+export function deployableTypeName(tag: string | undefined): string {
+    return nameOf(DEPLOYABLE_TYPE_NAMES, tag);
+}
+
+export function deployableTypeLabel(tag: string | undefined): string {
+    return translateGameText(deployableTypeName(tag));
+}
+
+
+// ── Surface Type ────────────────────────────────────────────────
+
+export const SURFACE_TYPE_NAMES: NameTable<SurfaceType["tag"]> = {
+    OceanBiome: "Open Ocean"
+};
+
+export function surfaceTypeName(tag: string | undefined): string {
+    return nameOf(SURFACE_TYPE_NAMES, tag);
+}
+
+export function surfaceTypeLabel(tag: string | undefined) {
+    return translateGameText(surfaceTypeName(tag));
+}

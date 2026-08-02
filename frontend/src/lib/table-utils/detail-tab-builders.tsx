@@ -48,6 +48,7 @@ import {
 import {Button} from "~/components/ui/button";
 import {BuildingLink, CargoLink, CollectibleLink, IconLink, IconSpan, ItemLink, ItemStackLink, LinkedList, pageIcon, PlaceableLink, QuestChainLink} from "~/lib/game-links";
 import {i18n, trackUILocale} from "~/lib/i18n";
+import {gameText} from "~/lib/labels";
 import {getInteractionName, getPlacementName} from "~/lib/placeables";
 import {
     buildingForConstruction,
@@ -421,19 +422,19 @@ export function collectiblesTab(collectibles: CollectibleDesc[]) : RelationshipT
 export function claimResearchTab(techs: ClaimTechDesc[]) : RelationshipTab {
     return {
         id: "claim-tech",
-        label: msg`Claim Research`,
+        label: gameText(msg`Claim Research`, "Research"),
         count: techs.length,
         showWhenEmpty: false,
         content: () => (
             <RelTable<ClaimTechDesc>
                 data={techs}
                 columns={[
-                    {header: msg`Claim Research`, cell: c => (
+                    {header: gameText(msg`Claim Research`, "Research"), cell: c => (
                         <IconLink href={`/database/claim-research/${c.id}`} icon={pageIcon("Claim Research")}>
                             {c.name}
                         </IconLink>
                     )},
-                    {header: msg`Required`, cell: c => (
+                    {header: gameText(msg`Requires`, "Requires "), cell: c => (
                         <LinkedList>
                             {
                                 c.input.map(is => <ItemStackLink stack={is}/>)
@@ -488,7 +489,7 @@ export function questRequirementsTab(quests: QuestChainDesc[]): RelationshipTab 
             <RelTable<QuestChainDesc>
                 data={quests}
                 columns={[
-                    {header: msg`Quest`, cell: q => <QuestChainLink id={q.id} name={q.name}/>},
+                    {header: gameText(msg`Quest`), cell: q => <QuestChainLink id={q.id} name={q.name}/>},
                 ]}
             />
         ),
@@ -505,7 +506,7 @@ export function questRewardsTab(quests: QuestChainDesc[]): RelationshipTab {
             <RelTable<QuestChainDesc>
                 data={quests}
                 columns={[
-                    {header: msg`Quest`, cell: q => <QuestChainLink id={q.id} name={q.name}/>},
+                    {header: gameText(msg`Quests`), cell: q => <QuestChainLink id={q.id} name={q.name}/>},
                 ]}
             />
         ),

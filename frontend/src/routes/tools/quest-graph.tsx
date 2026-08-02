@@ -8,6 +8,7 @@
  * Completed quests are persisted in AppSettings via localStorage.
  */
 
+import {Trans} from "@lingui/solid/macro";
 import {useSearchParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
@@ -45,8 +46,9 @@ export default function QuestGraphTool() {
     return (
         <MainLayout title="Quest Graph" description="Interactive BitCraft quest chain graph — visualize quest progression and rewards on Brico.app." navTitle={
             <>
-                {breadcrumb("/database/quest-chain", "Quests")}
-                {"Graph"}
+                {breadcrumb("/database/quest-chain")}
+                <span class="mx-1.5">{">"}</span>
+                <Trans>Graph</Trans>
             </>
         }>
             <Show when={!isLoading()} fallback={
@@ -56,7 +58,7 @@ export default function QuestGraphTool() {
             }>
                 <div class="flex flex-col gap-4 px-4 pb-6 h-full">
                     <div class="flex justify-center">
-                        <h1 class="text-xl font-bold">Quest Chains</h1>
+                        <h1 class="text-xl font-bold"><Trans>Quest Graph</Trans></h1>
                     </div>
                     <QuestGraph
                         completedQuests={completedQuests}

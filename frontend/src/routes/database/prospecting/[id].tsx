@@ -1,4 +1,5 @@
 import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
@@ -16,7 +17,7 @@ function ProspectingItemsPanel(props: { prospecting: ProspectingDesc }) {
         if (!props.prospecting.requiredItemsToStart.length) return null;
         return (
             <div class="flex flex-col gap-2 align-items-center">
-                <div class="text-center w-full h-10 text-sm">Required to Start</div>
+                <div class="text-center w-full h-10 text-sm"><Trans>Required to Start</Trans></div>
                 <ItemStackArray stacks={props.prospecting.requiredItemsToStart}/>
             </div>
         );
@@ -25,7 +26,7 @@ function ProspectingItemsPanel(props: { prospecting: ProspectingDesc }) {
         if (!props.prospecting.consumedItemsByAbilityTrigger.length) return null;
         return (
             <div class="flex flex-col gap-2 align-items-center">
-                <div class="text-center w-full h-10 text-sm">Consumed on Ability Use</div>
+                <div class="text-center w-full h-10 text-sm"><Trans>Consumed on Ability Use</Trans></div>
                 <ItemStackArray stacks={props.prospecting.consumedItemsByAbilityTrigger}/>
             </div>
         );
@@ -34,7 +35,7 @@ function ProspectingItemsPanel(props: { prospecting: ProspectingDesc }) {
         if (!props.prospecting.requiredItemsToInteractWithReward.length) return null;
         return (
             <div class="flex flex-col gap-2 align-items-center">
-                <div class="text-center w-full h-10 text-sm">Required for Reward</div>
+                <div class="text-center w-full h-10 text-sm"><Trans>Required for Reward</Trans></div>
                 <ItemStackArray stacks={props.prospecting.requiredItemsToInteractWithReward}/>
             </div>
         )

@@ -1,4 +1,5 @@
 import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/shared/DetailPageLayout";
@@ -102,7 +103,7 @@ export default function PlaceableDetail() {
         if (pl.length) {
             result.push({
                 id: "placement",
-                label: "Placement",
+                label: msg`Placement`,
                 count: pl.length,
                 content: () => (
                     <RecipeSelect
@@ -124,7 +125,7 @@ export default function PlaceableDetail() {
         if (ext.length) {
             result.push({
                 id: "extracted-from",
-                label: "Extracted from",
+                label: msg`Extracted from`,
                 count: ext.length,
                 content: () => (
                     <RecipeSelect
@@ -140,7 +141,7 @@ export default function PlaceableDetail() {
         if (g) {
             result.push({
                 id: "grows-into",
-                label: "Grows into",
+                label: msg`Grows into`,
                 count: g.outcomesV2?.length ?? 0,
                 content: () => <GrowthPanel growth={g}/>,
             });
@@ -150,7 +151,7 @@ export default function PlaceableDetail() {
         if (gs.length) {
             result.push({
                 id: "grows-from",
-                label: "Grows from",
+                label: msg`Grows from`,
                 count: gs.length,
                 content: () => (
                     <RecipeSelect
@@ -183,10 +184,10 @@ export default function PlaceableDetail() {
             details={detailGroups()}
             summaryContent={graphPlacementId() ? () => (
                 <div class="flex flex-col items-center gap-2 py-2">
-                    <p class="text-sm text-muted-foreground">This placeable is part of a lifecycle chain.</p>
+                    <p class="text-sm text-muted-foreground"><Trans>This placeable is part of a lifecycle chain.</Trans></p>
                     <A href={`/tools/placeable-graph?placement=${graphPlacementId()}`}
                        class="text-sm font-medium hover:underline">
-                        View full lifecycle in Placeable Graph →
+                        <Trans>View full lifecycle in Placeable Graph →</Trans>
                     </A>
                 </div>
             ) : undefined}

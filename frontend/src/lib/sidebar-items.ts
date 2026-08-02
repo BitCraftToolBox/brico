@@ -113,6 +113,7 @@ const sidebarGroups = [
 ] as const;
 
 export type SidebarPages = typeof sidebarGroups[number]["items"][number]["title"];
+export type SidebarHrefs = typeof sidebarGroups[number]["items"][number]["href"];
 
 export const SIDEBAR_GROUPS: SidebarGroupDef[] = sidebarGroups.map(g => ({
     name: g.name,
@@ -131,3 +132,9 @@ export const PAGE_ICON_CODEPOINTS: Record<SidebarPages, string> = Object.fromEnt
 export const PAGE_ICONS: Record<string, IconTypes> = Object.fromEntries(
     sidebarGroups.flatMap(g => g.items.map(i => [i.title, makeFontIcon(i.codepoint)]))
 );
+
+/** Sidebar `titleLabel`, keyed by `href` — lets a detail page's breadcrumb reuse the same label
+ *  its sidebar button renders instead of re-deriving (and mistranslating) it from the URL. */
+export const PAGE_TITLE_LABELS: Record<SidebarHrefs, Label> = Object.fromEntries(
+    sidebarGroups.flatMap(g => g.items.map(i => [i.href, i.titleLabel]))
+) as Record<SidebarHrefs, Label>;

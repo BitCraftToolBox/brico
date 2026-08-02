@@ -1,10 +1,10 @@
 import {msg} from "@lingui/core/macro";
-import {A, useParams} from "@solidjs/router";
+import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
+import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb} from "~/lib/game-links";
+import {breadcrumb, ItemLink} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {buffsGroups} from "~/lib/table-utils/detail-group-builders";
@@ -78,11 +78,13 @@ export default function FoodDetail() {
             tabs={[
                 {
                     id: "item", label: msg`Item`, count: item() ? 1 : 0,
-                    content: () => <Show when={item()}>
-                        <RelTable data={[item()!]} columns={[
-                            {header: msg`Item`, cell: row => <A href={`/database/item/${row.id}`}>{row.name}</A>},
-                        ]}/>
-                    </Show>,
+                    content: () => (
+                        <Show when={item()}>
+                            {d => <div class="p-1">
+                                <ItemLink id={d().id} name={d().name}/>
+                            </div>}
+                        </Show>
+                    ),
                 },
                 {
                     id: "buffs", label: msg`Buffs`, count: buffs().length,

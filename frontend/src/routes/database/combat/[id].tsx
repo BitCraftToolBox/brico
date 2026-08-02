@@ -58,7 +58,7 @@ export default function CombatDetail() {
     return (
         <DetailPageLayout
             title={action()?.name ?? `Combat Action #${params.id}`}
-            breadcrumb={breadcrumb("/database/combat", "Combat Ability")}
+            breadcrumb={breadcrumb("/database/combat", msg`Combat Ability`)}
             loading={isLoading() && !action()}
             name={action()?.name ?? "Combat action not found"}
             icon={<Show when={action()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}

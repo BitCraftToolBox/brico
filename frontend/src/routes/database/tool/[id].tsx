@@ -1,9 +1,9 @@
 import {msg} from "@lingui/core/macro";
-import {A, useParams} from "@solidjs/router";
+import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
+import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
-import {breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {breadcrumb, ItemLink, SkillLinkById} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -49,11 +49,13 @@ export default function ToolDetail() {
             tabs={[
                 {
                     id: "item", label: msg`Item`, count: item() ? 1 : 0,
-                    content: () => <Show when={item()}>
-                        <RelTable data={[item()!]} columns={[
-                            {header: msg`Item`, cell: row => <A href={`/database/item/${row.id}`}>{row.name}</A>},
-                        ]}/>
-                    </Show>,
+                    content: () => (
+                        <Show when={item()}>
+                            {d => <div class="p-1">
+                                <ItemLink id={d().id} name={d().name}/>
+                            </div>}
+                        </Show>
+                    ),
                 },
             ]}
         />

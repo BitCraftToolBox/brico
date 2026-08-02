@@ -1,4 +1,5 @@
 import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
@@ -34,15 +35,15 @@ export default function BuffDetail() {
         const groups: DetailGroup[] = [{
             properties: [
                 {label: msg`Buff Type`, value: buffType()?.name},
-                {label: msg`Duration`, value: b.duration ? readableSeconds(b.duration) : "Unspecified"},
+                {label: msg`Duration`, value: b.duration ? readableSeconds(b.duration) : () => <Trans>Unspecified</Trans>},
                 {label: msg`Priority`, value: b.priority},
                 {label: msg`Beneficial`, value: b.beneficial},
                 {label: msg`Warn Time`, value: b.warnTime ? `${fixFloat(b.warnTime)}s` : undefined},
                 {
                     label: msg`Online Timestamp`,
                     value: () => <Tooltip openOnTouchStart>
-                        <TooltipTrigger class="decoration-dotted underline">{b.onlineTimestamp ? "Yes" : "No"}</TooltipTrigger>
-                        <TooltipContent class="max-w-[90svw]">If No, buff ticks down while offline.</TooltipContent>
+                        <TooltipTrigger class="decoration-dotted underline">{b.onlineTimestamp ? <Trans>Yes</Trans> : <Trans>No</Trans>}</TooltipTrigger>
+                        <TooltipContent class="max-w-[90svw]"><Trans>If No, buff ticks down while offline.</Trans></TooltipContent>
                     </Tooltip>
                 },
             ],
@@ -128,7 +129,7 @@ export default function BuffDetail() {
             tabs={[
                 {
                     id: "sources",
-                    label: "Sources",
+                    label: msg`Sources`,
                     count: sources().length,
                     showWhenEmpty: false,
                     content: () => <RelTable

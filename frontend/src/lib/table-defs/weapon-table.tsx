@@ -3,6 +3,7 @@ import {Rarity} from "~/bindings/src/rarity_type";
 import {WeaponDesc} from "~/bindings/src/weapon_desc_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
+import {gameText} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rarityColumn, rarityFilter, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
@@ -33,7 +34,7 @@ export const WeaponDefs: BitCraftToDataDef<WeaponDesc> = {
         {id: "Min Damage", meta: {label: msg`Min Damage`}, accessorKey: "minDamage", filterFn: "inNumberRange"},
         {id: "Max Damage", meta: {label: msg`Max Damage`}, accessorKey: "maxDamage", filterFn: "inNumberRange"},
         {
-            id: "Cooldown", meta: {label: msg`Cooldown`}, accessorKey: "cooldown",
+            id: "Cooldown", meta: {label: gameText(msg`Cooldown`)}, accessorKey: "cooldown",
             cell: (props) => <span>{fixFloat(props.row.original.cooldown)}</span>,
             filterFn: "inNumberRange",
         },
@@ -49,7 +50,7 @@ export const WeaponDefs: BitCraftToDataDef<WeaponDesc> = {
         rarityFilter(),
         rangeFilter("Min Damage", msg`Min Damage`),
         rangeFilter("Max Damage", msg`Max Damage`),
-        rangeFilter("Cooldown", msg`Cooldown`),
+        rangeFilter("Cooldown", gameText(msg`Cooldown`)),
         rangeFilter("Stamina Use Multiplier", msg`Stamina Use Multiplier`),
     ],
     searchColumns: ["Name"],

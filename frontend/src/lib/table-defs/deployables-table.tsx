@@ -1,6 +1,9 @@
 import {msg} from "@lingui/core/macro";
-import {Show} from "solid-js";
+import {Trans} from "@lingui/solid/macro";
+import {CellContext} from "@tanstack/solid-table";
+import {JSX, Show} from "solid-js";
 import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
+import DeployableType from "~/bindings/src/deployable_type_type";
 import {ItemDesc} from "~/bindings/src/item_desc_type";
 import {MovementType} from "~/bindings/src/movement_type_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
@@ -8,7 +11,10 @@ import {SurfaceType} from "~/bindings/src/surface_type_type";
 import {TableColumnHeader} from "~/components/data-table/table-column-header";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {translateGameText} from "~/lib/data-translation";
 import {ItemLink} from "~/lib/game-links";
+import {deployableTypeLabel, surfaceTypeLabel} from "~/lib/game-strings";
+import {gameText} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {boolFilter, headerColumn, knowledgeColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
@@ -76,6 +82,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
             id: "Type",
             meta: {label: msg`Type`},
             accessorKey: "deployableType.tag",
+            cell: (props: CellContext<any, DeployableType["tag"]>): JSX.Element => deployableTypeLabel(props.getValue()),
             filterFn: includedIn<DeployableDesc>(),
         },
         {
@@ -98,10 +105,10 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
                     <TableColumnHeader column={props.column} title={props.column.id} table={props.table}>
                         <Tooltip openOnTouchStart>
                             <TooltipTrigger class="decoration-dotted underline">
-                                Total Item Size
+                                <Trans>Total Item Size</Trans>
                             </TooltipTrigger>
                             <TooltipContent class="max-w-[90svw]">
-                                Equivalent "player inventory" slots.
+                                <Trans>Equivalent "player inventory" slots.</Trans>
                             </TooltipContent>
                         </Tooltip>
                     </TableColumnHeader>
@@ -130,7 +137,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Deed",
-            meta: {label: msg`Deed`},
+            meta: {label: gameText(msg`Deed`)},
             accessorFn: (dep: DeployableDesc) => requiredItemsForDeployable(dep).deed?.name ?? "",
             cell: props => {
                 const deed = () => requiredItemsForDeployable(props.row.original).deed;
@@ -151,27 +158,28 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         },
         {
             id: "Movement",
-            meta: {label: msg`Movement`},
+            meta: {label: gameText(msg`Movement`)},
             accessorKey: "movementType.tag",
+            cell: (props: CellContext<any, MovementType["tag"]>): JSX.Element => translateGameText(props.getValue()),
             filterFn: includedIn<DeployableDesc>(),
         },
         {
             id: "Speed",
-            meta: {label: msg`Speed`},
+            meta: {label: gameText(msg`Speed`)},
             accessorFn: (deployable: DeployableDesc) => {
-                let speeds;
+                let speeds: any[];
                 switch (deployable.movementType.tag) {
                     case MovementType.None.tag:
                         return 0;
                     case MovementType.Ground.tag:
                         speeds = new Set(deployable.speed
                             .filter(ms => ms.surfaceType.tag == SurfaceType.Ground.tag)
-                            .map(ms => ms.surfaceType.tag + ": " + ms.speed)).values().toArray()
+                            .map(ms => surfaceTypeLabel(ms.surfaceType.tag) + ": " + ms.speed)).values().toArray()
                         return speeds.length == 1 ? speeds[0] : speeds.join(', ');
                     case MovementType.Water.tag:
                         speeds = new Set(deployable.speed
                             .filter(ms => ms.surfaceType.tag != SurfaceType.Ground.tag)
-                            .map(ms => ms.surfaceType.tag + ": " + ms.speed)).values().toArray()
+                            .map(ms => surfaceTypeLabel(ms.surfaceType.tag) + ": " + ms.speed)).values().toArray()
                         return speeds.length == 1 ? speeds[0] : speeds.join(', ');
                     case MovementType.Amphibious.tag:
                         speeds = new Set(deployable.speed
@@ -215,7 +223,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         rangeFilter("Total Cargo Size", msg`Total Cargo Size`),
         uniqueValuesFilter("Training", msg`Training`, compareOptions),
         rangeFilter("Occupants", msg`Occupants`),
-        uniqueValuesFilter("Movement", msg`Movement`),
+        uniqueValuesFilter("Movement", gameText(msg`Movement`)),
         rangeFilter("Step Height", msg`Step Height`),
         boolFilter("Can Auto-Follow", msg`Can Auto-Follow`),
         uniqueValuesFilter("Affected By Wind", msg`Affected By Wind`, compareOptions),

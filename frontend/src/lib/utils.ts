@@ -1,7 +1,8 @@
 import {FilterFn, Row, Table} from "@tanstack/solid-table";
 import {type ClassValue, clsx} from "clsx"
 import {twMerge} from "tailwind-merge"
-import {compareText, i18n, trackUILocale} from "~/lib/i18n";
+import {activeDataLocale} from "~/lib/data-translation";
+import {compareText, i18n, PSEUDOLOCALE_ENABLED, trackUILocale} from "~/lib/i18n";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -121,7 +122,7 @@ export function readableSeconds(seconds: number | undefined, shorten: boolean = 
     if (!supportsDurationFormat) return readableSecondsFallback(hours, minutes, secs);
 
     trackUILocale();
-    const [fmt, fmtZero] = getDurationFormats(i18n.locale);
+    const [fmt, fmtZero] = getDurationFormats(PSEUDOLOCALE_ENABLED ? activeDataLocale() : i18n.locale);
     if (hours === 0 && minutes === 0 && secs === 0) {
         return fmtZero.format({seconds: 0});
     }

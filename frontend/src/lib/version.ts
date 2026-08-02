@@ -5,5 +5,5 @@ export type VersionInfo = {
 };
 
 export const CURRENT_VERSION: VersionInfo = {
-    tag: "2026-07-27-2",
+    tag: "dev",
 };

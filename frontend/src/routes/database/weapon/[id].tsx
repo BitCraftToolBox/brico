@@ -5,7 +5,8 @@ import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb} from "~/lib/game-links";
+import {breadcrumb, ItemLink} from "~/lib/game-links";
+import {gameText} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
@@ -51,7 +52,7 @@ export default function WeaponDetail() {
             details={[
                 {label: msg`Min Damage`, value: weapon()?.minDamage},
                 {label: msg`Max Damage`, value: weapon()?.maxDamage},
-                {label: msg`Cooldown`, value: weapon() ? fixFloat(weapon()!.cooldown) : undefined},
+                {label: gameText(msg`Cooldown`), value: weapon() ? fixFloat(weapon()!.cooldown) : undefined},
                 {label: msg`Stamina Mult`, value: weapon() ? `${fixFloat(weapon()!.staminaUseMultiplier)}x` : undefined},
                 {label: msg`Hunting`, value: weaponType()?.hunting},
             ]}
@@ -61,6 +62,16 @@ export default function WeaponDetail() {
             chatLink={`(item=${item()?.id})`}
             tabs={[
                 {id: "combat", label: msg`Combat Actions`, count: combatActions().length, content: () => <CombatActionTable data={combatActions()}/>},
+                {
+                    id: "item", label: msg`Item`, count: item() ? 1 : 0,
+                    content: () => (
+                        <Show when={item()}>
+                            {d => <div class="p-1">
+                                <ItemLink id={d().id} name={d().name}/>
+                            </div>}
+                        </Show>
+                    ),
+                },
             ]}
         />
     );

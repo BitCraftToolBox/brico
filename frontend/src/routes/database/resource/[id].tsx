@@ -1,4 +1,5 @@
 import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
@@ -108,7 +109,7 @@ export default function ResourceDetail() {
             tabs={[
                 {
                     id: "extraction",
-                    label: "Extraction",
+                    label: msg`Extraction`,
                     count: extractionRecipe() ? 1 : 0,
                     content: () => <Show when={extractionRecipe()}>
                         {r => <ExtractionRecipePanel recipe={r()}/>}
@@ -116,7 +117,7 @@ export default function ResourceDetail() {
                 },
                 {
                     id: "depletion",
-                    label: "Depletion Drops",
+                    label: msg`Depletion Drops`,
                     count: extractionRecipe() ? 0 : (resource()?.onDestroyYield?.length ?? 0) + (resource()?.onDestroyYieldResourceId ? 1 : 0),
                     showWhenEmpty: false,
                     content: () => <Show when={resource() && (hasDepletion() || hasDepletionResource())}>
@@ -125,7 +126,7 @@ export default function ResourceDetail() {
                 },
                 {
                     id: "from-depletion",
-                    label: "Spawned from Resource",
+                    label: msg`Spawned from Resource`,
                     count: yieldedByResource()?.length ?? 0,
                     showWhenEmpty: false,
                     content: () => (
@@ -138,14 +139,14 @@ export default function ResourceDetail() {
                 },
                 {
                   id: "growth",
-                  label: "Timed Growth",
+                  label: msg`Timed Growth`,
                   count: (growthFrom() ? 1 : 0) + (growthInto() ? 1 : 0),
                   showWhenEmpty: false,
                   content: () => (
                       <div class="space-y-4">
                           <Show when={growthFrom()}>{growthDescs =>
                               <div>
-                                  <h4 class="text-sm text-muted-foreground mb-2">Grows From</h4>
+                                  <h4 class="text-sm text-muted-foreground mb-2"><Trans>Grows From</Trans></h4>
                                   <RecipeSelect
                                       recipes={growthDescs()}
                                       nameFor={gd => resourceIndex().get(gd.resourceId)?.name ?? "Resource #" + gd.resourceId}
@@ -155,7 +156,7 @@ export default function ResourceDetail() {
                           }</Show>
                           <Show when={growthInto()}>{growthDesc =>
                               <div>
-                                  <h4 class="text-sm text-muted-foreground mb-2">Grows Into</h4>
+                                  <h4 class="text-sm text-muted-foreground mb-2"><Trans>Grows Into</Trans></h4>
                                   <ResourceGrowthPanel growth={growthDesc()}/>
                               </div>
                           }</Show>
@@ -164,7 +165,7 @@ export default function ResourceDetail() {
                 },
                 {
                     id: "prospecting",
-                    label: "Spawned from Prospecting",
+                    label: msg`Spawned from Prospecting`,
                     count: prospecting().length,
                     showWhenEmpty: false,
                     content: () => (
@@ -183,7 +184,7 @@ export default function ResourceDetail() {
                 },
                 {
                     id: "enemies",
-                    label: "Spawns Enemies",
+                    label: msg`Spawns Enemies`,
                     count: enemies().length,
                     showWhenEmpty: false,
                     content: () => (

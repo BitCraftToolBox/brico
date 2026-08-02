@@ -6,6 +6,7 @@ import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_t
 import {ItemStackArray} from "~/components/shared/ItemStacks";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {SkillLinkById} from "~/lib/game-links";
+import {gameText} from "~/lib/labels";
 import {getTravelerNpcName, getTravelerTradeName} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
@@ -25,14 +26,14 @@ export const TravelerTradeDefs: BitCraftToDataDef<TravelerTradeOrderDesc> = {
     columns: [
         headerColumn<TravelerTradeOrderDesc, string>({
             title: "Description",
-            label: msg`Description`,
+            label: gameText(msg`Description`),
             accessor: {accessorFn: trade => getTravelerTradeName(trade)},
             route: trade => ["traveler-trade", trade.id],
             customRender: (val) => <span class="text-sm text-balance">{val}</span>,
         }),
         {
             id: "Traveler",
-            meta: {label: msg`Traveler`},
+            meta: {label: gameText(msg`Traveler`)},
             // The NPC's English name — filterable, so it ends up in shared URLs. See the note at
             // the top of table-utils/column-builders.tsx.
             accessorFn: (trade) => getTravelerNpcName(trade.traveler.tag, {source: true}),
@@ -53,7 +54,7 @@ export const TravelerTradeDefs: BitCraftToDataDef<TravelerTradeOrderDesc> = {
         },
         {
             id: "Skill",
-            meta: {label: msg`Skill`},
+            meta: {label: gameText(msg`Skill`)},
             accessorFn: (trade) => {
                 const req = trade.levelRequirements[0];
                 if (!req?.skillId) return undefined;
@@ -69,7 +70,7 @@ export const TravelerTradeDefs: BitCraftToDataDef<TravelerTradeOrderDesc> = {
         },
         {
             id: "Level",
-            meta: {label: msg`Level`},
+            meta: {label: gameText(msg`Level`)},
             accessorFn: (trade) => trade.levelRequirements[0]?.level,
             filterFn: "inNumberRange",
         },
@@ -78,9 +79,9 @@ export const TravelerTradeDefs: BitCraftToDataDef<TravelerTradeOrderDesc> = {
         rowActions(),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Traveler", msg`Traveler`, compareOptions),
-        uniqueValuesFilter("Skill", msg`Skill`, compareOptions),
-        rangeFilter("Level", msg`Level`),
+        uniqueValuesFilter("Traveler", gameText(msg`Traveler`), compareOptions),
+        uniqueValuesFilter("Skill", gameText(msg`Skill`), compareOptions),
+        rangeFilter("Level", gameText(msg`Level`)),
         uniqueValuesFilter("Required Knowledge", msg`Required Knowledge`, compareOptions),
         uniqueValuesFilter("Blocking Knowledge", msg`Blocking Knowledge`, compareOptions),
     ],

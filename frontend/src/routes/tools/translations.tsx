@@ -79,7 +79,9 @@ const UI_CATALOGS: Record<UILocale, Map<string, string>> = {
 
 const UI_IDS = Array.from(UI_CATALOGS.en.keys()).sort(compareText);
 
-function UiStringsSection(props: {query: Accessor<string>}) {
+function UiStringsSection(props: {query: Accessor<string>; hiddenLocales: Accessor<Set<string>>}) {
+    const locales = createMemo(() => UI_LOCALES.filter((locale) => !props.hiddenLocales().has(locale)));
+
     const filtered = createMemo(() => {
         const q = props.query().trim().toLowerCase();
         if (!q) return UI_IDS;
@@ -105,7 +107,7 @@ function UiStringsSection(props: {query: Accessor<string>}) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <For each={UI_LOCALES}>
+                            <For each={locales()}>
                                 {(locale, i) => (
                                     <TableHead
                                         class={i() === 0 ? "sticky left-0 top-0 z-20 bg-background whitespace-nowrap" : "sticky top-0 z-10 bg-background whitespace-nowrap"}
@@ -121,7 +123,7 @@ function UiStringsSection(props: {query: Accessor<string>}) {
                             each={visible()}
                             fallback={
                                 <TableRow>
-                                    <TableCell colSpan={UI_LOCALES.length} class="text-center text-muted-foreground py-6">
+                                    <TableCell colSpan={locales().length} class="text-center text-muted-foreground py-6">
                                         No matches
                                     </TableCell>
                                 </TableRow>
@@ -129,7 +131,7 @@ function UiStringsSection(props: {query: Accessor<string>}) {
                         >
                             {(id) => (
                                 <TableRow>
-                                    <For each={UI_LOCALES}>
+                                    <For each={locales()}>
                                         {(locale, i) => {
                                             const text = () => UI_CATALOGS[locale].get(id);
                                             return (
@@ -160,11 +162,15 @@ function UiStringsSection(props: {query: Accessor<string>}) {
 
 const GAME_LOCALES: DataLocale[] = DATA_LOCALES.filter((locale) => locale !== "en");
 
-function GameStringsSection(props: {query: Accessor<string>}) {
+function GameStringsSection(props: {query: Accessor<string>; hiddenLocales: Accessor<Set<string>>}) {
     // Kick off every locale's CSV fetch up front — `translationsFor` memoizes per locale, so this
     // is a no-op for any locale already loaded elsewhere in the app, and reactive: reading the
     // accessor subscribes this component to the fetch landing.
     const readers = GAME_LOCALES.map((locale) => translationsFor(locale));
+
+    const showEnglish = createMemo(() => !props.hiddenLocales().has("en"));
+    const visibleLocales = createMemo(() => GAME_LOCALES.filter((locale) => !props.hiddenLocales().has(locale)));
+    const columnCount = createMemo(() => (showEnglish() ? 1 : 0) + visibleLocales().length);
 
     const allSources = createMemo(() => {
         const sources = new Set<string>();
@@ -202,10 +208,12 @@ function GameStringsSection(props: {query: Accessor<string>}) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead class="sticky left-0 top-0 z-20 bg-background whitespace-nowrap">
-                                {localeLabel("en")} (en)
-                            </TableHead>
-                            <For each={GAME_LOCALES}>
+                            <Show when={showEnglish()}>
+                                <TableHead class="sticky left-0 top-0 z-20 bg-background whitespace-nowrap">
+                                    {localeLabel("en")} (en)
+                                </TableHead>
+                            </Show>
+                            <For each={visibleLocales()}>
                                 {(locale) => (
                                     <TableHead class="sticky top-0 z-10 bg-background whitespace-nowrap">
                                         {localeLabel(locale)} ({locale})
@@ -219,7 +227,7 @@ function GameStringsSection(props: {query: Accessor<string>}) {
                             each={visible()}
                             fallback={
                                 <TableRow>
-                                    <TableCell colSpan={GAME_LOCALES.length + 1} class="text-center text-muted-foreground py-6">
+                                    <TableCell colSpan={columnCount()} class="text-center text-muted-foreground py-6">
                                         No matches
                                     </TableCell>
                                 </TableRow>
@@ -227,10 +235,13 @@ function GameStringsSection(props: {query: Accessor<string>}) {
                         >
                             {(source) => (
                                 <TableRow>
-                                    <TableCell class="sticky left-0 bg-background font-medium max-w-md align-top">{source}</TableCell>
-                                    <For each={GAME_LOCALES}>
-                                        {(_locale, i) => {
-                                            const text = () => readers[i()]()?.get(source);
+                                    <Show when={showEnglish()}>
+                                        <TableCell class="sticky left-0 bg-background font-medium max-w-md align-top">{source}</TableCell>
+                                    </Show>
+                                    <For each={visibleLocales()}>
+                                        {(locale) => {
+                                            const readerIndex = GAME_LOCALES.indexOf(locale);
+                                            const text = () => readers[readerIndex]()?.get(source);
                                             return (
                                                 <TableCell class="max-w-md align-top">
                                                     <Show when={text()} fallback={<span class="text-muted-foreground italic">—</span>}>
@@ -255,12 +266,25 @@ function GameStringsSection(props: {query: Accessor<string>}) {
     );
 }
 
+// Every locale toggleable from the checkbox row below the search bar — the union of both
+// systems' locale lists, in their natural (declared) order, deduped by code.
+const ALL_LOCALES: string[] = Array.from(new Set<string>([...UI_LOCALES, ...DATA_LOCALES]));
+
 // ── Page ──────────────────────────────────────────────────────────
 
 export default function TranslationsPage() {
     const [query, setQuery] = createSignal("");
     const setQueryThrottled = throttle((value: string) => setQuery(value), 300);
     onCleanup(() => setQueryThrottled.clear());
+
+    const [hiddenLocales, setHiddenLocales] = createSignal<Set<string>>(new Set());
+    const toggleLocale = (locale: string, visible: boolean) => {
+        setHiddenLocales((prev) => {
+            const next = new Set(prev);
+            if (visible) next.delete(locale); else next.add(locale);
+            return next;
+        });
+    };
 
     return (
         <MainLayout title="Translations" hideSearch description="Debug view of collated UI and game-data translation strings.">
@@ -273,10 +297,25 @@ export default function TranslationsPage() {
                             onInput={(e) => setQueryThrottled(e.currentTarget.value)}
                         />
                     </TextField>
+                    <div class="flex flex-wrap gap-3 mt-3">
+                        <For each={ALL_LOCALES}>
+                            {(locale) => (
+                                <label class="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                    <input
+                                        type="checkbox"
+                                        class="size-4 accent-primary"
+                                        checked={!hiddenLocales().has(locale)}
+                                        onChange={(e) => toggleLocale(locale, e.currentTarget.checked)}
+                                    />
+                                    {localeLabel(locale)} ({locale})
+                                </label>
+                            )}
+                        </For>
+                    </div>
                 </div>
 
-                <GameStringsSection query={query}/>
-                <UiStringsSection query={query}/>
+                <GameStringsSection query={query} hiddenLocales={hiddenLocales}/>
+                <UiStringsSection query={query} hiddenLocales={hiddenLocales}/>
             </div>
         </MainLayout>
     );

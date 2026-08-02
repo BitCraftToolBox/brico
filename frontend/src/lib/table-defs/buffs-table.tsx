@@ -20,7 +20,7 @@ export const BuffDefs: BitCraftToDataDef<BuffDesc> = {
         descriptionColumn(),
         {
             id: "Buff Type",
-            meta: {label: msg`Buff Type`},
+            meta: {label: msg`Type`},
             // English value — this column is filterable, so it ends up in shared URLs.
             // See the note at the top of table-utils/column-builders.tsx.
             accessorFn: row => row.buffTypeId ? sourceRow(BitCraftTables.BuffTypeDesc.indexedBy("id")().get(row.buffTypeId))?.name ?? `#${row.buffTypeId}` : undefined,
@@ -31,7 +31,7 @@ export const BuffDefs: BitCraftToDataDef<BuffDesc> = {
         rowActions(),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Buff Type", msg`Buff Type`, compareOptions),
+        uniqueValuesFilter("Buff Type", msg`Type`, compareOptions),
         statsFilter(),
     ],
     searchColumns: ["Name", "Description"],

@@ -4,6 +4,7 @@ import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {breadcrumb} from "~/lib/game-links";
+import {skillCategoryLabel} from "~/lib/game-strings";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -20,8 +21,7 @@ export default function SkillDetail() {
     const skillTag = createMemo(() => {
         const s = skill();
         if (!s) return "Unknown";
-        if (s.skillCategory.tag == "None") return "Skill";
-        return s.skillCategory.tag;
+        return skillCategoryLabel(s.skillCategory.tag);
     });
 
     return (

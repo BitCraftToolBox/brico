@@ -14,7 +14,7 @@
  * construction, or it freezes at the wrong moment.
  */
 
-import type {MessageDescriptor} from "@lingui/core";
+import {i18n, type MessageDescriptor} from "@lingui/core";
 import {useLingui} from "@lingui/solid";
 import {translateGameText} from "~/lib/data-translation";
 
@@ -48,7 +48,7 @@ export function isGameLabel(label: Label | string): label is GameLabel {
  *
  * ```ts
  * titleLabel: gameText(msg`Items`)                       // source defaults to the msgid
- * titleLabel: gameText(msg`Structures`, "Building")       // …unless the game words it differently
+ * titleLabel: gameText(msg`Experience`, "EXP")       // …unless the game words it differently
  * ```
  *
  * The source string defaults to the descriptor's message (i.e. the English text the `msg` macro
@@ -64,8 +64,30 @@ export function gameText(fallback: MessageDescriptor, source?: string): GameLabe
     };
 }
 
+/**
+ * The canonical English text of a `Label`, untranslated — for identity uses (persisted keys,
+ * `name`/`id`-style props) where a `Label` is accepted for display but the value must stay stable
+ * across locales. Not reactive; there is nothing to react to.
+ */
+export function labelSource(label: Label | string): string {
+    if (typeof label === "string") return label;
+    if (isGameLabel(label)) return label.source;
+    return label.message ?? String(label.id);
+}
+
 /** Resolves a `Label` to display text. See `useLabel` — this is its non-hook form. */
 export type LabelResolver = (label: Label | string) => string;
+
+function resolveLabel(_: (d: MessageDescriptor) => string, label: Label | string): string {
+    if (typeof label === "string") return label;
+    if (isGameLabel(label)) {
+        const translated = translateGameText(label.source);
+        // A miss returns the source unchanged; prefer the app's own catalog in that case, so a
+        // label the game doesn't publish still follows the UI language.
+        return translated === label.source ? _(label.fallback) : translated;
+    }
+    return _(label);
+}
 
 /**
  * Returns a resolver for `Label` values.
@@ -76,14 +98,14 @@ export type LabelResolver = (label: Label | string) => string;
  */
 export function useLabel(): LabelResolver {
     const {_} = useLingui();
-    return (label) => {
-        if (typeof label === "string") return label;
-        if (isGameLabel(label)) {
-            const translated = translateGameText(label.source);
-            // A miss returns the source unchanged; prefer the app's own catalog in that case, so a
-            // label the game doesn't publish still follows the UI language.
-            return translated === label.source ? _(label.fallback) : translated;
-        }
-        return _(label);
-    };
+    return (label) => resolveLabel(_, label);
+}
+
+/**
+ * Non-hook form of `useLabel`, for module-scope helpers that build JSX outside a component body
+ * (e.g. `breadcrumb()`). Uses the module-global Lingui instance directly, so — same as the bare `t`
+ * macro (see i18n.ts) — the caller must call `trackUILocale()` first for reactivity.
+ */
+export function labelText(label: Label | string): string {
+    return resolveLabel((d) => i18n._(d), label);
 }

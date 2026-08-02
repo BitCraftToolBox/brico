@@ -11,7 +11,6 @@
  *   - Stat lines (icon in label, linked name in value)
  */
 
-import {i18n} from "@lingui/core";
 import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {TbOutlineLock as IconLock} from "solid-icons/tb";
@@ -22,7 +21,8 @@ import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {trackUILocale} from "~/lib/i18n";
-import {PAGE_ICONS, SidebarPages} from "~/lib/sidebar-items";
+import {type Label, labelText} from "~/lib/labels";
+import {PAGE_ICONS, PAGE_TITLE_LABELS, SidebarPages} from "~/lib/sidebar-items";
 import {BitCraftTables} from "~/lib/spacetime";
 import {cn, fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -413,14 +413,18 @@ export function knowledgeStatIcon(): JSX.Element {
 }
 
 
-export function breadcrumb(href: string, title?: string): JSX.Element {
-    title = title ?? href
-        .split("/").pop()
-        ?.replace(/(-[a-z])/g, c => " " + c[1].toUpperCase())
-        .replace(/^\w/, c => c.toUpperCase());
-    if (!title) return <></>;
+/**
+ * Breadcrumb link for a detail page, reusing the same label its sidebar entry renders — so it
+ * never invents a second wording (or, worse, a string that was never extracted and so never
+ * translates at all). Pass `titleOverride` only when the breadcrumb needs different wording than
+ * the sidebar (a singular noun for a detail page, say) or an already-resolved display string (a
+ * category tag looked up per-row).
+ */
+export function breadcrumb(href: string, titleOverride?: Label | string): JSX.Element {
+    const label = titleOverride ?? PAGE_TITLE_LABELS[href];
+    if (!label) return <></>;
     trackUILocale();
     return <>
-        <A href={href}>{i18n._(title)}</A><span class="mx-1.5">{">"}</span>
+        <A href={href}>{labelText(label)}</A>
     </>;
 }

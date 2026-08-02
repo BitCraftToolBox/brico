@@ -83,6 +83,8 @@ export interface DetailPageProps {
     metaKind?: string;
     /** OG/Twitter thumbnail (absolute or root-relative). Defaults to the branded thumbnail. */
     metaImage?: string;
+    /** Tab to try to open first - tries details first if unset **/
+    defaultTab?: string;
     /**
      * Detailed info — either a flat list of properties (rendered as one group)
      * or an array of DetailGroup with optional subheadings.
@@ -156,7 +158,7 @@ const PropertyGrid: Component<{ properties: DetailProperty[] }> = (props) => {
 type InfoTab = "details" | "summary" | "raw" | string;
 
 const PseudoTabLink: Component<{
-    label: string;
+    label: string | JSX.Element;
     tab: InfoTab;
     active: InfoTab;
     onClick: (tab: InfoTab) => void;
@@ -191,8 +193,8 @@ const CopyButton: Component<{
 
     return (
         <Button variant="outline" size="sm" onClick={copyContent}>
-            <Show when={contentCopied()} fallback={props.copyElement || <><IconClipboardCopy class="mr-1"/> Copy JSON</>}>
-                {props.copiedElement || <><IconClipboardCheck class="mr-1"/> Copied!</>}
+            <Show when={contentCopied()} fallback={props.copyElement || <><IconClipboardCopy class="mr-1"/> <Trans>Copy JSON</Trans></>}>
+                {props.copiedElement || <><IconClipboardCheck class="mr-1"/> <Trans>Copied!</Trans></>}
             </Show>
         </Button>
     );
@@ -225,7 +227,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     const hasDetails = () => groups().some(g => visibleProps(g.properties).length > 0);
     const hasInfoSection = () => hasDetails() || props.summaryContent || props.rawData || props.infoTabs;
 
-    const [infoTab, setInfoTabRaw] = createSignal<InfoTab>("details");
+    const [infoTab, setInfoTabRaw] = createSignal<InfoTab>(props.defaultTab ?? "details");
     const setInfoTab = (info: string) => {
         setInfoTabRaw(info);
         setSearchParams({info}, {replace: true});
@@ -252,9 +254,11 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                 return; // skip the default-details logic below
             }
         }
-        // Default: prefer Summary when there is no Details
+        // Default: find a tab with content
         if (!hasDetails() && props.summaryContent) {
             setInfoTab("summary");
+        } else if (!props.summaryContent && hasDetails()) {
+            setInfoTab("details");
         }
     });
 
@@ -282,7 +286,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
             description={detailMetaDescription(metaArgs())}
             keywords={metaKeywords(metaArgs())}
             image={props.metaImage}
-            navTitle={<>{props.breadcrumb}{props.title}</>}
+            navTitle={props.breadcrumb}
         >
             <Show when={!props.loading} fallback={
                 <div class="flex items-center justify-center py-20">
@@ -322,14 +326,14 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                             <CardHeader class="pb-2">
                                 <div class="flex gap-4 items-center">
                                     <Show when={props.summaryContent}>
-                                        <PseudoTabLink label="Summary" tab="summary" active={infoTab()} onClick={setInfoTab}/>
+                                        <PseudoTabLink label={<Trans>Summary</Trans>} tab="summary" active={infoTab()} onClick={setInfoTab}/>
                                     </Show>
                                     <For each={props.infoTabs}>{tab =>
                                         <PseudoTabLink label={tab[0]} tab={tab[0]} active={infoTab()} onClick={setInfoTab}/>
                                     }</For>
-                                    <PseudoTabLink label="Details" tab="details" active={infoTab()} onClick={setInfoTab}/>
+                                    <PseudoTabLink label={<Trans>Details</Trans>} tab="details" active={infoTab()} onClick={setInfoTab}/>
                                     <Show when={props.rawData}>
-                                        <PseudoTabLink label="Raw Data" tab="raw" active={infoTab()} onClick={setInfoTab}/>
+                                        <PseudoTabLink label={<Trans>Raw Data</Trans>} tab="raw" active={infoTab()} onClick={setInfoTab}/>
                                     </Show>
                                 </div>
                             </CardHeader>
@@ -371,18 +375,18 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                         <div class="flex gap-2 items-center flex-wrap">
                                             <CopyButton
                                                 content={JSON.stringify(rawData(), null, 2)}
-                                                copyElement={<><IconClipboardText/> Copy JSON</>}
+                                                copyElement={<><IconClipboardText/> <Trans>Copy JSON</Trans></>}
                                             />
                                             <Show when={props.objectId !== undefined}>
                                                 <CopyButton
                                                     content={String(props.objectId)}
-                                                    copyElement={<><IconClipboardCopy/> Copy ID</>}
+                                                    copyElement={<><IconClipboardCopy/> <Trans>Copy ID</Trans></>}
                                                 />
                                             </Show>
                                             <Show when={props.chatLink}>{s =>
                                                 <CopyButton
                                                     content={s()}
-                                                    copyElement={<><FontIcon codepoint="FFE0" class="mr-1"/> Copy Chat Link</>}
+                                                    copyElement={<><FontIcon codepoint="FFE0" class="mr-1"/> <Trans>Copy Chat Link</Trans></>}
                                                 />
                                             }</Show>
                                             <Show when={props.spacetimeTable && props.objectId !== undefined}>
@@ -391,7 +395,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                                     target="_blank"
                                                     class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
                                                 >
-                                                    <IconExternal/> Browse raw data on 🥣 cereal
+                                                    <IconExternal/> <Trans>Browse raw data on 🥣 cereal</Trans>
                                                 </a>
                                             </Show>
                                         </div>
@@ -484,7 +488,7 @@ export function RelTable<T>(props: RelTableProps<T>) {
                 <tbody>
                 <For each={props.data} fallback={
                     <tr>
-                        <td colspan={props.columns.length} class="text-center py-4 text-muted-foreground">No data</td>
+                        <td colspan={props.columns.length} class="text-center py-4 text-muted-foreground"><Trans>No data</Trans></td>
                     </tr>
                 }>
                     {(row) => (

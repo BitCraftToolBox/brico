@@ -31,13 +31,13 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
         }),
         {
             id: "Requirements",
-            meta: {label: msg`Requirements`},
+            meta: {label: gameText(msg`Requires`, "Requires ")},
             accessorKey: "requiredItems",
             cell: renderItemStackArray,
         },
         {
             id: "Rewards",
-            meta: {label: msg`Rewards`},
+            meta: {label: gameText(msg`Rewards`)},
             accessorKey: "rewardedItems",
             cell: renderItemStackArray,
             sortingFn: (rowA, rowB) => {
@@ -50,7 +50,7 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
         },
         {
             id: "Skill",
-            meta: {label: msg`Skill`},
+            meta: {label: gameText(msg`Skill`)},
             accessorFn: task => {
                 // English value — filterable, so it ends up in shared URLs. The cell renders
                 // SkillLinkById, which localizes for display. See table-utils/column-builders.tsx.
@@ -67,7 +67,7 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
         },
         {
             id: "Exp",
-            meta: {label: msg`Exp`},
+            meta: {label: gameText(msg`EXP`)},
             accessorKey: "rewardedExperience.quantity",
             filterFn: 'inNumberRange'
         },
@@ -86,8 +86,8 @@ export const TravelerTaskDefs: BitCraftToDataDef<TravelerTaskDesc> = {
         rowActions(),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Skill", msg`Skill`),
-        rangeFilter("Exp", msg`Exp`),
+        uniqueValuesFilter("Skill", gameText(msg`Skill`)),
+        rangeFilter("Exp", gameText(msg`EXP`)),
         rangeFilter("Min Level", msg`Min Level`),
         rangeFilter("Max Level", msg`Max Level`),
     ],

@@ -5,6 +5,7 @@ import {ItemIcon} from "~/components/shared/GameIcon";
 import {sourceRow} from "~/lib/data-translation";
 import {SkillLinkById} from "~/lib/game-links";
 import {equipmentSlotLabel, equipmentSlotName} from "~/lib/game-strings";
+import {gameText} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rarityColumn, rarityFilter, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
@@ -34,7 +35,7 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
         },
         {
             id: "Skill",
-            meta: {label: msg`Skill`},
+            meta: {label: gameText(msg`Skill`)},
             accessorFn: row => {
                 if (!row.levelRequirement) return undefined;
                 if (!row.levelRequirement.skillId) return undefined;
@@ -51,7 +52,7 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
         },
         {
             id: "Level",
-            meta: {label: msg`Level`},
+            meta: {label: gameText(msg`Level`)},
             accessorFn: row => row.levelRequirement?.level,
             filterFn: "inNumberRange",
         },
@@ -62,8 +63,8 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
     ],
     facetedFilters: [
         uniqueValuesFilter("Slots", msg`Slots`, undefined, undefined, equipmentSlotLabel),
-        uniqueValuesFilter("Skill", msg`Skill`),
-        rangeFilter("Level", msg`Level`),
+        uniqueValuesFilter("Skill", gameText(msg`Skill`)),
+        rangeFilter("Level", gameText(msg`Level`)),
         statsFilter(),
         tierFilter(),
         rarityFilter()
