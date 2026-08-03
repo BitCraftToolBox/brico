@@ -1,9 +1,10 @@
-import {A, useParams} from "@solidjs/router";
+import {msg} from "@lingui/core/macro";
+import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
+import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb} from "~/lib/game-links";
+import {breadcrumb, ItemLink} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {buffsGroups} from "~/lib/table-utils/detail-group-builders";
@@ -59,13 +60,13 @@ export default function FoodDetail() {
             details={[
                 {
                     properties: [
-                        {label: "Satiation", value: food() ? undefinedIfZero(fixFloat(food()!.hunger)) : undefined},
-                        {label: "HP", value: food() ? undefinedIfZero(fixFloat(food()!.hp)) : undefined},
-                        {label: "Up To HP", value: food() ? undefinedIfZero(fixFloat(food()!.upToHp)) : undefined},
-                        {label: "Stamina", value: food() ? undefinedIfZero(fixFloat(food()!.stamina)) : undefined},
-                        {label: "Up To Stamina", value: food() ? undefinedIfZero(fixFloat(food()!.upToStamina)) : undefined},
-                        {label: "Teleportation Energy", value: food() ? undefinedIfZero(fixFloat(food()!.teleportationEnergy)) : undefined},
-                        {label: "Consumable In Combat", value: food()?.consumableWhileInCombat},
+                        {label: msg`Satiation`, value: food() ? undefinedIfZero(fixFloat(food()!.hunger)) : undefined},
+                        {label: msg`HP`, value: food() ? undefinedIfZero(fixFloat(food()!.hp)) : undefined},
+                        {label: msg`Up To HP`, value: food() ? undefinedIfZero(fixFloat(food()!.upToHp)) : undefined},
+                        {label: msg`Stamina`, value: food() ? undefinedIfZero(fixFloat(food()!.stamina)) : undefined},
+                        {label: msg`Up To Stamina`, value: food() ? undefinedIfZero(fixFloat(food()!.upToStamina)) : undefined},
+                        {label: msg`Teleportation Energy`, value: food() ? undefinedIfZero(fixFloat(food()!.teleportationEnergy)) : undefined},
+                        {label: msg`Consumable In Combat`, value: food()?.consumableWhileInCombat},
                     ]
                 },
                 ...statGroups()
@@ -76,15 +77,17 @@ export default function FoodDetail() {
             chatLink={`(item=${item()?.id})`}
             tabs={[
                 {
-                    id: "item", label: "Item", count: item() ? 1 : 0,
-                    content: () => <Show when={item()}>
-                        <RelTable data={[item()!]} columns={[
-                            {header: "Item", cell: row => <A href={`/database/item/${row.id}`}>{row.name}</A>},
-                        ]}/>
-                    </Show>,
+                    id: "item", label: msg`Item`, count: item() ? 1 : 0,
+                    content: () => (
+                        <Show when={item()}>
+                            {d => <div class="p-1">
+                                <ItemLink id={d().id} name={d().name}/>
+                            </div>}
+                        </Show>
+                    ),
                 },
                 {
-                    id: "buffs", label: "Buffs", count: buffs().length,
+                    id: "buffs", label: msg`Buffs`, count: buffs().length,
                     content: () => <BuffTable data={buffs()}/>,
                 },
             ]}

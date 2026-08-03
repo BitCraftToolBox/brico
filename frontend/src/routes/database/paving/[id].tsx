@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
@@ -54,8 +55,8 @@ export default function PavingDetail() {
             metaKind="paving"
             metaImage={ogImageForAsset(tile()?.iconAddress)}
             details={[
-                {label: "Experience", value: experienceStr()},
-                {label: "Build Time", value: tile() ? `${fixFloat(tile()!.pavingDuration)}s` : undefined},
+                {label: msg`Experience`, value: experienceStr()},
+                {label: msg`Build Time`, value: tile() ? `${fixFloat(tile()!.pavingDuration)}s` : undefined},
             ]}
             rawData={tile()}
             spacetimeTable={BitCraftTables.PavingTileDesc.spacetimeName}
@@ -63,13 +64,13 @@ export default function PavingDetail() {
             tabs={[
                 {
                     id: "consumed",
-                    label: "Consumed Items",
+                    label: msg`Consumed Items`,
                     count: tile()?.consumedItemStacks?.reduce((p, iis) => p + iis.quantity, 0) ?? 0,
                     showWhenEmpty: false,
                     content: () => <InputItemStackArray stacks={tile()!.consumedItemStacks}/>,
                 },
-                {id: "knowledge", label: "Required Knowledge", count: requiredKnowledges().length, content: () => <KnowledgeTable data={requiredKnowledges()}/>},
-                {id: "stats", label: "Stat Effects", count: tile()?.statEffects?.length ?? 0, content: () => <StatTable data={tile()!.statEffects}/>},
+                {id: "knowledge", label: msg`Required Knowledge`, count: requiredKnowledges().length, content: () => <KnowledgeTable data={requiredKnowledges()}/>},
+                {id: "stats", label: msg`Stat Effects`, count: tile()?.statEffects?.length ?? 0, content: () => <StatTable data={tile()!.statEffects}/>},
             ]}
         />
     );

@@ -1,3 +1,5 @@
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
@@ -12,6 +14,7 @@ import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {breadcrumb, ItemListLink, SkillLinkById} from "~/lib/game-links";
+import {useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
 import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList, scalingDescsFromEnemy} from "~/lib/relations";
@@ -22,6 +25,7 @@ type LootRow = [ContributionLootDesc, ItemListDesc];
 
 export default function CreatureDetail() {
     const params = useParams();
+    const label = useLabel();
     const isLoading = useTablesLoading(BitCraftTables.EnemyDesc);
     const index = BitCraftTables.EnemyDesc.indexedBy("enemyType");
     const pathfindingIndex = BitCraftTables.PathfindingDesc.indexedBy("id");
@@ -59,9 +63,9 @@ export default function CreatureDetail() {
             return <><SkillLinkById skillId={exp.skillId}/>: <Tooltip openOnTouchStart>
                     <TooltipTrigger class={"decoration-dotted underline"}>{fixFloat(exp.quantity)}</TooltipTrigger>
                     <TooltipContent>
-                        Experience per Damage Dealt<br/>
+                        <Trans>Experience per Damage Dealt</Trans><br/>
                         {c.maxHealth} HP * {fixFloat(exp.quantity)} = {c.maxHealth * fixFloat(exp.quantity)} XP<br/>
-                        <span class="text-muted-foreground">Note: overkill damage also grants XP. This is the minimum.</span>
+                        <span class="text-muted-foreground"><Trans>Note: overkill damage also grants XP. This is the minimum.</Trans></span>
                     </TooltipContent>
                 </Tooltip>
             </>;
@@ -74,44 +78,44 @@ export default function CreatureDetail() {
         return [
             //{ properties: [{ label: "Huntable", value: c.huntable }]}, // for now, redundant with the "Huntable Animal" tag
             {
-                heading: "Combat",
+                heading: msg`Combat`,
                 properties: [
-                    {label: "Max Health", value: c.maxHealth},
-                    {label: "Health Regen", value: fixFloat(c.healthRegenQuantity)},
-                    {label: "Exp", value: experience()},
-                    {label: "Armor", value: c.armor},
-                    {label: "Accuracy", value: c.accuracy},
-                    {label: "Evasion", value: c.evasion},
-                    {label: "Strength", value: c.strength},
-                    {label: "Min Damage", value: c.minDamage},
-                    {label: "Max Damage", value: c.maxDamage},
-                    {label: "Cooldown Multiplier", value: fixFloat(c.cooldownMultiplier)},
-                    {label: "Attack Level", value: c.attackLevel},
-                    {label: "Defense Level", value: c.defenseLevel},
-                    {label: "Radius", value: c.radius},
+                    {label: msg`Max Health`, value: c.maxHealth},
+                    {label: msg`Health Regen`, value: fixFloat(c.healthRegenQuantity)},
+                    {label: msg`Exp`, value: experience()},
+                    {label: msg`Armor`, value: c.armor},
+                    {label: msg`Accuracy`, value: c.accuracy},
+                    {label: msg`Evasion`, value: c.evasion},
+                    {label: msg`Strength`, value: c.strength},
+                    {label: msg`Min Damage`, value: c.minDamage},
+                    {label: msg`Max Damage`, value: c.maxDamage},
+                    {label: msg`Cooldown Multiplier`, value: fixFloat(c.cooldownMultiplier)},
+                    {label: msg`Attack Level`, value: c.attackLevel},
+                    {label: msg`Defense Level`, value: c.defenseLevel},
+                    {label: msg`Radius`, value: c.radius},
                 ],
             },
             {
-                heading: "Movement",
+                heading: msg`Movement`,
                 properties: [
-                    {label: "Min Speed", value: c.minSpeed},
-                    {label: "Max Speed", value: c.maxSpeed},
+                    {label: msg`Min Speed`, value: c.minSpeed},
+                    {label: msg`Max Speed`, value: c.maxSpeed},
                     ...pathfindingLabels(),
-                    {label: "Evade Range", value: c.evadeRange},
+                    {label: msg`Evade Range`, value: c.evadeRange},
                 ],
             },
             {
-                heading: "Awareness & Aggro",
+                heading: msg`Awareness & Aggro`,
                 properties: [
-                    {label: "Day Detect Range", value: c.daytimeDetectRange},
-                    {label: "Day Aggro Range", value: c.daytimeAggroRange},
-                    {label: "Day Deaggro Range", value: c.daytimeDeaggroRange},
-                    {label: "Night Detect Range", value: c.nighttimeDetectRange},
-                    {label: "Night Aggro Range", value: c.nighttimeAggroRange},
-                    {label: "Night Deaggro Range", value: c.nighttimeDeaggroRange},
-                    {label: "Deaggro Health", value: `${fixFloat(c.deaggroHealthThreshold * 100)}%`},
-                    {label: "Awareness Threshold", value: `${fixFloat(c.awarenessDestinationThreshold)}`},
-                    {label: "Awareness Tick", value: `${c.minAwarenessTickSec}–${c.maxAwarenessTickSec}s`},
+                    {label: msg`Day Detect Range`, value: c.daytimeDetectRange},
+                    {label: msg`Day Aggro Range`, value: c.daytimeAggroRange},
+                    {label: msg`Day Deaggro Range`, value: c.daytimeDeaggroRange},
+                    {label: msg`Night Detect Range`, value: c.nighttimeDetectRange},
+                    {label: msg`Night Aggro Range`, value: c.nighttimeAggroRange},
+                    {label: msg`Night Deaggro Range`, value: c.nighttimeDeaggroRange},
+                    {label: msg`Deaggro Health`, value: `${fixFloat(c.deaggroHealthThreshold * 100)}%`},
+                    {label: msg`Awareness Threshold`, value: `${fixFloat(c.awarenessDestinationThreshold)}`},
+                    {label: msg`Awareness Tick`, value: `${c.minAwarenessTickSec}–${c.maxAwarenessTickSec}s`},
                 ],
             },
         ];
@@ -140,13 +144,13 @@ export default function CreatureDetail() {
             tabs={[
                 {
                     id: "combat",
-                    label: "Combat Actions",
+                    label: msg`Combat Actions`,
                     count: combatActions().length,
                     content: () => <CombatActionTable data={combatActions()}/>,
                 },
                 {
                     id: "drops",
-                    label: "Drops",
+                    label: msg`Drops`,
                     count: extractedItems().length + questDrops().length,
                     showWhenEmpty: false,
                     content: () => <Show when={creature()}>
@@ -155,7 +159,7 @@ export default function CreatureDetail() {
                 },
                 {
                     id: "loot",
-                    label: "Contribution Loot",
+                    label: msg`Contribution Loot`,
                     count: contributionLists().length,
                     showWhenEmpty: false,
                     content: () => (
@@ -163,7 +167,7 @@ export default function CreatureDetail() {
                             data={contributionLists()}
                             columns={[
                                 {
-                                    header: "Item List",
+                                    header: msg`Item List`,
                                     cell: ([, list]) => (
                                         <ItemListLink
                                             id={list.id}
@@ -173,15 +177,15 @@ export default function CreatureDetail() {
                                     ),
                                 },
                                 {
-                                    header: "Min Contribution",
+                                    header: msg`Min Contribution`,
                                     cell: ([loot]) => <span>{loot.minimumContribution}</span>,
                                 },
                                 {
-                                    header: "Weighted",
+                                    header: msg`Weighted`,
                                     cell: ([loot]) => itemListLootWeightedComponent(loot.weighted),
                                 },
                                 {
-                                    header: "Output",
+                                    header: msg`Output`,
                                     cell: ([loot, list]) => {
                                         const questDrops = questDropsForItemList(list.id);
                                         const listComp = <ItemListDisplay itemList={list} chances={loot.weighted ? 1000 : 1} probability={1}/>;
@@ -203,7 +207,7 @@ export default function CreatureDetail() {
                 },
                 {
                     id: "scaling",
-                    label: "Stat Scaling",
+                    label: msg`Stat Scaling`,
                     count: scaling().length,
                     showWhenEmpty: false,
                     content: () => (
@@ -211,26 +215,27 @@ export default function CreatureDetail() {
                             data={scaling().sort((a, b) => a.requiredPlayersCount - b.requiredPlayersCount)}
                             columns={[
                                 {
-                                    header: "Required Players",
+                                    header: msg`Required Players`,
                                     cell: (scaling) => <span>{scaling.requiredPlayersCount}</span>,
                                 },
                                 {
-                                    header: "Stat Bonuses",
+                                    header: msg`Stat Bonuses`,
                                     cell: (scaling) => {
                                         const pairs = [
-                                            ["Scaled Armor", scaling.scaledArmorBonus],
-                                            ["Strength", scaling.strengthBonus],
-                                            ["Accuracy", scaling.accuracyBonus],
-                                            ["Evasion", scaling.evasionBonus],
-                                            ["Min. Damage", scaling.minDamageBonus],
-                                            ["Max. Damage", scaling.maxDamageBonus],
-                                        ].filter((p) => !!p[1]);
+                                            [msg`Scaled Armor`, scaling.scaledArmorBonus],
+                                            [msg`Strength`, scaling.strengthBonus],
+                                            [msg`Accuracy`, scaling.accuracyBonus],
+                                            [msg`Evasion`, scaling.evasionBonus],
+                                            [msg`Min Damage`, scaling.minDamageBonus],
+                                            [msg`Max Damage`, scaling.maxDamageBonus],
+                                        ] as const;
+                                        const shown = pairs.filter((p) => !!p[1]);
                                         return (
                                             <div class="flex flex-row flex-wrap gap-1">
-                                                <For each={pairs}>
+                                                <For each={shown}>
                                                     {p => (
                                                         <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs bg-muted text-muted-foreground whitespace-nowrap">
-                                                            <span class="font-medium">{p[0]}</span>
+                                                            <span class="font-medium">{label(p[0])}</span>
                                                             <span class="opacity-70">{p[1]}</span>
                                                         </span>
                                                     )}

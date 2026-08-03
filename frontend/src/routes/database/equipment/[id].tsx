@@ -1,11 +1,13 @@
-import {A, useParams} from "@solidjs/router";
+import {msg} from "@lingui/core/macro";
+import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
+import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
-import {breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {breadcrumb, ItemLink, SkillLinkById} from "~/lib/game-links";
+import {equipmentSlotLabel, statLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {fixFloat, splitCamelCase} from "~/lib/utils";
+import {fixFloat} from "~/lib/utils";
 
 export default function EquipmentDetail() {
     const params = useParams();
@@ -27,18 +29,18 @@ export default function EquipmentDetail() {
         const groups: DetailGroup[] = [
             {
                 properties: [
-                    {label: "Slots", value: eq.slots?.map(s => splitCamelCase(s.tag)).join(", ")},
-                    {label: "Required Skill", value: eq.levelRequirement?.skillId ? () => <SkillLinkById skillId={eq.levelRequirement!.skillId}/> : undefined},
-                    {label: "Required Level", value: eq.levelRequirement?.level},
-                    {label: "Show In Progression", value: eq.showInProgression ? "Yes" : undefined},
+                    {label: msg`Slots`, value: eq.slots?.map(s => equipmentSlotLabel(s.tag)).join(", ")},
+                    {label: msg`Required Skill`, value: eq.levelRequirement?.skillId ? () => <SkillLinkById skillId={eq.levelRequirement!.skillId}/> : undefined},
+                    {label: msg`Required Level`, value: eq.levelRequirement?.level},
+                    {label: msg`Show In Progression`, value: eq.showInProgression ? "Yes" : undefined},
                 ],
             },
         ];
         if (eq.stats?.length) {
             groups.push({
-                heading: "Stats",
+                heading: msg`Stats`,
                 properties: eq.stats.map(s => ({
-                    label: splitCamelCase(s.id?.tag ?? ""),
+                    label: statLabel(s.id?.tag),
                     value: `${fixFloat(s.value * (s.isPct ? 100 : 1))}${s.isPct ? "%" : ""}`,
                 })),
             });
@@ -66,12 +68,14 @@ export default function EquipmentDetail() {
             chatLink={`(item=${item()?.id})`}
             tabs={[
                 {
-                    id: "item", label: "Item", count: item() ? 1 : 0,
-                    content: () => <Show when={item()}>
-                        <RelTable data={[item()!]} columns={[
-                            {header: "Item", cell: row => <A href={`/database/item/${row.id}`}>{row.name}</A>},
-                        ]}/>
-                    </Show>,
+                    id: "item", label: msg`Item`, count: item() ? 1 : 0,
+                    content: () => (
+                        <Show when={item()}>
+                            {d => <div class="p-1">
+                                <ItemLink id={d().id} name={d().name}/>
+                            </div>}
+                        </Show>
+                    ),
                 },
             ]}
         />

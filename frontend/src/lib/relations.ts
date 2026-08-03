@@ -8,6 +8,7 @@
  *   ItemStack, InputItemStack, ProbabilisticItemStack, ItemListPossibility, cargo IDs
  */
 
+import {t} from "@lingui/core/macro";
 import {createMemo} from "solid-js";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
@@ -42,6 +43,8 @@ import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTaskKnowledgeRequirementDesc} from "~/bindings/src/traveler_task_knowledge_requirement_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
+import {sourceRow} from "~/lib/data-translation";
+import {compareText, trackUILocale} from "~/lib/i18n";
 import {BitCraftTables} from "~/lib/spacetime";
 
 const AOC_ID: number = 12345; // Art of Cheating knowledge ID
@@ -52,7 +55,9 @@ function artOfCheatingThen<T extends { requiredKnowledges: number[] }>(field: st
     return (a: T, b: T) => {
         const aoc_diff = a.requiredKnowledges.indexOf(AOC_ID) - b.requiredKnowledges.indexOf(AOC_ID);
         if (aoc_diff !== 0) return aoc_diff;
-        return (a[field] as string).localeCompare(b[field] as string); // idk what's wrong here
+        // `field` holds translated display text, so collate it in the reader's language rather
+        // than the runtime default — see `compareText`.
+        return compareText(a[field] as string, b[field] as string);
     }
 }
 
@@ -450,27 +455,45 @@ export function getCraftingRecipeName(recipe: CraftingRecipeDesc): string {
         .replace("{0}", outputItem?.name || "{0}");
 }
 
-/** Display name for an extraction recipe */
+/**
+ * Display name for an extraction recipe.
+ *
+ * `trackUILocale()` here and in the helpers below: the bare `t` macro from `@lingui/core/macro`
+ * compiles to a read of the module-global i18n instance, which no computation is subscribed to.
+ * Without it these composed names would keep the previous wording after a UI locale change until
+ * something else happened to invalidate the caller. `<Trans>` and `useLingui()` don't need this.
+ */
 export function getExtractionRecipeName(recipe: ExtractionRecipeDesc): string {
+    trackUILocale();
     const resource = recipe.resourceId
         ? BitCraftTables.ResourceDesc.indexedBy("id")().get(recipe.resourceId)
         : undefined;
     const cargo = recipe.cargoId
         ? BitCraftTables.CargoDesc.indexedBy("id")().get(recipe.cargoId)
         : undefined;
-    return recipe.verbPhrase + " " + (resource?.name ?? cargo?.name ?? "Unknown");
+    // Both halves are game strings (verbPhrase and the target's name are translated by the data
+    // layer), but the *word order* between them is app-authored, so it goes through Lingui.
+    const verbPhrase = recipe.verbPhrase;
+    const targetName = resource?.name ?? cargo?.name ?? t`Unknown`;
+    return t`${verbPhrase} ${targetName}`;
 }
 
 /** Display name for a construction recipe */
 export function getConstructionRecipeName(recipe: ConstructionRecipeDesc): string {
+    if (recipe.name) return recipe.name;
+    trackUILocale();
     // wild RHS but it doesn't ever occur
-    return recipe.name || ("Construct " + (BitCraftTables.BuildingDesc.indexedBy("id")().get(recipe.buildingDescriptionId)?.name ?? ("Building #" + recipe.buildingDescriptionId)));
+    const buildingName = BitCraftTables.BuildingDesc.indexedBy("id")().get(recipe.buildingDescriptionId)?.name
+        ?? `#${recipe.buildingDescriptionId}`;
+    return t`Construct ${buildingName}`;
 }
 
 /** Display name for a deconstruction recipe */
 export function getDeconstructionRecipeName(recipe: DeconstructionRecipeDesc): string {
+    trackUILocale();
     const building = BitCraftTables.BuildingDesc.indexedBy("id")().get(recipe.consumedBuilding);
-    return "Deconstruct " + (building?.name ?? "Unknown");
+    const buildingName = building?.name ?? t`Unknown`;
+    return t`Deconstruct ${buildingName}`;
 }
 
 /** Display name for a conversion recipe */
@@ -480,18 +503,29 @@ export function getConversionRecipeName(recipe: ItemConversionRecipeDesc): strin
 
 /** Display name for a traveler task */
 export function getTravelerTaskName(task: TravelerTaskDesc): string {
+    trackUILocale();
     const skill = BitCraftTables.SkillDesc.indexedBy("id")().get(task.levelRequirement.skillId);
     const firstItem = task.requiredItems.find(s => !isHexCoin(s)) ?? task.rewardedItems.find(s => !isHexCoin(s));
-    const pfx = (skill?.name ? skill.name + " " : "") + " Task: ";
-    return pfx + getItemStackName(firstItem);
+    const itemName = getItemStackName(firstItem);
+    // Two separate messages rather than one with an optional prefix: a translator needs to be able
+    // to reorder skill/item freely, and "<Skill> Task: <Item>" has no sensible empty-skill form.
+    const skillName = skill?.name;
+    return skillName ? t`${skillName} Task: ${itemName}` : t`Task: ${itemName}`;
 }
 
-/** Resolve the NPC name for a traveler tag string */
-export function getTravelerNpcName(travelerTag: string): string {
+/**
+ * Resolve the NPC name for a traveler tag string.
+ *
+ * Pass `{source: true}` for the canonical English name — needed wherever the name is a column
+ * *value* rather than display text, since those end up in shareable filter URLs. See the note at
+ * the top of `table-utils/column-builders.tsx`.
+ */
+export function getTravelerNpcName(travelerTag: string, opts?: {source?: boolean}): string {
     const tagOrdinal = BitCraftTables.TravelerTradeOrderDesc.tagToOrdinal("traveler");
     const npcOrdinal = tagOrdinal.get(travelerTag);
     if (npcOrdinal !== undefined) {
-        return BitCraftTables.NpcDesc.indexedBy("npcType")().get(npcOrdinal)?.name ?? travelerTag;
+        const npc = BitCraftTables.NpcDesc.indexedBy("npcType")().get(npcOrdinal);
+        return (opts?.source ? sourceRow(npc) : npc)?.name ?? travelerTag;
     }
     return travelerTag;
 }
@@ -501,25 +535,30 @@ const isHexCoin = (s: ItemStack) => s.itemType.tag === ItemType.Item.tag && s.it
 
 /** Display name for a traveler trade */
 export function getTravelerTradeName(trade: TravelerTradeOrderDesc): string {
+    trackUILocale();
     const npcName = getTravelerNpcName(trade.traveler.tag);
 
     const hasHexInRequired = trade.requiredItems.some(isHexCoin);
     const hasHexInOffer = trade.offerItems.some(isHexCoin);
 
+    // App-authored sentences wrapping game-string values. Using `t` with *named* interpolation
+    // (the placeholder takes the local variable's name) rather than concatenation is what lets a
+    // translator reorder the parts per language — while each value is itself already translated by
+    // the data layer. This is the standard pattern for composing an app string around game text.
     if (hasHexInRequired) {
         // Paying with hex coins → buying something
         const itemName = getItemStackName(trade.offerItems[0]);
-        return `Buy ${itemName} from ${npcName}`;
+        return t`Buy ${itemName} from ${npcName}`;
     }
     if (hasHexInOffer) {
         // Receiving hex coins → selling something
         const itemName = getItemStackName(trade.requiredItems[0]);
-        return `Sell ${itemName} to ${npcName}`;
+        return t`Sell ${itemName} to ${npcName}`;
     }
     // Generic item-for-item trade
     const reqName = getItemStackName(trade.requiredItems[0]);
     const offerName = getItemStackName(trade.offerItems[0]);
-    return `Trade ${reqName} for ${offerName} to ${npcName}`;
+    return t`Trade ${reqName} for ${offerName} to ${npcName}`;
 }
 
 /** Display name for an item list */
@@ -528,7 +567,8 @@ export function getItemListName(list: ItemListDesc): string {
 }
 
 export function getItemStackName(stack: ItemStack | undefined): string {
-    if (!stack) return "Unknown";
+    trackUILocale();
+    if (!stack) return t`Unknown`;
     if (stack.itemType.tag === ItemType.Item.tag) {
         const itemIndex = BitCraftTables.ItemDesc.indexedBy("id")();
         return itemIndex.get(stack.itemId)?.name ?? "Item #" + stack.itemId;
@@ -537,12 +577,14 @@ export function getItemStackName(stack: ItemStack | undefined): string {
         const cargoIndex = BitCraftTables.CargoDesc.indexedBy("id")();
         return cargoIndex.get(stack.itemId)?.name ?? "Cargo #" + stack.itemId;
     }
-    return "Unknown";
+    return t`Unknown`;
 }
 
 /** Display name for a resource depletion relationship */
 export function getResourceDepletionName(resource: ResourceDesc): string {
-    return "Deplete " + resource.name;
+    trackUILocale();
+    const resourceName = resource.name;
+    return t`Deplete ${resourceName}`;
 }
 
 /** Get the resource associated with an extraction recipe (if any) */

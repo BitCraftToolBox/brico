@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
@@ -61,15 +62,15 @@ export default function AchievementDetail() {
             spacetimeTable={BitCraftTables.AchievementDesc.spacetimeName}
             objectId={achievement()?.id}
             tabs={[
-                {id: "prereqs", label: "Prerequisites", count: prereqs().length, content: () => <AchievementTable data={prereqs()}/>},
+                {id: "prereqs", label: msg`Prerequisites`, count: prereqs().length, content: () => <AchievementTable data={prereqs()}/>},
                 {
-                    id: "rewards", label: "Rewards", count: rewards().length,
+                    id: "rewards", label: msg`Rewards`, count: rewards().length,
                     content: () => (
                         <RelTable<CollectibleDesc>
                             data={rewards()}
                             columns={[
-                                {header: "Collectible", cell: (row) => <CollectibleLink id={row.id} name={row.name}/>},
-                                {header: "Type", cell: (row) => <span>{row.collectibleType?.tag}</span>},
+                                {header: msg`Collectible`, cell: (row) => <CollectibleLink id={row.id} name={row.name}/>},
+                                {header: msg`Type`, cell: (row) => <span>{row.collectibleType?.tag}</span>},
                             ]}
                             onRowClick={(row) => navigate(`/database/collectible/${row.id}`)}
                         />

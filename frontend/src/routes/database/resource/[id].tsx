@@ -1,3 +1,5 @@
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
@@ -63,22 +65,22 @@ export default function ResourceDetail() {
         return [
             {
                 properties: [
-                    {label: "Max Health", value: r.maxHealth},
-                    {label: "Ignores Damage", value: r.ignoreDamage ? true : undefined},
-                    {label: "Show Time Left", value: r.showTimeLeft ? true : undefined},
-                    {label: "Flattenable", value: r.flattenable ? true : undefined},
-                    {label: "Compendium Entry", value: !r.compendiumEntry ? false : undefined},
+                    {label: msg`Max Health`, value: r.maxHealth},
+                    {label: msg`Ignores Damage`, value: r.ignoreDamage ? true : undefined},
+                    {label: msg`Show Time Left`, value: r.showTimeLeft ? true : undefined},
+                    {label: msg`Flattenable`, value: r.flattenable ? true : undefined},
+                    {label: msg`Compendium Entry`, value: !r.compendiumEntry ? false : undefined},
                 ]
             },
             {
-                heading: "Resource Spawning",
+                heading: msg`Resource Spawning`,
                 properties: [
-                    {label: "Despawn Time", value: r.despawnTime ? `${fixFloat(r.despawnTime)}s` : undefined},
-                    {label: "Scheduled Respawn", value: r.scheduledRespawnTime ? `${fixFloat(r.scheduledRespawnTime)}s` : undefined},
-                    {label: "Not Respawning", value: r.notRespawning ? true : undefined},
-                    {label: "Spawn Priority", value: r.spawnPriority},
-                    ...(r.spawnsOnLand ? [{label: "Land Elevation", value: `${r.landElevationMin}-${r.landElevationMax}`}] : []),
-                    ...(r.spawnsInWater ? [{label: "Water Depth", value: `${r.waterDepthMin}-${r.waterDepthMax}`}] : []),
+                    {label: msg`Despawn Time`, value: r.despawnTime ? `${fixFloat(r.despawnTime)}s` : undefined},
+                    {label: msg`Scheduled Respawn`, value: r.scheduledRespawnTime ? `${fixFloat(r.scheduledRespawnTime)}s` : undefined},
+                    {label: msg`Not Respawning`, value: r.notRespawning ? true : undefined},
+                    {label: msg`Spawn Priority`, value: r.spawnPriority},
+                    ...(r.spawnsOnLand ? [{label: msg`Land Elevation`, value: `${r.landElevationMin}-${r.landElevationMax}`}] : []),
+                    ...(r.spawnsInWater ? [{label: msg`Water Depth`, value: `${r.waterDepthMin}-${r.waterDepthMax}`}] : []),
                 ]
             }
         ]
@@ -107,7 +109,7 @@ export default function ResourceDetail() {
             tabs={[
                 {
                     id: "extraction",
-                    label: "Extraction",
+                    label: msg`Extraction`,
                     count: extractionRecipe() ? 1 : 0,
                     content: () => <Show when={extractionRecipe()}>
                         {r => <ExtractionRecipePanel recipe={r()}/>}
@@ -115,7 +117,7 @@ export default function ResourceDetail() {
                 },
                 {
                     id: "depletion",
-                    label: "Depletion Drops",
+                    label: msg`Depletion Drops`,
                     count: extractionRecipe() ? 0 : (resource()?.onDestroyYield?.length ?? 0) + (resource()?.onDestroyYieldResourceId ? 1 : 0),
                     showWhenEmpty: false,
                     content: () => <Show when={resource() && (hasDepletion() || hasDepletionResource())}>
@@ -124,7 +126,7 @@ export default function ResourceDetail() {
                 },
                 {
                     id: "from-depletion",
-                    label: "Spawned from Resource",
+                    label: msg`Spawned from Resource`,
                     count: yieldedByResource()?.length ?? 0,
                     showWhenEmpty: false,
                     content: () => (
@@ -137,14 +139,14 @@ export default function ResourceDetail() {
                 },
                 {
                   id: "growth",
-                  label: "Timed Growth",
+                  label: msg`Timed Growth`,
                   count: (growthFrom() ? 1 : 0) + (growthInto() ? 1 : 0),
                   showWhenEmpty: false,
                   content: () => (
                       <div class="space-y-4">
                           <Show when={growthFrom()}>{growthDescs =>
                               <div>
-                                  <h4 class="text-sm text-muted-foreground mb-2">Grows From</h4>
+                                  <h4 class="text-sm text-muted-foreground mb-2"><Trans>Grows From</Trans></h4>
                                   <RecipeSelect
                                       recipes={growthDescs()}
                                       nameFor={gd => resourceIndex().get(gd.resourceId)?.name ?? "Resource #" + gd.resourceId}
@@ -154,7 +156,7 @@ export default function ResourceDetail() {
                           }</Show>
                           <Show when={growthInto()}>{growthDesc =>
                               <div>
-                                  <h4 class="text-sm text-muted-foreground mb-2">Grows Into</h4>
+                                  <h4 class="text-sm text-muted-foreground mb-2"><Trans>Grows Into</Trans></h4>
                                   <ResourceGrowthPanel growth={growthDesc()}/>
                               </div>
                           }</Show>
@@ -163,39 +165,39 @@ export default function ResourceDetail() {
                 },
                 {
                     id: "prospecting",
-                    label: "Spawned from Prospecting",
+                    label: msg`Spawned from Prospecting`,
                     count: prospecting().length,
                     showWhenEmpty: false,
                     content: () => (
                         <RelTable<ProspectingDesc>
                             data={prospecting()}
                             columns={[
-                                {header: "Name", cell: (row) => (
+                                {header: msg`Name`, cell: (row) => (
                                     <IconLink href={`/database/prospecting/${row.id}`} icon={<FontIcon codepoint={row.iconAssetPath} class="size-4 inline"/>}>
                                         {row.name}
                                     </IconLink>
                                 )},
-                                {header: "Description", cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
+                                {header: msg`Description`, cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
                             ]}
                         />
                     ),
                 },
                 {
                     id: "enemies",
-                    label: "Spawns Enemies",
+                    label: msg`Spawns Enemies`,
                     count: enemies().length,
                     showWhenEmpty: false,
                     content: () => (
                         <RelTable<EnemyDesc>
                             data={enemies()}
                             columns={[
-                                {header: "Name", cell: (row) => (
+                                {header: msg`Name`, cell: (row) => (
                                     <IconLink href={`/database/creature/${row.enemyType}`} icon={pageIcon("Creatures")}>
                                         {row.name}
                                     </IconLink>
                                 )},
-                                {header: "Tier", cell: (row) => <span>{row.tier}</span>},
-                                {header: "Max HP", cell: (row) => <span>{row.maxHealth}</span>},
+                                {header: msg`Tier`, cell: (row) => <span>{row.tier}</span>},
+                                {header: msg`Max HP`, cell: (row) => <span>{row.maxHealth}</span>},
                             ]}
                         />
                     ),

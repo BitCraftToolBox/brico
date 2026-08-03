@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
@@ -35,25 +36,25 @@ export default function BiomeDetail() {
             metaKind="biome"
             metaImage={ogImageForPage("Biomes")}
             details={[
-                {label: "Hazard Level", value: biome()?.hazardLevel},
-                {label: "Disallow Player Build", value: biome()?.disallowPlayerBuild},
+                {label: msg`Hazard`, value: biome()?.hazardLevel},
+                {label: msg`Disallow Player Build`, value: biome()?.disallowPlayerBuild},
             ]}
             rawData={biome()}
             spacetimeTable={BitCraftTables.BiomeDesc.spacetimeName}
             objectId={biome()?.biomeType}
             tabs={[
                 {
-                    id: "prospecting", label: "Prospecting", count: prospectingEntries().length,
+                    id: "prospecting", label: msg`Prospecting`, count: prospectingEntries().length,
                     content: () => (
                         <RelTable<ProspectingDesc>
                             data={prospectingEntries()}
                             columns={[
-                                {header: "Name", cell: (row) => (
+                                {header: msg`Name`, cell: (row) => (
                                     <IconLink href={`/database/prospecting/${row.id}`} icon={<FontIcon codepoint={row.iconAssetPath} class="size-4 inline"/>}>
                                         {row.name}
                                     </IconLink>
                                 )},
-                                {header: "Description", cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
+                                {header: msg`Description`, cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
                             ]}
                         />
                     ),

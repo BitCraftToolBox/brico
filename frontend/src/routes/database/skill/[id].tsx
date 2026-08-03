@@ -1,8 +1,10 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {breadcrumb} from "~/lib/game-links";
+import {skillCategoryLabel} from "~/lib/game-strings";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -19,8 +21,7 @@ export default function SkillDetail() {
     const skillTag = createMemo(() => {
         const s = skill();
         if (!s) return "Unknown";
-        if (s.skillCategory.tag == "None") return "Skill";
-        return s.skillCategory.tag;
+        return skillCategoryLabel(s.skillCategory.tag);
     });
 
     return (
@@ -35,8 +36,8 @@ export default function SkillDetail() {
             metaKind="skill"
             metaImage={ogImageForCodepoint(skill()?.iconAssetName)}
             details={[
-                {label: "Title", value: skill()?.title},
-                {label: "Max Level", value: skill()?.maxLevel},
+                {label: msg`Title`, value: skill()?.title},
+                {label: msg`Max Level`, value: skill()?.maxLevel},
             ]}
             rawData={skill()}
             spacetimeTable={BitCraftTables.SkillDesc.spacetimeName}

@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
@@ -17,7 +18,7 @@ export const PavingDefs: BitCraftToDataDef<PavingTileDesc> = {
     ],
     facetedFilters: [
         tierFilter(),
-        uniqueValuesFilter("Required Knowledge", undefined, compareOptions),
+        uniqueValuesFilter("Required Knowledge", msg`Required Knowledge`, compareOptions),
     ],
     searchColumns: ["Name", "Description"],
 };

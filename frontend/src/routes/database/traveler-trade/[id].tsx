@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
@@ -72,15 +73,16 @@ export default function TravelerTradeDetail() {
             icon={npcDesc() ? <FontIcon codepoint={npcDesc()!.iconAddress} class="size-16"/> : undefined}
             name={`${npcName()} Trade`}
             description={tradeName()}
+            defaultTab="summary"
             metaKind="traveler trade"
             metaImage={ogImageForCodepoint(npcDesc()?.iconAddress)}
             details={[
-                {label: "Traveler", value: npcName()},
-                {label: "Starting Stock", value: trade() && trade()!.startingStock !== MAX_INT32 ? trade()!.startingStock : undefined},
-                {label: "Always Offered", value: trade()?.alwaysOffered === false ? "No" : undefined},
-                {label: "Level Requirements", value: levelReqsEl()},
-                {label: "Achievement Requirements", value: achievementReqsEl()},
-                {label: "Hide If Requirements Not Met", value: trade()?.hideIfRequirementsAreNotMet === true ? "Yes" : undefined},
+                {label: msg`Traveler`, value: npcName()},
+                {label: msg`Starting Stock`, value: trade() && trade()!.startingStock !== MAX_INT32 ? trade()!.startingStock : undefined},
+                {label: msg`Always Offered`, value: trade()?.alwaysOffered === false ? "No" : undefined},
+                {label: msg`Level Requirements`, value: levelReqsEl()},
+                {label: msg`Achievement Requirements`, value: achievementReqsEl()},
+                {label: msg`Hide If Requirements Not Met`, value: trade()?.hideIfRequirementsAreNotMet === true ? "Yes" : undefined},
             ]}
             summaryContent={() => trade() ? <TravelerTradePanel trade={trade()!}/> : <></>}
             rawData={trade()}

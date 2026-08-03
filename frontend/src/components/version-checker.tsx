@@ -1,3 +1,4 @@
+import {Trans} from "@lingui/solid/macro";
 import {A, useLocation} from "@solidjs/router";
 import {TbOutlineExternalLink as IconExternal, TbOutlineInfoCircle as IconCurrent, TbOutlineInfoTriangle as IconOutdated} from "solid-icons/tb";
 import {createResource, onCleanup, onMount, Show} from "solid-js";
@@ -70,7 +71,7 @@ export function VersionChecker() {
                     </span>
                 </PopoverTrigger>
                 <PopoverContent class="max-w-80 text-xs space-y-2" onOpenAutoFocus={e => e.preventDefault()} onCloseAutoFocus={e => e.preventDefault()}>
-                    <div class="font-medium">Current data version</div>
+                    <div class="font-medium"><Trans>Current data version</Trans></div>
                     <div>{versionSummary(CURRENT_VERSION)}</div>
                     <Show when={hasDescription(CURRENT_VERSION)}>
                         <div class="text-muted-foreground">{descSummary(CURRENT_VERSION.description)}</div>
@@ -79,17 +80,18 @@ export function VersionChecker() {
                     <Show when={isOutdated() && latestVersion()} fallback={
                         <Show when={latestVersion()}>
                             <div class="border-t border-border"/>
-                            <div class="font-medium">Up to date</div>
+                            <div class="font-medium"><Trans>Up to date</Trans></div>
                         </Show>
                     }>
                         {(latest) => (
                             <>
                                 <div class="border-t border-border"/>
                                 <div class="font-medium">
-                                    Latest available{" "}
-                                    <A href={`https://preview.brico.app${location.pathname}${location.search}`} target="_blank" class="underline">
-                                        (check preview <IconExternal class="inline"/>)
-                                    </A>
+                                    <Trans>Latest available{" "}
+                                        <A href={`https://preview.brico.app${location.pathname}${location.search}`} target="_blank" class="underline">
+                                            (check preview <IconExternal class="inline"/>)
+                                        </A>
+                                    </Trans>
                                 </div>
                                 <div>{versionSummary(latest())}</div>
                                 <Show when={hasDescription(latest())}>

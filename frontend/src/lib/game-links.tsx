@@ -11,6 +11,7 @@
  *   - Stat lines (icon in label, linked name in value)
  */
 
+import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {TbOutlineLock as IconLock} from "solid-icons/tb";
 import {children, For, JSX, Show} from "solid-js";
@@ -19,7 +20,9 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {PAGE_ICONS, SidebarPages} from "~/lib/sidebar-items";
+import {trackUILocale} from "~/lib/i18n";
+import {type Label, labelText} from "~/lib/labels";
+import {PAGE_ICONS, PAGE_TITLE_LABELS, SidebarPages} from "~/lib/sidebar-items";
 import {BitCraftTables} from "~/lib/spacetime";
 import {cn, fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -73,7 +76,7 @@ export function pageIcon(pageTitle: SidebarPages, iconClass: string = "size-4 sh
 export function SkillLink(props: { skill: SkillDesc; class?: string; showIcon?: boolean; level?: string }) {
     const show = () => props.showIcon !== false;
     // overwrite "ANY" skill icon with tools icon. better than a square at least. might still change this
-    const codepoint = () => props.skill.name === "ANY" ? "0086" : props.skill.iconAssetName;
+    const codepoint = () => props.skill.id === 1 ? "0086" : props.skill.iconAssetName;
     return (
         <IconLink
             href={`/database/skill/${props.skill.id}`}
@@ -116,7 +119,7 @@ export function KnowledgeLink(props: { id: number; name?: string; class?: string
                     <IconLock class="size-3 text-destructive shrink-0"/>
                 </Show>
             </TooltipTrigger>
-            <TooltipContent class="max-w-[90svw]">Developer-locked / inaccessible</TooltipContent>
+            <TooltipContent class="max-w-[90svw]"><Trans>Developer-locked / inaccessible</Trans></TooltipContent>
         </Tooltip>
     );
 }
@@ -410,13 +413,18 @@ export function knowledgeStatIcon(): JSX.Element {
 }
 
 
-export function breadcrumb(href: string, title?: string): JSX.Element {
-    title = title ?? href
-        .split("/").pop()
-        ?.replace(/(-[a-z])/g, c => " " + c[1].toUpperCase())
-        .replace(/^\w/, c => c.toUpperCase());
-    if (!title) return <></>;
+/**
+ * Breadcrumb link for a detail page, reusing the same label its sidebar entry renders — so it
+ * never invents a second wording (or, worse, a string that was never extracted and so never
+ * translates at all). Pass `titleOverride` only when the breadcrumb needs different wording than
+ * the sidebar (a singular noun for a detail page, say) or an already-resolved display string (a
+ * category tag looked up per-row).
+ */
+export function breadcrumb(href: string, titleOverride?: Label | string): JSX.Element {
+    const label = titleOverride ?? PAGE_TITLE_LABELS[href];
+    if (!label) return <></>;
+    trackUILocale();
     return <>
-        <A href={href}>{title}</A><span class="mx-1.5">{">"}</span>
+        <A href={href}>{labelText(label)}</A>
     </>;
 }

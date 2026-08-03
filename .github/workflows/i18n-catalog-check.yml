@@ -1,0 +1,38 @@
+name: i18n Catalog Check
+
+# Fails if the checked-in Lingui catalog is out of date with the source — i.e. someone added or
+# changed a `<Trans>`/`t`/`msg` string without re-running `npm run i18n:extract`. Without this,
+# a missed extraction is invisible until a translator notices the string never reached Crowdin.
+on:
+  push:
+    branches: [main, preview]
+  pull_request:
+    paths:
+      - "frontend/src/**"
+      - "frontend/lingui.config.ts"
+      - "frontend/package.json"
+      - ".github/workflows/i18n-catalog-check.yml"
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Verify message catalog is up to date
+        run: npm run i18n:extract-check
+
+      - name: Explain failure
+        if: failure()
+        run: |
+          echo "::error::The Lingui catalog is out of date. Run 'npm run i18n:extract' in frontend/ and commit src/locales/."

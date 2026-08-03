@@ -1,8 +1,11 @@
+import {msg} from "@lingui/core/macro";
 import {ColumnDef} from "@tanstack/solid-table";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
 import {BuildingFunction} from "~/bindings/src/building_function_type";
 import {BuildingIcon} from "~/components/shared/GameIcon";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
+import {sourceRow, translateGameText} from "~/lib/data-translation";
+import {Label} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
@@ -15,15 +18,23 @@ type NumericBuildingProp = Extract<keyof BuildingFunction, string> &
 const fromFunctionProp = (
     title: string,
     prop: NumericBuildingProp,
-    filter: ColumnDef<BuildingDesc, number>["filterFn"] = includedIn()
+    filter: ColumnDef<BuildingDesc, number>["filterFn"] = includedIn(),
+    label: Label | string = title,
 ): ColumnDef<BuildingDesc, number | undefined> => {
     return {
         id: title,
+        meta: {label},
         accessorFn: (bldg: BuildingDesc) =>
             bldg.functions.find(func => func[prop] > 0)?.[prop],
         filterFn: filter,
         sortUndefined: 'last'
     };
+}
+
+/** Canonical English function-type names for a building. */
+function buildingTypeNames(bldg: BuildingDesc): string[] {
+    const bldgTypes = BitCraftTables.BuildingTypeDesc.indexedBy("id");
+    return bldg.functions.map(func => sourceRow(bldgTypes().get(func.functionType))?.name || "Unknown");
 }
 
 export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
@@ -34,20 +45,19 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
         }),
         {
             id: "Type",
-            accessorFn: (bldg: BuildingDesc) => {
-                const bldgTypes = BitCraftTables.BuildingTypeDesc.indexedBy("id");
-                return bldg.functions.map(func => bldgTypes().get(func.functionType)?.name || "Unknown");
-            },
-            getUniqueValues: (bldg: BuildingDesc) => {
-                const bldgTypes = BitCraftTables.BuildingTypeDesc.indexedBy("id");
-                return bldg.functions.map(func => bldgTypes().get(func.functionType)?.name || "Unknown");
-            },
+            meta: {label: msg`Type`},
+            // English value — this column is filterable, so it ends up in shared URLs.
+            // See the note at the top of table-utils/column-builders.tsx.
+            accessorFn: (bldg: BuildingDesc) => buildingTypeNames(bldg),
+            getUniqueValues: (bldg: BuildingDesc) => buildingTypeNames(bldg),
+            cell: props => (props.getValue() as string[]).map(translateGameText).join(", "),
             filterFn: "arrIncludesSome"
         },
         tierColumn({accessorFn: getBuildingTier}),
-        fromFunctionProp("Item Slots", "storageSlots", "inNumberRange"),
+        fromFunctionProp("Item Slots", "storageSlots", "inNumberRange", msg`Item Slots`),
         {
             id: "Item Stack Size",
+            meta: {label: msg`Item Stack Size`},
             accessorFn: (bldg: BuildingDesc) => {
                 // this ensures we get the slot size of the function used for finding slots above
                 // if a building ever has multiple inventory functions of the same item type,
@@ -60,9 +70,10 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
             filterFn: includedIn<BuildingDesc>(),
             sortUndefined: "last"
         },
-        fromFunctionProp("Cargo Slots", "cargoSlots", "inNumberRange"),
+        fromFunctionProp("Cargo Slots", "cargoSlots", "inNumberRange", msg`Cargo Slots`),
         {
             id: "Cargo Stack Size",
+            meta: {label: msg`Cargo Stack Size`},
             accessorFn: (bldg: BuildingDesc) => {
                 // as above
                 const stockpileIndex = bldg.functions
@@ -73,10 +84,11 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
             filterFn: includedIn<BuildingDesc>(),
             sortUndefined: "last"
         },
-        fromFunctionProp("Trade Orders", "tradeOrders"),
-        fromFunctionProp("Crafts per Player", "concurrentCraftsPerPlayer"),
+        fromFunctionProp("Trade Orders", "tradeOrders", undefined, msg`Trade Orders`),
+        fromFunctionProp("Crafts per Player", "concurrentCraftsPerPlayer", undefined, msg`Crafts per Player`),
         {
             id: "Crafting Slots",
+            meta: {label: msg`Crafting Slots`},
             accessorFn: (bldg: BuildingDesc) => {
                 const func = bldg.functions.find(func => func.craftingSlots > 0 || func.refiningSlots > 0 || func.refiningCargoSlots > 0);
                 if (!func) return undefined;
@@ -87,21 +99,21 @@ export const BuildingDescDefs: BitCraftToDataDef<BuildingDesc> = {
             filterFn: includedIn<BuildingDesc>(),
             sortUndefined: "last"
         },
-        fromFunctionProp("Housing Slots", "housingSlots"),
-        fromFunctionProp("Housing Income", "housingIncome"),
+        fromFunctionProp("Housing Slots", "housingSlots", undefined, msg`Housing Slots`),
+        fromFunctionProp("Housing Income", "housingIncome", undefined, msg`Housing Income`),
         rowActions(undefined, "build"),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Type", undefined, compareOptions),
+        uniqueValuesFilter("Type", msg`Type`, compareOptions),
         tierFilter(),
-        rangeFilter("Item Slots"),
-        uniqueValuesFilter("Item Stack Size", undefined, compareOptions),
-        rangeFilter("Cargo Slots"),
-        uniqueValuesFilter("Cargo Stack Size", undefined, compareOptions),
-        uniqueValuesFilter("Trade Orders", undefined, compareOptions),
-        uniqueValuesFilter("Crafting Slots", undefined, compareOptions),
-        uniqueValuesFilter("Housing Slots", undefined, compareOptions),
-        uniqueValuesFilter("Housing Income", undefined, compareOptions),
+        rangeFilter("Item Slots", msg`Item Slots`),
+        uniqueValuesFilter("Item Stack Size", msg`Item Stack Size`, compareOptions),
+        rangeFilter("Cargo Slots", msg`Cargo Slots`),
+        uniqueValuesFilter("Cargo Stack Size", msg`Cargo Stack Size`, compareOptions),
+        uniqueValuesFilter("Trade Orders", msg`Trade Orders`, compareOptions),
+        uniqueValuesFilter("Crafting Slots", msg`Crafting Slots`, compareOptions),
+        uniqueValuesFilter("Housing Slots", msg`Housing Slots`, compareOptions),
+        uniqueValuesFilter("Housing Income", msg`Housing Income`, compareOptions),
     ],
     searchColumns: ["Name"],
 }

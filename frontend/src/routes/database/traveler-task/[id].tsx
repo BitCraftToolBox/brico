@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
@@ -43,9 +44,9 @@ export default function TravelerTaskDetail() {
             metaKind="traveler task"
             metaImage={ogImageForPage("Traveler Tasks")}
             details={[
-                {label: "Skill", value: task()?.levelRequirement?.skillId ? () => <SkillLinkById skillId={task()!.levelRequirement.skillId}/> : undefined},
-                {label: "Level Range", value: task() ? `${task()!.levelRequirement.minLevel}–${task()!.levelRequirement.maxLevel}` : undefined},
-                {label: "XP Reward", value: xpStr()},
+                {label: msg`Skill`, value: task()?.levelRequirement?.skillId ? () => <SkillLinkById skillId={task()!.levelRequirement.skillId}/> : undefined},
+                {label: msg`Level Range`, value: task() ? `${task()!.levelRequirement.minLevel}–${task()!.levelRequirement.maxLevel}` : undefined},
+                {label: msg`XP Reward`, value: xpStr()},
             ]}
             rawData={task()}
             spacetimeTable={BitCraftTables.TravelerTaskDesc.spacetimeName}
@@ -53,7 +54,7 @@ export default function TravelerTaskDetail() {
             tabs={[
                 {
                     id: "traveler-task",
-                    label: "Traveler Task",
+                    label: msg`Traveler Task`,
                     content: () => (
                         <div class="space-y-4">
                             <Show when={task()}>

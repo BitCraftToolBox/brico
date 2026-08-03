@@ -1,3 +1,6 @@
+import {msg, plural} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
+import {Trans} from "@lingui/solid/macro";
 import {useSearchParams} from "@solidjs/router";
 import type {Column, Table} from "@tanstack/solid-table"
 
@@ -10,6 +13,7 @@ import {NumberField, NumberFieldDecrementTrigger, NumberFieldGroup, NumberFieldI
 import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover"
 import {Separator} from "~/components/ui/separator"
 import {Slider, SliderFill, SliderLabel, SliderThumb, SliderTrack, SliderValueLabel} from "~/components/ui/slider";
+import {type Label, useLabel} from "~/lib/labels";
 import {cn, ensurePagesVisible} from "~/lib/utils"
 import {Switch, SwitchControl, SwitchLabel, SwitchThumb} from "../ui/switch"
 
@@ -62,7 +66,7 @@ type StatProps<TData> = {
 export type TableFacetedFilterProps<TData> = {
     table: Table<TData>
     column?: Column<TData>
-    title?: string
+    title?: Label | string
 } & (ValueProps<TData> | BoolProps<TData> | RangeProps<TData> | StatProps<TData>);
 
 type BadgeOpts<TData> = ParentProps<{
@@ -132,6 +136,7 @@ function StatsFilterContent<TData>(props: {
     column?: Column<TData>;
     options: StatsBasedOption;
 }) {
+    const {_} = useLingui();
     const [search, setSearch] = createSignal("");
 
     const filterValue = (): StatsFilterValue =>
@@ -171,22 +176,22 @@ function StatsFilterContent<TData>(props: {
         <div class="flex flex-col max-h-[600px]">
             {/* Search */}
             <Command shouldFilter={false}>
-                <CommandInput placeholder="Search stats..." value={search()} onValueChange={setSearch}/>
+                <CommandInput placeholder={_(msg`Search stats...`)} value={search()} onValueChange={setSearch}/>
                 <CommandGroup class="overflow-visible">
                     <Switch class="flex flex-row w-full justify-center gap-2 mt-1"
                             checked={!filterValue().requireAll} onChange={changeMode}
                     >
-                        <SwitchLabel class="sr-only">Matching mode</SwitchLabel>
-                        <span>All</span>
+                        <SwitchLabel class="sr-only"><Trans>Matching mode</Trans></SwitchLabel>
+                        <span><Trans>All</Trans></span>
                         {/* Prevent "active" look when toggling - both sides are equal states, not active/non-active. */}
                         <SwitchControl class="bg-input data-[checked]:bg-input">
                             <SwitchThumb/>
                         </SwitchControl>
-                        <span>Any</span>
+                        <span><Trans>Any</Trans></span>
                     </Switch>
                 </CommandGroup>
                 <CommandList class="max-h-[200px]">
-                    <CommandEmpty>No stats found.</CommandEmpty>
+                    <CommandEmpty><Trans>No stats found.</Trans></CommandEmpty>
                     <CommandGroup>
                         <For each={filteredStats()}>
                             {(stat) => {
@@ -229,7 +234,7 @@ function StatsFilterContent<TData>(props: {
                                 }}
                                 class="justify-center text-center"
                             >
-                                Clear all stat filters
+                                <Trans>Clear all stat filters</Trans>
                             </CommandItem>
                         </CommandGroup>
                     </Show>
@@ -240,7 +245,7 @@ function StatsFilterContent<TData>(props: {
             <Show when={selectedKeys().length > 0}>
                 <Separator/>
                 <div class="p-2 space-y-2 max-h-[250px] overflow-y-auto">
-                    <div class="text-xs font-medium text-muted-foreground mb-1">Ranges</div>
+                    <div class="text-xs font-medium text-muted-foreground mb-1"><Trans>Ranges</Trans></div>
                     <For each={selectedKeys()}>
                         {(key) => {
                             const stat = () => props.options.stats.find(s => s.key === key);
@@ -327,7 +332,7 @@ function BoolFilterItem(props: {
             <IconCheck/>
         </div>
         <span class="flex-1">
-            {(props.resolvedOptions as ValueBasedOption[]).find(o => o.value === props.value)?.label ?? "Yes"}
+            {(props.resolvedOptions as ValueBasedOption[]).find(o => o.value === props.value)?.label ?? <Trans>Yes</Trans>}
             <Show when={(props.facets as Map<any, number>)?.get(props.value)}>
                 {count => <span class="font-mono text-xs ml-2">{count()}</span>}
             </Show>
@@ -336,6 +341,9 @@ function BoolFilterItem(props: {
 }
 
 export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>) {
+    const label = useLabel();
+    const title = () => props.title === undefined ? "" : label(props.title);
+
     // Resolve options reactively — if options is a function, re-evaluate it
     // whenever TanStack's faceted values change (e.g., when data loads)
     const resolvedOptions = createMemo(() => {
@@ -344,6 +352,17 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
         }
         return props.options;
     });
+
+    /**
+     * Display text for one selected value. Value-based filters store the canonical value (English
+     * game text, a rarity tag, a group id) so links stay locale-stable, so the badge has to look
+     * the label up rather than print the value.
+     */
+    const optionLabel = (value: any): string => {
+        const match = (resolvedOptions() as ValueBasedOption[]).find?.(o => o.value === value);
+        if (match) return match.label;
+        return typeof value === "boolean" ? String(value) : String(value ?? "");
+    };
 
     const isValueBased = () => props.type === "value";
     const isStatsBased = () => props.type === "stat";
@@ -454,7 +473,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                 class={`h-8 border-dashed ${selectedValues().length ? "border-muted-foreground border-solid" : ""}`}
             >
                 <IconCirclePlus/>
-                {props.title}
+                {title()}
                 <Show when={selectedValues().length}>
                     <Separator orientation="vertical" class="mx-2 h-4"/>
                     <Show when={isStatsBased()}>
@@ -466,7 +485,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                                 <Show when={keys.length < 3} fallback={
                                     <StatsFilterBadge
                                         table={props.table} column={props.column}
-                                        statKey="" label={`${keys.length} stats`}
+                                        statKey="" label={label(msg({message: plural(keys.length, {one: "# stat", other: "# stats"})}))}
                                     />
                                 }>
                                     <div class="hidden space-x-1 lg:flex">
@@ -504,7 +523,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                                 when={selectedValues().length < 3}
                                 fallback={
                                     <FilterBadge values={selectedValues} table={props.table} column={props.column}>
-                                        {selectedValues().length} selected
+                                        <Trans>{selectedValues().length} selected</Trans>
                                     </FilterBadge>
                                 }
                             >
@@ -512,7 +531,9 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                                     {(option: any) =>
                                         <FilterBadge values={selectedValues} table={props.table} column={props.column}
                                                      option={option as string}>
-                                            {typeof option === "boolean" ? (option ? "Yes" : "No") : option}
+                                            {/* Selected values are canonical (English game text,
+                                                or a raw boolean), so show the option's label. */}
+                                            {optionLabel(option)}
                                         </FilterBadge>
                                     }
                                 </For>
@@ -550,7 +571,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                     >
                         <div class="flex flex-col w-full gap-3">
                             <div class="flex flex-row w-full justify-between px-2 pt-2">
-                                <SliderLabel>Range</SliderLabel>
+                                <SliderLabel><Trans>Range</Trans></SliderLabel>
                                 <SliderValueLabel
                                     class={`${editingWithNumberInputs() ? "" : "underline "}decoration-1 decoration-dashed`}
                                     onclick={() => setEditingWithNumberInputs(true)}
@@ -607,9 +628,9 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                 {/* Value-based filter */}
                 <Show when={isValueBased()}>
                     <Command shouldFilter={false}>
-                        <CommandInput placeholder={props.title} value={search()} onValueChange={setSearch}/>
+                        <CommandInput placeholder={title()} value={search()} onValueChange={setSearch}/>
                         <CommandList>
-                            <CommandEmpty>No results found.</CommandEmpty>
+                            <CommandEmpty><Trans>No results found.</Trans></CommandEmpty>
                             <CommandGroup>
                                 <For each={filteredOptions()}>
                                     {(option) => {
@@ -663,7 +684,7 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                                             }}
                                             class="justify-center text-center"
                                         >
-                                            Clear filters
+                                            <Trans>Clear filters</Trans>
                                         </CommandItem>
                                     </CommandGroup>
                                 </>

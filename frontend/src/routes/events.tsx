@@ -10,6 +10,7 @@ import {Command, CommandGroup, CommandList, CommandSeparator} from "~/components
 import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
 import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {sourceRow} from "~/lib/data-translation";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables} from "~/lib/spacetime";
 import {readableSeconds} from "~/lib/utils";
@@ -50,7 +51,9 @@ function formatEndTimestamp(timestamp: GrowthTimer["endTimestamp"]): string {
 }
 
 function isActiveEvent(timer: EventTimer): boolean {
-    return !timer.resource.name.toLowerCase().includes("inactive");
+    // Matches the canonical English name, so read through sourceRow(): under a translated data
+    // locale the substring would never match and every timer would look active.
+    return !sourceRow(timer.resource).name.toLowerCase().includes("inactive");
 }
 
 function getClosestInactiveEvent(timers: EventTimer[]): EventTimer | null {
@@ -161,8 +164,11 @@ export default function Events() {
     }
 
     function refreshRegionTimers(conn: DbConnection, regionId: number, row?: GrowthTimer) {
-        if (row && resourceById().get(row.resourceId)?.tag !== "World Event") {
-            return;
+        // `tag` identifies a game concept here rather than labeling anything, so both checks in
+        // this function compare against the untranslated row (see sourceRow's doc comment).
+        if (row) {
+            const changed = resourceById().get(row.resourceId);
+            if (!changed || sourceRow(changed).tag !== "World Event") return;
         }
         if (!TRACKED_REGION_IDS.includes(regionId as (typeof TRACKED_REGION_IDS)[number])) {
             return;
@@ -171,7 +177,7 @@ export default function Events() {
         for (const row of conn.db.growth_timers.iter()) {
             if (row.regionId !== regionId) continue;
             const resource = resourceById().get(row.resourceId);
-            if (!resource || resource.tag !== "World Event") continue;
+            if (!resource || sourceRow(resource).tag !== "World Event") continue;
             timers.push({
                 entityId: row.entityId,
                 resource,

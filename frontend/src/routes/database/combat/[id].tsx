@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {BuffEffect} from "~/bindings/src/buff_effect_type";
@@ -57,7 +58,7 @@ export default function CombatDetail() {
     return (
         <DetailPageLayout
             title={action()?.name ?? `Combat Action #${params.id}`}
-            breadcrumb={breadcrumb("/database/combat", "Combat Ability")}
+            breadcrumb={breadcrumb("/database/combat", msg`Combat Ability`)}
             loading={isLoading() && !action()}
             name={action()?.name ?? "Combat action not found"}
             icon={<Show when={action()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
@@ -67,39 +68,39 @@ export default function CombatDetail() {
             details={[
                 {
                     properties: [
-                        {label: "Player Ability", value: action()?.learnedByPlayer},
-                        {label: "Weapon Type", value: weaponTypes().length > 0 ? weaponTypes().map(wt => wt.name).join(", ") : undefined},
-                        {label: "Auto-cast", value: action()?.autoCast},
-                        {label: "Is Self Targeting", value: action()?.isSelfTargeting ? true : undefined},
+                        {label: msg`Player Ability`, value: action()?.learnedByPlayer},
+                        {label: msg`Weapon Type`, value: weaponTypes().length > 0 ? weaponTypes().map(wt => wt.name).join(", ") : undefined},
+                        {label: msg`Auto-cast`, value: action()?.autoCast},
+                        {label: msg`Is Self Targeting`, value: action()?.isSelfTargeting ? true : undefined},
                     ]
                 },
                 {
-                    heading: "Combat Stats",
+                    heading: msg`Combat Stats`,
                     properties: [
-                        {label: "Stamina Use", value: action() ? fixFloat(action()!.staminaUse) : undefined},
-                        {label: "Max Range", value: action()?.maxRange},
-                        {label: "Strength Multiplier", value: action() ? `${fixFloat(action()!.strengthMultiplier)}x` : undefined},
-                        {label: "Accuracy Multiplier", value: action() ? `${fixFloat(action()!.accuracyMultiplier)}x` : undefined},
-                        {label: "Lead In Time", value: action() ? fixFloat(action()!.leadInTime) : undefined},
-                        {label: "Inaction Time", value: action() ? undefinedIfZero(fixFloat(action()!.inactionTime)) : undefined},
-                        {label: "Projectile Speed", value: action()?.projectileSpeed},
-                        {label: "Weapon Durability Lost", value: action() ? undefinedIfZero(fixFloat(action()!.weaponDurabilityLost)) : undefined},
+                        {label: msg`Stamina Use`, value: action() ? fixFloat(action()!.staminaUse) : undefined},
+                        {label: msg`Max Range`, value: action()?.maxRange},
+                        {label: msg`Strength Multiplier`, value: action() ? `${fixFloat(action()!.strengthMultiplier)}x` : undefined},
+                        {label: msg`Accuracy Multiplier`, value: action() ? `${fixFloat(action()!.accuracyMultiplier)}x` : undefined},
+                        {label: msg`Lead In Time`, value: action() ? fixFloat(action()!.leadInTime) : undefined},
+                        {label: msg`Inaction Time`, value: action() ? undefinedIfZero(fixFloat(action()!.inactionTime)) : undefined},
+                        {label: msg`Projectile Speed`, value: action()?.projectileSpeed},
+                        {label: msg`Weapon Durability Lost`, value: action() ? undefinedIfZero(fixFloat(action()!.weaponDurabilityLost)) : undefined},
                     ]
                 },
                 {
-                    heading: "Cooldown",
+                    heading: msg`Cooldown`,
                     properties: [
-                        {label: "Cooldown", value: action() ? fixFloat(action()!.cooldown) : undefined},
-                        {label: "Global Cooldown", value: action() ? fixFloat(action()!.globalCooldown) : undefined},
-                        {label: "Ignores Global Cooldown", value: action()?.ignoreGlobalCooldown},
+                        {label: msg`Cooldown`, value: action() ? fixFloat(action()!.cooldown) : undefined},
+                        {label: msg`Global Cooldown`, value: action() ? fixFloat(action()!.globalCooldown) : undefined},
+                        {label: msg`Ignores Global Cooldown`, value: action()?.ignoreGlobalCooldown},
                     ]
                 },
                 {
-                    heading: "Threat",
+                    heading: msg`Threat`,
                     properties: [
-                        {label: "Base Threat", value: action() ? fixFloat(action()!.baseThreat) : undefined},
-                        {label: "Threat Per Damage", value: action() ? fixFloat(action()!.threatPerDamage) : undefined},
-                        {label: "Is Taunt", value: action()?.isTauntAction},
+                        {label: msg`Base Threat`, value: action() ? fixFloat(action()!.baseThreat) : undefined},
+                        {label: msg`Threat Per Damage`, value: action() ? fixFloat(action()!.threatPerDamage) : undefined},
+                        {label: msg`Is Taunt`, value: action()?.isTauntAction},
                     ]
                 },
 
@@ -108,8 +109,8 @@ export default function CombatDetail() {
             spacetimeTable={BitCraftTables.CombatActionDesc.spacetimeName}
             objectId={action()?.id}
             tabs={[
-                {id: "self-buffs", label: "Self Buffs", count: selfBuffs().length, content: () => <BuffTable data={selfBuffs()}/>},
-                {id: "target-buffs", label: "Target Buffs", count: targetBuffs().length, content: () => <BuffTable data={targetBuffs()}/>},
+                {id: "self-buffs", label: msg`Self Buffs`, count: selfBuffs().length, content: () => <BuffTable data={selfBuffs()}/>},
+                {id: "target-buffs", label: msg`Target Buffs`, count: targetBuffs().length, content: () => <BuffTable data={targetBuffs()}/>},
             ]}
         />
     );

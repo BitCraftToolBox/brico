@@ -2,7 +2,20 @@ import {ColorModeStorageManager, ConfigColorMode} from "@kobalte/core";
 import {ColumnFiltersState, PaginationState, SortingState} from "@tanstack/solid-table";
 import {Accessor, createContext, createEffect, createMemo, createSignal, JSX, onCleanup, onMount, Setter, useContext} from "solid-js";
 import {isServer} from "solid-js/web";
+import {dataLocaleFor, isDataLocale} from "~/lib/data-translation";
+import {crowdinTargetUILocale, DEFAULT_UI_LOCALE, detectUILocale, isUILocale, PSEUDOLOCALE_ENABLED, type UILocale} from "~/lib/i18n";
 import {ALL_SIDEBAR_HREFS} from "~/lib/sidebar-items";
+
+/**
+ * Sentinel stored in place of a locale to mean "derive it": the browser's preferred language for
+ * the UI, the UI language for game data.
+ *
+ * Persisted as the sentinel rather than as the resolved tag on purpose — otherwise a user who
+ * changed browsers or interface language would stay pinned to whatever was resolved once. It also
+ * keeps the persisted default free of anything client-specific, which is what lets `persist()`
+ * hand the same default to the server and to the first client render.
+ */
+export const AUTO_LOCALE = "auto";
 
 export type SortMode = "tree" | "az";
 export type ViewMode = "list" | "grid";
@@ -77,6 +90,27 @@ export type AppSettings = {
     tableNaturalSort: () => NaturalSortOrder;
     setTableNaturalSort: (v: NaturalSortOrder) => void;
 
+    /**
+     * Language for the app's *own* UI strings (Lingui) — one of `UI_LOCALES` from `~/lib/i18n`, or
+     * the sentinel `AUTO_LOCALE` meaning "follow the browser". Read `resolvedUILocale()` to get an
+     * actual locale; this raw accessor exists so the Settings UI can show which option is selected.
+     */
+    uiLocale: () => string;
+    setUILocale: (v: string) => void;
+    /** `uiLocale()` with `AUTO_LOCALE` resolved against the browser's preferred languages. */
+    resolvedUILocale: () => UILocale;
+
+    /**
+     * Locale used for *game data* text (item names, descriptions, …) — one of `DATA_LOCALES`
+     * from `~/lib/data-translation`, or `AUTO_LOCALE` meaning "same as the interface language".
+     * Distinct from the UI language: a locale whose community translation is patchy is still worth
+     * reading the interface in, so the two can be set independently.
+     */
+    dataLocale: () => string;
+    setDataLocale: (v: string) => void;
+    /** `dataLocale()` with `AUTO_LOCALE` resolved from `resolvedUILocale()`. */
+    resolvedDataLocale: () => string;
+
     /** Quest chain IDs the user has marked as completed. */
     completedQuests: () => Set<number>;
     setCompletedQuests: (ids: number[]) => void;
@@ -122,6 +156,8 @@ export const KEYS = {
     tableHiddenColumns: "brico:table:hidden-columns",
     tableActionsFirst: "brico:table:actions-first",
     tableNaturalSort: "brico:table:natural-sort",
+    uiLocale: "brico:ui-locale",
+    dataLocale: "brico:data-locale",
     completedQuests: "brico:quests:completed",
     easterEggs: "brico:easter-eggs",
     tf2Mode: "brico:easter-eggs:tf2-mode",
@@ -234,6 +270,10 @@ function createSettings(): AppSettings {
     const [tableActionsFirst, setTableActionsFirst] = persist(createSignal(false), KEYS.tableActionsFirst);
     const [tableNaturalSort, setTableNaturalSort] = persist(createSignal<NaturalSortOrder>("pk"), KEYS.tableNaturalSort);
 
+    // language — both default to AUTO_LOCALE, i.e. follow the browser, and game data follows the UI
+    const [uiLocale, setUILocale] = persist(createSignal<string>(AUTO_LOCALE), KEYS.uiLocale);
+    const [dataLocale, setDataLocale] = persist(createSignal<string>(AUTO_LOCALE), KEYS.dataLocale);
+
     // game data?
     const [completedQuestsRaw, setCompletedQuestsRaw] = persist(createSignal<number[]>([]), KEYS.completedQuests);
 
@@ -277,6 +317,28 @@ function createSettings(): AppSettings {
         setSidebarHiddenItems(ALL_SIDEBAR_HREFS.filter(h => !favorites.includes(h)));
     };
 
+    // language
+    //
+    // Under Crowdin's in-context editor (`PSEUDOLOCALE_ENABLED`), both resolved locales ignore
+    // the persisted setting entirely rather than merely defaulting: a translator's browser may
+    // carry a `uiLocale`/`dataLocale` saved from an earlier, ordinary visit to the site, and
+    // without this override that stale preference — not the pseudolocale / target-language pair
+    // the review session needs — would win. Forcing at the *resolved* layer (rather than e.g.
+    // only changing what "auto" means) also means flipping the Settings selects during a review
+    // session can't desync the two systems either.
+    const resolvedUILocale = createMemo<UILocale>(() => {
+        if (PSEUDOLOCALE_ENABLED) return "zu";
+        const stored = uiLocale();
+        return isUILocale(stored) ? stored : detectUILocale();
+    });
+    const resolvedDataLocale = createMemo<string>(() => {
+        if (PSEUDOLOCALE_ENABLED) return dataLocaleFor(crowdinTargetUILocale() ?? DEFAULT_UI_LOCALE);
+        const stored = dataLocale();
+        // Anything unrecognized — the AUTO_LOCALE sentinel, but also a locale dropped from
+        // DATA_LOCALES upstream — follows the UI language rather than requesting a CSV that 404s.
+        return isDataLocale(stored) ? stored : dataLocaleFor(resolvedUILocale());
+    });
+
     // game data
     const completedQuests = createMemo(() => new Set(completedQuestsRaw()));
     const setCompletedQuests = (ids: number[]) => setCompletedQuestsRaw(ids);
@@ -316,6 +378,8 @@ function createSettings(): AppSettings {
         {key: KEYS.tablePageSize, get: tablePageSize, set: setTablePageSize},
         {key: KEYS.tableActionsFirst, get: tableActionsFirst, set: setTableActionsFirst},
         {key: KEYS.tableNaturalSort, get: tableNaturalSort, set: setTableNaturalSort},
+        {key: KEYS.uiLocale, get: uiLocale, set: setUILocale},
+        {key: KEYS.dataLocale, get: dataLocale, set: setDataLocale},
         {key: KEYS.completedQuests, get: completedQuestsRaw, set: setCompletedQuestsRaw},
         {key: KEYS.easterEggs, get: easterEggs, set: setEasterEggs},
         {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
@@ -351,6 +415,12 @@ function createSettings(): AppSettings {
         setTableActionsFirst,
         tableNaturalSort,
         setTableNaturalSort,
+        uiLocale,
+        setUILocale,
+        resolvedUILocale,
+        dataLocale,
+        setDataLocale,
+        resolvedDataLocale,
         displayProbabilityAsAverage,
         setDisplayProbabilityAsAverage,
         flattenItemListOutputs,

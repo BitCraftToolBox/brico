@@ -12,12 +12,13 @@ import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {RelTable, RelTableColumn} from "~/components/shared/DetailPageLayout";
 import {AchievementLink, BuffLink, CombatActionLink, KnowledgeLink} from "~/lib/game-links";
-import {fixFloat, splitCamelCase} from "~/lib/utils";
+import {statLabel} from "~/lib/game-strings";
+import {fixFloat} from "~/lib/utils";
 
 // ─── Stat Entry Table ───────────────────────────────────────────
 
 const statColumns: RelTableColumn<CsvStatEntry>[] = [
-    {header: "Stat", cell: (row) => <span>{splitCamelCase(row.id?.tag ?? "")}</span>},
+    {header: "Stat", cell: (row) => <span>{statLabel(row.id?.tag)}</span>},
     {header: "Value", cell: (row) => <span>{fixFloat(row.value * (row.isPct ? 100 : 1))}{row.isPct ? "%" : ""}</span>},
 ];
 

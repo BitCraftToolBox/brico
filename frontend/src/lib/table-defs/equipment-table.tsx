@@ -1,12 +1,16 @@
+import {msg} from "@lingui/core/macro";
 import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
 import {Rarity} from "~/bindings/src/rarity_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
+import {sourceRow} from "~/lib/data-translation";
 import {SkillLinkById} from "~/lib/game-links";
+import {equipmentSlotLabel, equipmentSlotName} from "~/lib/game-strings";
+import {gameText} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rarityColumn, rarityFilter, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {statsColumn, statsFilter} from "~/lib/table-utils/stats-column-builder";
-import {includedIn, splitCamelCase} from "~/lib/utils";
+import {includedIn} from "~/lib/utils";
 
 export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
     columns: [
@@ -21,17 +25,22 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
         }),
         {
             id: "Slots",
-            accessorFn: row => row.slots?.map(s => splitCamelCase(s.tag)) ?? [],
-            getUniqueValues: row => row.slots?.map(s => splitCamelCase(s.tag)) ?? [],
-            cell: ctx => ctx.getValue()?.join(", ") ?? "",
+            meta: {label: msg`Slots`},
+            // Canonical English slot names as the value (filter state / shared URLs), translated
+            // for display — see the note at the top of table-utils/column-builders.tsx.
+            accessorFn: row => row.slots?.map(s => equipmentSlotName(s.tag)) ?? [],
+            getUniqueValues: row => row.slots?.map(s => equipmentSlotName(s.tag)) ?? [],
+            cell: ctx => ctx.row.original.slots?.map(s => equipmentSlotLabel(s.tag)).join(", ") ?? "",
             filterFn: 'arrIncludesSome',
         },
         {
             id: "Skill",
+            meta: {label: gameText(msg`Skill`)},
             accessorFn: row => {
                 if (!row.levelRequirement) return undefined;
                 if (!row.levelRequirement.skillId) return undefined;
-                const skill = BitCraftTables.SkillDesc.indexedBy("id")().get(row.levelRequirement.skillId);
+                // English value; the cell renders SkillLinkById, which localizes for display.
+                const skill = sourceRow(BitCraftTables.SkillDesc.indexedBy("id")().get(row.levelRequirement.skillId));
                 return skill?.name ?? `#${row.levelRequirement.skillId}`;
             },
             cell: (props) => {
@@ -43,6 +52,7 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
         },
         {
             id: "Level",
+            meta: {label: gameText(msg`Level`)},
             accessorFn: row => row.levelRequirement?.level,
             filterFn: "inNumberRange",
         },
@@ -52,10 +62,10 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
         rowActions({accessorKey: "itemId"}, "item"),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Slots"),
-        uniqueValuesFilter("Skill"),
-        rangeFilter("Level"),
-        statsFilter("Stats"),
+        uniqueValuesFilter("Slots", msg`Slots`, undefined, undefined, equipmentSlotLabel),
+        uniqueValuesFilter("Skill", gameText(msg`Skill`)),
+        rangeFilter("Level", gameText(msg`Level`)),
+        statsFilter(),
         tierFilter(),
         rarityFilter()
     ],

@@ -1,3 +1,5 @@
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
@@ -15,7 +17,7 @@ function ProspectingItemsPanel(props: { prospecting: ProspectingDesc }) {
         if (!props.prospecting.requiredItemsToStart.length) return null;
         return (
             <div class="flex flex-col gap-2 align-items-center">
-                <div class="text-center w-full h-10 text-sm">Required to Start</div>
+                <div class="text-center w-full h-10 text-sm"><Trans>Required to Start</Trans></div>
                 <ItemStackArray stacks={props.prospecting.requiredItemsToStart}/>
             </div>
         );
@@ -24,7 +26,7 @@ function ProspectingItemsPanel(props: { prospecting: ProspectingDesc }) {
         if (!props.prospecting.consumedItemsByAbilityTrigger.length) return null;
         return (
             <div class="flex flex-col gap-2 align-items-center">
-                <div class="text-center w-full h-10 text-sm">Consumed on Ability Use</div>
+                <div class="text-center w-full h-10 text-sm"><Trans>Consumed on Ability Use</Trans></div>
                 <ItemStackArray stacks={props.prospecting.consumedItemsByAbilityTrigger}/>
             </div>
         );
@@ -33,7 +35,7 @@ function ProspectingItemsPanel(props: { prospecting: ProspectingDesc }) {
         if (!props.prospecting.requiredItemsToInteractWithReward.length) return null;
         return (
             <div class="flex flex-col gap-2 align-items-center">
-                <div class="text-center w-full h-10 text-sm">Required for Reward</div>
+                <div class="text-center w-full h-10 text-sm"><Trans>Required for Reward</Trans></div>
                 <ItemStackArray stacks={props.prospecting.requiredItemsToInteractWithReward}/>
             </div>
         )
@@ -113,38 +115,38 @@ export default function ProspectingDetail() {
             metaKind="prospecting node"
             metaImage={ogImageForCodepoint(prospecting()?.iconAssetPath)}
             details={[
-                {label: "Breadcrumb Count", value: rangeStr(prospecting()?.breadCrumbCount)},
-                {label: "Contribution Per Crumb", value: prospecting()?.contributionPerVisitedBreadCrumb},
-                {label: "% Nodes for Max Contribution", value: (prospecting()?.pctNodesForMaxContribution ?? 0) * 100},
-                {label: "Single Contribution Only", value: prospecting()?.singleContributionOnly},
-                {label: "Breadcrumb Distance", value: rangeStr(prospecting()?.distanceBetweenBreadCrumbs)},
-                {label: "Breadcrumb Radius", value: rangeStr(prospecting()?.breadCrumbRadius)},
-                {label: "Deadzone Angle", value: prospecting()?.deadzoneAngleBetweenCrumbs},
-                {label: "Join Radius", value: prospecting()?.joinRadius},
-                {label: "Experience Per Node", value: experienceStr()},
-                {label: "Pointer Duration", value: readableSeconds(prospecting()?.pointerDuration)},
-                {label: "Prospecting Duration", value: readableSeconds(prospecting()?.prospectingDuration)},
-                {label: "Is Aquatic Resource", value: prospecting()?.isAquaticResource},
-                {label: "Allow Aquatic Prospecting", value: prospecting()?.allowAquaticProspecting},
-                {label: "Allow Aquatic Breadcrumb", value: prospecting()?.allowAquaticBreadCrumb},
+                {label: msg`Breadcrumb Count`, value: rangeStr(prospecting()?.breadCrumbCount)},
+                {label: msg`Contribution Per Crumb`, value: prospecting()?.contributionPerVisitedBreadCrumb},
+                {label: msg`% Nodes for Max Contribution`, value: (prospecting()?.pctNodesForMaxContribution ?? 0) * 100},
+                {label: msg`Single Contribution Only`, value: prospecting()?.singleContributionOnly},
+                {label: msg`Breadcrumb Distance`, value: rangeStr(prospecting()?.distanceBetweenBreadCrumbs)},
+                {label: msg`Breadcrumb Radius`, value: rangeStr(prospecting()?.breadCrumbRadius)},
+                {label: msg`Deadzone Angle`, value: prospecting()?.deadzoneAngleBetweenCrumbs},
+                {label: msg`Join Radius`, value: prospecting()?.joinRadius},
+                {label: msg`Experience Per Node`, value: experienceStr()},
+                {label: msg`Pointer Duration`, value: readableSeconds(prospecting()?.pointerDuration)},
+                {label: msg`Prospecting Duration`, value: readableSeconds(prospecting()?.prospectingDuration)},
+                {label: msg`Is Aquatic Resource`, value: prospecting()?.isAquaticResource},
+                {label: msg`Allow Aquatic Prospecting`, value: prospecting()?.allowAquaticProspecting},
+                {label: msg`Allow Aquatic Breadcrumb`, value: prospecting()?.allowAquaticBreadCrumb},
             ]}
             rawData={prospecting()}
             spacetimeTable={BitCraftTables.ProspectingDesc.spacetimeName}
             objectId={prospecting()?.id}
             tabs={[
                 {
-                    id: "biomes", label: "Biomes", count: biomes().length,
+                    id: "biomes", label: msg`Biomes`, count: biomes().length,
                     content: () => (
                         <RelTable data={biomes()} columns={[
                             {
-                                header: "Biome",
+                                header: msg`Biome`,
                                 cell: (biome) => <BiomeLink {...biome} />,
                             }
                         ]}/>
                     ),
                 },
                 {
-                    id: "spawns", label: "Spawns", count: spawnInfo()?.items.length ?? 0,
+                    id: "spawns", label: msg`Spawns`, count: spawnInfo()?.items.length ?? 0,
                     content: () => {
                         const info = spawnInfo()!;
                         if (info.type === "resource") {
@@ -159,7 +161,7 @@ export default function ProspectingDetail() {
                 },
                 {
                     id: "items",
-                    label: "Required Items",
+                    label: msg`Required Items`,
                     count: (prospecting()?.requiredItemsToStart?.length ?? 0) +
                         (prospecting()?.requiredItemsToInteractWithReward.length ?? 0) +
                         (prospecting()?.consumedItemsByAbilityTrigger.length ?? 0),

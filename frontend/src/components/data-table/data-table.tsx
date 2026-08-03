@@ -21,6 +21,7 @@ import {TableColumnHeader} from "~/components/data-table/table-column-header";
 import {TableFacetedFilterProps} from "~/components/data-table/table-faceted-filter";
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "~/components/ui/table"
+import {useLabel} from "~/lib/labels";
 import {useSettings} from "~/lib/settings";
 import {AccessorProp} from "~/lib/table-utils/base";
 
@@ -47,6 +48,7 @@ export type FilterSetupProps<TData, TResult> = Omit<TableFacetedFilterProps<TDat
 export function DataTable<TData>(props: DataTableProps<TData>) {
     const {tableHiddenColumns, tableActionsFirst, getTableSession, tableNaturalSort} = useSettings();
     const [searchParams, setSearchParams] = useSearchParams()
+    const label = useLabel();
 
     const columns = createMemo(() => {
         const idCol = {
@@ -194,7 +196,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 
     props.columns.forEach(c => {
         if (c.header === undefined) {
-            c.header = (props) => <TableColumnHeader column={props.column} title={props.column.id} table={table}></TableColumnHeader>;
+            c.header = (props) => <TableColumnHeader column={props.column} title={label(props.column.columnDef.meta?.label ?? props.column.id)} table={table}></TableColumnHeader>;
         }
     });
 

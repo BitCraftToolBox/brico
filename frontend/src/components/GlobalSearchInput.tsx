@@ -10,6 +10,9 @@
  *   - Enter navigates to full /search page
  */
 
+import {msg} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
+import {Trans} from "@lingui/solid/macro";
 import {A, useNavigate} from "@solidjs/router";
 import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
 import {createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
@@ -32,6 +35,7 @@ interface TabDef {
 }
 
 export default function GlobalSearchInput(props: GlobalSearchInputProps) {
+    const {_} = useLingui();
     const navigate = useNavigate();
     const {quickSearch} = useGlobalSearch();
     const [query, setQuery] = createSignal("");
@@ -67,7 +71,7 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
     });
 
     const tabs = createMemo((): TabDef[] => {
-        const result: TabDef[] = [{id: "all", label: "All", count: allSuggestions().length}];
+        const result: TabDef[] = [{id: "all", label: _(msg`All`), count: allSuggestions().length}];
         for (const [tableKey, group] of groupedSuggestions()) {
             result.push({id: tableKey, label: group.label, count: group.matches.length});
         }
@@ -203,7 +207,7 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
                     <input
                         ref={inputRef}
                         type="search"
-                        placeholder={props.placeholder ?? "Search..."}
+                        placeholder={props.placeholder ?? _(msg`Search...`)}
                         onInput={handleInput}
                         onKeyDown={handleKeyDown}
                         onFocus={() => {
@@ -214,7 +218,7 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
                             "w-full rounded-md border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sidebar-ring",
                             isLarge() ? "pl-10 pr-12 py-3 text-base" : "pl-8 pr-8 py-1.5 text-sm"
                         )}
-                        aria-label="Global search"
+                        aria-label={_(msg`Global search`)}
                         aria-autocomplete="list"
                         aria-expanded={hasSuggestions()}
                         autocomplete="off"
@@ -294,7 +298,7 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
 
                     {/* Footer */}
                     <div class="px-3 py-1 text-xs text-muted-foreground border-t border-border flex justify-between items-center">
-                        <span><kbd>Shift</kbd>+<kbd>Enter</kbd> for full results · ←→ switch tabs</span>
+                        <span><Trans><kbd>Shift</kbd>+<kbd>Enter</kbd> for full results · ←→ switch tabs</Trans></span>
                     </div>
                 </div>
             </Show>

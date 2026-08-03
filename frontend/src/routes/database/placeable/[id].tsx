@@ -1,3 +1,5 @@
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/shared/DetailPageLayout";
@@ -6,16 +8,16 @@ import {ExtractionRecipePanel, GrowthPanel, PlacementPanel, RecipeSelect} from "
 import {breadcrumb} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {
+    extractionsByPlaceable,
     findRootPlacement,
     getPlaceableName,
     getPlacementName,
-    useExtractionsByPlaceable,
-    useGroupsByPlaceable,
-    useGrowthByOutcome,
-    useGrowthByPlaceable,
-    useInteractionsByOutcome,
-    useInteractionsByPlaceable,
-    usePlacementsByPlaceable,
+    groupsByPlaceable,
+    growthByOutcome,
+    growthByPlaceable,
+    interactionsByOutcome,
+    interactionsByPlaceable,
+    placementsByPlaceable,
 } from "~/lib/placeables";
 import {getExtractionRecipeName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -40,22 +42,14 @@ export default function PlaceableDetail() {
 
     const placeableId = () => placeable()?.id;
 
-    // Lookups
-    const groupsMap = useGroupsByPlaceable();
-    const placementsMap = usePlacementsByPlaceable();
-    const growthMap = useGrowthByPlaceable();
-    const growthByOutcomeMap = useGrowthByOutcome();
-    const interactionsMap = useInteractionsByPlaceable();
-    const interactionsByOutcomeMap = useInteractionsByOutcome();
-    const extractionsMap = useExtractionsByPlaceable();
-
-    const groups = createMemo(() => placeableId() != null ? groupsMap()?.get(placeableId()!) ?? [] : []);
-    const placements = createMemo(() => placeableId() != null ? placementsMap()?.get(placeableId()!) ?? [] : []);
-    const growth = createMemo(() => placeableId() != null ? growthMap()?.get(placeableId()!) : undefined);
-    const growthSources = createMemo(() => placeableId() != null ? growthByOutcomeMap()?.get(placeableId()!) ?? [] : []);
-    const interactionsWith = createMemo(() => placeableId() != null ? interactionsMap()?.get(placeableId()!) ?? [] : []);
-    const interactionsResultingIn = createMemo(() => placeableId() != null ? interactionsByOutcomeMap()?.get(placeableId()!) ?? [] : []);
-    const extractions = createMemo(() => placeableId() != null ? extractionsMap()?.get(placeableId()!) ?? [] : []);
+    // Lookups — shared module-scope accessors, see ~/lib/placeables
+    const groups = createMemo(() => placeableId() != null ? groupsByPlaceable().get(placeableId()!) ?? [] : []);
+    const placements = createMemo(() => placeableId() != null ? placementsByPlaceable().get(placeableId()!) ?? [] : []);
+    const growth = createMemo(() => placeableId() != null ? growthByPlaceable().get(placeableId()!) : undefined);
+    const growthSources = createMemo(() => placeableId() != null ? growthByOutcome().get(placeableId()!) ?? [] : []);
+    const interactionsWith = createMemo(() => placeableId() != null ? interactionsByPlaceable().get(placeableId()!) ?? [] : []);
+    const interactionsResultingIn = createMemo(() => placeableId() != null ? interactionsByOutcome().get(placeableId()!) ?? [] : []);
+    const extractions = createMemo(() => placeableId() != null ? extractionsByPlaceable().get(placeableId()!) ?? [] : []);
 
     // Root placement (for "View in Graph" link)
     const rootPlacement = createMemo(() => placeableId() != null ? findRootPlacement(placeableId()!) : undefined);
@@ -70,8 +64,8 @@ export default function PlaceableDetail() {
         // General details
         result.push({
             properties: [
-                {label: "Max Health", value: p.maxHealth},
-                {label: "Visible to Others", value: p.visibleToOthers},
+                {label: msg`Max Health`, value: p.maxHealth},
+                {label: msg`Visible to Others`, value: p.visibleToOthers},
             ],
         });
 
@@ -80,20 +74,20 @@ export default function PlaceableDetail() {
         if (grps.length) {
             for (const g of grps) {
                 result.push({
-                    heading: "Placement Group",
+                    heading: msg`Placement Group`,
                     properties: [
-                        {label: "Group", value: g.name},
-                        {label: "Limit", value: g.placementLimit},
+                        {label: msg`Group`, value: g.name},
+                        {label: msg`Limit`, value: g.placementLimit},
                     ],
                 });
             }
         }
 
         result.push({
-            heading: "Spawn Conditions",
+            heading: msg`Spawn Conditions`,
             properties: [
-                ...(p.spawnsOnLand ? [{label: "Land Elevation", value: `${p.landElevationMin}-${p.landElevationMax}`}] : []),
-                ...(p.spawnsInWater ? [{label: "Water Depth", value: `${p.waterDepthMin}-${p.waterDepthMax}`}] : []),
+                ...(p.spawnsOnLand ? [{label: msg`Land Elevation`, value: `${p.landElevationMin}-${p.landElevationMax}`}] : []),
+                ...(p.spawnsInWater ? [{label: msg`Water Depth`, value: `${p.waterDepthMin}-${p.waterDepthMax}`}] : []),
             ]
         })
 
@@ -109,7 +103,7 @@ export default function PlaceableDetail() {
         if (pl.length) {
             result.push({
                 id: "placement",
-                label: "Placement",
+                label: msg`Placement`,
                 count: pl.length,
                 content: () => (
                     <RecipeSelect
@@ -131,7 +125,7 @@ export default function PlaceableDetail() {
         if (ext.length) {
             result.push({
                 id: "extracted-from",
-                label: "Extracted from",
+                label: msg`Extracted from`,
                 count: ext.length,
                 content: () => (
                     <RecipeSelect
@@ -147,7 +141,7 @@ export default function PlaceableDetail() {
         if (g) {
             result.push({
                 id: "grows-into",
-                label: "Grows into",
+                label: msg`Grows into`,
                 count: g.outcomesV2?.length ?? 0,
                 content: () => <GrowthPanel growth={g}/>,
             });
@@ -157,7 +151,7 @@ export default function PlaceableDetail() {
         if (gs.length) {
             result.push({
                 id: "grows-from",
-                label: "Grows from",
+                label: msg`Grows from`,
                 count: gs.length,
                 content: () => (
                     <RecipeSelect
@@ -190,10 +184,10 @@ export default function PlaceableDetail() {
             details={detailGroups()}
             summaryContent={graphPlacementId() ? () => (
                 <div class="flex flex-col items-center gap-2 py-2">
-                    <p class="text-sm text-muted-foreground">This placeable is part of a lifecycle chain.</p>
+                    <p class="text-sm text-muted-foreground"><Trans>This placeable is part of a lifecycle chain.</Trans></p>
                     <A href={`/tools/placeable-graph?placement=${graphPlacementId()}`}
                        class="text-sm font-medium hover:underline">
-                        View full lifecycle in Placeable Graph →
+                        <Trans>View full lifecycle in Placeable Graph →</Trans>
                     </A>
                 </div>
             ) : undefined}

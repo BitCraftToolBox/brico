@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {JSX} from "solid-js";
 import {ItemDesc} from "~/bindings/src/item_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
@@ -44,6 +45,7 @@ export const ItemListDescDefs: BitCraftToDataDef<ItemListDesc> = {
         rarityColumn({accessorFn: (list) => listToItem(list)?.rarity.tag ?? "Default"}),
         {
             id: "Possible Items",
+            meta: {label: msg`Possible Items`},
             accessorFn: (row) => row,
             cell: (props) => {
                 let originalIcon: JSX.Element | undefined = undefined;

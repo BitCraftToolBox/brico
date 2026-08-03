@@ -1,3 +1,5 @@
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {createMemo, createSignal, For, Show} from "solid-js";
 import {EmpireColorDesc} from "~/bindings/src/empire_color_desc_type";
 import {EmpireIconDesc} from "~/bindings/src/empire_icon_desc_type";
@@ -6,6 +8,8 @@ import {GLYPH_ICONS} from "~/components/icons/font-icons-data";
 import MainLayout from "~/components/MainLayout";
 import {Button} from "~/components/ui/button";
 import {Tabs, TabsContent, TabsIndicator, TabsList, TabsTrigger} from "~/components/ui/tabs";
+import {gameText, useLabel} from "~/lib/labels";
+import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
 import {loadTableAdHoc} from "~/lib/spacetime";
 
 
@@ -28,7 +32,6 @@ function getIconEntry(iconUnicode: string) {
 }
 
 function GridSection<T extends {id: number}>(props: {
-    title: string;
     items: T[];
     selectedId: number | undefined;
     onSelect: (item: T) => void;
@@ -37,7 +40,6 @@ function GridSection<T extends {id: number}>(props: {
 }) {
     return (
         <div class={`flex flex-col max-h-1/2 ${props.showBorder ? "border-b pb-1" : ""}`}>
-            <h3 class="shrink-0 text-sm font-semibold text-muted-foreground px-1 py-1">{props.title}</h3>
             <div class="flex-1 overflow-y-auto min-h-0">
                 <div class="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-12 gap-1 p-1">
                     <For each={props.items}>
@@ -46,7 +48,7 @@ function GridSection<T extends {id: number}>(props: {
                             return (
                                 <button
                                     onClick={() => props.onSelect(item)}
-                                    title={`${props.title} ${item.id}`}
+                                    title={`${item.id}`}
                                 >
                                     {props.renderItem(item, isSelected)}
                                 </button>
@@ -133,8 +135,11 @@ export default function EmblemEditor() {
     const SHAPE_SIZE = ICON_SIZE * 1.85;
     const SHADOW_PX = Math.round(ICON_SIZE * 0.07);
 
+    const label = useLabel();
+    const title = () => label(PAGE_TITLE_LABELS["/tools/emblem"]);
+
     return (
-        <MainLayout title="Emblem Editor" description="BitCraft emblem editor — design, customize, and preview empire emblems on Brico.app.">
+        <MainLayout title={title()} description="BitCraft emblem editor — design, customize, and preview empire emblems on Brico.app.">
             <div class="flex flex-col items-center gap-4 w-full max-w-3xl mx-auto h-full">
                 <div
                     class="shrink-0 relative"
@@ -232,19 +237,18 @@ export default function EmblemEditor() {
                 </div>
 
                 <div class="flex items-center justify-around w-full">
-                    <Button variant="outline" size="sm" onClick={reset}>Reset</Button>
+                    <Button variant="outline" size="sm" onClick={reset}><Trans>Reset</Trans></Button>
                 </div>
 
                 <Tabs defaultValue="icon" class="w-full flex flex-col flex-1 min-h-0">
                     <TabsList class="w-full shrink-0 justify-center">
-                        <TabsTrigger value="icon">Icon</TabsTrigger>
-                        <TabsTrigger value="shape">Shape</TabsTrigger>
+                        <TabsTrigger value="icon">{label(gameText(msg`Icon`))}</TabsTrigger>
+                        <TabsTrigger value="shape">{label(gameText(msg`Shape`))}</TabsTrigger>
                         <TabsIndicator/>
                     </TabsList>
 
                     <TabsContent value="icon" class="flex-1 min-h-0 mt-0 flex flex-col gap-0">
                         <GridSection
-                            title="Icons"
                             items={icons()}
                             selectedId={selectedIcon()?.id}
                             onSelect={setSelectedIcon}
@@ -252,7 +256,6 @@ export default function EmblemEditor() {
                             showBorder
                         />
                         <GridSection
-                            title="Icon Colors"
                             items={iconColors()}
                             selectedId={selectedIconColor()?.id}
                             onSelect={setSelectedIconColor}
@@ -262,7 +265,6 @@ export default function EmblemEditor() {
 
                     <TabsContent value="shape" class="flex-1 min-h-0 mt-0 flex flex-col gap-0">
                         <GridSection
-                            title="Shapes"
                             items={shapes()}
                             selectedId={selectedShape()?.id}
                             onSelect={setSelectedShape}
@@ -270,7 +272,6 @@ export default function EmblemEditor() {
                             showBorder
                         />
                         <GridSection
-                            title="Shape Colors"
                             items={shapeColors()}
                             selectedId={selectedShapeColor()?.id}
                             onSelect={setSelectedShapeColor}
