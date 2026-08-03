@@ -1,0 +1,8 @@
+name: i18n-translate-sync.yml
+on:
+  workflow_dispatch:
+
+
+jobs:
+  empty:
+    runs-on: ubuntu-latest
