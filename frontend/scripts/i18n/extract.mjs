@@ -8,7 +8,13 @@
  * while producing no catalog is the worst possible failure mode for a CI freshness check, so we
  * import the command function directly instead of relying on that guard.
  *
- * Usage: node scripts/i18n/extract.mjs [--clean] [--verbose] [--check]
+ * Usage: node scripts/i18n/extract.mjs [--keep-obsolete] [--verbose] [--check]
+ *
+ * Obsolete messages (no longer referenced in `src`) are pruned outright rather than kept as `#~`
+ * comments: nothing here re-activates a stale translation the way plain gettext tooling might, and
+ * leaving them in round-trips through Crowdin, which fills their empty `msgstr` with the English
+ * source on every export — reintroducing the exact strings this step is meant to remove. Pass
+ * `--keep-obsolete` to fall back to Lingui's default (commented-out, not deleted).
  *
  * `--check` additionally fails if extraction changed anything, i.e. a string was added or edited
  * without re-running extraction. It uses `git status --porcelain` rather than `git diff` so that a
@@ -28,7 +34,7 @@ const argv = process.argv.slice(2);
 
 const success = await extractCommand(getConfig({}), {
     verbose: argv.includes("--verbose"),
-    clean: argv.includes("--clean"),
+    clean: !argv.includes("--keep-obsolete"),
     overwrite: argv.includes("--overwrite"),
     watch: false,
     workersOptions: resolveWorkersOptions({}),

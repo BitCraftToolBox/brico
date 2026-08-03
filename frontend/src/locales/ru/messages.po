@@ -656,10 +656,6 @@ msgstr ""
 msgid "Browse raw data on 🥣 cereal"
 msgstr ""
 
-#: src/lib/table-defs/cargo-table.tsx
-#~ msgid "Supply"
-#~ msgstr ""
-
 #: src/lib/sidebar-items.ts
 msgid "Items"
 msgstr "Предметы"
@@ -726,10 +722,6 @@ msgstr ""
 #: src/routes/database/food/[id].tsx
 msgid "Up To HP"
 msgstr ""
-
-#: src/lib/table-defs/achievement-table.tsx
-#~ msgid "Points"
-#~ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Min Contribution"
@@ -1066,10 +1058,6 @@ msgstr ""
 msgid "Offer Items"
 msgstr ""
 
-#: src/components/Nav.tsx
-#~ msgid "Theme Colors"
-#~ msgstr ""
-
 #. placeholder {0}: outcome.radiusMin
 #. placeholder {1}: outcome.radiusMax
 #: src/components/shared/RecipeDisplay.tsx
@@ -1240,10 +1228,6 @@ msgstr ""
 #: src/lib/recipe-sources.tsx
 msgid "Building:"
 msgstr ""
-
-#: src/routes/database/biome/[id].tsx
-#~ msgid "Hazard Level"
-#~ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
@@ -1483,10 +1467,6 @@ msgstr "Инструмент"
 #: src/lib/table-defs/claim-research-table.tsx
 msgid "Supply Cap"
 msgstr ""
-
-#: src/components/version-checker.tsx
-#~ msgid "Latest available"
-#~ msgstr ""
 
 #: src/routes/database/cargo/[id].tsx
 msgid "Place Time"
@@ -2113,10 +2093,6 @@ msgstr ""
 msgid "Disallow Player Build"
 msgstr ""
 
-#: src/lib/table-utils/detail-tab-builders.tsx
-#~ msgid "Required"
-#~ msgstr ""
-
 #: src/lib/recipe-sources.tsx
 msgid "? min"
 msgstr ""
@@ -2463,10 +2439,6 @@ msgstr ""
 #: src/routes/database/deployable/[id].tsx
 msgid "Mounting Radius"
 msgstr ""
-
-#: src/components/version-checker.tsx
-#~ msgid "(check preview <0/>)"
-#~ msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx

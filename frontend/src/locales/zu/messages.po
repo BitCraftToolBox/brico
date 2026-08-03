@@ -656,10 +656,6 @@ msgstr "crwdns1522:0crwdne1522:0"
 msgid "Browse raw data on 🥣 cereal"
 msgstr "crwdns3048:0crwdne3048:0"
 
-#: src/lib/table-defs/cargo-table.tsx
-#~ msgid "Supply"
-#~ msgstr "Supply"
-
 #: src/lib/sidebar-items.ts
 msgid "Items"
 msgstr "crwdns1188:0crwdne1188:0"
@@ -726,10 +722,6 @@ msgstr "crwdns1660:0crwdne1660:0"
 #: src/routes/database/food/[id].tsx
 msgid "Up To HP"
 msgstr "crwdns1746:0crwdne1746:0"
-
-#: src/lib/table-defs/achievement-table.tsx
-#~ msgid "Points"
-#~ msgstr "Points"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Min Contribution"
@@ -1066,10 +1058,6 @@ msgstr "crwdns1154:0crwdne1154:0"
 msgid "Offer Items"
 msgstr "crwdns1432:0crwdne1432:0"
 
-#: src/components/Nav.tsx
-#~ msgid "Theme Colors"
-#~ msgstr "Theme Colors"
-
 #. placeholder {0}: outcome.radiusMin
 #. placeholder {1}: outcome.radiusMax
 #: src/components/shared/RecipeDisplay.tsx
@@ -1240,10 +1228,6 @@ msgstr "crwdns3112:0crwdne3112:0"
 #: src/lib/recipe-sources.tsx
 msgid "Building:"
 msgstr "crwdns1110:0crwdne1110:0"
-
-#: src/routes/database/biome/[id].tsx
-#~ msgid "Hazard Level"
-#~ msgstr "Hazard Level"
 
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
@@ -1483,10 +1467,6 @@ msgstr "crwdns1832:0crwdne1832:0"
 #: src/lib/table-defs/claim-research-table.tsx
 msgid "Supply Cap"
 msgstr "crwdns1294:0crwdne1294:0"
-
-#: src/components/version-checker.tsx
-#~ msgid "Latest available"
-#~ msgstr "Latest available"
 
 #: src/routes/database/cargo/[id].tsx
 msgid "Place Time"
@@ -2113,10 +2093,6 @@ msgstr "crwdns1716:0crwdne1716:0"
 msgid "Disallow Player Build"
 msgstr "crwdns1550:0crwdne1550:0"
 
-#: src/lib/table-utils/detail-tab-builders.tsx
-#~ msgid "Required"
-#~ msgstr "Required"
-
 #: src/lib/recipe-sources.tsx
 msgid "? min"
 msgstr "crwdns1116:0crwdne1116:0"
@@ -2463,10 +2439,6 @@ msgstr "crwdns1958:0crwdne1958:0"
 #: src/routes/database/deployable/[id].tsx
 msgid "Mounting Radius"
 msgstr "crwdns1726:0crwdne1726:0"
-
-#: src/components/version-checker.tsx
-#~ msgid "(check preview <0/>)"
-#~ msgstr "(check preview <0/>)"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
