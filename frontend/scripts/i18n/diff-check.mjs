@@ -12,15 +12,7 @@
  */
 import {execFileSync} from "node:child_process";
 import {readFileSync} from "node:fs";
-import {parsePo} from "pofile-ts";
-
-function itemsOf(content) {
-    const po = parsePo(content);
-    return po.items
-        .filter((item) => !item.obsolete)
-        .map((item) => ({msgid: item.msgid, msgctxt: item.msgctxt, msgstr: item.msgstr, comments: item.extractedComments}))
-        .sort((a, b) => (a.msgid + (a.msgctxt ?? "")).localeCompare(b.msgid + (b.msgctxt ?? "")));
-}
+import {itemsOf} from "./po-items.mjs";
 
 // `--relative` so paths come back relative to cwd (matching the `./`-relative `git show` calls
 // below) rather than `git diff`'s default of repo-root-relative.
@@ -32,8 +24,8 @@ let realChange = false;
 for (const file of changedFiles) {
     // `./` makes the `HEAD:<path>` pathspec relative to cwd rather than the repo root, so this
     // works whether the script runs from `frontend/` locally or from the repo root in CI.
-    const before = itemsOf(execFileSync("git", ["show", `HEAD:./${file}`], {encoding: "utf8"}));
-    const after = itemsOf(readFileSync(file, "utf8"));
+    const before = itemsOf(execFileSync("git", ["show", `HEAD:./${file}`], {encoding: "utf8"}), {includeMsgstr: true});
+    const after = itemsOf(readFileSync(file, "utf8"), {includeMsgstr: true});
     if (JSON.stringify(before) !== JSON.stringify(after)) {
         realChange = true;
         break;
