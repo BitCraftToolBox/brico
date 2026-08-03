@@ -5,16 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: zh\n"
+"Language: es\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
 "PO-Revision-Date: 2026-08-03 21:18\n"
 "Last-Translator: \n"
-"Language-Team: Chinese Simplified\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language-Team: Spanish\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: brico\n"
 "X-Crowdin-Project-ID: 916887\n"
-"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-Language: es-ES\n"
 "X-Crowdin-File: /frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 48\n"
 
@@ -34,7 +34,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Compendium"
-msgstr "百科全书"
+msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "Total Passive Slots"
@@ -43,7 +43,7 @@ msgstr ""
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Max Stamina"
-msgstr "最大耐力"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Converted from"
@@ -174,7 +174,7 @@ msgstr ""
 
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "EXP"
-msgstr "经验"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Paving Tier:"
@@ -191,7 +191,7 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 msgid "Stats"
-msgstr "属性"
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Night Deaggro Range"
@@ -234,7 +234,7 @@ msgstr ""
 
 #: src/routes/database/item/[id].tsx
 msgid "Knowledge Scroll"
-msgstr "知识卷轴"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Any manually applied column sort will override this."
@@ -274,7 +274,7 @@ msgstr ""
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Rewards"
-msgstr "奖励"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Show items grouped by category (tree) or sorted alphabetically."
@@ -370,7 +370,7 @@ msgstr ""
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/lib/table-defs/combat-table.tsx
 msgid "Range"
-msgstr "射程"
+msgstr ""
 
 #: src/lib/table-defs/cargo-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -381,7 +381,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/routes/database/collectible/[id].tsx
 msgid "Deployables"
-msgstr "可部署物"
+msgstr ""
 
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/biome/[id].tsx
@@ -389,7 +389,7 @@ msgstr "可部署物"
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Name"
-msgstr "名称"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Object ID"
@@ -437,16 +437,16 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
-msgstr "武器"
+msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
 msgid "Secret"
-msgstr "秘密"
+msgstr ""
 
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Evasion"
-msgstr "闪避"
+msgstr ""
 
 #: src/lib/game-links.tsx
 msgid "Developer-locked / inaccessible"
@@ -456,7 +456,7 @@ msgstr ""
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Equipment"
-msgstr "装备"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Placeable Placement"
@@ -478,7 +478,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Quests"
-msgstr "任务"
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
@@ -490,14 +490,14 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Structures"
-msgstr "建筑物"
+msgstr ""
 
 #: src/lib/table-defs/achievement-table.tsx
 #: src/lib/table-defs/quests-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Requires"
-msgstr "需要"
+msgstr ""
 
 #. placeholder {0}: (min + max) / 2 * perNode
 #: src/lib/recipe-sources.tsx
@@ -521,7 +521,7 @@ msgstr ""
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Max Health"
-msgstr "最大生命值"
+msgstr ""
 
 #: src/components/GlobalSearchInput.tsx
 msgid "<0>Shift</0>+<1>Enter</1> for full results · ←→ switch tabs"
@@ -543,7 +543,7 @@ msgstr ""
 
 #: src/routes/database/item/[id].tsx
 msgid "Weapon"
-msgstr "武器"
+msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows Into"
@@ -553,7 +553,7 @@ msgstr ""
 #: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Satiation"
-msgstr "饱食度"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Sort order"
@@ -625,7 +625,7 @@ msgstr ""
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
 msgid "Experience"
-msgstr "经验"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/resource/[id].tsx
@@ -638,7 +638,7 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/weapon/[id].tsx
 msgid "Cooldown"
-msgstr "冷却时间"
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Exp"
@@ -662,7 +662,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Items"
-msgstr "物品"
+msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Placement Group"
@@ -700,7 +700,7 @@ msgstr ""
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/collectible/[id].tsx
 msgid "Deed"
-msgstr "契据"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Effort Required:"
@@ -839,7 +839,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Terraforming"
-msgstr "地形改造"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Collapse sidebar by default"
@@ -915,7 +915,7 @@ msgstr ""
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/cargo/[id].tsx
 msgid "Knowledge"
-msgstr "知识"
+msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "Ignore Damage"
@@ -958,7 +958,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Character"
-msgstr "角色"
+msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Recipe option"
@@ -980,7 +980,7 @@ msgstr ""
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "TP Energy"
-msgstr "传送能量"
+msgstr ""
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Achievement Requirements"
@@ -1158,7 +1158,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Traveler Tasks"
-msgstr "旅行者任务"
+msgstr ""
 
 #: src/components/data-table/table-toolbar.tsx
 msgid "Link Filters <0/>"
@@ -1169,7 +1169,7 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Stamina"
-msgstr "耐力"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "{skillName} Exp:"
@@ -1184,7 +1184,7 @@ msgstr ""
 #: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "HP"
-msgstr "生命值"
+msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Despawns"
@@ -1274,7 +1274,7 @@ msgstr ""
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Strength"
-msgstr "力量"
+msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No drops"
@@ -1361,7 +1361,7 @@ msgstr ""
 
 #: src/lib/table-defs/achievement-table.tsx
 msgid "Achievement Points"
-msgstr "成就点数"
+msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/DetailPageLayout.tsx
@@ -1387,7 +1387,7 @@ msgstr ""
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Speed"
-msgstr "速度"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Is Self Targeting"
@@ -1454,7 +1454,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Progression"
-msgstr "成长进度"
+msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Any"
@@ -1478,7 +1478,7 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Tool"
-msgstr "工具"
+msgstr ""
 
 #: src/lib/table-defs/claim-research-table.tsx
 msgid "Supply Cap"
@@ -1527,7 +1527,7 @@ msgstr ""
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/skill/[id].tsx
 msgid "Title"
-msgstr "标题"
+msgstr ""
 
 #: src/lib/table-defs/weapon-table.tsx
 msgid "Stamina Use Multiplier"
@@ -1622,7 +1622,7 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/tool/[id].tsx
 msgid "Power"
-msgstr "供能"
+msgstr ""
 
 #: src/lib/table-utils/column-builders.tsx
 msgid "<empty>"
@@ -1641,7 +1641,7 @@ msgstr ""
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Tier"
-msgstr "阶级"
+msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "Not Deconstructible"
@@ -1669,7 +1669,7 @@ msgstr ""
 #: src/routes/database/biome/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Description"
-msgstr "描述"
+msgstr ""
 
 #: src/routes/database/cargo/[id].tsx
 msgid "Pick Up Time"
@@ -1703,7 +1703,7 @@ msgstr ""
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Movement"
-msgstr "移动"
+msgstr ""
 
 #: src/lib/table-utils/column-builders.tsx
 msgid "View Map"
@@ -1758,7 +1758,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Cargo"
-msgstr "货物"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Favorite items"
@@ -1774,7 +1774,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Combat Abilities"
-msgstr "技能"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Resource ignores regular damage."
@@ -1782,7 +1782,7 @@ msgstr ""
 
 #: src/lib/table-utils/column-builders.tsx
 msgid "Tags"
-msgstr "标签"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 #: src/lib/table-defs/equipment-table.tsx
@@ -1792,7 +1792,7 @@ msgstr "标签"
 #: src/routes/database/tool/[id].tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Skill"
-msgstr "技能"
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Scaled Armor"
@@ -1800,7 +1800,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Skills"
-msgstr "技能"
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/quest-graph.tsx
@@ -1872,7 +1872,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Collection"
-msgstr "收集"
+msgstr ""
 
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
@@ -1989,7 +1989,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Resources"
-msgstr "资源"
+msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "Beneficial"
@@ -2007,7 +2007,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Claim Research"
-msgstr "研究"
+msgstr ""
 
 #: src/lib/table-defs/creature-table.tsx
 msgid "Huntable"
@@ -2043,7 +2043,7 @@ msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Deployable"
-msgstr "可部署"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Output is rolled once, regardless of damage dealt, as long as the minimum threshold is reached."
@@ -2059,7 +2059,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Achievements"
-msgstr "成就"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Favorites only"
@@ -2067,7 +2067,7 @@ msgstr ""
 
 #: src/lib/table-defs/food-table.tsx
 msgid "Food Buffs"
-msgstr "食物增益"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
@@ -2149,7 +2149,7 @@ msgstr ""
 
 #: src/lib/table-utils/column-builders.tsx
 msgid "Rarity"
-msgstr "稀有度"
+msgstr ""
 
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/building/[id].tsx
@@ -2216,7 +2216,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/routes/database/item/[id].tsx
 msgid "Food"
-msgstr "食物"
+msgstr ""
 
 #: src/components/version-checker.tsx
 msgid "Current data version"
@@ -2252,7 +2252,7 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Quest"
-msgstr "知识卷轴"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -2351,12 +2351,12 @@ msgstr ""
 
 #: src/routes/tools/emblem.tsx
 msgid "Shape"
-msgstr "形状"
+msgstr ""
 
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Armor"
-msgstr "护甲"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Naturally sort tables by their primary ID, or use the internal database ordering."
@@ -2389,7 +2389,7 @@ msgstr ""
 
 #: src/routes/tools/emblem.tsx
 msgid "Icon"
-msgstr "图标"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Stamina Use"
@@ -2411,7 +2411,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/routes/database/biome/[id].tsx
 msgid "Prospecting"
-msgstr "勘探"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Combat Stats"
@@ -2419,7 +2419,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Tools"
-msgstr "工具"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Target Buffs"
@@ -2437,12 +2437,12 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Paving"
-msgstr "铺路"
+msgstr ""
 
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Accuracy"
-msgstr "精准度"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
@@ -2585,7 +2585,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Placeables"
-msgstr "可放置物"
+msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Is Aquatic Resource"
@@ -2639,8 +2639,9 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Creatures"
-msgstr "生物"
+msgstr ""
 
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr ""
+

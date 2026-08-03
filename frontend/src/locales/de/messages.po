@@ -8,15 +8,15 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-07-31 22:46\n"
+"PO-Revision-Date: 2026-08-03 21:18\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: brico\n"
 "X-Crowdin-Project-ID: 916887\n"
 "X-Crowdin-Language: de\n"
-"X-Crowdin-File: /[BitCraftToolBox.brico] feat.i18n/frontend/src/locales/en/messages.po\n"
-"X-Crowdin-File-ID: 14\n"
+"X-Crowdin-File: /frontend/src/locales/en/messages.po\n"
+"X-Crowdin-File-ID: 48\n"
 
 #: src/routes/settings.tsx
 msgid "You are now a developer!"
@@ -658,7 +658,7 @@ msgstr ""
 
 #: src/lib/table-defs/cargo-table.tsx
 #~ msgid "Supply"
-#~ msgstr ""
+#~ msgstr "Supply"
 
 #: src/lib/sidebar-items.ts
 msgid "Items"
@@ -729,7 +729,7 @@ msgstr ""
 
 #: src/lib/table-defs/achievement-table.tsx
 #~ msgid "Points"
-#~ msgstr ""
+#~ msgstr "Points"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Min Contribution"
@@ -1068,7 +1068,7 @@ msgstr ""
 
 #: src/components/Nav.tsx
 #~ msgid "Theme Colors"
-#~ msgstr ""
+#~ msgstr "Theme Colors"
 
 #. placeholder {0}: outcome.radiusMin
 #. placeholder {1}: outcome.radiusMax
@@ -1243,7 +1243,7 @@ msgstr ""
 
 #: src/routes/database/biome/[id].tsx
 #~ msgid "Hazard Level"
-#~ msgstr ""
+#~ msgstr "Hazard Level"
 
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
@@ -1486,7 +1486,7 @@ msgstr ""
 
 #: src/components/version-checker.tsx
 #~ msgid "Latest available"
-#~ msgstr ""
+#~ msgstr "Latest available"
 
 #: src/routes/database/cargo/[id].tsx
 msgid "Place Time"
@@ -2115,7 +2115,7 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #~ msgid "Required"
-#~ msgstr ""
+#~ msgstr "Required"
 
 #: src/lib/recipe-sources.tsx
 msgid "? min"
@@ -2466,7 +2466,7 @@ msgstr ""
 
 #: src/components/version-checker.tsx
 #~ msgid "(check preview <0/>)"
-#~ msgstr ""
+#~ msgstr "(check preview <0/>)"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
