@@ -6,7 +6,7 @@ import treeShakeFontIcons from "./scripts/icons/vite-plugin-tree-shake-icons.mjs
 // Crowdin's pseudolocale (`zu`) and its In-Context script are dev-only noise for real visitors,
 // but a dedicated Cloudflare Pages branch running them lets translators review live without a
 // local checkout. See `src/lib/i18n.ts`'s `PSEUDOLOCALE_ENABLED`.
-if (process.env.CF_PAGES_BRANCH === "translate" || process.env.CF_PAGES_BRANCH === "feat/i18n") {
+if (process.env.CF_PAGES_BRANCH === "translate") {
     process.env.VITE_ENABLE_PSEUDOLOCALE = "true";
 }
 

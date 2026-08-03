@@ -1,3 +1,4 @@
+import {formatter} from "@lingui/format-po";
 import {defineConfig} from "@lingui/solid/config";
 
 /**
@@ -17,7 +18,8 @@ import {defineConfig} from "@lingui/solid/config";
 export default defineConfig({
     locales: ["en", "de", "es", "fr", "ja", "pl", "pt-BR", "ru", "zh-Hans", "zh-Hant", "zu"],
     sourceLocale: "en",
-    orderBy: "origin",
+    orderBy: "messageId",
+    format: formatter({lineNumbers: false}),
     catalogs: [
         {
             path: "src/locales/{locale}/messages",
