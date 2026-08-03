@@ -5,8 +5,9 @@
  * genuinely belong to the *game's*: most sidebar titles are the names of BitCraft's own compendium
  * sections, and rarity/stat names are game vocabulary the player already knows from the client.
  * Translating those ourselves would invent a second wording for text the game has already
- * localized — so they go through the game catalogs, with the Lingui message as the fallback for
- * anything the game doesn't publish.
+ * localized — so they go through the game catalogs by default. But a UI translator (Crowdin) can
+ * still override the game's wording for a specific label, and that override wins: priority is
+ * UI-translator-override, then the game catalog, then the English source.
  *
  * Both kinds resolve reactively, so a locale change on either side updates the label with no
  * call-site involvement. Resolve inside a component with `useLabel()`; outside one — a `msg`
@@ -43,8 +44,9 @@ export function isGameLabel(label: Label | string): label is GameLabel {
 }
 
 /**
- * Marks a label as game vocabulary: look it up in the game-data catalogs first, fall back to the
- * Lingui catalog.
+ * Marks a label as game vocabulary: normally rendered from the game-data catalogs, but a UI
+ * translator can still override the wording for this specific label — that override takes
+ * priority over the game's translation, which in turn takes priority over the English source.
  *
  * ```ts
  * titleLabel: gameText(msg`Items`)                       // source defaults to the msgid
@@ -81,10 +83,15 @@ export type LabelResolver = (label: Label | string) => string;
 function resolveLabel(_: (d: MessageDescriptor) => string, label: Label | string): string {
     if (typeof label === "string") return label;
     if (isGameLabel(label)) {
+        const uiText = _(label.fallback);
+        // A UI translator has overridden this string — that wins over the game's own wording, so
+        // Crowdin can correct or replace game vocabulary. An untouched catalog resolves to the
+        // English source unchanged, which is how we tell "overridden" apart from "not yet
+        // translated" without a separate flag.
+        if (uiText !== label.source) return uiText;
         const translated = translateGameText(label.source);
-        // A miss returns the source unchanged; prefer the app's own catalog in that case, so a
-        // label the game doesn't publish still follows the UI language.
-        return translated === label.source ? _(label.fallback) : translated;
+        // A miss returns the source unchanged; fall back to the (English) UI text in that case.
+        return translated === label.source ? uiText : translated;
     }
     return _(label);
 }

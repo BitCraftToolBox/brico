@@ -9,7 +9,8 @@ import {
     TbOutlineMoon as IconMoon,
     TbOutlineSearch as IconSearch,
     TbOutlineSettings as IconSettings,
-    TbOutlineSun as IconSun
+    TbOutlineSun as IconSun,
+    TbOutlineWorld as IconWorld,
 } from "solid-icons/tb"
 import {For, JSX, Show} from "solid-js";
 import {isDev} from "solid-js/web";
@@ -20,21 +21,6 @@ import {SidebarTrigger} from "~/components/ui/sidebar";
 import {dataLocaleFor} from "~/lib/data-translation";
 import {localeLabel, PSEUDOLOCALE_ENABLED, UI_LOCALES, type UILocale} from "~/lib/i18n";
 import {AUTO_LOCALE, useSettings} from "~/lib/settings";
-
-/** Flag shown for each `UI_LOCALES` entry. Not derivable from the locale tag, so hand-mapped. */
-const LOCALE_FLAGS: Partial<Record<UILocale, string>> = {
-    en: "🇺🇸",
-    de: "🇩🇪",
-    es: "🇪🇸",
-    fr: "🇫🇷",
-    pl: "🇵🇱",
-    "pt-BR": "🇧🇷",
-    ru: "🇷🇺",
-    ja: "🇯🇵",
-    "zh-Hans": "🇨🇳",
-    "zh-Hant": "🇹🇼",
-};
-const AUTO_FLAG = "🌐";
 
 function LanguageMenu() {
     const settings = useSettings();
@@ -58,19 +44,17 @@ function LanguageMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger as={Button<"button">} variant="ghost" size="sm" class="w-7 px-0">
-                <span class="text-base leading-none" aria-hidden="true">{LOCALE_FLAGS[settings.resolvedUILocale()] ?? AUTO_FLAG}</span>
+                <span class="text-base leading-none" aria-hidden="true"><IconWorld/></span>
                 <span class="sr-only"><Trans>Change language</Trans></span>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuItem onSelect={setAuto}>
-                    <span class="mr-2 w-5 text-center" aria-hidden="true">{AUTO_FLAG}</span>
                     <span><Trans>Automatic</Trans></span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator/>
                 <For each={UI_LOCALES}>
                     {(locale) => (
                         <DropdownMenuItem onSelect={() => setLocale(locale)} disabled={PSEUDOLOCALE_ENABLED && locale !== "zu"}>
-                            <span class="mr-2 w-5 text-center" aria-hidden="true">{LOCALE_FLAGS[locale] ?? AUTO_FLAG}</span>
                             <span>{localeLabel(locale)}</span>
                         </DropdownMenuItem>
                     )}
