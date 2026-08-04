@@ -25,9 +25,11 @@ import {Card, CardContent, CardHeader} from "~/components/ui/card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
 import {Rarities} from "~/lib/bitcraft-utils";
 import {sourceRow} from "~/lib/data-translation";
+import {breadcrumb} from "~/lib/game-links";
 import {rarityLabel} from "~/lib/game-strings";
 import {type Label, useLabel} from "~/lib/labels";
-import {detailMetaDescription, metaKeywords} from "~/lib/og-meta";
+import {BITCRAFT_TITLE_SUFFIX, detailMetaDescription, metaKeywords} from "~/lib/og-meta";
+import {BreadcrumbJsonLd, ItemPageJsonLd, type JsonLdProperty} from "~/lib/structured-data";
 import {cn} from "~/lib/utils";
 
 // ─── Types ──────────────────────────────────────────────────────
@@ -59,8 +61,16 @@ export interface RelationshipTab {
 export interface DetailPageProps {
     /** Page title (shown in browser tab / MainLayout) */
     title: string;
-    /** Shown before the title in the navbar */
-    breadcrumb?: JSX.Element;
+    /**
+     * Href of the list page this object belongs to (e.g. `"/database/item"`). Single source for both
+     * the navbar breadcrumb and the `BreadcrumbList` JSON-LD trail, so the two can't drift.
+     */
+    breadcrumbHref?: string;
+    /**
+     * Override for the breadcrumb's page-level wording — a singular noun for a detail page, or an
+     * already-resolved display string. See `breadcrumb()` in ~/lib/game-links.
+     */
+    breadcrumbTitle?: Label | string;
     /** Whether the primary data is still loading */
     loading?: boolean;
     /** Icon element */
@@ -106,6 +116,11 @@ export interface DetailPageProps {
     tabs?: RelationshipTab[];
     /** Fallback when entity not found */
     notFound?: string;
+    /**
+     * Canonical URL to declare instead of this page's own — see `MainLayout`. Also suppresses the
+     * `ItemPage` JSON-LD, which would otherwise claim this URL as an entity page.
+     */
+    canonicalOverride?: string;
 }
 
 // ─── Helpers ────────────────────────────────────────────────────
@@ -227,6 +242,29 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     const hasDetails = () => groups().some(g => visibleProps(g.properties).length > 0);
     const hasInfoSection = () => hasDetails() || props.summaryContent || props.rawData || props.infoTabs;
 
+    /**
+     * The property grid as plain `name`/`value` pairs for JSON-LD. The grid stacks its label above
+     * its value with no separator, which looks right but flattens to garbage for a crawler reading
+     * visible text ("Occupants4. Allow HuntingNo."), so hand over the pairs directly instead of
+     * distorting the layout. Function-valued labels and values are markup — links, tooltips, icon
+     * rows — with no meaningful plain-text form, so they're skipped rather than stringified.
+     */
+    const jsonLdProperties = (): JsonLdProperty[] => {
+        const out: JsonLdProperty[] = [];
+        if (props.tier !== undefined) out.push({name: "Tier", value: props.tier});
+        if (props.rarity) out.push({name: "Rarity", value: props.rarity});
+        // "Category", not "Type": several grids already have a "Type" row of their own (weapon type,
+        // tool type), and two same-named PropertyValues in one list is ambiguous.
+        if (props.tag) out.push({name: "Category", value: props.tag});
+        for (const group of groups()) {
+            for (const prop of visibleProps(group.properties)) {
+                if (typeof prop.label === "function" || typeof prop.value === "function") continue;
+                out.push({name: tabLabel(prop.label), value: prop.value!});
+            }
+        }
+        return out;
+    };
+
     const [infoTab, setInfoTabRaw] = createSignal<InfoTab>(props.defaultTab ?? "details");
     const setInfoTab = (info: string) => {
         setInfoTabRaw(info);
@@ -281,12 +319,27 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     });
 
     return (
+        <>
+        <BreadcrumbJsonLd href={props.breadcrumbHref} titleOverride={props.breadcrumbTitle} objectName={props.name}/>
+        {/* Skipped when the page canonicalizes elsewhere: asserting an `ItemPage` for a URL we've
+            just told crawlers isn't the canonical one would contradict the canonical tag. */}
+        <Show when={!props.canonicalOverride}>
+            <ItemPageJsonLd
+                name={props.name}
+                description={props.description}
+                image={props.metaImage}
+                properties={jsonLdProperties()}
+            />
+        </Show>
         <MainLayout
             title={props.title}
+            canonicalOverride={props.canonicalOverride}
+            titleSuffix={BITCRAFT_TITLE_SUFFIX}
+            ownHeading
             description={detailMetaDescription(metaArgs())}
             keywords={metaKeywords(metaArgs())}
             image={props.metaImage}
-            navTitle={props.breadcrumb}
+            navTitle={props.breadcrumbHref ? breadcrumb(props.breadcrumbHref, props.breadcrumbTitle) : undefined}
         >
             <Show when={!props.loading} fallback={
                 <div class="flex items-center justify-center py-20">
@@ -452,6 +505,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                 </div>
             </Show>
         </MainLayout>
+        </>
     );
 };
 

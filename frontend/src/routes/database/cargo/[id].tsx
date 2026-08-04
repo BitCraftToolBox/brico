@@ -5,7 +5,6 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {lootTab} from "~/components/fun/BricoLootBox";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
-import {breadcrumb} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
@@ -105,7 +104,7 @@ export default function CargoDetail() {
     return (
         <DetailPageLayout
             title={cargo()?.name ?? `Cargo #${params.id}`}
-            breadcrumb={breadcrumb("/database/cargo")}
+            breadcrumbHref="/database/cargo"
             loading={isLoading() && !cargo()}
             icon={<Show when={cargo()}>{(c) =>
                 <CargoIcon cargo={c()} small={false} noInteract/>

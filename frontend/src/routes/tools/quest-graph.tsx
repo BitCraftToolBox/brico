@@ -14,7 +14,7 @@ import {createMemo, Show} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
 import MainLayout from "~/components/MainLayout";
 import {QuestGraph} from "~/components/shared/QuestGraph";
-import {breadcrumb} from "~/lib/game-links";
+import {breadcrumbCurrent} from "~/lib/game-links";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
@@ -44,13 +44,12 @@ export default function QuestGraphTool() {
     });
 
     return (
-        <MainLayout title="Quest Graph" description="Interactive BitCraft quest chain graph — visualize quest progression and rewards on Brico.app." navTitle={
-            <>
-                {breadcrumb("/database/quest-chain")}
-                <span class="mx-1.5">{">"}</span>
-                <Trans>Graph</Trans>
-            </>
-        }>
+        <MainLayout
+            title="Quest Graph"
+            ownHeading
+            description="Interactive BitCraft quest chain graph — visualize quest progression and rewards on Brico.app."
+            navTitle={breadcrumbCurrent("/tools/quest-graph")}
+        >
             <Show when={!isLoading()} fallback={
                 <div class="flex items-center justify-center py-20">
                     <Spinner type={SpinnerType.ballTriangle} class="mx-auto"/>

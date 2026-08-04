@@ -3,7 +3,6 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
-import {breadcrumb} from "~/lib/game-links";
 import {skillCategoryLabel} from "~/lib/game-strings";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -27,7 +26,8 @@ export default function SkillDetail() {
     return (
         <DetailPageLayout
             title={skill()?.name ?? `Skill #${params.id}`}
-            breadcrumb={breadcrumb("/database/skill", skillTag())}
+            breadcrumbHref="/database/skill"
+            breadcrumbTitle={skillTag()}
             loading={isLoading() && !skill()}
             name={skill()?.name ?? `Skill #${params.id}`}
             icon={<Show when={skill()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}

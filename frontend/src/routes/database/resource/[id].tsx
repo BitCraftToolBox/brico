@@ -9,7 +9,7 @@ import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ResourceIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGrowthPanel} from "~/components/shared/RecipeDisplay";
-import {breadcrumb, IconLink, pageIcon} from "~/lib/game-links";
+import {IconLink, pageIcon} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {prospectingForResource} from "~/lib/recipe-sources";
 import {enemiesForResource, extractionRecipeForResource, resourceGrowthFrom, resourceGrowthInto, resourcesYieldingResource} from "~/lib/relations";
@@ -89,7 +89,7 @@ export default function ResourceDetail() {
     return (
         <DetailPageLayout
             title={resource()?.name ?? `Resource #${params.id}`}
-            breadcrumb={breadcrumb("/database/resource")}
+            breadcrumbHref="/database/resource"
             loading={isLoading() && !resource()}
             icon={<Show when={resource()}>{r =>
                 <ResourceIcon res={r()} small={false} noInteract/>

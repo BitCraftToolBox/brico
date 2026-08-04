@@ -7,7 +7,7 @@ import {lootTabWith} from "~/components/fun/BricoLootBox";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {breadcrumb, IconLink, pageIcon, SkillLinkById} from "~/lib/game-links";
+import {IconLink, IconSpan, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {equipmentSlotLabel, statLabel} from "~/lib/game-strings";
 import {gameText, useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
@@ -195,7 +195,7 @@ export default function ItemDetail() {
         if (tool) {
             const toolType = toolTypeIndex().get(tool.toolType);
             groups.push({
-                heading: () => <IconLink href={`/database/tool/${i.id}`} icon={pageIcon("Tools")}>{label(gameText(msg`Tool`))}</IconLink>,
+                heading: () => <IconSpan icon={pageIcon("Tools")}>{label(gameText(msg`Tool`))}</IconSpan>,
                 properties: [
                     {label: msg`Type`, value: toolType?.name ?? `#${tool.toolType}`},
                     {label: gameText(msg`Power`), value: tool.power},
@@ -215,11 +215,11 @@ export default function ItemDetail() {
                 eqProps.push({label: msg`Required Skill`, value: () => <SkillLinkById skillId={equip.levelRequirement!.skillId}/>});
                 eqProps.push({label: msg`Required Level`, value: equip.levelRequirement.level});
             }
-            const eqGroup: DetailGroup = {heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>{label(gameText(msg`Equipment`))}</IconLink>, properties: eqProps};
+            const eqGroup: DetailGroup = {heading: () => <IconSpan icon={pageIcon("Equipment")}>{label(gameText(msg`Equipment`))}</IconSpan>, properties: eqProps};
             groups.push(eqGroup);
             if (equip.stats?.length) {
                 groups.push({
-                    heading: () => <IconLink href={`/database/equipment/${i.id}`} icon={pageIcon("Equipment")}>{label(gameText(msg`Stats`))}</IconLink>,
+                    heading: () => <IconSpan icon={pageIcon("Equipment")}>{label(gameText(msg`Stats`))}</IconSpan>,
                     properties: equip.stats.map((stat: any) => ({
                         label: statLabel(stat.id?.tag),
                         value: `${fixFloat(stat.value * (stat.isPct ? 100 : 1))}${stat.isPct ? "%" : ""}`,
@@ -233,7 +233,7 @@ export default function ItemDetail() {
         if (weapon) {
             const wt = weaponTypeIndex()?.get(weapon.weaponType);
             groups.push({
-                heading: () => <IconLink href={`/database/weapon/${i.id}`} icon={pageIcon("Weapons")}>{label(gameText(msg`Weapon`))}</IconLink>,
+                heading: () => <IconSpan icon={pageIcon("Weapons")}>{label(gameText(msg`Weapon`))}</IconSpan>,
                 properties: [
                     {label: msg`Type`, value: wt?.name ?? `#${weapon.weaponType}`},
                     {label: msg`Min Damage`, value: weapon.minDamage},
@@ -248,7 +248,7 @@ export default function ItemDetail() {
         const food = foodData();
         if (food) {
             groups.push({
-                heading: () => <IconLink href={`/database/food/${i.id}`} icon={pageIcon("Food")}>{label(gameText(msg`Food`))}</IconLink>,
+                heading: () => <IconSpan icon={pageIcon("Food")}>{label(gameText(msg`Food`))}</IconSpan>,
                 properties: [
                     {label: gameText(msg`Satiation`), value: food.hunger ? fixFloat(food.hunger) : undefined},
                     {label: gameText(msg`HP`, "Health"), value: food.hp ? fixFloat(food.hp) : undefined},
@@ -289,7 +289,7 @@ export default function ItemDetail() {
     return (
         <DetailPageLayout
             title={item()?.name ?? `Item #${params.id}`}
-            breadcrumb={breadcrumb("/database/item")}
+            breadcrumbHref="/database/item"
             loading={isLoading() && !item()}
             icon={<Show when={item()}>{i => <ItemIcon item={i()} small={false} noInteract/>}</Show>}
             name={item()?.name ?? "Item not found"}
@@ -306,10 +306,10 @@ export default function ItemDetail() {
             chatLink={`(item=${item()?.id})`}
             summaryContent={placeablePlacements().length === 1 ? () => (
                 <div class="flex flex-col items-center gap-2 py-2">
-                    <p class="text-sm text-muted-foreground">This item starts a placeable lifecycle chain.</p>
+                    <p class="text-sm text-muted-foreground"><Trans>This item starts a placeable lifecycle chain.</Trans></p>
                     <A href={`/tools/placeable-graph?placement=${placeablePlacements()[0].id}`}
                        class="text-sm font-medium hover:underline">
-                        View full lifecycle in Placeable Graph →
+                        <Trans>View full lifecycle in Placeable Graph →</Trans>
                     </A>
                 </div>
             ) : undefined}

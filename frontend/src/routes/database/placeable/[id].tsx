@@ -5,7 +5,6 @@ import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/shared/DetailPageLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, GrowthPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
-import {breadcrumb} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {
     extractionsByPlaceable,
@@ -169,7 +168,7 @@ export default function PlaceableDetail() {
     return (
         <DetailPageLayout
             title={placeable()?.name ?? `Placeable #${params.id}`}
-            breadcrumb={breadcrumb("/database/placeable")}
+            breadcrumbHref="/database/placeable"
             loading={isLoading() && !placeable()}
             icon={<Show when={placeable()}>{p =>
                 <PlaceableIcon placeable={p()} small={false} noInteract/>

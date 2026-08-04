@@ -11,6 +11,7 @@ import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
 import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {sourceRow} from "~/lib/data-translation";
+import {breadcrumbCurrent} from "~/lib/game-links";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables} from "~/lib/spacetime";
 import {readableSeconds} from "~/lib/utils";
@@ -447,7 +448,12 @@ export default function Events() {
     });
 
     return (
-        <MainLayout title="Uncharted Islands Events" description="Live Uncharted Islands world event timers for BitCraft — track spawns and set notifications on Brico.app.">
+        <MainLayout
+            title="Uncharted Islands Events"
+            ownHeading
+            description="Live Uncharted Islands world event timers for BitCraft — track spawns and set notifications on Brico.app."
+            navTitle={breadcrumbCurrent("/events")}
+        >
 
             <div class="w-full px-4 pb-6">
                 <div class="mb-2 flex items-center justify-center gap-3">

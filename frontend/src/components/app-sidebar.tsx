@@ -280,12 +280,6 @@ export function AppSidebar() {
                     </a>
                 </div>
                 <VersionChecker/>
-                <div class="overflow-hidden
-                            transition-[max-height,opacity] duration-200 ease-linear
-                            max-h-6 opacity-100
-                            group-data-[collapsible=icon]:max-h-0 group-data-[collapsible=icon]:opacity-0">
-                    <div class="text-muted-foreground text-sm text-center"><Trans>Not affiliated with Clockwork Labs</Trans></div>
-                </div>
             </SidebarFooter>
             <SidebarRail/>
         </Sidebar>

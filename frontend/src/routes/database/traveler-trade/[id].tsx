@@ -4,7 +4,7 @@ import {createMemo} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {TravelerTradePanel} from "~/components/shared/RecipeDisplay";
-import {AchievementLink, breadcrumb, LinkedList, SkillLinkById} from "~/lib/game-links";
+import {AchievementLink, LinkedList, SkillLinkById} from "~/lib/game-links";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {getTravelerNpcName, getTravelerTradeName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -68,7 +68,7 @@ export default function TravelerTradeDetail() {
     return (
         <DetailPageLayout
             title={tradeName()}
-            breadcrumb={breadcrumb("/database/traveler-trade")}
+            breadcrumbHref="/database/traveler-trade"
             loading={isLoading() && !trade()}
             icon={npcDesc() ? <FontIcon codepoint={npcDesc()!.iconAddress} class="size-16"/> : undefined}
             name={`${npcName()} Trade`}

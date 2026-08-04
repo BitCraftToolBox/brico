@@ -187,7 +187,6 @@ msgstr "crwdns4400:0crwdne4400:0"
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
 #: src/routes/database/deployable/[id].tsx
-#: src/routes/database/equipment/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 msgid "Stats"
@@ -198,7 +197,6 @@ msgid "Night Deaggro Range"
 msgstr "crwdns4404:0crwdne4404:0"
 
 #: src/lib/table-defs/tools-table.tsx
-#: src/routes/database/tool/[id].tsx
 msgid "Tool Type"
 msgstr "crwdns4406:0crwdne4406:0"
 
@@ -228,7 +226,6 @@ msgid "Guaranteed drop on last hit of resource extraction"
 msgstr "crwdns4418:0crwdne4418:0"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Consumable In Combat"
 msgstr "crwdns4420:0crwdne4420:0"
@@ -261,10 +258,6 @@ msgstr "crwdns4432:0crwdne4432:0"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Single Contribution Only"
 msgstr "crwdns4434:0crwdne4434:0"
-
-#: src/routes/database/equipment/[id].tsx
-msgid "Show In Progression"
-msgstr "crwdns4436:0crwdne4436:0"
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage"
@@ -359,10 +352,6 @@ msgstr "crwdns4476:0crwdne4476:0"
 #: src/routes/settings.tsx
 msgid "Default rows per page"
 msgstr "crwdns4478:0crwdne4478:0"
-
-#: src/components/app-sidebar.tsx
-msgid "Not affiliated with Clockwork Labs"
-msgstr "crwdns4480:0crwdne4480:0"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Can Enter Portals"
@@ -555,7 +544,6 @@ msgid "Grows Into"
 msgstr "crwdns4560:0crwdne4560:0"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Satiation"
 msgstr "crwdns4562:0crwdne4562:0"
@@ -641,7 +629,6 @@ msgstr "crwdns4594:0crwdne4594:0"
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/combat/[id].tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Cooldown"
 msgstr "crwdns4596:0crwdne4596:0"
 
@@ -723,10 +710,6 @@ msgstr "crwdns4632:0crwdne4632:0"
 #: src/routes/database/creature/[id].tsx
 msgid "Combat"
 msgstr "crwdns4634:0crwdne4634:0"
-
-#: src/routes/database/food/[id].tsx
-msgid "Up To HP"
-msgstr "crwdns4636:0crwdne4636:0"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Min Contribution"
@@ -1106,12 +1089,8 @@ msgid "Forced to Crowdin's target language for review."
 msgstr "crwdns4816:0crwdne4816:0"
 
 #: src/lib/table-defs/quests-table.tsx
-#: src/routes/database/equipment/[id].tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
-#: src/routes/database/tool/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Item"
 msgstr "crwdns4818:0crwdne4818:0"
 
@@ -1140,7 +1119,6 @@ msgstr "crwdns4828:0crwdne4828:0"
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Min Damage"
 msgstr "crwdns4830:0crwdne4830:0"
 
@@ -1158,7 +1136,6 @@ msgid "Link Filters <0/>"
 msgstr "crwdns4836:0crwdne4836:0"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Stamina"
@@ -1174,7 +1151,6 @@ msgid "Trade Orders"
 msgstr "crwdns4842:0crwdne4842:0"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "HP"
 msgstr "crwdns4844:0crwdne4844:0"
@@ -1192,10 +1168,6 @@ msgstr "crwdns4848:0crwdne4848:0"
 msgid "Join Radius"
 msgstr "crwdns4850:0crwdne4850:0"
 
-#: src/routes/database/food/[id].tsx
-msgid "Teleportation Energy"
-msgstr "crwdns4852:0crwdne4852:0"
-
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Converts into"
 msgstr "crwdns4854:0crwdne4854:0"
@@ -1209,6 +1181,11 @@ msgstr "crwdns4856:0crwdne4856:0"
 #: src/routes/database/combat/[id].tsx
 msgid "Projectile Speed"
 msgstr "crwdns4858:0crwdne4858:0"
+
+#. Accessible name for the navigation trail in the top bar (not the in-game prospecting trail)
+#: src/components/Nav.tsx
+msgid "Breadcrumb"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
@@ -1281,13 +1258,13 @@ msgstr "crwdns4890:0crwdne4890:0"
 msgid "Wilderness"
 msgstr "crwdns4892:0crwdne4892:0"
 
+#: src/lib/game-links.tsx
+msgid "Database"
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
 msgstr "crwdns4894:0crwdne4894:0"
-
-#: src/routes/database/food/[id].tsx
-msgid "Up To Stamina"
-msgstr "crwdns4896:0crwdne4896:0"
 
 #: src/lib/recipe-sources.tsx
 msgid "Claim Tier:"
@@ -1581,7 +1558,6 @@ msgstr "crwdns5024:0{0}crwdne5024:0"
 msgid "Deplete {resourceName}"
 msgstr "crwdns5026:0{resourceName}crwdne5026:0"
 
-#: src/routes/database/equipment/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Required Skill"
 msgstr "crwdns5028:0crwdne5028:0"
@@ -1612,7 +1588,6 @@ msgstr "crwdns5038:0crwdne5038:0"
 
 #: src/lib/table-defs/tools-table.tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/tool/[id].tsx
 msgid "Power"
 msgstr "crwdns5040:0crwdne5040:0"
 
@@ -1671,7 +1646,6 @@ msgstr "crwdns5062:0crwdne5062:0"
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Max Damage"
 msgstr "crwdns5064:0crwdne5064:0"
 
@@ -1706,7 +1680,6 @@ msgstr "crwdns5076:0crwdne5076:0"
 #: src/lib/table-defs/tools-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/tool/[id].tsx
 msgid "Level"
 msgstr "crwdns5078:0crwdne5078:0"
 
@@ -1782,7 +1755,6 @@ msgstr "crwdns5110:0crwdne5110:0"
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/tool/[id].tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Skill"
 msgstr "crwdns5112:0crwdne5112:0"
@@ -1805,6 +1777,7 @@ msgstr "crwdns5118:0crwdne5118:0"
 msgid "Traveler"
 msgstr "crwdns5120:0crwdne5120:0"
 
+#: src/routes/database/item/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "View full lifecycle in Placeable Graph →"
 msgstr "crwdns5122:0crwdne5122:0"
@@ -1816,6 +1789,10 @@ msgstr "crwdns5124:0crwdne5124:0"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr "crwdns5126:0crwdne5126:0"
+
+#: src/components/SiteFooter.tsx
+msgid "Not affiliated with Clockwork Labs."
+msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "No data"
@@ -1981,10 +1958,6 @@ msgstr "crwdns5200:0crwdne5200:0"
 msgid "cereal - Raw Data Browser"
 msgstr "crwdns5202:0crwdne5202:0"
 
-#: src/routes/database/weapon/[id].tsx
-msgid "Hunting"
-msgstr "crwdns5204:0crwdne5204:0"
-
 #: src/lib/sidebar-items.ts
 msgid "Resources"
 msgstr "crwdns5206:0crwdne5206:0"
@@ -2018,10 +1991,6 @@ msgstr "crwdns5218:0crwdne5218:0"
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
 msgstr "crwdns5220:0crwdne5220:0"
-
-#: src/routes/database/weapon/[id].tsx
-msgid "Stamina Mult"
-msgstr "crwdns5222:0crwdne5222:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Traveler Trade"
@@ -2174,6 +2143,10 @@ msgstr "crwdns5288:0crwdne5288:0"
 msgid "Compendium Entry"
 msgstr "crwdns5290:0crwdne5290:0"
 
+#: src/routes/database/item/[id].tsx
+msgid "This item starts a placeable lifecycle chain."
+msgstr ""
+
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
@@ -2197,7 +2170,6 @@ msgid "Craft"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Combat Actions"
 msgstr "crwdns5298:0crwdne5298:0"
 
@@ -2283,7 +2255,6 @@ msgid "Hide"
 msgstr "crwdns5336:0crwdne5336:0"
 
 #: src/lib/table-defs/equipment-table.tsx
-#: src/routes/database/equipment/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Slots"
 msgstr "crwdns5338:0crwdne5338:0"
@@ -2406,11 +2377,6 @@ msgstr "crwdns5392:0crwdne5392:0"
 msgid "Required for Reward"
 msgstr "crwdns5394:0crwdne5394:0"
 
-#: src/routes/tools/placeable-graph.tsx
-#: src/routes/tools/quest-graph.tsx
-msgid "Graph"
-msgstr "crwdns5396:0crwdne5396:0"
-
 #: src/lib/table-defs/quests-table.tsx
 msgid "Equipped Item"
 msgstr "crwdns5398:0crwdne5398:0"
@@ -2424,6 +2390,7 @@ msgstr "crwdns5400:0crwdne5400:0"
 msgid "Combat Stats"
 msgstr "crwdns5402:0crwdne5402:0"
 
+#: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
 msgid "Tools"
 msgstr "crwdns5404:0crwdne5404:0"
@@ -2573,7 +2540,6 @@ msgstr "crwdns5470:0crwdne5470:0"
 msgid "Not Respawning"
 msgstr "crwdns5472:0crwdne5472:0"
 
-#: src/routes/database/equipment/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Required Level"
 msgstr "crwdns5474:0crwdne5474:0"
@@ -2597,7 +2563,6 @@ msgstr "crwdns5482:0crwdne5482:0"
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/building/[id].tsx
-#: src/routes/database/food/[id].tsx
 msgid "Buffs"
 msgstr "crwdns5484:0crwdne5484:0"
 
@@ -2643,6 +2608,10 @@ msgstr "crwdns5502:0crwdne5502:0"
 #: src/lib/sidebar-items.ts
 msgid "Creatures"
 msgstr "crwdns5504:0crwdne5504:0"
+
+#: src/components/SiteFooter.tsx
+msgid "Brico's Toolbox is a fan-made database of <0>BitCraft</0> items, recipes, creatures, structures, and more."
+msgstr ""
 
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"

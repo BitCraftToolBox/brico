@@ -59,10 +59,10 @@ function AppRoot(props: { children: any }) {
                 <GlobalSearchProvider isReady={allReady}>
                     <Show when={allReady()} fallback={<AppLoadingScreen {...loadingProgress()}/>}>
                         <SidebarProvider defaultOpen={!sidebarStartsCollapsed()}>
-                            <AppSidebar/>
                             <Suspense>
                                 {props.children}
                             </Suspense>
+                            <AppSidebar/>
                         </SidebarProvider>
                     </Show>
                 </GlobalSearchProvider>

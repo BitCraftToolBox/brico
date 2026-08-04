@@ -68,11 +68,30 @@ function uiText(descriptor: MessageDescriptor): string {
 
 // ─── Common Column Builders ─────────────────────────────────────
 
+/**
+ * Where a table's name column links. `[slug, id]` builds `/database/{slug}/{id}`; the optional
+ * third element appends `?detail={tab}` to open a specific relationship tab on arrival.
+ *
+ * The slug does *not* have to be the table's own route. Several tables deliberately point at a
+ * different entity's detail page — the tool/food/weapon/equipment tables all resolve to
+ * `/database/item/{itemId}`, because the item page renders a superset of what a dedicated page
+ * would (see the note in sitemap.xml.ts), and item lists resolve to whichever item or creature owns
+ * them. Sending the row-click to the page that actually holds the content beats maintaining a
+ * thinner near-duplicate of it.
+ */
+export type DetailRoute = readonly [slug: string, id: string | number, tab?: string];
+
+/** Builds the URL for a `DetailRoute`. */
+export function detailHref(route: DetailRoute): string {
+    const [slug, id, tab] = route;
+    return `/database/${slug}/${id}${tab ? `?detail=${tab}` : ""}`;
+}
+
 interface HeaderColumnParams<T, V extends JSX.Element> {
     title?: string;
     label?: Label | string;
     accessor?: AccessorProp<T, V>;
-    route: (row: T) => [string, string | number];
+    route: (row: T) => DetailRoute;
     prefixElement?: (row: T) => JSX.Element;
     customRender?: (row: V) => JSX.Element;
 }
@@ -89,22 +108,19 @@ export function headerColumn<T, V extends JSX.Element>({
         id: title,
         meta: {label},
         ...accessor,
-        cell: (props) => {
-            const r = route(props.row.original);
-            return (
-                <Button
-                    variant="ghost" class="w-full h-full justify-start" as={A}
-                    href={`/database/${r[0]}/${r[1]}`}
-                >
-                    {/* Re-resolved from the row, not `props.getValue()`: tanstack caches the accessor
+        cell: (props) => (
+            <Button
+                variant="ghost" class="w-full h-full justify-start" as={A}
+                href={detailHref(route(props.row.original))}
+            >
+                {/* Re-resolved from the row, not `props.getValue()`: tanstack caches the accessor
                         result on the row object for as long as `data` keeps its identity, which is
                         forever for tables like FoodDesc/ToolDesc whose own rows never change on a
                         data-locale switch — only the cross-table lookup (ItemDesc) they read through
                         does. Reading it fresh here keeps this JSX child subscribed to that lookup. */}
-                    {prefixElement(props.row.original)} {customRender(resolveAccessor(accessor, props.row.original) as V)}
-                </Button>
-            );
-        },
+                {prefixElement(props.row.original)} {customRender(resolveAccessor(accessor, props.row.original) as V)}
+            </Button>
+        ),
         enableHiding: false
     }
 }

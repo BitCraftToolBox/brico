@@ -287,7 +287,7 @@ export default function TranslationsPage() {
     };
 
     return (
-        <MainLayout title="Translations" hideSearch description="Debug view of collated UI and game-data translation strings.">
+        <MainLayout title="Translations" hideSearch ownHeading description="Debug view of collated UI and game-data translation strings.">
             <div class="w-full flex flex-col gap-8">
                 <div>
                     <h1 class="text-4xl font-bold mb-4 text-foreground">Translations</h1>

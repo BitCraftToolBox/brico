@@ -14,7 +14,9 @@ export const WeaponDefs: BitCraftToDataDef<WeaponDesc> = {
         headerColumn({
             title: "Name",
             accessor: {accessorFn: wep => BitCraftTables.ItemDesc.indexedBy("id")().get(wep.itemId)?.name ?? `Item #${wep.itemId}`},
-            route: wep => ["weapon", wep.itemId],
+            // Row-click goes to the item page, not a dedicated weapon page: it renders a
+            // superset of these fields inline. See `DetailRoute` in table-utils/column-builders.
+            route: wep => ["item", wep.itemId],
             prefixElement: wep => {
                 const item = (() => BitCraftTables.ItemDesc.indexedBy("id")().get(wep.itemId))();
                 return item ? <ItemIcon item={item} small noInteract/> : <></>;

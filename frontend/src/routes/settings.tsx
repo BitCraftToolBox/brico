@@ -257,7 +257,7 @@ export default function SettingsPage() {
     });
 
     return (
-        <MainLayout title="Settings" hideSearch description="Configure Brico.app — theme, favorites, and display preferences for the BitCraft compendium.">
+        <MainLayout title="Settings" hideSearch ownHeading description="Configure Brico.app — theme, favorites, and display preferences for the BitCraft compendium.">
             <div class="max-w-3xl mx-auto flex flex-col gap-4 px-4 pb-6">
                 <h1 class="text-2xl font-bold" onclick={incUnlockCounter}><Show when={showDevModeUnlock()} fallback={<Trans>Settings</Trans>}><Trans>You are now a developer!</Trans></Show></h1>
 

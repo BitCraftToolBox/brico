@@ -6,7 +6,6 @@ import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {InputItemStackArray} from "~/components/shared/ItemStacks";
 import {KnowledgeTable, StatTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
@@ -43,7 +42,7 @@ export default function PavingDetail() {
     return (
         <DetailPageLayout
             title={tile()?.name ?? `Paving Tile #${params.id}`}
-            breadcrumb={breadcrumb("/database/paving")}
+            breadcrumbHref="/database/paving"
             loading={isLoading() && !tile()}
             icon={<Show when={tile()}>{(t) =>
                 <GameIcon name={t().name} iconAsset={t().iconAddress} shape="square"

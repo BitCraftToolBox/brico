@@ -13,7 +13,7 @@ import {EnemyDropPanel} from "~/components/shared/RecipeDisplay";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
-import {breadcrumb, ItemListLink, SkillLinkById} from "~/lib/game-links";
+import {ItemListLink, SkillLinkById} from "~/lib/game-links";
 import {useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
@@ -124,7 +124,7 @@ export default function CreatureDetail() {
     return (
         <DetailPageLayout
             title={creature()?.name ?? `Creature #${params.id}`}
-            breadcrumb={breadcrumb("/database/creature")}
+            breadcrumbHref="/database/creature"
             loading={isLoading() && !creature()}
             icon={<Show when={creature()}>{(c) =>
                 <EnemyIcon enemy={c()} small={false} noInteract/>

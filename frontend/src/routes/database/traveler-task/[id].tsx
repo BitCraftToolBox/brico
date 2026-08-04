@@ -3,7 +3,7 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {RecipeSelect, TravelerTaskPanel} from "~/components/shared/RecipeDisplay";
-import {breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {SkillLinkById} from "~/lib/game-links";
 import {ogImageForPage} from "~/lib/og-meta";
 import {getTravelerTaskName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -37,7 +37,7 @@ export default function TravelerTaskDetail() {
     return (
         <DetailPageLayout
             title={`${skillName() ?? "Task"} Task #${params.id}`}
-            breadcrumb={breadcrumb("/database/traveler-task")}
+            breadcrumbHref="/database/traveler-task"
             loading={isLoading() && !task()}
             name={`${skillName() ?? "Task"} Task`}
             description={task()?.description}

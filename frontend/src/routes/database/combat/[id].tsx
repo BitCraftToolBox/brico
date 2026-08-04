@@ -6,7 +6,6 @@ import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {BuffTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb} from "~/lib/game-links";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, undefinedIfZero} from "~/lib/utils";
@@ -58,7 +57,8 @@ export default function CombatDetail() {
     return (
         <DetailPageLayout
             title={action()?.name ?? `Combat Action #${params.id}`}
-            breadcrumb={breadcrumb("/database/combat", msg`Combat Ability`)}
+            breadcrumbHref="/database/combat"
+            breadcrumbTitle={msg`Combat Ability`}
             loading={isLoading() && !action()}
             name={action()?.name ?? "Combat action not found"}
             icon={<Show when={action()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}

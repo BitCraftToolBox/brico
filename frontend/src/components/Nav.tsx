@@ -100,6 +100,15 @@ function DarkModeToggle() {
     )
 }
 
+/**
+ * Accessible name for the breadcrumb landmark. Carries a translator comment because BitCraft has
+ * its own literal "Breadcrumb …" in the catalog, so a bare "Breadcrumb" is ambiguous out of context.
+ */
+const BREADCRUMB_LABEL = msg({
+    message: "Breadcrumb",
+    comment: "Accessible name for the navigation trail in the top bar (not the in-game prospecting trail)",
+});
+
 interface NavProps {
     title: JSX.Element;
     hideSearch?: boolean;
@@ -108,12 +117,14 @@ interface NavProps {
 export default function Nav(props: NavProps) {
     const {_} = useLingui();
     return (
-        <nav class="flex flex-col sticky z-20 top-0 h-10 bg-sidebar-primary text-sidebar-primary-foreground">
+        // <header>, not <nav>: this bar is the site banner (trigger, breadcrumb, search, prefs).
+        <header class="flex flex-col sticky z-20 top-0 h-10 bg-sidebar-primary text-sidebar-primary-foreground">
             <div class="flex flex-row items-center h-10 w-full gap-2 px-2">
                 <SidebarTrigger class="shrink-0"/>
-                <div class="max-w-[calc(90svw-5rem)] overflow-x-clip">
-                    <h1 class="text-lg text-center text-nowrap leading-none">{props.title}</h1>
-                </div>
+                {/* <nav>, not <h1> - breadcrumbs are a navigation element. don't fight with the h1 header in the page content */}
+                <nav aria-label={_(BREADCRUMB_LABEL)} class="max-w-[calc(90svw-5rem)] overflow-x-clip">
+                    <div class="text-lg text-center text-nowrap leading-none">{props.title}</div>
+                </nav>
                 <div class="flex-1"/>
                 <Show when={!props.hideSearch}>
                     {/* Full search input on sm+ */}
@@ -139,6 +150,6 @@ export default function Nav(props: NavProps) {
                     </A>
                 </div>
             </div>
-        </nav>
+        </header>
     )
 }

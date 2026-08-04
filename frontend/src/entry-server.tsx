@@ -16,7 +16,7 @@ export default createHandler(() => (
                 <link rel="icon" type="image/svg+xml" href="/brico-face.svg" />
                 <meta name="theme-color" content="#15557d" />
                 <meta property="og:type" content="website"/>
-                <meta property="og:site_name" content="Brico.app" />
+                <meta property="og:site_name" content="Brico.app — BitCraft Compendium" />
                 <meta property="twitter:domain" content="brico.app"/>
                 <link rel="search" type="application/opensearchdescription+xml" title="Brico.app" href="/opensearch.xml"/>
                 <script id="pre-hydration-script" innerHTML={preHydrationScript}/>

@@ -3,7 +3,7 @@ import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {breadcrumb, ItemStackLink, LinkedList} from "~/lib/game-links";
+import {ItemStackLink, LinkedList} from "~/lib/game-links";
 import {ogImageForPage} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {readableSeconds, undefinedIfZero} from "~/lib/utils";
@@ -42,7 +42,7 @@ export default function ClaimResearchDetail() {
     return (
         <DetailPageLayout
             title={tech()?.name ?? `Claim Tech #${params.id}`}
-            breadcrumb={breadcrumb("/database/claim-research")}
+            breadcrumbHref="/database/claim-research"
             loading={isLoading() && !tech()}
             name={tech()?.name ?? "Claim research not found"}
             tier={tech()?.tier}

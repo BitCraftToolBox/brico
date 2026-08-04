@@ -7,7 +7,7 @@ import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon, ResourceIcon} from "~/components/shared/GameIcon";
 import {ItemStackArray} from "~/components/shared/ItemStacks";
-import {BiomeLink, breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {BiomeLink, SkillLinkById} from "~/lib/game-links";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
@@ -107,7 +107,7 @@ export default function ProspectingDetail() {
     return (
         <DetailPageLayout
             title={prospecting()?.name ?? `Prospecting #${params.id}`}
-            breadcrumb={breadcrumb("/database/prospecting")}
+            breadcrumbHref="/database/prospecting"
             loading={isLoading() && !prospecting()}
             name={prospecting()?.name ?? "Prospecting entry not found"}
             icon={<Show when={prospecting()?.iconAssetPath}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}

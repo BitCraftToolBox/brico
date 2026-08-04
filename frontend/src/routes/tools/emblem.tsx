@@ -8,6 +8,7 @@ import {GLYPH_ICONS} from "~/components/icons/font-icons-data";
 import MainLayout from "~/components/MainLayout";
 import {Button} from "~/components/ui/button";
 import {Tabs, TabsContent, TabsIndicator, TabsList, TabsTrigger} from "~/components/ui/tabs";
+import {breadcrumbCurrent} from "~/lib/game-links";
 import {gameText, useLabel} from "~/lib/labels";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
 import {loadTableAdHoc} from "~/lib/spacetime";
@@ -139,7 +140,11 @@ export default function EmblemEditor() {
     const title = () => label(PAGE_TITLE_LABELS["/tools/emblem"]);
 
     return (
-        <MainLayout title={title()} description="BitCraft emblem editor — design, customize, and preview empire emblems on Brico.app.">
+        <MainLayout
+            title={title()}
+            description="BitCraft emblem editor — design, customize, and preview empire emblems on Brico.app."
+            navTitle={breadcrumbCurrent("/tools/emblem")}
+        >
             <div class="flex flex-col items-center gap-4 w-full max-w-3xl mx-auto h-full">
                 <div
                     class="shrink-0 relative"

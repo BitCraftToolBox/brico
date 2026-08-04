@@ -3,7 +3,7 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
-import {breadcrumb, ItemLink} from "~/lib/game-links";
+import {ItemLink} from "~/lib/game-links";
 import {statLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {knowledgeUsedBy, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
@@ -89,7 +89,7 @@ export default function KnowledgeDetail() {
     return (
         <DetailPageLayout
             title={knowledge()?.name ?? `Knowledge #${params.id}`}
-            breadcrumb={breadcrumb("/database/knowledge")}
+            breadcrumbHref="/database/knowledge"
             loading={isLoading() && !knowledge()}
             icon={<Show when={item()}>{(i) =>
                 <ItemIcon item={i()} small={false} noInteract/>

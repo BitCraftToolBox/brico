@@ -4,7 +4,6 @@ import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
-import {breadcrumb} from "~/lib/game-links";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {toolRequirementText} from "~/lib/recipe-sources";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -36,7 +35,7 @@ export default function TerraformingDetail() {
     return (
         <DetailPageLayout
             title={"Elevation ±" + recipe()?.difference}
-            breadcrumb={breadcrumb("/database/terraforming")}
+            breadcrumbHref="/database/terraforming"
             loading={isLoading() && !recipe()}
             icon={<FontIcon codepoint="0034" class="size-8"/>}
             name={t`Terraform Elevation Difference ${recipe()?.difference ?? ""}`}

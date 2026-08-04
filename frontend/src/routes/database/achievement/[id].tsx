@@ -3,7 +3,7 @@ import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {breadcrumb, CollectibleLink} from "~/lib/game-links";
+import {CollectibleLink} from "~/lib/game-links";
 import {collectibleTypeLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
 import {ogImageForPage} from "~/lib/og-meta";
@@ -51,7 +51,7 @@ export default function AchievementDetail() {
     return (
         <DetailPageLayout
             title={achievement()?.name ?? `Achievement #${params.id}`}
-            breadcrumb={breadcrumb("/database/achievement")}
+            breadcrumbHref="/database/achievement"
             loading={isLoading() && !achievement()}
             name={achievement()?.name ?? "Achievement not found"}
             description={achievement()?.description}

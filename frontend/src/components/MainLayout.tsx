@@ -1,8 +1,9 @@
 import {Link, Meta, Title} from "@solidjs/meta";
-import {useLocation} from "@solidjs/router";
 import {JSX, Show, Suspense} from "solid-js";
 import Nav from "~/components/Nav";
-import {absoluteUrl, OG_THUMBNAIL, SITE_URL} from "~/lib/og-meta";
+import SiteFooter from "~/components/SiteFooter";
+import {absoluteUrl, OG_THUMBNAIL, TITLE_SUFFIX, useCanonicalUrl} from "~/lib/og-meta";
+import {SiteJsonLd} from "~/lib/structured-data";
 import {cn} from "~/lib/utils";
 import {useIsMobile} from "./ui/sidebar";
 
@@ -18,8 +19,25 @@ interface LayoutProps {
     image?: string;
     /** Twitter card layout. "summary" (thumbnail) by default; index uses "summary_large_image". */
     card?: "summary" | "summary_large_image";
+    /**
+     * Canonical URL to declare instead of this page's own — for a page whose content genuinely lives
+     * at another URL (an item list, whose contents the owning item/creature page already renders in
+     * full). The page stays reachable; only the indexing signal is consolidated.
+     */
+    canonicalOverride?: string;
     /** When true the page title is used verbatim (no " - Brico's Toolbox" suffix). */
     noTitleSuffix?: boolean;
+    /**
+     * Brand suffix appended to `title`. Defaults to the plain brand; detail and table pages pass
+     * `BITCRAFT_TITLE_SUFFIX` so the game's name is in the `<title>` where it matters for search.
+     */
+    titleSuffix?: string;
+    /**
+     * Set by pages that render their own `<h1>` in the body. Everything else gets a visually-hidden
+     * one from `<main>` below, so every page has exactly one — no more, no less. (The nav bar used
+     * to be the `<h1>`; see the comment in Nav.tsx.)
+     */
+    ownHeading?: boolean;
     navTitle?: JSX.Element;
     children?: JSX.Element;
     wrapperClasses?: string;
@@ -28,14 +46,12 @@ interface LayoutProps {
 
 export default function MainLayout(props: LayoutProps) {
     const isMobile = useIsMobile();
-    const location = useLocation();
-    const fullTitle = () => props.noTitleSuffix ? props.title : `${props.title} - Brico's Toolbox`;
+    const fullTitle = () => props.noTitleSuffix ? props.title : `${props.title} - ${props.titleSuffix ?? TITLE_SUFFIX}`;
     const description = () => props.description || DEFAULT_DESCRIPTION;
     const image = () => absoluteUrl(props.image ?? OG_THUMBNAIL);
     const card = () => props.card ?? "summary";
-    // Canonical URL: bare path, dropping UI-state query params (?info=/?detail=/?q=) so their
-    // variants don't fragment into separate indexable URLs.
-    const canonical = () => `${SITE_URL}${location.pathname}`;
+    const pageUrl = useCanonicalUrl();
+    const canonical = () => props.canonicalOverride ?? pageUrl();
 
     return (
         <div class="relative flex flex-col w-full h-dvh overflow-hidden">
@@ -55,6 +71,7 @@ export default function MainLayout(props: LayoutProps) {
             <Meta name="twitter:title" content={fullTitle()}/>
             <Meta name="twitter:description" content={description()}/>
             <Meta name="twitter:image" content={image()}/>
+            <SiteJsonLd/>
             <Nav title={props.navTitle ?? props.title} hideSearch={props.hideSearch}/>
             <div class="flex flex-1 min-h-0">
                 <Suspense>
@@ -65,7 +82,15 @@ export default function MainLayout(props: LayoutProps) {
                             props.wrapperClasses
                         )}
                     >
-                        {props.children}
+                        <div class="flex flex-col min-h-full">
+                            <div>
+                                <Show when={!props.ownHeading}>
+                                    <h1 class="sr-only">{props.title}</h1>
+                                </Show>
+                                {props.children}
+                            </div>
+                            <SiteFooter/>
+                        </div>
                     </main>
                 </Suspense>
             </div>

@@ -42,7 +42,9 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
     columns: [
         headerColumn<FoodDesc, any>({
             accessor: {accessorFn: food => BitCraftTables.ItemDesc.indexedBy("id")().get(food.itemId)?.name ?? `Item #${food.itemId}`},
-            route: food => ["food", food.itemId],
+            // Row-click goes to the item page, not a dedicated food page: it renders a
+            // superset of these fields inline. See `DetailRoute` in table-utils/column-builders.
+            route: food => ["item", food.itemId],
             prefixElement: food => {
                 const item = BitCraftTables.ItemDesc.indexedBy("id")().get(food.itemId);
                 return item ? <ItemIcon item={item} small noInteract/> : <></>;

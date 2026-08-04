@@ -14,7 +14,9 @@ export const ToolDefs: BitCraftToDataDef<ToolDesc> = {
         headerColumn<ToolDesc, any>({
             title: "Name",
             accessor: {accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.name ?? `Item #${tool.itemId}`},
-            route: tool => ["tool", tool.itemId],
+            // Row-click goes to the item page, not a dedicated tool page: it renders a
+            // superset of these fields inline. See `DetailRoute` in table-utils/column-builders.
+            route: tool => ["item", tool.itemId],
             prefixElement: tool => {
                 const item = BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId);
                 return item ? <ItemIcon item={item} small noInteract={true}/> : <></>;

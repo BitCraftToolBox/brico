@@ -165,7 +165,7 @@ const Sidebar: Component<SidebarProps> = (rawProps) => {
             <Match when={local.collapsible === "none"}>
                 <div
                     class={cn(
-                        "w-(--sidebar-width) flex h-full flex-col bg-sidebar text-sidebar-foreground",
+                        "w-(--sidebar-width) flex h-full flex-col bg-sidebar text-sidebar-foreground order-first",
                         local.class
                     )}
                     {...others}
@@ -184,13 +184,13 @@ const Sidebar: Component<SidebarProps> = (rawProps) => {
                         }}
                         position={local.side}
                     >
-                        <div class="flex size-full flex-col">{local.children}</div>
+                        <nav aria-label="Site navigation" class="flex size-full flex-col">{local.children}</nav>
                     </SheetContent>
                 </Sheet>
             </Match>
             <Match when={!isMobile()}>
                 <div
-                    class="group peer hidden md:block"
+                    class="group peer hidden md:block order-first"
                     data-state={state()}
                     data-collapsible={state() === "collapsed" ? local.collapsible : ""}
                     data-variant={local.variant}
@@ -221,12 +221,18 @@ const Sidebar: Component<SidebarProps> = (rawProps) => {
                         )}
                         {...others}
                     >
-                        <div
+                        {/* A <nav> landmark, not a bare div: this is the entire site nav, and on the
+                            bot-SSR path it is real server-rendered text. Without the landmark,
+                            Google had nothing marking it as boilerplate and was pulling group/page
+                            names ("Items Cargo Creatures Resources…") into search snippets ahead of
+                            the actual page content. */}
+                        <nav
                             data-sidebar="sidebar"
+                            aria-label="Site navigation"
                             class="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
                         >
                             {local.children}
-                        </div>
+                        </nav>
                     </div>
                 </div>
             </Match>

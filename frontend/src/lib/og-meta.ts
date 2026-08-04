@@ -6,6 +6,7 @@
  * templates. Consumed by MainLayout (the single meta sink) and the page/detail layouts.
  */
 
+import {useLocation} from "@solidjs/router";
 import {Rarity} from "~/bindings/src/rarity_type";
 import {codepointKey} from "~/components/icons/font-icons";
 import {GLYPH_ICONS} from "~/components/icons/font-icons-data";
@@ -14,11 +15,35 @@ import {PAGE_ICON_CODEPOINTS, SidebarPages} from "~/lib/sidebar-items";
 
 export const SITE_URL = "https://brico.app";
 
+/** Official game site — used for the footer's outbound link and the `VideoGame` entity's `sameAs`. */
+export const BITCRAFT_URL = "https://bitcraftonline.com";
+
+/**
+ * Default `<title>` suffix — just the brand, for aux pages (settings, search, the tools).
+ *
+ * Pages that are actually competing for game-term searches use `BITCRAFT_TITLE_SUFFIX` instead:
+ * "bitcraft" was previously absent from every `<title>` on the site, which left nothing tying a
+ * result for e.g. "Hexcoin" to the game it belongs to.
+ */
+export const TITLE_SUFFIX = "Brico's Toolbox";
+/** `<title>` suffix for detail + table pages (see `TITLE_SUFFIX`). */
+export const BITCRAFT_TITLE_SUFFIX = "BitCraft Database | Brico's Toolbox";
+
 /** Large banner image — index page only (summary_large_image card). */
 export const OG_LARGE = "/brico.png";
 /** Branded square thumbnail — tables, aux pages, and detail fallback (summary card). */
 /*  Generated at build time by scripts/icons/gen-og-icons.mjs. */
 export const OG_THUMBNAIL = "/brico-face.png";
+
+/**
+ * Canonical URL of the current route: bare path, dropping UI-state query params (`?info=`,
+ * `?detail=`, `?q=`) so their variants don't fragment into separate indexable URLs. Shared by the
+ * `<link rel="canonical">`/`og:url` tags and the JSON-LD page nodes, which must agree.
+ */
+export function useCanonicalUrl(): () => string {
+    const location = useLocation();
+    return () => `${SITE_URL}${location.pathname}`;
+}
 
 /** Promote a root-relative path to an absolute URL; pass through anything already absolute. */
 export function absoluteUrl(path: string): string {

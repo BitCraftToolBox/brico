@@ -8,7 +8,7 @@ import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_ty
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb, IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {IconLink, ItemLink, pageIcon} from "~/lib/game-links";
 import {collectibleTypeLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
@@ -87,7 +87,7 @@ export default function CollectibleDetail() {
     return (
         <DetailPageLayout
             title={collectible()?.name ?? `Collectible #${params.id}`}
-            breadcrumb={breadcrumb("/database/collectible")}
+            breadcrumbHref="/database/collectible"
             loading={isLoading() && !collectible()}
             icon={<Show when={collectible()}>{c => <CollectibleIcon collectible={c()} small={false} noInteract/>}</Show>}
             name={collectible()?.name ?? "Collectible not found"}

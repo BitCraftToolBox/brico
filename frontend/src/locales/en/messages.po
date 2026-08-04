@@ -182,7 +182,6 @@ msgstr "Build Time"
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
 #: src/routes/database/deployable/[id].tsx
-#: src/routes/database/equipment/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 msgid "Stats"
@@ -193,7 +192,6 @@ msgid "Night Deaggro Range"
 msgstr "Night Deaggro Range"
 
 #: src/lib/table-defs/tools-table.tsx
-#: src/routes/database/tool/[id].tsx
 msgid "Tool Type"
 msgstr "Tool Type"
 
@@ -223,7 +221,6 @@ msgid "Guaranteed drop on last hit of resource extraction"
 msgstr "Guaranteed drop on last hit of resource extraction"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Consumable In Combat"
 msgstr "Consumable In Combat"
@@ -256,10 +253,6 @@ msgstr "Interface language"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Single Contribution Only"
 msgstr "Single Contribution Only"
-
-#: src/routes/database/equipment/[id].tsx
-msgid "Show In Progression"
-msgstr "Show In Progression"
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage"
@@ -354,10 +347,6 @@ msgstr "Maintenance"
 #: src/routes/settings.tsx
 msgid "Default rows per page"
 msgstr "Default rows per page"
-
-#: src/components/app-sidebar.tsx
-msgid "Not affiliated with Clockwork Labs"
-msgstr "Not affiliated with Clockwork Labs"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Can Enter Portals"
@@ -550,7 +539,6 @@ msgid "Grows Into"
 msgstr "Grows Into"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Satiation"
 msgstr "Satiation"
@@ -636,7 +624,6 @@ msgstr "Extraction"
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/combat/[id].tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Cooldown"
 msgstr "Cooldown"
 
@@ -718,10 +705,6 @@ msgstr "Total Cargo Size"
 #: src/routes/database/creature/[id].tsx
 msgid "Combat"
 msgstr "Combat"
-
-#: src/routes/database/food/[id].tsx
-msgid "Up To HP"
-msgstr "Up To HP"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Min Contribution"
@@ -1101,12 +1084,8 @@ msgid "Forced to Crowdin's target language for review."
 msgstr "Forced to Crowdin's target language for review."
 
 #: src/lib/table-defs/quests-table.tsx
-#: src/routes/database/equipment/[id].tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
-#: src/routes/database/tool/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Item"
 msgstr "Item"
 
@@ -1135,7 +1114,6 @@ msgstr "Construction Recipe"
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Min Damage"
 msgstr "Min Damage"
 
@@ -1153,7 +1131,6 @@ msgid "Link Filters <0/>"
 msgstr "Link Filters <0/>"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Stamina"
@@ -1169,7 +1146,6 @@ msgid "Trade Orders"
 msgstr "Trade Orders"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/food/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "HP"
 msgstr "HP"
@@ -1187,10 +1163,6 @@ msgstr "Visible to Others"
 msgid "Join Radius"
 msgstr "Join Radius"
 
-#: src/routes/database/food/[id].tsx
-msgid "Teleportation Energy"
-msgstr "Teleportation Energy"
-
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Converts into"
 msgstr "Converts into"
@@ -1204,6 +1176,11 @@ msgstr "Known By Default"
 #: src/routes/database/combat/[id].tsx
 msgid "Projectile Speed"
 msgstr "Projectile Speed"
+
+#. Accessible name for the navigation trail in the top bar (not the in-game prospecting trail)
+#: src/components/Nav.tsx
+msgid "Breadcrumb"
+msgstr "Breadcrumb"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
@@ -1276,13 +1253,13 @@ msgstr "Secret features. How did you even find this?"
 msgid "Wilderness"
 msgstr "Wilderness"
 
+#: src/lib/game-links.tsx
+msgid "Database"
+msgstr "Database"
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
 msgstr "Chance"
-
-#: src/routes/database/food/[id].tsx
-msgid "Up To Stamina"
-msgstr "Up To Stamina"
 
 #: src/lib/recipe-sources.tsx
 msgid "Claim Tier:"
@@ -1576,7 +1553,6 @@ msgstr "+{0} more results (refine your query)"
 msgid "Deplete {resourceName}"
 msgstr "Deplete {resourceName}"
 
-#: src/routes/database/equipment/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Required Skill"
 msgstr "Required Skill"
@@ -1607,7 +1583,6 @@ msgstr "Dropped from"
 
 #: src/lib/table-defs/tools-table.tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/tool/[id].tsx
 msgid "Power"
 msgstr "Power"
 
@@ -1666,7 +1641,6 @@ msgstr "Pick Up Time"
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Max Damage"
 msgstr "Max Damage"
 
@@ -1701,7 +1675,6 @@ msgstr "View Map"
 #: src/lib/table-defs/tools-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/tool/[id].tsx
 msgid "Level"
 msgstr "Level"
 
@@ -1777,7 +1750,6 @@ msgstr "Tags"
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
-#: src/routes/database/tool/[id].tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Skill"
 msgstr "Skill"
@@ -1800,6 +1772,7 @@ msgstr "Quest Graph"
 msgid "Traveler"
 msgstr "Traveler"
 
+#: src/routes/database/item/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "View full lifecycle in Placeable Graph →"
 msgstr "View full lifecycle in Placeable Graph →"
@@ -1811,6 +1784,10 @@ msgstr "Copied!"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr "Elevation Difference"
+
+#: src/components/SiteFooter.tsx
+msgid "Not affiliated with Clockwork Labs."
+msgstr "Not affiliated with Clockwork Labs."
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "No data"
@@ -1976,10 +1953,6 @@ msgstr "Game data language"
 msgid "cereal - Raw Data Browser"
 msgstr "cereal - Raw Data Browser"
 
-#: src/routes/database/weapon/[id].tsx
-msgid "Hunting"
-msgstr "Hunting"
-
 #: src/lib/sidebar-items.ts
 msgid "Resources"
 msgstr "Resources"
@@ -2013,10 +1986,6 @@ msgstr "Sources"
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
 msgstr "Awareness Threshold"
-
-#: src/routes/database/weapon/[id].tsx
-msgid "Stamina Mult"
-msgstr "Stamina Mult"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Traveler Trade"
@@ -2169,6 +2138,10 @@ msgstr "Placeable Interaction"
 msgid "Compendium Entry"
 msgstr "Compendium Entry"
 
+#: src/routes/database/item/[id].tsx
+msgid "This item starts a placeable lifecycle chain."
+msgstr "This item starts a placeable lifecycle chain."
+
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
@@ -2192,7 +2165,6 @@ msgid "Craft"
 msgstr "Craft"
 
 #: src/routes/database/creature/[id].tsx
-#: src/routes/database/weapon/[id].tsx
 msgid "Combat Actions"
 msgstr "Combat Actions"
 
@@ -2278,7 +2250,6 @@ msgid "Hide"
 msgstr "Hide"
 
 #: src/lib/table-defs/equipment-table.tsx
-#: src/routes/database/equipment/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Slots"
 msgstr "Slots"
@@ -2401,11 +2372,6 @@ msgstr "Stamina Use"
 msgid "Required for Reward"
 msgstr "Required for Reward"
 
-#: src/routes/tools/placeable-graph.tsx
-#: src/routes/tools/quest-graph.tsx
-msgid "Graph"
-msgstr "Graph"
-
 #: src/lib/table-defs/quests-table.tsx
 msgid "Equipped Item"
 msgstr "Equipped Item"
@@ -2419,6 +2385,7 @@ msgstr "Prospecting"
 msgid "Combat Stats"
 msgstr "Combat Stats"
 
+#: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
 msgid "Tools"
 msgstr "Tools"
@@ -2568,7 +2535,6 @@ msgstr "Midnight"
 msgid "Not Respawning"
 msgstr "Not Respawning"
 
-#: src/routes/database/equipment/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Required Level"
 msgstr "Required Level"
@@ -2592,7 +2558,6 @@ msgstr "Is Aquatic Resource"
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/building/[id].tsx
-#: src/routes/database/food/[id].tsx
 msgid "Buffs"
 msgstr "Buffs"
 
@@ -2638,6 +2603,10 @@ msgstr "Inventory"
 #: src/lib/sidebar-items.ts
 msgid "Creatures"
 msgstr "Creatures"
+
+#: src/components/SiteFooter.tsx
+msgid "Brico's Toolbox is a fan-made database of <0>BitCraft</0> items, recipes, creatures, structures, and more."
+msgstr "Brico's Toolbox is a fan-made database of <0>BitCraft</0> items, recipes, creatures, structures, and more."
 
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"

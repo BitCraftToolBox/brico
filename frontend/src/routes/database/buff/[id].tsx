@@ -5,7 +5,7 @@ import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {breadcrumb, IconLink, pageIcon} from "~/lib/game-links";
+import {IconLink, pageIcon} from "~/lib/game-links";
 import {statLabel} from "~/lib/game-strings";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {SidebarPages} from "~/lib/sidebar-items";
@@ -71,7 +71,7 @@ export default function BuffDetail() {
             if (food.buffs.some(e => e.buffId === b.id)) {
                 const item = itemIdx.get(food.itemId);
                 entries.push({
-                    href: `/database/food/${food.itemId}`,
+                    href: `/database/item/${food.itemId}`,
                     iconPage: "Food",
                     name: item?.name ?? `Food #${food.itemId}`,
                 });
@@ -115,7 +115,7 @@ export default function BuffDetail() {
     return (
         <DetailPageLayout
             title={buff()?.description ?? `Buff #${params.id}`}
-            breadcrumb={breadcrumb("/database/buff")}
+            breadcrumbHref="/database/buff"
             loading={isLoading() && !buff()}
             name={buff()?.description ?? `Buff #${params.id}`}
             icon={<Show when={buff()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}

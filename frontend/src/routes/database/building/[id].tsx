@@ -10,7 +10,7 @@ import {ItemStackIcon} from "~/components/shared/ItemStacks";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
 import {sourceRow} from "~/lib/data-translation";
-import {breadcrumb, BuffLinkById, LinkedList} from "~/lib/game-links";
+import {BuffLinkById, LinkedList} from "~/lib/game-links";
 import {trackUILocale} from "~/lib/i18n";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {constructionRecipeForBuilding, deconstructionRecipeForBuilding,} from "~/lib/relations";
@@ -131,7 +131,8 @@ export default function BuildingDetail() {
     return (
         <DetailPageLayout
             title={building()?.name ?? `Building #${params.id}`}
-            breadcrumb={breadcrumb("/database/building", msg`Structure`)}
+            breadcrumbHref="/database/building"
+            breadcrumbTitle={msg`Structure`}
             loading={isLoading() && !building()}
             icon={<Show when={building()}>{(b) =>
                 <BuildingIcon building={b()} small={false} noInteract/>

@@ -119,6 +119,7 @@ export default function QuestChainDetail() {
     return (
         <DetailPageLayout
             title={quest()?.name ?? `Quest #${params.id}`}
+            breadcrumbHref="/database/quest-chain"
             loading={isLoading() && !quest()}
             name={quest()?.name ?? `Quest #${params.id}`}
             icon={pageIcon("Quest Chains", "size-16")}
