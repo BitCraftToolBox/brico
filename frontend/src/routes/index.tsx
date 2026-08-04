@@ -30,7 +30,7 @@ export default function Home() {
                 />
                 <Button variant="ghost" as={A} href="/events" class="mt-8 h-20">
                     <GameIcon
-                        name={_(msg`Track World Events`)}
+                        name={_(msg`Track World Event Timers`)}
                         iconAsset="GeneratedIcons/Other/GeneratedIcons/Other/Buildings/Crafting/Bank"
                         shape="square"
                         small

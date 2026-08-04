@@ -26,7 +26,8 @@ export const ToolDefs: BitCraftToDataDef<ToolDesc> = {
             // English value — this column is filterable, so it ends up in shared URLs.
             // See the note at the top of table-utils/column-builders.tsx.
             accessorFn: row => sourceRow(BitCraftTables.ToolTypeDesc.indexedBy("id")().get(row.toolType))?.name ?? `#${row.toolType}`,
-            cell: props => translateGameText(props.getValue() as string ?? ""),
+            // Wrapped in a JSX child so the translation stays reactive on a data-locale switch.
+            cell: props => <>{translateGameText(props.getValue() as string ?? "")}</>,
             filterFn: includedIn<ToolDesc>(),
         },
         {id: "Power", meta: {label: gameText(msg`Power`)}, accessorKey: "power", filterFn: "inNumberRange"},

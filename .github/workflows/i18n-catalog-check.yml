@@ -5,7 +5,7 @@ name: i18n Catalog Check
 # a missed extraction is invisible until a translator notices the string never reached Crowdin.
 on:
   push:
-    branches: [main, preview]
+    branches: [main]
   pull_request:
     paths:
       - "frontend/src/**"

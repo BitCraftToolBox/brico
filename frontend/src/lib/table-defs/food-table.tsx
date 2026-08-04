@@ -57,11 +57,12 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
             cell: p => {
                 const food = p.row.original;
                 if (!food.buffs?.length) return undefined;
-                const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
-                const buffs = food.buffs.map(b => [b, buffIdx.get(b.buffId)]).filter((b) => !!b[1]) as [BuffEffect, BuffDesc][];
+                // `each` is computed inline (rather than from a local `const` above) so the
+                // `indexedBy("id")()` read happens inside For's own tracked scope and the list
+                // re-resolves on a data-locale switch instead of freezing at first render.
                 return (
                     <div class="flex flex-wrap gap-1">
-                        <For each={buffs}>
+                        <For each={food.buffs.map(b => [b, BitCraftTables.BuffDesc.indexedBy("id")().get(b.buffId)] as [BuffEffect, BuffDesc | undefined]).filter((b): b is [BuffEffect, BuffDesc] => !!b[1])}>
                             {buff => <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs bg-muted text-muted-foreground whitespace-nowrap">
                                 <BuffLink buffId={buff[0].buffId} label={buff[1].description} class="font-medium" showIcon={false}/>
                                 <span class="opacity-70">{readableSeconds(buff[0].duration ?? buff[1].duration)}</span>

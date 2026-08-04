@@ -96,7 +96,12 @@ export function headerColumn<T, V extends JSX.Element>({
                     variant="ghost" class="w-full h-full justify-start" as={A}
                     href={`/database/${r[0]}/${r[1]}`}
                 >
-                    {prefixElement(props.row.original)} {customRender(props.getValue())}
+                    {/* Re-resolved from the row, not `props.getValue()`: tanstack caches the accessor
+                        result on the row object for as long as `data` keeps its identity, which is
+                        forever for tables like FoodDesc/ToolDesc whose own rows never change on a
+                        data-locale switch — only the cross-table lookup (ItemDesc) they read through
+                        does. Reading it fresh here keeps this JSX child subscribed to that lookup. */}
+                    {prefixElement(props.row.original)} {customRender(resolveAccessor(accessor, props.row.original) as V)}
                 </Button>
             );
         },
@@ -116,7 +121,9 @@ export function boolColumn<T, V extends boolean | undefined>(
         cell: (props: CellContext<T, boolean | undefined>): JSX.Element => {
             const v = props.getValue();
             if (typeof v === "undefined") return <></>;
-            return v ? translateGameText("Yes") : translateGameText("No");
+            // Wrapped in a JSX child so the translated text stays reactive — a bare returned
+            // string is inserted once and never revisited on a data-locale change.
+            return <>{v ? translateGameText("Yes") : translateGameText("No")}</>;
         },
         filterFn: includedIn<T>(),
     }
@@ -198,8 +205,9 @@ export function rarityColumn<T, V extends Rarity["tag"]>(
         meta: {label: gameText(msg`Rarity`)},
         ...accessor,
         // The value stays the `Rarity` tag: it drives the frame/border colors, the rarity sort
-        // order below, and the query param. Only the displayed text is localized.
-        cell: (props: CellContext<T, V>): JSX.Element => rarityLabel(props.getValue()),
+        // order below, and the query param. Only the displayed text is localized. Wrapped in a
+        // JSX child (rather than returned bare) so that translation stays reactive.
+        cell: (props: CellContext<T, V>): JSX.Element => <>{rarityLabel(props.getValue())}</>,
         filterFn: includedIn<T>(),
         sortingFn: (rowA, rowB, columnId) => {
             const rA = rowA.getValue<V>(columnId);

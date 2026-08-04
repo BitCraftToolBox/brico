@@ -55,12 +55,12 @@ export default function AchievementDetail() {
             loading={isLoading() && !achievement()}
             name={achievement()?.name ?? "Achievement not found"}
             description={achievement()?.description}
-            tag={`${achievement()?.pointsReward} points`}
             metaKind="achievement"
             metaImage={ogImageForPage("Achievements")}
             rawData={achievement()}
             spacetimeTable={BitCraftTables.AchievementDesc.spacetimeName}
             objectId={achievement()?.id}
+            details={[{label: gameText(msg`Achievement Points`), value: achievement()?.pointsReward}]}
             tabs={[
                 achievementRequirementsTab(requirements()),
                 {

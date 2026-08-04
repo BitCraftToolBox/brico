@@ -30,7 +30,8 @@ export const EquipmentDefs: BitCraftToDataDef<EquipmentDesc> = {
             // for display — see the note at the top of table-utils/column-builders.tsx.
             accessorFn: row => row.slots?.map(s => equipmentSlotName(s.tag)) ?? [],
             getUniqueValues: row => row.slots?.map(s => equipmentSlotName(s.tag)) ?? [],
-            cell: ctx => ctx.row.original.slots?.map(s => equipmentSlotLabel(s.tag)).join(", ") ?? "",
+            // Wrapped in a JSX child so the translation stays reactive on a data-locale switch.
+            cell: ctx => <>{ctx.row.original.slots?.map(s => equipmentSlotLabel(s.tag)).join(", ") ?? ""}</>,
             filterFn: 'arrIncludesSome',
         },
         {
