@@ -64,7 +64,7 @@ export default function CreatureDetail() {
                     <TooltipTrigger class={"decoration-dotted underline"}>{fixFloat(exp.quantity)}</TooltipTrigger>
                     <TooltipContent>
                         <Trans>Experience per Damage Dealt</Trans><br/>
-                        {c.maxHealth} HP * {fixFloat(exp.quantity)} = {c.maxHealth * fixFloat(exp.quantity)} XP<br/>
+                        {c.maxHealth} HP * {fixFloat(exp.quantity)} = {fixFloat(c.maxHealth * exp.quantity)} XP<br/>
                         <span class="text-muted-foreground"><Trans>Note: overkill damage also grants XP. This is the minimum.</Trans></span>
                     </TooltipContent>
                 </Tooltip>

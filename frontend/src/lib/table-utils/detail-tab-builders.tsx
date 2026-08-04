@@ -7,7 +7,7 @@
 
 import type {MessageDescriptor} from "@lingui/core";
 import {msg} from "@lingui/core/macro";
-import {Trans} from "@lingui/solid/macro";
+import {Plural, Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {createSignal, Show} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
@@ -46,11 +46,27 @@ import {
     TravelerTradePanel,
 } from "~/components/shared/RecipeDisplay";
 import {Button} from "~/components/ui/button";
-import {BuildingLink, CargoLink, CollectibleLink, IconLink, IconSpan, ItemLink, ItemStackLink, LinkedList, pageIcon, PlaceableLink, QuestChainLink} from "~/lib/game-links";
+import {
+    AchievementLink,
+    BuildingLink,
+    CargoLink,
+    CollectibleLink,
+    IconLink,
+    IconSpan,
+    ItemLink,
+    ItemStackLink,
+    LinkedList,
+    pageIcon,
+    PlaceableLink,
+    QuestChainLink,
+    ResourceLink,
+    SkillLinkById,
+} from "~/lib/game-links";
 import {i18n, trackUILocale} from "~/lib/i18n";
 import {gameText} from "~/lib/labels";
 import {getInteractionName, getPlacementName} from "~/lib/placeables";
 import {
+    AchievementRequirement,
     buildingForConstruction,
     getConstructionRecipeName,
     getConversionRecipeName,
@@ -65,6 +81,7 @@ import {
     resourceForExtraction,
 } from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
+import {fixFloat} from "~/lib/utils";
 
 // ─── Individual Recipe Tab Builders ─────────────────────────────────
 
@@ -507,6 +524,66 @@ export function questRewardsTab(quests: QuestChainDesc[]): RelationshipTab {
                 data={quests}
                 columns={[
                     {header: gameText(msg`Quests`), cell: q => <QuestChainLink id={q.id} name={q.name}/>},
+                ]}
+            />
+        ),
+    };
+}
+
+// ─── Achievement Requirement Tab ─────────────────────────────────
+
+const ACHIEVEMENT_REQUIREMENT_TYPE_LABELS: Record<AchievementRequirement["type"], MessageDescriptor> = {
+    achievement: msg`Achievement`,
+    skill: msg`Skill`,
+    resource: msg`Discover Resource`,
+    cargo: msg`Discover Cargo`,
+    item: msg`Discover Item`,
+    crafting: msg`Craft`,
+    chunks: msg`Explore`,
+};
+
+function achievementRequirementTypeLabel(type: AchievementRequirement["type"]): string {
+    trackUILocale();
+    return i18n._(ACHIEVEMENT_REQUIREMENT_TYPE_LABELS[type]);
+}
+
+function achievementRequirementTarget(req: AchievementRequirement) {
+    switch (req.type) {
+        case "achievement":
+            return <AchievementLink id={req.achievement.id} name={req.achievement.name}/>;
+        case "skill":
+            return (
+                <span class="inline-flex items-center gap-1">
+                    <SkillLinkById skillId={req.skillId}/> <span class="text-muted-foreground"><Trans>Lvl. {req.skillLevel}</Trans></span>
+                </span>
+            );
+        case "resource":
+            return <ResourceLink id={req.resource.id} name={req.resource.name}/>;
+        case "cargo":
+            return <CargoLink id={req.cargo.id} name={req.cargo.name}/>;
+        case "item":
+            return <ItemLink id={req.item.id} name={req.item.name}/>;
+        case "crafting":
+            return <span>{getCraftingRecipeName(req.recipe)}</span>;
+        case "chunks":
+            return req.pctChunksDiscovered
+                ? <Trans>{fixFloat(req.pctChunksDiscovered)}% of chunks</Trans>
+                : <Plural value={req.chunksDiscovered} one="# chunk" other="# chunks"/>;
+    }
+}
+
+export function achievementRequirementsTab(requirements: AchievementRequirement[]): RelationshipTab {
+    return {
+        id: "requirements",
+        label: gameText(msg`Requires`),
+        count: requirements.length,
+        showWhenEmpty: false,
+        content: () => (
+            <RelTable<AchievementRequirement>
+                data={requirements}
+                columns={[
+                    {header: msg`Type`, cell: req => <span>{achievementRequirementTypeLabel(req.type)}</span>},
+                    {header: msg`Requirement`, cell: achievementRequirementTarget},
                 ]}
             />
         ),

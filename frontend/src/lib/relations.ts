@@ -12,6 +12,7 @@ import {t} from "@lingui/core/macro";
 import {createMemo} from "solid-js";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
+import {CargoDesc} from "~/bindings/src/cargo_desc_type";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
@@ -354,11 +355,60 @@ export function prospectingForBiome(biomeType: number): ProspectingDesc[] {
     return all.filter(p => p.biomeRequirements?.includes(biomeType));
 }
 
-/** Resolve prerequisite achievements by their IDs */
-export function achievementPrereqs(requisites: number[]): AchievementDesc[] {
-    if (!requisites?.length) return [];
-    const idx = BitCraftTables.AchievementDesc.indexedBy("id")();
-    return requisites.map(id => idx.get(id)).filter((v): v is AchievementDesc => !!v);
+// ─── Achievement Requirements ────────────────────────────────────
+
+export type AchievementRequirement =
+    | { type: "achievement"; achievement: AchievementDesc }
+    | { type: "skill"; skillId: number; skillLevel: number }
+    | { type: "resource"; resource: ResourceDesc }
+    | { type: "cargo"; cargo: CargoDesc }
+    | { type: "item"; item: ItemDesc }
+    | { type: "crafting"; recipe: CraftingRecipeDesc }
+    | { type: "chunks"; chunksDiscovered: number; pctChunksDiscovered: number };
+
+/** Resolve every requirement an achievement has — prerequisite achievements, skill level, discoveries, and exploration. */
+export function achievementRequirements(a: AchievementDesc): AchievementRequirement[] {
+    const reqs: AchievementRequirement[] = [];
+
+    const achievementIdx = BitCraftTables.AchievementDesc.indexedBy("id")();
+    for (const id of a.requisites ?? []) {
+        const achievement = achievementIdx.get(id);
+        if (achievement) reqs.push({type: "achievement", achievement});
+    }
+
+    if (a.skillId) {
+        reqs.push({type: "skill", skillId: a.skillId, skillLevel: a.skillLevel});
+    }
+
+    const resourceIdx = BitCraftTables.ResourceDesc.indexedBy("id")();
+    for (const id of a.resourceDisc ?? []) {
+        const resource = resourceIdx.get(id);
+        if (resource) reqs.push({type: "resource", resource});
+    }
+
+    const cargoIdx = BitCraftTables.CargoDesc.indexedBy("id")();
+    for (const id of a.cargoDisc ?? []) {
+        const cargo = cargoIdx.get(id);
+        if (cargo) reqs.push({type: "cargo", cargo});
+    }
+
+    const itemIdx = BitCraftTables.ItemDesc.indexedBy("id")();
+    for (const id of a.itemDisc ?? []) {
+        const item = itemIdx.get(id);
+        if (item) reqs.push({type: "item", item});
+    }
+
+    const recipeIdx = BitCraftTables.CraftingRecipeDesc.indexedBy("id")();
+    for (const id of a.craftingDisc ?? []) {
+        const recipe = recipeIdx.get(id);
+        if (recipe) reqs.push({type: "crafting", recipe});
+    }
+
+    if (a.chunksDiscovered || a.pctChunksDiscovered) {
+        reqs.push({type: "chunks", chunksDiscovered: a.chunksDiscovered, pctChunksDiscovered: a.pctChunksDiscovered});
+    }
+
+    return reqs;
 }
 
 /** Resolve collectible rewards by their IDs */

@@ -300,6 +300,28 @@ export function CargoLink(props: { id: number; name?: string; class?: string; sh
     );
 }
 
+// ─── Resource ────────────────────────────────────────────────────
+
+/** Renders a resource name as a link. */
+export function ResourceLink(props: { id: number; name?: string; class?: string; showIcon?: boolean }) {
+    const show = () => props.showIcon !== false;
+    return (
+        <IconLink
+            href={`/database/resource/${props.id}`}
+            icon={show() ? pageIcon("Resources") : undefined}
+            class={props.class}
+        >
+            {props.name ?? `Resource #${props.id}`}
+        </IconLink>
+    );
+}
+
+/** Resolves a resource ID to a ResourceLink. */
+export function ResourceLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
+    const resource = () => BitCraftTables.ResourceDesc.indexedBy("id")().get(props.id);
+    return <ResourceLink id={props.id} name={resource()?.name} class={props.class} showIcon={props.showIcon}/>;
+}
+
 // ─── Item List ───────────────────────────────────────────────────
 
 /** Renders an item list name as a link. */

@@ -210,6 +210,7 @@ msgstr "crwdns4408:0crwdne4408:0"
 msgid "Hats"
 msgstr "crwdns4410:0crwdne4410:0"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirement"
 msgstr "crwdns4412:0crwdne4412:0"
@@ -434,6 +435,10 @@ msgstr "crwdns4510:0crwdne4510:0"
 #: src/routes/database/creature/[id].tsx
 msgid "Contribution Loot"
 msgstr "crwdns4512:0crwdne4512:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Explore"
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
@@ -1304,6 +1309,10 @@ msgstr "crwdns4904:0crwdne4904:0"
 msgid "Used By"
 msgstr "crwdns4906:0crwdne4906:0"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Discover Cargo"
+msgstr ""
+
 #: src/routes/database/placeable/[id].tsx
 msgid "Spawn Conditions"
 msgstr "crwdns4908:0crwdne4908:0"
@@ -1335,7 +1344,9 @@ msgid "Occupants"
 msgstr "crwdns4920:0crwdne4920:0"
 
 #. placeholder {0}: lr.level
+#. placeholder {0}: req.skillLevel
 #: src/lib/table-defs/quests-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Lvl. {0}"
 msgstr "crwdns4922:0{0}crwdne4922:0"
 
@@ -1389,6 +1400,11 @@ msgstr "crwdns4942:0crwdne4942:0"
 msgid "Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently."
 msgstr "crwdns4944:0crwdne4944:0"
 
+#. placeholder {0}: fixFloat(req.pctChunksDiscovered)
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "{0}% of chunks"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Threat Per Damage"
 msgstr "crwdns4946:0crwdne4946:0"
@@ -1401,10 +1417,6 @@ msgstr "crwdns4948:0crwdne4948:0"
 #: src/routes/settings.tsx
 msgid "No items visible <0>You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?</0>"
 msgstr "crwdns4950:0crwdne4950:0"
-
-#: src/routes/database/achievement/[id].tsx
-msgid "Prerequisites"
-msgstr "crwdns4952:0crwdne4952:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Global Cooldown"
@@ -1768,6 +1780,7 @@ msgstr "crwdns5110:0crwdne5110:0"
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/tool/[id].tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -1887,6 +1900,11 @@ msgstr "crwdns5164:0crwdne5164:0"
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirements"
 msgstr "crwdns5166:0crwdne5166:0"
+
+#. placeholder {0}: req.chunksDiscovered
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "{0, plural, one {# chunk} other {# chunks}}"
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Day Deaggro Range"
@@ -2123,6 +2141,10 @@ msgstr "crwdns5276:0crwdne5276:0"
 msgid "A–Z"
 msgstr "crwdns5278:0crwdne5278:0"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Discover Item"
+msgstr ""
+
 #: src/lib/table-utils/column-builders.tsx
 msgid "Rarity"
 msgstr "crwdns5280:0crwdne5280:0"
@@ -2162,9 +2184,17 @@ msgstr "crwdns5292:0crwdne5292:0"
 msgid "Buff Type"
 msgstr "crwdns5294:0crwdne5294:0"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Discover Resource"
+msgstr ""
+
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Details"
 msgstr "crwdns5296:0crwdne5296:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Craft"
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/weapon/[id].tsx
@@ -2240,6 +2270,7 @@ msgid "Biomes:"
 msgstr "crwdns5330:0crwdne5330:0"
 
 #: src/lib/table-defs/quests-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Achievement"
 msgstr "crwdns5332:0crwdne5332:0"
 
@@ -2616,4 +2647,3 @@ msgstr "crwdns5504:0crwdne5504:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
-

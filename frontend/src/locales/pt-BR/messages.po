@@ -210,6 +210,7 @@ msgstr ""
 msgid "Hats"
 msgstr ""
 
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirement"
 msgstr ""
@@ -433,6 +434,10 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Contribution Loot"
+msgstr ""
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Explore"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -1304,6 +1309,10 @@ msgstr ""
 msgid "Used By"
 msgstr ""
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Discover Cargo"
+msgstr ""
+
 #: src/routes/database/placeable/[id].tsx
 msgid "Spawn Conditions"
 msgstr ""
@@ -1335,7 +1344,9 @@ msgid "Occupants"
 msgstr ""
 
 #. placeholder {0}: lr.level
+#. placeholder {0}: req.skillLevel
 #: src/lib/table-defs/quests-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Lvl. {0}"
 msgstr ""
 
@@ -1389,6 +1400,11 @@ msgstr ""
 msgid "Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently."
 msgstr ""
 
+#. placeholder {0}: fixFloat(req.pctChunksDiscovered)
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "{0}% of chunks"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Threat Per Damage"
 msgstr ""
@@ -1400,10 +1416,6 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "No items visible <0>You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?</0>"
-msgstr ""
-
-#: src/routes/database/achievement/[id].tsx
-msgid "Prerequisites"
 msgstr ""
 
 #: src/routes/database/combat/[id].tsx
@@ -1768,6 +1780,7 @@ msgstr "Tags"
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/tool/[id].tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -1886,6 +1899,11 @@ msgstr ""
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirements"
+msgstr ""
+
+#. placeholder {0}: req.chunksDiscovered
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "{0, plural, one {# chunk} other {# chunks}}"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
@@ -2123,6 +2141,10 @@ msgstr ""
 msgid "A–Z"
 msgstr ""
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Discover Item"
+msgstr ""
+
 #: src/lib/table-utils/column-builders.tsx
 msgid "Rarity"
 msgstr "Raridade"
@@ -2162,8 +2184,16 @@ msgstr ""
 msgid "Buff Type"
 msgstr ""
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Discover Resource"
+msgstr ""
+
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Details"
+msgstr ""
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Craft"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
@@ -2240,6 +2270,7 @@ msgid "Biomes:"
 msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Achievement"
 msgstr ""
 

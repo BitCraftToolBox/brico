@@ -205,6 +205,7 @@ msgstr "List"
 msgid "Hats"
 msgstr "Hats"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirement"
 msgstr "Requirement"
@@ -429,6 +430,10 @@ msgstr "Not Pickupable"
 #: src/routes/database/creature/[id].tsx
 msgid "Contribution Loot"
 msgstr "Contribution Loot"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Explore"
+msgstr "Explore"
 
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
@@ -1299,6 +1304,10 @@ msgstr "This prospecting is fixed at one contribution, regardless of bread crumb
 msgid "Used By"
 msgstr "Used By"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Discover Cargo"
+msgstr "Discover Cargo"
+
 #: src/routes/database/placeable/[id].tsx
 msgid "Spawn Conditions"
 msgstr "Spawn Conditions"
@@ -1330,7 +1339,9 @@ msgid "Occupants"
 msgstr "Occupants"
 
 #. placeholder {0}: lr.level
+#. placeholder {0}: req.skillLevel
 #: src/lib/table-defs/quests-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Lvl. {0}"
 msgstr "Lvl. {0}"
 
@@ -1384,6 +1395,11 @@ msgstr "Placeable in Water"
 msgid "Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently."
 msgstr "Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently."
 
+#. placeholder {0}: fixFloat(req.pctChunksDiscovered)
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "{0}% of chunks"
+msgstr "{0}% of chunks"
+
 #: src/routes/database/combat/[id].tsx
 msgid "Threat Per Damage"
 msgstr "Threat Per Damage"
@@ -1396,10 +1412,6 @@ msgstr "Time"
 #: src/routes/settings.tsx
 msgid "No items visible <0>You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?</0>"
 msgstr "No items visible <0>You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?</0>"
-
-#: src/routes/database/achievement/[id].tsx
-msgid "Prerequisites"
-msgstr "Prerequisites"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Global Cooldown"
@@ -1763,6 +1775,7 @@ msgstr "Tags"
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/tool/[id].tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -1882,6 +1895,11 @@ msgstr "Collectibles"
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirements"
 msgstr "Requirements"
+
+#. placeholder {0}: req.chunksDiscovered
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "{0, plural, one {# chunk} other {# chunks}}"
+msgstr "{0, plural, one {# chunk} other {# chunks}}"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Day Deaggro Range"
@@ -2118,6 +2136,10 @@ msgstr "Settings"
 msgid "A–Z"
 msgstr "A–Z"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Discover Item"
+msgstr "Discover Item"
+
 #: src/lib/table-utils/column-builders.tsx
 msgid "Rarity"
 msgstr "Rarity"
@@ -2157,9 +2179,17 @@ msgstr "Tag"
 msgid "Buff Type"
 msgstr "Buff Type"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Discover Resource"
+msgstr "Discover Resource"
+
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Details"
 msgstr "Details"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Craft"
+msgstr "Craft"
 
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/weapon/[id].tsx
@@ -2235,6 +2265,7 @@ msgid "Biomes:"
 msgstr "Biomes:"
 
 #: src/lib/table-defs/quests-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Achievement"
 msgstr "Achievement"
 
