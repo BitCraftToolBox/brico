@@ -433,7 +433,16 @@ function addPlaceableSelfBuffs(lines: StatLine[], placeableBuffs: PlaceableSelfB
                     <IconLink href={`/database/buff/${b.buffId}`}>
                         {buff?.description ?? `Buff #${b.buffId}`}
                         {duration ? <span class="text-muted-foreground">{readableSeconds(fixFloat(duration))}</span> : null}
-                        {<span class="text-muted-foreground">({fixFloat(b.chance * 100)}%)</span>}
+                        {
+                            <Tooltip>
+                                <TooltipTrigger class="text-muted-foreground decoration-dotted underline">
+                                    ({fixFloat(b.chance * 100)}%)
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <Trans>Chance per hit</Trans>
+                                </TooltipContent>
+                            </Tooltip>
+                        }
                     </IconLink>
                 )
             ] satisfies StatLine;
