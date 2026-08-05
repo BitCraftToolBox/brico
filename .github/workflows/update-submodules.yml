@@ -44,9 +44,7 @@ jobs:
           gh pr create \
             --base main \
             --head preview \
-            --title "Update submodules" \
-            --body "This PR updates submodules to their latest versions.
-
-          **Automated by GitHub Actions**
+            --title "Merge preview into main" \
+            --body "This PR merges preview changes into the main deployment branch.
           
-          Please review the submodule changes before merging." || echo "Pull Request already exists"
+          This includes submodule (data and bindings) changes and any feature/fix branches merged into preview." || echo "Pull Request already exists"
