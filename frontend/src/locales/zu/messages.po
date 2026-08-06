@@ -1332,6 +1332,7 @@ msgid "No stats found."
 msgstr "crwdns4924:0crwdne4924:0"
 
 #: src/lib/table-defs/achievement-table.tsx
+#: src/routes/database/achievement/[id].tsx
 msgid "Achievement Points"
 msgstr "crwdns4926:0crwdne4926:0"
 
@@ -1514,6 +1515,10 @@ msgstr "crwdns5004:0crwdne5004:0"
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
 msgstr "crwdns5006:0crwdne5006:0"
+
+#: src/lib/recipe-sources.tsx
+msgid "Chance per hit"
+msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "No results found."
@@ -1903,10 +1908,6 @@ msgstr "crwdns5174:0crwdne5174:0"
 #: src/routes/database/terraforming/[id].tsx
 msgid "Effort"
 msgstr "crwdns5176:0crwdne5176:0"
-
-#: src/routes/index.tsx
-msgid "Track World Events"
-msgstr "crwdns5178:0crwdne5178:0"
 
 #: src/components/data-table/table-column-header.tsx
 msgid "Desc Multi"

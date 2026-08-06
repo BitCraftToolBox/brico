@@ -1327,6 +1327,7 @@ msgid "No stats found."
 msgstr "No stats found."
 
 #: src/lib/table-defs/achievement-table.tsx
+#: src/routes/database/achievement/[id].tsx
 msgid "Achievement Points"
 msgstr "Achievement Points"
 
@@ -1509,6 +1510,10 @@ msgstr "Crafting Slots"
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
 msgstr "Show All"
+
+#: src/lib/recipe-sources.tsx
+msgid "Chance per hit"
+msgstr "Chance per hit"
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "No results found."
@@ -1898,10 +1903,6 @@ msgstr "Near Building:"
 #: src/routes/database/terraforming/[id].tsx
 msgid "Effort"
 msgstr "Effort"
-
-#: src/routes/index.tsx
-msgid "Track World Events"
-msgstr "Track World Events"
 
 #: src/components/data-table/table-column-header.tsx
 msgid "Desc Multi"

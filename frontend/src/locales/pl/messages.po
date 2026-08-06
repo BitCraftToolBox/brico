@@ -1332,6 +1332,7 @@ msgid "No stats found."
 msgstr ""
 
 #: src/lib/table-defs/achievement-table.tsx
+#: src/routes/database/achievement/[id].tsx
 msgid "Achievement Points"
 msgstr "Punkty osiągnięć"
 
@@ -1513,6 +1514,10 @@ msgstr ""
 
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
+msgstr ""
+
+#: src/lib/recipe-sources.tsx
+msgid "Chance per hit"
 msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
@@ -1902,10 +1907,6 @@ msgstr ""
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Effort"
-msgstr ""
-
-#: src/routes/index.tsx
-msgid "Track World Events"
 msgstr ""
 
 #: src/components/data-table/table-column-header.tsx
