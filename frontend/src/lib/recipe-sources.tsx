@@ -247,6 +247,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
     addCommonRequirements(lines, recipe, totalEffort);
     addUseHandsInformation(lines, recipe);
     addKnowledgeRequirements(lines, recipe);
+    addPlaceableSelfBuffs(lines, recipe.selfBuffs);
     return lines;
 }
 
