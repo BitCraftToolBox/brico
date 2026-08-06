@@ -1,54 +1,55 @@
 /**
  * Placeables — Shared lookup helpers for placeable data.
  *
- * Provides memoized maps for:
- *   - Group membership (placeableId → PlaceableGroupDesc)
+ * Provides cached maps for:
+ *   - Group membership (placeableId → PlaceableGroupDesc[])
  *   - Placements by placeable (placedPlaceableId → PlaceablePlacementDesc[])
  *   - Growth by placeable (placeableId → PlaceableGrowthDesc)
  *   - Interactions by placeable (placeableId → PlaceableInteractionDesc[])
+ *
+ * Each is a single module-scope accessor built with `derivedTableLookup`, rebuilt only when its
+ * table's rows change identity. Read the doc comment there before touching this: these used to be
+ * `use*()` factories that minted a fresh `createMemo` per caller, so every component rebuilt the
+ * same map — and any attempt to share one lazily (as placeables-table.tsx did) produced a memo
+ * owned by whichever component rendered first, silently frozen from its unmount onward.
  */
 
-import {createMemo} from "solid-js";
+import {t} from "@lingui/core/macro";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {PlaceableGroupDesc} from "~/bindings/src/placeable_group_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
-import {BitCraftTables} from "~/lib/spacetime";
+import {trackUILocale} from "~/lib/i18n";
+import {BitCraftTables, derivedTableLookup} from "~/lib/spacetime";
 
 // ─── Group Lookup ───────────────────────────────────────────────
 
-/** Builds a map: placeableId → PlaceableGroupDesc[] (a placeable could be in multiple groups) */
-export function useGroupsByPlaceable() {
-    return createMemo(() => {
-        const groups = BitCraftTables.PlaceableGroupDesc.get() ?? [];
-        const map = new Map<number, PlaceableGroupDesc[]>();
-        for (const g of groups) {
-            for (const pid of g.placeableIds) {
-                const arr = map.get(pid);
-                if (arr) arr.push(g);
-                else map.set(pid, [g]);
-            }
+/** placeableId → PlaceableGroupDesc[] (a placeable can be in multiple groups) */
+export const groupsByPlaceable = derivedTableLookup(BitCraftTables.PlaceableGroupDesc, groups => {
+    const map = new Map<number, PlaceableGroupDesc[]>();
+    for (const g of groups) {
+        for (const pid of g.placeableIds) {
+            const arr = map.get(pid);
+            if (arr) arr.push(g);
+            else map.set(pid, [g]);
         }
-        return map;
-    });
-}
+    }
+    return map;
+});
 
 // ─── Placement Lookup ───────────────────────────────────────────
 
-/** Builds a map: placedPlaceableId → PlaceablePlacementDesc[] */
-export function usePlacementsByPlaceable() {
-    return createMemo(() => {
-        const all = BitCraftTables.PlaceablePlacementDesc.get() ?? [];
-        const map = new Map<number, PlaceablePlacementDesc[]>();
-        for (const p of all) {
-            const arr = map.get(p.placedPlaceableId);
-            if (arr) arr.push(p);
-            else map.set(p.placedPlaceableId, [p]);
-        }
-        return map;
-    });
-}
+/** placedPlaceableId → PlaceablePlacementDesc[] */
+export const placementsByPlaceable = derivedTableLookup(BitCraftTables.PlaceablePlacementDesc, all => {
+    const map = new Map<number, PlaceablePlacementDesc[]>();
+    for (const p of all) {
+        const arr = map.get(p.placedPlaceableId);
+        if (arr) arr.push(p);
+        else map.set(p.placedPlaceableId, [p]);
+    }
+    return map;
+});
 
 /** Finds placements where inputItem matches a given item */
 export function placementsConsumingItem(itemId: number, itemType: string): PlaceablePlacementDesc[] {
@@ -58,79 +59,75 @@ export function placementsConsumingItem(itemId: number, itemType: string): Place
 
 // ─── Growth Lookup ──────────────────────────────────────────────
 
-/** Builds a map: placeableId → PlaceableGrowthDesc (the growth record for that placeable) */
-export function useGrowthByPlaceable() {
-    return createMemo(() => {
-        const all = BitCraftTables.PlaceableGrowthDesc.get() ?? [];
-        const map = new Map<number, PlaceableGrowthDesc>();
-        for (const g of all) {
-            map.set(g.placeableId, g);
-        }
-        return map;
-    });
-}
+/** placeableId → PlaceableGrowthDesc (the growth record for that placeable) */
+export const growthByPlaceable = derivedTableLookup(BitCraftTables.PlaceableGrowthDesc, all => {
+    const map = new Map<number, PlaceableGrowthDesc>();
+    for (const g of all) {
+        map.set(g.placeableId, g);
+    }
+    return map;
+});
 
-/** Builds a map: outcomeId → PlaceableGrowthDesc[] (all growths that can produce this placeable as an outcome) */
-export function useGrowthByOutcome() {
-    return createMemo(() => {
-        const all = BitCraftTables.PlaceableGrowthDesc.get() ?? [];
-        const map = new Map<number, PlaceableGrowthDesc[]>();
-        for (const g of all) {
-            for (const outcome of g.outcomesV2 ?? []) {
-                const arr = map.get(outcome.placeableId);
-                if (arr) arr.push(g);
-                else map.set(outcome.placeableId, [g]);
-            }
+/** outcomeId → PlaceableGrowthDesc[] (all growths that can produce this placeable as an outcome) */
+export const growthByOutcome = derivedTableLookup(BitCraftTables.PlaceableGrowthDesc, all => {
+    const map = new Map<number, PlaceableGrowthDesc[]>();
+    for (const g of all) {
+        for (const outcome of g.outcomesV2 ?? []) {
+            const arr = map.get(outcome.placeableId);
+            if (arr) arr.push(g);
+            else map.set(outcome.placeableId, [g]);
         }
-        return map;
-    });
-}
+    }
+    return map;
+});
 
 // ─── Extraction Lookup ─────────────────────────────────────────
 
-export function useExtractionsByPlaceable() {
-    return createMemo(() => {
-        const all = BitCraftTables.ExtractionRecipeDesc.get() ?? [];
-        const map = new Map<number, ExtractionRecipeDesc[]>();
-        for (const ext of all) {
-            if (!ext.spawnedPlaceables?.length) continue;
-            for (const esp of ext.spawnedPlaceables) {
-                const pid = esp.placeableId;
-                const arr = map.get(pid);
-                if (arr) arr.push(ext);
-                else map.set(pid, [ext]);
-            }
+/** placeableId → ExtractionRecipeDesc[] (extractions that spawn this placeable) */
+export const extractionsByPlaceable = derivedTableLookup(BitCraftTables.ExtractionRecipeDesc, all => {
+    const map = new Map<number, ExtractionRecipeDesc[]>();
+    for (const ext of all) {
+        if (!ext.spawnedPlaceables?.length) continue;
+        for (const esp of ext.spawnedPlaceables) {
+            const pid = esp.placeableId;
+            const arr = map.get(pid);
+            if (arr) arr.push(ext);
+            else map.set(pid, [ext]);
         }
-        return map;
-    });
-}
+    }
+    return map;
+});
 
 // ─── Interaction Lookup ─────────────────────────────────────────
 
-/** Builds a map: placeableId → PlaceableInteractionDesc[] */
-export function useInteractionsByPlaceable() {
-    return createMemo(() => {
-        const all = BitCraftTables.PlaceableInteractionDesc.get() ?? [];
-        const map = new Map<number, PlaceableInteractionDesc[]>();
-        for (const ia of all) {
-            const arr = map.get(ia.placeableId);
-            if (arr) arr.push(ia);
-            else map.set(ia.placeableId, [ia]);
+/** placeableId → PlaceableInteractionDesc[] (interactions performed on that placeable) */
+export const interactionsByPlaceable = derivedTableLookup(BitCraftTables.PlaceableInteractionDesc, all => {
+    const map = new Map<number, PlaceableInteractionDesc[]>();
+    for (const ia of all) {
+        const arr = map.get(ia.placeableId);
+        if (arr) arr.push(ia);
+        else map.set(ia.placeableId, [ia]);
+    }
+    return map;
+});
 
-            if (ia.onDestroySpawnedPlaceableId) {
-                const outArr = map.get(ia.onDestroySpawnedPlaceableId);
-                if (outArr) outArr.push(ia);
-                else map.set(ia.onDestroySpawnedPlaceableId, [ia]);
-            }
-            for (const outcome of ia.onDestroyOutcomes ?? []) {
-                const outArr = map.get(outcome.placeableId);
-                if (outArr) outArr.push(ia);
-                else map.set(outcome.placeableId, [ia]);
-            }
+/** outcomePlaceableId → PlaceableInteractionDesc[] (interactions that spawn this placeable when their target is destroyed) */
+export const interactionsByOutcome = derivedTableLookup(BitCraftTables.PlaceableInteractionDesc, all => {
+    const map = new Map<number, PlaceableInteractionDesc[]>();
+    for (const ia of all) {
+        if (ia.onDestroySpawnedPlaceableId) {
+            const arr = map.get(ia.onDestroySpawnedPlaceableId);
+            if (arr) arr.push(ia);
+            else map.set(ia.onDestroySpawnedPlaceableId, [ia]);
         }
-        return map;
-    });
-}
+        for (const outcome of ia.onDestroyOutcomes ?? []) {
+            const arr = map.get(outcome.placeableId);
+            if (arr) arr.push(ia);
+            else map.set(outcome.placeableId, [ia]);
+        }
+    }
+    return map;
+});
 
 /** Finds interactions where the given item appears in either consumedItemStacks or outputItemStacks */
 export function interactionsInvolvingItem(itemId: number, itemType: string): PlaceableInteractionDesc[] {
@@ -194,12 +191,20 @@ export function getPlaceableName(placeableId: number): string {
     return BitCraftTables.PlaceableDesc.indexedBy("id")().get(placeableId)?.name ?? `Placeable #${placeableId}`;
 }
 
+// App-authored templates around game-string values — see the note in relations.ts's
+// getTravelerTradeName for why these use named `t` interpolation rather than concatenation.
+// `trackUILocale()` because the bare `t` macro compiles to a read of the module-global i18n
+// instance, which no computation subscribes to; without it these names would keep the previous
+// wording after a UI locale change until something else invalidated the caller.
 export function getPlacementName(p: PlaceablePlacementDesc): string {
+    trackUILocale();
     const plcName = getPlaceableName(p.placedPlaceableId);
-    return `Place ${plcName}`;
+    return t`Place ${plcName}`;
 }
 
 export function getInteractionName(ia: PlaceableInteractionDesc): string {
+    trackUILocale();
     const plcName = getPlaceableName(ia.placeableId);
-    return `${ia.verbPhrase} (${plcName})`;
+    const verbPhrase = ia.verbPhrase;
+    return t`${verbPhrase} (${plcName})`;
 }

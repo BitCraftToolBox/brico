@@ -11,6 +11,8 @@
  * Stack rendering uses ItemStacks.tsx components.
  */
 
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {TbOutlineArrowBigDownLines as IconDown, TbOutlineLock as IconLock} from "solid-icons/tb";
 import {Accessor, children, Component, createEffect, createMemo, createSignal, For, JSX, Show} from "solid-js";
 import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
@@ -34,6 +36,7 @@ import {BuildingIcon, EnemyIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon
 import {expandStack, InputItemStackArray, ItemStackArray, ItemStackIcon, ProbBadge, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {useLabel} from "~/lib/labels";
 import {
     collapseStacks,
     constructionStatLines,
@@ -119,7 +122,7 @@ export const CraftingRecipePanel: Component<{ recipe: CraftingRecipeDesc }> = (p
     <RecipeVisual
         inputs={<InputItemStackArray stacks={props.recipe.consumedItemStacks}/>}
         outputs={
-            <For each={props.recipe.craftedItemStacks} fallback={"No Outputs"}>
+            <For each={props.recipe.craftedItemStacks} fallback={<Trans>No Outputs</Trans>}>
                 {(stack) => expandStack(stack)}
             </For>
         }
@@ -153,10 +156,10 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                         <Show when={props.showLabel}>
                             <Tooltip openOnTouchStart>
                                 <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
-                                    deplete
+                                    <Trans>deplete</Trans>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    Guaranteed drop on last hit of resource extraction
+                                    <Trans>Guaranteed drop on last hit of resource extraction</Trans>
                                 </TooltipContent>
                             </Tooltip>
                         </Show>
@@ -169,19 +172,24 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                     const chance = props.resource.onDestroyYieldResourceChance;
                     const minRad = props.resource.onDestroyYieldResourceMinRadius;
                     const maxRad = props.resource.onDestroyYieldResourceMaxRadius;
-                    const label = chance === 1 ? "deplete" : `${fixFloat(chance * 100)}%`;
-                    const spawnText = chance === 1 ? "Guaranteed spawn" : "Chance to spawn";
-                    const radText = minRad > 0 || maxRad > 0 ? ` within ${minRad}–${maxRad} tiles` : "";
-                    const tooltipText = spawnText + radText + " on last hit of resource extraction.";
+                    const hasRadius = minRad > 0 || maxRad > 0;
                     return (
                         <div class="flex flex-col items-center gap-0.5">
                             <Show when={props.showLabel}>
                                 <Tooltip openOnTouchStart>
                                     <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
-                                        {label}
+                                        {chance === 1 ? <Trans>deplete</Trans> : `${fixFloat(chance * 100)}%`}
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        {tooltipText}
+                                        <Show when={hasRadius} fallback={
+                                            chance === 1
+                                                ? <Trans>Guaranteed spawn on last hit of resource extraction.</Trans>
+                                                : <Trans>Chance to spawn on last hit of resource extraction.</Trans>
+                                        }>
+                                            {chance === 1
+                                                ? <Trans>Guaranteed spawn within {minRad}–{maxRad} tiles on last hit of resource extraction.</Trans>
+                                                : <Trans>Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction.</Trans>}
+                                        </Show>
                                     </TooltipContent>
                                 </Tooltip>
                             </Show>
@@ -200,7 +208,7 @@ const ExtractedPlaceableIcons: Component<{ drops: ExtractionSpawnedPlaceable[], 
         <For each={props.drops}>{esp => {
             const placeable = placeableIndex().get(esp.placeableId);
             if (!placeable) return null;
-            const radText = esp.radiusMin > 0 || esp.radiusMax > 0 ? <><br/>Drops within {esp.radiusMin}–{esp.radiusMax} tiles.</> : "";
+            const radText = esp.radiusMin > 0 || esp.radiusMax > 0 ? <><br/><Trans>Drops within {esp.radiusMin}–{esp.radiusMax} tiles.</Trans></> : "";
             return (
                 <div class="flex flex-col items-center gap-0.5">
                     <Show when={props.showLabel}>
@@ -239,7 +247,7 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                 <>
                     <For each={props.recipe.extractedItemStacks.filter((s: ProbabilisticItemStack) => !!s)}
                          fallback={
-                             <Show when={!resource()?.onDestroyYieldResourceId && !questDrops().length && !props.recipe.spawnedPlaceables}>No Outputs</Show>
+                             <Show when={!resource()?.onDestroyYieldResourceId && !questDrops().length && !props.recipe.spawnedPlaceables}><Trans>No Outputs</Trans></Show>
                          }
                     >
                         {(stack) => expandStack(stack, chances())}
@@ -273,7 +281,7 @@ export const ConstructionRecipePanel: Component<{ recipe: ConstructionRecipeDesc
                 />
             }
             outputs={
-                <Show when={building()} fallback={<span class="text-muted-foreground">Building #{props.recipe.buildingDescriptionId}</span>}>
+                <Show when={building()} fallback={<span class="text-muted-foreground"><Trans>Building #{props.recipe.buildingDescriptionId}</Trans></span>}>
                     {(b) => (
                         <BuildingIcon building={b()} small/>
                     )}
@@ -292,7 +300,7 @@ export const DeconstructionRecipePanel: Component<{ recipe: DeconstructionRecipe
     return (
         <RecipeVisual
             inputs={
-                <Show when={building()} fallback={<span class="text-muted-foreground">Building #{props.recipe.consumedBuilding}</span>}>
+                <Show when={building()} fallback={<span class="text-muted-foreground"><Trans>Building #{props.recipe.consumedBuilding}</Trans></span>}>
                     {(b) => (
                         <BuildingIcon building={b()} small/>
                     )}
@@ -310,7 +318,7 @@ export const ConversionRecipePanel: Component<{ recipe: ItemConversionRecipeDesc
     <RecipeVisual
         inputs={<ItemStackArray stacks={props.recipe.inputItems}/>}
         outputs={
-            <Show when={props.recipe.outputItem} fallback={"No Output"}>
+            <Show when={props.recipe.outputItem} fallback={<Trans>No Output</Trans>}>
                 {(out) => expandStack(out())}
             </Show>
         }
@@ -360,11 +368,11 @@ export const ResourceGrowthPanel: Component<{ growth: ResourceGrowthRecipeDesc }
     return (
         <RecipeVisual
             inputs={<ResourceIcon res={from()} alwaysLabel={from().iconAssetName === to()?.iconAssetName}/>}
-            outputs={<Show when={to()} fallback={"Despawns"}>{t => <ResourceIcon res={t()} alwaysLabel={from().iconAssetName === to()?.iconAssetName}/>}</Show>}
+            outputs={<Show when={to()} fallback={<Trans>Despawns</Trans>}>{t => <ResourceIcon res={t()} alwaysLabel={from().iconAssetName === to()?.iconAssetName}/>}</Show>}
             stats={[
-                ["Time", min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`],
-                ["Chance", `${fixFloat(growth.grownResourceChance * 100)}%`],
-                ["Radius", `${growth.grownResourceMinRadius}-${growth.grownResourceMaxRadius}`]
+                [() => <Trans>Time</Trans>, min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`],
+                [() => <Trans>Chance</Trans>, `${fixFloat(growth.grownResourceChance * 100)}%`],
+                [() => <Trans>Radius</Trans>, `${growth.grownResourceMinRadius}-${growth.grownResourceMaxRadius}`]
             ]}
         />
     );
@@ -406,7 +414,7 @@ export const EnemyDropPanel: Component<{ enemy: EnemyDesc }> = (props) => {
                 <>
                     <For each={props.enemy.extractedItemStacks} fallback={
                         <Show when={!questDrops().length}>
-                            <span class="text-muted-foreground text-sm">No drops</span>
+                            <span class="text-muted-foreground text-sm"><Trans>No drops</Trans></span>
                         </Show>
                     }>
                         {(stack) => expandStack(stack, 1)}
@@ -438,13 +446,14 @@ interface RecipeSelectProps<T> {
  * Shows just the panel when there's only one recipe; shows dropdown when multiple.
  */
 export function RecipeSelect<T>(props: RecipeSelectProps<T>) {
+    const label = useLabel();
     const options = () => props.recipes.map((_, i) => ({
         label: props.nameFor(props.recipes[i]),
         value: String(i),
     } as SelectOption));
 
     const [selected, setSelected] = createSignal<SelectOption | undefined>(
-        options().length ? options()[0] : {label: "None", value: ""}
+        options().length ? options()[0] : {label: label(msg`None`), value: ""}
     );
 
     createEffect(() => {
@@ -476,7 +485,7 @@ export function RecipeSelect<T>(props: RecipeSelectProps<T>) {
                         options={options()}
                         optionValue="value"
                         optionTextValue="label"
-                        placeholder="Select a recipe"
+                        placeholder={label(msg`Select a recipe`)}
                         itemComponent={(itemProps) => {
                             if (props.renderSelectItem) {
                                 const idx = parseInt(itemProps.item.key, 10);
@@ -490,7 +499,7 @@ export function RecipeSelect<T>(props: RecipeSelectProps<T>) {
                         }}
                         class="flex flex-row justify-center"
                     >
-                        <SelectTrigger aria-label="Recipe option" class="w-auto min-w-1/2">
+                        <SelectTrigger aria-label={label(msg`Recipe option`)} class="w-auto min-w-1/2">
                             <SelectValue<SelectOption> class="flex flex-row w-full">
                                 {(state) => (
                                     <>
@@ -536,7 +545,7 @@ export const PlacementPanel: Component<{ placement: PlaceablePlacementDesc }> = 
                 <ItemStackIcon stack={props.placement.inputItem}/>
             }
             outputs={
-                <Show when={placeable()} fallback={<span class="text-muted-foreground">Placeable #{props.placement.placedPlaceableId}</span>}>
+                <Show when={placeable()} fallback={<span class="text-muted-foreground"><Trans>Placeable #{props.placement.placedPlaceableId}</Trans></span>}>
                     {(p) => <PlaceableIcon placeable={p()} small/>}
                 </Show>
             }
@@ -562,6 +571,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
         }
         return props.interaction.onDestroyOutcomes;
     };
+    const totalWeight = () => outcomes()?.reduce((t, o) => t + o.probability, 0) ?? 0;
 
     return (
         <RecipeVisual
@@ -585,29 +595,40 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                     <Show when={props.interaction.outputItemStacks.length}>
                         <ItemStackArray stacks={props.interaction.outputItemStacks}/>
                     </Show>
-                    <Show when={outcomes()}>
-                        {(sp) => (
+                    <Show when={outcomes()?.length}>
+                        <div class="flex flex-row flex-wrap justify-center items-end gap-0.5 rounded-md px-1 py-0.5 bg-muted/40 border border-dashed border-muted-foreground">
                             <For each={outcomes()}>
                                 {outcome => {
                                     const sp = idx().get(outcome.placeableId);
+                                    const weight = fixFloat(outcome.probability / totalWeight());
                                     return sp ? (
                                         <div class="flex flex-col items-center gap-0.5">
                                             <Tooltip openOnTouchStart>
                                                 <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
-                                                    {Math.round(outcome.probability * 100)}%
+                                                    {Math.round(weight * 100)}%
                                                 </TooltipTrigger>
                                                 <TooltipContent>
-                                                    {outcome.probability < 1 ? "Chance" : "Guaranteed"} to spawn on depletion.<br/>
-                                                    {outcome.radiusMin > 0 || outcome.radiusMax > 0 ? `Spawns within ${outcome.radiusMin}–${outcome.radiusMax} tiles.` : null}
+                                                    {weight < 1 ? <Trans>Chance to spawn on depletion.</Trans> : <Trans>Guaranteed to spawn on depletion.</Trans>}<br/>
+                                                    {outcome.radiusMin > 0 || outcome.radiusMax > 0
+                                                        ? <Trans>Spawns within {outcome.radiusMin}–{outcome.radiusMax} tiles.</Trans>
+                                                        : null}
                                                 </TooltipContent>
                                             </Tooltip>
                                             <PlaceableIcon placeable={sp} small/>
                                             <span class="text-[10px] text-muted-foreground text-center max-w-14 leading-tight truncate" title={sp.name}>{sp.name}</span>
                                         </div>
-                                    ) : null;
+                                    ) : outcome.placeableId === 0 ? (
+                                        <div class="flex flex-col items-center gap-0.5">
+                                            <span class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
+                                                {Math.round(weight * 100)}%
+                                            </span>
+                                            <span class="w-[65px] h-[65px]"></span>
+                                            <span class="text-[10px] text-muted-foreground text-center max-w-14 leading-tight"><Trans>Despawn</Trans></span>
+                                        </div>
+                                    ) : undefined;
                                 }}
                             </For>
-                        )}
+                        </div>
                     </Show>
                 </>
             }
@@ -625,6 +646,7 @@ const GrowthOutcomeIcon: Component<{
     showPercent: Accessor<boolean>;
     onTogglePercent: () => void;
 }> = (props) => {
+    const label = useLabel();
     const placeable = () => BitCraftTables.PlaceableDesc.indexedBy("id")().get(props.placeableId);
     const pct = () => (props.probability / props.totalWeight) * 100;
 
@@ -634,12 +656,12 @@ const GrowthOutcomeIcon: Component<{
                 <button
                     class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight hover:bg-muted cursor-pointer transition-colors"
                     onClick={props.onTogglePercent}
-                    title="Click to toggle between percentage and weight"
+                    title={label(msg`Click to toggle between percentage and weight`)}
                 >
                     {props.showPercent() ? `${pct().toFixed(1)}%` : props.probability}
                 </button>
             </Show>
-            <Show when={placeable()} fallback={<span class="text-xs text-muted-foreground">{props.placeableId === 0 ? "Despawn" : `#${props.placeableId}`}</span>}>
+            <Show when={placeable()} fallback={<span class="text-xs text-muted-foreground">{props.placeableId === 0 ? <Trans>Despawn</Trans> : `#${props.placeableId}`}</span>}>
                 {(p) => <PlaceableIcon placeable={p()} small/>}
             </Show>
             <Show when={placeable()}>

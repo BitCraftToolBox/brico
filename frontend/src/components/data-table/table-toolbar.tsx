@@ -1,3 +1,6 @@
+import {msg} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
+import {Trans} from "@lingui/solid/macro";
 import {throttle} from "@solid-primitives/scheduled"
 import {useLocation} from "@solidjs/router";
 import type {Table} from "@tanstack/solid-table"
@@ -21,20 +24,23 @@ type DataTableToolbarProps<TData> = {
 
 export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
     const { tablePageSize } = useSettings();
+    const {_} = useLingui();
     const isFiltered = () => props.table.getState().columnFilters.length > 0
         || props.table.getState().globalFilter
-        || props.table.getState().sorting.length > 0;
+        || props.table.getState().sorting.length > 0 && (props.table.getState().sorting.length !== 1 || props.table.getState().sorting[0].id !== "pk");
 
     const getSearchPlaceholder = () => {
         if (!props.searchColumns || props.searchColumns.length === 0) {
-            return "Search...";
+            return _(msg`Search...`);
         }
         if (props.searchColumns.length === 1) {
-            return `Search by ${props.searchColumns[0]}...`;
+            return _(msg`Search by ${props.searchColumns[0]}...`);
         }
         const lastCol = props.searchColumns[props.searchColumns.length - 1];
         const otherCols = props.searchColumns.slice(0, -1).join(", ");
-        return `Search by ${otherCols}${props.searchColumns.length > 2 ? ',' : ''} or ${lastCol}...`;
+        return props.searchColumns.length > 2
+            ? _(msg`Search by ${otherCols}, or ${lastCol}...`)
+            : _(msg`Search by ${otherCols} or ${lastCol}...`);
     };
 
     const [currentSearch, setCurrentSearch] = createSignal<string>(props.table.getState().globalFilter || "");
@@ -247,7 +253,7 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
                                                 onKeyDown={handleKeyDown}/>
                             </TooltipTrigger>
                             <TooltipContent class="max-w-[90svw]">
-                                Press <kbd>Enter</kbd> to commit Tier/Tag filters, <kbd>Esc</kbd> to clear.
+                                <Trans>Press <kbd>Enter</kbd> to commit Tier/Tag filters, <kbd>Esc</kbd> to clear.</Trans>
                             </TooltipContent>
                         </Tooltip>
                     </Show>
@@ -257,7 +263,7 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
                             onClick={resetAllFilters}
                             class="h-8 w-auto px-2 sm:px-3"
                         >
-                            Reset Filters
+                            <Trans>Reset Filters</Trans>
                             <IconX/>
                         </Button>
                     </Show>
@@ -267,8 +273,8 @@ export function TableToolbar<TData>(props: DataTableToolbarProps<TData>) {
                             onClick={saveFilters}
                             class="h-8 w-auto px-2 sm:px-3"
                         >
-                            <Show when={filtersSaved()} fallback={<>Link Filters <IconLink class="ml-1"/></>}>
-                                Link Copied! <IconClipboardCheck class="ml-1"/>
+                            <Show when={filtersSaved()} fallback={<Trans>Link Filters <IconLink class="ml-1"/></Trans>}>
+                                <Trans>Link Copied! <IconClipboardCheck class="ml-1"/></Trans>
                             </Show>
                         </Button>
                     </Show>

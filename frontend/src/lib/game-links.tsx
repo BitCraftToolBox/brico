@@ -11,6 +11,8 @@
  *   - Stat lines (icon in label, linked name in value)
  */
 
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {TbOutlineLock as IconLock} from "solid-icons/tb";
 import {children, For, JSX, Show} from "solid-js";
@@ -19,7 +21,9 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {PAGE_ICONS, SidebarPages} from "~/lib/sidebar-items";
+import {trackUILocale} from "~/lib/i18n";
+import {type Label, labelText} from "~/lib/labels";
+import {PAGE_ICONS, PAGE_TITLE_LABELS, SidebarPages} from "~/lib/sidebar-items";
 import {BitCraftTables} from "~/lib/spacetime";
 import {cn, fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -73,7 +77,7 @@ export function pageIcon(pageTitle: SidebarPages, iconClass: string = "size-4 sh
 export function SkillLink(props: { skill: SkillDesc; class?: string; showIcon?: boolean; level?: string }) {
     const show = () => props.showIcon !== false;
     // overwrite "ANY" skill icon with tools icon. better than a square at least. might still change this
-    const codepoint = () => props.skill.name === "ANY" ? "0086" : props.skill.iconAssetName;
+    const codepoint = () => props.skill.id === 1 ? "0086" : props.skill.iconAssetName;
     return (
         <IconLink
             href={`/database/skill/${props.skill.id}`}
@@ -116,7 +120,7 @@ export function KnowledgeLink(props: { id: number; name?: string; class?: string
                     <IconLock class="size-3 text-destructive shrink-0"/>
                 </Show>
             </TooltipTrigger>
-            <TooltipContent class="max-w-[90svw]">Developer-locked / inaccessible</TooltipContent>
+            <TooltipContent class="max-w-[90svw]"><Trans>Developer-locked / inaccessible</Trans></TooltipContent>
         </Tooltip>
     );
 }
@@ -297,6 +301,28 @@ export function CargoLink(props: { id: number; name?: string; class?: string; sh
     );
 }
 
+// ─── Resource ────────────────────────────────────────────────────
+
+/** Renders a resource name as a link. */
+export function ResourceLink(props: { id: number; name?: string; class?: string; showIcon?: boolean }) {
+    const show = () => props.showIcon !== false;
+    return (
+        <IconLink
+            href={`/database/resource/${props.id}`}
+            icon={show() ? pageIcon("Resources") : undefined}
+            class={props.class}
+        >
+            {props.name ?? `Resource #${props.id}`}
+        </IconLink>
+    );
+}
+
+/** Resolves a resource ID to a ResourceLink. */
+export function ResourceLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
+    const resource = () => BitCraftTables.ResourceDesc.indexedBy("id")().get(props.id);
+    return <ResourceLink id={props.id} name={resource()?.name} class={props.class} showIcon={props.showIcon}/>;
+}
+
 // ─── Item List ───────────────────────────────────────────────────
 
 /** Renders an item list name as a link. */
@@ -410,13 +436,77 @@ export function knowledgeStatIcon(): JSX.Element {
 }
 
 
-export function breadcrumb(href: string, title?: string): JSX.Element {
-    title = title ?? href
-        .split("/").pop()
-        ?.replace(/(-[a-z])/g, c => " " + c[1].toUpperCase())
-        .replace(/^\w/, c => c.toUpperCase());
-    if (!title) return <></>;
+/**
+ * Coarse top-level section a breadcrumb path lives under. Rendered as inert text ahead of the
+ * page-level crumb — there's no single `/database` or `/tools` landing page to link it to.
+ * `/events` lives in the Toolbox sidebar group despite its top-level URL, so it maps to Tools too.
+ */
+function breadcrumbSection(href: string): Label | undefined {
+    return href.startsWith("/tools") || href === "/events" ? msg`Tools`
+        : href.startsWith("/database") ? msg`Database`
+        : undefined;
+}
+
+/** The `Label` a breadcrumb renders for `href`: the caller's override, else the sidebar's own. */
+function crumbLabel(href: string, titleOverride?: Label | string): Label | string | undefined {
+    return titleOverride ?? PAGE_TITLE_LABELS[href];
+}
+
+/**
+ * The visible breadcrumb trail as plain strings, for `BreadcrumbList` JSON-LD (see
+ * `~/lib/structured-data`). Same wording the trail renders, so the two never drift apart.
+ * Returns `undefined` for an href with no resolvable label — the same case `breadcrumb()`
+ * renders as nothing.
+ *
+ * Like `breadcrumbTrail` below this resolves labels outside a component, so it calls
+ * `trackUILocale()` to stay reactive; the caller must read it inside a computation for that to
+ * matter (`useJsonLd`'s render effect does).
+ */
+export function breadcrumbText(href: string, titleOverride?: Label | string): {section?: string; page: string} | undefined {
+    const label = crumbLabel(href, titleOverride);
+    if (!label) return undefined;
+    trackUILocale();
+    const section = breadcrumbSection(href);
+    return {section: section ? labelText(section) : undefined, page: labelText(label)};
+}
+
+/**
+ * Shared renderer: an inert section label ("Database"/"Tools") followed by the page-level crumb,
+ * which reuses the same label its sidebar entry renders — so it never invents a second wording
+ * (or, worse, a string that was never extracted and so never translates at all).
+ */
+function breadcrumbTrail(href: string, titleOverride: Label | string | undefined, current: boolean): JSX.Element {
+    const label = crumbLabel(href, titleOverride);
+    if (!label) return <></>;
+    trackUILocale();
+    const section = breadcrumbSection(href);
     return <>
-        <A href={href}>{title}</A><span class="mx-1.5">{">"}</span>
+        <Show when={section}>
+            <span class="text-muted-foreground/70">{labelText(section!)}</span>
+            <span class="mx-1.5 text-muted-foreground/70">{">"}</span>
+        </Show>
+        {current
+            ? <span aria-current="page">{labelText(label)}</span>
+            : <A href={href}>{labelText(label)}</A>}
     </>;
+}
+
+/**
+ * Breadcrumb for a detail page — the page-level crumb links *up* to the list page the object
+ * belongs to. The object's own name is deliberately absent: it's already the page's `<h1>`, so
+ * repeating it in the nav was redundant (it does still appear in the JSON-LD trail, which has no
+ * such duplication problem). Pass `titleOverride` only when the breadcrumb needs different wording
+ * than the sidebar (a singular noun for a detail page, say) or an already-resolved display string
+ * (a category tag looked up per-row).
+ */
+export function breadcrumb(href: string, titleOverride?: Label | string): JSX.Element {
+    return breadcrumbTrail(href, titleOverride, false);
+}
+
+/**
+ * Breadcrumb for a page that *is* `href` — a list page or a tool. The page-level crumb renders as
+ * inert `aria-current` text rather than a link to the page you're already on.
+ */
+export function breadcrumbCurrent(href: string, titleOverride?: Label | string): JSX.Element {
+    return breadcrumbTrail(href, titleOverride, true);
 }

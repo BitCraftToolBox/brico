@@ -1,8 +1,9 @@
+import {msg} from "@lingui/core/macro";
 import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {breadcrumb, ItemStackLink, LinkedList} from "~/lib/game-links";
+import {ItemStackLink, LinkedList} from "~/lib/game-links";
 import {ogImageForPage} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {readableSeconds, undefinedIfZero} from "~/lib/utils";
@@ -34,14 +35,14 @@ export default function ClaimResearchDetail() {
     });
 
     const claimTechColumns = [
-        {header: "Tech", cell: (row: ClaimTechDesc) => <span>{row.name}</span>},
-        {header: "Tier", cell: (row: ClaimTechDesc) => <span>{row.tier}</span>},
+        {header: msg`Tech`, cell: (row: ClaimTechDesc) => <span>{row.name}</span>},
+        {header: msg`Tier`, cell: (row: ClaimTechDesc) => <span>{row.tier}</span>},
     ];
 
     return (
         <DetailPageLayout
             title={tech()?.name ?? `Claim Tech #${params.id}`}
-            breadcrumb={breadcrumb("/database/claim-research")}
+            breadcrumbHref="/database/claim-research"
             loading={isLoading() && !tech()}
             name={tech()?.name ?? "Claim research not found"}
             tier={tech()?.tier}
@@ -50,20 +51,20 @@ export default function ClaimResearchDetail() {
             metaImage={ogImageForPage("Claim Research")}
             details={[
                 {
-                    heading: "Cost",
+                    heading: msg`Cost`,
                     properties: [
-                        {label: "Item Cost", value: tech()?.input.length ? () => <LinkedList>{tech()!.input.map(is => <ItemStackLink stack={is}/>)}</LinkedList> : "None"},
-                        {label: "Supply Cost", value: tech()?.suppliesCost},
-                        {label: "Research Time", value: readableSeconds(undefinedIfZero(tech()?.researchTime))},
+                        {label: msg`Item Cost`, value: tech()?.input.length ? () => <LinkedList>{tech()!.input.map(is => <ItemStackLink stack={is}/>)}</LinkedList> : "None"},
+                        {label: msg`Supply Cost`, value: tech()?.suppliesCost},
+                        {label: msg`Research Time`, value: readableSeconds(undefinedIfZero(tech()?.researchTime))},
                     ]
                 },
                 {
-                    heading: "Unlocks",
+                    heading: msg`Unlocks`,
                     properties: [
-                        {label: "Members", value: undefinedIfZero(tech()?.members)},
-                        {label: "Area", value: undefinedIfZero(tech()?.area)},
-                        {label: "Supplies", value: undefinedIfZero(tech()?.supplies)},
-                        {label: "XP to mint Hex Coin", value: undefinedIfZero(tech()?.xpToMintHexCoin)},
+                        {label: msg`Members`, value: undefinedIfZero(tech()?.members)},
+                        {label: msg`Area`, value: undefinedIfZero(tech()?.area)},
+                        {label: msg`Supplies`, value: undefinedIfZero(tech()?.supplies)},
+                        {label: msg`XP to mint Hex Coin`, value: undefinedIfZero(tech()?.xpToMintHexCoin)},
                     ]
                 }
             ]}
@@ -73,13 +74,13 @@ export default function ClaimResearchDetail() {
             tabs={[
                 {
                     id: "requirements",
-                    label: "Requirements",
+                    label: msg`Requirements`,
                     count: requirements().length,
                     content: () => <RelTable<ClaimTechDesc> data={requirements()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>
                 },
                 {
                     id: "unlocks",
-                    label: "Unlocks Techs",
+                    label: msg`Unlocks Techs`,
                     count: unlocksTechs().length,
                     showWhenEmpty: false,
                     content: () => <RelTable<ClaimTechDesc> data={unlocksTechs()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>

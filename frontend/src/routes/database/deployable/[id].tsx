@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
@@ -5,7 +6,8 @@ import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/Detai
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {StatTable} from "~/components/shared/RelTablePresets";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
-import {breadcrumb, IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {surfaceTypeLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {collectiblesTab} from "~/lib/table-utils/detail-tab-builders";
@@ -46,47 +48,47 @@ export default function DeployableDetail() {
         return [
             {
                 properties: [
-                    {label: "Occupants", value: d.capacity},
-                    {label: "Allow Hunting", value: d.allowHunting},
-                    {label: "Allow Gathering", value: d.allowDriverExtract},
-                    {label: "Show After Logout", value: readableSeconds(undefinedIfZero(d.showForSecsAfterOwnerLogout))},
+                    {label: msg`Occupants`, value: d.capacity},
+                    {label: msg`Allow Hunting`, value: d.allowHunting},
+                    {label: msg`Allow Gathering`, value: d.allowDriverExtract},
+                    {label: msg`Show After Logout`, value: readableSeconds(undefinedIfZero(d.showForSecsAfterOwnerLogout))},
                 ]
             },
             {
-                heading: "Inventory",
+                heading: msg`Inventory`,
                 properties: [
-                    {label: "Item Slots", value: d.storage > 0 ? `${d.storage} × ${d.itemSlotSize / 6000}` : "0"},
-                    {label: "Cargo Slots", value: d.stockpile > 0 ? `${d.stockpile} × ${d.cargoSlotSize / 6000}` : "0"},
-                    {label: "Barter Slots", value: undefinedIfZero(d.barter)},
+                    {label: msg`Item Slots`, value: d.storage > 0 ? `${d.storage} × ${d.itemSlotSize / 6000}` : "0"},
+                    {label: msg`Cargo Slots`, value: d.stockpile > 0 ? `${d.stockpile} × ${d.cargoSlotSize / 6000}` : "0"},
+                    {label: msg`Barter Slots`, value: undefinedIfZero(d.barter)},
                 ],
             },
             {
-                heading: "Movement",
+                heading: msg`Movement`,
                 properties: [
                     ...pathfindingLabels(),
-                    {label: "Water Depth", value: undefinedIfZero(pathfinding()?.maxWaterDepth)},
-                    {label: "Can Auto Follow", value: d.canAutoFollow},
-                    {label: "Wind Multiplier", value: undefinedIfZero(fixFloat(d.affectedByWind))},
-                    {label: "Can Enter Portals", value: d.canEnterPortals},
-                    {label: "Mounting Radius", value: d.mountingRadius},
-                    {label: "Radius", value: undefinedIfZero(d.radius)},
+                    {label: msg`Water Depth`, value: undefinedIfZero(pathfinding()?.maxWaterDepth)},
+                    {label: msg`Can Auto Follow`, value: d.canAutoFollow},
+                    {label: msg`Wind Multiplier`, value: undefinedIfZero(fixFloat(d.affectedByWind))},
+                    {label: msg`Can Enter Portals`, value: d.canEnterPortals},
+                    {label: msg`Mounting Radius`, value: d.mountingRadius},
+                    {label: msg`Radius`, value: undefinedIfZero(d.radius)},
                 ],
             },
             {
-                heading: "Speed",
+                heading: msg`Speed`,
                 properties: [
                     ...(deployable()?.speed?.map((ms) => ({
-                        label: ms.surfaceType.tag,
+                        label: surfaceTypeLabel(ms.surfaceType.tag),
                         value: undefinedIfZero(ms.speed),
                     })) ?? [])
                 ]
             },
             {
-                heading: "Placement",
+                heading: msg`Placement`,
                 properties: [
-                    {label: "Placeable on Land", value: d.placeableOnLand},
-                    {label: "Placeable in Water", value: d.placeableInWater},
-                    {label: "Deploy time", value: readableSeconds(undefinedIfZero(d.deployTime))},
+                    {label: msg`Placeable on Land`, value: d.placeableOnLand},
+                    {label: msg`Placeable in Water`, value: d.placeableInWater},
+                    {label: msg`Deploy time`, value: readableSeconds(undefinedIfZero(d.deployTime))},
                 ],
             },
         ];
@@ -95,7 +97,7 @@ export default function DeployableDetail() {
     return (
         <DetailPageLayout
             title={deployable()?.name ?? `Deployable #${params.id}`}
-            breadcrumb={breadcrumb("/database/deployable")}
+            breadcrumbHref="/database/deployable"
             loading={isLoading() && !deployable()}
             icon={<Show when={collectible()}>{c => <CollectibleIcon collectible={c()} small={false} noInteract/>}</Show>}
             name={deployable()?.name ?? "Deployable not found"}
@@ -110,21 +112,21 @@ export default function DeployableDetail() {
             tabs={[
                 {
                     id: "appearances",
-                    label: "Appearances",
+                    label: msg`Appearances`,
                     count: appearances().length,
                     showWhenEmpty: false,
                     content: () => (
                         <RelTable<CollectibleDesc>
                             data={appearances()} columns={[
-                            {header: "Collectible", cell: row => <CollectibleIcon collectible={row} small/>},
-                            {header: "Name", cell: row => <IconLink icon={pageIcon("Collection")} href={`/database/collectible/${row.id}`}>{row.name}</IconLink>},
+                            {header: msg`Collectible`, cell: row => <CollectibleIcon collectible={row} small/>},
+                            {header: msg`Name`, cell: row => <IconLink icon={pageIcon("Collection")} href={`/database/collectible/${row.id}`}>{row.name}</IconLink>},
                         ]}
                         />
                     )
                 },
                 {
                     id: "stats",
-                    label: "Stats",
+                    label: msg`Stats`,
                     count: deployable()?.stats?.length ?? 0,
                     showWhenEmpty: false,
                     content: () => <StatTable data={deployable()!.stats}/>,
@@ -132,7 +134,7 @@ export default function DeployableDetail() {
                 ...(collectible() ? [collectiblesTab([collectible()!])] : []),
                 {
                     id: "deed",
-                    label: "Item Deed",
+                    label: msg`Item Deed`,
                     count: itemDeed() ? 1 : 0,
                     content: () => (
                         <Show when={itemDeed()}>

@@ -1,6 +1,15 @@
-import {ColumnDef, DeepKeys, DeepValue} from "@tanstack/solid-table";
+import {ColumnDef, DeepKeys, DeepValue, RowData} from "@tanstack/solid-table";
 import {FilterSetupProps} from "~/components/data-table/data-table";
+import {Label} from "~/lib/labels";
 
+// Column headers otherwise have no display text distinct from the (load-bearing, English) column
+// id — see the "Column labels" note in I18N_PLAN.md. Declared against `@tanstack/table-core`
+// because that's where `ColumnMeta` actually lives; `@tanstack/solid-table` only re-exports it.
+declare module "@tanstack/table-core" {
+    interface ColumnMeta<TData extends RowData, TValue> {
+        label?: Label | string;
+    }
+}
 
 export type BitCraftToDataDef<T> = {
     columns: ColumnDef<T, any>[];
@@ -24,9 +33,10 @@ export function resolveAccessor<T, V>(acc: AccessorProp<T, V>, obj: T, def?: V):
     } else {
         const aKey = acc.accessorKey as string;
         if (aKey.includes(".")) {
-            const keys = aKey.split(".");
-            let result;
-            for (const key of keys) {
+            // Walk the dotted path from `obj` — starting from `undefined` (as this used to) made
+            // every nested key resolve to undefined.
+            let result: any = obj;
+            for (const key of aKey.split(".")) {
                 result = result?.[key];
             }
             ret = result;

@@ -1,0 +1,35 @@
+name: i18n Translate Branch Resync
+
+# `i18n-translate-sync.yml`'s `sync-sources` job force-pushes `preview` to `translate`
+# (translate.brico.app, Crowdin's in-context/JIPT review build) *before* that week's translations
+# are downloaded — the download only produces a result once the `chore/crowdin-translations` PR it
+# opens against `preview` gets reviewed and merged, which happens later and outside that workflow
+# run. Until this resync, `translate` stays pinned to pre-download `preview`, so any string added
+# (or pseudolocale text regenerated) since then renders as plain English on translate.brico.app and
+# Crowdin's JIPT overlay can't recognize it — "unrecognized string" errors.
+#
+# Whoever merges that PR is the one who actually completes the sync, so re-push `translate` right
+# then. `preview` already has everything needed (this PR's contents already round-tripped through
+# Crowdin in `sync-translations`), so no re-extraction or re-upload here — just mirror the branch.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [preview]
+
+permissions:
+  contents: write
+
+jobs:
+  resync-translate:
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'chore/crowdin-translations'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview
+        uses: actions/checkout@v4
+        with:
+          ref: preview
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Force-push to translate branch
+        run: git push --force origin HEAD:translate

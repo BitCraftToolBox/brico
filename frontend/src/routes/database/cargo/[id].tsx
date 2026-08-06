@@ -1,10 +1,10 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {lootTab} from "~/components/fun/BricoLootBox";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
-import {breadcrumb} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
@@ -104,7 +104,7 @@ export default function CargoDetail() {
     return (
         <DetailPageLayout
             title={cargo()?.name ?? `Cargo #${params.id}`}
-            breadcrumb={breadcrumb("/database/cargo")}
+            breadcrumbHref="/database/cargo"
             loading={isLoading() && !cargo()}
             icon={<Show when={cargo()}>{(c) =>
                 <CargoIcon cargo={c()} small={false} noInteract/>
@@ -118,14 +118,14 @@ export default function CargoDetail() {
             metaKind="cargo"
             metaImage={ogImageForAsset(cargo()?.iconAssetName)}
             details={[
-                {label: "Volume", value: cargo()?.volume},
-                {label: "Pick Up Time", value: readableSeconds(fixFloat(cargo()?.pickUpTime))},
-                {label: "Place Time", value: readableSeconds(fixFloat(cargo()?.placeTime))},
-                {label: "Movement Modifier", value: cargo()?.movementModifier ? `${fixFloat(cargo()!.movementModifier)}x` : undefined},
-                {label: "Blocks Path", value: cargo()?.blocksPath},
-                {label: "Not Pickupable", value: cargo()?.notPickupable ? true : undefined},
+                {label: msg`Volume`, value: cargo()?.volume},
+                {label: msg`Pick Up Time`, value: readableSeconds(fixFloat(cargo()?.pickUpTime))},
+                {label: msg`Place Time`, value: readableSeconds(fixFloat(cargo()?.placeTime))},
+                {label: msg`Movement Modifier`, value: cargo()?.movementModifier ? `${fixFloat(cargo()!.movementModifier)}x` : undefined},
+                {label: msg`Blocks Path`, value: cargo()?.blocksPath},
+                {label: msg`Not Pickupable`, value: cargo()?.notPickupable ? true : undefined},
                 //{label: "Despawn Time", value: readableSeconds(fixFloat(cargo()?.despawnTime))}, // game doesn't actually use this anymore, cargo are just DroppedItems now
-                {label: "Knowledge", value: knowledgeName()},
+                {label: msg`Knowledge`, value: knowledgeName()},
             ]}
             rawData={cargo()}
             spacetimeTable={BitCraftTables.CargoDesc.spacetimeName}

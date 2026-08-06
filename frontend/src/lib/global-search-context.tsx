@@ -1,4 +1,5 @@
 import {Accessor, createContext, createMemo, JSX, useContext} from "solid-js";
+import {activeDataLocale} from "~/lib/data-translation";
 import {
     createGlobalSearchIndex,
     globalSearch as runGlobalSearch,
@@ -16,9 +17,19 @@ interface GlobalSearchContextValue {
 const GlobalSearchContext = createContext<GlobalSearchContextValue>();
 
 export function GlobalSearchProvider(props: { children: JSX.Element; isReady: Accessor<boolean> }) {
-    const index = createMemo<GlobalSearchIndex | null>(() => (
-        props.isReady() ? createGlobalSearchIndex() : null
-    ));
+    const index = createMemo<GlobalSearchIndex | null>(() => {
+        // `createGlobalSearchIndex()` snapshots name/description/tag into Fuse at build time, so
+        // the whole index has to be rebuilt when the data locale changes — otherwise search would
+        // keep matching (and displaying) stale English text. A full rebuild is fine: locale
+        // switches are rare and user-initiated.
+        //
+        // Tracked explicitly for intent; the index would in fact also rebuild via the reads of
+        // `BitCraftTables[...].get()` inside, which are now locale-aware memos. That chain is what
+        // covers the *asynchronous* case — switching locale rebuilds once immediately (still
+        // English) and again when that locale's CSV finishes downloading.
+        activeDataLocale();
+        return props.isReady() ? createGlobalSearchIndex() : null;
+    });
 
     const contextValue: GlobalSearchContextValue = {
         globalSearch: (query, maxPerTable = 10, scoreCutoff = 0.2) => (

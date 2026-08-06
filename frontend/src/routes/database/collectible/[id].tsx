@@ -1,3 +1,4 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
@@ -7,7 +8,9 @@ import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_ty
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb, IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {collectibleTypeLabel} from "~/lib/game-strings";
+import {gameText} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -84,7 +87,7 @@ export default function CollectibleDetail() {
     return (
         <DetailPageLayout
             title={collectible()?.name ?? `Collectible #${params.id}`}
-            breadcrumb={breadcrumb("/database/collectible")}
+            breadcrumbHref="/database/collectible"
             loading={isLoading() && !collectible()}
             icon={<Show when={collectible()}>{c => <CollectibleIcon collectible={c()} small={false} noInteract/>}</Show>}
             name={collectible()?.name ?? "Collectible not found"}
@@ -94,12 +97,12 @@ export default function CollectibleDetail() {
             metaKind="collectible"
             metaImage={ogImageForAsset(collectible()?.iconAssetName)}
             details={[
-                {label: "Collectible Type", value: collectible()?.collectibleType?.tag},
-                {label: "Invalidates Type", value: collectible()?.invalidatesType?.tag == CollectibleType.Default.tag ? undefined : collectible()?.invalidatesType?.tag},
-                {label: "Auto Collect", value: collectible()?.autoCollect},
-                {label: "Locked", value: collectible()?.locked},
-                {label: "Starting Loadout", value: collectible()?.startingLoadout},
-                {label: "Max Equip Count", value: collectible()?.maxEquipCount},
+                {label: msg`Collectible Type`, value: collectibleTypeLabel(collectible()?.collectibleType?.tag)},
+                {label: msg`Invalidates Type`, value: collectible()?.invalidatesType?.tag == CollectibleType.Default.tag ? undefined : collectibleTypeLabel(collectible()?.invalidatesType?.tag)},
+                {label: msg`Auto Collect`, value: collectible()?.autoCollect},
+                {label: msg`Locked`, value: collectible()?.locked},
+                {label: msg`Starting Loadout`, value: collectible()?.startingLoadout},
+                {label: msg`Max Equip Count`, value: collectible()?.maxEquipCount},
             ]}
             rawData={collectible()}
             spacetimeTable={BitCraftTables.CollectibleDesc.spacetimeName}
@@ -108,18 +111,18 @@ export default function CollectibleDetail() {
             tabs={[
                 {
                     id: "deployables",
-                    label: "Deployables",
+                    label: gameText(msg`Deployables`),
                     count: deployables().length,
                     showWhenEmpty: false,
                     content: () => (
                         <RelTable<[DeployableDesc, CollectibleDesc]> data={deployables()} columns={[
-                            {header: "Deployable", cell: d => <CollectibleIcon collectible={d[1]} small noInteract/>, class: "w-10"},
-                            {header: "Name", cell: d => <IconLink href={`/database/deployable/${d[0].id}`} icon={pageIcon("Deployables")}>{d[0].name}</IconLink>},
+                            {header: gameText(msg`Deployable`), cell: d => <CollectibleIcon collectible={d[1]} small noInteract/>, class: "w-10"},
+                            {header: gameText(msg`Name`), cell: d => <IconLink href={`/database/deployable/${d[0].id}`} icon={pageIcon("Deployables")}>{d[0].name}</IconLink>},
                         ]} />
                     )
                 },
                 {
-                    id: "deed", label: "Item Deed", count: itemDeed() ? 1 : 0,
+                    id: "deed", label: gameText(msg`Deed`), count: itemDeed() ? 1 : 0,
                     content: () => (
                         <Show when={itemDeed()}>
                             {d => <div class="p-1">
@@ -130,14 +133,14 @@ export default function CollectibleDetail() {
                 },
                 {
                     id: "knowledge-use",
-                    label: "Required Knowledge",
+                    label: msg`Required Knowledge`,
                     count: knowledgesToUse().length,
                     showWhenEmpty: false,
                     content: () => <KnowledgeTable data={knowledgesToUse()}/>
                 },
                 {
                     id: "knowledge-convert",
-                    label: "Required Knowledge (Convert)",
+                    label: msg`Required Knowledge (Convert)`,
                     count: knowledgesToConvert().length,
                     showWhenEmpty: false,
                     content: () => <KnowledgeTable data={knowledgesToConvert()}/>

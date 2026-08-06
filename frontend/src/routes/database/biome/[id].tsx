@@ -1,9 +1,10 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {breadcrumb, IconLink} from "~/lib/game-links";
+import {IconLink} from "~/lib/game-links";
 import {ogImageForPage} from "~/lib/og-meta";
 import {prospectingForBiome} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -28,32 +29,32 @@ export default function BiomeDetail() {
     return (
         <DetailPageLayout
             title={biome()?.name ?? `Biome #${params.id}`}
-            breadcrumb={breadcrumb("/database/biome")}
+            breadcrumbHref="/database/biome"
             loading={isLoading() && !biome()}
             name={biome()?.name ?? "Biome not found"}
             description={biome()?.description}
             metaKind="biome"
             metaImage={ogImageForPage("Biomes")}
             details={[
-                {label: "Hazard Level", value: biome()?.hazardLevel},
-                {label: "Disallow Player Build", value: biome()?.disallowPlayerBuild},
+                {label: msg`Hazard`, value: biome()?.hazardLevel},
+                {label: msg`Disallow Player Build`, value: biome()?.disallowPlayerBuild},
             ]}
             rawData={biome()}
             spacetimeTable={BitCraftTables.BiomeDesc.spacetimeName}
             objectId={biome()?.biomeType}
             tabs={[
                 {
-                    id: "prospecting", label: "Prospecting", count: prospectingEntries().length,
+                    id: "prospecting", label: msg`Prospecting`, count: prospectingEntries().length,
                     content: () => (
                         <RelTable<ProspectingDesc>
                             data={prospectingEntries()}
                             columns={[
-                                {header: "Name", cell: (row) => (
+                                {header: msg`Name`, cell: (row) => (
                                     <IconLink href={`/database/prospecting/${row.id}`} icon={<FontIcon codepoint={row.iconAssetPath} class="size-4 inline"/>}>
                                         {row.name}
                                     </IconLink>
                                 )},
-                                {header: "Description", cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
+                                {header: msg`Description`, cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
                             ]}
                         />
                     ),

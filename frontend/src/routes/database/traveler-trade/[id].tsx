@@ -1,9 +1,10 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {TravelerTradePanel} from "~/components/shared/RecipeDisplay";
-import {AchievementLink, breadcrumb, LinkedList, SkillLinkById} from "~/lib/game-links";
+import {AchievementLink, LinkedList, SkillLinkById} from "~/lib/game-links";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {getTravelerNpcName, getTravelerTradeName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -67,20 +68,21 @@ export default function TravelerTradeDetail() {
     return (
         <DetailPageLayout
             title={tradeName()}
-            breadcrumb={breadcrumb("/database/traveler-trade")}
+            breadcrumbHref="/database/traveler-trade"
             loading={isLoading() && !trade()}
             icon={npcDesc() ? <FontIcon codepoint={npcDesc()!.iconAddress} class="size-16"/> : undefined}
             name={`${npcName()} Trade`}
             description={tradeName()}
+            defaultTab="summary"
             metaKind="traveler trade"
             metaImage={ogImageForCodepoint(npcDesc()?.iconAddress)}
             details={[
-                {label: "Traveler", value: npcName()},
-                {label: "Starting Stock", value: trade() && trade()!.startingStock !== MAX_INT32 ? trade()!.startingStock : undefined},
-                {label: "Always Offered", value: trade()?.alwaysOffered === false ? "No" : undefined},
-                {label: "Level Requirements", value: levelReqsEl()},
-                {label: "Achievement Requirements", value: achievementReqsEl()},
-                {label: "Hide If Requirements Not Met", value: trade()?.hideIfRequirementsAreNotMet === true ? "Yes" : undefined},
+                {label: msg`Traveler`, value: npcName()},
+                {label: msg`Starting Stock`, value: trade() && trade()!.startingStock !== MAX_INT32 ? trade()!.startingStock : undefined},
+                {label: msg`Always Offered`, value: trade()?.alwaysOffered === false ? "No" : undefined},
+                {label: msg`Level Requirements`, value: levelReqsEl()},
+                {label: msg`Achievement Requirements`, value: achievementReqsEl()},
+                {label: msg`Hide If Requirements Not Met`, value: trade()?.hideIfRequirementsAreNotMet === true ? "Yes" : undefined},
             ]}
             summaryContent={() => trade() ? <TravelerTradePanel trade={trade()!}/> : <></>}
             rawData={trade()}

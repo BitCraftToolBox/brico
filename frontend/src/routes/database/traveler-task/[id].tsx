@@ -1,8 +1,9 @@
+import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {RecipeSelect, TravelerTaskPanel} from "~/components/shared/RecipeDisplay";
-import {breadcrumb, SkillLinkById} from "~/lib/game-links";
+import {SkillLinkById} from "~/lib/game-links";
 import {ogImageForPage} from "~/lib/og-meta";
 import {getTravelerTaskName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
@@ -36,16 +37,16 @@ export default function TravelerTaskDetail() {
     return (
         <DetailPageLayout
             title={`${skillName() ?? "Task"} Task #${params.id}`}
-            breadcrumb={breadcrumb("/database/traveler-task")}
+            breadcrumbHref="/database/traveler-task"
             loading={isLoading() && !task()}
             name={`${skillName() ?? "Task"} Task`}
             description={task()?.description}
             metaKind="traveler task"
             metaImage={ogImageForPage("Traveler Tasks")}
             details={[
-                {label: "Skill", value: task()?.levelRequirement?.skillId ? () => <SkillLinkById skillId={task()!.levelRequirement.skillId}/> : undefined},
-                {label: "Level Range", value: task() ? `${task()!.levelRequirement.minLevel}–${task()!.levelRequirement.maxLevel}` : undefined},
-                {label: "XP Reward", value: xpStr()},
+                {label: msg`Skill`, value: task()?.levelRequirement?.skillId ? () => <SkillLinkById skillId={task()!.levelRequirement.skillId}/> : undefined},
+                {label: msg`Level Range`, value: task() ? `${task()!.levelRequirement.minLevel}–${task()!.levelRequirement.maxLevel}` : undefined},
+                {label: msg`XP Reward`, value: xpStr()},
             ]}
             rawData={task()}
             spacetimeTable={BitCraftTables.TravelerTaskDesc.spacetimeName}
@@ -53,7 +54,7 @@ export default function TravelerTaskDetail() {
             tabs={[
                 {
                     id: "traveler-task",
-                    label: "Traveler Task",
+                    label: msg`Traveler Task`,
                     content: () => (
                         <div class="space-y-4">
                             <Show when={task()}>

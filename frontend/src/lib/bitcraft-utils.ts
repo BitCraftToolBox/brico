@@ -100,7 +100,9 @@ export class Tiers {
     }
 }
 
-export const ASSET_CDN_BASE = import.meta.env.VITE_SPRITE_CDN_BASE ?? "https://cdn.brico.app";
+// `import.meta.env?.` (rather than `.`) so this module can also be imported outside Vite — the
+// scripts in scripts/i18n/ pull it in via tsx, where `import.meta.env` is undefined.
+export const ASSET_CDN_BASE = import.meta.env?.VITE_SPRITE_CDN_BASE ?? "https://cdn.brico.app";
 
 export function getAssetURL(path: string, quantity?: number) {
     if (!path) {

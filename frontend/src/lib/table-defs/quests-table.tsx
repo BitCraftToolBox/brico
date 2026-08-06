@@ -1,3 +1,5 @@
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {CompletionCondition} from "~/bindings/src/completion_condition_type";
 import {ItemStackCompletionCondition} from "~/bindings/src/item_stack_completion_condition_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
@@ -7,6 +9,7 @@ import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
 import {QuestRequirement} from "~/bindings/src/quest_requirement_type";
 import {QuestReward} from "~/bindings/src/quest_reward_type";
 import {AchievementLink, CollectibleLinkById, ItemStackLink, KnowledgeLinkById, LinkedList, QuestChainLinkById, SkillLinkById,} from "~/lib/game-links";
+import {gameText, Label} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {boolColumn, boolFilter, headerColumn, rangeFilter, rowActions} from "~/lib/table-utils/column-builders";
@@ -15,17 +18,17 @@ import {fixFloat} from "~/lib/utils";
 /** Union of all quest requirement/reward/condition entry types. */
 export type QuestEntry = QuestRequirement | QuestReward | CompletionCondition;
 
-/** Human-readable label for a requirement/reward/condition tag. */
-export function reqOrRewardTagLabel(tag: string): string {
+/** Human-readable label for a requirement/reward/condition tag. Resolve with `useLabel()`. */
+export function reqOrRewardTagLabel(tag: string): Label | string {
     switch (tag) {
-        case "QuestChain":        return "Quest Chain";
-        case "Achievement":       return "Achievement";
-        case "Collectible":       return "Collectible";
-        case "Level":             return "Level";
-        case "ItemStack":         return "Item";
-        case "SecondaryKnowledge":return "Knowledge";
-        case "Experience":        return "Experience";
-        case "EquippedItem":      return "Equipped Item";
+        case "QuestChain":        return msg`Quest Chain`;
+        case "Achievement":       return msg`Achievement`;
+        case "Collectible":       return msg`Collectible`;
+        case "Level":             return msg`Level`;
+        case "ItemStack":         return msg`Item`;
+        case "SecondaryKnowledge":return msg`Knowledge`;
+        case "Experience":        return msg`Experience`;
+        case "EquippedItem":      return msg`Equipped Item`;
         default:                  return tag;
     }
 }
@@ -86,7 +89,7 @@ export function ReqOrRewardLink(props: { qr: QuestEntry }) {
             const lr = props.qr.value as LevelRequirement;
             return (
                 <span class="inline-flex items-center gap-1">
-                    <SkillLinkById skillId={lr.skillId}/> <span class="text-muted-foreground">Lv. {lr.level}</span>
+                    <SkillLinkById skillId={lr.skillId}/> <span class="text-muted-foreground"><Trans>Lvl. {lr.level}</Trans></span>
                 </span>
             );
         }
@@ -94,7 +97,7 @@ export function ReqOrRewardLink(props: { qr: QuestEntry }) {
             const expStack = props.qr.value as { skillId: number; quantity: number };
             return (
                 <span class="inline-flex items-center gap-1">
-                    <SkillLinkById skillId={expStack.skillId}/><span class="text-muted-foreground">XP: {fixFloat(expStack.quantity)}</span>
+                    <SkillLinkById skillId={expStack.skillId}/><span class="text-muted-foreground"><Trans>EXP: {fixFloat(expStack.quantity)}</Trans></span>
                 </span>
             );
         }
@@ -119,9 +122,11 @@ export function ReqOrRewardLink(props: { qr: QuestEntry }) {
 function reqOrRewardColumn(
     id: string,
     getEntries: (row: QuestChainDesc) => (QuestRequirement | QuestReward)[],
+    label: Label,
 ) {
     return {
         id,
+        meta: {label},
         accessorFn: (row: QuestChainDesc) =>
             getEntries(row)
                 .filter(r => r.tag !== "PaddingNone")
@@ -146,21 +151,22 @@ export const QuestChainDefs: BitCraftToDataDef<QuestChainDesc> = {
         }),
         {
             id: "Stages",
+            meta: {label: msg`Stages`},
             accessorFn: row => row.stages?.length ?? 0,
             filterFn: "inNumberRange",
         },
-        reqOrRewardColumn("Requirements", row => row.requirements ?? []),
-        reqOrRewardColumn("Rewards", row => [...(row.rewards ?? []), ...(row.implicitRewards ?? [])]),
-        boolColumn<QuestChainDesc, boolean>("Is Hint", {accessorKey: "isHint"}),
-        boolColumn<QuestChainDesc, boolean>("Unstartable", {accessorKey: "unstartable"}),
-        boolColumn<QuestChainDesc, boolean>("Is Secret", {accessorKey: "isSecret"}),
+        reqOrRewardColumn("Requirements", row => row.requirements ?? [], gameText(msg`Requires`, "Requires ")),
+        reqOrRewardColumn("Rewards", row => [...(row.rewards ?? []), ...(row.implicitRewards ?? [])], gameText(msg`Rewards`)),
+        boolColumn<QuestChainDesc, boolean>("Is Hint", {accessorKey: "isHint"}, msg`Is Hint`),
+        boolColumn<QuestChainDesc, boolean>("Unstartable", {accessorKey: "unstartable"}, msg`Unstartable`),
+        boolColumn<QuestChainDesc, boolean>("Is Secret", {accessorKey: "isSecret"}, gameText(msg`Secret`)),
         rowActions(),
     ],
     facetedFilters: [
-        rangeFilter("Stages"),
-        boolFilter("Is Hint"),
-        boolFilter("Unstartable"),
-        boolFilter("Is Secret"),
+        rangeFilter("Stages", msg`Stages`),
+        boolFilter("Is Hint", msg`Is Hint`),
+        boolFilter("Unstartable", msg`Unstartable`),
+        boolFilter("Is Secret", gameText(msg`Secret`)),
     ],
     searchColumns: ["Name", "Requirements", "Rewards"],
 };

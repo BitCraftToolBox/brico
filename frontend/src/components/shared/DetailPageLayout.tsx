@@ -7,6 +7,7 @@
  * 3. Relationship Tabs: Each tab renders a mini table of related objects
  */
 
+import {Trans} from "@lingui/solid/macro";
 import {useSearchParams} from "@solidjs/router";
 import {
     TbOutlineClipboardCheck as IconClipboardCheck,
@@ -23,24 +24,35 @@ import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardHeader} from "~/components/ui/card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
 import {Rarities} from "~/lib/bitcraft-utils";
-import {detailMetaDescription, metaKeywords} from "~/lib/og-meta";
+import {sourceRow} from "~/lib/data-translation";
+import {breadcrumb} from "~/lib/game-links";
+import {rarityLabel} from "~/lib/game-strings";
+import {type Label, useLabel} from "~/lib/labels";
+import {BITCRAFT_TITLE_SUFFIX, detailMetaDescription, metaKeywords} from "~/lib/og-meta";
+import {BreadcrumbJsonLd, ItemPageJsonLd, type JsonLdProperty} from "~/lib/structured-data";
 import {cn} from "~/lib/utils";
 
 // ─── Types ──────────────────────────────────────────────────────
 
 export interface DetailProperty {
-    label: string | (() => JSX.Element);
+    /** A `Label` (see `~/lib/labels`), a plain string, or arbitrary markup. */
+    label: Label | string | (() => JSX.Element);
     value: string | number | boolean | undefined | null | (() => JSX.Element);
 }
 
 export interface DetailGroup {
-    heading?: string | (() => JSX.Element);
+    heading?: Label | string | (() => JSX.Element);
     properties: DetailProperty[];
 }
 
 export interface RelationshipTab {
     id: string;
-    label: string;
+    /**
+     * A `Label` — preferred, because tabs are built by plain factory functions outside any
+     * component, so the text has to be resolved at render time rather than baked in — or a plain
+     * string for call sites not yet migrated.
+     */
+    label: Label | string;
     showWhenEmpty?: boolean;
     count?: number;
     content: () => JSX.Element;
@@ -49,8 +61,16 @@ export interface RelationshipTab {
 export interface DetailPageProps {
     /** Page title (shown in browser tab / MainLayout) */
     title: string;
-    /** Shown before the title in the navbar */
-    breadcrumb?: JSX.Element;
+    /**
+     * Href of the list page this object belongs to (e.g. `"/database/item"`). Single source for both
+     * the navbar breadcrumb and the `BreadcrumbList` JSON-LD trail, so the two can't drift.
+     */
+    breadcrumbHref?: string;
+    /**
+     * Override for the breadcrumb's page-level wording — a singular noun for a detail page, or an
+     * already-resolved display string. See `breadcrumb()` in ~/lib/game-links.
+     */
+    breadcrumbTitle?: Label | string;
     /** Whether the primary data is still loading */
     loading?: boolean;
     /** Icon element */
@@ -73,6 +93,8 @@ export interface DetailPageProps {
     metaKind?: string;
     /** OG/Twitter thumbnail (absolute or root-relative). Defaults to the branded thumbnail. */
     metaImage?: string;
+    /** Tab to try to open first - tries details first if unset **/
+    defaultTab?: string;
     /**
      * Detailed info — either a flat list of properties (rendered as one group)
      * or an array of DetailGroup with optional subheadings.
@@ -94,6 +116,11 @@ export interface DetailPageProps {
     tabs?: RelationshipTab[];
     /** Fallback when entity not found */
     notFound?: string;
+    /**
+     * Canonical URL to declare instead of this page's own — see `MainLayout`. Also suppresses the
+     * `ItemPage` JSON-LD, which would otherwise claim this URL as an entity page.
+     */
+    canonicalOverride?: string;
 }
 
 // ─── Helpers ────────────────────────────────────────────────────
@@ -117,33 +144,36 @@ function visibleProps(props: DetailProperty[]): DetailProperty[] {
 
 // ─── Property Grid ──────────────────────────────────────────────
 
-const PropertyGrid: Component<{ properties: DetailProperty[] }> = (props) => (
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-2 text-sm">
-        <For each={visibleProps(props.properties)}>
-            {(prop) => (
-                <div class="flex flex-col">
-                    <span class="text-muted-foreground text-xs">
-                        {typeof prop.label === "function" ? (prop.label as () => JSX.Element)() : prop.label}
-                    </span>
-                    <span class="font-medium">
-                        {typeof prop.value === "boolean"
-                            ? (prop.value ? "Yes" : "No")
-                            : typeof prop.value === "function"
-                                ? (prop.value as () => JSX.Element)()
-                                : prop.value}
-                    </span>
-                </div>
-            )}
-        </For>
-    </div>
-);
+const PropertyGrid: Component<{ properties: DetailProperty[] }> = (props) => {
+    const label = useLabel();
+    return (
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-2 text-sm">
+            <For each={visibleProps(props.properties)}>
+                {(prop) => (
+                    <div class="flex flex-col">
+                        <span class="text-muted-foreground text-xs">
+                            {typeof prop.label === "function" ? (prop.label as () => JSX.Element)() : label(prop.label)}
+                        </span>
+                        <span class="font-medium">
+                            {typeof prop.value === "boolean"
+                                ? (prop.value ? <Trans>Yes</Trans> : <Trans>No</Trans>)
+                                : typeof prop.value === "function"
+                                    ? (prop.value as () => JSX.Element)()
+                                    : prop.value}
+                        </span>
+                    </div>
+                )}
+            </For>
+        </div>
+    );
+};
 
 // ─── Pseudo-Tab Link ────────────────────────────────────────────
 
 type InfoTab = "details" | "summary" | "raw" | string;
 
 const PseudoTabLink: Component<{
-    label: string;
+    label: string | JSX.Element;
     tab: InfoTab;
     active: InfoTab;
     onClick: (tab: InfoTab) => void;
@@ -178,8 +208,8 @@ const CopyButton: Component<{
 
     return (
         <Button variant="outline" size="sm" onClick={copyContent}>
-            <Show when={contentCopied()} fallback={props.copyElement || <><IconClipboardCopy class="mr-1"/> Copy JSON</>}>
-                {props.copiedElement || <><IconClipboardCheck class="mr-1"/> Copied!</>}
+            <Show when={contentCopied()} fallback={props.copyElement || <><IconClipboardCopy class="mr-1"/> <Trans>Copy JSON</Trans></>}>
+                {props.copiedElement || <><IconClipboardCheck class="mr-1"/> <Trans>Copied!</Trans></>}
             </Show>
         </Button>
     );
@@ -189,6 +219,14 @@ const CopyButton: Component<{
 
 export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     const [searchParams, setSearchParams] = useSearchParams();
+    const tabLabel = useLabel();
+
+    /**
+     * The Raw Data tab shows the *untranslated* row — it is raw. `sourceRow()` returns the original
+     * English row for anything the data layer rewrote, and the row itself when nothing matched, so
+     * callers can keep passing whatever they already render from.
+     */
+    const rawData = () => sourceRow(props.rawData);
 
     const availableTabs = () => props.tabs?.filter(t => t.count === undefined || t.count > 0) ?? [];
     const disabledTabs = () => props.tabs?.filter(t => t.count !== undefined && t.count === 0 && (t.showWhenEmpty ?? true)) ?? [];
@@ -204,7 +242,30 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     const hasDetails = () => groups().some(g => visibleProps(g.properties).length > 0);
     const hasInfoSection = () => hasDetails() || props.summaryContent || props.rawData || props.infoTabs;
 
-    const [infoTab, setInfoTabRaw] = createSignal<InfoTab>("summary");
+    /**
+     * The property grid as plain `name`/`value` pairs for JSON-LD. The grid stacks its label above
+     * its value with no separator, which looks right but flattens to garbage for a crawler reading
+     * visible text ("Occupants4. Allow HuntingNo."), so hand over the pairs directly instead of
+     * distorting the layout. Function-valued labels and values are markup — links, tooltips, icon
+     * rows — with no meaningful plain-text form, so they're skipped rather than stringified.
+     */
+    const jsonLdProperties = (): JsonLdProperty[] => {
+        const out: JsonLdProperty[] = [];
+        if (props.tier !== undefined) out.push({name: "Tier", value: props.tier});
+        if (props.rarity) out.push({name: "Rarity", value: props.rarity});
+        // "Category", not "Type": several grids already have a "Type" row of their own (weapon type,
+        // tool type), and two same-named PropertyValues in one list is ambiguous.
+        if (props.tag) out.push({name: "Category", value: props.tag});
+        for (const group of groups()) {
+            for (const prop of visibleProps(group.properties)) {
+                if (typeof prop.label === "function" || typeof prop.value === "function") continue;
+                out.push({name: tabLabel(prop.label), value: prop.value!});
+            }
+        }
+        return out;
+    };
+
+    const [infoTab, setInfoTabRaw] = createSignal<InfoTab>(props.defaultTab ?? "details");
     const setInfoTab = (info: string) => {
         setInfoTabRaw(info);
         setSearchParams({info}, {replace: true});
@@ -231,8 +292,10 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                 return; // skip the default-details logic below
             }
         }
-        // Default: prefer Details when there is no Summary
-        if (hasDetails() && !props.summaryContent) {
+        // Default: find a tab with content
+        if (!hasDetails() && props.summaryContent) {
+            setInfoTab("summary");
+        } else if (!props.summaryContent && hasDetails()) {
             setInfoTab("details");
         }
     });
@@ -256,12 +319,27 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     });
 
     return (
+        <>
+        <BreadcrumbJsonLd href={props.breadcrumbHref} titleOverride={props.breadcrumbTitle} objectName={props.name}/>
+        {/* Skipped when the page canonicalizes elsewhere: asserting an `ItemPage` for a URL we've
+            just told crawlers isn't the canonical one would contradict the canonical tag. */}
+        <Show when={!props.canonicalOverride}>
+            <ItemPageJsonLd
+                name={props.name}
+                description={props.description}
+                image={props.metaImage}
+                properties={jsonLdProperties()}
+            />
+        </Show>
         <MainLayout
             title={props.title}
+            canonicalOverride={props.canonicalOverride}
+            titleSuffix={BITCRAFT_TITLE_SUFFIX}
+            ownHeading
             description={detailMetaDescription(metaArgs())}
             keywords={metaKeywords(metaArgs())}
             image={props.metaImage}
-            navTitle={<>{props.breadcrumb}{props.title}</>}
+            navTitle={props.breadcrumbHref ? breadcrumb(props.breadcrumbHref, props.breadcrumbTitle) : undefined}
         >
             <Show when={!props.loading} fallback={
                 <div class="flex items-center justify-center py-20">
@@ -279,8 +357,10 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                     <TierIcon tier={props.tier!}/>
                                 </Show>
                                 <Show when={props.rarity}>
+                                    {/* `rarity` stays the canonical tag — it drives the border color and is what
+                                        URLs/filters carry — so only the displayed text is translated. */}
                                     <span class={`text-sm font-medium px-2 py-0.5 rounded ${Rarities.getBorderColorClass({tag: props.rarity!} as any)} border`}>
-                                        {props.rarity}
+                                        {rarityLabel(props.rarity)}
                                     </span>
                                 </Show>
                             </h1>
@@ -299,14 +379,14 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                             <CardHeader class="pb-2">
                                 <div class="flex gap-4 items-center">
                                     <Show when={props.summaryContent}>
-                                        <PseudoTabLink label="Summary" tab="summary" active={infoTab()} onClick={setInfoTab}/>
+                                        <PseudoTabLink label={<Trans>Summary</Trans>} tab="summary" active={infoTab()} onClick={setInfoTab}/>
                                     </Show>
                                     <For each={props.infoTabs}>{tab =>
                                         <PseudoTabLink label={tab[0]} tab={tab[0]} active={infoTab()} onClick={setInfoTab}/>
                                     }</For>
-                                    <PseudoTabLink label="Details" tab="details" active={infoTab()} onClick={setInfoTab}/>
+                                    <PseudoTabLink label={<Trans>Details</Trans>} tab="details" active={infoTab()} onClick={setInfoTab}/>
                                     <Show when={props.rawData}>
-                                        <PseudoTabLink label="Raw Data" tab="raw" active={infoTab()} onClick={setInfoTab}/>
+                                        <PseudoTabLink label={<Trans>Raw Data</Trans>} tab="raw" active={infoTab()} onClick={setInfoTab}/>
                                     </Show>
                                 </div>
                             </CardHeader>
@@ -332,7 +412,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                                             <h3 class="text-sm font-semibold text-muted-foreground mb-2 border-b pb-1">
                                                                 {typeof group.heading === "function"
                                                                     ? (group.heading as () => JSX.Element)()
-                                                                    : group.heading}
+                                                                    : tabLabel(group.heading!)}
                                                             </h3>
                                                         </Show>
                                                         <PropertyGrid properties={group.properties}/>
@@ -343,23 +423,23 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                     </div>
                                 </Show>
                                 {/* Raw Data tab */}
-                                <Show when={infoTab() === "raw" && props.rawData}>
+                                <Show when={infoTab() === "raw" && rawData()}>
                                     <div class="flex flex-col gap-3">
                                         <div class="flex gap-2 items-center flex-wrap">
                                             <CopyButton
-                                                content={JSON.stringify(props.rawData, null, 2)}
-                                                copyElement={<><IconClipboardText/> Copy JSON</>}
+                                                content={JSON.stringify(rawData(), null, 2)}
+                                                copyElement={<><IconClipboardText/> <Trans>Copy JSON</Trans></>}
                                             />
                                             <Show when={props.objectId !== undefined}>
                                                 <CopyButton
                                                     content={String(props.objectId)}
-                                                    copyElement={<><IconClipboardCopy/> Copy ID</>}
+                                                    copyElement={<><IconClipboardCopy/> <Trans>Copy ID</Trans></>}
                                                 />
                                             </Show>
                                             <Show when={props.chatLink}>{s =>
                                                 <CopyButton
                                                     content={s()}
-                                                    copyElement={<><FontIcon codepoint="FFE0" class="mr-1"/> Copy Chat Link</>}
+                                                    copyElement={<><FontIcon codepoint="FFE0" class="mr-1"/> <Trans>Copy Chat Link</Trans></>}
                                                 />
                                             }</Show>
                                             <Show when={props.spacetimeTable && props.objectId !== undefined}>
@@ -368,12 +448,12 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                                     target="_blank"
                                                     class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
                                                 >
-                                                    <IconExternal/> Browse raw data on 🥣 cereal
+                                                    <IconExternal/> <Trans>Browse raw data on 🥣 cereal</Trans>
                                                 </a>
                                             </Show>
                                         </div>
                                         <pre class="text-xs bg-muted/50 rounded p-3 overflow-auto max-h-[500px] whitespace-pre-wrap break-all">
-                                            {JSON.stringify(props.rawData, null, 2)}
+                                            {JSON.stringify(rawData(), null, 2)}
                                         </pre>
                                     </div>
                                 </Show>
@@ -391,7 +471,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                             <For each={availableTabs()}>
                                                 {(tab) => (
                                                     <TabsTrigger value={tab.id} class="text-sm items-baseline">
-                                                        {tab.label}
+                                                        {tabLabel(tab.label)}
                                                         <Show when={tab.count !== undefined}>
                                                             <span class="ml-1 text-xs text-muted-foreground">({tab.count})</span>
                                                         </Show>
@@ -405,7 +485,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                             <For each={disabledTabs()}>
                                                 {(tab) => (
                                                     <TabsTrigger value={tab.id} disabled class="text-sm opacity-50">
-                                                        {tab.label} (0)
+                                                        {tabLabel(tab.label)} (0)
                                                     </TabsTrigger>
                                                 )}
                                             </For>
@@ -425,13 +505,14 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                 </div>
             </Show>
         </MainLayout>
+        </>
     );
 };
 
 // ─── Helper: Simple Relationship Table ──────────────────────────
 
 export interface RelTableColumn<T> {
-    header: string;
+    header: Label | string;
     cell: (row: T) => JSX.Element;
     class?: string;
 }
@@ -443,6 +524,7 @@ interface RelTableProps<T> {
 }
 
 export function RelTable<T>(props: RelTableProps<T>) {
+    const label = useLabel();
     return (
         <div class="overflow-auto max-h-[90svh] rounded border">
             <table class="w-full text-sm">
@@ -451,7 +533,7 @@ export function RelTable<T>(props: RelTableProps<T>) {
                     <For each={props.columns}>
                         {(col) => (
                             <th class={cn("text-left px-3 py-2 font-medium text-muted-foreground", col.class)}>
-                                {col.header}
+                                {label(col.header)}
                             </th>
                         )}
                     </For>
@@ -460,7 +542,7 @@ export function RelTable<T>(props: RelTableProps<T>) {
                 <tbody>
                 <For each={props.data} fallback={
                     <tr>
-                        <td colspan={props.columns.length} class="text-center py-4 text-muted-foreground">No data</td>
+                        <td colspan={props.columns.length} class="text-center py-4 text-muted-foreground"><Trans>No data</Trans></td>
                     </tr>
                 }>
                     {(row) => (

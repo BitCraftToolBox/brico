@@ -5,19 +5,19 @@
 
 import {useNavigate} from "@solidjs/router";
 import {Component} from "solid-js";
-import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
 import {BuffEffect} from "~/bindings/src/buff_effect_type";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
 import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {RelTable, RelTableColumn} from "~/components/shared/DetailPageLayout";
-import {AchievementLink, BuffLink, CombatActionLink, KnowledgeLink} from "~/lib/game-links";
-import {fixFloat, splitCamelCase} from "~/lib/utils";
+import {BuffLink, CombatActionLink, KnowledgeLink} from "~/lib/game-links";
+import {statLabel} from "~/lib/game-strings";
+import {fixFloat} from "~/lib/utils";
 
 // ─── Stat Entry Table ───────────────────────────────────────────
 
 const statColumns: RelTableColumn<CsvStatEntry>[] = [
-    {header: "Stat", cell: (row) => <span>{splitCamelCase(row.id?.tag ?? "")}</span>},
+    {header: "Stat", cell: (row) => <span>{statLabel(row.id?.tag)}</span>},
     {header: "Value", cell: (row) => <span>{fixFloat(row.value * (row.isPct ? 100 : 1))}{row.isPct ? "%" : ""}</span>},
 ];
 
@@ -49,22 +49,6 @@ const buffColumns: RelTableColumn<BuffEffectWithLabel>[] = [
 export const BuffTable: Component<{ data: BuffEffectWithLabel[] }> = (props) => (
     <RelTable<BuffEffectWithLabel> data={props.data} columns={buffColumns}/>
 );
-
-// ─── Achievement Table ──────────────────────────────────────────
-
-export const AchievementTable: Component<{ data: AchievementDesc[] }> = (props) => {
-    const navigate = useNavigate();
-    return (
-        <RelTable<AchievementDesc>
-            data={props.data}
-            columns={[
-                {header: "Achievement", cell: (row) => <AchievementLink id={row.id} name={row.name}/>},
-                {header: "Points", cell: (row) => <span>{row.pointsReward}</span>},
-            ]}
-            onRowClick={(row) => navigate(`/database/achievement/${row.id}`)}
-        />
-    );
-};
 
 // ─── Combat Action Table ────────────────────────────────────────
 

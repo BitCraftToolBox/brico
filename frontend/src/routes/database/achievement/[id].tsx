@@ -1,17 +1,18 @@
-import {useNavigate, useParams} from "@solidjs/router";
+import {msg} from "@lingui/core/macro";
+import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {AchievementTable} from "~/components/shared/RelTablePresets";
-import {breadcrumb, CollectibleLink} from "~/lib/game-links";
+import {CollectibleLink} from "~/lib/game-links";
+import {collectibleTypeLabel} from "~/lib/game-strings";
+import {gameText} from "~/lib/labels";
 import {ogImageForPage} from "~/lib/og-meta";
-import {achievementPrereqs, collectibleRewards, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
+import {achievementRequirements, collectibleRewards, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
+import {achievementRequirementsTab, questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
 
 export default function AchievementDetail() {
     const params = useParams();
-    const navigate = useNavigate();
     const isLoading = useTablesLoading(BitCraftTables.AchievementDesc);
     const index = BitCraftTables.AchievementDesc.indexedBy("id");
 
@@ -21,10 +22,10 @@ export default function AchievementDetail() {
         return index().get(id);
     });
 
-    const prereqs = createMemo(() => {
+    const requirements = createMemo(() => {
         const a = achievement();
-        if (!a?.requisites?.length) return [];
-        return achievementPrereqs(a.requisites);
+        if (!a) return [];
+        return achievementRequirements(a);
     });
 
     const rewards = createMemo(() => {
@@ -50,28 +51,27 @@ export default function AchievementDetail() {
     return (
         <DetailPageLayout
             title={achievement()?.name ?? `Achievement #${params.id}`}
-            breadcrumb={breadcrumb("/database/achievement")}
+            breadcrumbHref="/database/achievement"
             loading={isLoading() && !achievement()}
             name={achievement()?.name ?? "Achievement not found"}
             description={achievement()?.description}
-            tag={`${achievement()?.pointsReward} points`}
             metaKind="achievement"
             metaImage={ogImageForPage("Achievements")}
             rawData={achievement()}
             spacetimeTable={BitCraftTables.AchievementDesc.spacetimeName}
             objectId={achievement()?.id}
+            details={[{label: gameText(msg`Achievement Points`), value: achievement()?.pointsReward}]}
             tabs={[
-                {id: "prereqs", label: "Prerequisites", count: prereqs().length, content: () => <AchievementTable data={prereqs()}/>},
+                achievementRequirementsTab(requirements()),
                 {
-                    id: "rewards", label: "Rewards", count: rewards().length,
+                    id: "rewards", label: gameText(msg`Rewards`), count: rewards().length,
                     content: () => (
                         <RelTable<CollectibleDesc>
                             data={rewards()}
                             columns={[
-                                {header: "Collectible", cell: (row) => <CollectibleLink id={row.id} name={row.name}/>},
-                                {header: "Type", cell: (row) => <span>{row.collectibleType?.tag}</span>},
+                                {header: gameText(msg`Collectible`), cell: (row) => <CollectibleLink id={row.id} name={row.name}/>},
+                                {header: msg`Type`, cell: (row) => <span>{collectibleTypeLabel(row.collectibleType.tag)}</span>},
                             ]}
-                            onRowClick={(row) => navigate(`/database/collectible/${row.id}`)}
                         />
                     ),
                 },

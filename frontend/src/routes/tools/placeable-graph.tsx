@@ -8,6 +8,7 @@
  * Graph state: SVG pan/zoom graph via BFS from selected placement.
  */
 
+import {Trans} from "@lingui/solid/macro";
 import {useNavigate, useSearchParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
@@ -15,8 +16,10 @@ import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_ty
 import MainLayout from "~/components/MainLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {buildPlaceableGraph, PlaceableGraph} from "~/components/shared/PlaceableGraph";
-import {breadcrumb} from "~/lib/game-links";
+import {breadcrumbCurrent} from "~/lib/game-links";
+import {useLabel} from "~/lib/labels";
 import {getPlaceableName} from "~/lib/placeables";
+import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function PlaceableGraphTool() {
@@ -76,37 +79,36 @@ export default function PlaceableGraphTool() {
         );
     }
 
+    const label = useLabel();
+    const title = () => label(PAGE_TITLE_LABELS["/tools/placeable-graph"]);
+
     return (
-        <MainLayout title="Placeable Graph" description="Interactive BitCraft placeable lifecycle graph — trace placement, interaction, and conversion chains on Brico.app." navTitle={
-            <>
-                {breadcrumb("/database/placeable", "Placeables")}
-                <span>Graph</span>
-                <Show when={selectedPlaceableName()}>{(n) => {
-                    return <>
-                        <span class="mx-1.5">{">"}</span>
-                        <span>{n()}</span>
-                    </>;
-                }}</Show>
-            </>
-        }>
+        <MainLayout
+            title={title()}
+            ownHeading
+            description="Interactive BitCraft placeable lifecycle graph — trace placement, interaction, and conversion chains on Brico.app."
+            navTitle={breadcrumbCurrent("/tools/placeable-graph")}
+        >
             <Show when={!isLoading()} fallback={
                 <div class="flex items-center justify-center py-20">
                     <Spinner type={SpinnerType.ballTriangle} class="mx-auto"/>
                 </div>
             }>
                 <div class="flex flex-col gap-4 px-4 pb-6 h-full">
+                    {/* Outside the Show below so the page always has exactly one <h1> — the graph
+                        branch renders only an <h2> for the selected placeable's name. */}
+                    <div class="flex justify-center">
+                        <h1 class="text-xl font-bold"><Trans>Placeable Graph</Trans></h1>
+                    </div>
                     <Show when={graphData()} fallback={
                         /* Empty state: list of placements */
                         <div class="max-w-2xl mx-auto w-full">
-                            <div class="flex justify-center pb-4">
-                                <h1 class="text-xl font-bold">Placeable Lifecycle Graph</h1>
-                            </div>
                             <p class="text-sm text-muted-foreground mb-4">
-                                Select a placement to visualize its lifecycle graph.
+                                <Trans>Select a placement to visualize its lifecycle graph.</Trans>
                             </p>
                             <div class="border rounded-md max-h-[70vh] overflow-auto">
                                 <For each={placements()} fallback={
-                                    <div class="text-center py-8 text-muted-foreground text-sm">No placements found</div>
+                                    <div class="text-center py-8 text-muted-foreground text-sm"><Trans>No placements found</Trans></div>
                                 }>
                                     {(p) => (
                                         <button
@@ -134,7 +136,7 @@ export default function PlaceableGraphTool() {
                                         class="text-sm text-muted-foreground hover:text-foreground transition-colors"
                                         onClick={() => setSearchParams({placement: undefined})}
                                     >
-                                        ← Back to list
+                                        <Trans>← Back to list</Trans>
                                     </button>
                                 </div>
                                 <PlaceableGraph

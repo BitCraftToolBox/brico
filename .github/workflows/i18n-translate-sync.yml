@@ -1,8 +1,157 @@
-name: i18n-translate-sync.yml
-on:
-  workflow_dispatch:
+name: i18n Translate Branch Sync
 
+# Keeps `translate` (translate.brico.app — Crowdin's in-context/JIPT review build, see
+# frontend/app.config.ts) mirroring `preview`, and round-trips UI strings with Crowdin:
+#
+#   sync-sources      preview -> re-extract (backstop) -> upload sources to Crowdin
+#                     -> force-push to translate
+#   sync-translations download translations from Crowdin -> backfill any new gameText()
+#                     labels from the game's own CSVs -> upload those back to Crowdin
+#                     -> PR the result against preview
+#
+# Crowdin's own GitHub integration is deliberately NOT used for this — it re-normalizes every
+# locale file on each sync regardless of whether translation content actually changed, producing
+# one spam commit per file. This workflow does its own content-aware diffing
+# (frontend/scripts/i18n/diff-check.mjs) so a no-op sync opens no PR at all.
+#
+# `preview` is the source of truth for both published and upcoming strings — nothing reaches
+# `main` without going through `preview` first (rare hotfixes excepted, and those get
+# back-merged), so there's no separate "release" event to track: tracking `preview` alone lets
+# translators work ahead of what's live.
+
+on:
+  schedule:
+    - cron: "0 4 * * 5" # weekly
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  empty:
+  sync-sources:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview
+        uses: actions/checkout@v4
+        with:
+          ref: preview
+          token: ${{ secrets.GH_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # Backstop only — i18n-catalog-check.yml should already keep `preview` clean. Committed
+      # locally (never pushed back to `preview`) so `translate` never ships a stale catalog even
+      # if something slipped through.
+      - name: Re-extract catalog (backstop)
+        working-directory: frontend
+        run: npm run i18n:extract
+
+      - name: Commit backstop extraction if needed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/src/locales
+          git diff --cached --quiet || git commit -m "chore: refresh i18n catalog (translate-sync backstop)"
+
+      - name: Upload sources to Crowdin
+        uses: crowdin/github-action@v3.0.0-next.2
+        with:
+          upload_sources: true
+          upload_translations: false
+          download_translations: false
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
+
+      - name: Force-push to translate branch
+        run: git push --force origin HEAD:translate
+
+  sync-translations:
+    needs: sync-sources
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview
+        uses: actions/checkout@v4
+        with:
+          ref: preview
+          token: ${{ secrets.GH_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Download translations from Crowdin
+        uses: crowdin/github-action@v3.0.0-next.2
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          push_translations: false
+          create_pull_request: false
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
+
+      # Fills any *empty* gameText() msgstr from the game's own published CSVs — including labels
+      # added since the last sync. Never touches a msgstr the download step just populated.
+      - name: Backfill game-text translations
+        working-directory: frontend
+        run: node scripts/i18n/backfill-game-translations.mjs
+
+      # Push newly-filled game-text translations back up so Crowdin has them too (pre-filled for
+      # translators to review, and so next week's download round-trips them). Safe to run right
+      # after the download above: anything still empty locally was just confirmed empty on
+      # Crowdin, so this can't clobber a translator's more recent edit.
+      - name: Upload backfilled translations to Crowdin
+        uses: crowdin/github-action@v3.0.0-next.2
+        with:
+          upload_sources: false
+          upload_translations: true
+          download_translations: false
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
+
+      # Crowdin re-writes PO header metadata (PO-Revision-Date, X-Generator, ...) on every
+      # export regardless of real content changes; diff-check.mjs ignores that noise so a
+      # no-op week doesn't open an empty PR.
+      - name: Check for real translation changes
+        id: check
+        working-directory: frontend
+        run: echo "changed=$(node scripts/i18n/diff-check.mjs)" >> "$GITHUB_OUTPUT"
+
+      - name: Commit to translations branch
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B chore/crowdin-translations
+          git add frontend/src/locales
+          git commit -m "chore: sync translations from Crowdin"
+          git push --force origin chore/crowdin-translations
+
+      - name: Create pull request
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base preview \
+            --head chore/crowdin-translations \
+            --title "Sync translations from Crowdin" \
+            --body "Downloaded translations from Crowdin and backfilled any new \`gameText()\` labels from the game's own CSVs (pushed back to Crowdin too).
+
+          **Automated by GitHub Actions**" || echo "Pull Request already exists"

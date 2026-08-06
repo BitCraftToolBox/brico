@@ -1,9 +1,11 @@
+import {Trans} from "@lingui/solid/macro";
 import {Column, Table} from "@tanstack/solid-table"
 
 import {TbOutlineEye as IconEye, TbOutlineEyeClosed as IconEyeOff} from "solid-icons/tb"
 import {For, Show} from "solid-js"
 import {Button} from "~/components/ui/button"
 import {DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from "~/components/ui/dropdown-menu"
+import {useLabel} from "~/lib/labels";
 import {useSettings} from "~/lib/settings";
 
 type TableViewOptionsProps<TData> = {
@@ -14,6 +16,7 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
     // @ts-ignore this should be added via module augmentation but that breaks things somehow
     const name: string | undefined = props.table.options.meta?.["name"];
 
+    const label = useLabel();
     const {tableHiddenColumns, setTableHiddenColumns} = useSettings();
 
     /** Persist a single column visibility change. */
@@ -38,14 +41,14 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
         } else {
             const allIds = props.table
                 .getAllColumns()
-                .filter(c => typeof c.accessorFn !== "undefined" && c.getCanHide())
+                .filter(c => typeof c.accessorFn !== "undefined" && c.getCanHide() && c.id !== "pk")
                 .map(c => c.id);
             setTableHiddenColumns({...tableHiddenColumns(), [name]: allIds});
         }
     };
 
     const toggleAllVisible = (visible: boolean) => {
-        props.table.getAllColumns().forEach(c => c.toggleVisibility(visible));
+        props.table.getAllColumns().forEach(c => c.toggleVisibility(c.id !== "pk" && visible));
         persistAll(visible);
     };
 
@@ -62,32 +65,32 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
                 size="sm"
                 class="h-8 w-auto px-2 sm:px-3"
             >
-                <Show when={props.table.getIsAllColumnsVisible()} fallback={<IconEyeOff/>}><IconEye/></Show>
-                View
+                <Show when={props.table.getAllLeafColumns().every(c => c.id === "pk" || c.getIsVisible())} fallback={<IconEyeOff/>}><IconEye/></Show>
+                <Trans>View</Trans>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuLabel class={"text-center"}>Toggle columns</DropdownMenuLabel>
+                <DropdownMenuLabel class={"text-center"}><Trans>Toggle columns</Trans></DropdownMenuLabel>
                 <DropdownMenuSeparator/>
                 <div class={"flex gap-1"}>
                     <Button variant="ghost" class={"text-xs"} onclick={() => toggleAllVisible(true)}>
-                        Show All
+                        <Trans>Show All</Trans>
                     </Button>
                     <Button variant="ghost" class={"text-xs"} onclick={() => toggleAllVisible(false)}>
-                        Hide All
+                        <Trans>Hide All</Trans>
                     </Button>
                 </div>
                 <DropdownMenuSeparator/>
                 <For
                     each={props.table
                         .getAllColumns()
-                        .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide())}
+                        .filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide() && column.id !== "pk")}
                 >
                     {(column) => (
                         <DropdownMenuCheckboxItem
                             checked={column.getIsVisible()}
                             onChange={(value) => toggleVisibility(column, value)}
                         >
-                            {column.id}
+                            {label(column.columnDef.meta?.label ?? column.id)}
                         </DropdownMenuCheckboxItem>
                     )}
                 </For>

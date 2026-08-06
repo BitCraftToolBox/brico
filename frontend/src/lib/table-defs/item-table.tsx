@@ -1,3 +1,5 @@
+import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
 import {ItemDesc} from "~/bindings/src/item_desc_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
@@ -66,28 +68,29 @@ export const ItemDescDefs: BitCraftToDataDef<ItemDesc> = {
         statsColumn<ItemDesc>("Stats", {accessorFn: getConsolidatedItemStats}),
         {
             id: "Volume",
+            meta: {label: msg`Volume`},
             accessorKey: "volume",
             filterFn: 'inNumberRange',
             cell: (props) => (
                 <Tooltip openOnTouchStart>
                     <TooltipTrigger>{props.row.original.volume}</TooltipTrigger>
                     <TooltipContent class="max-w-[90svw]">
-                        Inventory stack: {6000 / props.row.original.volume}
+                        <Trans>Inventory stack: {6000 / props.row.original.volume}</Trans>
                     </TooltipContent>
                 </Tooltip>
             )
         },
         descriptionColumn(),
-        boolColumn("Is Item List", { accessorFn: i => i.itemListId !== 0 }),
+        boolColumn("Is Item List", { accessorFn: i => i.itemListId !== 0 }, msg`Is Item List`),
         rowActions(undefined, "item"),
     ],
     facetedFilters: [
         tagFilter(),
         tierFilter(),
         rarityFilter(),
-        statsFilter("Stats"),
-        rangeFilter("Volume"),
-        boolFilter("Is Item List")
+        statsFilter(),
+        rangeFilter("Volume", msg`Volume`),
+        boolFilter("Is Item List", msg`Is Item List`)
     ],
     searchColumns: ["Name", "Description"],
 }
