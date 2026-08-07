@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-03 21:57\n"
+"PO-Revision-Date: 2026-08-07 05:39\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -20,17 +20,17 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "You are now a developer!"
-msgstr ""
+msgstr "これで開発者になりました！"
 
 #: src/lib/table-defs/item-table.tsx
 #: src/routes/database/cargo/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Volume"
-msgstr ""
+msgstr "量"
 
 #: src/routes/settings.tsx
 msgid "Tree"
-msgstr ""
+msgstr "ツリー"
 
 #: src/lib/sidebar-items.ts
 msgid "Compendium"
@@ -38,7 +38,7 @@ msgstr "コンペンディウム"
 
 #: src/routes/database/building/[id].tsx
 msgid "Total Passive Slots"
-msgstr ""
+msgstr "パッシブスロットの合計"
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -47,11 +47,11 @@ msgstr "最大スタミナ"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Converted from"
-msgstr ""
+msgstr "変換元"
 
 #: src/lib/relations.ts
 msgid "{skillName} Task: {itemName}"
-msgstr ""
+msgstr "{skillName}タスク：{itemName}"
 
 #. placeholder {0}: esp.radiusMin
 #. placeholder {1}: esp.radiusMax
@@ -61,11 +61,11 @@ msgstr ""
 
 #: src/components/Nav.tsx
 msgid "Change language"
-msgstr ""
+msgstr "言語を変更"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Unspecified"
-msgstr ""
+msgstr "未指定"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Equivalent \"player inventory\" slots."
@@ -73,20 +73,20 @@ msgstr ""
 
 #: src/components/data-table/table-toolbar.tsx
 msgid "Search by {otherCols}, or {lastCol}..."
-msgstr ""
+msgstr "{otherCols} または {lastCol} で検索…"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Auto-cast"
-msgstr ""
+msgstr "自動適応"
 
 #. placeholder {0}: fixFloat(expStack.quantity)
 #: src/lib/table-defs/quests-table.tsx
 msgid "EXP: {0}"
-msgstr ""
+msgstr "経験値: {0}"
 
 #: src/components/app-sidebar.tsx
 msgid "Favorites can be set in the <0><1/> Settings</0>"
-msgstr ""
+msgstr "お気に入りは <0><1/> 設定</0> から登録できます"
 
 #: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-defs/buildings-table.tsx
@@ -98,15 +98,15 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Type"
-msgstr ""
+msgstr "タイプ"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "In Item Lists"
-msgstr ""
+msgstr "アイテムリスト"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Warn Time"
-msgstr ""
+msgstr "警告日時"
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Starting Stock"
@@ -116,73 +116,73 @@ msgstr ""
 #. placeholder {1}: hiddenColumnStats().tables
 #: src/routes/settings.tsx
 msgid "Un-hide {0, plural, one {# table column} other {# table columns}} across {1, plural, one {# table page} other {# table pages}}."
-msgstr ""
+msgstr "{0, plural, other {#個のテーブル列}}を{1, plural, other {#個のテーブルページ}}にわたって非表示解除します。"
 
 #: src/routes/settings.tsx
 msgid "TF2 Mode"
-msgstr ""
+msgstr "TF2 モード"
 
 #. placeholder {0}: props.loaded
 #. placeholder {1}: props.total
 #: src/components/AppLoadingScreen.tsx
 msgid "Loading game data… {0}/{1}"
-msgstr ""
+msgstr "ゲームデータを読み込んでいます… {0}/{1}"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Resource Depletion"
-msgstr ""
+msgstr "リソースの枯渇"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/placeable-graph.tsx
 msgid "Placeable Graph"
-msgstr ""
+msgstr "設置物のグラフ"
 
 #. placeholder {0}: recipe()?.difference ?? ""
 #: src/routes/database/terraforming/[id].tsx
 msgid "Terraform Elevation Difference {0}"
-msgstr ""
+msgstr "地形標高差 {0}"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
-msgstr ""
+msgstr "優先度"
 
 #. placeholder {0}: props.recipe.buildingDescriptionId
 #. placeholder {0}: props.recipe.consumedBuilding
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Building #{0}"
-msgstr ""
+msgstr "建物 #{0}"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "No construction recipe"
-msgstr ""
+msgstr "建設レシピなし"
 
 #: src/components/Nav.tsx
 #: src/routes/settings.tsx
 msgid "Light"
-msgstr ""
+msgstr "ライト"
 
 #: src/components/shared/DetailPageLayout.tsx
 #: src/lib/recipe-sources.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "No"
-msgstr ""
+msgstr "いいえ"
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Unlocks"
-msgstr ""
+msgstr "アンロック"
 
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "EXP"
-msgstr "EXP"
+msgstr "経験値"
 
 #: src/lib/recipe-sources.tsx
 msgid "Paving Tier:"
-msgstr ""
+msgstr "舗装ティア："
 
 #: src/routes/database/paving/[id].tsx
 msgid "Build Time"
-msgstr ""
+msgstr "ビルド時間"
 
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
@@ -194,41 +194,41 @@ msgstr "ステータス"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Night Deaggro Range"
-msgstr ""
+msgstr "夜間の敵対解除範囲"
 
 #: src/lib/table-defs/tools-table.tsx
 msgid "Tool Type"
-msgstr ""
+msgstr "ツールタイプ"
 
 #: src/routes/settings.tsx
 msgid "List"
-msgstr ""
+msgstr "リスト"
 
 #: src/routes/settings.tsx
 msgid "Hats"
-msgstr ""
+msgstr "帽子"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirement"
-msgstr ""
+msgstr "要件"
 
 #: src/components/Nav.tsx
 msgid "Toggle theme"
-msgstr ""
+msgstr "テーマを切り替える"
 
 #: src/routes/database/paving/[id].tsx
 msgid "Stat Effects"
-msgstr ""
+msgstr "ステータス効果"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Guaranteed drop on last hit of resource extraction"
-msgstr ""
+msgstr "資源採掘のラストヒットで確実にドロップします"
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Consumable In Combat"
-msgstr ""
+msgstr "戦闘中に消費可能"
 
 #: src/routes/database/item/[id].tsx
 msgid "Knowledge Scroll"
@@ -236,28 +236,28 @@ msgstr "知識の巻物"
 
 #: src/routes/settings.tsx
 msgid "Any manually applied column sort will override this."
-msgstr ""
+msgstr "手動で適用された列の並べ替え設定があれば、これが優先されます。"
 
 #: src/components/app-sidebar.tsx
 msgid "Alphabetical"
-msgstr ""
+msgstr "アルファベット順"
 
 #: src/components/data-table/table-toolbar.tsx
 msgid "Search by {otherCols} or {lastCol}..."
-msgstr ""
+msgstr "{otherCols} または {lastCol} で検索…"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Is Hint"
-msgstr ""
+msgstr "ヒント"
 
 #: src/routes/settings.tsx
 msgid "Interface language"
-msgstr ""
+msgstr "インタフェースの言語"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Single Contribution Only"
-msgstr ""
+msgstr "一人の貢献のみ"
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage"
@@ -272,58 +272,58 @@ msgstr "報酬"
 
 #: src/routes/settings.tsx
 msgid "Show items grouped by category (tree) or sorted alphabetically."
-msgstr ""
+msgstr "カテゴリ別にグループ化（ツリー表示）するか、アルファベット順に並べ替えて項目を表示します。"
 
 #: src/lib/table-defs/combat-table.tsx
 #: src/routes/database/combat/[id].tsx
 msgid "Player Ability"
-msgstr ""
+msgstr "プレイヤーアビリティ"
 
 #: src/routes/index.tsx
 msgid "Track World Event Timers"
-msgstr ""
+msgstr "世界のイベントタイマーを追跡する"
 
 #: src/lib/recipe-sources.tsx
 msgid "Level {level} {toolName}"
-msgstr ""
+msgstr "レベル {level} {toolName}"
 
 #: src/lib/table-defs/item-list-table.tsx
 msgid "Possible Items"
-msgstr ""
+msgstr "取得可能なアイテム"
 
 #: src/components/app-sidebar.tsx
 msgid "Grid view"
-msgstr ""
+msgstr "グリッド表示"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Item Stack Size"
-msgstr ""
+msgstr "アイテムスタックサイズ"
 
 #: src/lib/recipe-sources.tsx
 msgid "Effort:"
-msgstr ""
+msgstr "労力："
 
 #: src/components/app-sidebar.tsx
 msgid "List view"
-msgstr ""
+msgstr "一覧表示"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Threat"
-msgstr ""
+msgstr "脅威"
 
 #: src/lib/recipe-sources.tsx
 msgid "Blocking Knowledge:"
-msgstr ""
+msgstr "解放される知識："
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interact with this placeable"
-msgstr ""
+msgstr "この設置物にインタラクトする"
 
 #. placeholder {0}: f.level
 #: src/routes/database/building/[id].tsx
 msgid "{funcName} Lvl {0}"
-msgstr ""
+msgstr "{funcName} レベル{0}"
 
 #: src/lib/table-defs/collectible-table.tsx
 #: src/lib/table-defs/knowledge-table.tsx
@@ -331,11 +331,11 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 msgid "Auto Collect"
-msgstr ""
+msgstr "自動取得"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Step Height"
-msgstr ""
+msgstr "通過可能な段差"
 
 #: src/lib/relations.ts
 msgid "Task: {itemName}"
@@ -343,7 +343,7 @@ msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Spawn Priority"
-msgstr ""
+msgstr "スポーンの優先度"
 
 #: src/routes/database/building/[id].tsx
 msgid "Maintenance"
@@ -351,27 +351,27 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Default rows per page"
-msgstr ""
+msgstr "ページあたりの表示行数"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Can Enter Portals"
-msgstr ""
+msgstr "ポータルに入ることができる"
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/lib/table-defs/combat-table.tsx
 msgid "Range"
-msgstr "射程"
+msgstr "範囲"
 
 #: src/lib/table-defs/cargo-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Supplies"
-msgstr ""
+msgstr "サプライ"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/database/collectible/[id].tsx
 msgid "Deployables"
-msgstr "設置物"
+msgstr "展開物"
 
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/biome/[id].tsx
@@ -383,31 +383,31 @@ msgstr "名前"
 
 #: src/routes/settings.tsx
 msgid "Object ID"
-msgstr ""
+msgstr "オブジェクト ID"
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Always Offered"
-msgstr ""
+msgstr "常に提供される"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Flattenable"
-msgstr ""
+msgstr "フラット化可能"
 
 #: src/lib/sidebar-items.ts
 msgid "Toolbox"
-msgstr ""
+msgstr "ツールボックス"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Allow Aquatic Prospecting"
-msgstr ""
+msgstr "水中での探索を許可"
 
 #: src/routes/settings.tsx
 msgid "Tables"
-msgstr ""
+msgstr "テーブル"
 
 #: src/routes/settings.tsx
 msgid "Forced to the pseudolocale for Crowdin review."
-msgstr ""
+msgstr "Crowdinのレビューの都合で、疑似翻訳に固定されています。"
 
 #: src/routes/index.tsx
 msgid "Search items, buildings, creatures..."
@@ -415,15 +415,15 @@ msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Radius"
-msgstr ""
+msgstr "痕跡発見半径"
 
 #: src/routes/database/cargo/[id].tsx
 msgid "Not Pickupable"
-msgstr ""
+msgstr "取得不可"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Contribution Loot"
-msgstr ""
+msgstr "貢献度に応じた戦利品"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Explore"
@@ -454,20 +454,20 @@ msgstr "装備"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Placeable Placement"
-msgstr ""
+msgstr "設置"
 
 #: src/routes/settings.tsx
 msgid "Join the project on Crowdin and contribute by using <0>translate.brico.app</0>."
-msgstr ""
+msgstr "Crowdinでプロジェクトに参加し、<0>translate.brico.app</0>を利用して翻訳に協力してください。"
 
 #: src/routes/database/buff/[id].tsx
 msgid "If No, buff ticks down while offline."
-msgstr ""
+msgstr "いいえの場合、オフライン中もバフの効果時間が減少します。"
 
 #: src/components/Nav.tsx
 #: src/routes/search.tsx
 msgid "Search"
-msgstr ""
+msgstr "検索"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -476,11 +476,11 @@ msgstr "クエスト"
 
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
-msgstr ""
+msgstr "アイテムの詳細"
 
 #: src/components/app-sidebar.tsx
 msgid "Showing favorites"
-msgstr ""
+msgstr "お気に入りを表示"
 
 #: src/lib/sidebar-items.ts
 msgid "Structures"
@@ -504,7 +504,7 @@ msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Base Threat"
-msgstr ""
+msgstr "基本的な脅威"
 
 #: src/lib/table-defs/creature-table.tsx
 #: src/lib/table-defs/food-table.tsx
@@ -523,17 +523,17 @@ msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "% Nodes for Max Contribution"
-msgstr ""
+msgstr "最大の貢献をするノードの%"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Ignores Global Cooldown"
-msgstr ""
+msgstr "グローバルクールダウンを無視"
 
 #: src/lib/table-defs/skills-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "Max Level"
-msgstr ""
+msgstr "最大レベル"
 
 #: src/routes/database/item/[id].tsx
 msgid "Weapon"
@@ -541,7 +541,7 @@ msgstr "武器"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows Into"
-msgstr ""
+msgstr "次の段階への成長"
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -550,7 +550,7 @@ msgstr "満腹度"
 
 #: src/routes/settings.tsx
 msgid "Sort order"
-msgstr ""
+msgstr "並び順"
 
 #: src/routes/settings.tsx
 msgid "Jamba Be Praised"
@@ -560,39 +560,39 @@ msgstr ""
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Radius"
-msgstr ""
+msgstr "半径"
 
 #. placeholder {0}: props.searchColumns[0]
 #: src/components/data-table/table-toolbar.tsx
 msgid "Search by {0}..."
-msgstr ""
+msgstr "{0} で検索…"
 
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Supply Cost"
-msgstr ""
+msgstr "サプライコスト"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Strength Multiplier"
-msgstr ""
+msgstr "力の倍率"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Self Buffs"
-msgstr ""
+msgstr "自己バフ"
 
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "Min Level"
-msgstr ""
+msgstr "最小レベル"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
 msgid "Housing Income"
-msgstr ""
+msgstr "住宅収入"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Cargo Stack Size"
-msgstr ""
+msgstr "カーゴスタックサイズ"
 
 #: src/lib/table-defs/paving-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
@@ -600,20 +600,20 @@ msgstr ""
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
 msgid "Required Knowledge"
-msgstr ""
+msgstr "必要な知識"
 
 #. placeholder {0}: group.name
 #: src/lib/recipe-sources.tsx
 msgid "Group limit for {0}:"
-msgstr ""
+msgstr "{0}のグループ制限："
 
 #: src/routes/database/creature/[id].tsx
 msgid "Day Aggro Range"
-msgstr ""
+msgstr "日中の敵対範囲"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used in"
-msgstr ""
+msgstr "使用先"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
@@ -623,7 +623,7 @@ msgstr "EXP"
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Extraction"
-msgstr ""
+msgstr "抽出"
 
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/weapon-table.tsx
@@ -634,19 +634,19 @@ msgstr "クールダウン"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Exp"
-msgstr ""
+msgstr "経験値"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Construction"
-msgstr ""
+msgstr "建設"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interactions"
-msgstr ""
+msgstr "対話"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
-msgstr ""
+msgstr "🥣 cerealで生データを閲覧する"
 
 #: src/lib/sidebar-items.ts
 msgid "Items"
@@ -654,11 +654,11 @@ msgstr "アイテム"
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Placement Group"
-msgstr ""
+msgstr "設置物グループ"
 
 #: src/components/data-table/table-toolbar.tsx
 msgid "Link Copied! <0/>"
-msgstr ""
+msgstr "リンクがコピーされました！ <0/>"
 
 #: src/routes/settings.tsx
 msgid "🥚 Easter Eggs"
@@ -678,11 +678,11 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Moves the <0/> menu to the first column instead of the last."
-msgstr ""
+msgstr "<0/> メニューを最後の列ではなく、最初の列に移動します。"
 
 #: src/lib/relations.ts
 msgid "Trade {reqName} for {offerName} to {npcName}"
-msgstr ""
+msgstr "{reqName}を{npcName}の{offerName}と交換する"
 
 #: src/lib/table-defs/collectible-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
@@ -692,44 +692,44 @@ msgstr "権利証"
 
 #: src/lib/recipe-sources.tsx
 msgid "Effort Required:"
-msgstr ""
+msgstr "要求される労力："
 
 #: src/lib/table-defs/prospecting-table.tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Count"
-msgstr ""
+msgstr "痕跡数"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Builds from"
-msgstr ""
+msgstr "建築元"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Total Cargo Size"
-msgstr ""
+msgstr "合計カーゴサイズ"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Combat"
-msgstr ""
+msgstr "戦闘"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Min Contribution"
-msgstr ""
+msgstr "最小貢献度"
 
 #: src/routes/database/building/[id].tsx
 msgid "Light Radius"
-msgstr ""
+msgstr "光半径"
 
 #: src/routes/settings.tsx
 msgid "Grid"
-msgstr ""
+msgstr "グリッド"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Cooldown Multiplier"
-msgstr ""
+msgstr "クールダウン倍率"
 
 #: src/routes/database/building/[id].tsx
 msgid "Decay"
-msgstr ""
+msgstr "朽ちる"
 
 #: src/components/app-sidebar.tsx
 msgid "Brico's Toolbox Discord"
@@ -737,16 +737,16 @@ msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Show After Logout"
-msgstr ""
+msgstr "ログアウト後の表示"
 
 #: src/components/Nav.tsx
 #: src/routes/settings.tsx
 msgid "System"
-msgstr ""
+msgstr "システム"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Crafting Recipe"
-msgstr ""
+msgstr "クラフトレシピ"
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Required Knowledge (Convert)"
@@ -754,15 +754,15 @@ msgstr ""
 
 #: src/routes/database/paving/[id].tsx
 msgid "Consumed Items"
-msgstr ""
+msgstr "消費アイテム"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Spawns"
-msgstr ""
+msgstr "スポーン"
 
 #: src/lib/recipe-sources.tsx
 msgid "Traveler:"
-msgstr ""
+msgstr "旅人："
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "(consumed)"
@@ -774,36 +774,36 @@ msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Tool:"
-msgstr ""
+msgstr "ツール："
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Allow Gathering"
-msgstr ""
+msgstr "採集可能"
 
 #: src/routes/settings.tsx
 msgid "Customize how the navigation sidebar is organized and displayed."
-msgstr ""
+msgstr "ナビゲーションサイドバーの構成や表示方法をカスタマイズします。"
 
 #: src/routes/settings.tsx
 msgid "Same as interface"
-msgstr ""
+msgstr "インタフェースと同じ"
 
 #: src/components/Nav.tsx
 #: src/routes/settings.tsx
 msgid "Automatic"
-msgstr ""
+msgstr "自動"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Biome"
-msgstr ""
+msgstr "バイオーム"
 
 #: src/lib/relations.ts
 msgid "Buy {itemName} from {npcName}"
-msgstr ""
+msgstr "{npcName}から{itemName}を購入する"
 
 #: src/routes/settings.tsx
 msgid "Table natural sort order"
-msgstr ""
+msgstr "テーブルを自然順にソート"
 
 #: src/routes/settings.tsx
 msgid "Region 9 Mode"
@@ -811,11 +811,11 @@ msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Summary"
-msgstr ""
+msgstr "概要"
 
 #: src/routes/settings.tsx
 msgid "View style"
-msgstr ""
+msgstr "表示スタイル"
 
 #: src/lib/sidebar-items.ts
 msgid "Terraforming"
@@ -823,27 +823,27 @@ msgstr "テラフォーミング"
 
 #: src/routes/settings.tsx
 msgid "Collapse sidebar by default"
-msgstr ""
+msgstr "デフォルトでサイドバーを折りたたむ"
 
 #: src/routes/settings.tsx
 msgid "When disabled, hides the quick controls for the sort order/view style/favorites."
-msgstr ""
+msgstr "無効にすると、並び替え順序、表示スタイル、お気に入りのクイックコントロールを非表示にします。"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Spawned from Prospecting"
-msgstr ""
+msgstr "探索からのスポーン"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Max Speed"
-msgstr ""
+msgstr "最大スピード"
 
 #: src/routes/settings.tsx
 msgid "Show row actions first"
-msgstr ""
+msgstr "行のアクションを最初に表示"
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Ranges"
-msgstr ""
+msgstr "範囲"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "None"
@@ -851,7 +851,7 @@ msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "deplete"
-msgstr ""
+msgstr "枯渇"
 
 #: src/lib/recipe-sources.tsx
 #: src/lib/relations.ts
@@ -864,7 +864,7 @@ msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Ignores Damage"
-msgstr ""
+msgstr "ダメージを無視"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Click to toggle between percentage and weight"
@@ -872,11 +872,11 @@ msgstr ""
 
 #: src/lib/table-defs/prospecting-table.tsx
 msgid "Contribution"
-msgstr ""
+msgstr "貢献"
 
 #: src/routes/settings.tsx
 msgid "All items visible"
-msgstr ""
+msgstr "すべてのアイテムを表示"
 
 #: src/lib/recipe-sources.tsx
 msgid "Buff"
@@ -884,12 +884,12 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "High contrast for vampires and OLED enjoyers. Only affects dark mode."
-msgstr ""
+msgstr "吸血鬼やOLED愛好家向けのハイコントラスト。ダークモードのみに影響します。"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stages"
-msgstr ""
+msgstr "段階"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/quests-table.tsx
@@ -907,34 +907,34 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Options for data tables across the app."
-msgstr ""
+msgstr "アプリ全体でのデータテーブルに関するオプション。"
 
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Drops"
-msgstr ""
+msgstr "ドロップ"
 
 #: src/components/app-sidebar.tsx
 msgid "Tree view"
-msgstr ""
+msgstr "ツリー表示"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
 msgid "Crafts per Player"
-msgstr ""
+msgstr "プレイヤーあたりのクラフト容量"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Bonuses"
-msgstr ""
+msgstr "ステータスボーナス"
 
 #: src/routes/settings.tsx
 msgid "Theme"
-msgstr ""
+msgstr "テーマ"
 
 #: src/lib/placeables.ts
 msgid "Place {plcName}"
-msgstr ""
+msgstr "{plcName}を設置する"
 
 #: src/lib/sidebar-items.ts
 msgid "Character"
@@ -942,15 +942,15 @@ msgstr "キャラクター"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Recipe option"
-msgstr ""
+msgstr "レシピオプション"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Item List Output"
-msgstr ""
+msgstr "出力アイテムリスト"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Deconstruction returns"
-msgstr ""
+msgstr "解体時の返却アイテム量"
 
 #. placeholder {0}: props.placement.placedPlaceableId
 #: src/components/shared/RecipeDisplay.tsx
@@ -964,7 +964,7 @@ msgstr "テレポートエネルギー"
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Achievement Requirements"
-msgstr ""
+msgstr "実績要件"
 
 #. placeholder {0}: selectedValues().length
 #: src/components/data-table/table-faceted-filter.tsx
@@ -977,7 +977,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Item Lists"
-msgstr ""
+msgstr "アイテムリスト"
 
 #: src/lib/recipe-sources.tsx
 msgid "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
@@ -985,12 +985,12 @@ msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Total HP"
-msgstr ""
+msgstr "総HP"
 
 #: src/lib/table-defs/collectible-table.tsx
 #: src/routes/database/collectible/[id].tsx
 msgid "Locked"
-msgstr ""
+msgstr "ロック中"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Paving Tile"
@@ -1000,11 +1000,11 @@ msgstr ""
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/combat/[id].tsx
 msgid "Weapon Type"
-msgstr ""
+msgstr "武器タイプ"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Required for"
-msgstr ""
+msgstr "必須項目"
 
 #: src/lib/table-defs/item-table.tsx
 msgid "Is Item List"
@@ -1012,39 +1012,39 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Conversion"
-msgstr ""
+msgstr "変換"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Max Range"
-msgstr ""
+msgstr "最大範囲"
 
 #: src/routes/settings.tsx
 msgid "Light, dark, or follow your system preference."
-msgstr ""
+msgstr "ライト、ダーク、またはシステムの設定に従う。"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Output"
-msgstr ""
+msgstr "戦利品"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Can Auto-Follow"
-msgstr ""
+msgstr "自動追尾が可能"
 
 #: src/routes/settings.tsx
 msgid "Want to help translate Brico.app?"
-msgstr ""
+msgstr "Brico.appの翻訳を手伝いませんか？"
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Is Secret"
-msgstr ""
+msgstr "秘密"
 
 #: src/lib/recipe-sources.tsx
 msgid "Minimum distance to Group:"
-msgstr ""
+msgstr "グループの最小距離："
 
 #: src/lib/table-defs/traveler-trades-table.tsx
 msgid "Offer Items"
-msgstr ""
+msgstr "提供されるアイテム"
 
 #. placeholder {0}: outcome.radiusMin
 #. placeholder {1}: outcome.radiusMax
@@ -1058,15 +1058,15 @@ msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Starting Loadout"
-msgstr ""
+msgstr "初期取得"
 
 #: src/routes/settings.tsx
 msgid "Show sidebar controls"
-msgstr ""
+msgstr "サイドバーコントロールを表示"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Tick"
-msgstr ""
+msgstr "認識までの時間"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Item list missing"
@@ -1078,38 +1078,38 @@ msgstr ""
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Level Requirements"
-msgstr ""
+msgstr "レベル要件"
 
 #: src/lib/table-defs/prospecting-table.tsx
 msgid "Experience Per Breadcrumb"
-msgstr ""
+msgstr "痕跡一つあたりの経験値"
 
 #: src/routes/settings.tsx
 msgid "Forced to Crowdin's target language for review."
-msgstr ""
+msgstr "Crowdinのレビューの都合で、翻訳先言語に固定されています。"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Item"
-msgstr ""
+msgstr "アイテム"
 
 #: src/lib/placeables.ts
 msgid "{verbPhrase} ({plcName})"
-msgstr ""
+msgstr "{plcName}を{verbPhrase}"
 
 #: src/routes/database/building/[id].tsx
 msgid "Storage Slots"
-msgstr ""
+msgstr "ストレージスロット"
 
 #: src/routes/database/building/[id].tsx
 msgid "Unenterable"
-msgstr ""
+msgstr "進入不可"
 
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Cost"
-msgstr ""
+msgstr "コスト"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Construction Recipe"
@@ -1120,11 +1120,11 @@ msgstr ""
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Min Damage"
-msgstr ""
+msgstr "最小ダメージ"
 
 #: src/lib/recipe-sources.tsx
 msgid "{skillTag}:"
-msgstr ""
+msgstr "{skillTag}："
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -1133,7 +1133,7 @@ msgstr "旅人のタスク"
 
 #: src/components/data-table/table-toolbar.tsx
 msgid "Link Filters <0/>"
-msgstr ""
+msgstr "フィルターのリンク <0/>"
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -1143,12 +1143,12 @@ msgstr "スタミナ"
 
 #: src/lib/recipe-sources.tsx
 msgid "{skillName} Exp:"
-msgstr ""
+msgstr "{skillName}経験値："
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
 msgid "Trade Orders"
-msgstr ""
+msgstr "取引注文"
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -1157,30 +1157,30 @@ msgstr "体力"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Despawns"
-msgstr ""
+msgstr "デスポーン"
 
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Visible to Others"
-msgstr ""
+msgstr "他のユーザーに表示"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Join Radius"
-msgstr ""
+msgstr "参加できる半径"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Converts into"
-msgstr ""
+msgstr "以下に変換"
 
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 msgid "Known By Default"
-msgstr ""
+msgstr "デフォルトで知っている"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Projectile Speed"
-msgstr ""
+msgstr "飛び道具速度"
 
 #. Accessible name for the navigation trail in the top bar (not the in-game prospecting trail)
 #: src/components/Nav.tsx
@@ -1189,11 +1189,11 @@ msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
-msgstr ""
+msgstr "精度の倍率"
 
 #: src/routes/tools/placeable-graph.tsx
 msgid "No placements found"
-msgstr ""
+msgstr "設置物が見つかりません"
 
 #: src/components/version-checker.tsx
 msgid "Up to date"
@@ -1201,7 +1201,7 @@ msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "No tool"
-msgstr ""
+msgstr "ツールなし"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required to Start"
@@ -1209,11 +1209,11 @@ msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Building:"
-msgstr ""
+msgstr "建物："
 
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
-msgstr ""
+msgstr "Brico'sの独自テキストと、ゲーム内テキストに使用する言語を選択してください。"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Experience Per Node"
@@ -1226,11 +1226,11 @@ msgstr ""
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Land Elevation"
-msgstr ""
+msgstr "土地の高度"
 
 #: src/components/data-table/table-view-options.tsx
 msgid "View"
-msgstr ""
+msgstr "表示"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Required for Quests"
@@ -1256,7 +1256,7 @@ msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "Wilderness"
-msgstr ""
+msgstr "荒野"
 
 #: src/lib/game-links.tsx
 msgid "Database"
@@ -1264,7 +1264,7 @@ msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
-msgstr ""
+msgstr "確率"
 
 #: src/lib/recipe-sources.tsx
 msgid "Claim Tier:"
@@ -1272,19 +1272,19 @@ msgstr ""
 
 #: src/lib/table-defs/skills-table.tsx
 msgid "Category"
-msgstr ""
+msgstr "カテゴリー"
 
 #: src/lib/relations.ts
 msgid "Sell {itemName} to {npcName}"
-msgstr ""
+msgstr "{npcName}に{itemName}を売却する"
 
 #: src/lib/recipe-sources.tsx
 msgid "This prospecting is fixed at one contribution, regardless of bread crumb count."
-msgstr ""
+msgstr "この探索は、痕跡数に関係なく、1回の貢献度に固定されます。"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used By"
-msgstr ""
+msgstr "使用先"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Cargo"
@@ -1292,24 +1292,24 @@ msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Spawn Conditions"
-msgstr ""
+msgstr "スポーン条件"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Copy JSON"
-msgstr ""
+msgstr "JSONをコピー"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Resource Spawning"
-msgstr ""
+msgstr "資源の生成"
 
 #: src/lib/recipe-sources.tsx
 msgid "Prospecting Hits"
-msgstr ""
+msgstr "探索の回数"
 
 #: src/lib/recipe-sources.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Weighted"
-msgstr ""
+msgstr "重み付け"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Note: overkill damage also grants XP. This is the minimum."
@@ -1318,18 +1318,18 @@ msgstr ""
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Occupants"
-msgstr ""
+msgstr "定員"
 
 #. placeholder {0}: lr.level
 #. placeholder {0}: req.skillLevel
 #: src/lib/table-defs/quests-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Lvl. {0}"
-msgstr ""
+msgstr "レベル {0}"
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "No stats found."
-msgstr ""
+msgstr "ステータスが見つかりませんでした。"
 
 #: src/lib/table-defs/achievement-table.tsx
 #: src/routes/database/achievement/[id].tsx
@@ -1342,7 +1342,7 @@ msgstr "実績ポイント"
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Yes"
-msgstr ""
+msgstr "はい"
 
 #: src/components/data-table/table-toolbar.tsx
 msgid "Press <0>Enter</0> to commit Tier/Tag filters, <1>Esc</1> to clear."
@@ -1351,11 +1351,11 @@ msgstr ""
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Group"
-msgstr ""
+msgstr "グループ"
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Hide If Requirements Not Met"
-msgstr ""
+msgstr "要件を満たしていない場合は非表示"
 
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
@@ -1364,7 +1364,7 @@ msgstr "速度"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Is Self Targeting"
-msgstr ""
+msgstr "ターゲットにしています"
 
 #: src/components/data-table/table-view-options.tsx
 msgid "Hide All"
@@ -1372,7 +1372,7 @@ msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Placeable in Water"
-msgstr ""
+msgstr "水面に設置可能"
 
 #: src/components/shared/ItemStacks.tsx
 msgid "Chance per progress (HP/damage/etc.) of this drop. Each point rolls independently."
@@ -1385,12 +1385,12 @@ msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Threat Per Damage"
-msgstr ""
+msgstr "ダメージごとの脅威"
 
 #: src/components/shared/RecipeDisplay.tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Time"
-msgstr ""
+msgstr "時間"
 
 #: src/routes/settings.tsx
 msgid "No items visible <0>You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?</0>"
@@ -1398,17 +1398,17 @@ msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Global Cooldown"
-msgstr ""
+msgstr "グローバルクールダウン"
 
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Duration"
-msgstr ""
+msgstr "持続時間"
 
 #. placeholder {0}: fixFloat(totalXp)
 #: src/lib/recipe-sources.tsx
 msgid "{perHit} (Total: {0})"
-msgstr ""
+msgstr "{perHit}（合計：{0}）"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
@@ -1416,11 +1416,11 @@ msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Pointer Duration"
-msgstr ""
+msgstr "ポインタの持続時間"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Result of other placeable interaction"
-msgstr ""
+msgstr "その他の設置物インタラクションの結果"
 
 #: src/components/version-checker.tsx
 msgid "Latest available <0>(check preview <1/>)</0>"
@@ -1436,11 +1436,11 @@ msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Contribution Per Crumb"
-msgstr ""
+msgstr "痕跡あたりの貢献"
 
 #: src/components/GlobalSearchInput.tsx
 msgid "Global search"
-msgstr ""
+msgstr "全体検索"
 
 #. placeholder {0}: 6000 / i.volume
 #. placeholder {0}: 6000 / props.row.original.volume
@@ -1456,11 +1456,11 @@ msgstr "ツール"
 
 #: src/lib/table-defs/claim-research-table.tsx
 msgid "Supply Cap"
-msgstr ""
+msgstr "サプライ上限"
 
 #: src/routes/database/cargo/[id].tsx
 msgid "Place Time"
-msgstr ""
+msgstr "配置時間"
 
 #: src/lib/recipe-sources.tsx
 msgid "Shows Time Left:"
@@ -1468,7 +1468,7 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "When enabled, only your favorite items are shown in the sidebar."
-msgstr ""
+msgstr "有効にすると、お気に入りのアイテムのみがサイドバーに表示されます。"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Spawns Enemies"
@@ -1477,19 +1477,19 @@ msgstr ""
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Placement"
-msgstr ""
+msgstr "設置"
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "XP to mint Hex Coin"
-msgstr ""
+msgstr "Hex Coinを生成するための経験値"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Evade Range"
-msgstr ""
+msgstr "回避距離"
 
 #: src/components/app-sidebar.tsx
 msgid "Showing all items"
-msgstr ""
+msgstr "すべてのアイテムを表示"
 
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/lib/table-defs/skills-table.tsx
@@ -1501,16 +1501,16 @@ msgstr "タイトル"
 
 #: src/lib/table-defs/weapon-table.tsx
 msgid "Stamina Use Multiplier"
-msgstr ""
+msgstr "使用スタミナの倍率"
 
 #: src/components/data-table/table-toolbar.tsx
 msgid "Reset Filters"
-msgstr ""
+msgstr "フィルターをリセット"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
 msgid "Crafting Slots"
-msgstr ""
+msgstr "作製スロット"
 
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
@@ -1522,11 +1522,11 @@ msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "No results found."
-msgstr ""
+msgstr "結果が見つかりませんでした。"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Deaggro Health"
-msgstr ""
+msgstr "敵対解除体力"
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/GlobalSearchInput.tsx
@@ -1536,7 +1536,7 @@ msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "Online Timestamp"
-msgstr ""
+msgstr "オンラインのタイムスタンプ"
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Research Time"
@@ -1552,7 +1552,7 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Language for Brico's own labels, menus, and settings."
-msgstr ""
+msgstr "Brico's独自のラベル、メニュー、および設定に使用する言語。"
 
 #. placeholder {0}: group.total - group.matches.length
 #: src/routes/search.tsx
@@ -1565,11 +1565,11 @@ msgstr ""
 
 #: src/routes/database/item/[id].tsx
 msgid "Required Skill"
-msgstr ""
+msgstr "必要スキル"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Scheduled Respawn"
-msgstr ""
+msgstr "リスポーンのスケジュール"
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Clear all stat filters"
@@ -1589,7 +1589,7 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Dropped from"
-msgstr ""
+msgstr "ドロップ元"
 
 #: src/lib/table-defs/tools-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -1607,7 +1607,7 @@ msgstr ""
 #: src/lib/table-defs/biome-table.tsx
 #: src/routes/database/biome/[id].tsx
 msgid "Hazard"
-msgstr ""
+msgstr "環境"
 
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -1625,7 +1625,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Emblem Editor"
-msgstr ""
+msgstr "エンブレムエディター"
 
 #: src/routes/database/building/[id].tsx
 msgid "hex coin per day per occupied slot"
@@ -1645,22 +1645,22 @@ msgstr "説明"
 
 #: src/routes/database/cargo/[id].tsx
 msgid "Pick Up Time"
-msgstr ""
+msgstr "取得時間"
 
 #: src/lib/table-defs/creature-table.tsx
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Max Damage"
-msgstr ""
+msgstr "最大ダメージ"
 
 #: src/routes/settings.tsx
 msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
-msgstr ""
+msgstr "ゲーム内の名前や説明文などの言語。<0/><1>Clockwork Labsによる公式翻訳（AI生成によるものですが）です。これらはゲーム内のテキストを反映したものであり、Brico.appによって管理されているものではありません。</1>"
 
 #: src/lib/recipe-sources.tsx
 msgid "Time:"
-msgstr ""
+msgstr "時間："
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Extraction Recipe"
@@ -1686,45 +1686,45 @@ msgstr ""
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Level"
-msgstr ""
+msgstr "レベル"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Total Item Size"
-msgstr ""
+msgstr "合計アイテムサイズ"
 
 #: src/routes/settings.tsx
 #: src/routes/tools/emblem.tsx
 msgid "Reset"
-msgstr ""
+msgstr "リセット"
 
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Area"
-msgstr ""
+msgstr "エリア"
 
 #: src/routes/database/building/[id].tsx
 msgid "Terraform"
-msgstr ""
+msgstr "テラフォーミング"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Can Auto Follow"
-msgstr ""
+msgstr "自動追尾が可能"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Raw Data"
-msgstr ""
+msgstr "生データ"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Prospecting Duration"
-msgstr ""
+msgstr "探索の時間"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Distance"
-msgstr ""
+msgstr "痕跡の距離"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Night Aggro Range"
-msgstr ""
+msgstr "夜間の敵対範囲"
 
 #: src/lib/sidebar-items.ts
 msgid "Cargo"
@@ -1732,15 +1732,15 @@ msgstr "貨物"
 
 #: src/routes/settings.tsx
 msgid "Favorite items"
-msgstr ""
+msgstr "お気に入りアイテム"
 
 #: src/lib/recipe-sources.tsx
 msgid "Stamina:"
-msgstr ""
+msgstr "スタミナ："
 
 #: src/routes/database/building/[id].tsx
 msgid "{name} Lvl {level}"
-msgstr ""
+msgstr "{name} レベル{level}"
 
 #: src/lib/sidebar-items.ts
 msgid "Combat Abilities"
@@ -1766,7 +1766,7 @@ msgstr "スキル"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Scaled Armor"
-msgstr ""
+msgstr "アーマー値のスケール"
 
 #: src/lib/sidebar-items.ts
 msgid "Skills"
@@ -1775,12 +1775,12 @@ msgstr "スキル"
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/quest-graph.tsx
 msgid "Quest Graph"
-msgstr ""
+msgstr "クエストのグラフ"
 
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Traveler"
-msgstr ""
+msgstr "旅人"
 
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/placeable/[id].tsx
@@ -1789,7 +1789,7 @@ msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Copied!"
-msgstr ""
+msgstr "コピーしました！"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
@@ -1805,29 +1805,29 @@ msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Tier {tier} {name}"
-msgstr ""
+msgstr "ティア {tier} {name}"
 
 #: src/components/data-table/table-column-header.tsx
 msgid "Asc"
-msgstr ""
+msgstr "昇順"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
-msgstr ""
+msgstr "デッドゾーン角度"
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
 msgid "No results found for \"{0}\""
-msgstr ""
+msgstr "\"{0}\" の結果は見つかりませんでした"
 
 #: src/components/Nav.tsx
 #: src/routes/settings.tsx
 msgid "Dark"
-msgstr ""
+msgstr "ダーク"
 
 #: src/lib/relations.ts
 msgid "{verbPhrase} {targetName}"
-msgstr ""
+msgstr "{targetName}を{verbPhrase}する"
 
 #: src/routes/settings.tsx
 msgid "Loading…"
@@ -1835,15 +1835,15 @@ msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Max Equip Count"
-msgstr ""
+msgstr "最大装備数"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows From"
-msgstr ""
+msgstr "成長元"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Min Speed"
-msgstr ""
+msgstr "最小スピード"
 
 #: src/lib/sidebar-items.ts
 msgid "Collection"
@@ -1852,11 +1852,11 @@ msgstr "コレクション"
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Attack Level"
-msgstr ""
+msgstr "攻撃レベル"
 
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Level Range"
-msgstr ""
+msgstr "レベル範囲"
 
 #: src/lib/recipe-sources.tsx
 msgid "Output is rolled a number of times equal to your contribution. One full HP bar of the enemy is worth 1000 contribution."
@@ -1868,20 +1868,20 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Resource Placement Recipe"
-msgstr ""
+msgstr "設置物のレシピ"
 
 #: src/components/data-table/table-column-header.tsx
 msgid "Desc"
-msgstr ""
+msgstr "降順"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Collectibles"
-msgstr ""
+msgstr "収集品"
 
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirements"
-msgstr ""
+msgstr "要件"
 
 #. placeholder {0}: req.chunksDiscovered
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -1890,7 +1890,7 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Day Deaggro Range"
-msgstr ""
+msgstr "日中の敵対解除範囲"
 
 #: src/components/shared/ItemStacks.tsx
 msgid "Chance of consumption per hit"
@@ -1898,7 +1898,7 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Choose how Brico's Toolbox looks."
-msgstr ""
+msgstr "Brico's Toolboxの見た目を選択します。"
 
 #: src/lib/recipe-sources.tsx
 msgid "Near Building:"
@@ -1907,7 +1907,7 @@ msgstr ""
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Effort"
-msgstr ""
+msgstr "労力"
 
 #: src/components/data-table/table-column-header.tsx
 msgid "Desc Multi"
@@ -1915,15 +1915,15 @@ msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Spawned from Resource"
-msgstr ""
+msgstr "資源からのスポーン"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Deploy time"
-msgstr ""
+msgstr "展開時間"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Enemy Drops"
-msgstr ""
+msgstr "敵のドロップ"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
@@ -1933,11 +1933,11 @@ msgstr ""
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Item Slots"
-msgstr ""
+msgstr "アイテムスロット"
 
 #: src/routes/settings.tsx
 msgid "Reset hidden columns"
-msgstr ""
+msgstr "非表示の列をリセットする"
 
 #: src/routes/settings.tsx
 msgid "Enable easter eggs"
@@ -1945,15 +1945,15 @@ msgstr ""
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage Requirements"
-msgstr ""
+msgstr "ステージ要件"
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Collectible Type"
-msgstr ""
+msgstr "取得可能なタイプ"
 
 #: src/routes/settings.tsx
 msgid "Game data language"
-msgstr ""
+msgstr "ゲームデータの言語"
 
 #: src/components/app-sidebar.tsx
 msgid "cereal - Raw Data Browser"
@@ -1965,16 +1965,16 @@ msgstr "資源"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Beneficial"
-msgstr ""
+msgstr "有益"
 
 #: src/components/shared/DetailPageLayout.tsx
 #: src/lib/table-utils/column-builders.tsx
 msgid "Copy ID"
-msgstr ""
+msgstr "IDをコピー"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Allow Aquatic Breadcrumb"
-msgstr ""
+msgstr "水中の痕跡を許可"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -1983,19 +1983,19 @@ msgstr "研究"
 
 #: src/lib/table-defs/creature-table.tsx
 msgid "Huntable"
-msgstr ""
+msgstr "狩猟可能"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Sources"
-msgstr ""
+msgstr "ソース"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
-msgstr ""
+msgstr "認識のしきい値"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Traveler Trade"
-msgstr ""
+msgstr "旅人の取引"
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Invalidates Type"
@@ -2003,11 +2003,11 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Crafts Into"
-msgstr ""
+msgstr "製作先"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Item List"
-msgstr ""
+msgstr "アイテムリスト"
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Deployable"
@@ -2019,7 +2019,7 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Day Detect Range"
-msgstr ""
+msgstr "日中の認識範囲"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded from Quests"
@@ -2031,7 +2031,7 @@ msgstr "実績"
 
 #: src/routes/settings.tsx
 msgid "Favorites only"
-msgstr ""
+msgstr "お気に入りのみ"
 
 #: src/lib/table-defs/food-table.tsx
 msgid "Food Buffs"
@@ -2039,11 +2039,11 @@ msgstr "食事バフ"
 
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
-msgstr ""
+msgstr "チェックを入れた項目はサイドバーに表示されます。新しい項目はデフォルトで常に表示されます。"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Allow Hunting"
-msgstr ""
+msgstr "狩猟可能"
 
 #: src/lib/recipe-sources.tsx
 msgid "Minimum Contribution"
@@ -2051,35 +2051,35 @@ msgstr ""
 
 #: src/lib/table-defs/terraforming-table.tsx
 msgid "Difference"
-msgstr ""
+msgstr "差"
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Grows into"
-msgstr ""
+msgstr "次の段階への成長"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Traveler Trades"
-msgstr ""
+msgstr "旅人の取引"
 
 #: src/routes/settings.tsx
 msgid "Whether to show the sidebar in its collapsed (icon only) state on initial load."
-msgstr ""
+msgstr "初回読み込み時にサイドバーを折りたたんだ状態（アイコンのみ）で表示するかどうか。"
 
 #. placeholder {0}: task.levelRequirement.minLevel
 #. placeholder {1}: task.levelRequirement.maxLevel
 #. placeholder {2}: skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>
 #: src/lib/recipe-sources.tsx
 msgid "Lv. {0}-{1} {2}"
-msgstr ""
+msgstr "レベル {0}-{1} {2}"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Barter Slots"
-msgstr ""
+msgstr "物々交換スロット"
 
 #: src/routes/database/biome/[id].tsx
 msgid "Disallow Player Build"
-msgstr ""
+msgstr "プレイヤーの建築を許可しない"
 
 #: src/lib/recipe-sources.tsx
 msgid "? min"
@@ -2087,7 +2087,7 @@ msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Timed Growth"
-msgstr ""
+msgstr "成育までの時間"
 
 #. placeholder {0}: results()!.totalMatches
 #: src/routes/search.tsx
@@ -2096,7 +2096,7 @@ msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Wind Multiplier"
-msgstr ""
+msgstr "風力倍率"
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Search stats..."
@@ -2105,11 +2105,11 @@ msgstr ""
 #: src/components/Nav.tsx
 #: src/routes/settings.tsx
 msgid "Settings"
-msgstr ""
+msgstr "設定"
 
 #: src/routes/settings.tsx
 msgid "A–Z"
-msgstr ""
+msgstr "A–Z"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Item"
@@ -2123,7 +2123,7 @@ msgstr "レアリティ"
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Defense Level"
-msgstr ""
+msgstr "防御値"
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Clear filters"
@@ -2133,7 +2133,7 @@ msgstr ""
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Water Depth"
-msgstr ""
+msgstr "水深"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Placeable Interaction"
@@ -2142,7 +2142,7 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Compendium Entry"
-msgstr ""
+msgstr "コンペンディウムに含まれるか"
 
 #: src/routes/database/item/[id].tsx
 msgid "This item starts a placeable lifecycle chain."
@@ -2152,11 +2152,11 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 msgid "Tag"
-msgstr ""
+msgstr "タグ"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"
-msgstr ""
+msgstr "バフタイプ"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Resource"
@@ -2164,7 +2164,7 @@ msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Details"
-msgstr ""
+msgstr "詳細"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Craft"
@@ -2172,7 +2172,7 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Combat Actions"
-msgstr ""
+msgstr "戦闘行動"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance to spawn on last hit of resource extraction."
@@ -2180,7 +2180,7 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Sidebar"
-msgstr ""
+msgstr "サイドバー"
 
 #: src/routes/database/building/[id].tsx
 msgid "Rested Buff Duration"
@@ -2190,7 +2190,7 @@ msgstr ""
 #. placeholder {1}: skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`
 #: src/lib/recipe-sources.tsx
 msgid "Lv. {0} {1}"
-msgstr ""
+msgstr "レベル {0} {1}"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/database/item/[id].tsx
@@ -2199,23 +2199,23 @@ msgstr "食料"
 
 #: src/components/version-checker.tsx
 msgid "Current data version"
-msgstr ""
+msgstr "現在のデータバージョン"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Crafted From"
-msgstr ""
+msgstr "制作元"
 
 #: src/lib/sidebar-items.ts
 msgid "World"
-msgstr ""
+msgstr "世界"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Night Detect Range"
-msgstr ""
+msgstr "夜間の認識範囲"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Placeable on Land"
-msgstr ""
+msgstr "地面に設置可能"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Consumed on Ability Use"
@@ -2223,11 +2223,11 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness & Aggro"
-msgstr ""
+msgstr "認識 & 敵対"
 
 #: src/lib/table-defs/quests-table.tsx
 msgid "Quest Chain"
-msgstr ""
+msgstr "クエストチェーン"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Quest"
@@ -2236,11 +2236,11 @@ msgstr "知識の巻物"
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Traveler Task"
-msgstr ""
+msgstr "旅人のタスク"
 
 #: src/lib/recipe-sources.tsx
 msgid "Biomes:"
-msgstr ""
+msgstr "バイオーム："
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -2253,25 +2253,25 @@ msgstr ""
 
 #: src/components/data-table/table-column-header.tsx
 msgid "Hide"
-msgstr ""
+msgstr "隠す"
 
 #: src/lib/table-defs/equipment-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Slots"
-msgstr ""
+msgstr "スロット"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Is Taunt"
-msgstr ""
+msgstr "挑発"
 
 #: src/components/shared/DetailPageLayout.tsx
 #: src/lib/table-utils/column-builders.tsx
 msgid "Copy Chat Link"
-msgstr ""
+msgstr "チャットリンクをコピー"
 
 #: src/routes/database/building/[id].tsx
 msgid "Structure"
-msgstr ""
+msgstr "建造物"
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Reward"
@@ -2279,7 +2279,7 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Language"
-msgstr ""
+msgstr "言語"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Placeable Interactions"
@@ -2291,7 +2291,7 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Required Players"
-msgstr ""
+msgstr "必要なプレイヤー数"
 
 #: src/components/data-table/table-view-options.tsx
 msgid "Toggle columns"
@@ -2300,7 +2300,7 @@ msgstr ""
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Unstartable"
-msgstr ""
+msgstr "開始不可"
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Extracted from"
@@ -2308,25 +2308,25 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Builds into"
-msgstr ""
+msgstr "建設先"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Combat Ability"
-msgstr ""
+msgstr "戦闘アビリティ"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Source"
-msgstr ""
+msgstr "ソース"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
 msgid "Housing Slots"
-msgstr ""
+msgstr "住宅スロット"
 
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required Items"
-msgstr ""
+msgstr "必要アイテム"
 
 #: src/routes/tools/emblem.tsx
 msgid "Shape"
@@ -2339,7 +2339,7 @@ msgstr "アーマー"
 
 #: src/routes/settings.tsx
 msgid "Naturally sort tables by their primary ID, or use the internal database ordering."
-msgstr ""
+msgstr "テーブルをプライマリIDで自然順にソートするか、内部のデータベースの並び順を使用します。"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Guaranteed spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
@@ -2348,23 +2348,23 @@ msgstr ""
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Members"
-msgstr ""
+msgstr "メンバー数"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Show Time Left"
-msgstr ""
+msgstr "残り時間の表示"
 
 #: src/routes/database/cargo/[id].tsx
 msgid "Blocks Path"
-msgstr ""
+msgstr "通行を妨げる"
 
 #: src/routes/database/traveler-task/[id].tsx
 msgid "XP Reward"
-msgstr ""
+msgstr "経験値報酬"
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Item Cost"
-msgstr ""
+msgstr "アイテムコスト"
 
 #: src/routes/tools/emblem.tsx
 msgid "Icon"
@@ -2372,7 +2372,7 @@ msgstr "アイコン"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Stamina Use"
-msgstr ""
+msgstr "スタミナ使用"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required for Reward"
@@ -2389,7 +2389,7 @@ msgstr "探鉱"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Combat Stats"
-msgstr ""
+msgstr "戦闘ステータス"
 
 #: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
@@ -2398,17 +2398,17 @@ msgstr "ツール"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Target Buffs"
-msgstr ""
+msgstr "対象バフ"
 
 #: src/lib/recipe-sources.tsx
 msgid "Timed Node"
-msgstr ""
+msgstr "ノードの時間"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/prospecting-table.tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Biomes"
-msgstr ""
+msgstr "バイオーム"
 
 #: src/lib/sidebar-items.ts
 msgid "Paving"
@@ -2421,38 +2421,38 @@ msgstr "命中率"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
-msgstr ""
+msgstr "行動までの時間"
 
 #: src/routes/settings.tsx
 msgid "Compact list or icon grid."
-msgstr ""
+msgstr "コンパクトな一覧表示またはグリッド表示。"
 
 #: src/lib/table-defs/traveler-trades-table.tsx
 msgid "Blocking Knowledge"
-msgstr ""
+msgstr "解放される知識"
 
 #: src/routes/settings.tsx
 msgid "Database Order"
-msgstr ""
+msgstr "データベース順"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Mounting Radius"
-msgstr ""
+msgstr "取り付き可能半径"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Cargo Slots"
-msgstr ""
+msgstr "カーゴスロット"
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage Rewards"
-msgstr ""
+msgstr "ステージ報酬"
 
 #: src/routes/tools/placeable-graph.tsx
 msgid "Select a placement to visualize its lifecycle graph."
-msgstr ""
+msgstr "ライフサイクルグラフを表示する設置物を選択してください。"
 
 #: src/routes/database/cargo/[id].tsx
 msgid "Movement Modifier"
@@ -2460,11 +2460,11 @@ msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Item Deed"
-msgstr ""
+msgstr "アイテム証明書"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Training"
-msgstr ""
+msgstr "トレーニング"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Output"
@@ -2476,11 +2476,11 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Color mode"
-msgstr ""
+msgstr "カラーモード"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Affected By Wind"
-msgstr ""
+msgstr "風の影響を受ける"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Experience per Damage Dealt"
@@ -2493,21 +2493,21 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Health Regen"
-msgstr ""
+msgstr "体力再生"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Despawn"
-msgstr ""
+msgstr "デスポーン"
 
 #: src/components/data-table/table-toolbar.tsx
 #: src/components/GlobalSearchInput.tsx
 #: src/components/Nav.tsx
 msgid "Search..."
-msgstr ""
+msgstr "検索…"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Despawn Time"
-msgstr ""
+msgstr "デスポーン時間"
 
 #: src/routes/settings.tsx
 msgid "Unlocks hidden easter-egg features scattered across the site."
@@ -2515,43 +2515,43 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Event Timers"
-msgstr ""
+msgstr "イベントタイマー"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Scaling"
-msgstr ""
+msgstr "ステータスのスケーリング"
 
 #: src/lib/recipe-sources.tsx
 msgid "Required Knowledge:"
-msgstr ""
+msgstr "必要な知識："
 
 #: src/lib/recipe-sources.tsx
 msgid "{skillName} XP/Progress:"
-msgstr ""
+msgstr "{skillName} 経験値/進捗："
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Limit"
-msgstr ""
+msgstr "制限"
 
 #: src/routes/settings.tsx
 msgid "Midnight"
-msgstr ""
+msgstr "ミッドナイト"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Not Respawning"
-msgstr ""
+msgstr "リスポーンしない"
 
 #: src/routes/database/item/[id].tsx
 msgid "Required Level"
-msgstr ""
+msgstr "必要レベル"
 
 #: src/lib/recipe-sources.tsx
 msgid "Range:"
-msgstr ""
+msgstr "範囲："
 
 #: src/routes/settings.tsx
 msgid "How many rows are shown per page when a table first loads."
-msgstr ""
+msgstr "テーブルが最初に読み込まれるときに、ページあたり何行表示されるか。"
 
 #: src/lib/sidebar-items.ts
 msgid "Placeables"
@@ -2559,13 +2559,13 @@ msgstr "設置物"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Is Aquatic Resource"
-msgstr ""
+msgstr "水中のリソース"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/building/[id].tsx
 msgid "Buffs"
-msgstr ""
+msgstr "バフ効果"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"
@@ -2596,15 +2596,15 @@ msgstr ""
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Collectible"
-msgstr ""
+msgstr "取得可能"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Appearances"
-msgstr ""
+msgstr "外観"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Inventory"
-msgstr ""
+msgstr "インベントリ"
 
 #: src/lib/sidebar-items.ts
 msgid "Creatures"
@@ -2616,4 +2616,5 @@ msgstr ""
 
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
-msgstr ""
+msgstr "{buildingName}を解体"
+

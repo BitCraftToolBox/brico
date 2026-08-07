@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-03 21:57\n"
+"PO-Revision-Date: 2026-08-07 05:39\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -431,7 +431,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
-msgstr "Waffe"
+msgstr "Waffen"
 
 #: src/lib/table-defs/quests-table.tsx
 msgid "Secret"
@@ -2394,7 +2394,7 @@ msgstr ""
 #: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
 msgid "Tools"
-msgstr "Werkzeug"
+msgstr "Werkzeuge"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Target Buffs"
@@ -2596,7 +2596,7 @@ msgstr ""
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Collectible"
-msgstr ""
+msgstr "Sammelobjekt"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Appearances"

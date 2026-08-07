@@ -8,7 +8,7 @@ msgstr ""
 "Language: zu\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-03 21:57\n"
+"PO-Revision-Date: 2026-08-07 05:39\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -427,7 +427,7 @@ msgstr "crwdns4512:0crwdne4512:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Explore"
-msgstr ""
+msgstr "crwdns5508:0crwdne5508:0"
 
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
@@ -1185,7 +1185,7 @@ msgstr "crwdns4858:0crwdne4858:0"
 #. Accessible name for the navigation trail in the top bar (not the in-game prospecting trail)
 #: src/components/Nav.tsx
 msgid "Breadcrumb"
-msgstr ""
+msgstr "crwdns5510:0crwdne5510:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
@@ -1260,7 +1260,7 @@ msgstr "crwdns4892:0crwdne4892:0"
 
 #: src/lib/game-links.tsx
 msgid "Database"
-msgstr ""
+msgstr "crwdns5512:0crwdne5512:0"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
@@ -1288,7 +1288,7 @@ msgstr "crwdns4906:0crwdne4906:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Cargo"
-msgstr ""
+msgstr "crwdns5514:0crwdne5514:0"
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Spawn Conditions"
@@ -1381,7 +1381,7 @@ msgstr "crwdns4944:0crwdne4944:0"
 #. placeholder {0}: fixFloat(req.pctChunksDiscovered)
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "{0}% of chunks"
-msgstr ""
+msgstr "crwdns5516:0{0}crwdne5516:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Threat Per Damage"
@@ -1518,7 +1518,7 @@ msgstr "crwdns5006:0crwdne5006:0"
 
 #: src/lib/recipe-sources.tsx
 msgid "Chance per hit"
-msgstr ""
+msgstr "crwdns5518:0crwdne5518:0"
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "No results found."
@@ -1797,7 +1797,7 @@ msgstr "crwdns5126:0crwdne5126:0"
 
 #: src/components/SiteFooter.tsx
 msgid "Not affiliated with Clockwork Labs."
-msgstr ""
+msgstr "crwdns5520:0crwdne5520:0"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "No data"
@@ -1886,7 +1886,7 @@ msgstr "crwdns5166:0crwdne5166:0"
 #. placeholder {0}: req.chunksDiscovered
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "{0, plural, one {# chunk} other {# chunks}}"
-msgstr ""
+msgstr "crwdns5522:00={0}crwdne5522:0"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Day Deaggro Range"
@@ -2113,7 +2113,7 @@ msgstr "crwdns5278:0crwdne5278:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Item"
-msgstr ""
+msgstr "crwdns5524:0crwdne5524:0"
 
 #: src/lib/table-utils/column-builders.tsx
 msgid "Rarity"
@@ -2146,7 +2146,7 @@ msgstr "crwdns5290:0crwdne5290:0"
 
 #: src/routes/database/item/[id].tsx
 msgid "This item starts a placeable lifecycle chain."
-msgstr ""
+msgstr "crwdns5526:0crwdne5526:0"
 
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -2160,7 +2160,7 @@ msgstr "crwdns5294:0crwdne5294:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Resource"
-msgstr ""
+msgstr "crwdns5528:0crwdne5528:0"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Details"
@@ -2168,7 +2168,7 @@ msgstr "crwdns5296:0crwdne5296:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Craft"
-msgstr ""
+msgstr "crwdns5530:0crwdne5530:0"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Combat Actions"
@@ -2612,8 +2612,9 @@ msgstr "crwdns5504:0crwdne5504:0"
 
 #: src/components/SiteFooter.tsx
 msgid "Brico's Toolbox is a fan-made database of <0>BitCraft</0> items, recipes, creatures, structures, and more."
-msgstr ""
+msgstr "crwdns5532:0crwdne5532:0"
 
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
+

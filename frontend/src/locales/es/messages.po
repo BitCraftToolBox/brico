@@ -8,7 +8,7 @@ msgstr ""
 "Language: es\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-03 22:19\n"
+"PO-Revision-Date: 2026-08-07 05:39\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2596,7 +2596,7 @@ msgstr ""
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Collectible"
-msgstr ""
+msgstr "Coleccionable"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Appearances"
