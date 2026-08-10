@@ -71,7 +71,7 @@ export default function ItemListDetail() {
             objectId={itemList()?.id}
             chatLink={chatLink()}
             tabs={[
-                itemListTab(itemList()),
+                itemListTab(itemList(), true),
             ]}
         />
     );

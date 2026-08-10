@@ -482,8 +482,8 @@ function breadcrumbTrail(href: string, titleOverride: Label | string | undefined
     const section = breadcrumbSection(href);
     return <>
         <Show when={section}>
-            <span class="text-muted-foreground/70">{labelText(section!)}</span>
-            <span class="mx-1.5 text-muted-foreground/70">{">"}</span>
+            <span class="text-sidebar-primary-foreground/50">{labelText(section!)}</span>
+            <span class="mx-1.5 text-sidebar-primary-foreground/50">{">"}</span>
         </Show>
         {current
             ? <span aria-current="page">{labelText(label)}</span>

@@ -173,7 +173,7 @@ export function constructionRecipesConsuming(itemId: number, itemType: string): 
     return all.filter(r =>
         anyStackMatches(r.consumedItemStacks, itemId, itemType) ||
         anyStackMatches(r.consumedCargoStacks, itemId, itemType)
-    );
+    ).sort(artOfCheatingThen<ConstructionRecipeDesc>("name"));
 }
 
 // ─── Deconstruction Recipes ─────────────────────────────────────

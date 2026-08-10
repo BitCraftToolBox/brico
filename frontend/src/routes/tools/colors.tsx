@@ -1,6 +1,7 @@
 import {useColorMode} from "@kobalte/core";
 import {createEffect, For} from "solid-js";
 import MainLayout from "~/components/MainLayout";
+import {breadcrumbCurrent} from "~/lib/game-links";
 
 type ColorConfig = {
     name: string;
@@ -111,7 +112,11 @@ export default function ColorsPage() {
         }, 0);
     });
     return (
-        <MainLayout title="Colors" hideSearch ownHeading description="Brico.app theme color reference.">
+        <MainLayout
+            title="Colors" hideSearch ownHeading
+            description="Brico.app theme color reference."
+            navTitle={breadcrumbCurrent("/tools/colors", "Colors")}
+        >
             <div class="w-full">
                 <h1 class="text-4xl font-bold mb-8 text-foreground">Theme Colors</h1>
 

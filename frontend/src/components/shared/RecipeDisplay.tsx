@@ -32,7 +32,7 @@ import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
-import {BuildingIcon, EnemyIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon} from "~/components/shared/GameIcon";
+import {BuildingIcon, EnemyIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon, SHAPE_SIZES} from "~/components/shared/GameIcon";
 import {expandStack, InputItemStackArray, ItemStackArray, ItemStackIcon, ProbBadge, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
@@ -54,7 +54,7 @@ import {
 } from "~/lib/recipe-sources";
 import {buildingForConstruction, buildingForDeconstruction, questDropsForEnemy, questDropsForExtraction, questDropsForItemList, resourceForExtraction} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
-import {fixFloat, readableSeconds} from "~/lib/utils";
+import {cn, fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Display ─────────────────────────────────────────
 
@@ -222,7 +222,7 @@ const ExtractedPlaceableIcons: Component<{ drops: ExtractionSpawnedPlaceable[], 
     );
 }
 
-export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> = (props) => {
+export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc, showItemListsIfEmpty?: boolean }> = (props) => {
     const resource = () => resourceForExtraction(props.recipe);
     const questDrops = () => questDropsForExtraction(props.recipe.id);
     const chances = () => resource()?.ignoreDamage ? undefined : resource()?.maxHealth;
@@ -250,7 +250,7 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc }> 
                              <Show when={!resource()?.onDestroyYieldResourceId && !questDrops().length && !props.recipe.spawnedPlaceables}><Trans>No Outputs</Trans></Show>
                          }
                     >
-                        {(stack) => expandStack(stack, chances())}
+                        {(stack) => expandStack(stack, chances(), props.showItemListsIfEmpty)}
                     </For>
                     <Show when={props.recipe.spawnedPlaceables}>
                         {p => <ExtractedPlaceableIcons drops={p()} showLabel={true} chances={chances()}/>}
@@ -380,9 +380,9 @@ export const ResourceGrowthPanel: Component<{ growth: ResourceGrowthRecipeDesc }
 
 // ─── Item List Panel ────────────────────────────────────────────
 
-export const ItemListPanel: Component<{ list: ItemListDesc }> = (props) => {
+export const ItemListPanel: Component<{ list: ItemListDesc, showEmptyItemList?: boolean }> = (props) => {
     const questDrops = () => questDropsForItemList(props.list.id);
-    const listComp = expandStack(props.list);
+    const listComp = expandStack(props.list, undefined, props.showEmptyItemList);
     return (
         <RecipeVisual
             inputs={<ItemListSourceIcon list={props.list}/>}
@@ -593,10 +593,14 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
             outputs={
                 <>
                     <Show when={props.interaction.outputItemStacks.length}>
-                        <ItemStackArray stacks={props.interaction.outputItemStacks}/>
+                        <div class="flex flex-row flex-wrap justify-center gap-0.5">
+                            <For each={props.interaction.outputItemStacks}>
+                               {(stack) =>  <div class={outcomes()?.length ? "mt-5" : ""}>{expandStack(stack)}</div>}
+                            </For>
+                        </div>
                     </Show>
                     <Show when={outcomes()?.length}>
-                        <div class="flex flex-row flex-wrap justify-center items-end gap-0.5 rounded-md px-1 py-0.5 bg-muted/40 border border-dashed border-muted-foreground">
+                        <div class="flex flex-row flex-wrap justify-center gap-0.5 rounded-md px-1 py-0.5 bg-muted/40 border border-dashed border-muted-foreground">
                             <For each={outcomes()}>
                                 {outcome => {
                                     const sp = idx().get(outcome.placeableId);
@@ -622,7 +626,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                                             <span class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
                                                 {Math.round(weight * 100)}%
                                             </span>
-                                            <span class="w-[65px] h-[65px]"></span>
+                                            <span class={cn(SHAPE_SIZES.square.small.container)}></span>
                                             <span class="text-[10px] text-muted-foreground text-center max-w-14 leading-tight"><Trans>Despawn</Trans></span>
                                         </div>
                                     ) : undefined;

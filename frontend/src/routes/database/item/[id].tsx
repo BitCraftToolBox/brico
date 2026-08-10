@@ -316,7 +316,7 @@ export default function ItemDetail() {
             tabs={!item() ? [] : [
                 craftedFromTab(craftedFrom()),
                 craftsIntoTab(craftsInto()),
-                extractionTab(extractionDrops(), extractionUses()),
+                extractionTab(extractionDrops(), extractionUses(), undefined, !!isItemList()),
                 depletionTab(extractionDrops(), extractionUses(), depletionSources()),
                 enemyDropsTab(enemyDrops()),
                 terraformDropsTab(terraformOutputs()),
@@ -324,7 +324,7 @@ export default function ItemDetail() {
                 conversionTab(conversionInputs(), conversionOutputs()),
                 travelerTasksTab(taskRewards(), taskRequires()),
                 travelerTradesTab(tradeOffers(), tradeRequires()),
-                itemListTab(isItemList()),
+                itemListTab(isItemList(), true),
                 itemListsTab(inItemLists()),
                 collectiblesTab(collectibleData()),
                 questRequirementsTab(questRequires()),

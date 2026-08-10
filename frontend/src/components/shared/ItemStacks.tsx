@@ -21,7 +21,7 @@ import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
 import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
-import {CargoIcon, ItemIcon} from "~/components/shared/GameIcon";
+import {CargoIcon, ItemIcon, SHAPE_SIZES} from "~/components/shared/GameIcon";
 import {Button} from "~/components/ui/button";
 import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
@@ -145,6 +145,7 @@ export const ProbItemStackIcon: Component<{
     chances?: number;
     small?: boolean;
     noInteract?: boolean;
+    showItemListsIfEmpty?: boolean;
 }> = (props) => {
     const inner = () => props.probStack.itemStack;
 
@@ -187,6 +188,7 @@ export const ProbItemStackIcon: Component<{
                             originalIcon={() => <ItemStackIcon stack={stack()} noInteract hideSingle/>}
                             small={props.small}
                             noInteract={props.noInteract}
+                            showIfEmpty={props.showItemListsIfEmpty}
                         />
                     )}
                 </Show>
@@ -294,6 +296,7 @@ export const ItemListDisplay: Component<{
     originalIcon?: () => JSX.Element;
     small?: boolean;
     noInteract?: boolean;
+    showIfEmpty?: boolean;
 }> = (props) => {
     const { displayProbabilityAsAverage, flattenItemListOutputs } = useSettings();
     const sorted = createMemo(() =>
@@ -320,7 +323,7 @@ export const ItemListDisplay: Component<{
     const flatAverages = createMemo(() => computeAveragesFlatExpanded(sorted()));
     const averages = createMemo(() => flattenItemListOutputs() && hasInnerLists() ? flatAverages() : normalAverages());
 
-    return (
+    return !averages().length && !props.showIfEmpty ? null : (
         <Popover flip={true} slide={true} overlap={true} fitViewport={true}>
             <div class="flex flex-col items-center gap-0.5">
                 {/* Outer probability badge */}
@@ -340,11 +343,22 @@ export const ItemListDisplay: Component<{
                                 />
                             )}
                         </For>
+                        <Show when={!averages().length && props.showIfEmpty}>
+                            <Show when={props.originalIcon} keyed fallback={<span class={cn(SHAPE_SIZES.tall.small.container)}></span>}>
+                                {i => i()}
+                            </Show>
+                        </Show>
                     </div>
                     <span class="text-[10px] text-muted-foreground italic">
                         <Show when={flattenItemListOutputs() && hasInnerLists()} fallback={
-                            <Show when={sorted().length > 1} fallback={"exact"}>avg</Show>
-                        }>expanded</Show>
+                            <Show when={sorted().length > 1} fallback={
+                                <Show when={!averages().length && props.showIfEmpty} fallback={
+                                    <Trans>exact</Trans>
+                                }>
+                                    <Trans>Nothing</Trans>
+                                </Show>
+                            }><Trans>avg</Trans></Show>
+                        }><Trans>expanded</Trans></Show>
                     </span>
                 </PopoverTrigger>
             </div>
@@ -550,18 +564,19 @@ export const QuestDropDisplay: Component<{
 
 export function expandStack(
     input: ItemStack | ProbabilisticItemStack | ItemListDesc,
-    chances?: number
+    chances?: number,
+    showEmptyItemList?: boolean
 ): JSX.Element {
     // ProbabilisticItemStack
     if ("probability" in input && "itemStack" in input) {
         const probStack = input as ProbabilisticItemStack;
         if (!probStack.itemStack) return <></>;
-        return <ProbItemStackIcon probStack={probStack} chances={chances}/>;
+        return <ProbItemStackIcon probStack={probStack} chances={chances} showItemListsIfEmpty={showEmptyItemList}/>;
     }
 
     // ItemListDesc
     if ("possibilities" in input) {
-        return <ItemListDisplay itemList={input as ItemListDesc} chances={chances}/>;
+        return <ItemListDisplay itemList={input as ItemListDesc} chances={chances} showIfEmpty={showEmptyItemList}/>;
     }
 
     // Plain ItemStack — check if it resolves to an item list
@@ -571,7 +586,10 @@ export function expandStack(
         if (item?.itemListId) {
             const list = BitCraftTables.ItemListDesc.indexedBy("id")().get(item.itemListId);
             if (list) {
-                return <ItemListDisplay itemList={list} chances={input.quantity} originalIcon={() => <ItemStackIcon stack={stack} hideSingle/>}/>;
+                return <ItemListDisplay
+                    itemList={list} chances={input.quantity} showIfEmpty={showEmptyItemList}
+                    originalIcon={() => <ItemStackIcon stack={stack} hideSingle/>}
+                />;
             }
         }
     }

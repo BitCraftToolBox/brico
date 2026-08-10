@@ -204,7 +204,8 @@ export function getPlacementName(p: PlaceablePlacementDesc): string {
 
 export function getInteractionName(ia: PlaceableInteractionDesc): string {
     trackUILocale();
-    const plcName = getPlaceableName(ia.placeableId);
+    const targetName = getPlaceableName(ia.placeableId);
     const verbPhrase = ia.verbPhrase;
-    return t`${verbPhrase} (${plcName})`;
+    // same as getExtractionRecipeName
+    return t`${verbPhrase} ${targetName}`;
 }

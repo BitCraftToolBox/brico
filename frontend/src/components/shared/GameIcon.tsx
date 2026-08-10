@@ -32,7 +32,7 @@ type ShapeSizeEntry = { container: [string, string]; icon: [string, string] };
 
 // The frame graphic and actual item icon don't fully fit in-game. You can actually see gaps if you look closely enough.
 // This annoys me enough that I've resized our containers (and icons, for the square shape) to better fit the two together.
-const SHAPE_SIZES: Record<IconShape, { large: ShapeSizeEntry; small: ShapeSizeEntry }> = {
+export const SHAPE_SIZES: Record<IconShape, { large: ShapeSizeEntry; small: ShapeSizeEntry }> = {
     // Items: tall and narrow
     tall: {
         /* true game sizes
