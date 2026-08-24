@@ -41,7 +41,7 @@ function GridSection<T extends {id: number}>(props: {
 }) {
     return (
         <div class={`flex flex-col max-h-1/2 ${props.showBorder ? "border-b pb-1" : ""}`}>
-            <div class="flex-1 overflow-y-auto min-h-0">
+            <div class="flex-1 overflow-y-auto min-h-0 max-h-[30svh]">
                 <div class="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-12 gap-1 p-1">
                     <For each={props.items}>
                         {(item) => {

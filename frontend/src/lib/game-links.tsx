@@ -343,17 +343,40 @@ export function ItemListLink(props: { id: number; name?: string; class?: string;
 
 /**
  * Renders a combat action name as a link, with the action's own font icon if provided,
- * falling back to the Combat Abilities page icon.
+ * falling back to the Combat Actions page icon.
  */
 export function CombatActionLink(props: { id: number; name?: string; codepoint?: string; class?: string }) {
     const icon = () => props.codepoint
         ? <FontIcon codepoint={props.codepoint} class="size-4 shrink-0 align-text-bottom"/>
-        : pageIcon("Combat Abilities");
+        : pageIcon("Combat Actions");
     return (
         <IconLink href={`/database/combat/${props.id}`} icon={icon()} class={props.class}>
             {props.name ?? `Combat Action #${props.id}`}
         </IconLink>
     );
+}
+
+// ─── Ability ─────────────────────────────────────────────────────
+
+/**
+ * Renders a custom ability's name as a link, with the ability's own font icon if provided,
+ * falling back to the Abilities page icon.
+ */
+export function AbilityLink(props: { id: number; name?: string; codepoint?: string; class?: string }) {
+    const icon = () => props.codepoint
+        ? <FontIcon codepoint={props.codepoint} class="size-4 shrink-0 align-text-bottom"/>
+        : pageIcon("Abilities");
+    return (
+        <IconLink href={`/database/ability/${props.id}`} icon={icon()} class={props.class}>
+            {props.name ?? `Ability #${props.id}`}
+        </IconLink>
+    );
+}
+
+/** Resolves an ability ID to an AbilityLink. */
+export function AbilityLinkById(props: { id: number; class?: string }) {
+    const ability = () => BitCraftTables.AbilityCustomDesc.indexedBy("id")().get(props.id);
+    return <AbilityLink id={props.id} name={ability()?.abilityName} codepoint={ability()?.iconPath} class={props.class}/>;
 }
 
 // ─── Item Stack (lightweight) ───────────────────────────────────

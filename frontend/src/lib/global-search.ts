@@ -115,7 +115,7 @@ export const searchableTables: SearchableTable[] = [
         fields: [{field: "description", get: (r) => r.description}],
     },
     {
-        label: "Combat Abilities", route: "/database/combat", tableKey: "CombatActionDesc",
+        label: "Combat Actions", route: "/database/combat", tableKey: "CombatActionDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
     },
@@ -124,6 +124,10 @@ export const searchableTables: SearchableTable[] = [
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
         tier: (r) => r.tier,
+    },
+    {
+        label: "Abilities", route: "/database/ability", tableKey: "AbilityCustomDesc",
+        pk: "id", name: (r) => r.abilityName,
     },
     {
         label: "Buffs", route: "/database/buff", tableKey: "BuffDesc",

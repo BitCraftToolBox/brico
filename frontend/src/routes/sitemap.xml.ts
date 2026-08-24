@@ -14,6 +14,7 @@ import {BitCraftTables, preloadAllTablesServer} from "~/lib/spacetime";
  * budget to do it. Those routes now redirect to `/database/item/{id}` anyway.
  */
 const ENTITIES: {slug: string; table: keyof typeof BitCraftTables; idField: string; include?: (row: any) => boolean}[] = [
+    {slug: "ability", table: "AbilityCustomDesc", idField: "id"},
     {slug: "achievement", table: "AchievementDesc", idField: "id"},
     {slug: "biome", table: "BiomeDesc", idField: "biomeType"},
     {slug: "buff", table: "BuffDesc", idField: "id"},

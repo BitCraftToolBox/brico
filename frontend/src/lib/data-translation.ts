@@ -154,6 +154,7 @@ export function translateGameText(source: string): string {
 export const TRANSLATABLE_FIELDS: ReadonlySet<string> = new Set([
     // Ubiquitous display text.
     "name",           // 29 tables
+    "abilityName",    //  AbilityCustomDesc — its `name`, spelled differently upstream
     "description",    // 16 tables
     "tag",            //  7 tables — category labels shown in tables/filters
     "title",          //  SkillDesc, KnowledgeScrollDesc
