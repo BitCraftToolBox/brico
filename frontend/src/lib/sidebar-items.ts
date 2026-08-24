@@ -37,15 +37,6 @@ export type SidebarGroupDef = {
     items: SidebarItemDef[]
 }
 
-// Each item carries its font-icon `codepoint` (single source); the runtime `icon` component and
-// the OG-image codepoint lookup (PAGE_ICON_CODEPOINTS) are both derived from it below.
-// `title` is the stable English identity, `titleLabel` the translatable label — see SidebarItemDef.
-//
-// The nav deliberately mirrors BitCraft's own compendium, so every entry that names a game concept
-// is wrapped in `gameText()`: it takes the game's translation of that exact English string, which
-// keeps the sidebar consistent with the client rather than inventing a second wording. Entries the
-// game has no string for fall back to the Lingui catalog automatically, so a translator can still
-// cover them. Everything under Toolbox is ours alone and stays on plain `msg`.
 const sidebarGroups = [
     {
         name: "Compendium", nameLabel: gameText(msg`Compendium`),

@@ -132,8 +132,7 @@ export function SiteJsonLd() {
  * deliberately omits it — it would just repeat the page's own `<h1>` — but structured data has no
  * such duplication problem, and the trail reads wrong without it.
  *
- * The section crumb ("Database"/"Tools") carries no url: there is no `/database` or `/tools`
- * landing page to link it to.
+ * The section crumb ("Database"/"Tools") links to that section's landing page.
  */
 export function BreadcrumbJsonLd(props: {href?: string; titleOverride?: Label | string; objectName?: string}) {
     useJsonLd(() => {
@@ -141,7 +140,7 @@ export function BreadcrumbJsonLd(props: {href?: string; titleOverride?: Label | 
         if (!href) return undefined;
         const text = breadcrumbText(href, props.titleOverride);
         const crumbs: {name: string; url?: string}[] = [];
-        if (text?.section) crumbs.push({name: text.section});
+        if (text?.section) crumbs.push({name: text.section, url: text.sectionHref ? absoluteUrl(text.sectionHref) : undefined});
         if (text?.page) crumbs.push({name: text.page, url: absoluteUrl(href)});
         if (props.objectName) crumbs.push({name: props.objectName});
         if (!crumbs.length) return undefined;

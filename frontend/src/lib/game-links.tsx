@@ -437,13 +437,12 @@ export function knowledgeStatIcon(): JSX.Element {
 
 
 /**
- * Coarse top-level section a breadcrumb path lives under. Rendered as inert text ahead of the
- * page-level crumb — there's no single `/database` or `/tools` landing page to link it to.
+ * Coarse top-level section a breadcrumb path lives under, and the landing page it links to.
  * `/events` lives in the Toolbox sidebar group despite its top-level URL, so it maps to Tools too.
  */
-function breadcrumbSection(href: string): Label | undefined {
-    return href.startsWith("/tools") || href === "/events" ? msg`Tools`
-        : href.startsWith("/database") ? msg`Database`
+function breadcrumbSection(href: string): {label: Label; href: string} | undefined {
+    return href.startsWith("/tools") || href === "/events" ? {label: msg`Tools`, href: "/tools"}
+        : href.startsWith("/database") ? {label: msg`Database`, href: "/database"}
         : undefined;
 }
 
@@ -462,12 +461,12 @@ function crumbLabel(href: string, titleOverride?: Label | string): Label | strin
  * `trackUILocale()` to stay reactive; the caller must read it inside a computation for that to
  * matter (`useJsonLd`'s render effect does).
  */
-export function breadcrumbText(href: string, titleOverride?: Label | string): {section?: string; page: string} | undefined {
+export function breadcrumbText(href: string, titleOverride?: Label | string): {section?: string; sectionHref?: string; page: string} | undefined {
     const label = crumbLabel(href, titleOverride);
     if (!label) return undefined;
     trackUILocale();
     const section = breadcrumbSection(href);
-    return {section: section ? labelText(section) : undefined, page: labelText(label)};
+    return {section: section ? labelText(section.label) : undefined, sectionHref: section?.href, page: labelText(label)};
 }
 
 /**
@@ -482,7 +481,7 @@ function breadcrumbTrail(href: string, titleOverride: Label | string | undefined
     const section = breadcrumbSection(href);
     return <>
         <Show when={section}>
-            <span class="text-sidebar-primary-foreground/50">{labelText(section!)}</span>
+            <A href={section!.href} class="text-sidebar-primary-foreground/50 hover:underline">{labelText(section!.label)}</A>
             <span class="mx-1.5 text-sidebar-primary-foreground/50">{">"}</span>
         </Show>
         {current
