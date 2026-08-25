@@ -160,8 +160,9 @@ export function skillCategoryLabel(tag: string | undefined): string {
 
 // ── Deployable Type ────────────────────────────────────────────────
 
-// all match splitCamelCase
-export const DEPLOYABLE_TYPE_NAMES: NameTable<DeployableType["tag"]> = {};
+export const DEPLOYABLE_TYPE_NAMES: NameTable<DeployableType["tag"]> = {
+    Stall: "Trader Stand"
+};
 
 export function deployableTypeName(tag: string | undefined): string {
     return nameOf(DEPLOYABLE_TYPE_NAMES, tag);

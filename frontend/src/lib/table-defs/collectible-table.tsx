@@ -55,7 +55,7 @@ export const CollectibleDefs: BitCraftToDataDef<CollectibleDesc> = {
     ],
     facetedFilters: [
         tagFilter(),
-        uniqueValuesFilter("Type", msg`Type`),
+        uniqueValuesFilter("Type", msg`Type`, undefined, undefined, collectibleTypeLabel),
         rarityFilter(),
         boolFilter("Auto Collect", msg`Auto Collect`),
         boolFilter("Locked", msg`Locked`),

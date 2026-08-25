@@ -31,7 +31,7 @@ export const SkillDefs: BitCraftToDataDef<SkillDesc> = {
         rowActions(undefined, "prof"),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Category", msg`Category`),
+        uniqueValuesFilter("Category", msg`Category`, undefined, undefined, skillCategoryLabel),
         rangeFilter("Max Level", msg`Max Level`),
     ],
     searchColumns: ["Name", "Description", "Title"],
