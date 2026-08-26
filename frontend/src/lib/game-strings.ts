@@ -55,7 +55,6 @@ export const CHARACTER_STAT_NAMES: NameTable<CharacterStatType["tag"]> = {
     MaxHealth: "Maximum Health",
     MaxStamina: "Maximum Stamina",
     MaxSatiation: "Maximum Satiation",
-    HuntingPower: "Hunting Strength",
     PassiveHealthRegenRate: "Passive Health Regeneration Rate",
     ActiveHealthRegenRate: "Active Health Regeneration Rate",
     PassiveStaminaRegenRate: "Passive Stamina Regeneration Rate",
