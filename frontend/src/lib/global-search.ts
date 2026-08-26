@@ -127,8 +127,8 @@ export const searchableTables: SearchableTable[] = [
     },
     {
         label: "Buffs", route: "/database/buff", tableKey: "BuffDesc",
-        pk: "id", name: (r) => r.name,
-        fields: [{field: "description", get: (r) => r.description}],
+        pk: "id", name: (r) => r.description,
+        fields: [{field: "description", get: (r) => BitCraftTables.BuffTypeDesc.indexedBy("id")().get(r.buffTypeId)?.name}],
     },
     {
         label: "Knowledge", route: "/database/knowledge", tableKey: "SecondaryKnowledgeDesc",
