@@ -74,6 +74,10 @@ msgstr "Search by {otherCols}, or {lastCol}..."
 msgid "Auto-cast"
 msgstr "Auto-cast"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Prospect for {target}"
+msgstr "Prospect for {target}"
+
 #. placeholder {0}: fixFloat(expStack.quantity)
 #: src/lib/table-defs/quests-table.tsx
 msgid "EXP: {0}"
@@ -137,6 +141,10 @@ msgstr "Placeable Graph"
 msgid "Terraform Elevation Difference {0}"
 msgstr "Terraform Elevation Difference {0}"
 
+#: src/routes/database/progression/index.tsx
+msgid "Profession"
+msgstr "Profession"
+
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
 msgstr "Priority"
@@ -164,6 +172,7 @@ msgid "No"
 msgstr "No"
 
 #: src/routes/database/claim-research/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Unlocks"
 msgstr "Unlocks"
 
@@ -184,6 +193,7 @@ msgstr "Build Time"
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Stats"
 msgstr "Stats"
 
@@ -376,6 +386,10 @@ msgstr "Deployables"
 msgid "Name"
 msgstr "Name"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Total"
+msgstr "Total"
+
 #: src/routes/settings.tsx
 msgid "Object ID"
 msgstr "Object ID"
@@ -389,6 +403,7 @@ msgid "Flattenable"
 msgstr "Flattenable"
 
 #: src/lib/sidebar-items.ts
+#: src/routes/tools/index.tsx
 msgid "Toolbox"
 msgstr "Toolbox"
 
@@ -444,6 +459,7 @@ msgstr "Developer-locked / inaccessible"
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Equipment"
 msgstr "Equipment"
 
@@ -466,6 +482,7 @@ msgstr "Search"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Quests"
 msgstr "Quests"
 
@@ -575,6 +592,10 @@ msgstr "Strength Multiplier"
 msgid "Self Buffs"
 msgstr "Self Buffs"
 
+#: src/components/shared/ItemStacks.tsx
+msgid "avg"
+msgstr "avg"
+
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "Min Level"
 msgstr "Min Level"
@@ -620,8 +641,10 @@ msgstr "Experience"
 msgid "Extraction"
 msgstr "Extraction"
 
+#: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/weapon-table.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/combat/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Cooldown"
@@ -832,6 +855,10 @@ msgstr "Spawned from Prospecting"
 msgid "Max Speed"
 msgstr "Max Speed"
 
+#: src/routes/database/ability/[id].tsx
+msgid "Ability"
+msgstr "Ability"
+
 #: src/routes/settings.tsx
 msgid "Show row actions first"
 msgstr "Show row actions first"
@@ -850,6 +877,7 @@ msgstr "deplete"
 
 #: src/lib/recipe-sources.tsx
 #: src/lib/relations.ts
+#: src/routes/database/skill/[id].tsx
 msgid "Unknown"
 msgstr "Unknown"
 
@@ -965,6 +993,11 @@ msgstr "Achievement Requirements"
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "{0} selected"
 msgstr "{0} selected"
+
+#: src/lib/sidebar-items.ts
+#: src/routes/database/skill/[id].tsx
+msgid "Abilities"
+msgstr "Abilities"
 
 #: src/routes/database/building/[id].tsx
 msgid "Destroy On Unclaim"
@@ -1089,10 +1122,6 @@ msgstr "Forced to Crowdin's target language for review."
 msgid "Item"
 msgstr "Item"
 
-#: src/lib/placeables.ts
-msgid "{verbPhrase} ({plcName})"
-msgstr "{verbPhrase} ({plcName})"
-
 #: src/routes/database/building/[id].tsx
 msgid "Storage Slots"
 msgstr "Storage Slots"
@@ -1105,6 +1134,11 @@ msgstr "Unenterable"
 #: src/routes/database/claim-research/[id].tsx
 msgid "Cost"
 msgstr "Cost"
+
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Stamina Cost"
+msgstr "Stamina Cost"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Construction Recipe"
@@ -1182,6 +1216,10 @@ msgstr "Projectile Speed"
 msgid "Breadcrumb"
 msgstr "Breadcrumb"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Sell <0/> to {npcName}"
+msgstr "Sell <0/> to {npcName}"
+
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
 msgstr "Accuracy Multiplier"
@@ -1205,6 +1243,12 @@ msgstr "Required to Start"
 #: src/lib/recipe-sources.tsx
 msgid "Building:"
 msgstr "Building:"
+
+#. placeholder {0}: formatStatLabel(stat)
+#. placeholder {1}: formatStatValue(stat)
+#: src/routes/database/skill/[id].tsx
+msgid "Permanently Gain {0} +{1}"
+msgstr "Permanently Gain {0} +{1}"
 
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
@@ -1254,6 +1298,7 @@ msgid "Wilderness"
 msgstr "Wilderness"
 
 #: src/lib/game-links.tsx
+#: src/routes/database/index.tsx
 msgid "Database"
 msgstr "Database"
 
@@ -1330,6 +1375,10 @@ msgstr "No stats found."
 #: src/routes/database/achievement/[id].tsx
 msgid "Achievement Points"
 msgstr "Achievement Points"
+
+#: src/routes/database/skill/[id].tsx
+msgid "Unlock trade"
+msgstr "Unlock trade"
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/DetailPageLayout.tsx
@@ -1422,6 +1471,8 @@ msgid "Latest available <0>(check preview <1/>)</0>"
 msgstr "Latest available <0>(check preview <1/>)</0>"
 
 #: src/lib/sidebar-items.ts
+#: src/routes/database/progression/index.tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Progression"
 msgstr "Progression"
 
@@ -1507,6 +1558,10 @@ msgstr "Reset Filters"
 msgid "Crafting Slots"
 msgstr "Crafting Slots"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Trade <0/> for <1/> to {npcName}"
+msgstr "Trade <0/> for <1/> to {npcName}"
+
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
 msgstr "Show All"
@@ -1532,6 +1587,10 @@ msgstr "All"
 #: src/routes/database/buff/[id].tsx
 msgid "Online Timestamp"
 msgstr "Online Timestamp"
+
+#: src/components/shared/ItemStacks.tsx
+msgid "exact"
+msgstr "exact"
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Research Time"
@@ -1657,6 +1716,10 @@ msgstr "Language for in-game names, descriptions, etc.<0/><1>Official (though AI
 msgid "Time:"
 msgstr "Time:"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Unlock achievement <0/>"
+msgstr "Unlock achievement <0/>"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Extraction Recipe"
 msgstr "Extraction Recipe"
@@ -1680,6 +1743,7 @@ msgstr "View Map"
 #: src/lib/table-defs/tools-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Level"
 msgstr "Level"
 
@@ -1704,6 +1768,10 @@ msgstr "Terraform"
 #: src/routes/database/deployable/[id].tsx
 msgid "Can Auto Follow"
 msgstr "Can Auto Follow"
+
+#: src/routes/database/skill/[id].tsx
+msgid "Crafting"
+msgstr "Crafting"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Raw Data"
@@ -1737,10 +1805,6 @@ msgstr "Stamina:"
 msgid "{name} Lvl {level}"
 msgstr "{name} Lvl {level}"
 
-#: src/lib/sidebar-items.ts
-msgid "Combat Abilities"
-msgstr "Combat Abilities"
-
 #: src/lib/recipe-sources.tsx
 msgid "Resource ignores regular damage."
 msgstr "Resource ignores regular damage."
@@ -1755,6 +1819,7 @@ msgstr "Tags"
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/progression/index.tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Skill"
 msgstr "Skill"
@@ -1766,6 +1831,11 @@ msgstr "Scaled Armor"
 #: src/lib/sidebar-items.ts
 msgid "Skills"
 msgstr "Skills"
+
+#: src/lib/table-defs/abilities-table.tsx
+#: src/lib/table-utils/column-builders.tsx
+msgid "Buff Stats"
+msgstr "Buff Stats"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/quest-graph.tsx
@@ -1794,9 +1864,19 @@ msgstr "Elevation Difference"
 msgid "Not affiliated with Clockwork Labs."
 msgstr "Not affiliated with Clockwork Labs."
 
+#: src/components/shared/ItemStacks.tsx
+msgid "Nothing"
+msgstr "Nothing"
+
 #: src/components/shared/DetailPageLayout.tsx
+#: src/routes/database/skill/[id].tsx
 msgid "No data"
 msgstr "No data"
+
+#: src/routes/database/skill/[id].tsx
+msgctxt "ability"
+msgid "Use <0/>"
+msgstr "Use <0/>"
 
 #: src/lib/recipe-sources.tsx
 msgid "Tier {tier} {name}"
@@ -1820,7 +1900,9 @@ msgstr "No results found for \"{0}\""
 msgid "Dark"
 msgstr "Dark"
 
+#: src/lib/placeables.ts
 #: src/lib/relations.ts
+#: src/routes/database/skill/[id].tsx
 msgid "{verbPhrase} {targetName}"
 msgstr "{verbPhrase} {targetName}"
 
@@ -1831,6 +1913,10 @@ msgstr "Loading…"
 #: src/routes/database/collectible/[id].tsx
 msgid "Max Equip Count"
 msgstr "Max Equip Count"
+
+#: src/routes/database/combat/[id].tsx
+msgid "Combat Action"
+msgstr "Combat Action"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows From"
@@ -1955,6 +2041,7 @@ msgid "cereal - Raw Data Browser"
 msgstr "cereal - Raw Data Browser"
 
 #: src/lib/sidebar-items.ts
+#: src/routes/database/skill/[id].tsx
 msgid "Resources"
 msgstr "Resources"
 
@@ -2016,11 +2103,16 @@ msgstr "Output is rolled once, regardless of damage dealt, as long as the minimu
 msgid "Day Detect Range"
 msgstr "Day Detect Range"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Equip <0/>"
+msgstr "Equip <0/>"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded from Quests"
 msgstr "Rewarded from Quests"
 
 #: src/lib/sidebar-items.ts
+#: src/routes/database/skill/[id].tsx
 msgid "Achievements"
 msgstr "Achievements"
 
@@ -2054,6 +2146,7 @@ msgstr "Grows into"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Traveler Trades"
 msgstr "Traveler Trades"
 
@@ -2071,6 +2164,10 @@ msgstr "Lv. {0}-{1} {2}"
 #: src/routes/database/deployable/[id].tsx
 msgid "Barter Slots"
 msgstr "Barter Slots"
+
+#: src/routes/database/skill/[id].tsx
+msgid "Unlock quest <0/>"
+msgstr "Unlock quest <0/>"
 
 #: src/routes/database/biome/[id].tsx
 msgid "Disallow Player Build"
@@ -2092,6 +2189,10 @@ msgstr "{0, plural, one {# result} other {# results}}"
 #: src/routes/database/deployable/[id].tsx
 msgid "Wind Multiplier"
 msgstr "Wind Multiplier"
+
+#: src/routes/database/skill/[id].tsx
+msgid "Buy <0/> from {npcName}"
+msgstr "Buy <0/> from {npcName}"
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Search stats..."
@@ -2165,6 +2266,7 @@ msgstr "Details"
 msgid "Craft"
 msgstr "Craft"
 
+#: src/lib/sidebar-items.ts
 #: src/routes/database/creature/[id].tsx
 msgid "Combat Actions"
 msgstr "Combat Actions"
@@ -2305,9 +2407,9 @@ msgstr "Extracted from"
 msgid "Builds into"
 msgstr "Builds into"
 
-#: src/routes/database/combat/[id].tsx
-msgid "Combat Ability"
-msgstr "Combat Ability"
+#: src/components/shared/ItemStacks.tsx
+msgid "expanded"
+msgstr "expanded"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Source"
@@ -2379,6 +2481,7 @@ msgstr "Equipped Item"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/database/biome/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Prospecting"
 msgstr "Prospecting"
 
@@ -2557,7 +2660,10 @@ msgid "Is Aquatic Resource"
 msgstr "Is Aquatic Resource"
 
 #: src/lib/sidebar-items.ts
+#: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/food-table.tsx
+#: src/lib/table-utils/column-builders.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/building/[id].tsx
 msgid "Buffs"
 msgstr "Buffs"

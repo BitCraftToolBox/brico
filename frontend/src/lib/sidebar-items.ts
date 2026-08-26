@@ -47,6 +47,7 @@ const sidebarGroups = [
             {href: '/database/resource', title: 'Resources', titleLabel: gameText(msg`Resources`), codepoint: "FFFE"},
             {href: '/database/building', title: 'Structures', titleLabel: gameText(msg`Structures`), codepoint: "FFF3"},
             {href: '/database/collectible', title: 'Collection', titleLabel: gameText(msg`Collection`), codepoint: "FFD9"},
+            {href: '/database/progression', title: 'Progression', titleLabel: gameText(msg`Progression`), codepoint: "FFF2"},
             {href: '/database/knowledge', title: 'Knowledge', titleLabel: gameText(msg`Knowledge`), codepoint: "FFFC"},
         ] as const
     },

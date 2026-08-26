@@ -323,6 +323,28 @@ export function ResourceLinkById(props: { id: number; class?: string; showIcon?:
     return <ResourceLink id={props.id} name={resource()?.name} class={props.class} showIcon={props.showIcon}/>;
 }
 
+// ─── Enemy ───────────────────────────────────────────────────────
+
+/** Renders an enemy name as a link. `id` is the enemy's `enemyType` ordinal. */
+export function EnemyLink(props: { id: number; name?: string; class?: string; showIcon?: boolean }) {
+    const show = () => props.showIcon !== false;
+    return (
+        <IconLink
+            href={`/database/creature/${props.id}`}
+            icon={show() ? pageIcon("Creatures") : undefined}
+            class={props.class}
+        >
+            {props.name ?? `Creature #${props.id}`}
+        </IconLink>
+    );
+}
+
+/** Resolves an enemyType ordinal to an EnemyLink. */
+export function EnemyLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
+    const enemy = () => BitCraftTables.EnemyDesc.indexedBy("enemyType")().get(props.id);
+    return <EnemyLink id={props.id} name={enemy()?.name} class={props.class} showIcon={props.showIcon}/>;
+}
+
 // ─── Item List ───────────────────────────────────────────────────
 
 /** Renders an item list name as a link. */
@@ -384,8 +406,11 @@ export function AbilityLinkById(props: { id: number; class?: string }) {
 /**
  * Renders an item or cargo stack as a page-icon + name + quantity link.
  * This is a lightweight text-based link, NOT the full graphical GameIcon.
+ *
+ * Takes the `itemId`/`itemType`/`quantity` subset rather than the full `ItemStack` so an
+ * `InputItemStack` (which has no `durability`) can be passed directly.
  */
-export function ItemStackLink(props: { stack: ItemStack; class?: string; showIcon?: boolean }) {
+export function ItemStackLink(props: { stack: Pick<ItemStack, "itemId" | "itemType" | "quantity">; class?: string; showIcon?: boolean }) {
     const show = () => props.showIcon !== false;
     const isCargo = () => props.stack.itemType.tag === ItemType.Cargo.tag;
 

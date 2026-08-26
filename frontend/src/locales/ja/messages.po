@@ -79,6 +79,10 @@ msgstr "{otherCols} または {lastCol} で検索…"
 msgid "Auto-cast"
 msgstr "自動適応"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Prospect for {target}"
+msgstr ""
+
 #. placeholder {0}: fixFloat(expStack.quantity)
 #: src/lib/table-defs/quests-table.tsx
 msgid "EXP: {0}"
@@ -142,6 +146,10 @@ msgstr "設置物のグラフ"
 msgid "Terraform Elevation Difference {0}"
 msgstr "地形標高差 {0}"
 
+#: src/routes/database/progression/index.tsx
+msgid "Profession"
+msgstr ""
+
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
 msgstr "優先度"
@@ -169,6 +177,7 @@ msgid "No"
 msgstr "いいえ"
 
 #: src/routes/database/claim-research/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Unlocks"
 msgstr "アンロック"
 
@@ -189,6 +198,7 @@ msgstr "ビルド時間"
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Stats"
 msgstr "ステータス"
 
@@ -381,6 +391,10 @@ msgstr "展開物"
 msgid "Name"
 msgstr "名前"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Total"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Object ID"
 msgstr "オブジェクト ID"
@@ -394,6 +408,7 @@ msgid "Flattenable"
 msgstr "フラット化可能"
 
 #: src/lib/sidebar-items.ts
+#: src/routes/tools/index.tsx
 msgid "Toolbox"
 msgstr "ツールボックス"
 
@@ -449,6 +464,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Equipment"
 msgstr "装備"
 
@@ -471,6 +487,7 @@ msgstr "検索"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Quests"
 msgstr "クエスト"
 
@@ -580,6 +597,10 @@ msgstr "力の倍率"
 msgid "Self Buffs"
 msgstr "自己バフ"
 
+#: src/components/shared/ItemStacks.tsx
+msgid "avg"
+msgstr ""
+
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "Min Level"
 msgstr "最小レベル"
@@ -625,8 +646,10 @@ msgstr "EXP"
 msgid "Extraction"
 msgstr "抽出"
 
+#: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/weapon-table.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/combat/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Cooldown"
@@ -837,6 +860,10 @@ msgstr "探索からのスポーン"
 msgid "Max Speed"
 msgstr "最大スピード"
 
+#: src/routes/database/ability/[id].tsx
+msgid "Ability"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Show row actions first"
 msgstr "行のアクションを最初に表示"
@@ -855,6 +882,7 @@ msgstr "枯渇"
 
 #: src/lib/recipe-sources.tsx
 #: src/lib/relations.ts
+#: src/routes/database/skill/[id].tsx
 msgid "Unknown"
 msgstr ""
 
@@ -969,6 +997,11 @@ msgstr "実績要件"
 #. placeholder {0}: selectedValues().length
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "{0} selected"
+msgstr ""
+
+#: src/lib/sidebar-items.ts
+#: src/routes/database/skill/[id].tsx
+msgid "Abilities"
 msgstr ""
 
 #: src/routes/database/building/[id].tsx
@@ -1094,10 +1127,6 @@ msgstr "Crowdinのレビューの都合で、翻訳先言語に固定されて�
 msgid "Item"
 msgstr "アイテム"
 
-#: src/lib/placeables.ts
-msgid "{verbPhrase} ({plcName})"
-msgstr "{plcName}を{verbPhrase}"
-
 #: src/routes/database/building/[id].tsx
 msgid "Storage Slots"
 msgstr "ストレージスロット"
@@ -1110,6 +1139,11 @@ msgstr "進入不可"
 #: src/routes/database/claim-research/[id].tsx
 msgid "Cost"
 msgstr "コスト"
+
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Stamina Cost"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Construction Recipe"
@@ -1187,6 +1221,10 @@ msgstr "飛び道具速度"
 msgid "Breadcrumb"
 msgstr ""
 
+#: src/routes/database/skill/[id].tsx
+msgid "Sell <0/> to {npcName}"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
 msgstr "精度の倍率"
@@ -1210,6 +1248,12 @@ msgstr ""
 #: src/lib/recipe-sources.tsx
 msgid "Building:"
 msgstr "建物："
+
+#. placeholder {0}: formatStatLabel(stat)
+#. placeholder {1}: formatStatValue(stat)
+#: src/routes/database/skill/[id].tsx
+msgid "Permanently Gain {0} +{1}"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
@@ -1259,6 +1303,7 @@ msgid "Wilderness"
 msgstr "荒野"
 
 #: src/lib/game-links.tsx
+#: src/routes/database/index.tsx
 msgid "Database"
 msgstr ""
 
@@ -1335,6 +1380,10 @@ msgstr "ステータスが見つかりませんでした。"
 #: src/routes/database/achievement/[id].tsx
 msgid "Achievement Points"
 msgstr "実績ポイント"
+
+#: src/routes/database/skill/[id].tsx
+msgid "Unlock trade"
+msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/DetailPageLayout.tsx
@@ -1427,6 +1476,8 @@ msgid "Latest available <0>(check preview <1/>)</0>"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
+#: src/routes/database/progression/index.tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Progression"
 msgstr "進行度"
 
@@ -1512,6 +1563,10 @@ msgstr "フィルターをリセット"
 msgid "Crafting Slots"
 msgstr "作製スロット"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Trade <0/> for <1/> to {npcName}"
+msgstr ""
+
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
 msgstr ""
@@ -1537,6 +1592,10 @@ msgstr ""
 #: src/routes/database/buff/[id].tsx
 msgid "Online Timestamp"
 msgstr "オンラインのタイムスタンプ"
+
+#: src/components/shared/ItemStacks.tsx
+msgid "exact"
+msgstr ""
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Research Time"
@@ -1662,6 +1721,10 @@ msgstr "ゲーム内の名前や説明文などの言語。<0/><1>Clockwork Labs
 msgid "Time:"
 msgstr "時間："
 
+#: src/routes/database/skill/[id].tsx
+msgid "Unlock achievement <0/>"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Extraction Recipe"
 msgstr ""
@@ -1685,6 +1748,7 @@ msgstr ""
 #: src/lib/table-defs/tools-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Level"
 msgstr "レベル"
 
@@ -1709,6 +1773,10 @@ msgstr "テラフォーミング"
 #: src/routes/database/deployable/[id].tsx
 msgid "Can Auto Follow"
 msgstr "自動追尾が可能"
+
+#: src/routes/database/skill/[id].tsx
+msgid "Crafting"
+msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Raw Data"
@@ -1742,10 +1810,6 @@ msgstr "スタミナ："
 msgid "{name} Lvl {level}"
 msgstr "{name} レベル{level}"
 
-#: src/lib/sidebar-items.ts
-msgid "Combat Abilities"
-msgstr "アビリティ"
-
 #: src/lib/recipe-sources.tsx
 msgid "Resource ignores regular damage."
 msgstr ""
@@ -1760,6 +1824,7 @@ msgstr "タグ"
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/progression/index.tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Skill"
 msgstr "スキル"
@@ -1771,6 +1836,11 @@ msgstr "アーマー値のスケール"
 #: src/lib/sidebar-items.ts
 msgid "Skills"
 msgstr "スキル"
+
+#: src/lib/table-defs/abilities-table.tsx
+#: src/lib/table-utils/column-builders.tsx
+msgid "Buff Stats"
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/quest-graph.tsx
@@ -1799,8 +1869,18 @@ msgstr ""
 msgid "Not affiliated with Clockwork Labs."
 msgstr ""
 
+#: src/components/shared/ItemStacks.tsx
+msgid "Nothing"
+msgstr ""
+
 #: src/components/shared/DetailPageLayout.tsx
+#: src/routes/database/skill/[id].tsx
 msgid "No data"
+msgstr ""
+
+#: src/routes/database/skill/[id].tsx
+msgctxt "ability"
+msgid "Use <0/>"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -1825,7 +1905,9 @@ msgstr "\"{0}\" の結果は見つかりませんでした"
 msgid "Dark"
 msgstr "ダーク"
 
+#: src/lib/placeables.ts
 #: src/lib/relations.ts
+#: src/routes/database/skill/[id].tsx
 msgid "{verbPhrase} {targetName}"
 msgstr "{targetName}を{verbPhrase}する"
 
@@ -1836,6 +1918,10 @@ msgstr ""
 #: src/routes/database/collectible/[id].tsx
 msgid "Max Equip Count"
 msgstr "最大装備数"
+
+#: src/routes/database/combat/[id].tsx
+msgid "Combat Action"
+msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows From"
@@ -1960,6 +2046,7 @@ msgid "cereal - Raw Data Browser"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
+#: src/routes/database/skill/[id].tsx
 msgid "Resources"
 msgstr "資源"
 
@@ -2021,11 +2108,16 @@ msgstr ""
 msgid "Day Detect Range"
 msgstr "日中の認識範囲"
 
+#: src/routes/database/skill/[id].tsx
+msgid "Equip <0/>"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded from Quests"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
+#: src/routes/database/skill/[id].tsx
 msgid "Achievements"
 msgstr "実績"
 
@@ -2059,6 +2151,7 @@ msgstr "次の段階への成長"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Traveler Trades"
 msgstr "旅人の取引"
 
@@ -2076,6 +2169,10 @@ msgstr "レベル {0}-{1} {2}"
 #: src/routes/database/deployable/[id].tsx
 msgid "Barter Slots"
 msgstr "物々交換スロット"
+
+#: src/routes/database/skill/[id].tsx
+msgid "Unlock quest <0/>"
+msgstr ""
 
 #: src/routes/database/biome/[id].tsx
 msgid "Disallow Player Build"
@@ -2097,6 +2194,10 @@ msgstr ""
 #: src/routes/database/deployable/[id].tsx
 msgid "Wind Multiplier"
 msgstr "風力倍率"
+
+#: src/routes/database/skill/[id].tsx
+msgid "Buy <0/> from {npcName}"
+msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Search stats..."
@@ -2170,6 +2271,7 @@ msgstr "詳細"
 msgid "Craft"
 msgstr ""
 
+#: src/lib/sidebar-items.ts
 #: src/routes/database/creature/[id].tsx
 msgid "Combat Actions"
 msgstr "戦闘行動"
@@ -2310,9 +2412,9 @@ msgstr ""
 msgid "Builds into"
 msgstr "建設先"
 
-#: src/routes/database/combat/[id].tsx
-msgid "Combat Ability"
-msgstr "戦闘アビリティ"
+#: src/components/shared/ItemStacks.tsx
+msgid "expanded"
+msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "Source"
@@ -2384,6 +2486,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 #: src/routes/database/biome/[id].tsx
+#: src/routes/database/skill/[id].tsx
 msgid "Prospecting"
 msgstr "探鉱"
 
@@ -2562,7 +2665,10 @@ msgid "Is Aquatic Resource"
 msgstr "水中のリソース"
 
 #: src/lib/sidebar-items.ts
+#: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/food-table.tsx
+#: src/lib/table-utils/column-builders.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/building/[id].tsx
 msgid "Buffs"
 msgstr "バフ効果"
@@ -2617,4 +2723,3 @@ msgstr ""
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "{buildingName}を解体"
-
