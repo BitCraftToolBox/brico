@@ -36,7 +36,6 @@ msgid "Total Passive Slots"
 msgstr "Total Passive Slots"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "Max Stamina"
 msgstr "Max Stamina"
 
@@ -525,7 +524,6 @@ msgstr "Base Threat"
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/creature/[id].tsx
-#: src/routes/database/item/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Max Health"
@@ -1191,7 +1189,6 @@ msgid "Trade Orders"
 msgstr "Trade Orders"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "HP"
 msgstr "HP"
 
@@ -2023,6 +2020,11 @@ msgstr "Enemy Drops"
 msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
 msgstr "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
 
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Health"
+msgstr "Min Health"
+
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
@@ -2083,6 +2085,11 @@ msgstr "Claim Research"
 #: src/lib/table-defs/creature-table.tsx
 msgid "Huntable"
 msgstr "Huntable"
+
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Stamina"
+msgstr "Min Stamina"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Sources"
@@ -2266,6 +2273,10 @@ msgstr "This item starts a placeable lifecycle chain."
 #: src/routes/database/knowledge/[id].tsx
 msgid "Tag"
 msgstr "Tag"
+
+#: src/routes/database/item/[id].tsx
+msgid "Health"
+msgstr "Health"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"

@@ -267,10 +267,10 @@ export default function ItemDetail() {
                 heading: () => <IconSpan icon={pageIcon("Food")}>{label(gameText(msg`Food`))}</IconSpan>,
                 properties: [
                     {label: gameText(msg`Satiation`), value: food.hunger ? fixFloat(food.hunger) : undefined},
-                    {label: gameText(msg`HP`, "Health"), value: food.hp ? fixFloat(food.hp) : undefined},
-                    {label: gameText(msg`Max Health`), value: food.upToHp ? fixFloat(food.upToHp) : undefined},
+                    {label: gameText(msg`Health`), value: food.hp ? fixFloat(food.hp) : undefined},
+                    {label: gameText(msg`Min Health`), value: food.upToHp ? fixFloat(food.upToHp) : undefined},
                     {label: gameText(msg`Stamina`), value: food.stamina ? fixFloat(food.stamina) : undefined},
-                    {label: gameText(msg`Max Stamina`), value: food.upToStamina ? fixFloat(food.upToStamina) : undefined},
+                    {label: gameText(msg`Min Stamina`), value: food.upToStamina ? fixFloat(food.upToStamina) : undefined},
                     {label: gameText(msg`TP Energy`, "Teleportation Energy"), value: food.teleportationEnergy ? fixFloat(food.teleportationEnergy) : undefined},
                     {label: msg`Consumable In Combat`, value: food.consumableWhileInCombat},
                     {label: msg`Auto Consume`, value: food.autoConsume},

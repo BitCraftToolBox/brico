@@ -41,7 +41,6 @@ msgid "Total Passive Slots"
 msgstr "パッシブスロットの合計"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "Max Stamina"
 msgstr "最大スタミナ"
 
@@ -148,7 +147,7 @@ msgstr "地形標高差 {0}"
 
 #: src/routes/database/progression/index.tsx
 msgid "Profession"
-msgstr ""
+msgstr "職業"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
@@ -387,7 +386,7 @@ msgstr "名前"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Total"
-msgstr ""
+msgstr "合計"
 
 #: src/routes/settings.tsx
 msgid "Object ID"
@@ -530,7 +529,6 @@ msgstr "基本的な脅威"
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/creature/[id].tsx
-#: src/routes/database/item/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Max Health"
@@ -1004,7 +1002,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Abilities"
-msgstr ""
+msgstr "アビリティ"
 
 #: src/routes/database/building/[id].tsx
 msgid "Destroy On Unclaim"
@@ -1196,7 +1194,6 @@ msgid "Trade Orders"
 msgstr "取引注文"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "HP"
 msgstr "体力"
 
@@ -1788,7 +1785,7 @@ msgstr "自動追尾が可能"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Crafting"
-msgstr ""
+msgstr "クラフト"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Raw Data"
@@ -2028,6 +2025,11 @@ msgstr "敵のドロップ"
 msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
 msgstr ""
 
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Health"
+msgstr ""
+
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
@@ -2088,6 +2090,11 @@ msgstr "研究"
 #: src/lib/table-defs/creature-table.tsx
 msgid "Huntable"
 msgstr "狩猟可能"
+
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Stamina"
+msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "Sources"
@@ -2271,6 +2278,10 @@ msgstr ""
 #: src/routes/database/knowledge/[id].tsx
 msgid "Tag"
 msgstr "タグ"
+
+#: src/routes/database/item/[id].tsx
+msgid "Health"
+msgstr "体力"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"

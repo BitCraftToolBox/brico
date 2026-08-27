@@ -41,7 +41,6 @@ msgid "Total Passive Slots"
 msgstr ""
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "Max Stamina"
 msgstr "Maks. wytrzymałość"
 
@@ -148,7 +147,7 @@ msgstr ""
 
 #: src/routes/database/progression/index.tsx
 msgid "Profession"
-msgstr ""
+msgstr "Profesja"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
@@ -173,7 +172,7 @@ msgstr ""
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/skill/[id].tsx
 msgid "Unlocks"
-msgstr ""
+msgstr "Odblokowuje"
 
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "EXP"
@@ -387,7 +386,7 @@ msgstr "Nazwa"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Total"
-msgstr ""
+msgstr "Suma"
 
 #: src/routes/settings.tsx
 msgid "Object ID"
@@ -530,7 +529,6 @@ msgstr ""
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/creature/[id].tsx
-#: src/routes/database/item/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Max Health"
@@ -1004,7 +1002,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Abilities"
-msgstr ""
+msgstr "Zdolności"
 
 #: src/routes/database/building/[id].tsx
 msgid "Destroy On Unclaim"
@@ -1196,7 +1194,6 @@ msgid "Trade Orders"
 msgstr ""
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "HP"
 msgstr "Zdrowie"
 
@@ -1788,7 +1785,7 @@ msgstr ""
 
 #: src/routes/database/skill/[id].tsx
 msgid "Crafting"
-msgstr ""
+msgstr "Wytwarzanie"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Raw Data"
@@ -2028,6 +2025,11 @@ msgstr ""
 msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
 msgstr ""
 
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Health"
+msgstr ""
+
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
@@ -2087,6 +2089,11 @@ msgstr "Badania"
 
 #: src/lib/table-defs/creature-table.tsx
 msgid "Huntable"
+msgstr ""
+
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Stamina"
 msgstr ""
 
 #: src/routes/database/buff/[id].tsx
@@ -2271,6 +2278,10 @@ msgstr ""
 #: src/routes/database/knowledge/[id].tsx
 msgid "Tag"
 msgstr ""
+
+#: src/routes/database/item/[id].tsx
+msgid "Health"
+msgstr "Zdrowie"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"

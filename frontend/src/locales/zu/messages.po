@@ -41,7 +41,6 @@ msgid "Total Passive Slots"
 msgstr "crwdns4340:0crwdne4340:0"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "Max Stamina"
 msgstr "crwdns4342:0crwdne4342:0"
 
@@ -530,7 +529,6 @@ msgstr "crwdns4546:0crwdne4546:0"
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/creature/[id].tsx
-#: src/routes/database/item/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Max Health"
@@ -1196,7 +1194,6 @@ msgid "Trade Orders"
 msgstr "crwdns4842:0crwdne4842:0"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "HP"
 msgstr "crwdns4844:0crwdne4844:0"
 
@@ -2028,6 +2025,11 @@ msgstr "crwdns5186:0crwdne5186:0"
 msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
 msgstr "crwdns5188:0{minRad}crwdnd5188:0{maxRad}crwdne5188:0"
 
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Health"
+msgstr ""
+
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
@@ -2088,6 +2090,11 @@ msgstr "crwdns5214:0crwdne5214:0"
 #: src/lib/table-defs/creature-table.tsx
 msgid "Huntable"
 msgstr "crwdns5216:0crwdne5216:0"
+
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Stamina"
+msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "Sources"
@@ -2271,6 +2278,10 @@ msgstr "crwdns5526:0crwdne5526:0"
 #: src/routes/database/knowledge/[id].tsx
 msgid "Tag"
 msgstr "crwdns5292:0crwdne5292:0"
+
+#: src/routes/database/item/[id].tsx
+msgid "Health"
+msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"
