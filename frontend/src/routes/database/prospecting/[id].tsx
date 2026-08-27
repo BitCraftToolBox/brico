@@ -79,7 +79,7 @@ export default function ProspectingDetail() {
         if (!p?.experiencePerNode) return undefined;
         if (!p.experiencePerNode.quantity) return undefined;
         const exp = p.experiencePerNode;
-        return () => <><SkillLinkById skillId={exp.skillId}/>: ${fixFloat(exp.quantity)}`</>;
+        return () => <><SkillLinkById skillId={exp.skillId}/>: {fixFloat(exp.quantity)}</>;
     });
 
     const spawnInfo = createMemo(() => {
