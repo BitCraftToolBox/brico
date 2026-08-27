@@ -423,6 +423,10 @@ msgstr "Forced to the pseudolocale for Crowdin review."
 msgid "Search items, buildings, creatures..."
 msgstr "Search items, buildings, creatures..."
 
+#: src/routes/settings.tsx
+msgid "Wiggle wiggle. Shake shake."
+msgstr "Wiggle wiggle. Shake shake."
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Radius"
 msgstr "Breadcrumb Radius"
@@ -902,6 +906,7 @@ msgid "All items visible"
 msgstr "All items visible"
 
 #: src/lib/recipe-sources.tsx
+#: src/routes/database/item/[id].tsx
 msgid "Buff"
 msgstr "Buff"
 
@@ -1567,6 +1572,7 @@ msgid "Show All"
 msgstr "Show All"
 
 #: src/lib/recipe-sources.tsx
+#: src/routes/database/item/[id].tsx
 msgid "Chance per hit"
 msgstr "Chance per hit"
 
@@ -1833,6 +1839,7 @@ msgid "Skills"
 msgstr "Skills"
 
 #: src/lib/table-defs/abilities-table.tsx
+#: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 msgid "Buff Stats"
 msgstr "Buff Stats"
@@ -2027,6 +2034,10 @@ msgstr "Enable easter eggs"
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage Requirements"
 msgstr "Stage Requirements"
+
+#: src/routes/settings.tsx
+msgid "Rish Emulation"
+msgstr "Rish Emulation"
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Collectible Type"
@@ -2661,10 +2672,12 @@ msgstr "Is Aquatic Resource"
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/abilities-table.tsx
+#: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/ability/[id].tsx
 #: src/routes/database/building/[id].tsx
+#: src/routes/database/item/[id].tsx
 msgid "Buffs"
 msgstr "Buffs"
 

@@ -118,6 +118,16 @@ export default function BuffDetail() {
                 })
             }
         }
+        const equips = BitCraftTables.EquipmentDesc.indexedByMulti("equipmentBuffId")().get(b.id);
+        if (equips?.length) {
+            entries.push(...equips.map(eq => {
+                return {
+                    href: `/database/item/${eq.itemId}`,
+                    iconPage: "Equipment",
+                    name: itemIdx.get(eq.itemId)?.name ?? `Equipment #${eq.itemId}`,
+                } satisfies SourceEntry
+            }));
+        }
         return entries;
     });
 

@@ -428,6 +428,10 @@ msgstr ""
 msgid "Search items, buildings, creatures..."
 msgstr ""
 
+#: src/routes/settings.tsx
+msgid "Wiggle wiggle. Shake shake."
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Radius"
 msgstr ""
@@ -907,6 +911,7 @@ msgid "All items visible"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
+#: src/routes/database/item/[id].tsx
 msgid "Buff"
 msgstr ""
 
@@ -1572,6 +1577,7 @@ msgid "Show All"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
+#: src/routes/database/item/[id].tsx
 msgid "Chance per hit"
 msgstr ""
 
@@ -1838,6 +1844,7 @@ msgid "Skills"
 msgstr "Навыки"
 
 #: src/lib/table-defs/abilities-table.tsx
+#: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 msgid "Buff Stats"
 msgstr ""
@@ -2031,6 +2038,10 @@ msgstr ""
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage Requirements"
+msgstr ""
+
+#: src/routes/settings.tsx
+msgid "Rish Emulation"
 msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
@@ -2666,10 +2677,12 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/abilities-table.tsx
+#: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/ability/[id].tsx
 #: src/routes/database/building/[id].tsx
+#: src/routes/database/item/[id].tsx
 msgid "Buffs"
 msgstr ""
 
