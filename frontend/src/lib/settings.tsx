@@ -121,6 +121,8 @@ export type AppSettings = {
     setTf2Mode: (v: boolean) => void;
     r9Mode: () => boolean;
     setR9Mode: (v: boolean) => void;
+    rishEmulation: () => boolean;
+    setRishEmulation: (v: boolean) => void;
 
     unchartedNotifications: () => UnchartedNotifications;
     setUnchartedNotifications: (v: UnchartedNotifications) => void;
@@ -162,6 +164,7 @@ export const KEYS = {
     easterEggs: "brico:easter-eggs",
     tf2Mode: "brico:easter-eggs:tf2-mode",
     r9Mode: "brico:easter-eggs:r9-mode",
+    rishEmulation: "brico:easter-eggs:rish-emulation",
     unchartedNotifications: "brico:uncharted:notifications",
 } as const;
 
@@ -281,6 +284,7 @@ function createSettings(): AppSettings {
     const [easterEggs, setEasterEggs] = persist(createSignal<boolean>(false), KEYS.easterEggs);
     const [tf2Mode, setTf2Mode] = persist(createSignal<boolean>(false), KEYS.tf2Mode);
     const [r9Mode, setR9Mode] = persist(createSignal<boolean>(false), KEYS.r9Mode);
+    const [rishEmulation, setRishEmulation] = persist(createSignal<boolean>(false), KEYS.rishEmulation);
 
     // temp/event
     const [unchartedNotifications, setUnchartedNotifications] = persist(
@@ -384,6 +388,7 @@ function createSettings(): AppSettings {
         {key: KEYS.easterEggs, get: easterEggs, set: setEasterEggs},
         {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
         {key: KEYS.r9Mode, get: r9Mode, set: setR9Mode},
+        {key: KEYS.rishEmulation, get: rishEmulation, set: setRishEmulation},
         {key: KEYS.unchartedNotifications, get: unchartedNotifications, set: setUnchartedNotifications},
     );
 
@@ -433,6 +438,8 @@ function createSettings(): AppSettings {
         setTf2Mode,
         r9Mode,
         setR9Mode,
+        rishEmulation,
+        setRishEmulation,
         unchartedNotifications,
         setUnchartedNotifications,
         getTableSession,

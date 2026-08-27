@@ -9,6 +9,7 @@ import {createEffect, Show, Suspense} from "solid-js";
 import {getRequestEvent, isServer} from "solid-js/web";
 import {AppSidebar} from "~/components/app-sidebar"
 import AppLoadingScreen from "~/components/AppLoadingScreen";
+import RishEmulator from "~/components/fun/RishEmulator";
 import {SidebarProvider} from "~/components/ui/sidebar";
 import {isBotUserAgent} from "~/lib/bot-detect";
 import {setActiveDataLocale} from "~/lib/data-translation";
@@ -55,6 +56,7 @@ function AppRoot(props: { children: any }) {
     return (
         <>
             <ColorModeScript storageType="localStorage" storageKey={KEYS.theme}/>
+            <RishEmulator/>
             <ColorModeProvider storageManager={colorStorageManager}>
                 <GlobalSearchProvider isReady={allReady}>
                     <Show when={allReady()} fallback={<AppLoadingScreen {...loadingProgress()}/>}>

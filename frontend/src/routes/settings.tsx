@@ -246,7 +246,9 @@ export default function SettingsPage() {
     }
 
     /** Show the section if unlocked this session OR if already enabled (to allow toggling off). */
-    const showEasterSection = () => konamiUnlocked() || developerMode() || settings.easterEggs();
+    const now = new Date();
+    const isAprilFools = now.getMonth() === 3 && now.getDate() === 1;
+    const showEasterSection = () => isAprilFools || konamiUnlocked() || developerMode() || settings.easterEggs();
 
     // Derived counts for the "Reset hidden columns" row
     const hiddenColumnStats = createMemo(() => {
@@ -498,6 +500,14 @@ export default function SettingsPage() {
                         </SettingsRow>
                         <SettingsRow label={<Trans>Region 9 Mode</Trans>} description={<Trans>Jamba Be Praised</Trans>}>
                             <Switch checked={settings.r9Mode()} onChange={settings.setR9Mode}>
+                                <SwitchControl><SwitchThumb/></SwitchControl>
+                            </Switch>
+                        </SettingsRow>
+                        <SettingsRow
+                            label={<Trans>Rish Emulation</Trans>}
+                            description={<Trans>Wiggle wiggle. Shake shake.</Trans>}
+                        >
+                            <Switch checked={settings.rishEmulation()} onChange={settings.setRishEmulation}>
                                 <SwitchControl><SwitchThumb/></SwitchControl>
                             </Switch>
                         </SettingsRow>
