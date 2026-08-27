@@ -11,17 +11,19 @@
  *   - Of those: how many have more than one possibility (so expansion actually changes averages)
  *   - The maximum nesting depth found when recursing sub-lists (with cycle detection)
  *   - Per-depth breakdown
+ *   - How many (and which) item lists have no outputs (empty `possibilities`, or every
+ *     possibility has an empty `items` array)
  *
  * Run:  npx tsx scripts/check-nested-item-lists.mjs
  */
 
+import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
 import {readFileSync} from "node:fs";
 import {dirname, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
-import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
+import {ItemDesc} from "../src/bindings/src/item_desc_type.ts";
 
 import {ItemListDesc} from "../src/bindings/src/item_list_desc_type.ts";
-import {ItemDesc} from "../src/bindings/src/item_desc_type.ts";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ROOT  = __dir.endsWith("scripts") ? resolve(__dir, "..") : __dir;
@@ -107,6 +109,11 @@ const listsWithSubLists = allLists.filter(l => subListIdsOf(l).size > 0);
 const listsWithSubListsAndMultiplePossibilities =
     listsWithSubLists.filter(l => l.possibilities.length > 1);
 
+/** Lists with no outputs: no possibilities, or every possibility has no items */
+const listsWithNoOutputs = allLists.filter(
+    l => l.possibilities.length === 0 || l.possibilities.every(p => p.items.length === 0),
+);
+
 /** Compute depth for every list */
 const depthCounts = new Map(); // depth → count
 let maxDepth = 0;
@@ -151,5 +158,16 @@ if (listsWithSubLists.length > 0) {
         console.log(`  [${list.id}] "${list.name}"`);
         console.log(`        possibilities: ${list.possibilities.length}, depth: ${d}`);
         console.log(`        sub-lists: ${subNames}`);
+    }
+}
+
+console.log(`\n${line}`);
+row("Lists with no outputs", listsWithNoOutputs.length);
+
+if (listsWithNoOutputs.length > 0) {
+    console.log(`\n${line}`);
+    console.log("  Lists with no outputs:\n");
+    for (const list of listsWithNoOutputs) {
+        console.log(`  [${list.id}] "${list.name}" — possibilities: ${list.possibilities.length}`);
     }
 }

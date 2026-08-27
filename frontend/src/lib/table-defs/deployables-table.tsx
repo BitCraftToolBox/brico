@@ -214,7 +214,7 @@ export const DeployableDescDefs: BitCraftToDataDef<DeployableDesc> = {
         }),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Type", msg`Type`),
+        uniqueValuesFilter("Type", msg`Type`, undefined, undefined, deployableTypeLabel),
         rangeFilter("Item Slots", msg`Item Slots`),
         uniqueValuesFilter("Item Stack Size", msg`Item Stack Size`, compareOptions),
         rangeFilter("Total Item Size", msg`Total Item Size`),

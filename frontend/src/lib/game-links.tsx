@@ -323,6 +323,28 @@ export function ResourceLinkById(props: { id: number; class?: string; showIcon?:
     return <ResourceLink id={props.id} name={resource()?.name} class={props.class} showIcon={props.showIcon}/>;
 }
 
+// ─── Enemy ───────────────────────────────────────────────────────
+
+/** Renders an enemy name as a link. `id` is the enemy's `enemyType` ordinal. */
+export function EnemyLink(props: { id: number; name?: string; class?: string; showIcon?: boolean }) {
+    const show = () => props.showIcon !== false;
+    return (
+        <IconLink
+            href={`/database/creature/${props.id}`}
+            icon={show() ? pageIcon("Creatures") : undefined}
+            class={props.class}
+        >
+            {props.name ?? `Creature #${props.id}`}
+        </IconLink>
+    );
+}
+
+/** Resolves an enemyType ordinal to an EnemyLink. */
+export function EnemyLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
+    const enemy = () => BitCraftTables.EnemyDesc.indexedBy("enemyType")().get(props.id);
+    return <EnemyLink id={props.id} name={enemy()?.name} class={props.class} showIcon={props.showIcon}/>;
+}
+
 // ─── Item List ───────────────────────────────────────────────────
 
 /** Renders an item list name as a link. */
@@ -343,12 +365,12 @@ export function ItemListLink(props: { id: number; name?: string; class?: string;
 
 /**
  * Renders a combat action name as a link, with the action's own font icon if provided,
- * falling back to the Combat Abilities page icon.
+ * falling back to the Combat Actions page icon.
  */
 export function CombatActionLink(props: { id: number; name?: string; codepoint?: string; class?: string }) {
     const icon = () => props.codepoint
         ? <FontIcon codepoint={props.codepoint} class="size-4 shrink-0 align-text-bottom"/>
-        : pageIcon("Combat Abilities");
+        : pageIcon("Combat Actions");
     return (
         <IconLink href={`/database/combat/${props.id}`} icon={icon()} class={props.class}>
             {props.name ?? `Combat Action #${props.id}`}
@@ -356,13 +378,39 @@ export function CombatActionLink(props: { id: number; name?: string; codepoint?:
     );
 }
 
+// ─── Ability ─────────────────────────────────────────────────────
+
+/**
+ * Renders a custom ability's name as a link, with the ability's own font icon if provided,
+ * falling back to the Abilities page icon.
+ */
+export function AbilityLink(props: { id: number; name?: string; codepoint?: string; class?: string }) {
+    const icon = () => props.codepoint
+        ? <FontIcon codepoint={props.codepoint} class="size-4 shrink-0 align-text-bottom"/>
+        : pageIcon("Abilities");
+    return (
+        <IconLink href={`/database/ability/${props.id}`} icon={icon()} class={props.class}>
+            {props.name ?? `Ability #${props.id}`}
+        </IconLink>
+    );
+}
+
+/** Resolves an ability ID to an AbilityLink. */
+export function AbilityLinkById(props: { id: number; class?: string }) {
+    const ability = () => BitCraftTables.AbilityCustomDesc.indexedBy("id")().get(props.id);
+    return <AbilityLink id={props.id} name={ability()?.abilityName} codepoint={ability()?.iconPath} class={props.class}/>;
+}
+
 // ─── Item Stack (lightweight) ───────────────────────────────────
 
 /**
  * Renders an item or cargo stack as a page-icon + name + quantity link.
  * This is a lightweight text-based link, NOT the full graphical GameIcon.
+ *
+ * Takes the `itemId`/`itemType`/`quantity` subset rather than the full `ItemStack` so an
+ * `InputItemStack` (which has no `durability`) can be passed directly.
  */
-export function ItemStackLink(props: { stack: ItemStack; class?: string; showIcon?: boolean }) {
+export function ItemStackLink(props: { stack: Pick<ItemStack, "itemId" | "itemType" | "quantity">; class?: string; showIcon?: boolean }) {
     const show = () => props.showIcon !== false;
     const isCargo = () => props.stack.itemType.tag === ItemType.Cargo.tag;
 
@@ -437,13 +485,12 @@ export function knowledgeStatIcon(): JSX.Element {
 
 
 /**
- * Coarse top-level section a breadcrumb path lives under. Rendered as inert text ahead of the
- * page-level crumb — there's no single `/database` or `/tools` landing page to link it to.
+ * Coarse top-level section a breadcrumb path lives under, and the landing page it links to.
  * `/events` lives in the Toolbox sidebar group despite its top-level URL, so it maps to Tools too.
  */
-function breadcrumbSection(href: string): Label | undefined {
-    return href.startsWith("/tools") || href === "/events" ? msg`Tools`
-        : href.startsWith("/database") ? msg`Database`
+function breadcrumbSection(href: string): {label: Label; href: string} | undefined {
+    return href.startsWith("/tools") || href === "/events" ? {label: msg`Tools`, href: "/tools"}
+        : href.startsWith("/database") ? {label: msg`Database`, href: "/database"}
         : undefined;
 }
 
@@ -462,12 +509,12 @@ function crumbLabel(href: string, titleOverride?: Label | string): Label | strin
  * `trackUILocale()` to stay reactive; the caller must read it inside a computation for that to
  * matter (`useJsonLd`'s render effect does).
  */
-export function breadcrumbText(href: string, titleOverride?: Label | string): {section?: string; page: string} | undefined {
+export function breadcrumbText(href: string, titleOverride?: Label | string): {section?: string; sectionHref?: string; page: string} | undefined {
     const label = crumbLabel(href, titleOverride);
     if (!label) return undefined;
     trackUILocale();
     const section = breadcrumbSection(href);
-    return {section: section ? labelText(section) : undefined, page: labelText(label)};
+    return {section: section ? labelText(section.label) : undefined, sectionHref: section?.href, page: labelText(label)};
 }
 
 /**
@@ -482,8 +529,8 @@ function breadcrumbTrail(href: string, titleOverride: Label | string | undefined
     const section = breadcrumbSection(href);
     return <>
         <Show when={section}>
-            <span class="text-muted-foreground/70">{labelText(section!)}</span>
-            <span class="mx-1.5 text-muted-foreground/70">{">"}</span>
+            <A href={section!.href} class="text-sidebar-primary-foreground/50 hover:underline">{labelText(section!.label)}</A>
+            <span class="mx-1.5 text-sidebar-primary-foreground/50">{">"}</span>
         </Show>
         {current
             ? <span aria-current="page">{labelText(label)}</span>

@@ -173,7 +173,7 @@ export function constructionRecipesConsuming(itemId: number, itemType: string): 
     return all.filter(r =>
         anyStackMatches(r.consumedItemStacks, itemId, itemType) ||
         anyStackMatches(r.consumedCargoStacks, itemId, itemType)
-    );
+    ).sort(artOfCheatingThen<ConstructionRecipeDesc>("name"));
 }
 
 // ─── Deconstruction Recipes ─────────────────────────────────────
@@ -353,6 +353,31 @@ export function prospectingForBiome(biomeType: number): ProspectingDesc[] {
     const all = BitCraftTables.ProspectingDesc.get();
     if (!all) return [];
     return all.filter(p => p.biomeRequirements?.includes(biomeType));
+}
+
+export type ProspectingSpawn =
+    | { type: "resource"; resources: ResourceDesc[] }
+    | { type: "enemy"; enemy: EnemyDesc | undefined };
+
+/** Resolves what a prospecting entry actually spawns — a set of resources, or an enemy. */
+export function prospectingSpawn(p: ProspectingDesc): ProspectingSpawn | undefined {
+    if (p.resourceClumpId > 0) {
+        const clumps = BitCraftTables.ResourceClumpDesc.indexedBy("id")();
+        const resources = BitCraftTables.ResourceDesc.indexedBy("id")();
+        const matched = clumps.get(p.resourceClumpId)?.resourceId
+            ?.map(rid => resources.get(rid))
+            .filter((v): v is ResourceDesc => !!v) ?? [];
+        return {type: "resource", resources: matched};
+    }
+    if (p.enemyAiDescId > 0) {
+        const enemyParams = BitCraftTables.EnemyAiParamsDesc.indexedBy("id")().get(p.enemyAiDescId);
+        if (!enemyParams) return {type: "enemy", enemy: undefined};
+        const tagOrdinal = BitCraftTables.EnemyAiParamsDesc.tagToOrdinal("enemyType");
+        const ordinal = tagOrdinal.get(enemyParams.enemyType.tag);
+        const enemy = ordinal !== undefined ? BitCraftTables.EnemyDesc.indexedBy("enemyType")().get(ordinal) : undefined;
+        return {type: "enemy", enemy};
+    }
+    return undefined;
 }
 
 // ─── Achievement Requirements ────────────────────────────────────
@@ -581,7 +606,7 @@ export function getTravelerNpcName(travelerTag: string, opts?: {source?: boolean
 }
 
 const HEX_COIN_ID = 1;
-const isHexCoin = (s: ItemStack) => s.itemType.tag === ItemType.Item.tag && s.itemId === HEX_COIN_ID;
+export const isHexCoin = (s: ItemStack) => s.itemType.tag === ItemType.Item.tag && s.itemId === HEX_COIN_ID;
 
 /** Display name for a traveler trade */
 export function getTravelerTradeName(trade: TravelerTradeOrderDesc): string {

@@ -200,7 +200,7 @@ function computeStatOptions<T>(col: Column<T>, columnId: string): StatsOptionEnt
 export function statsFilter<T>(column: string = "Stats", title?: Label | string): FilterSetupProps<T, StatsBasedOption> {
     return {
         column,
-        title: !title || title === "Stats" ? gameText(msg`Stats`) : column,
+        title: title ?? gameText(msg`Stats`),
         type: "stat",
         options: (col: Column<T> | undefined) => {
             if (!col) return {label: column, stats: []};

@@ -37,15 +37,6 @@ export type SidebarGroupDef = {
     items: SidebarItemDef[]
 }
 
-// Each item carries its font-icon `codepoint` (single source); the runtime `icon` component and
-// the OG-image codepoint lookup (PAGE_ICON_CODEPOINTS) are both derived from it below.
-// `title` is the stable English identity, `titleLabel` the translatable label — see SidebarItemDef.
-//
-// The nav deliberately mirrors BitCraft's own compendium, so every entry that names a game concept
-// is wrapped in `gameText()`: it takes the game's translation of that exact English string, which
-// keeps the sidebar consistent with the client rather than inventing a second wording. Entries the
-// game has no string for fall back to the Lingui catalog automatically, so a translator can still
-// cover them. Everything under Toolbox is ours alone and stays on plain `msg`.
 const sidebarGroups = [
     {
         name: "Compendium", nameLabel: gameText(msg`Compendium`),
@@ -56,6 +47,7 @@ const sidebarGroups = [
             {href: '/database/resource', title: 'Resources', titleLabel: gameText(msg`Resources`), codepoint: "FFFE"},
             {href: '/database/building', title: 'Structures', titleLabel: gameText(msg`Structures`), codepoint: "FFF3"},
             {href: '/database/collectible', title: 'Collection', titleLabel: gameText(msg`Collection`), codepoint: "FFD9"},
+            {href: '/database/progression', title: 'Progression', titleLabel: gameText(msg`Progression`), codepoint: "FFF2"},
             {href: '/database/knowledge', title: 'Knowledge', titleLabel: gameText(msg`Knowledge`), codepoint: "FFFC"},
         ] as const
     },
@@ -85,7 +77,8 @@ const sidebarGroups = [
         items: [
             {href: '/database/deployable', title: 'Deployables', titleLabel: gameText(msg`Deployables`), codepoint: "FFD4"},
             {href: '/database/placeable', title: 'Placeables', titleLabel: gameText(msg`Placeables`), codepoint: "0072"},
-            {href: '/database/combat', title: 'Combat Abilities', titleLabel: gameText(msg`Combat Abilities`, "Abilities"), codepoint: "FFC3"},
+            {href: '/database/combat', title: 'Combat Actions', titleLabel: gameText(msg`Combat Actions`), codepoint: "FFC3"},
+            {href: '/database/ability', title: 'Abilities', titleLabel: gameText(msg`Abilities`), codepoint: "FF61"},
             {href: '/database/buff', title: 'Buffs', titleLabel: gameText(msg`Buffs`), codepoint: "FFD0"},
         ] as const
     },

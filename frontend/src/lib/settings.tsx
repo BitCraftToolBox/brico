@@ -4,6 +4,7 @@ import {Accessor, createContext, createEffect, createMemo, createSignal, JSX, on
 import {isServer} from "solid-js/web";
 import {dataLocaleFor, isDataLocale} from "~/lib/data-translation";
 import {crowdinTargetUILocale, DEFAULT_UI_LOCALE, detectUILocale, isUILocale, PSEUDOLOCALE_ENABLED, type UILocale} from "~/lib/i18n";
+import type {ProgressionUnlock} from "~/lib/progression";
 import {ALL_SIDEBAR_HREFS} from "~/lib/sidebar-items";
 
 /**
@@ -121,9 +122,22 @@ export type AppSettings = {
     setTf2Mode: (v: boolean) => void;
     r9Mode: () => boolean;
     setR9Mode: (v: boolean) => void;
+    rishEmulation: () => boolean;
+    setRishEmulation: (v: boolean) => void;
 
     unchartedNotifications: () => UnchartedNotifications;
     setUnchartedNotifications: (v: UnchartedNotifications) => void;
+
+    /**
+     * Raw persisted list — `ProgressionUnlock` kinds explicitly hidden by the user on the skill
+     * Progression tab. Any kind NOT in this list is shown (new kinds are shown by default). Shared
+     * across all skills.
+     */
+    progressionHiddenTypes: () => ProgressionUnlock["kind"][];
+    setProgressionHiddenTypes: (v: ProgressionUnlock["kind"][]) => void;
+    /** Progression tab's stat-total target level, per skill id. */
+    progressionTargetLevels: () => Record<number, number>;
+    setProgressionTargetLevels: (v: Record<number, number>) => void;
 
     // unpersisted settings
 
@@ -162,7 +176,10 @@ export const KEYS = {
     easterEggs: "brico:easter-eggs",
     tf2Mode: "brico:easter-eggs:tf2-mode",
     r9Mode: "brico:easter-eggs:r9-mode",
+    rishEmulation: "brico:easter-eggs:rish-emulation",
     unchartedNotifications: "brico:uncharted:notifications",
+    progressionHiddenTypes: "brico:progression:hidden-types",
+    progressionTargetLevels: "brico:progression:target-levels",
 } as const;
 
 /**
@@ -281,6 +298,11 @@ function createSettings(): AppSettings {
     const [easterEggs, setEasterEggs] = persist(createSignal<boolean>(false), KEYS.easterEggs);
     const [tf2Mode, setTf2Mode] = persist(createSignal<boolean>(false), KEYS.tf2Mode);
     const [r9Mode, setR9Mode] = persist(createSignal<boolean>(false), KEYS.r9Mode);
+    const [rishEmulation, setRishEmulation] = persist(createSignal<boolean>(false), KEYS.rishEmulation);
+
+    // progression tab
+    const [progressionHiddenTypes, setProgressionHiddenTypes] = persist(createSignal<ProgressionUnlock["kind"][]>([]), KEYS.progressionHiddenTypes);
+    const [progressionTargetLevels, setProgressionTargetLevels] = persist(createSignal<Record<number, number>>({}), KEYS.progressionTargetLevels);
 
     // temp/event
     const [unchartedNotifications, setUnchartedNotifications] = persist(
@@ -384,7 +406,10 @@ function createSettings(): AppSettings {
         {key: KEYS.easterEggs, get: easterEggs, set: setEasterEggs},
         {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
         {key: KEYS.r9Mode, get: r9Mode, set: setR9Mode},
+        {key: KEYS.rishEmulation, get: rishEmulation, set: setRishEmulation},
         {key: KEYS.unchartedNotifications, get: unchartedNotifications, set: setUnchartedNotifications},
+        {key: KEYS.progressionHiddenTypes, get: progressionHiddenTypes, set: setProgressionHiddenTypes},
+        {key: KEYS.progressionTargetLevels, get: progressionTargetLevels, set: setProgressionTargetLevels},
     );
 
     return {
@@ -433,8 +458,14 @@ function createSettings(): AppSettings {
         setTf2Mode,
         r9Mode,
         setR9Mode,
+        rishEmulation,
+        setRishEmulation,
         unchartedNotifications,
         setUnchartedNotifications,
+        progressionHiddenTypes,
+        setProgressionHiddenTypes,
+        progressionTargetLevels,
+        setProgressionTargetLevels,
         getTableSession,
     };
 }

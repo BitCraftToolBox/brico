@@ -11,7 +11,10 @@ import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {CellContext, Column, ColumnDef} from "@tanstack/solid-table";
 import {TbOutlineClipboardCopy as IconClipboardCopy, TbOutlineExternalLink as IconExternal, TbOutlineLink as IconLink} from "solid-icons/tb";
-import {JSX, Show} from "solid-js";
+import {For, JSX, Show} from "solid-js";
+import {BuffDesc} from "~/bindings/src/buff_desc_type";
+import {BuffEffect} from "~/bindings/src/buff_effect_type";
+import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
 import {Rarity} from "~/bindings/src/rarity_type";
 import {FilterSetupProps} from "~/components/data-table/data-table";
 import {RangedBasedOption, ValueBasedOption} from "~/components/data-table/table-faceted-filter";
@@ -21,13 +24,14 @@ import {Button} from "~/components/ui/button";
 import {DropdownMenuItem} from "~/components/ui/dropdown-menu";
 import {Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
-import {KnowledgeLinkById, LinkedList} from "~/lib/game-links";
+import {BuffLink, KnowledgeLinkById, LinkedList} from "~/lib/game-links";
 import {rarityLabel} from "~/lib/game-strings";
 import {compareText, i18n, trackUILocale} from "~/lib/i18n";
 import {gameText, Label} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
 import {AccessorKey, AccessorProp, resolveAccessor} from "~/lib/table-utils/base";
-import {cn, compareBasic, includedIn} from "~/lib/utils";
+import {consolidateStats, statsColumn} from "~/lib/table-utils/stats-column-builder";
+import {cn, compareBasic, includedIn, readableSeconds} from "~/lib/utils";
 
 /**
  * Game-text columns keep the **English** value and translate only for display.
@@ -176,6 +180,79 @@ export function knowledgeColumn<T, V extends number[] | undefined>(
         filterFn: "arrIncludesSome",
         sortUndefined: "last",
     };
+}
+
+/**
+ * A `BuffEffect[]` field rendered as a row of linked buff pills, each with its effective duration
+ * (the effect's own override, else the buff's default). Shared by every table that grants buffs —
+ * food, custom abilities — so the cell markup and the sort/filter semantics stay identical.
+ *
+ * Pair with `uniqueValuesFilter(title, label, compareOptions)` for the matching faceted filter.
+ */
+export function buffsColumn<T>(
+    accessor: AccessorProp<T, BuffEffect[] | undefined>,
+    title: string = "Buffs",
+    label: Label | string = msg`Buffs`,
+): ColumnDef<T, string[] | undefined> {
+    // English buff descriptions: this backs a faceted filter, so the values end up in shared URLs.
+    // The cell renders BuffLink, which localizes for display. See the note at the top of this file.
+    const names = (row: T, def: string[] | undefined) => {
+        const buffs = resolveAccessor(accessor, row);
+        if (!buffs?.length) return def;
+        const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
+        return buffs.map(b => sourceRow(buffIdx.get(b.buffId))?.description ?? `Buff #${b.buffId}`);
+    };
+    return {
+        id: title,
+        meta: {label},
+        accessorFn: row => names(row, undefined),
+        getUniqueValues: row => names(row, []) as string[],
+        cell: (props) => {
+            const buffs = resolveAccessor(accessor, props.row.original);
+            if (!buffs?.length) return undefined;
+            // `each` is computed inline (rather than from a local `const` above) so the
+            // `indexedBy("id")()` read happens inside For's own tracked scope and the list
+            // re-resolves on a data-locale switch instead of freezing at first render.
+            return (
+                <div class="flex flex-wrap gap-1">
+                    <For each={buffs.map(b => [b, BitCraftTables.BuffDesc.indexedBy("id")().get(b.buffId)] as [BuffEffect, BuffDesc | undefined]).filter((b): b is [BuffEffect, BuffDesc] => !!b[1])}>
+                        {buff => <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs bg-muted text-muted-foreground whitespace-nowrap">
+                            <BuffLink buffId={buff[0].buffId} label={buff[1].description} class="font-medium" showIcon={false}/>
+                            <span class="opacity-70">{readableSeconds(buff[0].duration ?? buff[1].duration)}</span>
+                        </span>}
+                    </For>
+                </div>
+            );
+        },
+        sortingFn: (a, b) => {
+            const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
+            const maxDuration = (row: T) => Math.max(
+                ...(resolveAccessor(accessor, row) ?? []).map(be => be.duration ?? buffIdx.get(be.buffId)?.duration ?? 0)
+            );
+            return maxDuration(a.original) - maxDuration(b.original);
+        },
+        sortUndefined: "last",
+        filterFn: "arrIncludesSome",
+    };
+}
+
+/**
+ * The consolidated stat totals of a `BuffEffect[]` field — the same `statsColumn` a buff's own
+ * `stats` gets, summed across every buff the row grants. Pair with `statsFilter(title, label)`.
+ */
+export function buffStatsColumn<T>(
+    accessor: AccessorProp<T, BuffEffect[] | undefined>,
+    title: string = "Buff Stats",
+    label: Label | string = msg`Buff Stats`,
+): ColumnDef<T, CsvStatEntry[]> {
+    return statsColumn<T>(title, {
+        accessorFn: row => {
+            const buffs = resolveAccessor(accessor, row);
+            if (!buffs?.length) return undefined;
+            const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
+            return consolidateStats(buffs.flatMap(be => buffIdx.get(be.buffId)?.stats ?? []));
+        }
+    }, label);
 }
 
 export function descriptionColumn<T>(

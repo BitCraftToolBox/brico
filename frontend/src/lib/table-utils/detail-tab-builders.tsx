@@ -152,7 +152,8 @@ export function terraformDropsTab(
 export function extractionTab(
     drops: ExtractionRecipeDesc[],
     uses: ExtractionRecipeDesc[],
-    showWhenEmpty: boolean = false
+    showWhenEmpty: boolean = false,
+    showItemListsIfEmpty: boolean = false,
 ): RelationshipTab {
     return {
         id: "extraction",
@@ -167,7 +168,7 @@ export function extractionTab(
                         <RecipeSelect
                             recipes={drops}
                             nameFor={getExtractionRecipeName}
-                            render={r => <ExtractionRecipePanel recipe={r}/>}
+                            render={r => <ExtractionRecipePanel recipe={r} showItemListsIfEmpty={showItemListsIfEmpty}/>}
                         />
                     </div>
                 </Show>
@@ -254,7 +255,11 @@ export function constructionCombinedTab(
                         <div>
                             <h4 class="text-sm text-muted-foreground mb-2"><Trans>Deconstruction returns</Trans></h4>
                             <RecipeSelect
-                                recipes={deconstructedFrom}
+                                recipes={deconstructedFrom.sort((a, b) => {
+                                    const idxA = constructsInto.findIndex(cr => cr.buildingDescriptionId === a.consumedBuilding);
+                                    const idxB = constructsInto.findIndex(cr => cr.buildingDescriptionId === b.consumedBuilding);
+                                    return idxA - idxB;
+                                })}
                                 nameFor={getDeconstructionRecipeName}
                                 render={r => <DeconstructionRecipePanel recipe={r}/>}
                                 onSelect={onDeconSelected}
@@ -385,7 +390,7 @@ export function itemListsTab(recipes: ItemListDesc[]): RelationshipTab {
     };
 }
 
-export function itemListTab(list: ItemListDesc | undefined): RelationshipTab {
+export function itemListTab(list: ItemListDesc | undefined, showEmptyItemList: boolean = false): RelationshipTab {
     return {
         id: "item-list",
         label: msg`Item List Output`,
@@ -396,7 +401,7 @@ export function itemListTab(list: ItemListDesc | undefined): RelationshipTab {
                 <RecipeSelect
                     recipes={[list!]}
                     nameFor={getItemListName}
-                    render={l => <ItemListPanel list={l}/>}
+                    render={l => <ItemListPanel list={l} showEmptyItemList={showEmptyItemList}/>}
                 />
             </Show>
         ),

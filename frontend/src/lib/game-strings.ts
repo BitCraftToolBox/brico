@@ -55,7 +55,6 @@ export const CHARACTER_STAT_NAMES: NameTable<CharacterStatType["tag"]> = {
     MaxHealth: "Maximum Health",
     MaxStamina: "Maximum Stamina",
     MaxSatiation: "Maximum Satiation",
-    HuntingPower: "Hunting Strength",
     PassiveHealthRegenRate: "Passive Health Regeneration Rate",
     ActiveHealthRegenRate: "Active Health Regeneration Rate",
     PassiveStaminaRegenRate: "Passive Stamina Regeneration Rate",
@@ -160,8 +159,9 @@ export function skillCategoryLabel(tag: string | undefined): string {
 
 // ── Deployable Type ────────────────────────────────────────────────
 
-// all match splitCamelCase
-export const DEPLOYABLE_TYPE_NAMES: NameTable<DeployableType["tag"]> = {};
+export const DEPLOYABLE_TYPE_NAMES: NameTable<DeployableType["tag"]> = {
+    Stall: "Trader Stand"
+};
 
 export function deployableTypeName(tag: string | undefined): string {
     return nameOf(DEPLOYABLE_TYPE_NAMES, tag);

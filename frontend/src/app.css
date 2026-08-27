@@ -10,7 +10,7 @@
         --foreground: 203, 70.9%, 28.7%;
 
         --muted: 44.1, 27.9%, 76.1%;
-        --muted-foreground: 203, 70.9%, 33%;
+        --muted-foreground: 203, 50.9%, 45%;
 
         --popover: 45, 45.7%, 92.6%;
         --popover-foreground: 203, 70.9%, 28.7%;
@@ -109,7 +109,7 @@
         --popover-foreground: 0 0% 90%;
 
         --muted: 0 0% 10%;
-        --muted-foreground: 0 0% 70%;
+        --muted-foreground: 0 0% 60%;
 
         --accent: 210 80% 10%;
         --sidebar-primary: 210 80% 10%;

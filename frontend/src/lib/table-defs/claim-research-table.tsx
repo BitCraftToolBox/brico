@@ -19,7 +19,8 @@ export const ClaimResearchDefs: BitCraftToDataDef<ClaimTechDesc> = {
         rowActions(),
     ],
     facetedFilters: [
-        uniqueValuesFilter("Type", msg`Type`),
+        // this isn't exposed in the client, so don't attempt to translate it - no-op the labelFn to identity
+        uniqueValuesFilter("Type", msg`Type`, undefined, undefined, s => s),
         tierFilter(),
     ],
     searchColumns: ["Name", "Description"],

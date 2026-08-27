@@ -88,6 +88,15 @@ export default function BuffDetail() {
                 });
             }
         }
+        for (const ability of BitCraftTables.AbilityCustomDesc.get() ?? []) {
+            if (ability.buffs.some(e => e.buffId === b.id)) {
+                entries.push({
+                    href: `/database/ability/${ability.id}`,
+                    iconPage: "Abilities",
+                    name: ability.abilityName || `Ability #${ability.id}`,
+                });
+            }
+        }
         const placeableIdx = BitCraftTables.PlaceableDesc.indexedBy("id")();
         for (const interaction of BitCraftTables.PlaceableInteractionDesc.get() ?? []) {
             if (interaction.selfBuffs?.some(e => e.buffId === b.id)) {
@@ -108,6 +117,16 @@ export default function BuffDetail() {
                     name: placeable?.name ?? `Placeable #${placement.placedPlaceableId}`,
                 })
             }
+        }
+        const equips = BitCraftTables.EquipmentDesc.indexedByMulti("equipmentBuffId")().get(b.id);
+        if (equips?.length) {
+            entries.push(...equips.map(eq => {
+                return {
+                    href: `/database/item/${eq.itemId}`,
+                    iconPage: "Equipment",
+                    name: itemIdx.get(eq.itemId)?.name ?? `Equipment #${eq.itemId}`,
+                } satisfies SourceEntry
+            }));
         }
         return entries;
     });

@@ -25,7 +25,11 @@
 
 import {type IconProps, type IconTree, type IconTypes} from "solid-icons";
 import {JSX, splitProps} from "solid-js";
+import {cn} from "~/lib/utils";
 import {type FontIconEntry, GLYPH_ICONS} from "./font-icons-data";
+
+/** Tagged onto every rendered font-icon `<svg>` so the Rish Emulation easter egg can find them. */
+export const FONT_ICON_CLASS = "bc-font-icon";
 
 function entryToIconTree(entry: FontIconEntry): IconTree {
     return {
@@ -48,6 +52,7 @@ function renderIconSvg(tree: IconTree, props: IconProps & Record<string, unknown
         <svg
             {...tree.a}
             {...rest}
+            class={cn(rest.class as string | undefined, FONT_ICON_CLASS)}
             color={(local.color as string | undefined) || "currentColor"}
             {...(local.size != null ? {height: local.size as string, width: local.size as string} : {})}
             xmlns="http://www.w3.org/2000/svg"

@@ -6,10 +6,11 @@ import type {ItemDesc} from "~/bindings/src/item_desc_type";
 import type {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import Rarity from "~/bindings/src/rarity_type";
-import {CargoIcon, ItemIcon, rarityToFrameSlug} from "~/components/shared/GameIcon";
+import {CargoIcon, ItemIcon, rarityToFrameSlug, SHAPE_SIZES} from "~/components/shared/GameIcon";
 import {ASSET_CDN_BASE, getAssetURL, Tiers} from "~/lib/bitcraft-utils";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables} from "~/lib/spacetime";
+import {cn} from "~/lib/utils";
 
 const CHEST_ASSET = "GeneratedIcons/Other/Buildings/Storage/ChestSmallT4";
 const KEY_ASSET = "GeneratedIcons/Cargo/Brico'sBigKey";
@@ -279,11 +280,11 @@ export const BricoLootBox: Component<BricoLootBoxProps> = (props) => {
     };
 
     const ChestGraphic: Component = () => (
-        <div class="relative w-[130px] h-[130px]">
+        <div class={cn("relative", SHAPE_SIZES.square.large.container)}>
             <img
                 src={chestIconSrc()}
                 alt=""
-                class={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-contain w-[120px] h-[120px] ${Tiers.getBackgroundColorClass(chestTier())}`}
+                class={cn("absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-contain", Tiers.getBackgroundColorClass(chestTier()), SHAPE_SIZES.square.large.icon)}
                 onerror={(e) => ((e.target as HTMLImageElement).src = "/assets/Unknown.webp")}
             />
             <img src={frameSrc()} alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-fill pointer-events-none" />

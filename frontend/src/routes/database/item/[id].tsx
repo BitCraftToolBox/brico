@@ -2,12 +2,13 @@ import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {A, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
+import {BuffEffect} from "~/bindings/src/buff_effect_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {lootTabWith} from "~/components/fun/BricoLootBox";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {IconLink, IconSpan, pageIcon, SkillLinkById} from "~/lib/game-links";
+import {BuffLinkById, IconLink, IconSpan, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {equipmentSlotLabel, statLabel} from "~/lib/game-strings";
 import {gameText, useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
@@ -226,6 +227,17 @@ export default function ItemDetail() {
                     })),
                 });
             }
+            if (equip.equipmentBuffId) {
+                groups.push({
+                    heading: () => <IconSpan icon={pageIcon("Equipment")}>{label(gameText(msg`Buffs`))}</IconSpan>,
+                    properties: [
+                        {label: gameText(msg`Skill`), value: () => <SkillLinkById skillId={equip.equipmentBuffSkillId}/>},
+                        {label: msg`Chance per hit`, value: `${fixFloat(equip.equipmentBuffChancePerHit * 100)}%`},
+                        {label: gameText(msg`Buff`), value: () => <BuffLinkById buffId={equip.equipmentBuffId}/>}
+                    ],
+                });
+                groups.push(...buffsGroups([{buffId: equip.equipmentBuffId, duration: undefined} satisfies BuffEffect]));
+            }
         }
 
         // Weapon
@@ -316,7 +328,7 @@ export default function ItemDetail() {
             tabs={!item() ? [] : [
                 craftedFromTab(craftedFrom()),
                 craftsIntoTab(craftsInto()),
-                extractionTab(extractionDrops(), extractionUses()),
+                extractionTab(extractionDrops(), extractionUses(), undefined, !!isItemList()),
                 depletionTab(extractionDrops(), extractionUses(), depletionSources()),
                 enemyDropsTab(enemyDrops()),
                 terraformDropsTab(terraformOutputs()),
@@ -324,7 +336,7 @@ export default function ItemDetail() {
                 conversionTab(conversionInputs(), conversionOutputs()),
                 travelerTasksTab(taskRewards(), taskRequires()),
                 travelerTradesTab(tradeOffers(), tradeRequires()),
-                itemListTab(isItemList()),
+                itemListTab(isItemList(), true),
                 itemListsTab(inItemLists()),
                 collectiblesTab(collectibleData()),
                 questRequirementsTab(questRequires()),
