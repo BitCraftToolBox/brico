@@ -24,6 +24,7 @@ import {dirname, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 
 // Binding type modules — they export namespaces with getTypeScriptAlgebraicType()
+import {AbilityCustomDesc} from "../../src/bindings/src/ability_custom_desc_type.ts";
 import {BuffDesc} from "../../src/bindings/src/buff_desc_type.ts";
 import {CombatActionDesc} from "../../src/bindings/src/combat_action_desc_type.ts";
 import {EmpireIconDesc} from "../../src/bindings/src/empire_icon_desc_type.ts";
@@ -39,6 +40,7 @@ const ROOT = __dir.endsWith("icons") ? resolve(__dir, "../..") : __dir;
  * to the binding namespace that provides getTypeScriptAlgebraicType().
  */
 const TABLE_BINDINGS = {
+    ability_custom_desc: AbilityCustomDesc,
     buff_desc: BuffDesc,
     combat_action_desc: CombatActionDesc,
     empire_icon_desc: EmpireIconDesc,

@@ -58,12 +58,12 @@ export default function CombatDetail() {
         <DetailPageLayout
             title={action()?.name ?? `Combat Action #${params.id}`}
             breadcrumbHref="/database/combat"
-            breadcrumbTitle={msg`Combat Ability`}
+            breadcrumbTitle={msg`Combat Action`}
             loading={isLoading() && !action()}
             name={action()?.name ?? "Combat action not found"}
             icon={<Show when={action()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
             description={action()?.description}
-            metaKind="combat ability"
+            metaKind="combat action"
             metaImage={ogImageForCodepoint(action()?.iconAssetName)}
             details={[
                 {

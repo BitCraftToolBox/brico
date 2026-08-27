@@ -88,6 +88,15 @@ export default function BuffDetail() {
                 });
             }
         }
+        for (const ability of BitCraftTables.AbilityCustomDesc.get() ?? []) {
+            if (ability.buffs.some(e => e.buffId === b.id)) {
+                entries.push({
+                    href: `/database/ability/${ability.id}`,
+                    iconPage: "Abilities",
+                    name: ability.abilityName || `Ability #${ability.id}`,
+                });
+            }
+        }
         const placeableIdx = BitCraftTables.PlaceableDesc.indexedBy("id")();
         for (const interaction of BitCraftTables.PlaceableInteractionDesc.get() ?? []) {
             if (interaction.selfBuffs?.some(e => e.buffId === b.id)) {

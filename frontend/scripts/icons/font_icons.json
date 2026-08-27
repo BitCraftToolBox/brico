@@ -1,4 +1,5 @@
 {
+  "ability_custom_desc": "icon_path",
   "buff_desc": "icon_asset_name",
   "combat_action_desc": "icon_asset_name",
   "empire_icon_desc": "icon_unicode",

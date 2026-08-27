@@ -16,6 +16,8 @@ import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {Rarity} from "~/bindings/src/rarity_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {SkillDesc} from "~/bindings/src/skill_desc_type";
+import {FontIcon} from "~/components/icons/font-icons";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {ASSET_CDN_BASE, getAssetURL, getBuildingTier, Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {getItemListSource} from "~/lib/relations";
@@ -167,6 +169,84 @@ export const TierIcon: Component<TierIconProps> = (props) => {
         />
     )
 }
+
+type SkillBannerProps = Omit<ComponentProps<"div">, "children"> & {
+    skill: SkillDesc;
+};
+
+const SKILL_BANNER_COLORS: Partial<Record<number, string>> = {
+    2: "#3f764d", // Forestry
+    3: "#7b5547", // Carpentry
+    4: "#aa74a2", // Masonry
+    5: "#56658c", // Mining
+    6: "#636a6b", // Smithing
+    7: "#7e597e", // Scholar
+    8: "#bb5d4d", // Leatherworking
+    9: "#bd7141", // Hunting
+    10: "#474c7b", // Tailoring
+    11: "#efae31", // Farming
+    12: "#58a296", // Fishing
+    13: "#c04a39", // Cooking
+    14: "#83b063", // Foraging
+    // 15 Construction
+    // 17 Taming
+    // 18 Slayer
+    // 19 Merchanting
+    // 21 Sailing
+};
+
+const SKILL_BANNER_SRC = `${ASSET_CDN_BASE}/UI/Banners/skill-banner.webp`;
+const SKILL_BANNER_OUTLINE_SRC = `${ASSET_CDN_BASE}/UI/Banners/skill-banner-outline.webp`;
+
+/**
+ * Composed skill banner visual: tinted banner (bottom) + outline frame (mid) + skill FontIcon (top).
+ * Both banner layers are 156x212 source assets; pass a sizing class (e.g. `class="w-10"`) to shrink
+ * the whole component while preserving that aspect ratio.
+ */
+export const SkillBanner: Component<SkillBannerProps> = (props) => {
+    const [local, others] = splitProps(props, ["class", "skill"]);
+    const color = () => SKILL_BANNER_COLORS[local.skill.id];
+
+    return (
+        <div class={cn("relative inline-block shrink-0 isolate aspect-156/212", local.class)} {...others}>
+            <img
+                src={SKILL_BANNER_SRC}
+                alt=""
+                aria-hidden="true"
+                class="absolute inset-0 w-full h-full object-contain"
+            />
+            {/* Tint: multiplied over the grayscale banner rather than filtered to maintain texture */}
+            <Show when={color()}>
+                <div
+                    class="absolute inset-0 w-full h-full mix-blend-multiply"
+                    style={{
+                        "background-color": color(),
+                        /* what the hell opera it's 2026 get it together */
+                        "-webkit-mask-image": `url('${SKILL_BANNER_SRC}')`,
+                        "mask-image": `url('${SKILL_BANNER_SRC}')`,
+                        "-webkit-mask-size": "contain",
+                        "mask-size": "contain",
+                        "-webkit-mask-repeat": "no-repeat",
+                        "mask-repeat": "no-repeat",
+                        "-webkit-mask-position": "center",
+                        "mask-position": "center",
+                    }}
+                />
+            </Show>
+            <img
+                src={SKILL_BANNER_OUTLINE_SRC}
+                alt=""
+                aria-hidden="true"
+                class="absolute inset-0 w-full h-full object-contain"
+            />
+            <FontIcon
+                codepoint={local.skill.iconAssetName}
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-2/3"
+                color={color() ? "white" : undefined}
+            />
+        </div>
+    );
+};
 
 export const GameIcon: Component<GameIconProps> = (props) => {
     const [local, others] = splitProps(props, [

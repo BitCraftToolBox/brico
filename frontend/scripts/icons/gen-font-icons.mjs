@@ -1,7 +1,7 @@
 /**
  * gen-font-icons.mjs
  *
- * Reads all SVG files from ./icons (except Icons.svg) and generates
+ * Reads all SVG files from ./data and generates
  * src/lib/icons/font-icons-data.ts — a static TypeScript module embedding every
  * icon's viewBox + innerHTML so they can be used as a custom icon.
  *
@@ -13,7 +13,7 @@
  * Element -> Font Info -> General -> Set Descent to 0
  * File -> Execute Script -> select FF
  *
- * SelectWorthOutputting(); foreach Export("path/to/frontend/scripts/icons/%e.svg"); endloop;
+ * SelectWorthOutputting(); foreach Export("path/to/frontend/scripts/icons/data/%e.svg"); endloop;
  *
  */
 

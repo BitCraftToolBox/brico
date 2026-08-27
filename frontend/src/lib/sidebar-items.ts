@@ -47,6 +47,7 @@ const sidebarGroups = [
             {href: '/database/resource', title: 'Resources', titleLabel: gameText(msg`Resources`), codepoint: "FFFE"},
             {href: '/database/building', title: 'Structures', titleLabel: gameText(msg`Structures`), codepoint: "FFF3"},
             {href: '/database/collectible', title: 'Collection', titleLabel: gameText(msg`Collection`), codepoint: "FFD9"},
+            {href: '/database/progression', title: 'Progression', titleLabel: gameText(msg`Progression`), codepoint: "FFF2"},
             {href: '/database/knowledge', title: 'Knowledge', titleLabel: gameText(msg`Knowledge`), codepoint: "FFFC"},
         ] as const
     },
@@ -76,7 +77,8 @@ const sidebarGroups = [
         items: [
             {href: '/database/deployable', title: 'Deployables', titleLabel: gameText(msg`Deployables`), codepoint: "FFD4"},
             {href: '/database/placeable', title: 'Placeables', titleLabel: gameText(msg`Placeables`), codepoint: "0072"},
-            {href: '/database/combat', title: 'Combat Abilities', titleLabel: gameText(msg`Combat Abilities`, "Abilities"), codepoint: "FFC3"},
+            {href: '/database/combat', title: 'Combat Actions', titleLabel: gameText(msg`Combat Actions`), codepoint: "FFC3"},
+            {href: '/database/ability', title: 'Abilities', titleLabel: gameText(msg`Abilities`), codepoint: "FF61"},
             {href: '/database/buff', title: 'Buffs', titleLabel: gameText(msg`Buffs`), codepoint: "FFD0"},
         ] as const
     },
