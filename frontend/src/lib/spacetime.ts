@@ -50,6 +50,7 @@ import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_de
 import {ResourcePlacementRecipeDesc} from "~/bindings/src/resource_placement_recipe_desc_type";
 import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
+import {SkillLevelKnowledgeDesc} from "~/bindings/src/skill_level_knowledge_desc_type";
 import {StageRewardsDesc} from "~/bindings/src/stage_rewards_desc_type";
 import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {ToolDesc} from "~/bindings/src/tool_desc_type";
@@ -400,6 +401,7 @@ export const BitCraftTables = {
     'TravelerTaskKnowledgeRequirementDesc': cache<TravelerTaskKnowledgeRequirementDesc>('traveler_task_knowledge_requirement_desc', TravelerTaskKnowledgeRequirementDesc),
     'AbilityCustomDesc': cache<AbilityCustomDesc>('ability_custom_desc', AbilityCustomDesc),
     'AbilityUnlockDesc': cache<AbilityUnlockDesc>('ability_unlock_desc', AbilityUnlockDesc),
+    'SkillLevelKnowledgeDesc': cache<SkillLevelKnowledgeDesc>('skill_level_knowledge_desc', SkillLevelKnowledgeDesc),
 };
 
 // ── Preloads ──────────────────────────────────────────────────

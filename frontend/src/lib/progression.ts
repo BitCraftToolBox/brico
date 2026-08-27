@@ -10,12 +10,10 @@
 import {AbilityCustomDesc} from "~/bindings/src/ability_custom_desc_type";
 import {AbilityUnlockDesc} from "~/bindings/src/ability_unlock_desc_type";
 import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
-import {CharacterStatType} from "~/bindings/src/character_stat_type_type";
 import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
 import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {LevelRequirement} from "~/bindings/src/level_requirement_type";
 import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
@@ -33,29 +31,6 @@ export type ProgressionUnlock =
     | { kind: "achievement"; level: number; achievement: AchievementDesc }
     | { kind: "travelerTrade"; level: number; trade: TravelerTradeOrderDesc }
     ;
-
-/**
- * Shape the not-yet-shipped permanent-stat-gain table is expected to have: an id, the usual
- * `levelRequirements`, and a `CsvStatEntry[]`. There's no binding for it yet, so this stays a local
- * placeholder type with manual examples — swap in the real `BitCraftTables` entry once it exists and
- * everything below it keeps working unchanged.
- */
-type PermanentStatGainDesc = {
-    id: number;
-    levelRequirements: LevelRequirement[];
-    stats: CsvStatEntry[];
-};
-
-const PERMANENT_STAT_GAINS: PermanentStatGainDesc[] = [
-    {id: 0, levelRequirements: [{skillId: 12, level: 7}], stats: [{id: CharacterStatType.FishingCritChance, value: 0.002, isPct: true} as CsvStatEntry]},
-    {id: 0, levelRequirements: [{skillId: 12, level: 8}], stats: [{id: CharacterStatType.FishingSpeed, value: 0.001, isPct: true} as CsvStatEntry]},
-    {id: 0, levelRequirements: [{skillId: 12, level: 9}], stats: [{id: CharacterStatType.FishingCritChance, value: 0.002, isPct: true} as CsvStatEntry]},
-    {id: 0, levelRequirements: [{skillId: 12, level: 10}], stats: [{id: CharacterStatType.FishingSpeed, value: 0.001, isPct: true} as CsvStatEntry]},
-    {id: 0, levelRequirements: [{skillId: 12, level: 11}], stats: [{id: CharacterStatType.FishingCritMultiplier, value: 0.015, isPct: false} as CsvStatEntry]},
-    {id: 0, levelRequirements: [{skillId: 12, level: 12}], stats: [{id: CharacterStatType.FishingSpeed, value: 0.001, isPct: true} as CsvStatEntry]},
-    {id: 0, levelRequirements: [{skillId: 12, level: 13}], stats: [{id: CharacterStatType.FishingCritChance, value: 0.002, isPct: true} as CsvStatEntry]},
-    {id: 0, levelRequirements: [{skillId: 12, level: 14}], stats: [{id: CharacterStatType.FishingSpeed, value: 0.001, isPct: true} as CsvStatEntry]},
-];
 
 const AOC_ID: number = 12345; // Art of Cheating knowledge ID
 
@@ -111,11 +86,12 @@ export function progressionUnlocksForSkill(skillId: number): ProgressionUnlock[]
         if (req?.skillId === skillId) unlocks.push({kind: "travelerTrade", level: req.level, trade});
     }
 
-    for (const row of PERMANENT_STAT_GAINS) {
-        const req = row.levelRequirements[0];
-        if (req?.skillId !== skillId) continue;
-        for (const stat of row.stats) {
-            unlocks.push({kind: "stat", level: req.level, stat});
+    const knowledgeStats = BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")();
+    for (const skillKnowledge of BitCraftTables.SkillLevelKnowledgeDesc.get() ?? []) {
+        if (skillKnowledge.skillId !== skillId) continue;
+        const stats = knowledgeStats.get(skillKnowledge.secondaryKnowledgeId)?.stats ?? [];
+        for (const stat of stats) {
+            unlocks.push({kind: "stat", level: skillKnowledge.level, stat});
         }
     }
 
