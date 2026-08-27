@@ -232,7 +232,6 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc, sh
         <RecipeVisual
             inputs={
                 <>
-                    <InputItemStackArray stacks={props.recipe.consumedItemStacks}/>
                     <Show when={resource()}>
                         {res =>
                             <ResourceIcon
@@ -241,6 +240,9 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc, sh
                                 class={props.recipe.consumedItemStacks.some(c => c.consumptionChance < 1) ? "mt-4" : ""}
                             />
                         }
+                    </Show>
+                    <Show when={props.recipe.consumedItemStacks.length}>
+                        <InputItemStackArray stacks={props.recipe.consumedItemStacks}/>
                     </Show>
                 </>
             }
@@ -590,6 +592,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
         return props.interaction.onDestroyOutcomes;
     };
     const totalWeight = () => outcomes()?.reduce((t, o) => t + o.probability, 0) ?? 0;
+    const chances = () => placeable()?.maxHealth;
 
     return (
         <RecipeVisual
@@ -613,7 +616,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                     <Show when={props.interaction.outputItemStacks.length}>
                         <div class="flex flex-row flex-wrap justify-center gap-0.5">
                             <For each={props.interaction.outputItemStacks}>
-                               {(stack) =>  <div class={outcomes()?.length ? "mt-5" : ""}>{expandStack(stack)}</div>}
+                               {(stack) =>  <div class={outcomes()?.length ? "mt-5" : ""}>{expandStack({itemStack: stack, probability: 1}, chances())}</div>}
                             </For>
                         </div>
                     </Show>
