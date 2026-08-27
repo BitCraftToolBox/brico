@@ -24,6 +24,7 @@ import {
     enemiesDropping,
     extractionRecipesConsuming,
     extractionRecipesDropping,
+    foodDescsYielding,
     itemListsContaining,
     questDropSourcesFor,
     questsRequiringItem,
@@ -49,6 +50,7 @@ import {
     depletionTab,
     enemyDropsTab,
     extractionTab,
+    foodByproductsTab,
     itemListsTab,
     itemListTab,
     placeableInteractionsTab,
@@ -154,6 +156,8 @@ export default function ItemDetail() {
     const tradeOffers = createMemo(() => itemId() != null ? travelerTradesOffering(itemId()!, itemType) : []);
     const depletionSources = createMemo(() => itemId() != null ? resourcesYielding(itemId()!, itemType) : []);
     const researchRequires = createMemo(() => itemId() != null ? claimResearchRequiring(itemId()!, itemType) : []);
+    const foodYields = createMemo(() => foodData()?.outputItemStacks?.length ? [foodData()!] : []);
+    const foodByproductOf = createMemo(() => itemId() != null ? foodDescsYielding(itemId()!, itemType) : []);
     const isItemList = createMemo(() => item() ? item()?.itemListId ? BitCraftTables.ItemListDesc.indexedBy("id")().get(item()?.itemListId) : undefined : undefined);
     const {extractionDrops, enemyDrops, inItemLists} = questDropAugmentedLists(itemId, itemType);
 
@@ -268,7 +272,8 @@ export default function ItemDetail() {
                     {label: gameText(msg`Stamina`), value: food.stamina ? fixFloat(food.stamina) : undefined},
                     {label: gameText(msg`Max Stamina`), value: food.upToStamina ? fixFloat(food.upToStamina) : undefined},
                     {label: gameText(msg`TP Energy`, "Teleportation Energy"), value: food.teleportationEnergy ? fixFloat(food.teleportationEnergy) : undefined},
-                    {label: msg`Consumable In Combat`, value: food.consumableWhileInCombat || undefined},
+                    {label: msg`Consumable In Combat`, value: food.consumableWhileInCombat},
+                    {label: msg`Auto Consume`, value: food.autoConsume},
                 ],
             });
             // Food buff stat groups
@@ -332,6 +337,7 @@ export default function ItemDetail() {
                 depletionTab(extractionDrops(), extractionUses(), depletionSources()),
                 enemyDropsTab(enemyDrops()),
                 terraformDropsTab(terraformOutputs()),
+                foodByproductsTab(foodYields(), foodByproductOf()),
                 constructionCombinedTab(constructsInto(), deconstructedFrom()),
                 conversionTab(conversionInputs(), conversionOutputs()),
                 travelerTasksTab(taskRewards(), taskRequires()),

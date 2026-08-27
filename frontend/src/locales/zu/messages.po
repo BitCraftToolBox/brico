@@ -154,12 +154,6 @@ msgstr ""
 msgid "Priority"
 msgstr "crwdns4384:0crwdne4384:0"
 
-#. placeholder {0}: props.recipe.buildingDescriptionId
-#. placeholder {0}: props.recipe.consumedBuilding
-#: src/components/shared/RecipeDisplay.tsx
-msgid "Building #{0}"
-msgstr "crwdns4386:0#{0}crwdne4386:0"
-
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "No construction recipe"
 msgstr "crwdns4388:0crwdne4388:0"
@@ -494,6 +488,10 @@ msgstr "crwdns4530:0crwdne4530:0"
 #: src/routes/database/skill/[id].tsx
 msgid "Quests"
 msgstr "crwdns4532:0crwdne4532:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Yields when eaten"
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
@@ -868,6 +866,10 @@ msgstr "crwdns4698:0crwdne4698:0"
 msgid "Ability"
 msgstr ""
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Food Byproducts"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Show row actions first"
 msgstr "crwdns4700:0crwdne4700:0"
@@ -984,11 +986,6 @@ msgstr "crwdns4750:0crwdne4750:0"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Deconstruction returns"
 msgstr "crwdns4752:0crwdne4752:0"
-
-#. placeholder {0}: props.placement.placedPlaceableId
-#: src/components/shared/RecipeDisplay.tsx
-msgid "Placeable #{0}"
-msgstr "crwdns4754:0#{0}crwdne4754:0"
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -1126,6 +1123,10 @@ msgstr "crwdns4814:0crwdne4814:0"
 msgid "Forced to Crowdin's target language for review."
 msgstr "crwdns4816:0crwdne4816:0"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Byproduct of eating"
+msgstr ""
+
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
@@ -1183,6 +1184,11 @@ msgstr "crwdns4838:0crwdne4838:0"
 #: src/lib/recipe-sources.tsx
 msgid "{skillName} Exp:"
 msgstr "crwdns4840:0{skillName}crwdne4840:0"
+
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Auto Consume"
+msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx

@@ -154,12 +154,6 @@ msgstr ""
 msgid "Priority"
 msgstr ""
 
-#. placeholder {0}: props.recipe.buildingDescriptionId
-#. placeholder {0}: props.recipe.consumedBuilding
-#: src/components/shared/RecipeDisplay.tsx
-msgid "Building #{0}"
-msgstr ""
-
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "No construction recipe"
 msgstr ""
@@ -494,6 +488,10 @@ msgstr ""
 #: src/routes/database/skill/[id].tsx
 msgid "Quests"
 msgstr "Zadania"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Yields when eaten"
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
@@ -868,6 +866,10 @@ msgstr ""
 msgid "Ability"
 msgstr ""
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Food Byproducts"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Show row actions first"
 msgstr ""
@@ -983,11 +985,6 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Deconstruction returns"
-msgstr ""
-
-#. placeholder {0}: props.placement.placedPlaceableId
-#: src/components/shared/RecipeDisplay.tsx
-msgid "Placeable #{0}"
 msgstr ""
 
 #: src/lib/table-defs/food-table.tsx
@@ -1126,6 +1123,10 @@ msgstr ""
 msgid "Forced to Crowdin's target language for review."
 msgstr ""
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Byproduct of eating"
+msgstr ""
+
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
@@ -1182,6 +1183,11 @@ msgstr "Wytrzymałość"
 
 #: src/lib/recipe-sources.tsx
 msgid "{skillName} Exp:"
+msgstr ""
+
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Auto Consume"
 msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx

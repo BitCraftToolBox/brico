@@ -41,8 +41,9 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
         {id: "HP", meta: {label: gameText(msg`HP`, "Health")}, accessorKey: "hp", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
         {id: "Up To HP", meta: {label: gameText(msg`Max Health`)}, accessorKey: "upToHp", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
         {id: "Stamina", meta: {label: gameText(msg`Stamina`)}, accessorKey: "stamina", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
-        {id: "Up To Stamina", meta: {label:gameText(msg`Max Stamina`)}, accessorKey: "upToStamina", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
+        {id: "Up To Stamina", meta: {label: gameText(msg`Max Stamina`)}, accessorKey: "upToStamina", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
         boolColumn<FoodDesc, boolean>("Consumable In Combat", {accessorKey: "consumableWhileInCombat"}, msg`Consumable In Combat`),
+        boolColumn<FoodDesc, boolean>("Auto Consume", {accessorKey: "autoConsume"}, msg`Auto Consume`),
         tierColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.tier ?? -1}),
         rarityColumn({accessorFn: tool => BitCraftTables.ItemDesc.indexedBy("id")().get(tool.itemId)?.rarity.tag ?? Rarity.Default.tag as Rarity["tag"]}), // idk why TS needs this
         rowActions({accessorKey: "itemId"}, "item"),
@@ -57,6 +58,7 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
         rangeFilter("Stamina", gameText(msg`Stamina`)),
         rangeFilter("Up To Stamina", gameText(msg`Max Stamina`)),
         boolFilter("Consumable In Combat", msg`Consumable In Combat`),
+        boolFilter("Auto Consume", msg`Auto Consume`),
         tierFilter(),
         rarityFilter()
     ],

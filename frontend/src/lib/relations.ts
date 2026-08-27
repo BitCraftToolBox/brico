@@ -23,6 +23,7 @@ import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
 import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
+import {FoodDesc} from "~/bindings/src/food_desc_type";
 import {InputItemStack} from "~/bindings/src/input_item_stack_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemDesc} from "~/bindings/src/item_desc_type";
@@ -157,6 +158,15 @@ export function terraformRecipesDropping(itemId: number, itemType: string): Terr
         if (!r.outputItemStacks) return false;
         return anyProbStackMatches(r.outputItemStacks, itemId, itemType);
     })
+}
+
+// ─── Food Byproducts ──────────────────────────────────────────────
+
+/** Food items that yield this item/cargo as a byproduct when eaten (via outputItemStacks) */
+export function foodDescsYielding(itemId: number, itemType: string): FoodDesc[] {
+    const all = BitCraftTables.FoodDesc.get();
+    if (!all) return [];
+    return all.filter(f => f.outputItemStacks?.length && anyStackMatches(f.outputItemStacks, itemId, itemType));
 }
 
 // ─── Construction Recipes ───────────────────────────────────────
@@ -653,6 +663,13 @@ export function getItemStackName(stack: ItemStack | undefined): string {
         return cargoIndex.get(stack.itemId)?.name ?? "Cargo #" + stack.itemId;
     }
     return t`Unknown`;
+}
+
+/** Display name for a food byproduct relationship — the name of the food item eaten */
+export function getFoodItemName(food: FoodDesc): string {
+    trackUILocale();
+    const item = BitCraftTables.ItemDesc.indexedBy("id")().get(food.itemId);
+    return item?.name ?? `Item #${food.itemId}`;
 }
 
 /** Display name for a resource depletion relationship */
