@@ -160,7 +160,7 @@ export const QuestChainDefs: BitCraftToDataDef<QuestChainDesc> = {
         boolColumn<QuestChainDesc, boolean>("Is Hint", {accessorKey: "isHint"}, msg`Is Hint`),
         boolColumn<QuestChainDesc, boolean>("Unstartable", {accessorKey: "unstartable"}, msg`Unstartable`),
         boolColumn<QuestChainDesc, boolean>("Is Secret", {accessorKey: "isSecret"}, gameText(msg`Secret`)),
-        rowActions(),
+        rowActions(undefined, "quest"),
     ],
     facetedFilters: [
         rangeFilter("Stages", msg`Stages`),

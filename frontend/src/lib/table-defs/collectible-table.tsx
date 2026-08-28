@@ -51,7 +51,7 @@ export const CollectibleDefs: BitCraftToDataDef<CollectibleDesc> = {
         rarityColumn({accessorKey: "collectibleRarity.tag"}),
         boolColumn("Auto Collect", {accessorKey: "autoCollect"}, msg`Auto Collect`),
         boolColumn("Locked", {accessorKey: "locked"}, msg`Locked`),
-        rowActions(undefined, "col"),
+        rowActions(undefined, "coll"),
     ],
     facetedFilters: [
         tagFilter(),
