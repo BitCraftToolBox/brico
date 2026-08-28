@@ -8,7 +8,7 @@ msgstr ""
 "Language: zu\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-07 05:39\n"
+"PO-Revision-Date: 2026-08-28 15:54\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -80,7 +80,7 @@ msgstr "crwdns4358:0crwdne4358:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Prospect for {target}"
-msgstr ""
+msgstr "crwdns5542:0{target}crwdne5542:0"
 
 #. placeholder {0}: fixFloat(expStack.quantity)
 #: src/lib/table-defs/quests-table.tsx
@@ -147,7 +147,7 @@ msgstr "crwdns4382:0{0}crwdne4382:0"
 
 #: src/routes/database/progression/index.tsx
 msgid "Profession"
-msgstr ""
+msgstr "crwdns5544:0crwdne5544:0"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
@@ -386,7 +386,7 @@ msgstr "crwdns4490:0crwdne4490:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Total"
-msgstr ""
+msgstr "crwdns5546:0crwdne5546:0"
 
 #: src/routes/settings.tsx
 msgid "Object ID"
@@ -423,7 +423,7 @@ msgstr "crwdns4506:0crwdne4506:0"
 
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
-msgstr ""
+msgstr "crwdns5548:0crwdne5548:0"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Radius"
@@ -490,7 +490,7 @@ msgstr "crwdns4532:0crwdne4532:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Yields when eaten"
-msgstr ""
+msgstr "crwdns5550:0crwdne5550:0"
 
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
@@ -599,7 +599,7 @@ msgstr "crwdns4576:0crwdne4576:0"
 
 #: src/components/shared/ItemStacks.tsx
 msgid "avg"
-msgstr ""
+msgstr "crwdns5534:0crwdne5534:0"
 
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "Min Level"
@@ -862,11 +862,11 @@ msgstr "crwdns4698:0crwdne4698:0"
 
 #: src/routes/database/ability/[id].tsx
 msgid "Ability"
-msgstr ""
+msgstr "crwdns5552:0crwdne5552:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Food Byproducts"
-msgstr ""
+msgstr "crwdns5554:0crwdne5554:0"
 
 #: src/routes/settings.tsx
 msgid "Show row actions first"
@@ -1002,7 +1002,7 @@ msgstr "crwdns4760:0{0}crwdne4760:0"
 #: src/lib/sidebar-items.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Abilities"
-msgstr ""
+msgstr "crwdns5556:0crwdne5556:0"
 
 #: src/routes/database/building/[id].tsx
 msgid "Destroy On Unclaim"
@@ -1123,7 +1123,7 @@ msgstr "crwdns4816:0crwdne4816:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Byproduct of eating"
-msgstr ""
+msgstr "crwdns5558:0crwdne5558:0"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/knowledge/[id].tsx
@@ -1147,7 +1147,7 @@ msgstr "crwdns4826:0crwdne4826:0"
 #: src/lib/table-defs/abilities-table.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Stamina Cost"
-msgstr ""
+msgstr "crwdns5560:0crwdne5560:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Construction Recipe"
@@ -1186,7 +1186,7 @@ msgstr "crwdns4840:0{skillName}crwdne4840:0"
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Auto Consume"
-msgstr ""
+msgstr "crwdns5562:0crwdne5562:0"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
@@ -1231,7 +1231,7 @@ msgstr "crwdns5510:0crwdne5510:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Sell <0/> to {npcName}"
-msgstr ""
+msgstr "crwdns5564:0{npcName}crwdne5564:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
@@ -1261,7 +1261,7 @@ msgstr "crwdns4870:0crwdne4870:0"
 #. placeholder {1}: formatStatValue(stat)
 #: src/routes/database/skill/[id].tsx
 msgid "Permanently Gain {0} +{1}"
-msgstr ""
+msgstr "crwdns5566:0{0}crwdnd5566:0{1}crwdne5566:0"
 
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
@@ -1391,7 +1391,7 @@ msgstr "crwdns4926:0crwdne4926:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Unlock trade"
-msgstr ""
+msgstr "crwdns5568:0crwdne5568:0"
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/DetailPageLayout.tsx
@@ -1573,7 +1573,7 @@ msgstr "crwdns5004:0crwdne5004:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Trade <0/> for <1/> to {npcName}"
-msgstr ""
+msgstr "crwdns5570:0{npcName}crwdne5570:0"
 
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
@@ -1604,7 +1604,7 @@ msgstr "crwdns5014:0crwdne5014:0"
 
 #: src/components/shared/ItemStacks.tsx
 msgid "exact"
-msgstr ""
+msgstr "crwdns5536:0crwdne5536:0"
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Research Time"
@@ -1732,7 +1732,7 @@ msgstr "crwdns5068:0crwdne5068:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Unlock achievement <0/>"
-msgstr ""
+msgstr "crwdns5572:0crwdne5572:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Extraction Recipe"
@@ -1785,7 +1785,7 @@ msgstr "crwdns5088:0crwdne5088:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Crafting"
-msgstr ""
+msgstr "crwdns5574:0crwdne5574:0"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Raw Data"
@@ -1850,7 +1850,7 @@ msgstr "crwdns5116:0crwdne5116:0"
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 msgid "Buff Stats"
-msgstr ""
+msgstr "crwdns5576:0crwdne5576:0"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/quest-graph.tsx
@@ -1881,7 +1881,7 @@ msgstr "crwdns5520:0crwdne5520:0"
 
 #: src/components/shared/ItemStacks.tsx
 msgid "Nothing"
-msgstr ""
+msgstr "crwdns5538:0crwdne5538:0"
 
 #: src/components/shared/DetailPageLayout.tsx
 #: src/routes/database/skill/[id].tsx
@@ -1891,7 +1891,7 @@ msgstr "crwdns5128:0crwdne5128:0"
 #: src/routes/database/skill/[id].tsx
 msgctxt "ability"
 msgid "Use <0/>"
-msgstr ""
+msgstr "crwdns5578:0crwdne5578:0"
 
 #: src/lib/recipe-sources.tsx
 msgid "Tier {tier} {name}"
@@ -1931,7 +1931,7 @@ msgstr "crwdns5144:0crwdne5144:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Combat Action"
-msgstr ""
+msgstr "crwdns5580:0crwdne5580:0"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows From"
@@ -2028,7 +2028,7 @@ msgstr "crwdns5188:0{minRad}crwdnd5188:0{maxRad}crwdne5188:0"
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Min Health"
-msgstr ""
+msgstr "crwdns5582:0crwdne5582:0"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
@@ -2050,7 +2050,7 @@ msgstr "crwdns5196:0crwdne5196:0"
 
 #: src/routes/settings.tsx
 msgid "Rish Emulation"
-msgstr ""
+msgstr "crwdns5584:0crwdne5584:0"
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Collectible Type"
@@ -2094,7 +2094,7 @@ msgstr "crwdns5216:0crwdne5216:0"
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Min Stamina"
-msgstr ""
+msgstr "crwdns5586:0crwdne5586:0"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Sources"
@@ -2134,7 +2134,7 @@ msgstr "crwdns5236:0crwdne5236:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Equip <0/>"
-msgstr ""
+msgstr "crwdns5588:0crwdne5588:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded from Quests"
@@ -2196,7 +2196,7 @@ msgstr "crwdns5262:0crwdne5262:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Unlock quest <0/>"
-msgstr ""
+msgstr "crwdns5590:0crwdne5590:0"
 
 #: src/routes/database/biome/[id].tsx
 msgid "Disallow Player Build"
@@ -2221,7 +2221,7 @@ msgstr "crwdns5272:0crwdne5272:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Buy <0/> from {npcName}"
-msgstr ""
+msgstr "crwdns5592:0{npcName}crwdne5592:0"
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Search stats..."
@@ -2281,7 +2281,7 @@ msgstr "crwdns5292:0crwdne5292:0"
 
 #: src/routes/database/item/[id].tsx
 msgid "Health"
-msgstr ""
+msgstr "crwdns5594:0crwdne5594:0"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"
@@ -2442,7 +2442,7 @@ msgstr "crwdns5362:0crwdne5362:0"
 
 #: src/components/shared/ItemStacks.tsx
 msgid "expanded"
-msgstr ""
+msgstr "crwdns5540:0crwdne5540:0"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Source"
@@ -2753,3 +2753,4 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
+

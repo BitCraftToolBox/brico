@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-07 05:39\n"
+"PO-Revision-Date: 2026-08-28 15:54\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -494,7 +494,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
-msgstr ""
+msgstr "Описание предметов"
 
 #: src/components/app-sidebar.tsx
 msgid "Showing favorites"
@@ -1010,7 +1010,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Item Lists"
-msgstr ""
+msgstr "Предметы"
 
 #: src/lib/recipe-sources.tsx
 msgid "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
@@ -1693,7 +1693,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Emblem Editor"
-msgstr ""
+msgstr "Редактор эмблемы"
 
 #: src/routes/database/building/[id].tsx
 msgid "hex coin per day per occupied slot"
@@ -2337,7 +2337,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "World"
-msgstr ""
+msgstr "Мир"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Night Detect Range"
@@ -2539,7 +2539,7 @@ msgstr ""
 #: src/lib/table-defs/prospecting-table.tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Biomes"
-msgstr ""
+msgstr "Биомы"
 
 #: src/lib/sidebar-items.ts
 msgid "Paving"
@@ -2701,7 +2701,7 @@ msgstr ""
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Buffs"
-msgstr ""
+msgstr "Эффекты"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"
