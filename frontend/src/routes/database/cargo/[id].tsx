@@ -142,12 +142,12 @@ export default function CargoDetail() {
                 conversionTab(conversionInputs(), conversionOutputs()),
                 travelerTasksTab(taskRewards(), taskRequires()),
                 travelerTradesTab(tradeOffers(), tradeRequires()),
-                itemListsTab(inItemLists()),
                 questRequirementsTab(questRequires()),
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
                 claimResearchTab(researchRequires()),
+                itemListsTab(inItemLists()),
                 ...(cargo()?.id === 92169812 && easterEggs() ? [lootTab()] : [])
             ]}
         />

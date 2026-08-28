@@ -342,14 +342,14 @@ export default function ItemDetail() {
                 conversionTab(conversionInputs(), conversionOutputs()),
                 travelerTasksTab(taskRewards(), taskRequires()),
                 travelerTradesTab(tradeOffers(), tradeRequires()),
-                itemListTab(isItemList(), true),
-                itemListsTab(inItemLists()),
                 collectiblesTab(collectibleData()),
                 questRequirementsTab(questRequires()),
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
                 claimResearchTab(researchRequires()),
+                itemListTab(isItemList(), true),
+                itemListsTab(inItemLists()),
                 ...(item()?.id === 164053808 && easterEggs() ? [lootTabWith({loot: [[1602206011, "Item", 1687372047]], chest: [item()!.iconAssetName, item()!.rarity, item()!.tier]})] : [])
             ]}
         />

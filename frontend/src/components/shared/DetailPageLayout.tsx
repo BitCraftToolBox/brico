@@ -7,6 +7,8 @@
  * 3. Relationship Tabs: Each tab renders a mini table of related objects
  */
 
+import {msg} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
 import {useSearchParams} from "@solidjs/router";
 import {
@@ -23,6 +25,7 @@ import {TierIcon} from "~/components/shared/GameIcon";
 import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardHeader} from "~/components/ui/card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
+import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {Rarities} from "~/lib/bitcraft-utils";
 import {sourceRow} from "~/lib/data-translation";
 import {breadcrumb} from "~/lib/game-links";
@@ -30,7 +33,7 @@ import {rarityLabel} from "~/lib/game-strings";
 import {type Label, useLabel} from "~/lib/labels";
 import {BITCRAFT_TITLE_SUFFIX, detailMetaDescription, metaKeywords} from "~/lib/og-meta";
 import {BreadcrumbJsonLd, ItemPageJsonLd, type JsonLdProperty} from "~/lib/structured-data";
-import {cn} from "~/lib/utils";
+import {cn, useCopy} from "~/lib/utils";
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -196,15 +199,7 @@ const CopyButton: Component<{
     copyElement?: JSX.Element;
     copiedElement?: JSX.Element;
 }> = (props) => {
-    const [contentCopied, setContentCopied] = createSignal(false);
-    const copyContent = () => {
-        if (props.content) {
-            navigator.clipboard.writeText(props.content).then(() => {
-                setContentCopied(true);
-                setTimeout(() => setContentCopied(false), 1500);
-            });
-        }
-    };
+    const [copyContent, contentCopied] = useCopy(props.content);
 
     return (
         <Button variant="outline" size="sm" onClick={copyContent}>
@@ -356,12 +351,32 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                 <Show when={props.tier !== undefined}>
                                     <TierIcon tier={props.tier!}/>
                                 </Show>
-                                <Show when={props.rarity}>
-                                    {/* `rarity` stays the canonical tag — it drives the border color and is what
-                                        URLs/filters carry — so only the displayed text is translated. */}
-                                    <span class={`text-sm font-medium px-2 py-0.5 rounded ${Rarities.getBorderColorClass({tag: props.rarity!} as any)} border`}>
-                                        {rarityLabel(props.rarity)}
+                                <Show when={props.rarity}>{r => {
+                                    return <span class={`text-sm font-medium px-2 py-0.5 rounded ${Rarities.getBorderColorClass({tag: r()} as any)} border`}>
+                                        {rarityLabel(r())}
                                     </span>
+                                }}</Show>
+                                <Show when={props.chatLink}>
+                                    {link => {
+                                        const [copy, copied] = useCopy(link(), 1000);
+                                        const [open, setOpen] = createSignal(false);
+                                        const {_} = useLingui();
+                                        return (
+                                            <Tooltip open={open() || copied()} onOpenChange={setOpen}>
+                                                <TooltipTrigger
+                                                    as={Button} variant="default" onclick={copy} aria-label={_(msg`Copy Chat Link`)}
+                                                    size="icon" class={cn("size-6", copied() ? "hover:bg-success/90 bg-success" : "")}
+                                                >
+                                                    <FontIcon codepoint="0115"/>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <Show when={copied()} fallback={<Trans>Copy Chat Link</Trans>}>
+                                                        <Trans>Copied!</Trans>
+                                                    </Show>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        );
+                                    }}
                                 </Show>
                             </h1>
                             <Show when={props.tag}>
