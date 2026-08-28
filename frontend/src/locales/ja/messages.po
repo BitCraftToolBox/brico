@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-07 05:39\n"
+"PO-Revision-Date: 2026-08-28 15:54\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -264,7 +264,7 @@ msgstr "一人の貢献のみ"
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage"
-msgstr ""
+msgstr "段階"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
@@ -350,7 +350,7 @@ msgstr "スポーンの優先度"
 
 #: src/routes/database/building/[id].tsx
 msgid "Maintenance"
-msgstr ""
+msgstr "メンテナンス"
 
 #: src/routes/settings.tsx
 msgid "Default rows per page"
@@ -419,7 +419,7 @@ msgstr "Crowdinのレビューの都合で、疑似翻訳に固定されてい�
 
 #: src/routes/index.tsx
 msgid "Search items, buildings, creatures..."
-msgstr ""
+msgstr "アイテム、建物、クリーチャーを検索…"
 
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
@@ -439,7 +439,7 @@ msgstr "貢献度に応じた戦利品"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Explore"
-msgstr ""
+msgstr "探索"
 
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
@@ -685,7 +685,7 @@ msgstr "リンクがコピーされました！ <0/>"
 
 #: src/routes/settings.tsx
 msgid "🥚 Easter Eggs"
-msgstr ""
+msgstr "🥚 イースターエッグ"
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Unlocks Techs"
@@ -693,7 +693,7 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Terraforming Drops"
-msgstr ""
+msgstr "テラフォーミングドロップ"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Inaction Time"
@@ -756,7 +756,7 @@ msgstr "朽ちる"
 
 #: src/components/app-sidebar.tsx
 msgid "Brico's Toolbox Discord"
-msgstr ""
+msgstr "Brico's Toolbox Discord"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Show After Logout"
@@ -888,7 +888,7 @@ msgstr "枯渇"
 #: src/lib/relations.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Unknown"
-msgstr ""
+msgstr "不明"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded by"
@@ -1227,7 +1227,7 @@ msgstr "飛び道具速度"
 #. Accessible name for the navigation trail in the top bar (not the in-game prospecting trail)
 #: src/components/Nav.tsx
 msgid "Breadcrumb"
-msgstr ""
+msgstr "痕跡"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Sell <0/> to {npcName}"
@@ -1243,7 +1243,7 @@ msgstr "設置物が見つかりません"
 
 #: src/components/version-checker.tsx
 msgid "Up to date"
-msgstr ""
+msgstr "最新版"
 
 #: src/lib/recipe-sources.tsx
 msgid "No tool"
@@ -1313,7 +1313,7 @@ msgstr "荒野"
 #: src/lib/game-links.tsx
 #: src/routes/database/index.tsx
 msgid "Database"
-msgstr ""
+msgstr "データベース"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
@@ -1873,11 +1873,11 @@ msgstr "コピーしました！"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
-msgstr ""
+msgstr "標高差"
 
 #: src/components/SiteFooter.tsx
 msgid "Not affiliated with Clockwork Labs."
-msgstr ""
+msgstr "Clockwork Labsとは提携していません。"
 
 #: src/components/shared/ItemStacks.tsx
 msgid "Nothing"
@@ -2062,7 +2062,7 @@ msgstr "ゲームデータの言語"
 
 #: src/components/app-sidebar.tsx
 msgid "cereal - Raw Data Browser"
-msgstr ""
+msgstr "cereal - 生データブラウザー"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/database/skill/[id].tsx
@@ -2748,7 +2748,7 @@ msgstr "クリーチャー"
 
 #: src/components/SiteFooter.tsx
 msgid "Brico's Toolbox is a fan-made database of <0>BitCraft</0> items, recipes, creatures, structures, and more."
-msgstr ""
+msgstr "Brico's Toolboxは、<0>BitCraft</0>のアイテム、レシピ、生き物、建造物などを網羅した、ファンメイドのデータベースです。"
 
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
