@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-07 05:39\n"
+"PO-Revision-Date: 2026-08-28 15:54\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -41,7 +41,6 @@ msgid "Total Passive Slots"
 msgstr "パッシブスロットの合計"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "Max Stamina"
 msgstr "最大スタミナ"
 
@@ -148,17 +147,11 @@ msgstr "地形標高差 {0}"
 
 #: src/routes/database/progression/index.tsx
 msgid "Profession"
-msgstr ""
+msgstr "職業"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
 msgstr "優先度"
-
-#. placeholder {0}: props.recipe.buildingDescriptionId
-#. placeholder {0}: props.recipe.consumedBuilding
-#: src/components/shared/RecipeDisplay.tsx
-msgid "Building #{0}"
-msgstr "建物 #{0}"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "No construction recipe"
@@ -271,7 +264,7 @@ msgstr "一人の貢献のみ"
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage"
-msgstr ""
+msgstr "段階"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
@@ -357,7 +350,7 @@ msgstr "スポーンの優先度"
 
 #: src/routes/database/building/[id].tsx
 msgid "Maintenance"
-msgstr ""
+msgstr "メンテナンス"
 
 #: src/routes/settings.tsx
 msgid "Default rows per page"
@@ -393,7 +386,7 @@ msgstr "名前"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Total"
-msgstr ""
+msgstr "合計"
 
 #: src/routes/settings.tsx
 msgid "Object ID"
@@ -426,7 +419,7 @@ msgstr "Crowdinのレビューの都合で、疑似翻訳に固定されてい�
 
 #: src/routes/index.tsx
 msgid "Search items, buildings, creatures..."
-msgstr ""
+msgstr "アイテム、建物、クリーチャーを検索…"
 
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
@@ -446,7 +439,7 @@ msgstr "貢献度に応じた戦利品"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Explore"
-msgstr ""
+msgstr "探索"
 
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
@@ -495,6 +488,10 @@ msgstr "検索"
 msgid "Quests"
 msgstr "クエスト"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Yields when eaten"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
 msgstr "アイテムの詳細"
@@ -532,7 +529,6 @@ msgstr "基本的な脅威"
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/creature/[id].tsx
-#: src/routes/database/item/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Max Health"
@@ -689,7 +685,7 @@ msgstr "リンクがコピーされました！ <0/>"
 
 #: src/routes/settings.tsx
 msgid "🥚 Easter Eggs"
-msgstr ""
+msgstr "🥚 イースターエッグ"
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Unlocks Techs"
@@ -697,7 +693,7 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Terraforming Drops"
-msgstr ""
+msgstr "テラフォーミングドロップ"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Inaction Time"
@@ -760,7 +756,7 @@ msgstr "朽ちる"
 
 #: src/components/app-sidebar.tsx
 msgid "Brico's Toolbox Discord"
-msgstr ""
+msgstr "Brico's Toolbox Discord"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Show After Logout"
@@ -868,6 +864,10 @@ msgstr "最大スピード"
 msgid "Ability"
 msgstr ""
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Food Byproducts"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Show row actions first"
 msgstr "行のアクションを最初に表示"
@@ -888,7 +888,7 @@ msgstr "枯渇"
 #: src/lib/relations.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Unknown"
-msgstr ""
+msgstr "不明"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded by"
@@ -985,11 +985,6 @@ msgstr "出力アイテムリスト"
 msgid "Deconstruction returns"
 msgstr "解体時の返却アイテム量"
 
-#. placeholder {0}: props.placement.placedPlaceableId
-#: src/components/shared/RecipeDisplay.tsx
-msgid "Placeable #{0}"
-msgstr ""
-
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "TP Energy"
@@ -1007,7 +1002,7 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Abilities"
-msgstr ""
+msgstr "アビリティ"
 
 #: src/routes/database/building/[id].tsx
 msgid "Destroy On Unclaim"
@@ -1126,6 +1121,10 @@ msgstr "痕跡一つあたりの経験値"
 msgid "Forced to Crowdin's target language for review."
 msgstr "Crowdinのレビューの都合で、翻訳先言語に固定されています。"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Byproduct of eating"
+msgstr ""
+
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
@@ -1184,13 +1183,17 @@ msgstr "スタミナ"
 msgid "{skillName} Exp:"
 msgstr "{skillName}経験値："
 
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Auto Consume"
+msgstr ""
+
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
 msgid "Trade Orders"
 msgstr "取引注文"
 
 #: src/lib/table-defs/food-table.tsx
-#: src/routes/database/item/[id].tsx
 msgid "HP"
 msgstr "体力"
 
@@ -1224,7 +1227,7 @@ msgstr "飛び道具速度"
 #. Accessible name for the navigation trail in the top bar (not the in-game prospecting trail)
 #: src/components/Nav.tsx
 msgid "Breadcrumb"
-msgstr ""
+msgstr "痕跡"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Sell <0/> to {npcName}"
@@ -1240,7 +1243,7 @@ msgstr "設置物が見つかりません"
 
 #: src/components/version-checker.tsx
 msgid "Up to date"
-msgstr ""
+msgstr "最新版"
 
 #: src/lib/recipe-sources.tsx
 msgid "No tool"
@@ -1310,7 +1313,7 @@ msgstr "荒野"
 #: src/lib/game-links.tsx
 #: src/routes/database/index.tsx
 msgid "Database"
-msgstr ""
+msgstr "データベース"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
@@ -1782,7 +1785,7 @@ msgstr "自動追尾が可能"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Crafting"
-msgstr ""
+msgstr "クラフト"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Raw Data"
@@ -1870,11 +1873,11 @@ msgstr "コピーしました！"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
-msgstr ""
+msgstr "標高差"
 
 #: src/components/SiteFooter.tsx
 msgid "Not affiliated with Clockwork Labs."
-msgstr ""
+msgstr "Clockwork Labsとは提携していません。"
 
 #: src/components/shared/ItemStacks.tsx
 msgid "Nothing"
@@ -2022,6 +2025,11 @@ msgstr "敵のドロップ"
 msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
 msgstr ""
 
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Health"
+msgstr ""
+
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
@@ -2054,7 +2062,7 @@ msgstr "ゲームデータの言語"
 
 #: src/components/app-sidebar.tsx
 msgid "cereal - Raw Data Browser"
-msgstr ""
+msgstr "cereal - 生データブラウザー"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/database/skill/[id].tsx
@@ -2082,6 +2090,11 @@ msgstr "研究"
 #: src/lib/table-defs/creature-table.tsx
 msgid "Huntable"
 msgstr "狩猟可能"
+
+#: src/lib/table-defs/food-table.tsx
+#: src/routes/database/item/[id].tsx
+msgid "Min Stamina"
+msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "Sources"
@@ -2265,6 +2278,10 @@ msgstr ""
 #: src/routes/database/knowledge/[id].tsx
 msgid "Tag"
 msgstr "タグ"
+
+#: src/routes/database/item/[id].tsx
+msgid "Health"
+msgstr "体力"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"
@@ -2731,7 +2748,7 @@ msgstr "クリーチャー"
 
 #: src/components/SiteFooter.tsx
 msgid "Brico's Toolbox is a fan-made database of <0>BitCraft</0> items, recipes, creatures, structures, and more."
-msgstr ""
+msgstr "Brico's Toolboxは、<0>BitCraft</0>のアイテム、レシピ、生き物、建造物などを網羅した、ファンメイドのデータベースです。"
 
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"

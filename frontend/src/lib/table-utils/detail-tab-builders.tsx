@@ -17,6 +17,7 @@ import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
 import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
+import {FoodDesc} from "~/bindings/src/food_desc_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemType} from "~/bindings/src/item_type_type";
@@ -36,6 +37,7 @@ import {
     DeconstructionRecipePanel,
     EnemyDropPanel,
     ExtractionRecipePanel,
+    FoodByproductPanel,
     InteractionPanel,
     ItemListPanel,
     PlacementPanel,
@@ -73,6 +75,7 @@ import {
     getCraftingRecipeName,
     getDeconstructionRecipeName,
     getExtractionRecipeName,
+    getFoodItemName,
     getItemListName,
     getResourceDepletionName,
     getTravelerTaskName,
@@ -147,6 +150,42 @@ export function terraformDropsTab(
             ]}/>
         )
     }
+}
+
+export function foodByproductsTab(
+    yields: FoodDesc[],
+    byproductOf: FoodDesc[],
+): RelationshipTab {
+    return {
+        id: "food-byproducts",
+        label: msg`Food Byproducts`,
+        count: yields.length + byproductOf.length,
+        showWhenEmpty: false,
+        content: () => (
+            <div class="space-y-4">
+                <Show when={yields.length}>
+                    <div>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Yields when eaten</Trans></h4>
+                        <RecipeSelect
+                            recipes={yields}
+                            nameFor={getFoodItemName}
+                            render={f => <FoodByproductPanel food={f}/>}
+                        />
+                    </div>
+                </Show>
+                <Show when={byproductOf.length}>
+                    <div>
+                        <h4 class="text-sm text-muted-foreground mb-2"><Trans>Byproduct of eating</Trans></h4>
+                        <RecipeSelect
+                            recipes={byproductOf}
+                            nameFor={getFoodItemName}
+                            render={f => <FoodByproductPanel food={f}/>}
+                        />
+                    </div>
+                </Show>
+            </div>
+        ),
+    };
 }
 
 export function extractionTab(

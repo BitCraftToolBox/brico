@@ -55,6 +55,7 @@ export const CHARACTER_STAT_NAMES: NameTable<CharacterStatType["tag"]> = {
     MaxHealth: "Maximum Health",
     MaxStamina: "Maximum Stamina",
     MaxSatiation: "Maximum Satiation",
+    HuntingWeaponPower: "Hunting Strength",
     PassiveHealthRegenRate: "Passive Health Regeneration Rate",
     ActiveHealthRegenRate: "Active Health Regeneration Rate",
     PassiveStaminaRegenRate: "Passive Stamina Regeneration Rate",
@@ -126,11 +127,15 @@ export function rarityLabel(tag: string | undefined): string {
 
 /**
  * Equipment slots mostly read as their own display names, despite some very odd ones like "Head Artifact"
- * for the heart slot and "Feet Artifact" for the trinket. This is here in case CWL changes those.
+ * for the heart slot and "Feet Artifact" for the trinket.
  */
 export const EQUIPMENT_SLOT_NAMES: NameTable<EquipmentSlotType["tag"]> = {
     MainHand: "Main Hand Equipment",
-    OffHand: "Off Hand Equipment"
+    OffHand: "Off Hand Equipment",
+    // NB Not the real English strings. We replace here with our own strings (which do exist in game l10n files),
+    // because the slots in game are labeled poorly.
+    HeadArtifact: "Automata Heart",
+    FeetArtifact: "Trinket",
 };
 
 /** Canonical English name for an equipment slot tag. */

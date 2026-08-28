@@ -21,6 +21,7 @@ import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_des
 import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
 import {ExtractionSpawnedPlaceable} from "~/bindings/src/extraction_spawned_placeable_type";
+import {FoodDesc} from "~/bindings/src/food_desc_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
@@ -32,7 +33,7 @@ import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
-import {BuildingIcon, EnemyIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon, SHAPE_SIZES} from "~/components/shared/GameIcon";
+import {BuildingIcon, EnemyIcon, ItemIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon, SHAPE_SIZES} from "~/components/shared/GameIcon";
 import {expandStack, InputItemStackArray, ItemStackArray, ItemStackIcon, ProbBadge, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
@@ -231,7 +232,6 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc, sh
         <RecipeVisual
             inputs={
                 <>
-                    <InputItemStackArray stacks={props.recipe.consumedItemStacks}/>
                     <Show when={resource()}>
                         {res =>
                             <ResourceIcon
@@ -240,6 +240,9 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc, sh
                                 class={props.recipe.consumedItemStacks.some(c => c.consumptionChance < 1) ? "mt-4" : ""}
                             />
                         }
+                    </Show>
+                    <Show when={props.recipe.consumedItemStacks.length}>
+                        <InputItemStackArray stacks={props.recipe.consumedItemStacks}/>
                     </Show>
                 </>
             }
@@ -281,7 +284,7 @@ export const ConstructionRecipePanel: Component<{ recipe: ConstructionRecipeDesc
                 />
             }
             outputs={
-                <Show when={building()} fallback={<span class="text-muted-foreground"><Trans>Building #{props.recipe.buildingDescriptionId}</Trans></span>}>
+                <Show when={building()} fallback={<span class="text-muted-foreground">Building #{props.recipe.buildingDescriptionId}</span>}>
                     {(b) => (
                         <BuildingIcon building={b()} small/>
                     )}
@@ -300,7 +303,7 @@ export const DeconstructionRecipePanel: Component<{ recipe: DeconstructionRecipe
     return (
         <RecipeVisual
             inputs={
-                <Show when={building()} fallback={<span class="text-muted-foreground"><Trans>Building #{props.recipe.consumedBuilding}</Trans></span>}>
+                <Show when={building()} fallback={<span class="text-muted-foreground">Building #{props.recipe.consumedBuilding}</span>}>
                     {(b) => (
                         <BuildingIcon building={b()} small/>
                     )}
@@ -355,6 +358,23 @@ export const ResourceDepletionPanel: Component<{ resource: ResourceDesc }> = (pr
         <RecipeVisual
             inputs={<ResourceIcon res={props.resource} showFallbackText/>}
             outputs={<ResourceDepletionIcons resource={props.resource} showLabel={true}/>}
+        />
+    );
+};
+
+// ─── Food Byproduct Panel ───────────────────────────────────────
+
+export const FoodByproductPanel: Component<{ food: FoodDesc }> = (props) => {
+    const eatenItem = () => BitCraftTables.ItemDesc.indexedBy("id")().get(props.food.itemId);
+
+    return (
+        <RecipeVisual
+            inputs={
+                <Show when={eatenItem()} fallback={<span class="text-muted-foreground">Item #{props.food.itemId}</span>}>
+                    {(i) => <ItemIcon item={i()} small noInteract/>}
+                </Show>
+            }
+            outputs={<ItemStackArray stacks={props.food.outputItemStacks ?? []}/>}
         />
     );
 };
@@ -545,7 +565,7 @@ export const PlacementPanel: Component<{ placement: PlaceablePlacementDesc }> = 
                 <ItemStackIcon stack={props.placement.inputItem}/>
             }
             outputs={
-                <Show when={placeable()} fallback={<span class="text-muted-foreground"><Trans>Placeable #{props.placement.placedPlaceableId}</Trans></span>}>
+                <Show when={placeable()} fallback={<span class="text-muted-foreground">Placeable #{props.placement.placedPlaceableId}</span>}>
                     {(p) => <PlaceableIcon placeable={p()} small/>}
                 </Show>
             }
@@ -572,6 +592,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
         return props.interaction.onDestroyOutcomes;
     };
     const totalWeight = () => outcomes()?.reduce((t, o) => t + o.probability, 0) ?? 0;
+    const chances = () => placeable()?.maxHealth;
 
     return (
         <RecipeVisual
@@ -595,7 +616,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                     <Show when={props.interaction.outputItemStacks.length}>
                         <div class="flex flex-row flex-wrap justify-center gap-0.5">
                             <For each={props.interaction.outputItemStacks}>
-                               {(stack) =>  <div class={outcomes()?.length ? "mt-5" : ""}>{expandStack(stack)}</div>}
+                               {(stack) =>  <div class={outcomes()?.length ? "mt-5" : ""}>{expandStack({itemStack: stack, probability: 1}, chances())}</div>}
                             </For>
                         </div>
                     </Show>
