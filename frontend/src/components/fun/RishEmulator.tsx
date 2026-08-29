@@ -66,13 +66,16 @@ function ensureStyles() {
 export default function RishEmulator() {
     const {rishEmulation} = useSettings();
 
-    const matcher = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const [prefersReduced, setPrefersReduced] = createSignal(matcher.matches);
-    const cb = () => setPrefersReduced(matcher.matches);
-    matcher.addEventListener("change", cb);
-    onCleanup(() => {
-        matcher.removeEventListener("change", cb);
-    })
+    const [prefersReduced, setPrefersReduced] = createSignal(false);
+    if (!isServer) {
+        const matcher = window.matchMedia("(prefers-reduced-motion: reduce)");
+        setPrefersReduced(matcher.matches);
+        const cb = () => setPrefersReduced(matcher.matches);
+        matcher.addEventListener("change", cb);
+        onCleanup(() => {
+            matcher.removeEventListener("change", cb);
+        })
+    }
 
     createEffect(() => {
         if (isServer || !rishEmulation() || prefersReduced()) return;

@@ -32,6 +32,7 @@ const ENTITIES: {slug: string; table: keyof typeof BitCraftTables; idField: stri
     {slug: "item-list", table: "ItemListDesc", idField: "id", include: row => getItemListSource(row).type === "Unknown"},
     {slug: "knowledge", table: "SecondaryKnowledgeDesc", idField: "id"},
     {slug: "paving", table: "PavingTileDesc", idField: "id"},
+    {slug: "pillar-shaping", table: "PillarShapingDesc", idField: "id"},
     {slug: "placeable", table: "PlaceableDesc", idField: "id"},
     {slug: "prospecting", table: "ProspectingDesc", idField: "id"},
     {slug: "quest-chain", table: "QuestChainDesc", idField: "id"},

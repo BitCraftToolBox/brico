@@ -24,6 +24,9 @@ import {ExtractionSpawnedPlaceable} from "~/bindings/src/extraction_spawned_plac
 import {FoodDesc} from "~/bindings/src/food_desc_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
+import {ItemType} from "~/bindings/src/item_type_type";
+import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
+import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableGrowthOutcomeV2} from "~/bindings/src/placeable_growth_outcome_v_2_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
@@ -33,7 +36,7 @@ import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
-import {BuildingIcon, EnemyIcon, ItemIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon, SHAPE_SIZES} from "~/components/shared/GameIcon";
+import {BuildingIcon, EnemyIcon, GameIcon, ItemIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon, SHAPE_SIZES} from "~/components/shared/GameIcon";
 import {expandStack, InputItemStackArray, ItemStackArray, ItemStackIcon, ProbBadge, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
@@ -48,6 +51,8 @@ import {
     growthStatLines,
     interactionStatLines,
     itemListStatLines,
+    pavingStatLines,
+    pillarShapingStatLines,
     placementStatLines,
     StatLine,
     travelerTaskStatLines,
@@ -314,6 +319,46 @@ export const DeconstructionRecipePanel: Component<{ recipe: DeconstructionRecipe
         />
     );
 };
+
+// ─── Paving Tile Panel ────────────────────────────────────────
+
+export const PavingTilePanel: Component<{ recipe: PavingTileDesc }> = (props) => (
+    <RecipeVisual
+        inputs={
+            <>
+                <InputItemStackArray stacks={props.recipe.consumedItemStacks}/>
+                <Show when={props.recipe.inputCargoId}>
+                    {c => <ItemStackArray stacks={[{itemId: c(), itemType: ItemType.Cargo as ItemType, quantity: 1, durability: undefined}]}/>}
+                </Show>
+            </>
+        }
+        outputs={
+            <GameIcon name={props.recipe.name} iconAsset={props.recipe.iconAddress} shape="square"
+                      tier={props.recipe.tier} href={`/database/paving/${props.recipe.id}`} small/>
+        }
+        stats={pavingStatLines(props.recipe)}
+    />
+);
+
+// ─── Pillar Shaping Panel ───────────────────────────────────────
+
+export const PillarShapingPanel: Component<{ recipe: PillarShapingDesc }> = (props) => (
+    <RecipeVisual
+        inputs={
+            <>
+                <InputItemStackArray stacks={props.recipe.consumedItemStacks}/>
+                <Show when={props.recipe.inputCargoId}>
+                    {c => <ItemStackArray stacks={[{itemId: c(), itemType: ItemType.Cargo as ItemType, quantity: 1, durability: undefined}]}/>}
+                </Show>
+            </>
+        }
+        outputs={
+            <GameIcon name={props.recipe.name} iconAsset={props.recipe.iconAddress} shape="square"
+                      tier={props.recipe.tier} href={`/database/pillar-shaping/${props.recipe.id}`} small/>
+        }
+        stats={pillarShapingStatLines(props.recipe)}
+    />
+);
 
 // ─── Conversion Recipe Panel ────────────────────────────────────
 

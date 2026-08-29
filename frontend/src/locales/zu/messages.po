@@ -183,6 +183,7 @@ msgid "Paving Tier:"
 msgstr "crwdns4398:0crwdne4398:0"
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Build Time"
 msgstr "crwdns4400:0crwdne4400:0"
 
@@ -421,6 +422,10 @@ msgstr "crwdns4504:0crwdne4504:0"
 msgid "Search items, buildings, creatures..."
 msgstr "crwdns4506:0crwdne4506:0"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Pillar Shaping"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
 msgstr "crwdns5548:0crwdne5548:0"
@@ -616,10 +621,12 @@ msgid "Cargo Stack Size"
 msgstr "crwdns4582:0crwdne4582:0"
 
 #: src/lib/table-defs/paving-table.tsx
+#: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
 msgstr "crwdns4584:0crwdne4584:0"
 
@@ -638,6 +645,7 @@ msgstr "crwdns4590:0crwdne4590:0"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Experience"
 msgstr "crwdns4592:0crwdne4592:0"
 
@@ -776,6 +784,7 @@ msgid "Required Knowledge (Convert)"
 msgstr "crwdns4656:0crwdne4656:0"
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Consumed Items"
 msgstr "crwdns4658:0crwdne4658:0"
 
@@ -2363,6 +2372,11 @@ msgstr "crwdns5324:0crwdne5324:0"
 msgid "Quest"
 msgstr "crwdns5326:0crwdne5326:0"
 
+#: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Pillar Shaping"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Traveler Task"
@@ -2702,6 +2716,10 @@ msgstr "crwdns5482:0crwdne5482:0"
 #: src/routes/database/item/[id].tsx
 msgid "Buffs"
 msgstr "crwdns5484:0crwdne5484:0"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Paving"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"

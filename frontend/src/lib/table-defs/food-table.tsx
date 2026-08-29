@@ -36,7 +36,7 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
         }),
         {id: "Satiation", meta: {label: gameText(msg`Satiation`)}, accessorKey: "hunger", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
         buffsColumn<FoodDesc>({accessorKey: "buffs"}),
-        buffStatsColumn<FoodDesc>({accessorKey: "buffs"}, "Buff Stats", gameText(msg`Food Buffs`)),
+        buffStatsColumn<FoodDesc>({accessorKey: "buffs"}, "Buff Stats", gameText(msg`Stats`)),
         {id: "TP Energy", meta: {label: gameText(msg`TP Energy`, "Teleportation Energy")}, accessorKey: "teleportationEnergy", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
         {id: "HP", meta: {label: gameText(msg`HP`, "Health")}, accessorKey: "hp", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
         {id: "Up To HP", meta: {label: gameText(msg`Min Health`)}, accessorKey: "upToHp", cell: p => <span>{fixFloat(p.getValue() as number)}</span>, filterFn: "inNumberRange"},
@@ -51,7 +51,7 @@ export const FoodDefs: BitCraftToDataDef<FoodDesc> = {
     facetedFilters: [
         rangeFilter("Satiation", gameText(msg`Satiation`)),
         uniqueValuesFilter("Buffs", msg`Buffs`, compareOptions),
-        statsFilter("Buff Stats", gameText(msg`Food Buffs`)),
+        statsFilter("Buff Stats", gameText(msg`Stats`)),
         rangeFilter("TP Energy", gameText(msg`TP Energy`, "Teleportation Energy")),
         rangeFilter("HP", gameText(msg`HP`, "Health")),
         rangeFilter("Up To HP", gameText(msg`Max Health`)),

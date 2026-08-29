@@ -26,6 +26,8 @@ import {
     extractionRecipesDropping,
     foodDescsYielding,
     itemListsContaining,
+    pavingTilesConsuming,
+    pillarShapingRecipesConsuming,
     questDropSourcesFor,
     questsRequiringItem,
     questsRewardingItem,
@@ -148,6 +150,8 @@ export default function ItemDetail() {
     const extractionUses = createMemo(() => itemId() != null ? extractionRecipesConsuming(itemId()!, itemType) : []);
     const constructsInto = createMemo(() => itemId() != null ? constructionRecipesConsuming(itemId()!, itemType) : []);
     const deconstructedFrom = createMemo(() => itemId() != null ? deconstructionRecipesProducing(itemId()!, itemType) : []);
+    const usedInPaving = createMemo(() => itemId() != null ? pavingTilesConsuming(itemId()!, itemType) : []);
+    const usedInPillarShaping = createMemo(() => itemId() != null ? pillarShapingRecipesConsuming(itemId()!, itemType) : []);
     const conversionInputs = createMemo(() => itemId() != null ? conversionRecipesConsuming(itemId()!, itemType) : []);
     const conversionOutputs = createMemo(() => itemId() != null ? conversionRecipesProducing(itemId()!, itemType) : []);
     const taskRequires = createMemo(() => itemId() != null ? travelerTasksRequiring(itemId()!, itemType) : []);
@@ -338,7 +342,7 @@ export default function ItemDetail() {
                 enemyDropsTab(enemyDrops()),
                 terraformDropsTab(terraformOutputs()),
                 foodByproductsTab(foodYields(), foodByproductOf()),
-                constructionCombinedTab(constructsInto(), deconstructedFrom()),
+                constructionCombinedTab(constructsInto(), deconstructedFrom(), usedInPaving(), usedInPillarShaping()),
                 conversionTab(conversionInputs(), conversionOutputs()),
                 travelerTasksTab(taskRewards(), taskRequires()),
                 travelerTradesTab(tradeOffers(), tradeRequires()),

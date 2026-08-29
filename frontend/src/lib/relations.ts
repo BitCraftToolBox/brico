@@ -32,6 +32,7 @@ import {ItemListPossibility} from "~/bindings/src/item_list_possibility_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
+import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
@@ -184,6 +185,26 @@ export function constructionRecipesConsuming(itemId: number, itemType: string): 
         anyStackMatches(r.consumedItemStacks, itemId, itemType) ||
         anyStackMatches(r.consumedCargoStacks, itemId, itemType)
     ).sort(artOfCheatingThen<ConstructionRecipeDesc>("name"));
+}
+
+/** Paving tiles that consume this item/cargo */
+export function pavingTilesConsuming(itemId: number, itemType: string): PavingTileDesc[] {
+    const all = BitCraftTables.PavingTileDesc.get();
+    if (!all) return [];
+    return all.filter(r =>
+        anyStackMatches(r.consumedItemStacks, itemId, itemType) ||
+        (itemType === ItemType.Cargo.tag && r.inputCargoId === itemId)
+    ).sort(artOfCheatingThen<PavingTileDesc>("name"));
+}
+
+/** Pillar shaping recipes that consume this item/cargo */
+export function pillarShapingRecipesConsuming(itemId: number, itemType: string): PillarShapingDesc[] {
+    const all = BitCraftTables.PillarShapingDesc.get();
+    if (!all) return [];
+    return all.filter(r =>
+        anyStackMatches(r.consumedItemStacks, itemId, itemType) ||
+        (itemType === ItemType.Cargo.tag && r.inputCargoId === itemId)
+    ).sort(artOfCheatingThen<PillarShapingDesc>("name"));
 }
 
 // ─── Deconstruction Recipes ─────────────────────────────────────
@@ -462,6 +483,7 @@ export type KnowledgeUsage =
     | { type: "equipment"; equipment: EquipmentDesc }
     | { type: "extractionRecipe"; extractionRecipe: ExtractionRecipeDesc }
     | { type: "pavingTile"; pavingTile: PavingTileDesc }
+    | { type: "pillarShaping"; pillarShaping: PillarShapingDesc }
     | { type: "placeableInteraction"; placeableInteraction: PlaceableInteractionDesc }
     | { type: "placeablePlacement"; placeablePlacement: PlaceablePlacementDesc }
     | { type: "resourcePlacementRecipe"; resourcePlacementRecipe: ResourcePlacementRecipeDesc }
@@ -495,6 +517,9 @@ export function knowledgeUsedBy(knowledgeId: number): KnowledgeUsage[] {
     }
     for (const pavingTile of BitCraftTables.PavingTileDesc.get() ?? []) {
         if (requiresOrBlocksKnowledge(pavingTile, knowledgeId)) usages.push({type: "pavingTile", pavingTile});
+    }
+    for (const pillarShaping of BitCraftTables.PillarShapingDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(pillarShaping, knowledgeId)) usages.push({type: "pillarShaping", pillarShaping});
     }
     for (const placeableInteraction of BitCraftTables.PlaceableInteractionDesc.get() ?? []) {
         if (requiresOrBlocksKnowledge(placeableInteraction, knowledgeId)) usages.push({type: "placeableInteraction", placeableInteraction});
@@ -649,6 +674,16 @@ export function getTravelerTradeName(trade: TravelerTradeOrderDesc): string {
 /** Display name for an item list */
 export function getItemListName(list: ItemListDesc): string {
     return list.name;
+}
+
+/** Display name for a paving tile */
+export function getPavingTileName(tile: PavingTileDesc): string {
+    return tile.name;
+}
+
+/** Display name for a pillar shaping recipe */
+export function getPillarShapingName(recipe: PillarShapingDesc): string {
+    return recipe.name;
 }
 
 export function getItemStackName(stack: ItemStack | undefined): string {

@@ -35,6 +35,7 @@ import {KnowledgeStatModifierDesc} from "~/bindings/src/knowledge_stat_modifier_
 import {NpcDesc} from "~/bindings/src/npc_desc_type";
 import {PathfindingDesc} from "~/bindings/src/pathfinding_desc_type";
 import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
+import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
 import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableGroupDesc} from "~/bindings/src/placeable_group_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
@@ -379,6 +380,7 @@ export const BitCraftTables = {
     'ProspectingDesc': cache<ProspectingDesc>('prospecting_desc', ProspectingDesc),
     'CombatActionDesc': cache<CombatActionDesc>('combat_action_desc', CombatActionDesc),
     'PavingTileDesc': cache<PavingTileDesc>('paving_tile_desc', PavingTileDesc),
+    'PillarShapingDesc': cache<PillarShapingDesc>('pillar_shaping_desc', PillarShapingDesc),
     'ResourceClumpDesc': cache<ResourceClumpDesc>('resource_clump_desc', ResourceClumpDesc),
     'EnemyAiParamsDesc': cache<EnemyAiParamsDesc>('enemy_ai_params_desc', EnemyAiParamsDesc),
     'ContributionLootDesc': cache<ContributionLootDesc>('contribution_loot_desc', ContributionLootDesc),

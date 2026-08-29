@@ -183,6 +183,7 @@ msgid "Paving Tier:"
 msgstr ""
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Build Time"
 msgstr ""
 
@@ -421,6 +422,10 @@ msgstr ""
 msgid "Search items, buildings, creatures..."
 msgstr ""
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Pillar Shaping"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
 msgstr ""
@@ -616,10 +621,12 @@ msgid "Cargo Stack Size"
 msgstr ""
 
 #: src/lib/table-defs/paving-table.tsx
+#: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
 msgstr ""
 
@@ -638,6 +645,7 @@ msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Experience"
 msgstr "PD"
 
@@ -776,6 +784,7 @@ msgid "Required Knowledge (Convert)"
 msgstr ""
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Consumed Items"
 msgstr ""
 
@@ -2363,6 +2372,11 @@ msgstr ""
 msgid "Quest"
 msgstr "Zwoje wiedzy"
 
+#: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Pillar Shaping"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Traveler Task"
@@ -2701,6 +2715,10 @@ msgstr ""
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Buffs"
+msgstr ""
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Paving"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx

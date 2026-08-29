@@ -22,6 +22,8 @@ import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {ItemType} from "~/bindings/src/item_type_type";
 import {LevelRequirement} from "~/bindings/src/level_requirement_type";
+import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
+import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
 import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
@@ -269,6 +271,34 @@ export function deconstructionStatLines(recipe: DeconstructionRecipeDesc): StatL
         [t`Time:`, fixFloat(recipe.timeRequirement)],
     ];
     addCommonRequirements(lines, recipe);
+    return lines;
+}
+
+export function pavingStatLines(recipe: PavingTileDesc): StatLine[] {
+    trackUILocale();
+    const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
+    const lines: StatLine[] = [
+        [t`Time:`, fixFloat(recipe.pavingDuration)],
+    ];
+    recipe.experiencePerProgress.forEach(xp => {
+        const pair = skillExpPair(xp, undefined, skillData);
+        if (pair) lines.push(pair);
+    });
+    addKnowledgeRequirements(lines, recipe);
+    return lines;
+}
+
+export function pillarShapingStatLines(recipe: PillarShapingDesc): StatLine[] {
+    trackUILocale();
+    const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
+    const lines: StatLine[] = [
+        [t`Time:`, fixFloat(recipe.duration)],
+    ];
+    recipe.experiencePerProgress.forEach(xp => {
+        const pair = skillExpPair(xp, undefined, skillData);
+        if (pair) lines.push(pair);
+    });
+    addKnowledgeRequirements(lines, recipe);
     return lines;
 }
 

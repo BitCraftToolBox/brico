@@ -178,6 +178,7 @@ msgid "Paving Tier:"
 msgstr "Paving Tier:"
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Build Time"
 msgstr "Build Time"
 
@@ -416,6 +417,10 @@ msgstr "Forced to the pseudolocale for Crowdin review."
 msgid "Search items, buildings, creatures..."
 msgstr "Search items, buildings, creatures..."
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Pillar Shaping"
+msgstr "Used in Pillar Shaping"
+
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
 msgstr "Wiggle wiggle. Shake shake."
@@ -611,10 +616,12 @@ msgid "Cargo Stack Size"
 msgstr "Cargo Stack Size"
 
 #: src/lib/table-defs/paving-table.tsx
+#: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
 msgstr "Required Knowledge"
 
@@ -633,6 +640,7 @@ msgstr "Used in"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Experience"
 msgstr "Experience"
 
@@ -771,6 +779,7 @@ msgid "Required Knowledge (Convert)"
 msgstr "Required Knowledge (Convert)"
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Consumed Items"
 msgstr "Consumed Items"
 
@@ -2358,6 +2367,11 @@ msgstr "Quest Chain"
 msgid "Quest"
 msgstr "Quest"
 
+#: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Pillar Shaping"
+msgstr "Pillar Shaping"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Traveler Task"
@@ -2697,6 +2711,10 @@ msgstr "Is Aquatic Resource"
 #: src/routes/database/item/[id].tsx
 msgid "Buffs"
 msgstr "Buffs"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Paving"
+msgstr "Used in Paving"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"

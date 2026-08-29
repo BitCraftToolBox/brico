@@ -183,6 +183,7 @@ msgid "Paving Tier:"
 msgstr "舗装ティア："
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Build Time"
 msgstr "ビルド時間"
 
@@ -421,6 +422,10 @@ msgstr "Crowdinのレビューの都合で、疑似翻訳に固定されてい�
 msgid "Search items, buildings, creatures..."
 msgstr "アイテム、建物、クリーチャーを検索…"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Pillar Shaping"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
 msgstr ""
@@ -616,10 +621,12 @@ msgid "Cargo Stack Size"
 msgstr "カーゴスタックサイズ"
 
 #: src/lib/table-defs/paving-table.tsx
+#: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
 msgstr "必要な知識"
 
@@ -638,6 +645,7 @@ msgstr "使用先"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Experience"
 msgstr "EXP"
 
@@ -776,6 +784,7 @@ msgid "Required Knowledge (Convert)"
 msgstr ""
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Consumed Items"
 msgstr "消費アイテム"
 
@@ -2363,6 +2372,11 @@ msgstr "クエストチェーン"
 msgid "Quest"
 msgstr "知識の巻物"
 
+#: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Pillar Shaping"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Traveler Task"
@@ -2702,6 +2716,10 @@ msgstr "水中のリソース"
 #: src/routes/database/item/[id].tsx
 msgid "Buffs"
 msgstr "バフ効果"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Paving"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"
