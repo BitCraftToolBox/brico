@@ -187,6 +187,7 @@ msgstr ""
 msgid "Build Time"
 msgstr ""
 
+#: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
 #: src/routes/database/deployable/[id].tsx
@@ -587,6 +588,10 @@ msgstr ""
 #. placeholder {0}: props.searchColumns[0]
 #: src/components/data-table/table-toolbar.tsx
 msgid "Search by {0}..."
+msgstr ""
+
+#: src/lib/recipe-sources.tsx
+msgid "This recipe is fixed at one progress per hit."
 msgstr ""
 
 #: src/lib/table-defs/claim-research-table.tsx
@@ -1471,11 +1476,6 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-#. placeholder {0}: fixFloat(totalXp)
-#: src/lib/recipe-sources.tsx
-msgid "{perHit} (Total: {0})"
-msgstr ""
-
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
 msgstr ""
@@ -1880,6 +1880,12 @@ msgstr ""
 msgid "Copied!"
 msgstr ""
 
+#. placeholder {0}: effort()
+#. placeholder {1}: fixFloat(effort() * perProgress)
+#: src/lib/recipe-sources.tsx
+msgid "{0} * {perProgress} = {1} XP"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr ""
@@ -1912,6 +1918,10 @@ msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
+msgstr ""
+
+#: src/lib/recipe-sources.tsx
+msgid "Hands"
 msgstr ""
 
 #. placeholder {0}: query().trim()
@@ -2157,10 +2167,6 @@ msgstr "Достижения"
 #: src/routes/settings.tsx
 msgid "Favorites only"
 msgstr ""
-
-#: src/lib/table-defs/food-table.tsx
-msgid "Food Buffs"
-msgstr "Баффы от еды"
 
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."

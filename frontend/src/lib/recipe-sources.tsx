@@ -8,7 +8,7 @@
  * Shared helpers: skillReqPair, toolReqPair, skillExpPair for common stat patterns.
  */
 
-import {t} from "@lingui/core/macro";
+import {msg, t} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {JSX, Show} from "solid-js";
 import {Biome} from "~/bindings/src/biome_type";
@@ -38,6 +38,7 @@ import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_t
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {BiomeLink, IconLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
 import {trackUILocale} from "~/lib/i18n";
+import {gameText, useLabel} from "~/lib/labels";
 import {getItemListSource, getTravelerNpcName} from "~/lib/relations";
 import {BitCraftTables} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
@@ -80,14 +81,21 @@ export function toolReqPair(req: ToolRequirement, toolData: Map<any, ToolTypeDes
 export function skillExpPair(xp: ExperienceStackF32, total: number | undefined, skillData: Map<any, SkillDesc>): StatLine | null {
     if (!xp.quantity) return null;
     trackUILocale();
-    const totalXp = total ? total * xp.quantity : null;
-    const perHit = fixFloat(xp.quantity);
-    const elem = totalXp ? t`${perHit} (Total: ${fixFloat(totalXp)})` : String(perHit);
+    const perProgress = fixFloat(xp.quantity);
     const skill = skillData.get(xp.skillId);
     const skillName = skill?.name ?? t`Skill`;
     return [
         () => <IconSpan icon={skillStatIcon(skill)}><Trans>{skillName} XP/Progress:</Trans></IconSpan>,
-        elem,
+        () => <Tooltip openOnTouchStart disabled={!total}>
+            <TooltipTrigger class={!!total ? "decoration-dotted underline" : ""}>
+                {perProgress}
+            </TooltipTrigger>
+            <TooltipContent class="max-w-[90svw]">
+                <Show when={total}>
+                    {effort => <Trans>{effort()} * {perProgress} = {fixFloat(effort() * perProgress)} XP</Trans>}
+                </Show>
+            </TooltipContent>
+        </Tooltip>
     ];
 }
 
@@ -154,12 +162,20 @@ function addCommonRequirements(
 
 function addUseHandsInformation(lines: StatLine[], recipe: { toolRequirements: ToolRequirement[], allowUseHands: boolean }) {
     if (!recipe.toolRequirements.length && recipe.allowUseHands) {
+        const label = useLabel();
+        lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
+            () => <Tooltip openOnTouchStart>
+                <TooltipTrigger class="underline decoration-dotted">{label(gameText(msg`Hands`))}</TooltipTrigger>
+                <TooltipContent class="max-w-[90svw]"><Trans>This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power.</Trans></TooltipContent>
+            </Tooltip>
+        ]);
+    } else if (!recipe.toolRequirements.length && !recipe.allowUseHands) {
         lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
             () => <Tooltip openOnTouchStart>
                 <TooltipTrigger class="underline decoration-dotted"><Trans>No tool</Trans></TooltipTrigger>
-                <TooltipContent class="max-w-[50ch]"><Trans>This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power.</Trans></TooltipContent>
+                <TooltipContent class="max-w-[90svw]"><Trans>This recipe is fixed at one progress per hit.</Trans></TooltipContent>
             </Tooltip>
-        ])
+        ]);
     }
 }
 

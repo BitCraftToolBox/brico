@@ -121,8 +121,7 @@ export default function Nav(props: NavProps) {
         <header class="flex flex-col sticky z-20 top-0 h-10 bg-sidebar-primary text-sidebar-primary-foreground">
             <div class="flex flex-row items-center h-10 w-full gap-2 px-2">
                 <SidebarTrigger class="shrink-0"/>
-                {/* <nav>, not <h1> - breadcrumbs are a navigation element. don't fight with the h1 header in the page content */}
-                <nav aria-label={_(BREADCRUMB_LABEL)} class="max-w-[calc(90svw-5rem)] overflow-x-clip">
+                <nav aria-label={_(BREADCRUMB_LABEL)} class="max-w-[calc(90svw-5rem)] overflow-x-clip shrink min-w-0" style={{direction: "rtl"}}>
                     <div class="text-lg text-center text-nowrap leading-none">{props.title}</div>
                 </nav>
                 <div class="flex-1"/>
@@ -136,10 +135,11 @@ export default function Nav(props: NavProps) {
                         </Button>
                     </div>
                 </Show>
-                <div class="shrink-0">
+                {/* Least important controls: hide them outright on very narrow screens so search/settings never get pushed off-screen. */}
+                <div class="hidden min-[400px]:block shrink-0">
                     <LanguageMenu/>
                 </div>
-                <div class="shrink-0">
+                <div class="hidden min-[400px]:block shrink-0">
                     <DarkModeToggle/>
                 </div>
                 <div class="shrink-0">

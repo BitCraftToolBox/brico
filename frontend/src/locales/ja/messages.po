@@ -187,6 +187,7 @@ msgstr "舗装ティア："
 msgid "Build Time"
 msgstr "ビルド時間"
 
+#: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
 #: src/routes/database/deployable/[id].tsx
@@ -588,6 +589,10 @@ msgstr "半径"
 #: src/components/data-table/table-toolbar.tsx
 msgid "Search by {0}..."
 msgstr "{0} で検索…"
+
+#: src/lib/recipe-sources.tsx
+msgid "This recipe is fixed at one progress per hit."
+msgstr ""
 
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -1471,11 +1476,6 @@ msgstr "グローバルクールダウン"
 msgid "Duration"
 msgstr "持続時間"
 
-#. placeholder {0}: fixFloat(totalXp)
-#: src/lib/recipe-sources.tsx
-msgid "{perHit} (Total: {0})"
-msgstr "{perHit}（合計：{0}）"
-
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
 msgstr ""
@@ -1880,6 +1880,12 @@ msgstr ""
 msgid "Copied!"
 msgstr "コピーしました！"
 
+#. placeholder {0}: effort()
+#. placeholder {1}: fixFloat(effort() * perProgress)
+#: src/lib/recipe-sources.tsx
+msgid "{0} * {perProgress} = {1} XP"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr "標高差"
@@ -1913,6 +1919,10 @@ msgstr "昇順"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
 msgstr "デッドゾーン角度"
+
+#: src/lib/recipe-sources.tsx
+msgid "Hands"
+msgstr ""
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2157,10 +2167,6 @@ msgstr "実績"
 #: src/routes/settings.tsx
 msgid "Favorites only"
 msgstr "お気に入りのみ"
-
-#: src/lib/table-defs/food-table.tsx
-msgid "Food Buffs"
-msgstr "食事バフ"
 
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."

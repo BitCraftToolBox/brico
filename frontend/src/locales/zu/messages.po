@@ -187,6 +187,7 @@ msgstr "crwdns4398:0crwdne4398:0"
 msgid "Build Time"
 msgstr "crwdns4400:0crwdne4400:0"
 
+#: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
 #: src/routes/database/deployable/[id].tsx
@@ -588,6 +589,10 @@ msgstr "crwdns4568:0crwdne4568:0"
 #: src/components/data-table/table-toolbar.tsx
 msgid "Search by {0}..."
 msgstr "crwdns4570:0{0}crwdne4570:0"
+
+#: src/lib/recipe-sources.tsx
+msgid "This recipe is fixed at one progress per hit."
+msgstr ""
 
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -1471,11 +1476,6 @@ msgstr "crwdns4954:0crwdne4954:0"
 msgid "Duration"
 msgstr "crwdns4956:0crwdne4956:0"
 
-#. placeholder {0}: fixFloat(totalXp)
-#: src/lib/recipe-sources.tsx
-msgid "{perHit} (Total: {0})"
-msgstr "crwdns4958:0{perHit}crwdnd4958:0{0}crwdne4958:0"
-
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
 msgstr "crwdns4960:0crwdne4960:0"
@@ -1880,6 +1880,12 @@ msgstr "crwdns5122:0crwdne5122:0"
 msgid "Copied!"
 msgstr "crwdns5124:0crwdne5124:0"
 
+#. placeholder {0}: effort()
+#. placeholder {1}: fixFloat(effort() * perProgress)
+#: src/lib/recipe-sources.tsx
+msgid "{0} * {perProgress} = {1} XP"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr "crwdns5126:0crwdne5126:0"
@@ -1913,6 +1919,10 @@ msgstr "crwdns5132:0crwdne5132:0"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
 msgstr "crwdns5134:0crwdne5134:0"
+
+#: src/lib/recipe-sources.tsx
+msgid "Hands"
+msgstr ""
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2157,10 +2167,6 @@ msgstr "crwdns5240:0crwdne5240:0"
 #: src/routes/settings.tsx
 msgid "Favorites only"
 msgstr "crwdns5242:0crwdne5242:0"
-
-#: src/lib/table-defs/food-table.tsx
-msgid "Food Buffs"
-msgstr "crwdns5244:0crwdne5244:0"
 
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."

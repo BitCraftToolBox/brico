@@ -182,6 +182,7 @@ msgstr "Paving Tier:"
 msgid "Build Time"
 msgstr "Build Time"
 
+#: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
 #: src/routes/database/deployable/[id].tsx
@@ -583,6 +584,10 @@ msgstr "Radius"
 #: src/components/data-table/table-toolbar.tsx
 msgid "Search by {0}..."
 msgstr "Search by {0}..."
+
+#: src/lib/recipe-sources.tsx
+msgid "This recipe is fixed at one progress per hit."
+msgstr "This recipe is fixed at one progress per hit."
 
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -1466,11 +1471,6 @@ msgstr "Global Cooldown"
 msgid "Duration"
 msgstr "Duration"
 
-#. placeholder {0}: fixFloat(totalXp)
-#: src/lib/recipe-sources.tsx
-msgid "{perHit} (Total: {0})"
-msgstr "{perHit} (Total: {0})"
-
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
 msgstr "No Outputs"
@@ -1875,6 +1875,12 @@ msgstr "View full lifecycle in Placeable Graph →"
 msgid "Copied!"
 msgstr "Copied!"
 
+#. placeholder {0}: effort()
+#. placeholder {1}: fixFloat(effort() * perProgress)
+#: src/lib/recipe-sources.tsx
+msgid "{0} * {perProgress} = {1} XP"
+msgstr "{0} * {perProgress} = {1} XP"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr "Elevation Difference"
@@ -1908,6 +1914,10 @@ msgstr "Asc"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
 msgstr "Deadzone Angle"
+
+#: src/lib/recipe-sources.tsx
+msgid "Hands"
+msgstr "Hands"
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2152,10 +2162,6 @@ msgstr "Achievements"
 #: src/routes/settings.tsx
 msgid "Favorites only"
 msgstr "Favorites only"
-
-#: src/lib/table-defs/food-table.tsx
-msgid "Food Buffs"
-msgstr "Food Buffs"
 
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
