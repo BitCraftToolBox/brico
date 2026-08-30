@@ -183,9 +183,11 @@ msgid "Paving Tier:"
 msgstr "舗装ティア："
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Build Time"
 msgstr "ビルド時間"
 
+#: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
 #: src/routes/database/deployable/[id].tsx
@@ -421,6 +423,10 @@ msgstr "Crowdinのレビューの都合で、疑似翻訳に固定されてい�
 msgid "Search items, buildings, creatures..."
 msgstr "アイテム、建物、クリーチャーを検索…"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Pillar Shaping"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
 msgstr ""
@@ -584,6 +590,10 @@ msgstr "半径"
 msgid "Search by {0}..."
 msgstr "{0} で検索…"
 
+#: src/lib/recipe-sources.tsx
+msgid "This recipe is fixed at one progress per hit."
+msgstr ""
+
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Supply Cost"
@@ -616,10 +626,12 @@ msgid "Cargo Stack Size"
 msgstr "カーゴスタックサイズ"
 
 #: src/lib/table-defs/paving-table.tsx
+#: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
 msgstr "必要な知識"
 
@@ -638,6 +650,7 @@ msgstr "使用先"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Experience"
 msgstr "EXP"
 
@@ -776,6 +789,7 @@ msgid "Required Knowledge (Convert)"
 msgstr ""
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Consumed Items"
 msgstr "消費アイテム"
 
@@ -1462,11 +1476,6 @@ msgstr "グローバルクールダウン"
 msgid "Duration"
 msgstr "持続時間"
 
-#. placeholder {0}: fixFloat(totalXp)
-#: src/lib/recipe-sources.tsx
-msgid "{perHit} (Total: {0})"
-msgstr "{perHit}（合計：{0}）"
-
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
 msgstr ""
@@ -1871,6 +1880,12 @@ msgstr ""
 msgid "Copied!"
 msgstr "コピーしました！"
 
+#. placeholder {0}: effort()
+#. placeholder {1}: fixFloat(effort() * perProgress)
+#: src/lib/recipe-sources.tsx
+msgid "{0} * {perProgress} = {1} XP"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr "標高差"
@@ -1904,6 +1919,10 @@ msgstr "昇順"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
 msgstr "デッドゾーン角度"
+
+#: src/lib/recipe-sources.tsx
+msgid "Hands"
+msgstr ""
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2149,10 +2168,6 @@ msgstr "実績"
 msgid "Favorites only"
 msgstr "お気に入りのみ"
 
-#: src/lib/table-defs/food-table.tsx
-msgid "Food Buffs"
-msgstr "食事バフ"
-
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
 msgstr "チェックを入れた項目はサイドバーに表示されます。新しい項目はデフォルトで常に表示されます。"
@@ -2362,6 +2377,11 @@ msgstr "クエストチェーン"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Quest"
 msgstr "知識の巻物"
+
+#: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Pillar Shaping"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -2702,6 +2722,10 @@ msgstr "水中のリソース"
 #: src/routes/database/item/[id].tsx
 msgid "Buffs"
 msgstr "バフ効果"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Paving"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"

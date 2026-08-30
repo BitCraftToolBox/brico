@@ -107,7 +107,7 @@ export default function CollectibleDetail() {
             rawData={collectible()}
             spacetimeTable={BitCraftTables.CollectibleDesc.spacetimeName}
             objectId={collectible()?.id}
-            chatLink={`(col=${collectible()?.id})`}
+            chatLink={`(coll=${collectible()?.id})`}
             tabs={[
                 {
                     id: "deployables",

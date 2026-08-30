@@ -126,6 +126,12 @@ export const searchableTables: SearchableTable[] = [
         tier: (r) => r.tier,
     },
     {
+        label: "Pillar Shaping", route: "/database/pillar-shaping", tableKey: "PillarShapingDesc",
+        pk: "id", name: (r) => r.name,
+        fields: [{field: "description", get: (r) => r.description}],
+        tier: (r) => r.tier,
+    },
+    {
         label: "Abilities", route: "/database/ability", tableKey: "AbilityCustomDesc",
         pk: "id", name: (r) => r.abilityName,
     },

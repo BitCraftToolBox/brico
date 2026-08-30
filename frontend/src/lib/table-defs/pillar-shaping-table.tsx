@@ -1,27 +1,24 @@
 import {msg} from "@lingui/core/macro";
-import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
+import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {descriptionColumn, headerColumn, knowledgeColumn, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
-import {statsColumn, statsFilter} from "~/lib/table-utils/stats-column-builder";
 import {compareOptions} from "~/lib/utils";
 
-export const PavingDefs: BitCraftToDataDef<PavingTileDesc> = {
+export const PillarShapingDefs: BitCraftToDataDef<PillarShapingDesc> = {
     columns: [
         headerColumn({
-            route: paving => ["paving", paving.id],
-            prefixElement: paving => <GameIcon name={paving.name} iconAsset={paving.iconAddress} shape="square" small noInteract/>,
+            route: pillar => ["pillar-shaping", pillar.id],
+            prefixElement: pillar => <GameIcon name={pillar.name} iconAsset={pillar.iconAddress} shape="square" small noInteract/>,
         }),
         descriptionColumn(),
         tierColumn(),
-        statsColumn(undefined, {accessorKey: "statEffects"}),
         knowledgeColumn(),
         rowActions(),
     ],
     facetedFilters: [
         tierFilter(),
-        statsFilter(),
-        uniqueValuesFilter("Required Knowledge", msg`Required Knowledge`, compareOptions)
+        uniqueValuesFilter("Required Knowledge", msg`Required Knowledge`, compareOptions),
     ],
     searchColumns: ["Name", "Description"],
 };

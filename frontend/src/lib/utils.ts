@@ -1,5 +1,6 @@
 import {FilterFn, Row, Table} from "@tanstack/solid-table";
 import {type ClassValue, clsx} from "clsx"
+import {Accessor, createSignal} from "solid-js";
 import {twMerge} from "tailwind-merge"
 import {activeDataLocale} from "~/lib/data-translation";
 import {compareText, i18n, PSEUDOLOCALE_ENABLED, trackUILocale} from "~/lib/i18n";
@@ -131,4 +132,17 @@ export function readableSeconds(seconds: number | undefined, shorten: boolean = 
     if (minutes > 0) duration.minutes = minutes;
     if (secs > 0) duration.seconds = secs;
     return fmt.format(duration);
+}
+
+export function useCopy(content: string, delay: number = 1500): [() => void, Accessor<boolean>] {
+    const [contentCopied, setContentCopied] = createSignal(false);
+    const copyContent = () => {
+        if (content) {
+            navigator.clipboard.writeText(content).then(() => {
+                setContentCopied(true);
+                setTimeout(() => setContentCopied(false), delay);
+            });
+        }
+    };
+    return [copyContent, contentCopied];
 }

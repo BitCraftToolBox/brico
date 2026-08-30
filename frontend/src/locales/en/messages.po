@@ -178,9 +178,11 @@ msgid "Paving Tier:"
 msgstr "Paving Tier:"
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Build Time"
 msgstr "Build Time"
 
+#: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
 #: src/routes/database/deployable/[id].tsx
@@ -416,6 +418,10 @@ msgstr "Forced to the pseudolocale for Crowdin review."
 msgid "Search items, buildings, creatures..."
 msgstr "Search items, buildings, creatures..."
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Pillar Shaping"
+msgstr "Used in Pillar Shaping"
+
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
 msgstr "Wiggle wiggle. Shake shake."
@@ -579,6 +585,10 @@ msgstr "Radius"
 msgid "Search by {0}..."
 msgstr "Search by {0}..."
 
+#: src/lib/recipe-sources.tsx
+msgid "This recipe is fixed at one progress per hit."
+msgstr "This recipe is fixed at one progress per hit."
+
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Supply Cost"
@@ -611,10 +621,12 @@ msgid "Cargo Stack Size"
 msgstr "Cargo Stack Size"
 
 #: src/lib/table-defs/paving-table.tsx
+#: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
 msgstr "Required Knowledge"
 
@@ -633,6 +645,7 @@ msgstr "Used in"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Experience"
 msgstr "Experience"
 
@@ -771,6 +784,7 @@ msgid "Required Knowledge (Convert)"
 msgstr "Required Knowledge (Convert)"
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Consumed Items"
 msgstr "Consumed Items"
 
@@ -1457,11 +1471,6 @@ msgstr "Global Cooldown"
 msgid "Duration"
 msgstr "Duration"
 
-#. placeholder {0}: fixFloat(totalXp)
-#: src/lib/recipe-sources.tsx
-msgid "{perHit} (Total: {0})"
-msgstr "{perHit} (Total: {0})"
-
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
 msgstr "No Outputs"
@@ -1866,6 +1875,12 @@ msgstr "View full lifecycle in Placeable Graph →"
 msgid "Copied!"
 msgstr "Copied!"
 
+#. placeholder {0}: effort()
+#. placeholder {1}: fixFloat(effort() * perProgress)
+#: src/lib/recipe-sources.tsx
+msgid "{0} * {perProgress} = {1} XP"
+msgstr "{0} * {perProgress} = {1} XP"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr "Elevation Difference"
@@ -1899,6 +1914,10 @@ msgstr "Asc"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
 msgstr "Deadzone Angle"
+
+#: src/lib/recipe-sources.tsx
+msgid "Hands"
+msgstr "Hands"
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2144,10 +2163,6 @@ msgstr "Achievements"
 msgid "Favorites only"
 msgstr "Favorites only"
 
-#: src/lib/table-defs/food-table.tsx
-msgid "Food Buffs"
-msgstr "Food Buffs"
-
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
 msgstr "Checked items appear in the sidebar. New items are always visible by default."
@@ -2357,6 +2372,11 @@ msgstr "Quest Chain"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Quest"
 msgstr "Quest"
+
+#: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Pillar Shaping"
+msgstr "Pillar Shaping"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -2697,6 +2717,10 @@ msgstr "Is Aquatic Resource"
 #: src/routes/database/item/[id].tsx
 msgid "Buffs"
 msgstr "Buffs"
+
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Paving"
+msgstr "Used in Paving"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"

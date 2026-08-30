@@ -16,6 +16,8 @@ import {
     craftingRecipesProducing,
     deconstructionRecipesProducing,
     extractionRecipesConsuming,
+    pavingTilesConsuming,
+    pillarShapingRecipesConsuming,
     questsRequiringItem,
     questsRewardingItem,
     questsWithStageConditionItem,
@@ -79,6 +81,8 @@ export default function CargoDetail() {
     const extractionUses = createMemo(() => cargoId() != null ? extractionRecipesConsuming(cargoId()!, cargoType) : []);
     const constructsInto = createMemo(() => cargoId() != null ? constructionRecipesConsuming(cargoId()!, cargoType) : []);
     const deconstructedFrom = createMemo(() => cargoId() != null ? deconstructionRecipesProducing(cargoId()!, cargoType) : []);
+    const usedInPaving = createMemo(() => cargoId() != null ? pavingTilesConsuming(cargoId()!, cargoType) : []);
+    const usedInPillarShaping = createMemo(() => cargoId() != null ? pillarShapingRecipesConsuming(cargoId()!, cargoType) : []);
     const conversionInputs = createMemo(() => cargoId() != null ? conversionRecipesConsuming(cargoId()!, cargoType) : []);
     const conversionOutputs = createMemo(() => cargoId() != null ? conversionRecipesProducing(cargoId()!, cargoType) : []);
     const taskRequires = createMemo(() => cargoId() != null ? travelerTasksRequiring(cargoId()!, cargoType) : []);
@@ -138,16 +142,16 @@ export default function CargoDetail() {
                 depletionTab(extractionDrops(), extractionUses(), depletionSources()),
                 enemyDropsTab(enemyDrops()),
                 terraformDropsTab(terraformOutputs()),
-                constructionCombinedTab(constructsInto(), deconstructedFrom()),
+                constructionCombinedTab(constructsInto(), deconstructedFrom(), usedInPaving(), usedInPillarShaping()),
                 conversionTab(conversionInputs(), conversionOutputs()),
                 travelerTasksTab(taskRewards(), taskRequires()),
                 travelerTradesTab(tradeOffers(), tradeRequires()),
-                itemListsTab(inItemLists()),
                 questRequirementsTab(questRequires()),
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
                 claimResearchTab(researchRequires()),
+                itemListsTab(inItemLists()),
                 ...(cargo()?.id === 92169812 && easterEggs() ? [lootTab()] : [])
             ]}
         />

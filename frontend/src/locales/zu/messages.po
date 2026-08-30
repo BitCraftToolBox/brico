@@ -183,9 +183,11 @@ msgid "Paving Tier:"
 msgstr "crwdns4398:0crwdne4398:0"
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Build Time"
 msgstr "crwdns4400:0crwdne4400:0"
 
+#: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
 #: src/routes/database/deployable/[id].tsx
@@ -421,6 +423,10 @@ msgstr "crwdns4504:0crwdne4504:0"
 msgid "Search items, buildings, creatures..."
 msgstr "crwdns4506:0crwdne4506:0"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Pillar Shaping"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
 msgstr "crwdns5548:0crwdne5548:0"
@@ -584,6 +590,10 @@ msgstr "crwdns4568:0crwdne4568:0"
 msgid "Search by {0}..."
 msgstr "crwdns4570:0{0}crwdne4570:0"
 
+#: src/lib/recipe-sources.tsx
+msgid "This recipe is fixed at one progress per hit."
+msgstr ""
+
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Supply Cost"
@@ -616,10 +626,12 @@ msgid "Cargo Stack Size"
 msgstr "crwdns4582:0crwdne4582:0"
 
 #: src/lib/table-defs/paving-table.tsx
+#: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
 msgstr "crwdns4584:0crwdne4584:0"
 
@@ -638,6 +650,7 @@ msgstr "crwdns4590:0crwdne4590:0"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Experience"
 msgstr "crwdns4592:0crwdne4592:0"
 
@@ -776,6 +789,7 @@ msgid "Required Knowledge (Convert)"
 msgstr "crwdns4656:0crwdne4656:0"
 
 #: src/routes/database/paving/[id].tsx
+#: src/routes/database/pillar-shaping/[id].tsx
 msgid "Consumed Items"
 msgstr "crwdns4658:0crwdne4658:0"
 
@@ -1462,11 +1476,6 @@ msgstr "crwdns4954:0crwdne4954:0"
 msgid "Duration"
 msgstr "crwdns4956:0crwdne4956:0"
 
-#. placeholder {0}: fixFloat(totalXp)
-#: src/lib/recipe-sources.tsx
-msgid "{perHit} (Total: {0})"
-msgstr "crwdns4958:0{perHit}crwdnd4958:0{0}crwdne4958:0"
-
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
 msgstr "crwdns4960:0crwdne4960:0"
@@ -1871,6 +1880,12 @@ msgstr "crwdns5122:0crwdne5122:0"
 msgid "Copied!"
 msgstr "crwdns5124:0crwdne5124:0"
 
+#. placeholder {0}: effort()
+#. placeholder {1}: fixFloat(effort() * perProgress)
+#: src/lib/recipe-sources.tsx
+msgid "{0} * {perProgress} = {1} XP"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr "crwdns5126:0crwdne5126:0"
@@ -1904,6 +1919,10 @@ msgstr "crwdns5132:0crwdne5132:0"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
 msgstr "crwdns5134:0crwdne5134:0"
+
+#: src/lib/recipe-sources.tsx
+msgid "Hands"
+msgstr ""
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2149,10 +2168,6 @@ msgstr "crwdns5240:0crwdne5240:0"
 msgid "Favorites only"
 msgstr "crwdns5242:0crwdne5242:0"
 
-#: src/lib/table-defs/food-table.tsx
-msgid "Food Buffs"
-msgstr "crwdns5244:0crwdne5244:0"
-
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
 msgstr "crwdns5246:0crwdne5246:0"
@@ -2362,6 +2377,11 @@ msgstr "crwdns5324:0crwdne5324:0"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Quest"
 msgstr "crwdns5326:0crwdne5326:0"
+
+#: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Pillar Shaping"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -2704,6 +2724,10 @@ msgid "Buffs"
 msgstr "crwdns5484:0crwdne5484:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Used in Paving"
+msgstr ""
+
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"
 msgstr "crwdns5486:0crwdne5486:0"
 
@@ -2753,4 +2777,3 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
-

@@ -21,6 +21,8 @@ import {FoodDesc} from "~/bindings/src/food_desc_type";
 import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
 import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {ItemType} from "~/bindings/src/item_type_type";
+import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
+import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
@@ -40,6 +42,8 @@ import {
     FoodByproductPanel,
     InteractionPanel,
     ItemListPanel,
+    PavingTilePanel,
+    PillarShapingPanel,
     PlacementPanel,
     RecipeSelect,
     renderKnowledgeLockedItem,
@@ -77,6 +81,8 @@ import {
     getExtractionRecipeName,
     getFoodItemName,
     getItemListName,
+    getPavingTileName,
+    getPillarShapingName,
     getResourceDepletionName,
     getTravelerTaskName,
     getTravelerTradeName,
@@ -254,12 +260,14 @@ export function depletionTab(
 export function constructionCombinedTab(
     constructsInto: ConstructionRecipeDesc[],
     deconstructedFrom: DeconstructionRecipeDesc[],
+    usedInPaving: PavingTileDesc[],
+    usedInPillarShaping: PillarShapingDesc[],
     showWhenEmpty: boolean = false
 ): RelationshipTab {
     return {
         id: "construction",
         label: msg`Construction`,
-        count: constructsInto.length + deconstructedFrom.length,
+        count: constructsInto.length + deconstructedFrom.length + usedInPaving.length + usedInPillarShaping.length,
         showWhenEmpty,
         content: () => {
             const [conSelected, setConSelected] = createSignal<number>(0);
@@ -303,6 +311,28 @@ export function constructionCombinedTab(
                                 render={r => <DeconstructionRecipePanel recipe={r}/>}
                                 onSelect={onDeconSelected}
                                 selectedIndex={deconSelected}
+                            />
+                        </div>
+                    </Show>
+                    <Show when={usedInPaving.length}>
+                        <div>
+                            <h4 class="text-sm text-muted-foreground mb-2"><Trans>Used in Paving</Trans></h4>
+                            <RecipeSelect
+                                recipes={usedInPaving}
+                                nameFor={getPavingTileName}
+                                render={r => <PavingTilePanel recipe={r}/>}
+                                renderSelectItem={renderKnowledgeLockedItem}
+                            />
+                        </div>
+                    </Show>
+                    <Show when={usedInPillarShaping.length}>
+                        <div>
+                            <h4 class="text-sm text-muted-foreground mb-2"><Trans>Used in Pillar Shaping</Trans></h4>
+                            <RecipeSelect
+                                recipes={usedInPillarShaping}
+                                nameFor={getPillarShapingName}
+                                render={r => <PillarShapingPanel recipe={r}/>}
+                                renderSelectItem={renderKnowledgeLockedItem}
                             />
                         </div>
                     </Show>
@@ -726,6 +756,7 @@ const KNOWLEDGE_USAGE_TYPE_LABELS: Record<KnowledgeUsage["type"], MessageDescrip
     equipment: msg`Equipment`,
     extractionRecipe: msg`Extraction Recipe`,
     pavingTile: msg`Paving Tile`,
+    pillarShaping: msg`Pillar Shaping`,
     placeableInteraction: msg`Placeable Interaction`,
     placeablePlacement: msg`Placeable Placement`,
     resourcePlacementRecipe: msg`Resource Placement Recipe`,
@@ -768,6 +799,8 @@ function knowledgeUsageLink(usage: KnowledgeUsage) {
         }
         case "pavingTile":
             return <IconLink href={`/database/paving/${usage.pavingTile.id}`} icon={pageIcon("Paving")}>{usage.pavingTile.name}</IconLink>;
+        case "pillarShaping":
+            return <IconLink href={`/database/pillar-shaping/${usage.pillarShaping.id}`} icon={pageIcon("Pillar Shaping")}>{usage.pillarShaping.name}</IconLink>;
         case "placeableInteraction":
             return <PlaceableLink id={usage.placeableInteraction.placeableId}/>;
         case "placeablePlacement":
