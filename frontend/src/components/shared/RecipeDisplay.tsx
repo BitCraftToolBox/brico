@@ -661,7 +661,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                     <Show when={props.interaction.outputItemStacks.length}>
                         <div class="flex flex-row flex-wrap justify-center gap-0.5">
                             <For each={props.interaction.outputItemStacks}>
-                               {(stack) =>  <div class={outcomes()?.length ? "mt-5" : ""}>{expandStack({itemStack: stack, probability: 1}, chances())}</div>}
+                               {(stack) =>  expandStack({itemStack: stack, probability: 1}, chances())}
                             </For>
                         </div>
                     </Show>
