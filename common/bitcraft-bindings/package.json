@@ -1,0 +1,13 @@
+{
+  "name": "@brico/bitcraft-bindings",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "BitCraft upstream schema bindings (SpacetimeDB SDK 2.x). `upstream/` is a git submodule (BitCraft_Bindings, branch ts-region-2) — never edit it in place.",
+  "exports": {
+    "./*": "./upstream/src/*.ts"
+  },
+  "dependencies": {
+    "spacetimedb": "^2.9.0"
+  }
+}

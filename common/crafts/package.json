@@ -1,0 +1,23 @@
+{
+  "name": "@brico/crafts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Framework-free craft logic shared by the web frontend and brico-bot.",
+  "exports": {
+    "./filter": "./filter.ts",
+    "./subject": "./subject.ts",
+    "./watch": "./watch.ts",
+    "./names": "./names.ts",
+    "./entitlement": "./entitlement.ts",
+    "./errors": "./errors.ts"
+  },
+  "scripts": {
+    "test": "node --test \"*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "typescript": "^7.0.2"
+  }
+}

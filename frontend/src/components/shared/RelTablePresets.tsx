@@ -3,12 +3,9 @@
  * Each preset defines typed columns that can be shared across detail pages.
  */
 
+import {BuffEffect, CombatActionDesc, CsvStatEntry, SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
 import {useNavigate} from "@solidjs/router";
 import {Component} from "solid-js";
-import {BuffEffect} from "~/bindings/src/buff_effect_type";
-import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
-import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
-import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {RelTable, RelTableColumn} from "~/components/shared/DetailPageLayout";
 import {BuffLink, CombatActionLink, KnowledgeLink} from "~/lib/game-links";
 import {statLabel} from "~/lib/game-strings";

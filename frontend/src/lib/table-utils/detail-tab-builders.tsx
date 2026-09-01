@@ -5,31 +5,33 @@
  * shared across multiple detail pages.
  */
 
+import {
+    ClaimTechDesc,
+    CollectibleDesc,
+    ConstructionRecipeDesc,
+    CraftingRecipeDesc,
+    DeconstructionRecipeDesc,
+    EnemyDesc,
+    ExtractionRecipeDesc,
+    FoodDesc,
+    ItemConversionRecipeDesc,
+    ItemListDesc,
+    ItemType,
+    PavingTileDesc,
+    PillarShapingDesc,
+    PlaceableInteractionDesc,
+    PlaceablePlacementDesc,
+    QuestChainDesc,
+    ResourceDesc,
+    TerraformRecipeDesc,
+    TravelerTaskDesc,
+    TravelerTradeOrderDesc
+} from "@brico/bitcraft-bindings/types";
 import type {MessageDescriptor} from "@lingui/core";
 import {msg} from "@lingui/core/macro";
 import {Plural, Trans} from "@lingui/solid/macro";
 import {A, useNavigate} from "@solidjs/router";
 import {createSignal, Show} from "solid-js";
-import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
-import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
-import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
-import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
-import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {FoodDesc} from "~/bindings/src/food_desc_type";
-import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
-import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
-import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
-import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
-import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
-import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {RelationshipTab, RelTable} from "~/components/shared/DetailPageLayout";
 import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
 import {buildPlaceableGraph, PlaceableGraph} from "~/components/shared/PlaceableGraph";
@@ -53,6 +55,7 @@ import {
     TravelerTradePanel,
 } from "~/components/shared/RecipeDisplay";
 import {Button} from "~/components/ui/button";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {
     AchievementLink,
     BuildingLink,
@@ -90,7 +93,6 @@ import {
     KnowledgeUsage,
     resourceForExtraction,
 } from "~/lib/relations";
-import {BitCraftTables} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
 // ─── Individual Recipe Tab Builders ─────────────────────────────────

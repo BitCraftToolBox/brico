@@ -1,8 +1,8 @@
+import {ProspectingDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BiomeLink, LinkedList, SkillLinkById} from "~/lib/game-links";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {descriptionColumn, headerColumn, rowActions} from "~/lib/table-utils/column-builders";
 import {fixFloat} from "~/lib/utils";

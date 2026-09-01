@@ -3,11 +3,11 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ItemLink} from "~/lib/game-links";
 import {statLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {knowledgeUsedBy, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {knowledgeUsedByTab, questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
 import {fixFloat} from "~/lib/utils";
 

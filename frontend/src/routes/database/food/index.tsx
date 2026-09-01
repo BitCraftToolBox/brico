@@ -1,7 +1,7 @@
-import {FoodDesc} from "~/bindings/src/food_desc_type";
+import {FoodDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {FoodDefs} from "~/lib/table-defs/food-table";
 
 export default function Food() {

@@ -1,7 +1,7 @@
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {ResourceDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {ResourceDescDefs} from "~/lib/table-defs/resources-table";
 
 

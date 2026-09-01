@@ -1,9 +1,9 @@
+import {SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {sourceRow} from "~/lib/data-translation";
 import {gameText} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {boolColumn, boolFilter, headerColumn, rowActions, tagColumn, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {statsColumn, statsFilter} from "~/lib/table-utils/stats-column-builder";

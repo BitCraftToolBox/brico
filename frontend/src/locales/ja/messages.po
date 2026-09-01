@@ -18,9 +18,18 @@ msgstr ""
 "X-Crowdin-File: /frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 48\n"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That share code doesn't exist."
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "You are now a developer!"
 msgstr "これで開発者になりました！"
+
+#. placeholder {0}: pendingImport()?.length ?? 0
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Import {0, plural, one {# filter} other {# filters}}?"
+msgstr ""
 
 #: src/lib/table-defs/item-table.tsx
 #: src/routes/database/cargo/[id].tsx
@@ -44,6 +53,10 @@ msgstr "パッシブスロットの合計"
 msgid "Max Stamina"
 msgstr "最大スタミナ"
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "No such craft. The relay keeps a craft for 24 hours after it leaves the game, so this one has most likely expired."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Converted from"
 msgstr "変換元"
@@ -51,6 +64,10 @@ msgstr "変換元"
 #: src/lib/relations.ts
 msgid "{skillName} Task: {itemName}"
 msgstr "{skillName}タスク：{itemName}"
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Edit bounty"
+msgstr ""
 
 #. placeholder {0}: esp.radiusMin
 #. placeholder {1}: esp.radiusMax
@@ -62,12 +79,20 @@ msgstr ""
 msgid "Change language"
 msgstr "言語を変更"
 
-#: src/routes/database/buff/[id].tsx
-msgid "Unspecified"
-msgstr "未指定"
-
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Equivalent \"player inventory\" slots."
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Enter a plain non-negative number, e.g. 0.05 or 12."
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "e.g. 30"
+msgstr ""
+
+#: src/components/crafts/PlayerPicker.tsx
+msgid "Select players…"
 msgstr ""
 
 #: src/components/data-table/table-toolbar.tsx
@@ -111,6 +136,10 @@ msgstr "アイテムリスト"
 msgid "Warn Time"
 msgstr "警告日時"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That link code is already in use — try again."
+msgstr ""
+
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Starting Stock"
 msgstr ""
@@ -120,6 +149,15 @@ msgstr ""
 #: src/routes/settings.tsx
 msgid "Un-hide {0, plural, one {# table column} other {# table columns}} across {1, plural, one {# table page} other {# table pages}}."
 msgstr "{0, plural, other {#個のテーブル列}}を{1, plural, other {#個のテーブルページ}}にわたって非表示解除します。"
+
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "not in"
+msgid "{field} {cmpEl} {value}"
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgid "nothing"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "TF2 Mode"
@@ -131,9 +169,46 @@ msgstr "TF2 モード"
 msgid "Loading game data… {0}/{1}"
 msgstr "ゲームデータを読み込んでいます… {0}/{1}"
 
+#: src/routes/account/payees.tsx
+msgid "You haven't assigned any bounties yet."
+msgstr ""
+
+#: src/routes/account/callback.tsx
+#: src/routes/account/link.tsx
+msgid "Back to account"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "The <0>Payouts I owe</0> tab shows a running total of what you owe each contributor. Once you've paid someone in-game, record it there so the ledger stays accurate."
+msgstr ""
+
+#. placeholder {0}: entries.length
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "{0, plural, one {Imported # filter.} other {Imported # filters.}}"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That link no longer exists."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Resource Depletion"
 msgstr "リソースの枯渇"
+
+#: src/routes/account/notifications.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "no longer matches"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Unknown event: {kind}"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+#: src/routes/account/profile.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Bounties"
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -145,6 +220,27 @@ msgstr "設置物のグラフ"
 #: src/routes/database/terraforming/[id].tsx
 msgid "Terraform Elevation Difference {0}"
 msgstr "地形標高差 {0}"
+
+#: src/routes/account/bounties.tsx
+msgid "Remember that today's bounties are an honor system: the ledger tracks what you're owed, but the owner still has to trade you Hex Coin in-game. Only put in real effort on bounties from owners you trust to follow through."
+msgstr ""
+
+#: src/components/data-table/live-table.tsx
+msgid "No results."
+msgstr ""
+
+#: src/lib/crafts/payout.ts
+msgid "{rateText} {currencyLabel} / effort"
+msgstr ""
+
+#. placeholder {0}: props.row.name
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Copy {0} as JSON"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "<0>Automatically, with rules:</0> on the <1>Bounty rules</1> tab, set up filters (by claim, item, skill/tier, and more) and every new craft that matches gets a bounty assigned the moment it appears, with no manual work on your part. If more than one rule matches a craft, the highest-priority rule wins. You can reorder your rules to control which one takes precedence."
+msgstr ""
 
 #: src/routes/database/progression/index.tsx
 msgid "Profession"
@@ -159,12 +255,22 @@ msgstr "優先度"
 msgid "No construction recipe"
 msgstr "建設レシピなし"
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Log in to create share links."
+msgstr ""
+
 #: src/components/Nav.tsx
 #: src/routes/settings.tsx
 msgid "Light"
 msgstr "ライト"
 
+#: src/routes/account/loyalty.tsx
+msgid "A multiplier applied on top of the normal bounty math for crafts you pay out — e.g. 1.05 pays a player 5% more than their bounty alone would. Not shown anywhere except here; the payee's boosted total is only ever visible in their own payout totals."
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
 #: src/components/shared/DetailPageLayout.tsx
+#: src/lib/crafts/filter-condition.tsx
 #: src/lib/recipe-sources.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/buff/[id].tsx
@@ -219,6 +325,18 @@ msgstr ""
 msgid "Hats"
 msgstr "帽子"
 
+#: src/routes/account/bounty-rules.tsx
+msgid "<0>effort per</0><1/>"
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Upload file"
+msgstr ""
+
+#: src/routes/account/notifications.tsx
+msgid "Mark read"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirement"
@@ -232,6 +350,10 @@ msgstr "テーマを切り替える"
 msgid "Stat Effects"
 msgstr "ステータス効果"
 
+#: src/routes/tools/crafts/browse.tsx
+msgid "Overwrite"
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Guaranteed drop on last hit of resource extraction"
 msgstr "資源採掘のラストヒットで確実にドロップします"
@@ -241,6 +363,10 @@ msgstr "資源採掘のラストヒットで確実にドロップします"
 msgid "Consumable In Combat"
 msgstr "戦闘中に消費可能"
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "removed"
+msgstr ""
+
 #: src/routes/database/item/[id].tsx
 msgid "Knowledge Scroll"
 msgstr "知識の巻物"
@@ -248,6 +374,15 @@ msgstr "知識の巻物"
 #: src/routes/settings.tsx
 msgid "Any manually applied column sort will override this."
 msgstr "手動で適用された列の並べ替え設定があれば、これが優先されます。"
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "% of total"
+msgstr ""
+
+#: src/components/shared/GameIcon.tsx
+#: src/lib/table-utils/column-builders.tsx
+msgid "Untiered"
+msgstr ""
 
 #: src/components/app-sidebar.tsx
 msgid "Alphabetical"
@@ -262,17 +397,54 @@ msgstr "{otherCols} または {lastCol} で検索…"
 msgid "Is Hint"
 msgstr "ヒント"
 
+#: src/routes/account/bounties.tsx
+msgid "Get paid for helping with other players' crafts."
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Interface language"
 msgstr "インタフェースの言語"
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Set bounty"
+msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Single Contribution Only"
 msgstr "一人の貢献のみ"
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Move down"
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "private"
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Contributor"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Clear grid"
+msgstr ""
+
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage"
 msgstr "段階"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Could not generate a share code — try again."
+msgstr ""
+
+#: src/routes/account/profile.tsx
+msgid "Unlink this account?"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Output item tag"
+msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
@@ -280,6 +452,18 @@ msgstr "段階"
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Rewards"
 msgstr "報酬"
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Finished"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That account is already linked to a different brico account."
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Could not remove bounty"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Show items grouped by category (tree) or sorted alphabetically."
@@ -289,6 +473,15 @@ msgstr "カテゴリ別にグループ化（ツリー表示）するか、アル
 #: src/routes/database/combat/[id].tsx
 msgid "Player Ability"
 msgstr "プレイヤーアビリティ"
+
+#: src/routes/account/notifications.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "now matches"
+msgstr ""
+
+#: src/routes/account/loyalty.tsx
+msgid "Could not delete loyalty reward"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Level {level} {toolName}"
@@ -302,6 +495,10 @@ msgstr "取得可能なアイテム"
 msgid "Grid view"
 msgstr "グリッド表示"
 
+#: src/routes/account/loyalty.tsx
+msgid "Delete loyalty reward"
+msgstr ""
+
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Item Stack Size"
@@ -311,9 +508,17 @@ msgstr "アイテムスタックサイズ"
 msgid "Effort:"
 msgstr "労力："
 
+#: src/routes/account/link.tsx
+msgid "Missing link code."
+msgstr ""
+
 #: src/components/app-sidebar.tsx
 msgid "List view"
 msgstr "一覧表示"
+
+#: src/routes/account/callback.tsx
+msgid "Signing in"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Threat"
@@ -332,6 +537,11 @@ msgstr "この設置物にインタラクトする"
 msgid "{funcName} Lvl {0}"
 msgstr "{funcName} レベル{0}"
 
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Entitled"
+msgstr ""
+
 #: src/lib/table-defs/collectible-table.tsx
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/collectible/[id].tsx
@@ -340,9 +550,25 @@ msgstr "{funcName} レベル{0}"
 msgid "Auto Collect"
 msgstr "自動取得"
 
+#: src/lib/account/route-tabs.tsx
+#: src/routes/account/index.tsx
+msgid "Overview"
+msgstr ""
+
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Step Height"
 msgstr "通過可能な段差"
+
+#: src/routes/account/payees.tsx
+msgid "Payment"
+msgstr ""
+
+#: src/lib/sidebar-items.ts
+#: src/routes/account/bounties.tsx
+#: src/routes/settings.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Craft Browser"
+msgstr ""
 
 #: src/lib/relations.ts
 msgid "Task: {itemName}"
@@ -360,6 +586,19 @@ msgstr "メンテナンス"
 msgid "Default rows per page"
 msgstr "ページあたりの表示行数"
 
+#: src/routes/account/profile.tsx
+msgid "Unlink"
+msgstr ""
+
+#. placeholder {0}: unreadCount()
+#: src/routes/account/notifications.tsx
+msgid "{0, plural, one {# unread} other {# unread}}"
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Est. payout remaining"
+msgstr ""
+
 #: src/routes/database/deployable/[id].tsx
 msgid "Can Enter Portals"
 msgstr "ポータルに入ることができる"
@@ -375,10 +614,23 @@ msgstr "範囲"
 msgid "Supplies"
 msgstr "サプライ"
 
+#: src/routes/account/settings.tsx
+#: src/routes/settings.tsx
+msgid "How bounty rates are shown and entered — currency per effort, or effort per currency."
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Could not delete rule"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/routes/database/collectible/[id].tsx
 msgid "Deployables"
 msgstr "展開物"
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Name this filter"
+msgstr ""
 
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/biome/[id].tsx
@@ -389,12 +641,21 @@ msgid "Name"
 msgstr "名前"
 
 #: src/routes/database/skill/[id].tsx
+#: src/routes/tools/crafts/[id].tsx
 msgid "Total"
 msgstr "合計"
 
 #: src/routes/settings.tsx
 msgid "Object ID"
 msgstr "オブジェクト ID"
+
+#: src/routes/account/settings.tsx
+msgid "Toast everywhere"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Public"
+msgstr ""
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Always Offered"
@@ -404,10 +665,33 @@ msgstr "常に提供される"
 msgid "Flattenable"
 msgstr "フラット化可能"
 
+#. placeholder {0}: props.saved.name
+#: src/routes/tools/crafts/browse.tsx
+msgid "Watch settings for filter {0}"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/index.tsx
 msgid "Toolbox"
 msgstr "ツールボックス"
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Remaining payout"
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "in"
+msgid "{field} {cmpEl} {value}"
+msgstr ""
+
+#. placeholder {0}: label(fieldLabel(props.leaf.field))
+#: src/components/crafts/FilterBuilder.tsx
+msgid "Choose {0}"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Skill/tier grid"
+msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Allow Aquatic Prospecting"
@@ -417,6 +701,14 @@ msgstr "水中での探索を許可"
 msgid "Tables"
 msgstr "テーブル"
 
+#: src/routes/account/payees.tsx
+msgid "Enter a whole number."
+msgstr ""
+
+#: src/routes/account/payouts.tsx
+msgid "No bounty earnings yet."
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Forced to the pseudolocale for Crowdin review."
 msgstr "Crowdinのレビューの都合で、疑似翻訳に固定されています。"
@@ -424,6 +716,10 @@ msgstr "Crowdinのレビューの都合で、疑似翻訳に固定されてい�
 #: src/routes/index.tsx
 msgid "Search items, buildings, creatures..."
 msgstr "アイテム、建物、クリーチャーを検索…"
+
+#: src/routes/account/loyalty.tsx
+msgid "Log in to assign loyalty rewards."
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used in Pillar Shaping"
@@ -444,6 +740,10 @@ msgstr "取得不可"
 #: src/routes/database/creature/[id].tsx
 msgid "Contribution Loot"
 msgstr "貢献度に応じた戦利品"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "You need to be logged in to do that."
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Explore"
@@ -466,6 +766,10 @@ msgstr "回避"
 msgid "Developer-locked / inaccessible"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "This craft has no bounty assigned yet."
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
@@ -473,13 +777,29 @@ msgstr ""
 msgid "Equipment"
 msgstr "装備"
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Private bounties won't be shown to others on the craft list or details, but payouts are still calculated."
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
+msgid "of the following"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Placeable Placement"
 msgstr "設置"
 
+#: src/components/crafts/FilterBuilder.tsx
+msgid "Copy group as JSON"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Join the project on Crowdin and contribute by using <0>translate.brico.app</0>."
 msgstr "Crowdinでプロジェクトに参加し、<0>translate.brico.app</0>を利用して翻訳に協力してください。"
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Watch this filter"
+msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "If No, buff ticks down while offline."
@@ -504,6 +824,10 @@ msgstr ""
 msgid "Item Details"
 msgstr "アイテムの詳細"
 
+#: src/lib/crafts/filter-condition.tsx
+msgid "{field} {cmpEl} {value}"
+msgstr ""
+
 #: src/components/app-sidebar.tsx
 msgid "Showing favorites"
 msgstr "お気に入りを表示"
@@ -522,6 +846,15 @@ msgstr "必要条件"
 #. placeholder {0}: (min + max) / 2 * perNode
 #: src/lib/recipe-sources.tsx
 msgid "{perNode} contribution per node × {min} nodes = {0} hits"
+msgstr ""
+
+#: src/components/app-sidebar.tsx
+#: src/lib/game-links.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/notifications.tsx
+#: src/routes/account/profile.tsx
+#: src/routes/account/settings.tsx
+msgid "Account"
 msgstr ""
 
 #: src/routes/database/resource/[id].tsx
@@ -592,6 +925,10 @@ msgstr "半径"
 msgid "Search by {0}..."
 msgstr "{0} で検索…"
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "This recipe is not in the loaded game data."
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "This recipe is fixed at one progress per hit."
 msgstr ""
@@ -609,13 +946,29 @@ msgstr "力の倍率"
 msgid "Self Buffs"
 msgstr "自己バフ"
 
+#: src/routes/account/link.tsx
+msgid "Log in to your Brico's Toolbox account to finish linking Discord."
+msgstr ""
+
 #: src/components/shared/ItemStacks.tsx
 msgid "avg"
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Generating…"
 msgstr ""
 
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "Min Level"
 msgstr "最小レベル"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "This action is restricted."
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Complete"
+msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
@@ -646,9 +999,24 @@ msgstr "{0}のグループ制限："
 msgid "Day Aggro Range"
 msgstr "日中の敵対範囲"
 
+#: src/lib/account/route-tabs.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/loyalty.tsx
+msgid "Loyalty rewards"
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Loading contributions…"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used in"
 msgstr "使用先"
+
+#. placeholder {0}: props.row.name
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Download {0}"
+msgstr ""
 
 #: src/components/shared/PlaceableGraph.tsx
 msgid "{itemsList} per action"
@@ -682,6 +1050,18 @@ msgstr "経験値"
 msgid "Construction"
 msgstr "建設"
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "Storage"
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "No valid filters found."
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Co-owner"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interactions"
 msgstr "対話"
@@ -696,9 +1076,22 @@ msgstr ""
 msgid "Browse raw data on 🥣 cereal"
 msgstr "🥣 cerealで生データを閲覧する"
 
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Bounty"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Items"
 msgstr "アイテム"
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Discard"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "No bounty rules yet."
+msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Placement Group"
@@ -724,6 +1117,10 @@ msgstr "テラフォーミングドロップ"
 msgid "Inaction Time"
 msgstr ""
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "collected"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Moves the <0/> menu to the first column instead of the last."
 msgstr "<0/> メニューを最後の列ではなく、最初の列に移動します。"
@@ -747,6 +1144,10 @@ msgstr "要求される労力："
 msgid "Breadcrumb Count"
 msgstr "痕跡数"
 
+#: src/routes/account/settings.tsx
+msgid "Show a toast for a new notification anywhere on the site. The craft browser page always notifies on watched filters, regardless of this setting."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Builds from"
 msgstr "建築元"
@@ -755,9 +1156,24 @@ msgstr "建築元"
 msgid "Total Cargo Size"
 msgstr "合計カーゴサイズ"
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/account/notifications.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Delete"
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Not valid JSON."
+msgstr ""
+
 #: src/routes/database/creature/[id].tsx
 msgid "Combat"
 msgstr "戦闘"
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Progress"
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Min Contribution"
@@ -767,6 +1183,22 @@ msgstr "最小貢献度"
 msgid "Light Radius"
 msgstr "光半径"
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "Every"
+msgstr ""
+
+#: src/routes/settings.tsx
+msgid "Options for the craft browser, a craft's detail page, and bounty rules."
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Filters"
+msgstr ""
+
+#: src/routes/account/payouts.tsx
+msgid "Payer"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Grid"
 msgstr "グリッド"
@@ -774,6 +1206,10 @@ msgstr "グリッド"
 #: src/routes/database/creature/[id].tsx
 msgid "Cooldown Multiplier"
 msgstr "クールダウン倍率"
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Output item"
+msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "Decay"
@@ -813,12 +1249,31 @@ msgstr "スポーン"
 msgid "Traveler:"
 msgstr "旅人："
 
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "not equals"
+msgid "{field} {cmpEl} {value}"
+msgstr ""
+
 #: src/routes/database/quest-chain/[id].tsx
 msgid "(consumed)"
 msgstr ""
 
+#: src/routes/account/notifications.tsx
+msgid "Log in to see notifications from your watched craft filters."
+msgstr ""
+
 #: src/routes/database/item/[id].tsx
 msgid "Durability"
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/account/profile.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Cancel"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "<0/><1>per effort</1>"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -842,6 +1297,10 @@ msgstr "インタフェースと同じ"
 msgid "Automatic"
 msgstr "自動"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That link code is unknown or has expired."
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Biome"
 msgstr "バイオーム"
@@ -862,13 +1321,31 @@ msgstr ""
 msgid "Summary"
 msgstr "概要"
 
+#: src/routes/account/profile.tsx
+msgid "Link via Discord"
+msgstr ""
+
+#. placeholder {0}: props.table.getFilteredRowModel().rows.length
+#. placeholder {1}: props.table.getCoreRowModel().rows.length
+#: src/components/data-table/table-pagination.tsx
+msgid "{0} of {1, plural, one {# row} other {# rows}} shown."
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "View style"
 msgstr "表示スタイル"
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "is"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Terraforming"
 msgstr "テラフォーミング"
+
+#: src/routes/account/bounties.tsx
+msgid "You can also mark bounties as private. These won't be visible to anyone else browsing crafts, but they'll still be calculated and the payouts will show in the totals for both you and the crafter."
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Collapse sidebar by default"
@@ -881,6 +1358,10 @@ msgstr "無効にすると、並び替え順序、表示スタイル、お気に
 #: src/routes/database/resource/[id].tsx
 msgid "Spawned from Prospecting"
 msgstr "探索からのスポーン"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That link code has already been used."
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Max Speed"
@@ -932,6 +1413,14 @@ msgstr ""
 msgid "Contribution"
 msgstr "貢献"
 
+#: src/routes/account/bounties.tsx
+msgid "Today, bounties are paid in Hex Coin. This is a <0>trust-based ledger</0>, not an automatic in-game transfer: the site keeps track of what's earned, but the actual Hex Coin still has to change hands in-game. Only work on bounties from owners you trust to pay you, and only mark a bounty as paid once you've actually sent the currency."
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Notify when a matching craft is…"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "All items visible"
 msgstr "すべてのアイテムを表示"
@@ -939,6 +1428,10 @@ msgstr "すべてのアイテムを表示"
 #: src/lib/recipe-sources.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Buff"
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Removed"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -983,6 +1476,10 @@ msgstr "ツリー表示"
 msgid "Crafts per Player"
 msgstr "プレイヤーあたりのクラフト容量"
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "Craft Order"
+msgstr ""
+
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Bonuses"
 msgstr "ステータスボーナス"
@@ -995,9 +1492,18 @@ msgstr "テーマ"
 msgid "Place {plcName}"
 msgstr "{plcName}を設置する"
 
+#: src/routes/account/settings.tsx
+#: src/routes/settings.tsx
+msgid "Effort / currency"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Character"
 msgstr "キャラクター"
+
+#: src/routes/account/profile.tsx
+msgid "Log out"
+msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Recipe option"
@@ -1011,6 +1517,19 @@ msgstr "出力アイテムリスト"
 msgid "Deconstruction returns"
 msgstr "解体時の返却アイテム量"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Select at least one filter."
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Rate"
+msgstr ""
+
+#. placeholder {0}: contributors().length.toLocaleString(uiLocale())
+#: src/routes/tools/crafts/[id].tsx
+msgid "Contributors: {0}"
+msgstr ""
+
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "TP Energy"
@@ -1019,6 +1538,15 @@ msgstr "テレポートエネルギー"
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Achievement Requirements"
 msgstr "実績要件"
+
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/tools/crafts/[id].tsx
+msgid "e.g. 20"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Hex Coin"
+msgstr ""
 
 #. placeholder {0}: selectedValues().length
 #: src/components/data-table/table-faceted-filter.tsx
@@ -1038,6 +1566,10 @@ msgstr ""
 msgid "Item Lists"
 msgstr "アイテムリスト"
 
+#: src/routes/account/profile.tsx
+msgid "Log in to sync saved filters and watches to your account, and to set up notifications."
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
 msgstr ""
@@ -1055,6 +1587,15 @@ msgstr "ロック中"
 msgid "Paving Tile"
 msgstr ""
 
+#: src/routes/tools/crafts/browse.tsx
+msgid "All Crafts"
+msgstr ""
+
+#. placeholder {0}: notification.event.craftId
+#: src/routes/tools/crafts/browse.tsx
+msgid "Craft {0}"
+msgstr ""
+
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/combat/[id].tsx
@@ -1065,8 +1606,17 @@ msgstr "武器タイプ"
 msgid "Required for"
 msgstr "必須項目"
 
+#: src/routes/account/notifications.tsx
+msgid "Delete read"
+msgstr ""
+
 #: src/lib/table-defs/item-table.tsx
 msgid "Is Item List"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/tools/crafts/[id].tsx
+msgid "e.g. 0.05"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -1101,6 +1651,14 @@ msgstr "秘密"
 msgid "Minimum distance to Group:"
 msgstr "グループの最小距離："
 
+#: src/components/crafts/FilterBuilder.tsx
+msgid "not"
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Export"
+msgstr ""
+
 #: src/lib/table-defs/traveler-trades-table.tsx
 msgid "Offer Items"
 msgstr "提供されるアイテム"
@@ -1131,17 +1689,70 @@ msgstr "認識までの時間"
 msgid "Item list missing"
 msgstr ""
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "at least"
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "less or equal"
+msgid "{field} {cmpEl} {value}"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "is any of"
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "That is not a craft id."
+msgstr ""
+
+#: src/routes/account/payees.tsx
+msgid "Amount"
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "not in"
+msgid "{quantifier} {field} {cmpEl} {value}"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Loading translations…"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Claim"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Enter a plain non-negative number for each rate, e.g. 0.05 or 12."
 msgstr ""
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Level Requirements"
 msgstr "レベル要件"
 
+#: src/routes/tools/crafts/browse.tsx
+msgid "Added"
+msgstr ""
+
 #: src/lib/table-defs/prospecting-table.tsx
 msgid "Experience Per Breadcrumb"
 msgstr "痕跡一つあたりの経験値"
+
+#: src/components/Nav.tsx
+msgid "(pending)"
+msgstr ""
+
+#: src/components/ui/toast.tsx
+msgid "Dismiss all"
+msgstr ""
+
+#. placeholder {0}: describeFilterLocalized(node.child, label, labelFor)
+#: src/lib/crafts/filter-condition.tsx
+msgid "not ({0})"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Forced to Crowdin's target language for review."
@@ -1149,6 +1760,10 @@ msgstr "Crowdinのレビューの都合で、翻訳先言語に固定されて�
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Byproduct of eating"
+msgstr ""
+
+#: src/components/crafts/PlayerPicker.tsx
+msgid "Select player…"
 msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
@@ -1160,6 +1775,10 @@ msgstr "アイテム"
 #: src/routes/database/building/[id].tsx
 msgid "Storage Slots"
 msgstr "ストレージスロット"
+
+#: src/routes/account/link.tsx
+msgid "Linking…"
+msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "Unenterable"
@@ -1177,6 +1796,12 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Construction Recipe"
+msgstr ""
+
+#: src/lib/account/route-tabs.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/notifications.tsx
+msgid "Notifications"
 msgstr ""
 
 #: src/lib/table-defs/creature-table.tsx
@@ -1227,6 +1852,10 @@ msgstr "体力"
 msgid "Despawns"
 msgstr "デスポーン"
 
+#: src/lib/utils.ts
+msgid "Infinite"
+msgstr ""
+
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Visible to Others"
@@ -1235,6 +1864,14 @@ msgstr "他のユーザーに表示"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Join Radius"
 msgstr "参加できる半径"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That filter isn't valid JSON."
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Build"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Converts into"
@@ -1255,6 +1892,10 @@ msgstr "飛び道具速度"
 msgid "Breadcrumb"
 msgstr "痕跡"
 
+#: src/routes/account/link.tsx
+msgid "Your Discord account is now linked."
+msgstr ""
+
 #: src/routes/database/skill/[id].tsx
 msgid "Sell <0/> to {npcName}"
 msgstr ""
@@ -1271,6 +1912,10 @@ msgstr "設置物が見つかりません"
 msgid "Up to date"
 msgstr "最新版"
 
+#: src/routes/account/profile.tsx
+msgid "Shown to other players wherever your account is credited."
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "No tool"
 msgstr "ツールなし"
@@ -1283,10 +1928,22 @@ msgstr ""
 msgid "Building:"
 msgstr "建物："
 
+#: src/routes/account/bounties.tsx
+msgid "Trust-less bounties, where payment is held in escrow and guaranteed automatically, are coming soon via <0>Stelo <1/></0>."
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "Browse the <0/> and look for crafts with a bounty attached. Just contribute effort to the craft as normal — there's nothing extra to sign up for. Your share of the bounty is tracked automatically as you go, based on how much effort you've put in relative to the craft's total."
+msgstr ""
+
 #. placeholder {0}: formatStatLabel(stat)
 #. placeholder {1}: formatStatValue(stat)
 #: src/routes/database/skill/[id].tsx
 msgid "Permanently Gain {0} +{1}"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That bounty rule belongs to a different account."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -1297,8 +1954,25 @@ msgstr "Brico'sの独自テキストと、ゲーム内テキストに使用す�
 msgid "Experience Per Node"
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "Reward players who help you finish crafts."
+msgstr ""
+
 #: src/components/data-table/table-column-header.tsx
 msgid "Asc Multi"
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "ready"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Could not save rule"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "You're not logged in with Discord."
 msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
@@ -1309,6 +1983,10 @@ msgstr "土地の高度"
 #: src/components/data-table/table-view-options.tsx
 msgid "View"
 msgstr "表示"
+
+#: src/routes/account/profile.tsx
+msgid "Link Discord"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Required for Quests"
@@ -1326,6 +2004,14 @@ msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance to spawn on depletion."
+msgstr ""
+
+#: src/routes/account/notifications.tsx
+msgid "Mark all read"
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
+msgid "Match all"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -1365,6 +2051,10 @@ msgstr "{npcName}に{itemName}を売却する"
 msgid "This prospecting is fixed at one contribution, regardless of bread crumb count."
 msgstr "この探索は、痕跡数に関係なく、1回の貢献度に固定されます。"
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "Loading this craft…"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used By"
 msgstr "使用先"
@@ -1373,21 +2063,43 @@ msgstr "使用先"
 msgid "Discover Cargo"
 msgstr ""
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "is not"
+msgstr ""
+
 #: src/routes/database/placeable/[id].tsx
 msgid "Spawn Conditions"
 msgstr "スポーン条件"
+
+#: src/routes/account/link.tsx
+#: src/routes/account/profile.tsx
+msgid "Linking failed"
+msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Copy JSON"
 msgstr "JSONをコピー"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That name is too long (maximum {MAX_FILTER_NAME_LENGTH} characters)."
+msgstr ""
+
 #: src/routes/database/resource/[id].tsx
 msgid "Resource Spawning"
 msgstr "資源の生成"
 
+#: src/routes/account/profile.tsx
+msgid "Linked accounts"
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "Prospecting Hits"
 msgstr "探索の回数"
+
+#. placeholder {0}: props.saved.name
+#: src/routes/tools/crafts/browse.tsx
+msgid "Delete \"{0}\"?"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 #: src/routes/database/creature/[id].tsx
@@ -1410,6 +2122,10 @@ msgstr "定員"
 msgid "Lvl. {0}"
 msgstr "レベル {0}"
 
+#: src/routes/account/bounties.tsx
+msgid "For contributors"
+msgstr ""
+
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "No stats found."
 msgstr "ステータスが見つかりませんでした。"
@@ -1419,12 +2135,31 @@ msgstr "ステータスが見つかりませんでした。"
 msgid "Achievement Points"
 msgstr "実績ポイント"
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Import"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "<0>One at a time:</0> find the craft in the <1/>, open it, and add a bounty directly from the craft's page."
+msgstr ""
+
 #: src/routes/database/skill/[id].tsx
 msgid "Unlock trade"
 msgstr ""
 
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "equals"
+msgid "{field} {cmpEl} {value}"
+msgstr ""
+
+#: src/routes/account/payees.tsx
+msgid "Could not record payment"
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/DetailPageLayout.tsx
+#: src/lib/crafts/filter-condition.tsx
 #: src/lib/recipe-sources.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/buff/[id].tsx
@@ -1435,6 +2170,7 @@ msgstr "はい"
 msgid "Press <0>Enter</0> to commit Tier/Tag filters, <1>Esc</1> to clear."
 msgstr ""
 
+#: src/components/crafts/FilterBuilder.tsx
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Group"
@@ -1448,6 +2184,15 @@ msgstr "要件を満たしていない場合は非表示"
 #: src/routes/database/deployable/[id].tsx
 msgid "Speed"
 msgstr "速度"
+
+#: src/routes/account/loyalty.tsx
+msgid "No loyalty rewards yet."
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Saved Filters"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Is Self Targeting"
@@ -1474,6 +2219,10 @@ msgstr ""
 msgid "Threat Per Damage"
 msgstr "ダメージごとの脅威"
 
+#: src/routes/account/profile.tsx
+msgid "Link your BitCraft account to get credit for crafts and contributions."
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Time"
@@ -1483,10 +2232,15 @@ msgstr "時間"
 msgid "No items visible <0>You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?</0>"
 msgstr ""
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "is none of"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Global Cooldown"
 msgstr "グローバルクールダウン"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Duration"
@@ -1494,6 +2248,20 @@ msgstr "持続時間"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
+msgid "Match any"
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Private bounty"
+msgstr ""
+
+#: src/lib/account/route-tabs.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/payees.tsx
+msgid "Payouts I owe"
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
@@ -1504,8 +2272,18 @@ msgstr "ポインタの持続時間"
 msgid "Result of other placeable interaction"
 msgstr "その他の設置物インタラクションの結果"
 
+#: src/components/crafts/FilterBuilder.tsx
+msgid "No conditions — every craft matches."
+msgstr ""
+
 #: src/components/version-checker.tsx
 msgid "Latest available <0>(check preview <1/>)</0>"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Owner"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -1515,7 +2293,12 @@ msgid "Progression"
 msgstr "進行度"
 
 #: src/components/data-table/table-faceted-filter.tsx
+#: src/lib/crafts/filter-vocab.ts
 msgid "Any"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That filter is too large (maximum {MAX_FILTER_JSON_LENGTH} bytes)."
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
@@ -1542,6 +2325,15 @@ msgstr "ツール"
 msgid "Supply Cap"
 msgstr "サプライ上限"
 
+#: src/components/crafts/LocalGroupingsManager.tsx
+#: src/routes/account/loyalty.tsx
+msgid "Add"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Payout"
+msgstr ""
+
 #: src/routes/database/cargo/[id].tsx
 msgid "Place Time"
 msgstr "配置時間"
@@ -1550,9 +2342,30 @@ msgstr "配置時間"
 msgid "Shows Time Left:"
 msgstr ""
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Delete all filters?"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "When enabled, only your favorite items are shown in the sidebar."
 msgstr "有効にすると、お気に入りのアイテムのみがサイドバーに表示されます。"
+
+#: src/routes/account/bounties.tsx
+msgid "The <0>My payouts</0> tab shows what you've earned from every owner you've contributed to, and how much of that has actually been paid out."
+msgstr ""
+
+#: src/routes/settings.tsx
+msgid "Enables various menus and displays that aren't useful to most players."
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "in"
+msgid "{quantifier} {field} {cmpEl} {value}"
+msgstr ""
+
+#: src/components/crafts/LocalGroupingsManager.tsx
+msgid "No local groupings yet."
+msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Spawns Enemies"
@@ -1587,14 +2400,46 @@ msgstr "タイトル"
 msgid "Stamina Use Multiplier"
 msgstr "使用スタミナの倍率"
 
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Last active"
+msgstr ""
+
 #: src/components/data-table/table-toolbar.tsx
 msgid "Reset Filters"
 msgstr "フィルターをリセット"
+
+#: src/lib/account/route-tabs.tsx
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/account/index.tsx
+msgid "Bounty rules"
+msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
 msgid "Crafting Slots"
 msgstr "作製スロット"
+
+#: src/routes/account/profile.tsx
+msgid "BitCraft characters"
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Copy share code"
+msgstr ""
+
+#: src/routes/account/profile.tsx
+msgid "Not linked."
+msgstr ""
+
+#. placeholder {0}: overflowCount()
+#: src/components/ui/toast.tsx
+msgid "{0, plural, one {+# more} other {+# more}}"
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Could not save bounty"
+msgstr ""
 
 #: src/routes/database/skill/[id].tsx
 msgid "Trade <0/> for <1/> to {npcName}"
@@ -1602,6 +2447,12 @@ msgstr ""
 
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
+msgstr ""
+
+#. placeholder {0}: contributedTotal().toLocaleString(uiLocale())
+#. placeholder {1}: fixFloat(contributionCoverage() * 100)
+#: src/routes/tools/crafts/[id].tsx
+msgid "effort logged: {0} ({1}%)"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -1664,6 +2515,14 @@ msgstr "リスポーンのスケジュール"
 msgid "Clear all stat filters"
 msgstr ""
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "Nobody has worked on this craft yet."
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "You can browse every craft that currently has a bounty attached, see the offered rates, and even get notifications in the <0/>."
+msgstr ""
+
 #. placeholder {0}: keys.length
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "{0, plural, one {# stat} other {# stats}}"
@@ -1685,6 +2544,14 @@ msgstr "ドロップ元"
 msgid "Power"
 msgstr "起動"
 
+#: src/routes/settings.tsx
+msgid "Developer Mode"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "has all of"
+msgstr ""
+
 #: src/lib/table-utils/column-builders.tsx
 msgid "<empty>"
 msgstr ""
@@ -1698,14 +2565,23 @@ msgstr ""
 msgid "Hazard"
 msgstr "環境"
 
+#: src/lib/crafts/filter-vocab.ts
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/resource/[id].tsx
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
 msgid "Tier"
 msgstr "ティア"
 
 #: src/routes/database/building/[id].tsx
 msgid "Not Deconstructible"
+msgstr ""
+
+#: src/lib/account/route-tabs.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/payouts.tsx
+msgid "My payouts"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -1715,6 +2591,10 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 msgid "Emblem Editor"
 msgstr "エンブレムエディター"
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Imported filter"
+msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "hex coin per day per occupied slot"
@@ -1755,6 +2635,10 @@ msgstr "時間："
 msgid "Unlock achievement <0/>"
 msgstr ""
 
+#: src/routes/account/profile.tsx
+msgid "Something went wrong"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Extraction Recipe"
 msgstr ""
@@ -1769,6 +2653,10 @@ msgstr ""
 msgid "Movement"
 msgstr "移動"
 
+#: src/routes/account/notifications.tsx
+msgid "No notifications yet."
+msgstr ""
+
 #: src/lib/table-utils/column-builders.tsx
 msgid "View Map"
 msgstr ""
@@ -1782,11 +2670,20 @@ msgstr ""
 msgid "Level"
 msgstr "レベル"
 
+#: src/routes/account/profile.tsx
+msgid "Discord"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Your Discord login is missing required information — try logging in again."
+msgstr ""
+
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Total Item Size"
 msgstr "合計アイテムサイズ"
 
 #: src/routes/settings.tsx
+#: src/routes/tools/crafts/browse.tsx
 #: src/routes/tools/emblem.tsx
 msgid "Reset"
 msgstr "リセット"
@@ -1795,6 +2692,19 @@ msgstr "リセット"
 #: src/routes/database/claim-research/[id].tsx
 msgid "Area"
 msgstr "エリア"
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Log in to create bounty rules."
+msgstr ""
+
+#: src/components/Nav.tsx
+msgid "Connection status"
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "not equals"
+msgid "{quantifier} {field} {cmpEl} {value}"
+msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "Terraform"
@@ -1808,6 +2718,10 @@ msgstr "自動追尾が可能"
 msgid "Crafting"
 msgstr "クラフト"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "This identity can't hold a brico account."
+msgstr ""
+
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Raw Data"
 msgstr "生データ"
@@ -1819,6 +2733,15 @@ msgstr "探索の時間"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Distance"
 msgstr "痕跡の距離"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That bounty belongs to a different account."
+msgstr ""
+
+#: src/routes/account/settings.tsx
+#: src/routes/settings.tsx
+msgid "Payout display"
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Night Aggro Range"
@@ -1836,9 +2759,26 @@ msgstr "お気に入りアイテム"
 msgid "Stamina:"
 msgstr "スタミナ："
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "Member"
+msgstr ""
+
 #: src/routes/database/building/[id].tsx
 msgid "{name} Lvl {level}"
 msgstr "{name} レベル{level}"
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Copy CSV"
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
+#: src/components/crafts/PlayerPicker.tsx
+msgid "No matches."
+msgstr ""
+
+#: src/lib/crafts/payout.ts
+msgid "{rateText} effort / {currencyLabel}"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Resource ignores regular damage."
@@ -1848,20 +2788,40 @@ msgstr ""
 msgid "Tags"
 msgstr "タグ"
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "Building"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
 #: src/lib/recipe-sources.tsx
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/account/bounty-rules.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/progression/index.tsx
 #: src/routes/database/traveler-task/[id].tsx
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
 msgid "Skill"
 msgstr "スキル"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Scaled Armor"
 msgstr "アーマー値のスケール"
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Connecting to the relay…"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "For craft owners"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That name is too long (maximum {MAX_DISPLAY_NAME_LENGTH} characters)."
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Skills"
@@ -1871,6 +2831,19 @@ msgstr "スキル"
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 msgid "Buff Stats"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That identity already has a brico account."
+msgstr ""
+
+#: src/routes/account/profile.tsx
+msgid "Display name"
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Est. payout"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -1885,6 +2858,7 @@ msgid "Traveler"
 msgstr "旅人"
 
 #: src/components/shared/DetailPageLayout.tsx
+#: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
 msgstr "コピーしました！"
 
@@ -1909,6 +2883,10 @@ msgstr ""
 #: src/components/shared/DetailPageLayout.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "No data"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Login issuer not accepted: {issuer}"
 msgstr ""
 
 #: src/routes/database/skill/[id].tsx
@@ -1977,16 +2955,38 @@ msgstr "コレクション"
 msgid "Attack Level"
 msgstr "攻撃レベル"
 
+#: src/lib/crafts/filter-vocab.ts
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Currency"
+msgstr ""
+
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Level Range"
 msgstr "レベル範囲"
+
+#: src/routes/account/bounties.tsx
+msgid "What are bounties?"
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Output is rolled a number of times equal to your contribution. One full HP bar of the enemy is worth 1000 contribution."
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "This login can't be used here."
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgid " or "
+msgstr ""
+
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Matching mode"
+msgstr ""
+
+#: src/routes/account/payees.tsx
+msgid "Log in to see the payouts for your bounties."
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -2001,10 +3001,22 @@ msgstr "降順"
 msgid "Collectibles"
 msgstr "収集品"
 
+#: src/routes/account/payees.tsx
+msgid "Record payment"
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
+msgid "Remove group"
+msgstr ""
+
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirements"
 msgstr "要件"
+
+#: src/routes/account/bounties.tsx
+msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft — a rate of currency per unit of effort — and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
+msgstr ""
 
 #. placeholder {0}: req.chunksDiscovered
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -2027,8 +3039,15 @@ msgstr "Brico's Toolboxの見た目を選択します。"
 msgid "Near Building:"
 msgstr ""
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Move up"
+msgstr ""
+
 #: src/lib/table-defs/terraforming-table.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
 #: src/routes/database/terraforming/[id].tsx
+#: src/routes/tools/crafts/[id].tsx
 msgid "Effort"
 msgstr "労力"
 
@@ -2036,9 +3055,22 @@ msgstr "労力"
 msgid "Desc Multi"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Enter a valid rate."
+msgstr ""
+
+#: src/routes/account/link.tsx
+msgid "Discord linked"
+msgstr ""
+
 #: src/routes/database/resource/[id].tsx
 msgid "Spawned from Resource"
 msgstr "資源からのスポーン"
+
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "greater or equal"
+msgid "{field} {cmpEl} {value}"
+msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Deploy time"
@@ -2047,6 +3079,18 @@ msgstr "展開時間"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Enemy Drops"
 msgstr "敵のドロップ"
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Save Copy"
+msgstr ""
+
+#: src/routes/account/link.tsx
+msgid "Log in to finish linking"
+msgstr ""
+
+#: src/routes/account/payouts.tsx
+msgid "Log in to see what you've earned from bounties."
+msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
@@ -2063,12 +3107,32 @@ msgstr ""
 msgid "Item Slots"
 msgstr "アイテムスロット"
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "That share code has no importable filters."
+msgstr ""
+
+#: src/routes/account/link.tsx
+msgid "Link account"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Reset hidden columns"
 msgstr "非表示の列をリセットする"
 
+#: src/routes/tools/crafts/browse.tsx
+msgid "Open Crafts"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Enable easter eggs"
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgid " and "
+msgstr ""
+
+#: src/components/Nav.tsx
+msgid "No active connections"
 msgstr ""
 
 #: src/routes/database/quest-chain/[id].tsx
@@ -2077,6 +3141,10 @@ msgstr "ステージ要件"
 
 #: src/routes/settings.tsx
 msgid "Rish Emulation"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "Enabled"
 msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
@@ -2100,10 +3168,23 @@ msgstr "資源"
 msgid "Beneficial"
 msgstr "有益"
 
+#. placeholder {0}: message()
+#: src/routes/account/callback.tsx
+msgid "Sign-in failed: {0}"
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "No crafts match this filter."
+msgstr ""
+
 #: src/components/shared/DetailPageLayout.tsx
 #: src/lib/table-utils/column-builders.tsx
 msgid "Copy ID"
 msgstr "IDをコピー"
+
+#: src/routes/account/loyalty.tsx
+msgid "Could not add loyalty reward"
+msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Allow Aquatic Breadcrumb"
@@ -2127,9 +3208,17 @@ msgstr ""
 msgid "Sources"
 msgstr "ソース"
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Paste a filter, a list of filters, or a share code"
+msgstr ""
+
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
 msgstr "認識のしきい値"
+
+#: src/components/crafts/LocalGroupingsManager.tsx
+msgid "Group payees who haven't linked a shared account under a name of your own, just for the totals on the <0>Payouts</0> page. Stored only in this browser."
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Traveler Trade"
@@ -2153,6 +3242,29 @@ msgstr "設置可能"
 
 #: src/lib/recipe-sources.tsx
 msgid "Output is rolled once, regardless of damage dealt, as long as the minimum threshold is reached."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "You can't revoke your own access."
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "at most"
+msgstr ""
+
+#: src/components/app-sidebar.tsx
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/account/link.tsx
+#: src/routes/account/loyalty.tsx
+#: src/routes/account/notifications.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+#: src/routes/account/profile.tsx
+msgid "Log in"
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
+msgid "Remove condition"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
@@ -2188,17 +3300,53 @@ msgstr "チェックを入れた項目はサイドバーに表示されます。
 msgid "Allow Hunting"
 msgstr "狩猟可能"
 
+#: src/routes/account/profile.tsx
+msgid "Account linked"
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "Minimum Contribution"
 msgstr ""
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "Remove"
+msgstr ""
+
+#: src/routes/account/loyalty.tsx
+msgid "e.g. 1.05"
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "equals"
+msgid "{quantifier} {field} {cmpEl} {value}"
+msgstr ""
+
 #: src/lib/table-defs/terraforming-table.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
 msgid "Difference"
 msgstr "差"
+
+#: src/routes/account/payees.tsx
+msgid "Payee"
+msgstr ""
+
+#. placeholder {0}: props.saved.name
+#: src/routes/tools/crafts/browse.tsx
+msgid "Copy filter {0} as JSON"
+msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Grows into"
 msgstr "次の段階への成長"
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "First seen"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That filter isn't valid."
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -2209,6 +3357,28 @@ msgstr "旅人の取引"
 #: src/routes/settings.tsx
 msgid "Whether to show the sidebar in its collapsed (icon only) state on initial load."
 msgstr "初回読み込み時にサイドバーを折りたたんだ状態（アイコンのみ）で表示するかどうか。"
+
+#. placeholder {0}: props.row.name
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Delete {0}?"
+msgstr ""
+
+#: src/components/crafts/LocalGroupingsManager.tsx
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/account/loyalty.tsx
+#: src/routes/account/profile.tsx
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Save"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That filter belongs to a different account."
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Watch active"
+msgstr ""
 
 #. placeholder {0}: task.levelRequirement.minLevel
 #. placeholder {1}: task.levelRequirement.maxLevel
@@ -2229,6 +3399,10 @@ msgstr ""
 msgid "Disallow Player Build"
 msgstr "プレイヤーの建築を許可しない"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That link code has already been claimed."
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "? min"
 msgstr ""
@@ -2246,8 +3420,26 @@ msgstr ""
 msgid "Wind Multiplier"
 msgstr "風力倍率"
 
+#: src/routes/account/bounties.tsx
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/loyalty.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Bounty payouts"
+msgstr ""
+
 #: src/routes/database/skill/[id].tsx
 msgid "Buy <0/> from {npcName}"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Log in and try again."
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
+#: src/routes/tools/crafts/[id].tsx
+msgid "effort/currency"
 msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
@@ -2255,6 +3447,9 @@ msgid "Search stats..."
 msgstr ""
 
 #: src/components/Nav.tsx
+#: src/lib/account/route-tabs.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/settings.tsx
 #: src/routes/settings.tsx
 msgid "Settings"
 msgstr "設定"
@@ -2262,6 +3457,16 @@ msgstr "設定"
 #: src/routes/settings.tsx
 msgid "A–Z"
 msgstr "A–Z"
+
+#. placeholder {0}: new Date(Number(link().linkedAt.toMillis())).toLocaleDateString(uiLocale())
+#. placeholder {0}: new Date(Number(link.linkedAt.toMillis())).toLocaleDateString(uiLocale())
+#: src/routes/account/profile.tsx
+msgid "linked {0}"
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "remaining"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Item"
@@ -2281,6 +3486,14 @@ msgstr "防御値"
 msgid "Clear filters"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "The following settings require you to be logged in to function."
+msgstr ""
+
+#: src/routes/account/loyalty.tsx
+msgid "Could not save loyalty reward"
+msgstr ""
+
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
@@ -2291,16 +3504,38 @@ msgstr "水深"
 msgid "Placeable Interaction"
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "Want to reward a specific player a bit extra — a trusted regular, a claim officer, and so on? The <0>Loyalty rewards</0> tab lets you set a payout multiplier for individual payees, on top of whatever their bounty already pays."
+msgstr ""
+
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Compendium Entry"
 msgstr "コンペンディウムに含まれるか"
+
+#: src/routes/account/profile.tsx
+msgid "You can link it again later."
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Share link"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Region"
+msgstr ""
 
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 msgid "Tag"
 msgstr "タグ"
+
+#: src/routes/account/callback.tsx
+msgid "Signing you in…"
+msgstr ""
 
 #: src/routes/database/item/[id].tsx
 msgid "Health"
@@ -2314,11 +3549,20 @@ msgstr "バフタイプ"
 msgid "Discover Resource"
 msgstr ""
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "← Back to the craft browser"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "\"{currency}\" isn't a supported currency."
+msgstr ""
+
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Details"
 msgstr "詳細"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/tools/crafts/browse.tsx
 msgid "Craft"
 msgstr ""
 
@@ -2337,6 +3581,19 @@ msgstr "サイドバー"
 
 #: src/routes/database/building/[id].tsx
 msgid "Rested Buff Duration"
+msgstr ""
+
+#: src/routes/account/profile.tsx
+msgid "Link another"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "You can only attach bounties to crafts you started yourself, or crafts sitting in a claim you own. There are two ways to do it:"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+#: src/routes/settings.tsx
+msgid "Currency / effort"
 msgstr ""
 
 #. placeholder {0}: req.level
@@ -2358,6 +3615,10 @@ msgstr "現在のデータバージョン"
 msgid "Crafted From"
 msgstr "制作元"
 
+#: src/components/crafts/FilterBuilder.tsx
+msgid "No conditions — nothing matches."
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "World"
 msgstr "世界"
@@ -2365,6 +3626,11 @@ msgstr "世界"
 #: src/routes/database/creature/[id].tsx
 msgid "Night Detect Range"
 msgstr "夜間の認識範囲"
+
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Paid"
+msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Placeable on Land"
@@ -2382,6 +3648,10 @@ msgstr "認識 & 敵対"
 msgid "Quest Chain"
 msgstr "クエストチェーン"
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "Remaining effort"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Quest"
 msgstr "知識の巻物"
@@ -2391,10 +3661,29 @@ msgstr "知識の巻物"
 msgid "Pillar Shaping"
 msgstr "柱の加工"
 
+#: src/lib/account/route-tabs.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/profile.tsx
+msgid "Profile"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Officer"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
 msgid "Traveler Task"
 msgstr "旅人のタスク"
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Owner's claim access"
+msgstr ""
+
+#. placeholder {0}: props.effortTotal.toLocaleString(uiLocale())
+#: src/routes/tools/crafts/[id].tsx
+msgid "Total for this craft's {0} effort."
+msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Biomes:"
@@ -2407,6 +3696,10 @@ msgstr ""
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Tech"
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "No saved filters yet."
 msgstr ""
 
 #: src/components/data-table/table-column-header.tsx
@@ -2437,6 +3730,15 @@ msgstr ""
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Reward"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/account/loyalty.tsx
+#: src/routes/account/notifications.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+#: src/routes/account/profile.tsx
+msgid "You're not logged in"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -2477,14 +3779,27 @@ msgstr "建設先"
 msgid "expanded"
 msgstr ""
 
+#: src/components/crafts/LocalGroupingsManager.tsx
+msgid "Group name"
+msgstr ""
+
 #: src/routes/database/buff/[id].tsx
 msgid "Source"
 msgstr "ソース"
+
+#: src/components/crafts/LocalGroupingsManager.tsx
+msgid "Local groupings"
+msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
 msgid "Housing Slots"
 msgstr "住宅スロット"
+
+#: src/components/crafts/FilterBuilder.tsx
+#: src/routes/tools/crafts/[id].tsx
+msgid "currency/effort"
+msgstr ""
 
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/prospecting/[id].tsx
@@ -2521,6 +3836,21 @@ msgstr "残り時間の表示"
 msgid "Blocks Path"
 msgstr "通行を妨げる"
 
+#: src/components/crafts/FilterBuilder.tsx
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Switch between currency/effort and effort/currency"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That account doesn't exist."
+msgstr ""
+
+#: src/components/crafts/FilterBuilder.tsx
+msgid "Condition"
+msgstr ""
+
 #: src/routes/database/traveler-task/[id].tsx
 msgid "XP Reward"
 msgstr "経験値報酬"
@@ -2528,6 +3858,14 @@ msgstr "経験値報酬"
 #: src/routes/database/claim-research/[id].tsx
 msgid "Item Cost"
 msgstr "アイテムコスト"
+
+#. placeholder {0}: matched().length.toLocaleString(uiLocale())
+#. placeholder {1}: entries().length
+#. placeholder {2}: matched().length
+#. placeholder {3}: completeCount().toLocaleString(uiLocale())
+#: src/routes/tools/crafts/browse.tsx
+msgid "{0} of {1, plural, one {# craft} other {# crafts}} {2, plural, one {matches} other {match}}<0> ({3} of them already complete and only waiting to be collected)</0>."
+msgstr ""
 
 #: src/routes/tools/emblem.tsx
 msgid "Icon"
@@ -2537,8 +3875,16 @@ msgstr "アイコン"
 msgid "Stamina Use"
 msgstr "スタミナ使用"
 
+#: src/lib/crafts/filter-vocab.ts
+msgid "Input item tag"
+msgstr ""
+
 #: src/components/shared/PlaceableGraph.tsx
 msgid "{maxHp} effort required, using tool power"
+msgstr ""
+
+#: src/routes/account/notifications.tsx
+msgid "Unsupported notification."
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
@@ -2547,6 +3893,17 @@ msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
 msgid "Equipped Item"
+msgstr ""
+
+#: src/routes/account/profile.tsx
+msgid "Link via BitAuth"
+msgstr ""
+
+#. placeholder {0}: props.row.name
+#. placeholder {0}: props.saved.name
+#: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "Delete filter {0}"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -2564,6 +3921,14 @@ msgstr "戦闘ステータス"
 msgid "Tools"
 msgstr "ツール"
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Flat rate"
+msgstr ""
+
+#: src/components/crafts/PlayerPicker.tsx
+msgid "Search players…"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Target Buffs"
 msgstr "対象バフ"
@@ -2578,6 +3943,14 @@ msgstr "ノードの時間"
 msgid "Biomes"
 msgstr "バイオーム"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Too many filters selected (maximum {MAX_SHARED_FILTER_IDS})."
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "My Crafts"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Paving"
 msgstr "舗装"
@@ -2587,10 +3960,23 @@ msgstr "舗装"
 msgid "Accuracy"
 msgstr "命中率"
 
+#. placeholder {0}: p.value
 #. placeholder {0}: props.tier
+#. placeholder {0}: t.value
 #: src/components/shared/GameIcon.tsx
+#: src/lib/crafts/options.ts
+#: src/lib/table-utils/column-builders.tsx
 msgid "Tier {0}"
 msgstr "ティア {0}"
+
+#: src/lib/crafts/filter-condition.tsx
+msgctxt "all"
+msgid "{field} {cmpEl} {value}"
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "just now"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
@@ -2608,9 +3994,18 @@ msgstr "解放される知識"
 msgid "Database Order"
 msgstr "データベース順"
 
+#. placeholder {0}: props.row.name
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Get a share link for {0}"
+msgstr ""
+
 #: src/routes/database/deployable/[id].tsx
 msgid "Mounting Radius"
 msgstr "取り付き可能半径"
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Input item"
+msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
@@ -2622,6 +4017,10 @@ msgstr "カーゴスロット"
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage Rewards"
 msgstr "ステージ報酬"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That watch belongs to a different account."
+msgstr ""
 
 #: src/routes/tools/placeable-graph.tsx
 msgid "Select a placement to visualize its lifecycle graph."
@@ -2643,6 +4042,10 @@ msgstr "トレーニング"
 msgid "No Output"
 msgstr ""
 
+#: src/routes/account/bounty-rules.tsx
+msgid "New rule"
+msgstr ""
+
 #: src/routes/tools/placeable-graph.tsx
 msgid "← Back to list"
 msgstr ""
@@ -2650,6 +4053,10 @@ msgstr ""
 #: src/routes/settings.tsx
 msgid "Color mode"
 msgstr "カラーモード"
+
+#: src/components/crafts/FilterBuilder.tsx
+msgid "Paste group from clipboard"
+msgstr ""
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Affected By Wind"
@@ -2668,6 +4075,11 @@ msgstr ""
 msgid "Health Regen"
 msgstr "体力再生"
 
+#: src/routes/account/notifications.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "finished crafting"
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Despawn"
 msgstr "デスポーン"
@@ -2677,6 +4089,11 @@ msgstr "デスポーン"
 #: src/components/Nav.tsx
 msgid "Search..."
 msgstr "検索…"
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "This can't be undone. The filter will still be available via previously created share codes."
+msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Despawn Time"
@@ -2694,6 +4111,10 @@ msgstr "ステータスのスケーリング"
 msgid "Required Knowledge:"
 msgstr "必要な知識："
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "Contributors"
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "{skillName} XP/Progress:"
 msgstr "{skillName} 経験値/進捗："
@@ -2705,6 +4126,10 @@ msgstr "制限"
 #: src/routes/settings.tsx
 msgid "Midnight"
 msgstr "ミッドナイト"
+
+#: src/components/crafts/LocalGroupingsManager.tsx
+msgid "Delete grouping"
+msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Not Respawning"
@@ -2721,6 +4146,14 @@ msgstr "範囲："
 #: src/routes/settings.tsx
 msgid "How many rows are shown per page when a table first loads."
 msgstr "テーブルが最初に読み込まれるときに、ページあたり何行表示されるか。"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "A loyalty reward's multiplier must be 1 or higher."
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Share"
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Placeables"
@@ -2749,6 +4182,15 @@ msgstr ""
 msgid "Offered by"
 msgstr ""
 
+#: src/lib/crafts/filter-vocab.ts
+#: src/routes/tools/crafts/browse.tsx
+msgid "Total effort"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That saved filter no longer exists."
+msgstr ""
+
 #: src/routes/database/resource/[id].tsx
 msgid "Max HP"
 msgstr ""
@@ -2761,8 +4203,16 @@ msgstr ""
 msgid "Construct {buildingName}"
 msgstr ""
 
+#: src/routes/tools/crafts/browse.tsx
+msgid "Advanced Filters"
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Guaranteed spawn on last hit of resource extraction."
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Remaining"
 msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
@@ -2784,9 +4234,29 @@ msgstr "外観"
 msgid "Inventory"
 msgstr "インベントリ"
 
+#. placeholder {0}: index + 1
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Imported filter {0}"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Creatures"
 msgstr "クリーチャー"
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/tools/crafts/[id].tsx
+msgid "Not connected."
+msgstr ""
+
+#: src/lib/crafts/filter-condition.tsx
+msgid "everything"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/tools/crafts/[id].tsx
+msgid "Private"
+msgstr ""
 
 #: src/components/SiteFooter.tsx
 msgid "Brico's Toolbox is a fan-made database of <0>BitCraft</0> items, recipes, creatures, structures, and more."

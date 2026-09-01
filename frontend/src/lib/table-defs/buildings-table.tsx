@@ -1,12 +1,11 @@
+import {BuildingDesc, BuildingFunction} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {ColumnDef} from "@tanstack/solid-table";
-import {BuildingDesc} from "~/bindings/src/building_desc_type";
-import {BuildingFunction} from "~/bindings/src/building_function_type";
 import {BuildingIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {Label} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {compareOptions, includedIn} from "~/lib/utils";

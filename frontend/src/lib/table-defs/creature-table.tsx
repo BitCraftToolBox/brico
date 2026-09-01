@@ -1,5 +1,5 @@
+import {EnemyDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
 import {EnemyIcon} from "~/components/shared/GameIcon";
 import {gameText} from "~/lib/labels";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";

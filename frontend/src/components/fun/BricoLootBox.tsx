@@ -1,15 +1,12 @@
+import type {CargoDesc, ItemDesc, ItemListDesc} from "@brico/bitcraft-bindings/types";
+import {ItemType, Rarity} from "@brico/bitcraft-bindings/types";
 import {useColorMode} from "@kobalte/core";
 import {type Component, createEffect, createSignal, on, onCleanup, onMount, Show} from "solid-js";
 import {Portal} from "solid-js/web";
-import type {CargoDesc} from "~/bindings/src/cargo_desc_type";
-import type {ItemDesc} from "~/bindings/src/item_desc_type";
-import type {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import Rarity from "~/bindings/src/rarity_type";
 import {CargoIcon, ItemIcon, rarityToFrameSlug, SHAPE_SIZES} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {ASSET_CDN_BASE, getAssetURL, Tiers} from "~/lib/bitcraft-utils";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables} from "~/lib/spacetime";
 import {cn} from "~/lib/utils";
 
 const CHEST_ASSET = "GeneratedIcons/Other/Buildings/Storage/ChestSmallT4";

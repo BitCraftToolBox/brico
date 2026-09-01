@@ -1,5 +1,5 @@
+import {BiomeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {BiomeDesc} from "~/bindings/src/biome_desc_type";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {descriptionColumn, headerColumn, rowActions} from "~/lib/table-utils/column-builders";
 

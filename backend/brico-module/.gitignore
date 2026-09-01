@@ -1,0 +1,4 @@
+# `spacetime build`/`publish` bundle the module here. Build output, not source.
+spacetimedb/dist/
+
+spacetime.local.json

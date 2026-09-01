@@ -8,8 +8,10 @@ import {FaSolidArrowDownAZ as IconSortAZ, FaSolidFolderTree as IconSortTree} fro
 import {SiCrowdin as IconCrowdin} from "solid-icons/si";
 import {
     TbFillLayoutGrid as IconViewGrid,
+    TbOutlineCoin as IconCurrency,
     TbOutlineDeviceLaptop as IconSystem,
     TbOutlineDots as IconDots,
+    TbOutlineHammer as IconEffort,
     TbOutlineList as IconViewList,
     TbOutlineList as IconSortData,
     TbOutlineListNumbers as IconSortPK,
@@ -26,7 +28,7 @@ import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
 import {DATA_LOCALES, dataTranslationsPending} from "~/lib/data-translation";
 import {localeLabel, PSEUDOLOCALE_ENABLED, UI_LOCALES, uiLocaleLoading} from "~/lib/i18n";
 import {useLabel} from "~/lib/labels";
-import {AUTO_LOCALE, NaturalSortOrder, type SortMode, useSettings, type ViewMode} from "~/lib/settings";
+import {AUTO_LOCALE, NaturalSortOrder, type PayoutDisplayMode, type SortMode, useSettings, type ViewMode} from "~/lib/settings";
 import {SIDEBAR_GROUPS, SidebarGroupDef, type SidebarItemDef} from "~/lib/sidebar-items";
 
 // ── Shared UI helpers ─────────────────────────────────────────
@@ -480,6 +482,26 @@ export default function SettingsPage() {
                     </SettingsRow>
                 </SettingsSection>
 
+                {/* ── Craft Browser ──────────────────────── */}
+                <SettingsSection
+                    title={<Trans>Craft Browser</Trans>}
+                    description={<Trans>Options for the craft browser, a craft's detail page, and bounty rules.</Trans>}
+                >
+                    <SettingsRow
+                        label={<Trans>Payout display</Trans>}
+                        description={<Trans>How bounty rates are shown and entered — currency per effort, or effort per currency.</Trans>}
+                    >
+                        <ButtonGroup<PayoutDisplayMode>
+                            value={settings.payoutDisplayMode()}
+                            onChange={settings.setPayoutDisplayMode}
+                            options={[
+                                {value: "currencyPerEffort", icon: IconCurrency, label: _(msg`Currency / effort`)},
+                                {value: "effortPerCurrency", icon: IconEffort, label: _(msg`Effort / currency`)},
+                            ]}
+                        />
+                    </SettingsRow>
+                </SettingsSection>
+
                 <Show when={showEasterSection()}>
                     <SettingsSection
                         title={<Trans>🥚 Easter Eggs</Trans>}
@@ -490,6 +512,14 @@ export default function SettingsPage() {
                             description={<Trans>Unlocks hidden easter-egg features scattered across the site.</Trans>}
                         >
                             <Switch checked={settings.easterEggs()} onChange={settings.setEasterEggs}>
+                                <SwitchControl><SwitchThumb/></SwitchControl>
+                            </Switch>
+                        </SettingsRow>
+                        <SettingsRow
+                            label={<Trans>Developer Mode</Trans>}
+                            description={<Trans>Enables various menus and displays that aren't useful to most players.</Trans>}
+                        >
+                            <Switch checked={settings.devMenusEnabled()} onChange={settings.setDevMenusEnabled}>
                                 <SwitchControl><SwitchThumb/></SwitchControl>
                             </Switch>
                         </SettingsRow>
