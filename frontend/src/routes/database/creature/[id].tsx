@@ -1,24 +1,21 @@
+import {CombatActionDesc, ContributionLootDesc, EnemyScalingDesc, ItemListDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
-import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
-import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
-import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon} from "~/components/shared/GameIcon";
 import {ItemListDisplay, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {EnemyDropPanel} from "~/components/shared/RecipeDisplay";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {ItemListLink, SkillLinkById} from "~/lib/game-links";
 import {useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
 import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList, scalingDescsFromEnemy} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
 type LootRow = [ContributionLootDesc, ItemListDesc];

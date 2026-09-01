@@ -1,8 +1,8 @@
+import {AchievementDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {AchievementLink, LinkedList} from "~/lib/game-links";
 import {gameText} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {descriptionColumn, headerColumn, rangeFilter, rowActions} from "~/lib/table-utils/column-builders";
 

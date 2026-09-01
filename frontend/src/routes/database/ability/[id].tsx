@@ -4,8 +4,8 @@ import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {readableSeconds} from "~/lib/utils";
 
 export default function AbilityDetail() {

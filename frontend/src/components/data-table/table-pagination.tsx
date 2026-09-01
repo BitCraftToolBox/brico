@@ -1,5 +1,5 @@
+import {Plural, Trans} from "@lingui/solid/macro";
 import type {Table} from "@tanstack/solid-table"
-
 import {
     TbOutlineCheck as IconCheck,
     TbOutlineChevronLeft as IconChevronLeft,
@@ -7,13 +7,15 @@ import {
     TbOutlineChevronsLeft as IconChevronsLeft,
     TbOutlineChevronsRight as IconChevronsRight
 } from "solid-icons/tb"
-import {createSignal, Show} from "solid-js";
+import {createSignal, type JSX, Show} from "solid-js";
 import {Button} from "~/components/ui/button"
 import {NumberField, NumberFieldInput} from "~/components/ui/number-field";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select"
 
 type TablePaginationProps<TData> = {
     table: Table<TData>
+    /** Replaces the default "{filtered} of {core} row(s) shown" text, for a caller with its own counts to report. */
+    label?: JSX.Element
 }
 
 export function TablePagination<TData>(props: TablePaginationProps<TData>) {
@@ -38,8 +40,12 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
     return (
         <div class="flex items-center justify-between py-2">
             <div class="flex-1 text-sm text-muted-foreground">
-                {props.table.getFilteredRowModel().rows.length} of{" "}
-                {props.table.getCoreRowModel().rows.length} row(s) shown.
+                <Show when={props.label} fallback={
+                    <Trans>{props.table.getFilteredRowModel().rows.length} of{" "}
+                        <Plural value={props.table.getCoreRowModel().rows.length} one="# row" other="# rows"/> shown.</Trans>
+                }>
+                    {props.label}
+                </Show>
             </div>
             <div class="flex items-center space-x-6 lg:space-x-8">
                 <div class="flex items-center space-x-2">

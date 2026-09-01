@@ -1,5 +1,5 @@
+import {PillarShapingDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {descriptionColumn, headerColumn, knowledgeColumn, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";

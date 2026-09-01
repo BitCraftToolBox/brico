@@ -1,9 +1,9 @@
+import {CombatActionDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
 import {GameIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {gameText} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {boolColumn, boolFilter, headerColumn, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {fixFloat, includedIn} from "~/lib/utils";

@@ -1,13 +1,12 @@
+import {BuffEffect, WeaponTypeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {BuffEffect} from "~/bindings/src/buff_effect_type";
-import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, undefinedIfZero} from "~/lib/utils";
 
 export default function CombatDetail() {

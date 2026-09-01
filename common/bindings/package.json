@@ -1,0 +1,16 @@
+{
+  "name": "@brico/bindings",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Generated SpacetimeDB 2.x client bindings (prism's relay-module, brico-app). Regenerate with the SpacetimeDB CLI; do not hand-edit.",
+  "exports": {
+    "./prism": "./prism/index.ts",
+    "./prism/*": "./prism/*.ts",
+    "./brico-app": "./brico-app/index.ts",
+    "./brico-app/*": "./brico-app/*.ts"
+  },
+  "dependencies": {
+    "spacetimedb": "^2.9.0"
+  }
+}

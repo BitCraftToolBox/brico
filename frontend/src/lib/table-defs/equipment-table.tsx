@@ -1,15 +1,12 @@
+import {BuffDesc, BuffEffect, EquipmentDesc, Rarity} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {For} from "solid-js";
-import {BuffDesc} from "~/bindings/src/buff_desc_type";
-import {BuffEffect} from "~/bindings/src/buff_effect_type";
-import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
-import {Rarity} from "~/bindings/src/rarity_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {sourceRow} from "~/lib/data-translation";
 import {BuffLink, SkillLinkById} from "~/lib/game-links";
 import {equipmentSlotLabel, equipmentSlotName} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef, resolveAccessor} from "~/lib/table-utils/base";
 import {
     buffsColumn,

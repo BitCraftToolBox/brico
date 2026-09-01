@@ -1,7 +1,7 @@
-import {SkillDesc} from "~/bindings/src/skill_desc_type";
+import {SkillDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {SkillDefs} from "~/lib/table-defs/skills-table";
 
 export default function Skills() {

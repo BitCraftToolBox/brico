@@ -1,7 +1,7 @@
-import {AlgebraicType} from "@clockworklabs/spacetimedb-sdk";
 import {csvParse} from "d3-dsv";
 import {Accessor, createEffect, createRoot, createSignal} from "solid-js";
 import {isServer} from "solid-js/web";
+import {AlgebraicType} from "spacetimedb";
 import {ASSET_CDN_BASE} from "~/lib/bitcraft-utils";
 
 /**
@@ -187,14 +187,14 @@ export type TranslatableField = {
  * never decides on its own that a field is translatable.
  */
 export function translatableFieldsOf(type: AlgebraicType): TranslatableField[] {
-    const elements: any[] = (type as any).product?.elements ?? [];
+    const elements: any[] = (type as any).value?.elements ?? [];
     const fields: TranslatableField[] = [];
     for (const element of elements) {
         if (!TRANSLATABLE_FIELDS.has(element.name)) continue;
         const algebraicType = element.algebraicType;
-        if (algebraicType?.type === "String") {
+        if (algebraicType?.tag === "String") {
             fields.push({name: element.name, isArray: false});
-        } else if (algebraicType?.type === "ArrayType" && algebraicType.array?.type === "String") {
+        } else if (algebraicType?.tag === "Array" && algebraicType.value?.tag === "String") {
             fields.push({name: element.name, isArray: true});
         }
     }

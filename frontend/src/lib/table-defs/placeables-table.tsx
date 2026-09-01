@@ -1,12 +1,12 @@
+import {PlaceableDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Column} from "@tanstack/solid-table";
 import {For} from "solid-js";
-import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {compareText} from "~/lib/i18n";
 import {gameText} from "~/lib/labels";
 import {groupsByPlaceable} from "~/lib/placeables";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {
     boolColumn,

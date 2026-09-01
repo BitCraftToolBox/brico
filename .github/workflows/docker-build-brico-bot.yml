@@ -1,9 +1,51 @@
 name: Build brico-bot docker image
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/brico-bot/**"
+      - "common/bindings/**"
+      - "common/crafts/**"
+      - "common/bitcraft-bindings/**"
+      - "package.json"
+      - "package-lock.json"
 
 jobs:
   build-brico-bot:
     runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: bitcrafttoolbox/brico-bot
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     steps:
-      - run:
+      - uses: actions/checkout@v6
+        with:
+          # common/bitcraft-bindings/upstream is a submodule the image build actually needs
+          # (@brico/bitcraft-bindings exports its raw .ts); frontend/public/bsatn comes along too
+          # but is small and unused by this build.
+          submodules: true
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: BitCraftToolBox
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push image
+        id: push
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          file: backend/brico-bot/Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          github-token: "${{ secrets.GITHUB_TOKEN }}"

@@ -2,9 +2,9 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemListSourceIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {absoluteUrl, ogImageForPage} from "~/lib/og-meta";
 import {getItemListSource, ItemListSource} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {detailHref} from "~/lib/table-utils/column-builders";
 import {itemListTab} from "~/lib/table-utils/detail-tab-builders";
 

@@ -1,7 +1,7 @@
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
+import {ProspectingDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {ProspectingDefs} from "~/lib/table-defs/prospecting-table";
 
 export default function Prospecting() {
