@@ -1,16 +1,18 @@
+import {
+    CompletionCondition,
+    ItemStack,
+    ItemStackCompletionCondition,
+    ItemType,
+    LevelRequirement,
+    QuestChainDesc,
+    QuestRequirement,
+    QuestReward
+} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
-import {CompletionCondition} from "~/bindings/src/completion_condition_type";
-import {ItemStackCompletionCondition} from "~/bindings/src/item_stack_completion_condition_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {LevelRequirement} from "~/bindings/src/level_requirement_type";
-import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
-import {QuestRequirement} from "~/bindings/src/quest_requirement_type";
-import {QuestReward} from "~/bindings/src/quest_reward_type";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {AchievementLink, CollectibleLinkById, ItemStackLink, KnowledgeLinkById, LinkedList, QuestChainLinkById, SkillLinkById,} from "~/lib/game-links";
 import {gameText, Label} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {boolColumn, boolFilter, headerColumn, rangeFilter, rowActions} from "~/lib/table-utils/column-builders";
 import {fixFloat} from "~/lib/utils";

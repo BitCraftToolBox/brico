@@ -71,7 +71,7 @@ export function TableViewOptions<TData>(props: TableViewOptionsProps<TData>) {
             <DropdownMenuContent>
                 <DropdownMenuLabel class={"text-center"}><Trans>Toggle columns</Trans></DropdownMenuLabel>
                 <DropdownMenuSeparator/>
-                <div class={"flex gap-1"}>
+                <div class="flex justify-between">
                     <Button variant="ghost" class={"text-xs"} onclick={() => toggleAllVisible(true)}>
                         <Trans>Show All</Trans>
                     </Button>

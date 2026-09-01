@@ -1,11 +1,10 @@
+import {ItemDesc, ItemListDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {JSX} from "solid-js";
-import {ItemDesc} from "~/bindings/src/item_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {EnemyIcon, ItemIcon} from "~/components/shared/GameIcon";
 import {ItemListDisplay} from "~/components/shared/ItemStacks";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {getItemListSource} from "~/lib/relations";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {type DetailRoute, headerColumn, rarityColumn, rarityFilter, rowActions, tagColumn, tagFilter, tierColumn, tierFilter} from "~/lib/table-utils/column-builders";
 

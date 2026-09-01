@@ -1,5 +1,5 @@
+import {ClaimTechDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {descriptionColumn, headerColumn, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {includedIn} from "~/lib/utils";

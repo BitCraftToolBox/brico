@@ -4,10 +4,10 @@ import {createMemo} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {TravelerTradePanel} from "~/components/shared/RecipeDisplay";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {AchievementLink, LinkedList, SkillLinkById} from "~/lib/game-links";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {getTravelerNpcName, getTravelerTradeName} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 const MAX_INT32 = 2147483647;
 

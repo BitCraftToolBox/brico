@@ -1,5 +1,3 @@
-// noinspection ES6PreferShortImport
-
 /**
  * analyze-icon-usage.mjs
  *
@@ -18,26 +16,18 @@
  *       (or: npx tsx scripts/analyze-icon-usage.mjs)
  */
 
-import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
+import {AbilityCustomDesc, BuffDesc, CombatActionDesc, EmpireIconDesc, NpcDesc, ProspectingDesc, SkillDesc} from "@brico/bitcraft-bindings/types";
 import {readdirSync, readFileSync} from "node:fs";
 import {dirname, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
-
-// Binding type modules — they export namespaces with getTypeScriptAlgebraicType()
-import {AbilityCustomDesc} from "../../src/bindings/src/ability_custom_desc_type.ts";
-import {BuffDesc} from "../../src/bindings/src/buff_desc_type.ts";
-import {CombatActionDesc} from "../../src/bindings/src/combat_action_desc_type.ts";
-import {EmpireIconDesc} from "../../src/bindings/src/empire_icon_desc_type.ts";
-import {NpcDesc} from "../../src/bindings/src/npc_desc_type.ts";
-import {ProspectingDesc} from "../../src/bindings/src/prospecting_desc_type.ts";
-import {SkillDesc} from "../../src/bindings/src/skill_desc_type.ts";
+import {AlgebraicType, BinaryReader} from "spacetimedb";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ROOT = __dir.endsWith("icons") ? resolve(__dir, "../..") : __dir;
 
 /**
  * Map from table name (as used in font_icons.json / BSATN filenames)
- * to the binding namespace that provides getTypeScriptAlgebraicType().
+ * to the binding value that provides `.algebraicType`.
  */
 const TABLE_BINDINGS = {
     ability_custom_desc: AbilityCustomDesc,
@@ -114,13 +104,12 @@ export function readBsatnIconField(rootDir, tableName, fieldName) {
         return [];
     }
 
-    const itemType = binding.getTypeScriptAlgebraicType();
-    const arrayType = AlgebraicType.createArrayType(itemType);
+    const deserialize = AlgebraicType.makeDeserializer(AlgebraicType.Array(binding.algebraicType));
     const reader = new BinaryReader(new Uint8Array(data.buffer, data.byteOffset, data.byteLength));
 
     let rows;
     try {
-        rows = arrayType.deserialize(reader);
+        rows = deserialize(reader);
     } catch (e) {
         console.warn(`  ⚠ Failed to deserialize ${tableName}: ${e.message}`);
         return [];

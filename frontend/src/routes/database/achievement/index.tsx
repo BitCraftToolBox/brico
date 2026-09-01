@@ -1,7 +1,7 @@
-import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
+import {AchievementDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {AchievementDefs} from "~/lib/table-defs/achievement-table";
 
 export default function Achievements() {

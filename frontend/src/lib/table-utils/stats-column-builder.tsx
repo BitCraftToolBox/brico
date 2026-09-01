@@ -5,10 +5,10 @@
  * Includes multi-stat filtering support.
  */
 
+import {CharacterStatType, CsvStatEntry} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {CellContext, Column, ColumnDef, FilterFn, Row} from "@tanstack/solid-table";
 import {For, JSX} from "solid-js";
-import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
 import {FilterSetupProps} from "~/components/data-table/data-table";
 import {StatsBasedOption, StatsFilterValue, StatsOptionEntry} from "~/components/data-table/table-faceted-filter";
 import {statLabel} from "~/lib/game-strings";
@@ -17,7 +17,6 @@ import {gameText, Label} from "~/lib/labels";
 
 import {AccessorFunction, AccessorProp, resolveAccessor} from "~/lib/table-utils/base";
 import {fixFloat} from "~/lib/utils";
-import CharacterStatType from "../../bindings/src/character_stat_type_type";
 
 // ─── Formatting helpers ─────────────────────────────────────────
 

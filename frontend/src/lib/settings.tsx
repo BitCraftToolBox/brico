@@ -1,3 +1,4 @@
+import {type FilterNode, openWorkFilter, parseFilter} from "@brico/crafts/filter";
 import {ColorModeStorageManager, ConfigColorMode} from "@kobalte/core";
 import {ColumnFiltersState, PaginationState, SortingState} from "@tanstack/solid-table";
 import {Accessor, createContext, createEffect, createMemo, createSignal, JSX, onCleanup, onMount, Setter, useContext} from "solid-js";
@@ -23,6 +24,34 @@ export type ViewMode = "list" | "grid";
 
 export type NaturalSortOrder = "pk" | "db";
 
+/**
+ * A named craft filter the user saved on the craft browser.
+ *
+ * This is the localStorage-side shape; `lib/crafts/filter-sync.tsx` reconciles it against
+ * `brico-app`'s `saved_craft_filter` table for a logged-in account. `id` is stable (rather than
+ * keying by name) and `filter` is plain JSON so both round-trip through that sync unchanged.
+ */
+export type SavedCraftFilter = {
+    id: string;
+    name: string;
+    filter: FilterNode;
+};
+
+/**
+ * Which craft transitions a saved filter's watch should surface — see
+ * `~/lib/crafts/watches.ts`'s `createCraftWatchRunner`. A filter's watch is "active" when at least
+ * one of these is true; all-false is equivalent to no watch at all and is never persisted (see
+ * `craftFilterWatches` below).
+ *
+ * Client-only for now, same caveat as `SavedCraftFilter`: this becomes the `watch` table's trigger
+ * flags once `brico-app` exists.
+ */
+export type CraftWatchTriggers = {
+    added: boolean;
+    finished: boolean;
+    removed: boolean;
+};
+
 /** Session-only (non-persisted) state for a single data table. */
 export type TableSessionState = {
     columnFilters: Accessor<ColumnFiltersState>;
@@ -33,6 +62,41 @@ export type TableSessionState = {
     setPagination: Setter<PaginationState>;
     globalFilter: Accessor<string>;
     setGlobalFilter: Setter<string>;
+};
+
+export type CraftBrowserState = {
+    /** Whether the whole "Filters" card is expanded — collapsing it hides everything below its header (quick filters, the advanced builder, save/import), not just the advanced builder. */
+    panelOpen: Accessor<boolean>;
+    setPanelOpen: Setter<boolean>;
+    /** The "Advanced Filters" sub-panel's own collapse state, independent of `panelOpen`. */
+    advancedFiltersOpen: Accessor<boolean>;
+    setAdvancedFiltersOpen: Setter<boolean>;
+    filter: Accessor<FilterNode>;
+    setFilter: Setter<FilterNode>;
+    /** The craft table's sort — persisted here rather than in the ephemeral `TableSessionState` this page would otherwise get from `getTableSession`. */
+    sorting: Accessor<SortingState>;
+    setSorting: Setter<SortingState>;
+    /** Same reasoning as `sorting`. `pageIndex` still resets on load — only `pageSize` is persisted, via the same signal `getTableSession`'s ephemeral pagination is composed from. */
+    pagination: Accessor<PaginationState>;
+    setPagination: Setter<PaginationState>;
+}
+
+/**
+ * Which direction a bounty/payout rate displays in, across the craft browser, a craft's detail
+ * page, and the bounty rule builder — a single shared setting rather than a per-page toggle, so
+ * flipping it anywhere (each page exposes its own inline control) stays in sync everywhere.
+ */
+export type PayoutDisplayMode = "currencyPerEffort" | "effortPerCurrency";
+
+/**
+ * A payer's own local grouping of BitCraft player ids under one arbitrary display name — purely a
+ * client-side UI convenience for aggregating payees on `/account/payees` who haven't linked (or
+ * don't share) a brico account, so a payer can still see a combined total for them. Never sent to
+ * the backend: actual payments still target individual player ids (see that page's doc comment).
+ */
+export type LocalPayeeGrouping = {
+    name: string;
+    playerIds: string[];
 };
 
 export type AppSettings = {
@@ -108,6 +172,12 @@ export type AppSettings = {
     completedQuests: () => Set<number>;
     setCompletedQuests: (ids: number[]) => void;
 
+    devMenusEnabled: () => boolean;
+    setDevMenusEnabled: (v: boolean) => void;
+
+    connectionManagerOpen: () => boolean;
+    setConnectionManagerOpen: (v: boolean) => void;
+
     easterEggs: () => boolean;
     setEasterEggs: (v: boolean) => void;
     tf2Mode: () => boolean;
@@ -116,6 +186,26 @@ export type AppSettings = {
     setR9Mode: (v: boolean) => void;
     rishEmulation: () => boolean;
     setRishEmulation: (v: boolean) => void;
+
+    /**
+     * Saved craft-browser filters, with structurally invalid entries dropped — a filter written by
+     * a newer version of the field set, or a hand-edited localStorage value, must not be able to
+     * break the browser page.
+     */
+    savedCraftFilters: () => SavedCraftFilter[];
+    setSavedCraftFilters: (v: SavedCraftFilter[]) => void;
+
+    /**
+     * Watch trigger flags for saved craft filters, keyed by `SavedCraftFilter.id`. A filter absent
+     * from this map has no watch. Malformed entries (a hand-edited localStorage value, or one from
+     * a newer field set) are dropped rather than breaking the browser page.
+     */
+    craftFilterWatches: () => Record<string, CraftWatchTriggers>;
+    setCraftFilterWatches: (v: Record<string, CraftWatchTriggers>) => void;
+
+    /** Whether a server-delivered notification toasts on pages other than the crafts pages. */
+    notifyToastEverywhere: () => boolean;
+    setNotifyToastEverywhere: (v: boolean) => void;
 
     /**
      * Raw persisted list — `ProgressionUnlock` kinds explicitly hidden by the user on the skill
@@ -136,6 +226,19 @@ export type AppSettings = {
     /** Flatten item list outputs by recursively expanding inner item lists into a single averaged list. NOT PERSISTED. */
     flattenItemListOutputs: () => boolean;
     setFlattenItemListOutputs: (b: boolean) => void;
+
+    craftBrowserState: () => CraftBrowserState;
+
+    /** See `PayoutDisplayMode`. Shared by the craft browser, a craft's detail page, and the bounty rule builder. */
+    payoutDisplayMode: () => PayoutDisplayMode;
+    setPayoutDisplayMode: (v: PayoutDisplayMode) => void;
+
+    /**
+     * See `LocalPayeeGrouping`. Structurally invalid entries dropped, same reasoning as
+     * `savedCraftFilters` — a hand-edited localStorage value must not be able to break the page.
+     */
+    localPayeeGroupings: () => LocalPayeeGrouping[];
+    setLocalPayeeGroupings: (v: LocalPayeeGrouping[]) => void;
 
     /**
      * Returns (or lazily creates) the session-only table state signals for the given table name.
@@ -167,13 +270,24 @@ export const KEYS = {
     r9Mode: "brico:easter-eggs:r9-mode",
     rishEmulation: "brico:easter-eggs:rish-emulation",
     // unchartedNotifications: "brico:uncharted:notifications",
+    savedCraftFilters: "brico:crafts:saved-filters",
+    craftFilterWatches: "brico:crafts:filter-watches",
+    craftBrowserFilter: "brico:crafts:browser-filter",
+    craftBrowserPanelOpen: "brico:crafts:browser-panel-open",
+    craftBrowserAdvancedFiltersOpen: "brico:crafts:browser-advanced-filters-open",
+    craftBrowserSorting: "brico:crafts:browser-sorting",
+    craftBrowserPageSize: "brico:crafts:browser-page-size",
+    notifyToastEverywhere: "brico:notifications:toast-everywhere",
     progressionHiddenTypes: "brico:progression:hidden-types",
     progressionTargetLevels: "brico:progression:target-levels",
+    payoutDisplayMode: "brico:payouts:payout-display-mode",
+    localPayeeGroupings: "brico:payouts:local-groupings",
+    devMenusEnabled: "brico:experimental:dev-menus",
 } as const;
 
 /**
  * SSR-safe persisted signal. On the server, and at the first client render, it holds the
- * provided default so server-rendered and hydrated markup match exactly. After mount it reads
+ * provided default so server-rendered and hydrated markup match exactly. After mount, it reads
  * the saved value from localStorage (applying it with a brief post-hydration update) and writes
  * subsequent changes back. Must be called during a component's render — createSettings() is.
  */
@@ -293,6 +407,22 @@ function createSettings(): AppSettings {
     const [progressionHiddenTypes, setProgressionHiddenTypes] = persist(createSignal<ProgressionUnlock["kind"][]>([]), KEYS.progressionHiddenTypes);
     const [progressionTargetLevels, setProgressionTargetLevels] = persist(createSignal<Record<number, number>>({}), KEYS.progressionTargetLevels);
 
+    // craft browser
+    const [savedCraftFiltersRaw, setSavedCraftFiltersRaw] = persist(createSignal<SavedCraftFilter[]>([]), KEYS.savedCraftFilters);
+    const [craftFilterWatchesRaw, setCraftFilterWatchesRaw] = persist(createSignal<Record<string, CraftWatchTriggers>>({}), KEYS.craftFilterWatches);
+
+    // notifications inbox — whether a server-delivered notification toasts outside the crafts
+    // pages (which always toast their own local watch matches, regardless of this setting).
+    // Defaults off: the sidebar badge already surfaces an unread count everywhere, so an
+    // unrelated page popping up a toast is opt-in rather than a surprise.
+    const [notifyToastEverywhere, setNotifyToastEverywhere] = persist(createSignal<boolean>(false), KEYS.notifyToastEverywhere);
+
+    const [payoutDisplayMode, setPayoutDisplayMode] = persist(createSignal<PayoutDisplayMode>("currencyPerEffort"), KEYS.payoutDisplayMode);
+    const [localPayeeGroupingsRaw, setLocalPayeeGroupingsRaw] = persist(createSignal<LocalPayeeGrouping[]>([]), KEYS.localPayeeGroupings);
+
+    // experimental / dev settings
+    const [devMenusEnabled, setDevMenusEnabled] = persist(createSignal<boolean>(false), KEYS.devMenusEnabled);
+
     // derived signals
 
     // theme
@@ -337,15 +467,66 @@ function createSettings(): AppSettings {
         return isDataLocale(stored) ? stored : dataLocaleFor(resolvedUILocale());
     });
 
+    // craft browser
+    const savedCraftFilters = createMemo(() => savedCraftFiltersRaw().flatMap(saved => {
+        const filter = parseFilter(saved?.filter);
+        return filter && typeof saved.id === "string" && typeof saved.name === "string" ? [{...saved, filter}] : [];
+    }));
+    const craftFilterWatches = createMemo(() => {
+        const clean: Record<string, CraftWatchTriggers> = {};
+        for (const [id, triggers] of Object.entries(craftFilterWatchesRaw())) {
+            if (!triggers || typeof triggers !== "object") continue;
+            clean[id] = {added: triggers.added, finished: triggers.finished, removed: triggers.removed};
+        }
+        return clean;
+    });
+
     // game data
     const completedQuests = createMemo(() => new Set(completedQuestsRaw()));
     const setCompletedQuests = (ids: number[]) => setCompletedQuestsRaw(ids);
 
+    // payouts
+    const localPayeeGroupings = createMemo(() => localPayeeGroupingsRaw().flatMap(g => {
+        if (!g || typeof g.name !== "string" || !Array.isArray(g.playerIds)) return [];
+        return [{name: g.name, playerIds: g.playerIds.filter((id): id is string => typeof id === "string")}];
+    }));
 
     // non-persisted signals
 
     const [displayProbabilityAsAverage, setDisplayProbabilityAsAverage] = createSignal(false);
     const [flattenItemListOutputs, setFlattenItemListOutputs] = createSignal(false);
+
+    const [connectionManagerOpen, setConnectionManagerOpen] = createSignal(false);
+
+    // Malformed/stale persisted JSON (a hand-edited localStorage value, or one from a filter-field
+    // set that's since changed) falls back to the same default a first-ever visit gets, same
+    // reasoning as `savedCraftFilters` above.
+    const [craftBrowserFilterRaw, setCraftBrowserFilterRaw] = persist(createSignal<FilterNode>(openWorkFilter()), KEYS.craftBrowserFilter);
+    const craftBrowserFilter = createMemo(() => parseFilter(craftBrowserFilterRaw()) ?? openWorkFilter());
+    // Starts expanded — this now gates the entire "Filters" card, not just the advanced builder,
+    // so defaulting closed would hide even the quick-filter grid and saved-filter chips on load.
+    const [craftBrowserPanelOpen, setCraftBrowserPanelOpen] = persist(createSignal(true), KEYS.craftBrowserPanelOpen);
+    const [craftBrowserAdvancedFiltersOpen, setCraftBrowserAdvancedFiltersOpen] = persist(createSignal(false), KEYS.craftBrowserAdvancedFiltersOpen);
+    const [craftBrowserSorting, setCraftBrowserSorting] = persist(createSignal<SortingState>([]), KEYS.craftBrowserSorting);
+    // Only `pageSize` is persisted — `pageIndex` stays a plain, unpersisted signal, the same as any
+    // other table's session state, so a reload always lands back on the first page.
+    const [craftBrowserPageIndex, setCraftBrowserPageIndex] = createSignal(0);
+    const [craftBrowserPageSize, setCraftBrowserPageSize] = persist(createSignal<number>(tablePageSize()), KEYS.craftBrowserPageSize);
+    const craftBrowserPagination = createMemo<PaginationState>(() => ({pageIndex: craftBrowserPageIndex(), pageSize: craftBrowserPageSize()}));
+    const setCraftBrowserPagination = ((updater: PaginationState | ((old: PaginationState) => PaginationState)) => {
+        const next = typeof updater === "function" ? updater(craftBrowserPagination()) : updater;
+        setCraftBrowserPageIndex(next.pageIndex);
+        setCraftBrowserPageSize(next.pageSize);
+    }) as Setter<PaginationState>;
+    const craftBrowserState: Accessor<CraftBrowserState> = () => {
+        return {
+            filter: craftBrowserFilter, setFilter: setCraftBrowserFilterRaw,
+            panelOpen: craftBrowserPanelOpen, setPanelOpen: setCraftBrowserPanelOpen,
+            advancedFiltersOpen: craftBrowserAdvancedFiltersOpen, setAdvancedFiltersOpen: setCraftBrowserAdvancedFiltersOpen,
+            sorting: craftBrowserSorting, setSorting: setCraftBrowserSorting,
+            pagination: craftBrowserPagination, setPagination: setCraftBrowserPagination,
+        } satisfies CraftBrowserState;
+    };
 
     // Session-only table state — keyed by table name
     const tableSessions = new Map<string, TableSessionState>();
@@ -380,11 +561,22 @@ function createSettings(): AppSettings {
         {key: KEYS.dataLocale, get: dataLocale, set: setDataLocale},
         {key: KEYS.completedQuests, get: completedQuestsRaw, set: setCompletedQuestsRaw},
         {key: KEYS.easterEggs, get: easterEggs, set: setEasterEggs},
+        {key: KEYS.devMenusEnabled, get: devMenusEnabled, set: setDevMenusEnabled},
         {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
         {key: KEYS.r9Mode, get: r9Mode, set: setR9Mode},
         {key: KEYS.rishEmulation, get: rishEmulation, set: setRishEmulation},
+        {key: KEYS.savedCraftFilters, get: savedCraftFiltersRaw, set: setSavedCraftFiltersRaw},
+        {key: KEYS.craftFilterWatches, get: craftFilterWatchesRaw, set: setCraftFilterWatchesRaw},
+        {key: KEYS.craftBrowserFilter, get: craftBrowserFilterRaw, set: setCraftBrowserFilterRaw},
+        {key: KEYS.craftBrowserPanelOpen, get: craftBrowserPanelOpen, set: setCraftBrowserPanelOpen},
+        {key: KEYS.craftBrowserAdvancedFiltersOpen, get: craftBrowserAdvancedFiltersOpen, set: setCraftBrowserAdvancedFiltersOpen},
+        {key: KEYS.craftBrowserSorting, get: craftBrowserSorting, set: setCraftBrowserSorting},
+        {key: KEYS.craftBrowserPageSize, get: craftBrowserPageSize, set: setCraftBrowserPageSize},
+        {key: KEYS.notifyToastEverywhere, get: notifyToastEverywhere, set: setNotifyToastEverywhere},
         {key: KEYS.progressionHiddenTypes, get: progressionHiddenTypes, set: setProgressionHiddenTypes},
         {key: KEYS.progressionTargetLevels, get: progressionTargetLevels, set: setProgressionTargetLevels},
+        {key: KEYS.payoutDisplayMode, get: payoutDisplayMode, set: setPayoutDisplayMode},
+        {key: KEYS.localPayeeGroupings, get: localPayeeGroupingsRaw, set: setLocalPayeeGroupingsRaw},
     );
 
     return {
@@ -427,6 +619,10 @@ function createSettings(): AppSettings {
         setFlattenItemListOutputs,
         completedQuests,
         setCompletedQuests,
+        devMenusEnabled,
+        setDevMenusEnabled,
+        connectionManagerOpen,
+        setConnectionManagerOpen,
         easterEggs,
         setEasterEggs,
         tf2Mode,
@@ -435,11 +631,22 @@ function createSettings(): AppSettings {
         setR9Mode,
         rishEmulation,
         setRishEmulation,
+        savedCraftFilters,
+        setSavedCraftFilters: setSavedCraftFiltersRaw,
+        craftFilterWatches,
+        setCraftFilterWatches: setCraftFilterWatchesRaw,
+        notifyToastEverywhere,
+        setNotifyToastEverywhere,
         progressionHiddenTypes,
         setProgressionHiddenTypes,
         progressionTargetLevels,
         setProgressionTargetLevels,
+        craftBrowserState,
         getTableSession,
+        payoutDisplayMode,
+        setPayoutDisplayMode,
+        localPayeeGroupings,
+        setLocalPayeeGroupings: setLocalPayeeGroupingsRaw,
     };
 }
 

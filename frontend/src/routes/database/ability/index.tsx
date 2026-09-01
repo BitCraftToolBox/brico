@@ -1,7 +1,7 @@
-import {AbilityCustomDesc} from "~/bindings/src/ability_custom_desc_type";
+import {AbilityCustomDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {AbilityDefs} from "~/lib/table-defs/abilities-table";
 
 export default function Abilities() {

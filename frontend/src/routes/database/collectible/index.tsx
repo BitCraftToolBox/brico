@@ -1,7 +1,7 @@
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
+import {CollectibleDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {CollectibleDefs} from "~/lib/table-defs/collectible-table";
 
 export default function Collectibles() {

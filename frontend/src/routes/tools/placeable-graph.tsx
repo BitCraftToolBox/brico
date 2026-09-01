@@ -8,19 +8,19 @@
  * Graph state: SVG pan/zoom graph via BFS from selected placement.
  */
 
+import {PlaceablePlacementDesc} from "@brico/bitcraft-bindings/types";
 import {Trans} from "@lingui/solid/macro";
 import {useNavigate, useSearchParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import MainLayout from "~/components/MainLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {buildPlaceableGraph, PlaceableGraph} from "~/components/shared/PlaceableGraph";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {breadcrumbCurrent} from "~/lib/game-links";
 import {useLabel} from "~/lib/labels";
 import {getPlaceableName} from "~/lib/placeables";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function PlaceableGraphTool() {
     const [searchParams, setSearchParams] = useSearchParams();

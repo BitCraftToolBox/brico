@@ -4,28 +4,19 @@
  * with a single configurable component.
  */
 
+import {BuildingDesc, CargoDesc, CollectibleDesc, EnemyDesc, ItemDesc, ItemListDesc, PlaceableDesc, Rarity, ResourceDesc, SkillDesc} from "@brico/bitcraft-bindings/types";
 import {useColorMode} from "@kobalte/core";
 import {msg} from "@lingui/core/macro";
 import {A, useNavigate} from "@solidjs/router";
 import {Component, ComponentProps, createSignal, JSX, Show, splitProps} from "solid-js";
-import {BuildingDesc} from "~/bindings/src/building_desc_type";
-import {CargoDesc} from "~/bindings/src/cargo_desc_type";
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
-import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
-import {ItemDesc} from "~/bindings/src/item_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
-import {Rarity} from "~/bindings/src/rarity_type";
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
-import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {ASSET_CDN_BASE, getAssetURL, getBuildingTier, Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {rarityLabel} from "~/lib/game-strings";
 import {gameText, useLabel} from "~/lib/labels";
 import {getItemListSource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables} from "~/lib/spacetime";
 import {cn} from "~/lib/utils";
 
 // ─── Shape Definitions ──────────────────────────────────────────
@@ -140,7 +131,7 @@ export const TierIcon: Component<TierIconProps> = (props) => {
     const { midnightDark } = useSettings();
     const label = useLabel();
     // "Tier {0}" is one of the game's own strings, placeholder and all — see `interpolate` in labels.ts.
-    const tierTitle = () => label(gameText(msg`Tier ${props.tier}`));
+    const tierTitle = () => label(gameText(props.tier === -1 ? msg`Untiered` : msg`Tier ${props.tier}`));
     const t0Filter = () =>
         colorMode() === "dark"
         ? midnightDark()
@@ -149,7 +140,7 @@ export const TierIcon: Component<TierIconProps> = (props) => {
         : "brightness(0) saturate(100%) invert(87%) sepia(27%) saturate(207%) hue-rotate(11deg) brightness(93%) contrast(84%)"; // light
     const inRange = props.tier >= 1 && props.tier <= 10;
     if (!inRange) return (
-        <div class={cn("inline-block relative", props.class)} title={tierTitle()}>
+        <div class={cn("inline-block relative shrink-0", props.class)} title={tierTitle()}>
             <img
                 class={"w-4 h-4"}
                 src={`${ASSET_CDN_BASE}/UI/Badges/badge-tier-container.webp`}
@@ -159,18 +150,18 @@ export const TierIcon: Component<TierIconProps> = (props) => {
             <p class={"absolute text-xs select-none " +
                 "top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] " +
                 "text-foreground"
-            }>{props.tier}</p>
+            }>{props.tier === -1 ? "-" : props.tier}</p>
         </div>
     );
 
     return (
         <img
-            class={cn(`inline w-4 h-4 ${Tiers.getBackgroundColorClass(props.tier)}`, props.class)}
+            class={cn(`inline w-4 h-4 shrink-0 ${Tiers.getBackgroundColorClass(props.tier)}`, props.class)}
             src={`${ASSET_CDN_BASE}/UI/Badges/badge-tier-number-${props.tier}.webp`}
             alt={`T${props.tier}`}
             title={tierTitle()}
             style={{
-                mask: `url('${ASSET_CDN_BASE}/UI/Badges/badge-tier-container.webp') 0 0/contain`,
+                mask: `url('${ASSET_CDN_BASE}/UI/Badges/badge-tier-container.webp') center/contain no-repeat`,
             }}
         />
     )

@@ -1,12 +1,12 @@
+import type {CollectibleType} from "@brico/bitcraft-bindings/types";
+import {CollectibleDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {CellContext} from "@tanstack/solid-table";
 import {JSX} from "solid-js";
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
-import type CollectibleType from "~/bindings/src/collectible_type_type";
 import {CollectibleIcon, ItemIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {collectibleTypeLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {
     boolColumn,

@@ -1,10 +1,9 @@
+import {CsvStatEntry, ItemDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
-import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
-import {ItemDesc} from "~/bindings/src/item_desc_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
-import {BitCraftTables} from "~/lib/spacetime";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {
     boolColumn,

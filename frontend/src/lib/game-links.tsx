@@ -11,21 +11,19 @@
  *   - Stat lines (icon in label, linked name in value)
  */
 
+import {ItemStack, ItemType, SkillDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
 import {TbOutlineLock as IconLock} from "solid-icons/tb";
 import {children, For, JSX, Show} from "solid-js";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {getAssetURL} from "~/lib/bitcraft-utils";
 import {trackUILocale} from "~/lib/i18n";
 import {type Label, labelText} from "~/lib/labels";
 import {PAGE_ICONS, PAGE_TITLE_LABELS, SidebarPages} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {cn, readableSeconds} from "~/lib/utils";
 
 // ─── Constants ──────────────────────────────────────────────────
@@ -491,6 +489,7 @@ export function knowledgeStatIcon(): JSX.Element {
 function breadcrumbSection(href: string): {label: Label; href: string} | undefined {
     return href.startsWith("/tools") ? {label: msg`Tools`, href: "/tools"}
         : href.startsWith("/database") ? {label: msg`Database`, href: "/database"}
+        : href.startsWith("/account") ? {label: msg`Account`, href: "/account"}
         : undefined;
 }
 

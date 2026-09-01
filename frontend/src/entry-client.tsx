@@ -1,8 +1,8 @@
 // @refresh reload
 import {mount, StartClient} from "@solidjs/start/client";
 import {render} from "solid-js/web";
+import {preloadAllTablesClient} from "~/lib/bitcraft-data";
 import {isBotUserAgent} from "~/lib/bot-detect";
-import {preloadAllTablesClient} from "~/lib/spacetime";
 
 const el = document.getElementById("app")!;
 

@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "frontend"
+    "frontend",
+    "common/*",
+    "backend/brico-bot"
   ],
   "scripts": {
     "typecheck": "npm run typecheck --workspaces --if-present",

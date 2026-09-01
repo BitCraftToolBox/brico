@@ -1,19 +1,22 @@
+import {
+    AbilityCustomDesc,
+    AchievementDesc,
+    CraftingRecipeDesc,
+    CsvStatEntry,
+    EquipmentDesc,
+    ExtractionRecipeDesc,
+    ProspectingDesc,
+    QuestChainDesc,
+    TravelerTradeOrderDesc
+} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, JSX, Show} from "solid-js";
-import {AbilityCustomDesc} from "~/bindings/src/ability_custom_desc_type";
-import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
-import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
-import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
-import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
-import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
-import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
-import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {SkillBanner} from "~/components/shared/GameIcon";
 import {NumberField, NumberFieldDecrementTrigger, NumberFieldGroup, NumberFieldIncrementTrigger, NumberFieldInput} from "~/components/ui/number-field";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {AbilityLink, AchievementLink, EnemyLink, IconLink, ItemLink, ItemStackLink, LinkedList, pageIcon, QuestChainLink, ResourceLink} from "~/lib/game-links";
 import {skillCategoryLabel} from "~/lib/game-strings";
 import {gameText, Label, useLabel} from "~/lib/labels";
@@ -21,7 +24,6 @@ import {ogImageForCodepoint} from "~/lib/og-meta";
 import {ProgressionUnlock, progressionUnlocksForSkill} from "~/lib/progression";
 import {getTravelerNpcName, isHexCoin, prospectingSpawn} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {consolidateStats, formatStatLabel, formatStatValue} from "~/lib/table-utils/stats-column-builder";
 
 // ─── Unlock line renderers ───────────────────────────────────────

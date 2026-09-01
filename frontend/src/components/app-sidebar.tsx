@@ -5,12 +5,14 @@ import {FaSolidArrowDownAZ as IconSortAZ, FaSolidFolderTree as IconSortTree, FaS
 import {
     TbFillLayoutGrid as IconViewGrid,
     TbFillStar as IconStarFilled,
+    TbFillUser as IconUserFilled,
     TbOutlineBrandDiscord as IconDiscord,
     TbOutlineBrandGithub as IconGithub,
     TbOutlineChevronDown as IconChevronDown,
     TbOutlineList as IconViewList,
     TbOutlineSettings as IconSettings,
     TbOutlineStar as IconStarOutline,
+    TbOutlineUser as IconUserOutline,
 } from "solid-icons/tb";
 import {createMemo, For, JSX, Show} from "solid-js";
 import BricoFace from "~/components/ui/brico-face";
@@ -32,8 +34,10 @@ import {
 } from "~/components/ui/sidebar"
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {VersionChecker} from "~/components/version-checker";
+import {useAccount} from "~/lib/account/state";
 import {compareText} from "~/lib/i18n";
 import {useLabel} from "~/lib/labels";
+import {useNotifications} from "~/lib/notifications/state";
 import {useSettings} from "~/lib/settings";
 import {SIDEBAR_GROUPS, type SidebarItemDef} from "~/lib/sidebar-items";
 import {cn} from "~/lib/utils";
@@ -49,7 +53,7 @@ function IconToggleButton<T>(props: {
     title?: JSX.Element;
 }) {
     const isSelected = () => props.value === props.selectedValue;
-    const handleClick = (e) => {
+    const handleClick = () => {
         if (isSelected() && props.offValue !== undefined) {
             props.onChange(props.offValue);
         } else {
@@ -73,7 +77,17 @@ function IconToggleButton<T>(props: {
 export function AppSidebar() {
     const state = useSidebar();
     const label = useLabel();
+    const {isLoggedIn} = useAccount();
+    const {unreadCount} = useNotifications();
     const activeMenuItemClasses = "bg-sidebar-foreground text-sidebar-accent-foreground rounded-none";
+
+    // Capped "9+" the same way any other tiny numeric badge does — the exact count past that
+    // point isn't useful at this size, and an unbounded number can overflow the badge's circle.
+    const unreadBadge = createMemo(() => {
+        const count = unreadCount();
+        if (count <= 0) return null;
+        return count > 9 ? "9+" : String(count);
+    });
 
     const {
         showSidebarControls,
@@ -251,7 +265,7 @@ export function AppSidebar() {
                 <div class="flex flex-row justify-center w-full">
                     <div class="flex overflow-hidden
                                 transition-[max-width,opacity] duration-200 ease-linear
-                                max-w-20 opacity-100
+                                max-w-30 opacity-100
                                 group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
                         <a href={"https://github.com/BitCraftToolBox/brico"} target={"_blank"}>
                             <Tooltip>
@@ -269,15 +283,36 @@ export function AppSidebar() {
                                 <TooltipContent><Trans>cereal - Raw Data Browser</Trans></TooltipContent>
                             </Tooltip>
                         </a>
+                        <a href={"https://discord.gg/MJGD2hZDGv"} target={"_blank"}>
+                            <Tooltip placement="right">
+                                <TooltipTrigger as={Button} variant="ghost" size="sm" class="w-9 px-0">
+                                    <IconDiscord/>
+                                </TooltipTrigger>
+                                <TooltipContent><Trans>Brico's Toolbox Discord</Trans></TooltipContent>
+                            </Tooltip>
+                        </a>
                     </div>
-                    <a href={"https://discord.gg/MJGD2hZDGv"} target={"_blank"}>
-                        <Tooltip placement="right">
-                            <TooltipTrigger as={Button} variant="ghost" size="sm" class="w-9 px-0">
-                                <IconDiscord/>
-                            </TooltipTrigger>
-                            <TooltipContent><Trans>Brico's Toolbox Discord</Trans></TooltipContent>
-                        </Tooltip>
-                    </a>
+                    <Tooltip placement="right">
+                        <TooltipTrigger
+                            as={A}
+                            href={isLoggedIn() && unreadBadge() ? "/account/notifications" : "/account/profile"}
+                            class="relative inline-flex items-center justify-center size-9 rounded-md hover:bg-accent hover:text-accent-foreground"
+                        >
+                            <Show when={isLoggedIn()} fallback={<IconUserOutline/>}>
+                                <IconUserFilled/>
+                            </Show>
+                            <Show when={isLoggedIn() && unreadBadge()}>
+                                {count => (
+                                    <span class="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[0.625rem] font-medium leading-none text-primary-foreground">
+                                        {count()}
+                                    </span>
+                                )}
+                            </Show>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {isLoggedIn() ? <Trans>Account</Trans> : <Trans>Log in</Trans>}
+                        </TooltipContent>
+                    </Tooltip>
                 </div>
                 <VersionChecker/>
             </SidebarFooter>

@@ -8,39 +8,41 @@
  * Shared helpers: skillReqPair, toolReqPair, skillExpPair for common stat patterns.
  */
 
+import {
+    Biome,
+    ConstructionRecipeDesc,
+    CraftingRecipeDesc,
+    DeconstructionRecipeDesc,
+    ExperienceStackF32,
+    ExtractionRecipeDesc,
+    ItemConversionRecipeDesc,
+    ItemListDesc,
+    ItemStack,
+    ItemType,
+    LevelRequirement,
+    PavingTileDesc,
+    PillarShapingDesc,
+    PlaceableDesc,
+    PlaceableGrowthDesc,
+    PlaceableInteractionDesc,
+    PlaceablePlacementDesc,
+    PlaceableSelfBuffChance,
+    ResourceDesc,
+    SkillDesc,
+    ToolRequirement,
+    ToolTypeDesc,
+    TravelerTaskDesc,
+    TravelerTradeOrderDesc
+} from "@brico/bitcraft-bindings/types";
 import {msg, t} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {JSX, Show} from "solid-js";
-import {Biome} from "~/bindings/src/biome_type";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
-import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
-import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
-import {ExperienceStackF32} from "~/bindings/src/experience_stack_f_32_type";
-import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {LevelRequirement} from "~/bindings/src/level_requirement_type";
-import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
-import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
-import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
-import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
-import {PlaceableSelfBuffChance} from "~/bindings/src/placeable_self_buff_chance_type";
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
-import {SkillDesc} from "~/bindings/src/skill_desc_type";
-import {ToolRequirement} from "~/bindings/src/tool_requirement_type";
-import {ToolTypeDesc} from "~/bindings/src/tool_type_desc_type";
-import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
-import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BiomeLink, IconLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
 import {trackUILocale} from "~/lib/i18n";
 import {gameText, useLabel} from "~/lib/labels";
 import {getItemListSource, getTravelerNpcName} from "~/lib/relations";
-import {BitCraftTables} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Type ─────────────────────────────────────────────

@@ -1,7 +1,7 @@
-import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
+import {PavingTileDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {PavingDefs} from "~/lib/table-defs/paving-table";
 
 export default function Paving() {

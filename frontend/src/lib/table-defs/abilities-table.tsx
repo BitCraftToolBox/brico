@@ -1,5 +1,5 @@
+import {AbilityCustomDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {AbilityCustomDesc} from "~/bindings/src/ability_custom_desc_type";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {gameText} from "~/lib/labels";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";

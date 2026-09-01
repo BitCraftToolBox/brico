@@ -1,8 +1,8 @@
+import {BuffDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {BuffDesc} from "~/bindings/src/buff_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {descriptionColumn, headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {statsColumn, statsFilter} from "~/lib/table-utils/stats-column-builder";

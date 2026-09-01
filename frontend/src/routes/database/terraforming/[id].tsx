@@ -4,9 +4,9 @@ import {createMemo, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {toolRequirementText} from "~/lib/recipe-sources";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function TerraformingDetail() {
     const params = useParams();

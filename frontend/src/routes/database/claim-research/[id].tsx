@@ -1,11 +1,11 @@
+import {ClaimTechDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
-import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {ItemStackArray} from "~/components/shared/ItemStacks";
+import {ItemStackArray} from "~/components/shared/ItemStacks.tsx";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForPage} from "~/lib/og-meta";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {readableSeconds, undefinedIfZero} from "~/lib/utils";
 
 export default function ClaimResearchDetail() {

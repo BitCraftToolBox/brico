@@ -1,0 +1,19 @@
+{
+  "name": "brico-app",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "cd .. && spacetime build",
+    "publish:local": "node ../scripts/publish-local.mjs",
+    "publish:prod": "cd .. && spacetime publish --server local --yes",
+    "generate": "cd .. && spacetime generate --lang typescript --out-dir ../../common/bindings/brico-app --module-path ./spacetimedb"
+  },
+  "dependencies": {
+    "@brico/crafts": "file:../../../common/crafts",
+    "spacetimedb": "2.10.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.6.2"
+  }
+}

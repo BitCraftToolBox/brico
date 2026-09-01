@@ -1,7 +1,7 @@
-import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
+import {PlaceableDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {PlaceableDefs} from "~/lib/table-defs/placeables-table";
 
 export default function Placeables() {

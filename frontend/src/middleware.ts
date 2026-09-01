@@ -1,6 +1,6 @@
 import {createMiddleware} from "@solidjs/start/middleware";
+import {preloadAllTablesServer} from "~/lib/bitcraft-data";
 import {isBotUserAgent} from "~/lib/bot-detect";
-import {preloadAllTablesServer} from "~/lib/spacetime";
 
 /**
  * Item-derived detail families that no longer have a page of their own. Each of these descs is keyed

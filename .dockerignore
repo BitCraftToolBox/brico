@@ -1,0 +1,18 @@
+# Keeps the build context small for `docker build -f backend/brico-bot/Dockerfile .` — the
+# Dockerfile only COPYs package.json/package-lock.json, common/{bindings,crafts,bitcraft-bindings}
+# and backend/brico-bot, but everything else in the repo still gets sent to the Docker daemon as
+# build context unless excluded here.
+.git
+.github
+.idea
+.claude
+node_modules
+**/node_modules
+docs
+
+# Not needed by brico-bot's image (see its Dockerfile's header comment) and by far the largest
+# thing in the repo otherwise.
+frontend
+
+backend/brico-bot/.state
+backend/brico-bot/.env

@@ -11,36 +11,39 @@
  * Stack rendering uses ItemStacks.tsx components.
  */
 
+import {
+    ConstructionRecipeDesc,
+    CraftingRecipeDesc,
+    DeconstructionRecipeDesc,
+    EnemyDesc,
+    ExtractionRecipeDesc,
+    ExtractionSpawnedPlaceable,
+    FoodDesc,
+    ItemConversionRecipeDesc,
+    ItemListDesc,
+    ItemType,
+    PavingTileDesc,
+    PillarShapingDesc,
+    PlaceableGrowthDesc,
+    PlaceableGrowthOutcomeV2,
+    PlaceableInteractionDesc,
+    PlaceablePlacementDesc,
+    ProbabilisticItemStack,
+    ResourceDesc,
+    ResourceDestroyBuildingOutcome,
+    ResourceGrowthRecipeDesc,
+    TravelerTaskDesc,
+    TravelerTradeOrderDesc
+} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {TbOutlineArrowBigDownLines as IconDown, TbOutlineLock as IconLock} from "solid-icons/tb";
 import {Accessor, children, Component, createEffect, createMemo, createSignal, For, JSX, Show} from "solid-js";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
-import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
-import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
-import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
-import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {ExtractionSpawnedPlaceable} from "~/bindings/src/extraction_spawned_placeable_type";
-import {FoodDesc} from "~/bindings/src/food_desc_type";
-import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
-import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
-import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
-import {PlaceableGrowthOutcomeV2} from "~/bindings/src/placeable_growth_outcome_v_2_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
-import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
-import {ResourceDestroyBuildingOutcome} from "~/bindings/src/resource_destroy_building_outcome_type";
-import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
-import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
-import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {BuildingIcon, EnemyIcon, GameIcon, ItemIcon, ItemListSourceIcon, PlaceableIcon, ResourceIcon, SHAPE_SIZES} from "~/components/shared/GameIcon";
 import {expandStack, InputItemStackArray, ItemStackArray, ItemStackIcon, ProbBadge, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {useLabel} from "~/lib/labels";
 import {
     collapseStacks,
@@ -60,7 +63,6 @@ import {
     travelerTradeStatLines,
 } from "~/lib/recipe-sources";
 import {buildingForConstruction, buildingForDeconstruction, questDropsForEnemy, questDropsForExtraction, questDropsForItemList, resourceForExtraction} from "~/lib/relations";
-import {BitCraftTables} from "~/lib/spacetime";
 import {cn, fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Display ─────────────────────────────────────────
@@ -136,6 +138,39 @@ export const CraftingRecipePanel: Component<{ recipe: CraftingRecipeDesc }> = (p
         stats={craftingStatLines(props.recipe)}
     />
 );
+
+/**
+ * A craft *order*: the same visual as `CraftingRecipePanel`, with the order's count multiplied
+ * through every stack and no stat lines.
+ *
+ * Both differences follow from what a live craft order is. The stat lines (level, tool, effort per
+ * unit) describe the recipe, and a craft page shows the order's own effort and skill in its own
+ * header — repeating the recipe's would be two sets of numbers for the same craft. And a recipe
+ * page is asking "what does one of these cost?", while a craft page is asking "what does *this
+ * job* cost?", which is the per-unit cost times the count the owner queued.
+ */
+export const CraftOrderPanel: Component<{ recipe: CraftingRecipeDesc, count: number }> = (props) => {
+    // An order for 0 is not a thing the relay reports, but a missing count must not silently zero
+    // out every quantity on the page.
+    const scale = () => Math.max(props.count, 1);
+
+    // `stacks`/`each` below stay the recipe's own unscaled arrays — stable across a live craft's
+    // snapshot ticks, since the recipe itself never changes — and `scale` is threaded down as a
+    // multiplier accessor instead of being baked into freshly-mapped stack objects. Rebuilding a
+    // new array of scaled stacks every tick, as this used to do, gives `<For>` a brand-new item
+    // identity each time even though nothing about the order changed, which tears down and rebuilds
+    // every input/output (and closes any open tooltip in an `ItemListDisplay` output) on every tick.
+    return (
+        <RecipeVisual
+            inputs={<InputItemStackArray stacks={props.recipe.consumedItemStacks} multiplier={scale}/>}
+            outputs={
+                <For each={props.recipe.craftedItemStacks} fallback={<Trans>No Outputs</Trans>}>
+                    {(stack) => expandStack(stack, undefined, undefined, scale)}
+                </For>
+            }
+        />
+    );
+};
 
 // ─── Extraction Recipe Panel ────────────────────────────────────
 

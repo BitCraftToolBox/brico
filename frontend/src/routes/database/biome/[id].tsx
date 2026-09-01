@@ -1,13 +1,13 @@
+import {ProspectingDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {IconLink} from "~/lib/game-links";
 import {ogImageForPage} from "~/lib/og-meta";
 import {prospectingForBiome} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function BiomeDetail() {
     const params = useParams();

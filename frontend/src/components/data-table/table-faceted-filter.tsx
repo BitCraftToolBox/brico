@@ -665,8 +665,8 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
                                                 <Show when={(facets() as Map<any, number>)?.get(option.value)}>
                                                     {(count) => (
                                                         <span class="ml-auto flex size-4 items-center justify-center font-mono text-xs">
-                                                        {count()}
-                                                    </span>
+                                                            {count()}
+                                                        </span>
                                                     )}
                                                 </Show>
                                             </CommandItem>

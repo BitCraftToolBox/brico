@@ -1,7 +1,7 @@
-import {ToolDesc} from "~/bindings/src/tool_desc_type";
+import {ToolDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {ToolDefs} from "~/lib/table-defs/tools-table";
 
 export default function Tools() {

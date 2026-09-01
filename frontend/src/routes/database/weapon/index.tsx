@@ -1,7 +1,7 @@
-import {WeaponDesc} from "~/bindings/src/weapon_desc_type";
+import {WeaponDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {WeaponDefs} from "~/lib/table-defs/weapon-table";
 
 export default function Weapons() {
