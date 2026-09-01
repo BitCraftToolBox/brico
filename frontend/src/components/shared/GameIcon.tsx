@@ -5,6 +5,7 @@
  */
 
 import {useColorMode} from "@kobalte/core";
+import {msg} from "@lingui/core/macro";
 import {A, useNavigate} from "@solidjs/router";
 import {Component, ComponentProps, createSignal, JSX, Show, splitProps} from "solid-js";
 import {BuildingDesc} from "~/bindings/src/building_desc_type";
@@ -20,6 +21,8 @@ import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {ASSET_CDN_BASE, getAssetURL, getBuildingTier, Rarities, Tiers} from "~/lib/bitcraft-utils";
+import {rarityLabel} from "~/lib/game-strings";
+import {gameText, useLabel} from "~/lib/labels";
 import {getItemListSource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables} from "~/lib/spacetime";
@@ -135,6 +138,9 @@ type TierIconProps = ComponentProps<"img" | "div"> & {
 export const TierIcon: Component<TierIconProps> = (props) => {
     const { colorMode } = useColorMode();
     const { midnightDark } = useSettings();
+    const label = useLabel();
+    // "Tier {0}" is one of the game's own strings, placeholder and all — see `interpolate` in labels.ts.
+    const tierTitle = () => label(gameText(msg`Tier ${props.tier}`));
     const t0Filter = () =>
         colorMode() === "dark"
         ? midnightDark()
@@ -143,7 +149,7 @@ export const TierIcon: Component<TierIconProps> = (props) => {
         : "brightness(0) saturate(100%) invert(87%) sepia(27%) saturate(207%) hue-rotate(11deg) brightness(93%) contrast(84%)"; // light
     const inRange = props.tier >= 1 && props.tier <= 10;
     if (!inRange) return (
-        <div class={cn("inline-block relative", props.class)} title={`Tier ${props.tier}`}>
+        <div class={cn("inline-block relative", props.class)} title={tierTitle()}>
             <img
                 class={"w-4 h-4"}
                 src={`${ASSET_CDN_BASE}/UI/Badges/badge-tier-container.webp`}
@@ -162,7 +168,7 @@ export const TierIcon: Component<TierIconProps> = (props) => {
             class={cn(`inline w-4 h-4 ${Tiers.getBackgroundColorClass(props.tier)}`, props.class)}
             src={`${ASSET_CDN_BASE}/UI/Badges/badge-tier-number-${props.tier}.webp`}
             alt={`T${props.tier}`}
-            title={`Tier ${props.tier}`}
+            title={tierTitle()}
             style={{
                 mask: `url('${ASSET_CDN_BASE}/UI/Badges/badge-tier-container.webp') 0 0/contain`,
             }}
@@ -286,7 +292,7 @@ export const GameIcon: Component<GameIconProps> = (props) => {
                 <TierIcon tier={local.tier!} class={"ml-1"}/>
             </Show>
             <Show when={local.rarity}>
-                , {local.rarity!.tag}
+                , {rarityLabel(local.rarity!.tag)}
             </Show>
         </div>
     );

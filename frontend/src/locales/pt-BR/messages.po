@@ -1922,7 +1922,7 @@ msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Hands"
-msgstr ""
+msgstr "Mãos"
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2381,7 +2381,7 @@ msgstr "Conhecimento"
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Pillar Shaping"
-msgstr ""
+msgstr "Esculpir Pilar"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -2569,6 +2569,11 @@ msgstr "Pavimentação"
 #: src/routes/database/creature/[id].tsx
 msgid "Accuracy"
 msgstr "Precisão"
+
+#. placeholder {0}: props.tier
+#: src/components/shared/GameIcon.tsx
+msgid "Tier {0}"
+msgstr "Nível {0}"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"

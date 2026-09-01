@@ -2565,6 +2565,11 @@ msgstr "Paving"
 msgid "Accuracy"
 msgstr "Accuracy"
 
+#. placeholder {0}: props.tier
+#: src/components/shared/GameIcon.tsx
+msgid "Tier {0}"
+msgstr "Tier {0}"
+
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
 msgstr "Lead In Time"

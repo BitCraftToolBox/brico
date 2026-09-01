@@ -10,8 +10,9 @@
  *
  * Steps:
  *  1. Scan `src/**\/*.{ts,tsx}` for `gameText(msg\`…\`)` / `gameText(msg\`…\`, "…")`.
- *  2. Dedupe into (msgid, source) pairs — msgid is always the `msg` content (what Lingui extracts
- *     as the catalog key); source is the second argument if given, else the same text. No
+ *  2. Dedupe into (msgid, source) pairs — msgid is the `msg` content with any `${…}` rewritten to
+ *     the placeholder the macro emits (see `templateToMsgid`), i.e. what Lingui extracts as the
+ *     catalog key; source is the second argument if given, else the same text. No
  *     trimming/case-folding of either: both are matched or displayed verbatim elsewhere.
  *  3. Download the 9 non-English game-data CSVs (same source as `src/lib/data-translation.ts`),
  *     parsing each into a `source -> translation` map with the same rules the app uses (first
@@ -51,7 +52,7 @@ const LOCALE_TO_CSV = {
 
 // ── 1+2. Scan source for gameText(msg`...`[, "..."]) ───────────────────────
 
-/** Unescapes a JS string/template-literal body (no `${}` support — gameText labels never have one). */
+/** Unescapes a JS string/template-literal body. Interpolations are handled by `templateToMsgid`. */
 function unescapeJsLiteral(raw) {
     return raw.replace(/\\(u\{[0-9a-fA-F]+\}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{2}|\r\n|\n|.)/gs, (_, esc) => {
         switch (esc[0]) {
@@ -67,6 +68,74 @@ function unescapeJsLiteral(raw) {
             default: return esc; // \`, \\, \$, \", \' and anything else -> literal char
         }
     });
+}
+
+/**
+ * Index of the `}` closing the `{` at `open`, or -1 if unbalanced. Skips over quoted runs so an
+ * expression like `${x ? "}" : ""}` doesn't end the placeholder early. Backticks can't appear —
+ * `CALL_RE` below stops the template body at the first one.
+ */
+function findClosingBrace(raw, open) {
+    let depth = 0;
+    for (let i = open; i < raw.length; i++) {
+        const ch = raw[i];
+        if (ch === '"' || ch === "'") {
+            const close = raw.indexOf(ch, i + 1);
+            if (close === -1) return -1;
+            i = close;
+        } else if (ch === "{") depth++;
+        else if (ch === "}" && --depth === 0) return i;
+    }
+    return -1;
+}
+
+/**
+ * The placeholder name Lingui gives one `${…}`, mirroring `expressionToArgument` in
+ * `@lingui/babel-plugin-lingui-macro`: a plain identifier becomes `{thatName}`, anything else
+ * takes the next number. TS wrappers (`x as Foo`, `x satisfies Foo`, `x!`) are transparent to the
+ * macro, so unwrap them first. Every misparse here degrades to "not an identifier" → numbered,
+ * which is the right answer for everything except a bare identifier.
+ */
+function placeholderName(expression, nextIndex) {
+    const inner = expression
+        .trim()
+        .replace(/\s+(?:as|satisfies)\s+[\s\S]+$/, "")
+        .replace(/!+$/, "")
+        .trim();
+    return /^[A-Za-z_$][\w$]*$/.test(inner) ? inner : String(nextIndex());
+}
+
+/**
+ * Converts a `msg` template-literal body into the msgid Lingui extracts from it, so an
+ * interpolated label lines up with its catalog entry: `` gameText(msg`Tier ${props.tier}`) ``
+ * scans as `Tier ${props.tier}` but is extracted as `Tier {0}` — and the game CSVs happen to use
+ * the same `{0}` placeholders, which is what makes those labels translatable at all (see
+ * `interpolate` in `src/lib/labels.ts`).
+ *
+ * The macro numbers unnamed placeholders from a counter that is **per macro call** (a fresh
+ * `MacroJs` is constructed for every `CallExpression`/`TaggedTemplateExpression` it visits) and
+ * only advances it for non-identifiers, so `` msg`${a} ${props.b} ${c.d}` `` → `{a} {0} {1}`.
+ *
+ * Returns null if a placeholder never closes, which can only mean the call didn't parse the way
+ * `CALL_RE` assumed.
+ */
+function templateToMsgid(raw) {
+    let out = "";
+    let literalStart = 0;
+    let index = 0;
+    const nextIndex = () => index++;
+
+    for (let i = 0; i < raw.length; ) {
+        if (raw[i] === "\\") { i += 2; continue; }              // \` or \$ — not an interpolation
+        if (raw[i] !== "$" || raw[i + 1] !== "{") { i++; continue; }
+
+        const end = findClosingBrace(raw, i + 1);
+        if (end === -1) return null;
+        out += unescapeJsLiteral(raw.slice(literalStart, i));
+        out += `{${placeholderName(raw.slice(i + 2, end), nextIndex)}}`;
+        i = literalStart = end + 1;
+    }
+    return out + unescapeJsLiteral(raw.slice(literalStart));
 }
 
 function listSourceFiles() {
@@ -87,7 +156,11 @@ const pairs = new Map();
 for (const file of listSourceFiles()) {
     const text = readFileSync(file, "utf8");
     for (const match of text.matchAll(CALL_RE)) {
-        const msgid = unescapeJsLiteral(match[1]);
+        const msgid = templateToMsgid(match[1]);
+        if (msgid === null) {
+            console.warn(`[backfill] could not parse the placeholders in ${JSON.stringify(match[0])} (${file}) — skipping`);
+            continue;
+        }
         const sourceArg = match[2];
         const source = sourceArg ? unescapeJsLiteral(sourceArg.slice(1, -1)) : msgid;
 
@@ -102,6 +175,22 @@ for (const file of listSourceFiles()) {
 }
 
 console.log(`Found ${pairs.size} unique gameText() label(s) across the source tree.`);
+
+// Sanity-check the msgids against the extracted English catalog, which is the same key space the
+// per-locale lookups below use. A miss means either a stale catalog or that `templateToMsgid`
+// disagrees with what the macro really emitted — both of which would otherwise show up only as a
+// label that silently never gets backfilled.
+const enMsgids = new Set(
+    parsePo(readFileSync(path.join(LOCALES_DIR, "en/messages.po"), "utf8"))
+        .items.filter((item) => !item.obsolete)
+        .map((item) => item.msgid),
+);
+for (const msgid of pairs.keys()) {
+    if (!enMsgids.has(msgid)) {
+        console.warn(`[backfill] ${JSON.stringify(msgid)} is not in src/locales/en/messages.po — ` +
+            `stale catalog (run \`npm run i18n:extract\`) or a msgid this script inferred wrong; it will never match`);
+    }
+}
 
 // ── 3. Download + parse the game-data CSVs ─────────────────────────────────
 

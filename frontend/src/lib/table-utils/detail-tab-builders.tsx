@@ -649,7 +649,7 @@ function achievementRequirementTarget(req: AchievementRequirement) {
 export function achievementRequirementsTab(requirements: AchievementRequirement[]): RelationshipTab {
     return {
         id: "requirements",
-        label: gameText(msg`Requires`),
+        label: gameText(msg`Requires`, "Requires "),
         count: requirements.length,
         showWhenEmpty: false,
         content: () => (

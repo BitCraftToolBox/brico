@@ -2570,6 +2570,11 @@ msgstr "crwdns5412:0crwdne5412:0"
 msgid "Accuracy"
 msgstr "crwdns5414:0crwdne5414:0"
 
+#. placeholder {0}: props.tier
+#: src/components/shared/GameIcon.tsx
+msgid "Tier {0}"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
 msgstr "crwdns5416:0crwdne5416:0"
