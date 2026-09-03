@@ -21,6 +21,7 @@ import {ItemType} from "~/bindings/src/item_type_type";
 import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {getAssetURL} from "~/lib/bitcraft-utils";
 import {trackUILocale} from "~/lib/i18n";
 import {type Label, labelText} from "~/lib/labels";
 import {PAGE_ICONS, PAGE_TITLE_LABELS, SidebarPages} from "~/lib/sidebar-items";
@@ -381,12 +382,12 @@ export function CombatActionLink(props: { id: number; name?: string; codepoint?:
 // ─── Ability ─────────────────────────────────────────────────────
 
 /**
- * Renders a custom ability's name as a link, with the ability's own font icon if provided,
+ * Renders a custom ability's name as a link, with the ability's own sprite icon if provided,
  * falling back to the Abilities page icon.
  */
-export function AbilityLink(props: { id: number; name?: string; codepoint?: string; class?: string }) {
-    const icon = () => props.codepoint
-        ? <FontIcon codepoint={props.codepoint} class="size-4 shrink-0 align-text-bottom"/>
+export function AbilityLink(props: { id: number; name?: string; iconPath?: string; class?: string }) {
+    const icon = () => props.iconPath
+        ? <img src={getAssetURL(props.iconPath)} alt="" class="size-4 shrink-0 align-text-bottom object-contain"/>
         : pageIcon("Abilities");
     return (
         <IconLink href={`/database/ability/${props.id}`} icon={icon()} class={props.class}>
@@ -398,7 +399,7 @@ export function AbilityLink(props: { id: number; name?: string; codepoint?: stri
 /** Resolves an ability ID to an AbilityLink. */
 export function AbilityLinkById(props: { id: number; class?: string }) {
     const ability = () => BitCraftTables.AbilityCustomDesc.indexedBy("id")().get(props.id);
-    return <AbilityLink id={props.id} name={ability()?.abilityName} codepoint={ability()?.iconPath} class={props.class}/>;
+    return <AbilityLink id={props.id} name={ability()?.abilityName} iconPath={ability()?.iconPath} class={props.class}/>;
 }
 
 // ─── Item Stack (lightweight) ───────────────────────────────────
