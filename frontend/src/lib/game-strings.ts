@@ -136,6 +136,7 @@ export const EQUIPMENT_SLOT_NAMES: NameTable<EquipmentSlotType["tag"]> = {
     // because the slots in game are labeled poorly.
     HeadArtifact: "Automata Heart",
     FeetArtifact: "Trinket",
+    HandArtifact: "Jewelry",
 };
 
 /** Canonical English name for an equipment slot tag. */

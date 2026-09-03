@@ -284,10 +284,6 @@ msgstr "crwdns4442:0crwdne4442:0"
 msgid "Player Ability"
 msgstr "crwdns4444:0crwdne4444:0"
 
-#: src/routes/index.tsx
-msgid "Track World Event Timers"
-msgstr "crwdns4446:0crwdne4446:0"
-
 #: src/lib/recipe-sources.tsx
 msgid "Level {level} {toolName}"
 msgstr "crwdns4448:0{level}crwdnd4448:0{toolName}crwdne4448:0"
@@ -679,6 +675,12 @@ msgstr "crwdns4600:0crwdne4600:0"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interactions"
 msgstr "crwdns4602:0crwdne4602:0"
+
+#. placeholder {0}: outcome.radiusMin
+#. placeholder {1}: outcome.radiusMax
+#: src/components/shared/RecipeDisplay.tsx
+msgid "Chance to spawn within {0}–{1} tiles on resource depletion."
+msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
@@ -2452,6 +2454,7 @@ msgstr "crwdns5356:0crwdne5356:0"
 msgid "Unstartable"
 msgstr "crwdns5358:0crwdne5358:0"
 
+#: src/routes/database/building/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Extracted from"
 msgstr "crwdns5360:0crwdne5360:0"
@@ -2570,6 +2573,11 @@ msgstr "crwdns5412:0crwdne5412:0"
 msgid "Accuracy"
 msgstr "crwdns5414:0crwdne5414:0"
 
+#. placeholder {0}: props.tier
+#: src/components/shared/GameIcon.tsx
+msgid "Tier {0}"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
 msgstr "crwdns5416:0crwdne5416:0"
@@ -2663,10 +2671,6 @@ msgstr "crwdns5456:0crwdne5456:0"
 #: src/routes/settings.tsx
 msgid "Unlocks hidden easter-egg features scattered across the site."
 msgstr "crwdns5458:0crwdne5458:0"
-
-#: src/lib/sidebar-items.ts
-msgid "Event Timers"
-msgstr "crwdns5460:0crwdne5460:0"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Scaling"

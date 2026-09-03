@@ -131,7 +131,16 @@ export function ProbBadge(props: { probability: number, chances?: number, extraT
                 </Tooltip>
             </Show>
         }>
-            <div class={badgeClass}>{pct()}%</div>
+            <Show when={props.extraTooltip} fallback={<div class={badgeClass}>{pct()}%</div>}>
+                <Tooltip openOnTouchStart>
+                    <TooltipTrigger class={badgeClass}>
+                        {pct()}%
+                    </TooltipTrigger>
+                    <TooltipContent class="max-w-[90svw]">
+                        {props.extraTooltip}
+                    </TooltipContent>
+                </Tooltip>
+            </Show>
         </Show>
     );
 }

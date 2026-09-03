@@ -34,6 +34,7 @@ export default function ProgressionNavIcons() {
         12, // Fishing
         5, // Mining
         2, // Forestry
+        14, // Foraging
     ];
 
     return (

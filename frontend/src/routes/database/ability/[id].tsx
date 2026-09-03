@@ -1,10 +1,10 @@
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
+import {GameIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
-import {ogImageForCodepoint} from "~/lib/og-meta";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -41,9 +41,9 @@ export default function AbilityDetail() {
             breadcrumbTitle={msg`Ability`}
             loading={isLoading() && !ability()}
             name={ability()?.abilityName ?? "Ability not found"}
-            icon={<Show when={ability()?.iconPath}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
+            icon={<Show when={ability()}>{a => <GameIcon name={a().abilityName} iconAsset={a().iconPath} shape="tall" small={false} noInteract/>}</Show>}
             metaKind="ability"
-            metaImage={ogImageForCodepoint(ability()?.iconPath)}
+            metaImage={ogImageForAsset(ability()?.iconPath)}
             chatLink={`(ability=${ability()?.id})`}
             details={[
                 {

@@ -55,8 +55,17 @@ export function isGameLabel(label: Label | string): label is GameLabel {
  *
  * The source string defaults to the descriptor's message (i.e. the English text the `msg` macro
  * was written with), so the two never drift apart. Pass `source` explicitly only when the app's
- * wording differs from the game's. Keep the descriptor a plain literal with no placeholders —
- * game-catalog matching is exact string equality, so an interpolated message can never hit.
+ * wording differs from the game's.
+ *
+ * Interpolated descriptors work, because the game's own strings carry the same `{0}` placeholders
+ * and Lingui's `msg` macro leaves them in the msgid:
+ *
+ * ```ts
+ * label(gameText(msg`Tier ${props.tier}`))              // msgid "Tier {0}" → "Palier 3"
+ * ```
+ *
+ * Matching is still exact string equality on the *un*filled template, so the descriptor's msgid
+ * has to read exactly as the game's does — see `interpolate` for how the values are put back.
  */
 export function gameText(fallback: MessageDescriptor, source?: string): GameLabel {
     return {
@@ -73,25 +82,53 @@ export function gameText(fallback: MessageDescriptor, source?: string): GameLabe
  */
 export function labelSource(label: Label | string): string {
     if (typeof label === "string") return label;
-    if (isGameLabel(label)) return label.source;
-    return label.message ?? String(label.id);
+    if (isGameLabel(label)) return interpolate(label.source, label.fallback.values);
+    return interpolate(label.message ?? String(label.id), label.values);
 }
 
 /** Resolves a `Label` to display text. See `useLabel` — this is its non-hook form. */
 export type LabelResolver = (label: Label | string) => string;
 
+/**
+ * Fills the `{0}` / `{name}` placeholders of a template with a descriptor's `values`.
+ *
+ * Only needed on the game-catalog path: Lingui interpolates its own messages, but a string coming
+ * out of the game CSV has never seen the descriptor. The game's templates use ICU-style positional
+ * placeholders (`Tier {0}`, `Requires a Tier {0} {1} equipped to {2}`) and translators reorder them
+ * freely (fr: `Nécessite un(e) {1} de niveau {0} équipé(e) sur {2}`), so match by name first.
+ *
+ * The positional fallback covers the naming mismatch Lingui can introduce: it names a placeholder
+ * after the interpolated expression when that's a plain identifier (`` msg`Tier ${tier}` `` →
+ * `Tier {tier}`) and numbers it otherwise (`` msg`Tier ${props.tier}` `` → `Tier {0}`). Values are
+ * emitted in source order, so falling back to argument order lines the two up. Anything still
+ * unmatched is left as-is rather than printed as "undefined".
+ */
+function interpolate(template: string, values: Record<string, unknown> | undefined): string {
+    if (!values) return template;
+    const ordered = Object.values(values);
+    let next = 0;
+    return template.replace(/\{(\w+)\}/g, (placeholder, name: string) => {
+        const value = name in values ? values[name] : ordered[next++];
+        return value === undefined ? placeholder : String(value);
+    });
+}
+
 function resolveLabel(_: (d: MessageDescriptor) => string, label: Label | string): string {
     if (typeof label === "string") return label;
     if (isGameLabel(label)) {
+        const values = label.fallback.values;
         const uiText = _(label.fallback);
         // A UI translator has overridden this string — that wins over the game's own wording, so
         // Crowdin can correct or replace game vocabulary. An untouched catalog resolves to the
-        // English source unchanged, which is how we tell "overridden" apart from "not yet
-        // translated" without a separate flag.
-        if (uiText !== label.source) return uiText;
+        // descriptor's own English text unchanged, which is how we tell "overridden" apart from
+        // "not yet translated" without a separate flag. Compare against the *descriptor's* English
+        // (interpolated, as Lingui just did), not `source`: those differ whenever the app's wording
+        // differs from the game's, and every interpolated label differs from its own template.
+        const english = interpolate(label.fallback.message ?? label.source, values);
+        if (uiText !== english) return uiText;
         const translated = translateGameText(label.source);
         // A miss returns the source unchanged; fall back to the (English) UI text in that case.
-        return translated === label.source ? uiText : translated;
+        return translated === label.source ? uiText : interpolate(translated, values);
     }
     return _(label);
 }

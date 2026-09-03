@@ -23,14 +23,6 @@ export type ViewMode = "list" | "grid";
 
 export type NaturalSortOrder = "pk" | "db";
 
-export type UnchartedNotifications = {
-    notifyAtStart: boolean;
-    notifyAt5m: boolean;
-    notifyAt15m: boolean;
-    notifyAt60m: boolean;
-    soundEnabled: boolean;
-};
-
 /** Session-only (non-persisted) state for a single data table. */
 export type TableSessionState = {
     columnFilters: Accessor<ColumnFiltersState>;
@@ -125,9 +117,6 @@ export type AppSettings = {
     rishEmulation: () => boolean;
     setRishEmulation: (v: boolean) => void;
 
-    unchartedNotifications: () => UnchartedNotifications;
-    setUnchartedNotifications: (v: UnchartedNotifications) => void;
-
     /**
      * Raw persisted list — `ProgressionUnlock` kinds explicitly hidden by the user on the skill
      * Progression tab. Any kind NOT in this list is shown (new kinds are shown by default). Shared
@@ -177,7 +166,7 @@ export const KEYS = {
     tf2Mode: "brico:easter-eggs:tf2-mode",
     r9Mode: "brico:easter-eggs:r9-mode",
     rishEmulation: "brico:easter-eggs:rish-emulation",
-    unchartedNotifications: "brico:uncharted:notifications",
+    // unchartedNotifications: "brico:uncharted:notifications",
     progressionHiddenTypes: "brico:progression:hidden-types",
     progressionTargetLevels: "brico:progression:target-levels",
 } as const;
@@ -304,19 +293,6 @@ function createSettings(): AppSettings {
     const [progressionHiddenTypes, setProgressionHiddenTypes] = persist(createSignal<ProgressionUnlock["kind"][]>([]), KEYS.progressionHiddenTypes);
     const [progressionTargetLevels, setProgressionTargetLevels] = persist(createSignal<Record<number, number>>({}), KEYS.progressionTargetLevels);
 
-    // temp/event
-    const [unchartedNotifications, setUnchartedNotifications] = persist(
-        createSignal<UnchartedNotifications>({
-            notifyAtStart: false,
-            notifyAt5m: false,
-            notifyAt15m: false,
-            notifyAt60m: false,
-            soundEnabled: false,
-        }),
-        KEYS.unchartedNotifications
-    );
-
-
     // derived signals
 
     // theme
@@ -407,7 +383,6 @@ function createSettings(): AppSettings {
         {key: KEYS.tf2Mode, get: tf2Mode, set: setTf2Mode},
         {key: KEYS.r9Mode, get: r9Mode, set: setR9Mode},
         {key: KEYS.rishEmulation, get: rishEmulation, set: setRishEmulation},
-        {key: KEYS.unchartedNotifications, get: unchartedNotifications, set: setUnchartedNotifications},
         {key: KEYS.progressionHiddenTypes, get: progressionHiddenTypes, set: setProgressionHiddenTypes},
         {key: KEYS.progressionTargetLevels, get: progressionTargetLevels, set: setProgressionTargetLevels},
     );
@@ -460,8 +435,6 @@ function createSettings(): AppSettings {
         setR9Mode,
         rishEmulation,
         setRishEmulation,
-        unchartedNotifications,
-        setUnchartedNotifications,
         progressionHiddenTypes,
         setProgressionHiddenTypes,
         progressionTargetLevels,

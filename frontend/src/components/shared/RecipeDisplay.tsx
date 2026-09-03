@@ -33,6 +33,7 @@ import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_des
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
 import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {ResourceDestroyBuildingOutcome} from "~/bindings/src/resource_destroy_building_outcome_type";
 import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
 import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
@@ -204,6 +205,9 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                     )
                 }}
             </Show>
+            <Show when={r?.onDestroyBuildingOutcomes}>
+                {d => <DepletionBuildingIcons drops={d()} showLabel={props.showLabel}/>}
+            </Show>
         </div>
     );
 }
@@ -218,9 +222,32 @@ const ExtractedPlaceableIcons: Component<{ drops: ExtractionSpawnedPlaceable[], 
             return (
                 <div class="flex flex-col items-center gap-0.5">
                     <Show when={props.showLabel}>
-                        <ProbBadge probability={esp.chance} chances={props.chances} extraTooltip={radText}></ProbBadge>
+                        <ProbBadge probability={esp.chance} chances={props.chances} extraTooltip={radText}/>
                     </Show>
                     <PlaceableIcon placeable={placeable} small/>
+                </div>
+            )
+        }}
+        </For>
+    );
+}
+
+const DepletionBuildingIcons: Component<{ drops: ResourceDestroyBuildingOutcome[], showLabel: boolean }> = (props) => {
+    const buildingIndex = BitCraftTables.BuildingDesc.indexedBy("id");
+    return (
+        <For each={props.drops}>{outcome => {
+            const building = buildingIndex().get(outcome.buildingId);
+            if (!building) return null;
+            const radText = outcome.radiusMin > 0 || outcome.radiusMax > 0 ? <><br/><Trans>Chance to spawn within {outcome.radiusMin}–{outcome.radiusMax} tiles on resource depletion.</Trans></> : "";
+            return (
+                <div class="flex flex-col items-center gap-0.5">
+                    <Show when={props.showLabel}>
+                        <ProbBadge probability={outcome.probability / 100} chances={1} extraTooltip={radText}/>
+                    </Show>
+                    <BuildingIcon building={building} small/>
+                    <span class="text-[10px] text-muted-foreground italic">
+                        <Trans>deplete</Trans>
+                    </span>
                 </div>
             )
         }}
@@ -255,7 +282,7 @@ export const ExtractionRecipePanel: Component<{ recipe: ExtractionRecipeDesc, sh
                 <>
                     <For each={props.recipe.extractedItemStacks.filter((s: ProbabilisticItemStack) => !!s)}
                          fallback={
-                             <Show when={!resource()?.onDestroyYieldResourceId && !questDrops().length && !props.recipe.spawnedPlaceables}><Trans>No Outputs</Trans></Show>
+                             <Show when={!resource()?.onDestroyYieldResourceId && !questDrops().length && !props.recipe.spawnedPlaceables && !resource()?.onDestroyBuildingOutcomes?.length}><Trans>No Outputs</Trans></Show>
                          }
                     >
                         {(stack) => expandStack(stack, chances(), props.showItemListsIfEmpty)}
@@ -661,7 +688,7 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                     <Show when={props.interaction.outputItemStacks.length}>
                         <div class="flex flex-row flex-wrap justify-center gap-0.5">
                             <For each={props.interaction.outputItemStacks}>
-                               {(stack) =>  <div class={outcomes()?.length ? "mt-5" : ""}>{expandStack({itemStack: stack, probability: 1}, chances())}</div>}
+                               {(stack) =>  expandStack({itemStack: stack, probability: 1}, chances())}
                             </For>
                         </div>
                     </Show>

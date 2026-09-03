@@ -1,6 +1,6 @@
 import {msg} from "@lingui/core/macro";
 import {AbilityCustomDesc} from "~/bindings/src/ability_custom_desc_type";
-import {FontIcon} from "~/components/icons/font-icons";
+import {GameIcon} from "~/components/shared/GameIcon";
 import {gameText} from "~/lib/labels";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {buffsColumn, buffStatsColumn, headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
@@ -22,7 +22,7 @@ export const AbilityDefs: BitCraftToDataDef<AbilityCustomDesc> = {
             accessor: {accessorKey: "abilityName"},
             route: ability => ["ability", ability.id],
             prefixElement: ability => (
-                <FontIcon codepoint={ability.iconPath}/>
+                <GameIcon name={ability.abilityName} iconAsset={ability.iconPath} shape="tall" small noInteract/>
             ),
         }),
         buffsColumn<AbilityCustomDesc>({accessorKey: "buffs"}),

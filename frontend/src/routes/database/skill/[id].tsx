@@ -68,7 +68,7 @@ function prospectingUnlockLine(prospecting: ProspectingDesc): JSX.Element {
 }
 
 function abilityUnlockLine(ability: AbilityCustomDesc): JSX.Element {
-    return <Trans context="ability">Use <AbilityLink id={ability.id} name={ability.abilityName} codepoint={ability.iconPath}/></Trans>;
+    return <Trans context="ability">Use <AbilityLink id={ability.id} name={ability.abilityName} iconPath={ability.iconPath}/></Trans>;
 }
 
 function statUnlockLine(stat: CsvStatEntry): JSX.Element {

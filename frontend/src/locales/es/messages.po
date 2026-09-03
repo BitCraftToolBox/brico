@@ -284,10 +284,6 @@ msgstr ""
 msgid "Player Ability"
 msgstr ""
 
-#: src/routes/index.tsx
-msgid "Track World Event Timers"
-msgstr ""
-
 #: src/lib/recipe-sources.tsx
 msgid "Level {level} {toolName}"
 msgstr ""
@@ -678,6 +674,12 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interactions"
+msgstr ""
+
+#. placeholder {0}: outcome.radiusMin
+#. placeholder {1}: outcome.radiusMax
+#: src/components/shared/RecipeDisplay.tsx
+msgid "Chance to spawn within {0}–{1} tiles on resource depletion."
 msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
@@ -1922,7 +1924,7 @@ msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Hands"
-msgstr ""
+msgstr "Manos"
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2381,7 +2383,7 @@ msgstr "Misión"
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Pillar Shaping"
-msgstr ""
+msgstr "Tallado de pilares"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -2452,6 +2454,7 @@ msgstr ""
 msgid "Unstartable"
 msgstr ""
 
+#: src/routes/database/building/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Extracted from"
 msgstr ""
@@ -2570,6 +2573,11 @@ msgstr "Pavimentación"
 msgid "Accuracy"
 msgstr "Precisión"
 
+#. placeholder {0}: props.tier
+#: src/components/shared/GameIcon.tsx
+msgid "Tier {0}"
+msgstr "Nivel {0}"
+
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
 msgstr ""
@@ -2662,10 +2670,6 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Unlocks hidden easter-egg features scattered across the site."
-msgstr ""
-
-#: src/lib/sidebar-items.ts
-msgid "Event Timers"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx

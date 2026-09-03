@@ -1,12 +1,8 @@
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
-import {Trans} from "@lingui/solid/macro";
-import {A} from "@solidjs/router";
 import GlobalSearchInput from "~/components/GlobalSearchInput";
 import MainLayout from "~/components/MainLayout";
-import {GameIcon} from "~/components/shared/GameIcon";
 import BricoFace from "~/components/ui/brico-face";
-import {Button} from "~/components/ui/button";
 import {OG_LARGE} from "~/lib/og-meta";
 
 export default function Home() {
@@ -28,18 +24,6 @@ export default function Home() {
                     large
                     autofocus
                 />
-                <Button variant="ghost" as={A} href="/events" class="mt-8 h-20">
-                    <GameIcon
-                        name={_(msg`Track World Event Timers`)}
-                        iconAsset="GeneratedIcons/Other/GeneratedIcons/Other/Buildings/Crafting/Bank"
-                        shape="square"
-                        small
-                        noInteract
-                        rarity={{tag: "Mythic"}}
-                        tier={-1}
-                    />
-                    <span><Trans>Track World Event Timers</Trans></span>
-                </Button>
             </div>
         </MainLayout>
     );
