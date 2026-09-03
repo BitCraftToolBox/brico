@@ -358,6 +358,13 @@ export function resourcesYieldingResource(res: number): ResourceDesc[] {
     return all.filter(r => r.onDestroyYieldResourceId === res);
 }
 
+/** Resources whose onDestroyBuildingOutcomes can spawn this building */
+export function resourcesSpawningBuilding(buildingId: number): ResourceDesc[] {
+    const all = BitCraftTables.ResourceDesc.get();
+    if (!all) return [];
+    return all.filter(r => r.onDestroyBuildingOutcomes?.some(o => o.buildingId === buildingId));
+}
+
 // ─── Cross-Table Relationships ──────────────────────────────────
 
 export function claimResearchRequiring(itemId: number, itemType: string): ClaimTechDesc[] {

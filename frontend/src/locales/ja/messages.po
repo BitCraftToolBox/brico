@@ -284,10 +284,6 @@ msgstr "カテゴリ別にグループ化（ツリー表示）するか、アル
 msgid "Player Ability"
 msgstr "プレイヤーアビリティ"
 
-#: src/routes/index.tsx
-msgid "Track World Event Timers"
-msgstr "世界のイベントタイマーを追跡する"
-
 #: src/lib/recipe-sources.tsx
 msgid "Level {level} {toolName}"
 msgstr "レベル {level} {toolName}"
@@ -679,6 +675,12 @@ msgstr "建設"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interactions"
 msgstr "対話"
+
+#. placeholder {0}: outcome.radiusMin
+#. placeholder {1}: outcome.radiusMax
+#: src/components/shared/RecipeDisplay.tsx
+msgid "Chance to spawn within {0}–{1} tiles on resource depletion."
+msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
@@ -2452,6 +2454,7 @@ msgstr ""
 msgid "Unstartable"
 msgstr "開始不可"
 
+#: src/routes/database/building/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Extracted from"
 msgstr ""
@@ -2668,10 +2671,6 @@ msgstr "デスポーン時間"
 #: src/routes/settings.tsx
 msgid "Unlocks hidden easter-egg features scattered across the site."
 msgstr ""
-
-#: src/lib/sidebar-items.ts
-msgid "Event Timers"
-msgstr "イベントタイマー"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Scaling"

@@ -49,6 +49,7 @@ export default function ResourceDetail() {
 
     const hasDepletion = createMemo(() => (resource()?.onDestroyYield?.length ?? 0) > 0);
     const hasDepletionResource = createMemo(() => (resource()?.onDestroyYieldResourceId ?? 0) > 0);
+    const hasDepletionBuildings = createMemo(() => (resource()?.onDestroyBuildingOutcomes?.length ?? 0) > 0);
     const yieldedByResource = createMemo(() => resource() ? resourcesYieldingResource(resource()!.id) : [])
 
     const growthInto = createMemo(() => resource() ? resourceGrowthInto(resource()!.id) : undefined);
@@ -118,9 +119,9 @@ export default function ResourceDetail() {
                 {
                     id: "depletion",
                     label: msg`Depletion Drops`,
-                    count: extractionRecipe() ? 0 : (resource()?.onDestroyYield?.length ?? 0) + (resource()?.onDestroyYieldResourceId ? 1 : 0),
+                    count: extractionRecipe() ? 0 : (resource()?.onDestroyYield?.length ?? 0) + (resource()?.onDestroyYieldResourceId ? 1 : 0) + (resource()?.onDestroyBuildingOutcomes?.length ?? 0),
                     showWhenEmpty: false,
-                    content: () => <Show when={resource() && (hasDepletion() || hasDepletionResource())}>
+                    content: () => <Show when={resource() && (hasDepletion() || hasDepletionResource() || hasDepletionBuildings())}>
                         <ResourceDepletionPanel resource={resource()!}/>
                     </Show>,
                 },

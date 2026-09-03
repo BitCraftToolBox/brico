@@ -279,10 +279,6 @@ msgstr "Show items grouped by category (tree) or sorted alphabetically."
 msgid "Player Ability"
 msgstr "Player Ability"
 
-#: src/routes/index.tsx
-msgid "Track World Event Timers"
-msgstr "Track World Event Timers"
-
 #: src/lib/recipe-sources.tsx
 msgid "Level {level} {toolName}"
 msgstr "Level {level} {toolName}"
@@ -674,6 +670,12 @@ msgstr "Construction"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interactions"
 msgstr "Interactions"
+
+#. placeholder {0}: outcome.radiusMin
+#. placeholder {1}: outcome.radiusMax
+#: src/components/shared/RecipeDisplay.tsx
+msgid "Chance to spawn within {0}–{1} tiles on resource depletion."
+msgstr "Chance to spawn within {0}–{1} tiles on resource depletion."
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
@@ -2447,6 +2449,7 @@ msgstr "Toggle columns"
 msgid "Unstartable"
 msgstr "Unstartable"
 
+#: src/routes/database/building/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Extracted from"
 msgstr "Extracted from"
@@ -2663,10 +2666,6 @@ msgstr "Despawn Time"
 #: src/routes/settings.tsx
 msgid "Unlocks hidden easter-egg features scattered across the site."
 msgstr "Unlocks hidden easter-egg features scattered across the site."
-
-#: src/lib/sidebar-items.ts
-msgid "Event Timers"
-msgstr "Event Timers"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Scaling"
