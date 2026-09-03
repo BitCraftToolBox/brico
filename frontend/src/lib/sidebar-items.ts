@@ -98,7 +98,6 @@ const sidebarGroups = [
     {
         name: "Toolbox", nameLabel: msg`Toolbox`,
         items: [
-            {href: '/events', title: 'Event Timers', titleLabel: msg`Event Timers`, codepoint: "FFFE"},
             {href: '/tools/emblem', title: 'Emblem Editor', titleLabel: msg`Emblem Editor`, codepoint: "FFB7"},
             {href: '/tools/placeable-graph', title: 'Placeable Graph', titleLabel: msg`Placeable Graph`, codepoint: "0072"},
             {href: '/tools/quest-graph', title: 'Quest Graph', titleLabel: msg`Quest Graph`, codepoint: "0107"},

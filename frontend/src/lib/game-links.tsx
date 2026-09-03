@@ -486,10 +486,9 @@ export function knowledgeStatIcon(): JSX.Element {
 
 /**
  * Coarse top-level section a breadcrumb path lives under, and the landing page it links to.
- * `/events` lives in the Toolbox sidebar group despite its top-level URL, so it maps to Tools too.
  */
 function breadcrumbSection(href: string): {label: Label; href: string} | undefined {
-    return href.startsWith("/tools") || href === "/events" ? {label: msg`Tools`, href: "/tools"}
+    return href.startsWith("/tools") ? {label: msg`Tools`, href: "/tools"}
         : href.startsWith("/database") ? {label: msg`Database`, href: "/database"}
         : undefined;
 }
