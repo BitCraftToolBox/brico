@@ -1,6 +1,6 @@
 import {msg} from "@lingui/core/macro";
 import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
-import {FontIcon} from "~/components/icons/font-icons";
+import {GameIcon} from "~/components/shared/GameIcon";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {gameText} from "~/lib/labels";
 import {BitCraftTables} from "~/lib/spacetime";
@@ -13,7 +13,7 @@ export const CombatDefs: BitCraftToDataDef<CombatActionDesc> = {
         headerColumn({
             route: comAct => ["combat", comAct.id],
             prefixElement: comAct => (
-                <FontIcon codepoint={comAct.iconAssetName}/>
+                <GameIcon name={comAct.name} iconAsset={comAct.iconAssetName} shape="tall" small noInteract/>
             )
         }),
         boolColumn("Player Ability", {accessorKey: "learnedByPlayer"}, msg`Player Ability`),

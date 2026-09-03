@@ -3,10 +3,10 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {BuffEffect} from "~/bindings/src/buff_effect_type";
 import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
-import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
+import {GameIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
-import {ogImageForCodepoint} from "~/lib/og-meta";
+import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat, undefinedIfZero} from "~/lib/utils";
 
@@ -61,10 +61,10 @@ export default function CombatDetail() {
             breadcrumbTitle={msg`Combat Action`}
             loading={isLoading() && !action()}
             name={action()?.name ?? "Combat action not found"}
-            icon={<Show when={action()?.iconAssetName}>{c => <FontIcon codepoint={c()} class="size-16"/>}</Show>}
+            icon={<Show when={action()}>{a => <GameIcon name={a().name} iconAsset={a().iconAssetName} shape="tall" small={false} noInteract/>}</Show>}
             description={action()?.description}
             metaKind="combat action"
-            metaImage={ogImageForCodepoint(action()?.iconAssetName)}
+            metaImage={ogImageForAsset(action()?.iconAssetName)}
             details={[
                 {
                     properties: [

@@ -58,7 +58,7 @@ export const CombatActionTable: Component<{ data: CombatActionDesc[] }> = (props
         <RelTable<CombatActionDesc>
             data={props.data}
             columns={[
-                {header: "Name", cell: (row) => <CombatActionLink id={row.id} name={row.name} codepoint={row.iconAssetName}/>},
+                {header: "Name", cell: (row) => <CombatActionLink id={row.id} name={row.name} iconAssetName={row.iconAssetName}/>},
                 {header: "Range", cell: (row) => <span>{row.maxRange}</span>},
                 {header: "Cooldown", cell: (row) => <span>{fixFloat(row.cooldown)}</span>},
                 {header: "Strength", cell: (row) => <span>{fixFloat(row.strengthMultiplier)}x</span>},

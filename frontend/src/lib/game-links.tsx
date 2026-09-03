@@ -365,12 +365,12 @@ export function ItemListLink(props: { id: number; name?: string; class?: string;
 // ─── Combat Action ───────────────────────────────────────────────
 
 /**
- * Renders a combat action name as a link, with the action's own font icon if provided,
+ * Renders a combat action name as a link, with the action's own sprite icon if provided,
  * falling back to the Combat Actions page icon.
  */
-export function CombatActionLink(props: { id: number; name?: string; codepoint?: string; class?: string }) {
-    const icon = () => props.codepoint
-        ? <FontIcon codepoint={props.codepoint} class="size-4 shrink-0 align-text-bottom"/>
+export function CombatActionLink(props: { id: number; name?: string; iconAssetName?: string; class?: string }) {
+    const icon = () => props.iconAssetName
+        ? <img src={getAssetURL(props.iconAssetName)} alt="" class="size-4 shrink-0 align-text-bottom object-contain"/>
         : pageIcon("Combat Actions");
     return (
         <IconLink href={`/database/combat/${props.id}`} icon={icon()} class={props.class}>
