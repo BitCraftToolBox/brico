@@ -8,7 +8,7 @@ msgstr ""
 "Language: zu\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 15:54\n"
+"PO-Revision-Date: 2026-09-04 08:30\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -421,7 +421,7 @@ msgstr "crwdns4506:0crwdne4506:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used in Pillar Shaping"
-msgstr ""
+msgstr "crwdns5596:0crwdne5596:0"
 
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
@@ -588,7 +588,7 @@ msgstr "crwdns4570:0{0}crwdne4570:0"
 
 #: src/lib/recipe-sources.tsx
 msgid "This recipe is fixed at one progress per hit."
-msgstr ""
+msgstr "crwdns5598:0crwdne5598:0"
 
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -680,7 +680,7 @@ msgstr "crwdns4602:0crwdne4602:0"
 #. placeholder {1}: outcome.radiusMax
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance to spawn within {0}–{1} tiles on resource depletion."
-msgstr ""
+msgstr "crwdns5600:0{0}crwdnd5600:0{1}crwdne5600:0"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
@@ -1886,7 +1886,7 @@ msgstr "crwdns5124:0crwdne5124:0"
 #. placeholder {1}: fixFloat(effort() * perProgress)
 #: src/lib/recipe-sources.tsx
 msgid "{0} * {perProgress} = {1} XP"
-msgstr ""
+msgstr "crwdns5602:0{0}crwdnd5602:0{perProgress}crwdnd5602:0{1}crwdne5602:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
@@ -1924,7 +1924,7 @@ msgstr "crwdns5134:0crwdne5134:0"
 
 #: src/lib/recipe-sources.tsx
 msgid "Hands"
-msgstr ""
+msgstr "crwdns5604:0crwdne5604:0"
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2383,7 +2383,7 @@ msgstr "crwdns5326:0crwdne5326:0"
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Pillar Shaping"
-msgstr ""
+msgstr "crwdns5606:0crwdne5606:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -2576,7 +2576,7 @@ msgstr "crwdns5414:0crwdne5414:0"
 #. placeholder {0}: props.tier
 #: src/components/shared/GameIcon.tsx
 msgid "Tier {0}"
-msgstr ""
+msgstr "crwdns5608:0{0}crwdne5608:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
@@ -2729,7 +2729,7 @@ msgstr "crwdns5484:0crwdne5484:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used in Paving"
-msgstr ""
+msgstr "crwdns5610:0crwdne5610:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"
@@ -2781,3 +2781,4 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
+

@@ -3,7 +3,7 @@ import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {ItemStackLink, LinkedList} from "~/lib/game-links";
+import {ItemStackArray} from "~/components/shared/ItemStacks";
 import {ogImageForPage} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {readableSeconds, undefinedIfZero} from "~/lib/utils";
@@ -53,7 +53,7 @@ export default function ClaimResearchDetail() {
                 {
                     heading: msg`Cost`,
                     properties: [
-                        {label: msg`Item Cost`, value: tech()?.input.length ? () => <LinkedList>{tech()!.input.map(is => <ItemStackLink stack={is}/>)}</LinkedList> : "None"},
+                        {label: msg`Item Cost`, value: tech()?.input.length ? () => <ItemStackArray stacks={tech()!.input} class="justify-start py-2"/> : "None"},
                         {label: msg`Supply Cost`, value: tech()?.suppliesCost},
                         {label: msg`Research Time`, value: readableSeconds(undefinedIfZero(tech()?.researchTime))},
                     ]

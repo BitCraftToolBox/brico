@@ -134,11 +134,12 @@ export function readableSeconds(seconds: number | undefined, shorten: boolean = 
     return fmt.format(duration);
 }
 
-export function useCopy(content: string, delay: number = 1500): [() => void, Accessor<boolean>] {
+export function useCopy(content: string | Accessor<string>, delay: number = 1500): [() => void, Accessor<boolean>] {
     const [contentCopied, setContentCopied] = createSignal(false);
     const copyContent = () => {
-        if (content) {
-            navigator.clipboard.writeText(content).then(() => {
+        const value = typeof content === "function" ? content() : content;
+        if (value) {
+            navigator.clipboard.writeText(value).then(() => {
                 setContentCopied(true);
                 setTimeout(() => setContentCopied(false), delay);
             });
