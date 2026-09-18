@@ -149,6 +149,7 @@ msgstr "crwdns4382:0{0}crwdne4382:0"
 msgid "Profession"
 msgstr "crwdns5544:0crwdne5544:0"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
 msgstr "crwdns4384:0crwdne4384:0"
@@ -2781,4 +2782,3 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
-

@@ -149,6 +149,7 @@ msgstr "地形標高差 {0}"
 msgid "Profession"
 msgstr "職業"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
 msgstr "優先度"

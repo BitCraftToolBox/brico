@@ -144,6 +144,7 @@ msgstr "Terraform Elevation Difference {0}"
 msgid "Profession"
 msgstr "Profession"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
 msgstr "Priority"
