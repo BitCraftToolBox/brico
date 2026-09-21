@@ -32,6 +32,11 @@ export interface QuestGraphProps {
     focusChainId?: number;
     /** Called when a quest is selected (search suggestion committed or node clicked). Does NOT trigger zoom. */
     setChainId?: (id: number) => void;
+    /**
+     * Restrict the graph to this subset of quest chain IDs (e.g. a single chain's
+     * upstream/downstream tree via `getQuestSubtreeIds`). Omit to show every quest.
+     */
+    chainIds?: Set<number>;
 }
 
 /** Bounding box (in grid units) of an ownership-tree subtree */
@@ -897,11 +902,11 @@ export interface QuestGraphData {
     edges: QuestGraphEdge[];
 }
 
-export function buildQuestGraph(): QuestGraphData {
+export function buildQuestGraph(chainIds?: Set<number>): QuestGraphData {
     const allQuests = BitCraftTables.QuestChainDesc.get() ?? [];
 
-    // Filter: only real quests (not hints, not unstartable)
-    const realQuests = allQuests.filter(q => !q.isHint && !q.unstartable);
+    // Filter: only real quests (not hints, not unstartable), optionally restricted to a subset
+    const realQuests = allQuests.filter(q => !q.isHint && !q.unstartable && (!chainIds || chainIds.has(q.id)));
 
     // Build a set of valid quest IDs for edge filtering
     const validIds = new Set(realQuests.map(q => q.id));
@@ -968,7 +973,7 @@ export function QuestGraph(props: QuestGraphProps) {
     let zoomBehavior: d3Zoom.ZoomBehavior<SVGSVGElement, unknown> | null = null;
 
     // Build graph data
-    const graphData = createMemo(() => buildQuestGraph());
+    const graphData = createMemo(() => buildQuestGraph(props.chainIds));
 
     const layoutResult = createMemo(() => computeLayout(graphData().nodes, graphData().edges));
     const nodePositions = createMemo(() => layoutResult().positions);

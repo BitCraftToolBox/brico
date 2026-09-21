@@ -136,6 +136,7 @@ msgid "Resource Depletion"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/tools/placeable-graph.tsx
 msgid "Placeable Graph"
 msgstr ""
@@ -149,6 +150,7 @@ msgstr ""
 msgid "Profession"
 msgstr "Beruf"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
 msgstr ""
@@ -207,6 +209,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "List"
+msgstr ""
+
+#: src/components/shared/PlaceableGraph.tsx
+msgid "→ {outputQty}× {outputName}"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -642,6 +648,10 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used in"
+msgstr ""
+
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{itemsList} per action"
 msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
@@ -1331,6 +1341,10 @@ msgstr ""
 msgid "Database"
 msgstr ""
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "Place ({placeDuration})"
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
 msgstr ""
@@ -1621,10 +1635,6 @@ msgstr ""
 msgid "Research Time"
 msgstr ""
 
-#: src/routes/database/placeable/[id].tsx
-msgid "This placeable is part of a lifecycle chain."
-msgstr ""
-
 #: src/routes/settings.tsx
 msgid "{count} of {total} items visible"
 msgstr ""
@@ -1864,6 +1874,7 @@ msgid "Buff Stats"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
+#: src/routes/database/quest-chain/[id].tsx
 #: src/routes/tools/quest-graph.tsx
 msgid "Quest Graph"
 msgstr ""
@@ -1871,11 +1882,6 @@ msgstr ""
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Traveler"
-msgstr ""
-
-#: src/routes/database/item/[id].tsx
-#: src/routes/database/placeable/[id].tsx
-msgid "View full lifecycle in Placeable Graph →"
 msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
@@ -2157,6 +2163,10 @@ msgstr ""
 msgid "Equip <0/>"
 msgstr ""
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{maxHp} effort required, ignoring base tool power"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded from Quests"
 msgstr ""
@@ -2284,10 +2294,6 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Compendium Entry"
-msgstr ""
-
-#: src/routes/database/item/[id].tsx
-msgid "This item starts a placeable lifecycle chain."
 msgstr ""
 
 #: src/lib/table-defs/knowledge-table.tsx
@@ -2425,6 +2431,10 @@ msgstr ""
 msgid "Structure"
 msgstr ""
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{qty}× {name}"
+msgstr ""
+
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Reward"
 msgstr ""
@@ -2525,6 +2535,10 @@ msgstr "Symbol"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Stamina Use"
+msgstr ""
+
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{maxHp} effort required, using tool power"
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
