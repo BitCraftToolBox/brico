@@ -1,3 +1,4 @@
+import {t} from "@lingui/core/macro";
 import {FilterFn, Row, Table} from "@tanstack/solid-table";
 import {type ClassValue, clsx} from "clsx"
 import {Accessor, createSignal} from "solid-js";
@@ -114,7 +115,8 @@ function readableSecondsFallback(hours: number, minutes: number, secs: number): 
 
 export function readableSeconds(seconds: number | undefined, shorten: boolean = false): string | undefined {
     if (seconds === undefined) return undefined;
-    if (seconds === -1) return "-1";
+    trackUILocale();
+    if (seconds === -1) return t`Infinite`;
     seconds = Math.round(seconds);
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
@@ -122,7 +124,6 @@ export function readableSeconds(seconds: number | undefined, shorten: boolean = 
 
     if (!supportsDurationFormat) return readableSecondsFallback(hours, minutes, secs);
 
-    trackUILocale();
     const [fmt, fmtZero] = getDurationFormats(PSEUDOLOCALE_ENABLED ? activeDataLocale() : i18n.locale);
     if (hours === 0 && minutes === 0 && secs === 0) {
         return fmtZero.format({seconds: 0});

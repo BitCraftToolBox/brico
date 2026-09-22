@@ -6,7 +6,7 @@ import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {descriptionColumn, headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {statsColumn, statsFilter} from "~/lib/table-utils/stats-column-builder";
-import {compareOptions, includedIn} from "~/lib/utils";
+import {compareOptions, includedIn, readableSeconds} from "~/lib/utils";
 
 export const BuffDefs: BitCraftToDataDef<BuffDesc> = {
     columns: [
@@ -29,6 +29,12 @@ export const BuffDefs: BitCraftToDataDef<BuffDesc> = {
         },
         statsColumn<BuffDesc>(),
         {
+            id: "Duration",
+            meta: {label: msg`Duration`},
+            accessorKey: "duration",
+            cell: props => readableSeconds(props.getValue()),
+        },
+        {
             id: "Priority",
             meta: {label: msg`Priority`},
             accessorKey: "priority",
@@ -39,6 +45,7 @@ export const BuffDefs: BitCraftToDataDef<BuffDesc> = {
     facetedFilters: [
         uniqueValuesFilter("Buff Type", msg`Type`, compareOptions),
         statsFilter(),
+        rangeFilter("Duration", msg`Duration`),
         rangeFilter("Priority", msg`Priority`)
     ],
     searchColumns: ["Name", "Description"],

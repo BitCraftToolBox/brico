@@ -6,7 +6,7 @@ import {GameIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {fixFloat, readableSeconds} from "~/lib/utils";
+import {readableSeconds} from "~/lib/utils";
 
 export default function AbilityDetail() {
     const params = useParams();
@@ -49,7 +49,7 @@ export default function AbilityDetail() {
                 {
                     properties: [
                         {label: msg`Stamina Cost`, value: ability()?.staminaCost},
-                        {label: msg`Cooldown`, value: readableSeconds(fixFloat(ability()?.cooldown))},
+                        {label: msg`Cooldown`, value: () => readableSeconds(ability()?.cooldown)},
                     ],
                 },
             ]}

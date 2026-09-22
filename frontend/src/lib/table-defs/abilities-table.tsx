@@ -5,7 +5,7 @@ import {gameText} from "~/lib/labels";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {buffsColumn, buffStatsColumn, headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {statsFilter} from "~/lib/table-utils/stats-column-builder";
-import {compareOptions, fixFloat, readableSeconds} from "~/lib/utils";
+import {compareOptions, readableSeconds} from "~/lib/utils";
 
 /**
  * Deliberately narrow: `castTime`, `range`, `radius`, `damage`, `threatValue`, `globalCooldown` and
@@ -33,7 +33,7 @@ export const AbilityDefs: BitCraftToDataDef<AbilityCustomDesc> = {
         },
         {
             id: "Cooldown", meta: {label: gameText(msg`Cooldown`)}, accessorKey: "cooldown",
-            cell: p => <span>{readableSeconds(fixFloat(p.getValue() as number))}</span>,
+            cell: p => readableSeconds(p.getValue()),
             filterFn: "inNumberRange",
         },
         rowActions(undefined, "ability"),

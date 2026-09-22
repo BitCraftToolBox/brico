@@ -123,8 +123,8 @@ export default function CargoDetail() {
             metaImage={ogImageForAsset(cargo()?.iconAssetName)}
             details={[
                 {label: msg`Volume`, value: cargo()?.volume},
-                {label: msg`Pick Up Time`, value: readableSeconds(fixFloat(cargo()?.pickUpTime))},
-                {label: msg`Place Time`, value: readableSeconds(fixFloat(cargo()?.placeTime))},
+                {label: msg`Pick Up Time`, value: readableSeconds(cargo()?.pickUpTime)},
+                {label: msg`Place Time`, value: readableSeconds(cargo()?.placeTime)},
                 {label: msg`Movement Modifier`, value: cargo()?.movementModifier ? `${fixFloat(cargo()!.movementModifier)}x` : undefined},
                 {label: msg`Blocks Path`, value: cargo()?.blocksPath},
                 {label: msg`Not Pickupable`, value: cargo()?.notPickupable ? true : undefined},

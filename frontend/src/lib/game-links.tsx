@@ -26,7 +26,7 @@ import {trackUILocale} from "~/lib/i18n";
 import {type Label, labelText} from "~/lib/labels";
 import {PAGE_ICONS, PAGE_TITLE_LABELS, SidebarPages} from "~/lib/sidebar-items";
 import {BitCraftTables} from "~/lib/spacetime";
-import {cn, fixFloat, readableSeconds} from "~/lib/utils";
+import {cn, readableSeconds} from "~/lib/utils";
 
 // ─── Constants ──────────────────────────────────────────────────
 
@@ -143,7 +143,7 @@ export function BuffLink(props: { buffId: number; label?: string; class?: string
             icon={show() ? pageIcon("Buffs") : undefined}
             class={props.class}
         >
-            {props.label ?? `Buff #${props.buffId}`} {props.duration ? <span class={"text-muted-foreground"}>{readableSeconds(fixFloat(props.duration))}</span> : null}
+            {props.label ?? `Buff #${props.buffId}`} {props.duration ? <span class={"text-muted-foreground"}>{readableSeconds(props.duration)}</span> : null}
         </IconLink>
     );
 }
