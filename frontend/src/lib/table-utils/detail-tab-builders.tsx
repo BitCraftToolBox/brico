@@ -8,7 +8,7 @@
 import type {MessageDescriptor} from "@lingui/core";
 import {msg} from "@lingui/core/macro";
 import {Plural, Trans} from "@lingui/solid/macro";
-import {A} from "@solidjs/router";
+import {A, useNavigate} from "@solidjs/router";
 import {createSignal, Show} from "solid-js";
 import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
 import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
@@ -32,6 +32,7 @@ import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {RelationshipTab, RelTable} from "~/components/shared/DetailPageLayout";
 import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
+import {buildPlaceableGraph, PlaceableGraph} from "~/components/shared/PlaceableGraph";
 import {
     ConstructionRecipePanel,
     ConversionRecipePanel,
@@ -665,6 +666,24 @@ export function achievementRequirementsTab(requirements: AchievementRequirement[
 }
 
 // ─── Placeable Tab Builders ─────────────────────────────────────
+
+export function placeableGraphTab(
+    placement: PlaceablePlacementDesc
+): RelationshipTab {
+    const navigate = useNavigate();
+    return {
+        id: "placeable-graph",
+        label: msg`Placeable Graph`,
+        content: () => {
+            const data = buildPlaceableGraph(placement);
+            return (
+                <div class="h-[600px] flex flex-col">
+                    <PlaceableGraph nodes={data.nodes} edges={data.edges} onNavigate={href => navigate(href)}/>
+                </div>
+            );
+        }
+    };
+}
 
 export function placeablePlacementTab(
     placements: PlaceablePlacementDesc[],

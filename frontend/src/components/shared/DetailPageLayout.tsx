@@ -199,7 +199,7 @@ const CopyButton: Component<{
     copyElement?: JSX.Element;
     copiedElement?: JSX.Element;
 }> = (props) => {
-    const [copyContent, contentCopied] = useCopy(props.content);
+    const [copyContent, contentCopied] = useCopy(() => props.content);
 
     return (
         <Button variant="outline" size="sm" onClick={copyContent}>
@@ -358,7 +358,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                 }}</Show>
                                 <Show when={props.chatLink}>
                                     {link => {
-                                        const [copy, copied] = useCopy(link(), 1000);
+                                        const [copy, copied] = useCopy(link, 1000);
                                         const [open, setOpen] = createSignal(false);
                                         const {_} = useLingui();
                                         return (

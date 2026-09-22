@@ -4,7 +4,7 @@ import {FontIcon} from "~/components/icons/font-icons";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
-import {descriptionColumn, headerColumn, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
+import {descriptionColumn, headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {statsColumn, statsFilter} from "~/lib/table-utils/stats-column-builder";
 import {compareOptions, includedIn} from "~/lib/utils";
 
@@ -28,11 +28,18 @@ export const BuffDefs: BitCraftToDataDef<BuffDesc> = {
             filterFn: includedIn<BuffDesc>(),
         },
         statsColumn<BuffDesc>(),
+        {
+            id: "Priority",
+            meta: {label: msg`Priority`},
+            accessorKey: "priority",
+            filterFn: "inNumberRange",
+        },
         rowActions(),
     ],
     facetedFilters: [
         uniqueValuesFilter("Buff Type", msg`Type`, compareOptions),
         statsFilter(),
+        rangeFilter("Priority", msg`Priority`)
     ],
     searchColumns: ["Name", "Description"],
 };

@@ -12,6 +12,7 @@
  * using cubic bezier detour paths (backward edges below, forward edges above).
  */
 
+import {t} from "@lingui/core/macro";
 import * as d3Selection from "d3-selection";
 import * as d3Zoom from "d3-zoom";
 import {TbOutlineArrowBarRight as IconStart, TbOutlineArrowBarToRight as IconEnd} from "solid-icons/tb";
@@ -20,6 +21,7 @@ import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
 import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
 import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {CargoIcon, ItemIcon, PlaceableIcon} from "~/components/shared/GameIcon";
+import {trackUILocale} from "~/lib/i18n";
 import {growthByPlaceable as growthByPlaceableMap, interactionsByOutcome, interactionsByPlaceable as interactionsByPlaceableMap} from "~/lib/placeables";
 import {BitCraftTables} from "~/lib/spacetime";
 import {readableSeconds} from "~/lib/utils";
@@ -1192,23 +1194,26 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
                         {(edge) => {
                             const isHov = () => hoveredEdge() === edge.index;
                             
-                            // Split tooltip text at spaces and wrap lines if needed
+                            // Split tooltip text at spaces and wrap lines if needed; `\n` forces a line break
                             const getTextLines = () => {
                                 const text = edge.tooltip || '';
                                 const maxCharsPerLine = 30;
                                 const lines: string[] = [];
-                                const words = text.split(' ');
-                                let currentLine = '';
-                                
-                                for (const word of words) {
-                                    if ((currentLine + word).length > maxCharsPerLine && currentLine) {
-                                        lines.push(currentLine.trim());
-                                        currentLine = word;
-                                    } else {
-                                        currentLine += (currentLine ? ' ' : '') + word;
+
+                                for (const paragraph of text.split('\n')) {
+                                    const words = paragraph.split(' ');
+                                    let currentLine = '';
+
+                                    for (const word of words) {
+                                        if ((currentLine + word).length > maxCharsPerLine && currentLine) {
+                                            lines.push(currentLine.trim());
+                                            currentLine = word;
+                                        } else {
+                                            currentLine += (currentLine ? ' ' : '') + word;
+                                        }
                                     }
+                                    lines.push(currentLine.trim());
                                 }
-                                if (currentLine) lines.push(currentLine.trim());
                                 return lines;
                             };
                             
@@ -1256,12 +1261,12 @@ export interface PlaceableGraphData {
     edges: PlaceableGraphEdge[];
 }
 
-export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
+export function buildPlaceableGraph(placement: PlaceablePlacementDesc): PlaceableGraphData {
+    trackUILocale();
     const placeableIndex = BitCraftTables.PlaceableDesc.indexedBy("id")();
     const itemIndex = BitCraftTables.ItemDesc.indexedBy("id")();
     const cargoIndex = BitCraftTables.CargoDesc.indexedBy("id")();
     const placementAll = BitCraftTables.PlaceablePlacementDesc.get() ?? [];
-    const placement = placementAll.find(p => p.id === placementId);
 
     if (!placement) return {nodes: [], edges: []};
 
@@ -1351,10 +1356,11 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
 
         // Placement edge (only for the root)
         if (plcId === startPlcId) {
+            const placeDuration = readableSeconds(placement.requiredTime) ?? "";
             edges.push({
                 source: inputNodeId,
                 target: plcNodeId,
-                label: `Place (${readableSeconds(placement.requiredTime)})`,
+                label: t`Place (${placeDuration})`,
                 edgeType: "placement",
             });
         }
@@ -1397,15 +1403,20 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
             // Tooltip: consumed items and actions required
             const maxHp = placeableIndex.get(plcId)?.maxHealth ?? 0;
             const hasTool = ia.toolRequirements.length > 0;
-            const effortReq = maxHp ? `, ${maxHp} effort required, ${hasTool ? "using tool power" : "ignoring base tool power"}` : "";
-            const tooltip = ia.consumedItemStacks.length
-                ? ia.consumedItemStacks.map(s => {
-                        const name = s.itemType.tag === "Cargo"
-                            ? cargoIndex.get(s.itemId)?.name ?? `Cargo #${s.itemId}`
-                            : itemIndex.get(s.itemId)?.name ?? `Item #${s.itemId}`;
-                        return `${s.quantity}× ${name} per action${effortReq}`;
-                    }).join(", ")
-                : undefined;
+            const effortReq = maxHp
+                ? (hasTool
+                    ? t`${maxHp} effort required, using tool power`
+                    : t`${maxHp} effort required, ignoring base tool power`)
+                : "";
+            const itemsList = ia.consumedItemStacks.map(s => {
+                const qty = s.quantity;
+                const name = s.itemType.tag === "Cargo"
+                    ? cargoIndex.get(s.itemId)?.name ?? `Cargo #${s.itemId}`
+                    : itemIndex.get(s.itemId)?.name ?? `Item #${s.itemId}`;
+                return t`${qty}× ${name}`;
+            }).join(", ");
+            const costReq = ia.consumedItemStacks.length ? t`${itemsList} per action` : "";
+            const tooltip = [costReq, effortReq].filter(Boolean).join("\n");
 
             // Output items
             const outputs = ia.outputItemStacks;
@@ -1419,12 +1430,14 @@ export function buildPlaceableGraph(placementId: number): PlaceableGraphData {
                 } else {
                     nodeId = addItemNode(output.itemId, output.itemType.tag, column + 1);
                 }
+                const outputQty = output.quantity;
+                const outputName = nodes.find(n => n.id === nodeId)?.label ?? "";
                 edges.push({
                     source: plcNodeId,
                     target: nodeId,
                     label: `${ia.verbPhrase}`,
                     edgeType: "interaction",
-                    tooltip: `→ ${output.quantity}× ${nodes.find(n => n.id === nodeId)?.label}`
+                    tooltip: t`→ ${outputQty}× ${outputName}`
                 });
             }
 

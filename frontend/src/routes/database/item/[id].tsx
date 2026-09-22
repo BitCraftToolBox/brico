@@ -1,6 +1,6 @@
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
-import {A, useParams} from "@solidjs/router";
+import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {BuffEffect} from "~/bindings/src/buff_effect_type";
 import {ItemType} from "~/bindings/src/item_type_type";
@@ -55,6 +55,7 @@ import {
     foodByproductsTab,
     itemListsTab,
     itemListTab,
+    placeableGraphTab,
     placeableInteractionsTab,
     placeablePlacementTab,
     questRequirementsTab,
@@ -93,6 +94,7 @@ export function questDropAugmentedLists(itemId: () => number | undefined, itemTy
 
 export default function ItemDetail() {
     const params = useParams();
+    const navigate = useNavigate();
     const { easterEggs } = useSettings();
 
     const isLoading = useTablesLoading(BitCraftTables.ItemDesc);
@@ -325,15 +327,6 @@ export default function ItemDetail() {
             spacetimeTable={BitCraftTables.ItemDesc.spacetimeName}
             objectId={item()?.id}
             chatLink={`(item=${item()?.id})`}
-            summaryContent={placeablePlacements().length === 1 ? () => (
-                <div class="flex flex-col items-center gap-2 py-2">
-                    <p class="text-sm text-muted-foreground"><Trans>This item starts a placeable lifecycle chain.</Trans></p>
-                    <A href={`/tools/placeable-graph?placement=${placeablePlacements()[0].id}`}
-                       class="text-sm font-medium hover:underline">
-                        <Trans>View full lifecycle in Placeable Graph →</Trans>
-                    </A>
-                </div>
-            ) : undefined}
             tabs={!item() ? [] : [
                 craftedFromTab(craftedFrom()),
                 craftsIntoTab(craftsInto()),
@@ -351,6 +344,7 @@ export default function ItemDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                ...(placeablePlacements().length === 1 ? [placeableGraphTab(placeablePlacements()[0])]: []),
                 claimResearchTab(researchRequires()),
                 itemListTab(isItemList(), true),
                 itemListsTab(inItemLists()),

@@ -8,7 +8,7 @@ msgstr ""
 "Language: zu\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 15:54\n"
+"PO-Revision-Date: 2026-09-04 08:30\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -136,6 +136,7 @@ msgid "Resource Depletion"
 msgstr "crwdns4378:0crwdne4378:0"
 
 #: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/tools/placeable-graph.tsx
 msgid "Placeable Graph"
 msgstr "crwdns4380:0crwdne4380:0"
@@ -149,6 +150,7 @@ msgstr "crwdns4382:0{0}crwdne4382:0"
 msgid "Profession"
 msgstr "crwdns5544:0crwdne5544:0"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
 msgstr "crwdns4384:0crwdne4384:0"
@@ -208,6 +210,10 @@ msgstr "crwdns4406:0crwdne4406:0"
 #: src/routes/settings.tsx
 msgid "List"
 msgstr "crwdns4408:0crwdne4408:0"
+
+#: src/components/shared/PlaceableGraph.tsx
+msgid "→ {outputQty}× {outputName}"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Hats"
@@ -421,7 +427,7 @@ msgstr "crwdns4506:0crwdne4506:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used in Pillar Shaping"
-msgstr ""
+msgstr "crwdns5596:0crwdne5596:0"
 
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
@@ -588,7 +594,7 @@ msgstr "crwdns4570:0{0}crwdne4570:0"
 
 #: src/lib/recipe-sources.tsx
 msgid "This recipe is fixed at one progress per hit."
-msgstr ""
+msgstr "crwdns5598:0crwdne5598:0"
 
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -644,6 +650,10 @@ msgstr "crwdns4588:0crwdne4588:0"
 msgid "Used in"
 msgstr "crwdns4590:0crwdne4590:0"
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{itemsList} per action"
+msgstr ""
+
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
 #: src/routes/database/pillar-shaping/[id].tsx
@@ -680,7 +690,7 @@ msgstr "crwdns4602:0crwdne4602:0"
 #. placeholder {1}: outcome.radiusMax
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance to spawn within {0}–{1} tiles on resource depletion."
-msgstr ""
+msgstr "crwdns5600:0{0}crwdnd5600:0{1}crwdne5600:0"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
@@ -1331,6 +1341,10 @@ msgstr "crwdns4892:0crwdne4892:0"
 msgid "Database"
 msgstr "crwdns5512:0crwdne5512:0"
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "Place ({placeDuration})"
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
 msgstr "crwdns4894:0crwdne4894:0"
@@ -1621,10 +1635,6 @@ msgstr "crwdns5536:0crwdne5536:0"
 msgid "Research Time"
 msgstr "crwdns5016:0crwdne5016:0"
 
-#: src/routes/database/placeable/[id].tsx
-msgid "This placeable is part of a lifecycle chain."
-msgstr "crwdns5018:0crwdne5018:0"
-
 #: src/routes/settings.tsx
 msgid "{count} of {total} items visible"
 msgstr "crwdns5020:0{count}crwdnd5020:0{total}crwdne5020:0"
@@ -1864,6 +1874,7 @@ msgid "Buff Stats"
 msgstr "crwdns5576:0crwdne5576:0"
 
 #: src/lib/sidebar-items.ts
+#: src/routes/database/quest-chain/[id].tsx
 #: src/routes/tools/quest-graph.tsx
 msgid "Quest Graph"
 msgstr "crwdns5118:0crwdne5118:0"
@@ -1873,11 +1884,6 @@ msgstr "crwdns5118:0crwdne5118:0"
 msgid "Traveler"
 msgstr "crwdns5120:0crwdne5120:0"
 
-#: src/routes/database/item/[id].tsx
-#: src/routes/database/placeable/[id].tsx
-msgid "View full lifecycle in Placeable Graph →"
-msgstr "crwdns5122:0crwdne5122:0"
-
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Copied!"
 msgstr "crwdns5124:0crwdne5124:0"
@@ -1886,7 +1892,7 @@ msgstr "crwdns5124:0crwdne5124:0"
 #. placeholder {1}: fixFloat(effort() * perProgress)
 #: src/lib/recipe-sources.tsx
 msgid "{0} * {perProgress} = {1} XP"
-msgstr ""
+msgstr "crwdns5602:0{0}crwdnd5602:0{perProgress}crwdnd5602:0{1}crwdne5602:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
@@ -1924,7 +1930,7 @@ msgstr "crwdns5134:0crwdne5134:0"
 
 #: src/lib/recipe-sources.tsx
 msgid "Hands"
-msgstr ""
+msgstr "crwdns5604:0crwdne5604:0"
 
 #. placeholder {0}: query().trim()
 #: src/routes/search.tsx
@@ -2157,6 +2163,10 @@ msgstr "crwdns5236:0crwdne5236:0"
 msgid "Equip <0/>"
 msgstr "crwdns5588:0crwdne5588:0"
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{maxHp} effort required, ignoring base tool power"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded from Quests"
 msgstr "crwdns5238:0crwdne5238:0"
@@ -2286,10 +2296,6 @@ msgstr "crwdns5288:0crwdne5288:0"
 msgid "Compendium Entry"
 msgstr "crwdns5290:0crwdne5290:0"
 
-#: src/routes/database/item/[id].tsx
-msgid "This item starts a placeable lifecycle chain."
-msgstr "crwdns5526:0crwdne5526:0"
-
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
@@ -2383,7 +2389,7 @@ msgstr "crwdns5326:0crwdne5326:0"
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Pillar Shaping"
-msgstr ""
+msgstr "crwdns5606:0crwdne5606:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -2424,6 +2430,10 @@ msgstr "crwdns5342:0crwdne5342:0"
 #: src/routes/database/building/[id].tsx
 msgid "Structure"
 msgstr "crwdns5344:0crwdne5344:0"
+
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{qty}× {name}"
+msgstr ""
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Reward"
@@ -2527,6 +2537,10 @@ msgstr "crwdns5390:0crwdne5390:0"
 msgid "Stamina Use"
 msgstr "crwdns5392:0crwdne5392:0"
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{maxHp} effort required, using tool power"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required for Reward"
 msgstr "crwdns5394:0crwdne5394:0"
@@ -2576,7 +2590,7 @@ msgstr "crwdns5414:0crwdne5414:0"
 #. placeholder {0}: props.tier
 #: src/components/shared/GameIcon.tsx
 msgid "Tier {0}"
-msgstr ""
+msgstr "crwdns5608:0{0}crwdne5608:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
@@ -2729,7 +2743,7 @@ msgstr "crwdns5484:0crwdne5484:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used in Paving"
-msgstr ""
+msgstr "crwdns5610:0crwdne5610:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"

@@ -56,8 +56,10 @@ export default function PlaceableGraphTool() {
 
     const graphData = createMemo(() => {
         const id = selectedPlacementId();
-        if (!id) return null;
-        return buildPlaceableGraph(id);
+        if (!id) return undefined;
+        const placement = placements().find(pp => pp.id === id);
+        if (!placement) return undefined;
+        return buildPlaceableGraph(placement);
     });
 
     function selectPlacement(id: number) {

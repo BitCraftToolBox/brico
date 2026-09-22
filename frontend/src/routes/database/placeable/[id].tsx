@@ -1,6 +1,5 @@
 import {msg} from "@lingui/core/macro";
-import {Trans} from "@lingui/solid/macro";
-import {A, useParams} from "@solidjs/router";
+import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/shared/DetailPageLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
@@ -20,7 +19,7 @@ import {
 } from "~/lib/placeables";
 import {getExtractionRecipeName} from "~/lib/relations";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {placeableInteractionsCombinedTab} from "~/lib/table-utils/detail-tab-builders";
+import {placeableGraphTab, placeableInteractionsCombinedTab} from "~/lib/table-utils/detail-tab-builders";
 
 export default function PlaceableDetail() {
     const params = useParams();
@@ -53,7 +52,7 @@ export default function PlaceableDetail() {
     // Root placement (for "View in Graph" link)
     const rootPlacement = createMemo(() => placeableId() != null ? findRootPlacement(placeableId()!) : undefined);
     const directPlacement = createMemo(() => placements().length > 0 ? placements()[0] : undefined);
-    const graphPlacementId = createMemo(() => directPlacement()?.id ?? rootPlacement()?.id);
+    const graphPlacement = createMemo(() => directPlacement() ?? rootPlacement());
 
     const detailGroups = createMemo((): DetailGroup[] => {
         const p = placeable();
@@ -162,6 +161,11 @@ export default function PlaceableDetail() {
             });
         }
 
+        const placement = graphPlacement();
+        if (placement) {
+            result.push(placeableGraphTab(placement));
+        }
+
         return result;
     });
 
@@ -181,15 +185,6 @@ export default function PlaceableDetail() {
             metaKind="placeable"
             metaImage={ogImageForAsset(placeable()?.iconAssetName)}
             details={detailGroups()}
-            summaryContent={graphPlacementId() ? () => (
-                <div class="flex flex-col items-center gap-2 py-2">
-                    <p class="text-sm text-muted-foreground"><Trans>This placeable is part of a lifecycle chain.</Trans></p>
-                    <A href={`/tools/placeable-graph?placement=${graphPlacementId()}`}
-                       class="text-sm font-medium hover:underline">
-                        <Trans>View full lifecycle in Placeable Graph →</Trans>
-                    </A>
-                </div>
-            ) : undefined}
             rawData={placeable()}
             spacetimeTable={BitCraftTables.PlaceableDesc.spacetimeName}
             objectId={placeable()?.id}

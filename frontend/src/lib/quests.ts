@@ -273,3 +273,56 @@ export function getQuestTreeIds(
     }
     return ids;
 }
+
+/**
+ * Enumerate `targetId`'s full upstream (prerequisite) + downstream (dependent)
+ * tree — every quest chain that must precede it, transitively, plus every
+ * chain that transitively requires it. Does not pull in unrelated siblings
+ * (e.g. an ancestor's other children, or a descendant's other prerequisites).
+ * Used to scope the quest graph to a single chain's own tree.
+ */
+export function getQuestSubtreeIds(
+    targetId: number,
+    questIndex: Map<number, QuestChainDesc>,
+): Set<number> {
+    const ids = new Set<number>([targetId]);
+
+    const upStack = [targetId];
+    while (upStack.length > 0) {
+        const id = upStack.pop()!;
+        const quest = questIndex.get(id);
+        if (!quest) continue;
+        for (const r of (quest.requirements ?? [])) {
+            if (r.tag !== "QuestChain") continue;
+            const pid = r.value as number;
+            if (!ids.has(pid)) {
+                ids.add(pid);
+                upStack.push(pid);
+            }
+        }
+    }
+
+    const childrenMap = new Map<number, number[]>();
+    for (const q of questIndex.values()) {
+        for (const r of (q.requirements ?? [])) {
+            if (r.tag !== "QuestChain") continue;
+            const pid = r.value as number;
+            const arr = childrenMap.get(pid);
+            if (arr) arr.push(q.id);
+            else childrenMap.set(pid, [q.id]);
+        }
+    }
+
+    const downStack = [targetId];
+    while (downStack.length > 0) {
+        const id = downStack.pop()!;
+        for (const child of (childrenMap.get(id) ?? [])) {
+            if (!ids.has(child)) {
+                ids.add(child);
+                downStack.push(child);
+            }
+        }
+    }
+
+    return ids;
+}

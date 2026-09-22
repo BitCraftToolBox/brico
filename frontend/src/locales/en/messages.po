@@ -131,6 +131,7 @@ msgid "Resource Depletion"
 msgstr "Resource Depletion"
 
 #: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/tools/placeable-graph.tsx
 msgid "Placeable Graph"
 msgstr "Placeable Graph"
@@ -144,6 +145,7 @@ msgstr "Terraform Elevation Difference {0}"
 msgid "Profession"
 msgstr "Profession"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Priority"
 msgstr "Priority"
@@ -203,6 +205,10 @@ msgstr "Tool Type"
 #: src/routes/settings.tsx
 msgid "List"
 msgstr "List"
+
+#: src/components/shared/PlaceableGraph.tsx
+msgid "→ {outputQty}× {outputName}"
+msgstr "→ {outputQty}× {outputName}"
 
 #: src/routes/settings.tsx
 msgid "Hats"
@@ -638,6 +644,10 @@ msgstr "Day Aggro Range"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used in"
 msgstr "Used in"
+
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{itemsList} per action"
+msgstr "{itemsList} per action"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
@@ -1326,6 +1336,10 @@ msgstr "Wilderness"
 msgid "Database"
 msgstr "Database"
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "Place ({placeDuration})"
+msgstr "Place ({placeDuration})"
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
 msgstr "Chance"
@@ -1616,10 +1630,6 @@ msgstr "exact"
 msgid "Research Time"
 msgstr "Research Time"
 
-#: src/routes/database/placeable/[id].tsx
-msgid "This placeable is part of a lifecycle chain."
-msgstr "This placeable is part of a lifecycle chain."
-
 #: src/routes/settings.tsx
 msgid "{count} of {total} items visible"
 msgstr "{count} of {total} items visible"
@@ -1859,6 +1869,7 @@ msgid "Buff Stats"
 msgstr "Buff Stats"
 
 #: src/lib/sidebar-items.ts
+#: src/routes/database/quest-chain/[id].tsx
 #: src/routes/tools/quest-graph.tsx
 msgid "Quest Graph"
 msgstr "Quest Graph"
@@ -1867,11 +1878,6 @@ msgstr "Quest Graph"
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Traveler"
 msgstr "Traveler"
-
-#: src/routes/database/item/[id].tsx
-#: src/routes/database/placeable/[id].tsx
-msgid "View full lifecycle in Placeable Graph →"
-msgstr "View full lifecycle in Placeable Graph →"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Copied!"
@@ -2152,6 +2158,10 @@ msgstr "Day Detect Range"
 msgid "Equip <0/>"
 msgstr "Equip <0/>"
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{maxHp} effort required, ignoring base tool power"
+msgstr "{maxHp} effort required, ignoring base tool power"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded from Quests"
 msgstr "Rewarded from Quests"
@@ -2280,10 +2290,6 @@ msgstr "Placeable Interaction"
 #: src/routes/database/resource/[id].tsx
 msgid "Compendium Entry"
 msgstr "Compendium Entry"
-
-#: src/routes/database/item/[id].tsx
-msgid "This item starts a placeable lifecycle chain."
-msgstr "This item starts a placeable lifecycle chain."
 
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -2420,6 +2426,10 @@ msgstr "Copy Chat Link"
 msgid "Structure"
 msgstr "Structure"
 
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{qty}× {name}"
+msgstr "{qty}× {name}"
+
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Reward"
 msgstr "Reward"
@@ -2521,6 +2531,10 @@ msgstr "Icon"
 #: src/routes/database/combat/[id].tsx
 msgid "Stamina Use"
 msgstr "Stamina Use"
+
+#: src/components/shared/PlaceableGraph.tsx
+msgid "{maxHp} effort required, using tool power"
+msgstr "{maxHp} effort required, using tool power"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required for Reward"

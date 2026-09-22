@@ -201,6 +201,11 @@ const ResourceDepletionIcons: Component<{ resource: ResourceDesc, showLabel: boo
                                 </Tooltip>
                             </Show>
                             <ResourceIcon res={dR()} small showFallbackText/>
+                            <Show when={chance !== 1}>
+                                <span class="text-[10px] text-muted-foreground italic">
+                                    <Trans>deplete</Trans>
+                                </span>
+                            </Show>
                         </div>
                     )
                 }}

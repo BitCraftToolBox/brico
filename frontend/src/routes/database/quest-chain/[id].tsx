@@ -1,20 +1,21 @@
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {A, useParams} from "@solidjs/router";
+import {TbOutlineExternalLink as IconExternal} from "solid-icons/tb";
 import {createMemo, For, Show} from "solid-js";
 import {CompletionCondition} from "~/bindings/src/completion_condition_type";
 import {ItemStack} from "~/bindings/src/item_stack_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {ItemStackLink, LinkedList, pageIcon, QuestChainLink} from "~/lib/game-links";
+import {QuestGraph} from "~/components/shared/QuestGraph";
+import {ItemStackLink, pageIcon} from "~/lib/game-links";
 import {useLabel} from "~/lib/labels";
 import {ogImageForPage} from "~/lib/og-meta";
-import {computeQuestTree, questChainCompleter, stagesByChain} from "~/lib/quests";
+import {getQuestSubtreeIds, questChainCompleter} from "~/lib/quests";
 import {useSettings} from "~/lib/settings";
 import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {ReqOrRewardLink, reqOrRewardTagLabel} from "~/lib/table-defs/quests-table";
 
 type StageConditionRow = { condition: CompletionCondition; stageName: string; chainId: number };
-type StageRewardsRow = { stageName: string; items: ItemStack[] };
 
 export default function QuestChainDetail() {
     const params = useParams();
@@ -86,33 +87,26 @@ export default function QuestChainDetail() {
     const isComplete = () => completedQuests().has(quest()?.id ?? 0);
     const {toggleComplete} = questChainCompleter(completedQuests, setCompletedQuests);
 
-    const stagesMap = stagesByChain();
-    // Cumulative quest tree — only computed for real (non-hint, non-unstartable) quests
-    const treeResult = createMemo(() => {
+    // Upstream + downstream tree for this chain, used to scope the embedded Quest Graph tab
+    const questSubtreeIds = createMemo(() => {
         const q = quest();
-        if (!q || q.isHint || q.unstartable) return null;
-        return computeQuestTree(q.id, completedQuests(), questIndex(), stagesMap());
+        if (!q || q.isHint || q.unstartable) return undefined;
+        return getQuestSubtreeIds(q.id, questIndex());
     });
 
     const graphControls = () => (
         <Show when={quest() && !quest()!.unstartable && !quest()!.isHint}>
-            <div class="flex flex-row items-center gap-4">
-                <A href={`/tools/quest-graph?chain=${quest()!.id}`}
-                   class="text-sm px-3 py-1.5 rounded-md border bg-background hover:bg-muted transition-colors text-foreground inline-block w-fit">
-                    View in Quest Graph
-                </A>
-                <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
-                    <input
-                        type="checkbox"
-                        checked={isComplete()}
-                        onChange={() => toggleComplete(quest()!.id)}
-                        class="accent-green-600"
-                    />
-                    <span class={isComplete() ? "text-green-600 dark:text-green-400" : ""}>
-                        {isComplete() ? "Completed" : "Mark as complete"}
-                    </span>
-                </label>
-            </div>
+            <label class="flex items-center gap-2 text-sm cursor-pointer select-none w-fit">
+                <input
+                    type="checkbox"
+                    checked={isComplete()}
+                    onChange={() => toggleComplete(quest()!.id)}
+                    class="accent-green-600"
+                />
+                <span class={isComplete() ? "text-green-600 dark:text-green-400" : ""}>
+                    {isComplete() ? "Completed" : "Mark as complete"}
+                </span>
+            </label>
         </Show>
     );
 
@@ -142,62 +136,6 @@ export default function QuestChainDetail() {
                     </Show>
                 </div>
             ) : undefined}
-            infoTabs={treeResult()?.allTreeQuestIds.size ? [["Quest Tree", () => {
-                const result = treeResult();
-                if (!result) return <></>;
-                const incomplete = [...result.involvedQuestIds];
-                const complete = [...result.allTreeQuestIds].filter(id => !result.involvedQuestIds.has(id));
-                return (
-                    <div class="flex flex-col gap-4 px-1 py-2">
-                        {graphControls()}
-                        <Show when={complete.length > 0}>
-                            <div>
-                                <div class="text-xs font-medium text-muted-foreground mb-1">
-                                    Completed ({complete.length}):
-                                </div>
-                                <LinkedList>
-                                    {complete.map(id => <QuestChainLink id={id} name={questIndex()?.get(id)?.name}/>)}
-                                </LinkedList>
-                            </div>
-                        </Show>
-                        <Show when={incomplete.length > 0}>
-                            <div>
-                                <div class="text-xs font-medium text-muted-foreground mb-1">
-                                    Incomplete ({incomplete.length}):
-                                </div>
-                                <LinkedList>
-                                    {incomplete.map(id => <QuestChainLink id={id} name={questIndex()?.get(id)?.name}/>)}
-                                </LinkedList>
-                            </div>
-                        </Show>
-                        <Show when={result.requirements.length || result.rewards.length}>
-                            <div class="text-sm text-muted-foreground">
-                                Requirements/rewards shown for {result.involvedQuestIds.size} incomplete quest{result.involvedQuestIds.size !== 1 ? "s" : ""}.
-                            </div>
-                        </Show>
-                        <Show when={result.requirements.length}>
-                            <div>
-                                <div class="text-xs font-medium text-muted-foreground mb-1">Cumulative Requirements:</div>
-                                <div class="flex flex-col gap-0.5 ml-2">
-                                    <For each={result.requirements}>
-                                        {(r) => <div class="text-sm"><ReqOrRewardLink qr={r}/></div>}
-                                    </For>
-                                </div>
-                            </div>
-                        </Show>
-                        <Show when={result.rewards.length}>
-                            <div>
-                                <div class="text-xs font-medium text-muted-foreground mb-1">Cumulative Rewards:</div>
-                                <div class="flex flex-col gap-0.5 ml-2">
-                                    <For each={result.rewards}>
-                                        {(r) => <div class="text-sm"><ReqOrRewardLink qr={r}/></div>}
-                                    </For>
-                                </div>
-                            </div>
-                        </Show>
-                    </div>
-                );
-            }]] : undefined}
             rawData={quest()}
             spacetimeTable={BitCraftTables.QuestChainDesc.spacetimeName}
             objectId={quest()?.id}
@@ -260,7 +198,26 @@ export default function QuestChainDetail() {
                             {header: msg`Item`, cell: row => <ItemStackLink stack={row}/>},
                         ]}/>
                     )
-                }
+                },
+                ...(questSubtreeIds() ? [{
+                    id: "quest-graph",
+                    label: msg`Quest Graph`,
+                    content: () => (
+                        <div class="flex flex-col items-center">
+                            <div class="h-[600px] flex flex-col w-full">
+                                <QuestGraph
+                                    completedQuests={completedQuests}
+                                    setCompletedQuests={setCompletedQuests}
+                                    chainIds={questSubtreeIds()}
+                                    focusChainId={quest()!.id}
+                                />
+                            </div>
+                            <A href={`/tools/quest-graph?chain=${quest()!.id}`} class="pt-2 text-muted-foreground underline hover:text-foreground">
+                                View in full quest graph <IconExternal class="inline"/>
+                            </A>
+                        </div>
+                    ),
+                }] : [])
             ]}
         />
     );
