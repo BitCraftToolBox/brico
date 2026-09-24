@@ -1,0 +1,2 @@
+# Dependencies. npm workspaces hoist to the repo root.
+node_modules/

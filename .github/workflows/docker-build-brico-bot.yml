@@ -1,0 +1,9 @@
+name: Build brico-bot docker image
+on:
+  workflow_dispatch:
+
+jobs:
+  build-brico-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - run:

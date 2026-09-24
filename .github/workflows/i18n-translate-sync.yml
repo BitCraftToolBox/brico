@@ -41,10 +41,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: frontend
         run: npm ci
 
       # Backstop only — i18n-catalog-check.yml should already keep `preview` clean. Committed
@@ -87,10 +86,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: frontend
         run: npm ci
 
       - name: Download translations from Crowdin
