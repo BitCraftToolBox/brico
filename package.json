@@ -1,0 +1,17 @@
+{
+  "name": "brico-toolbox",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
+    "build": "npm run build --workspace frontend",
+    "build:ci": "npm run build:ci --workspace frontend"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

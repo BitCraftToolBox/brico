@@ -11,6 +11,7 @@ on:
       - "frontend/src/**"
       - "frontend/lingui.config.ts"
       - "frontend/package.json"
+      - "package-lock.json"
       - ".github/workflows/i18n-catalog-check.yml"
 
 jobs:
@@ -25,9 +26,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - run: npm ci
+        working-directory: .
 
       - name: Verify message catalog is up to date
         run: npm run i18n:extract-check
