@@ -65,6 +65,8 @@ export const BountyEntitlementTotal = __t.object("BountyEntitlementTotal", {
   total: __t.i64(),
   totalEffort: __t.i64(),
   updatedAt: __t.timestamp(),
+  remainderNumerator: __t.i64(),
+  remainderDenominator: __t.i64(),
 });
 export type BountyEntitlementTotal = __Infer<typeof BountyEntitlementTotal>;
 
@@ -160,10 +162,7 @@ export const CraftBountyEntitlement = __t.object("CraftBountyEntitlement", {
   playerId: __t.u64(),
   currency: __t.string(),
   lastAssignedEffort: __t.i64(),
-  entitledTotal: __t.i64(),
   updatedAt: __t.timestamp(),
-  remainderNumerator: __t.i64(),
-  remainderDenominator: __t.i64(),
 });
 export type CraftBountyEntitlement = __Infer<typeof CraftBountyEntitlement>;
 
