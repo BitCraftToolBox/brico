@@ -1,7 +1,7 @@
 /**
  * live-table.tsx — the shared table chrome, for tables whose rows are a live feed.
  *
- * `DataTable` is built around the static database tables: it owns search, faceted filters, URL
+ * `DataTable` is built around the static database tables: it owns faceted filters, URL
  * round-tripping and per-table session state, and it installs the three faceted row models on
  * every table whether or not anything uses them. A feed like the craft browser wants none of that
  * — filtering there belongs to `FilterBuilder`, there is no page to navigate back to, and
@@ -9,17 +9,22 @@
  *
  * What it does want is the parts that make a table on this site *look and behave like the others*:
  * sortable column headers with the same dropdown, the same pagination bar, the same "View" column
- * toggle, and the same persisted hidden-column set. Those are already three separate components,
- * so this is a thin frame around them and a `createSolidTable` configured with the two row models
- * that are actually needed.
+ * toggle, and the same persisted hidden-column set — plus, optionally, a plain single-column
+ * name search (`searchColumnId`), for the reports that group rows and need one. Those are already
+ * three separate components, so this is a thin frame around them and a `createSolidTable`
+ * configured with the row models that are actually needed.
  */
+import {msg} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
 import {
     type ColumnDef,
+    type ColumnFiltersState,
     createSolidTable,
     type ExpandedState,
     getCoreRowModel,
     getExpandedRowModel,
+    getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     type HeaderContext,
@@ -32,6 +37,7 @@ import {TableColumnHeader} from "~/components/data-table/table-column-header";
 import {TablePagination} from "~/components/data-table/table-pagination";
 import {TableViewOptions} from "~/components/data-table/table-view-options";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "~/components/ui/table";
+import {TextField, TextFieldInput} from "~/components/ui/text-field";
 import {useLabel} from "~/lib/labels";
 import {type TableSessionState, useSettings} from "~/lib/settings";
 
@@ -49,6 +55,12 @@ type LiveTableProps<TData> = {
      * `getExpandedRowModel`/`getSubRows`. Inert when omitted: no row ever has subrows, so the
      * table's other consumers are unaffected. */
     getSubRows?: (row: TData) => TData[] | undefined;
+    /**
+     * Column id to filter by name when supplied — renders a search box in the toolbar, to the
+     * left of `toolbar`. Uses `filterFromLeafRows` so a match on a subrow keeps its group's
+     * parent row (and thus the group header) visible even though the parent itself doesn't match.
+     */
+    searchColumnId?: string;
     initialState?: InitialTableState;
     /** Controls placed in the toolbar row, to the left of the "View" button. */
     toolbar?: JSX.Element;
@@ -65,8 +77,15 @@ type LiveTableProps<TData> = {
 };
 
 export function LiveTable<TData>(props: LiveTableProps<TData>) {
+    const {_} = useLingui();
     const {tableHiddenColumns, getTableSession} = useSettings();
     const label = useLabel();
+
+    const [search, setSearch] = createSignal("");
+    const columnFilters = createMemo<ColumnFiltersState>(() => {
+        const value = search().trim();
+        return props.searchColumnId && value ? [{id: props.searchColumnId, value}] : [];
+    });
 
     // Same storage as `DataTable`'s, so a column hidden here stays hidden across reloads and the
     // "View" dropdown behaves identically. Read once: `TableViewOptions` writes both this table's
@@ -75,7 +94,7 @@ export function LiveTable<TData>(props: LiveTableProps<TData>) {
         Object.fromEntries((tableHiddenColumns()[props.name] ?? []).map(id => [id, false])),
     );
 
-    // live tables don't use the global or column filters, but we use existing session
+    // live tables don't persist the name-search filter across reloads, but we use existing session
     // mechanisms to persist sorting and pagination across page transitions — unless the caller
     // hands in its own (persisted) session, e.g. the craft browser's.
     const session = props.session ?? getTableSession(props.name);
@@ -122,10 +141,16 @@ export function LiveTable<TData>(props: LiveTableProps<TData>) {
             get expanded() {
                 return expanded();
             },
+            get columnFilters() {
+                return columnFilters();
+            },
         },
         initialState: props.initialState,
         getRowId: props.getRowId,
         getSubRows: props.getSubRows,
+        // A match on a subrow keeps its parent row around too, so a filtered group still shows its
+        // header — the row itself just won't match the filter on its own account.
+        filterFromLeafRows: true,
         enableRowSelection: false,
         enableMultiSort: true,
         // A live feed replaces `data` several times a second, and the default would read every one
@@ -144,6 +169,7 @@ export function LiveTable<TData>(props: LiveTableProps<TData>) {
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     });
 
@@ -157,7 +183,14 @@ export function LiveTable<TData>(props: LiveTableProps<TData>) {
     return (
         <div class="space-y-2">
             <div class="flex items-center justify-between gap-2">
-                <div class="flex flex-wrap items-center gap-2">{props.toolbar}</div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <Show when={props.searchColumnId}>
+                        <TextField value={search()} onChange={setSearch} class="w-auto lg:w-[200px]">
+                            <TextFieldInput placeholder={_(msg`Search...`)} class="h-8"/>
+                        </TextField>
+                    </Show>
+                    {props.toolbar}
+                </div>
                 <TableViewOptions table={table}/>
             </div>
             <div class="rounded-md border">

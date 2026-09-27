@@ -163,6 +163,11 @@ msgstr ""
 msgid "TF2 Mode"
 msgstr "TF2 モード"
 
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "History"
+msgstr ""
+
 #. placeholder {0}: props.loaded
 #. placeholder {1}: props.total
 #: src/components/AppLoadingScreen.tsx
@@ -442,6 +447,10 @@ msgstr ""
 msgid "Unlink this account?"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "\"{flag}\" isn't a valid claim permission."
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "Output item tag"
 msgstr ""
@@ -481,6 +490,10 @@ msgstr ""
 
 #: src/routes/account/loyalty.tsx
 msgid "Could not delete loyalty reward"
+msgstr ""
+
+#: src/routes/account/loyalty.tsx
+msgid "Effort of this currency"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -740,6 +753,10 @@ msgstr "取得不可"
 #: src/routes/database/creature/[id].tsx
 msgid "Contribution Loot"
 msgstr "貢献度に応じた戦利品"
+
+#: src/routes/account/loyalty.tsx
+msgid "Effort threshold"
+msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "You need to be logged in to do that."
@@ -1152,6 +1169,10 @@ msgstr ""
 msgid "Builds from"
 msgstr "建築元"
 
+#: src/routes/account/loyalty.tsx
+msgid "Who currently qualifies for a bonus from the rules above, and how much."
+msgstr ""
+
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Total Cargo Size"
 msgstr "合計カーゴサイズ"
@@ -1195,6 +1216,7 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
+#: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/routes/account/payouts.tsx
 msgid "Payer"
 msgstr ""
@@ -1443,6 +1465,10 @@ msgstr "吸血鬼やOLED愛好家向けのハイコントラスト。ダーク�
 msgid "Stages"
 msgstr "段階"
 
+#: src/routes/account/loyalty.tsx
+msgid "Claim membership"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/cargo/[id].tsx
@@ -1466,6 +1492,10 @@ msgstr "アプリ全体でのデータテーブルに関するオプション。
 #: src/routes/database/creature/[id].tsx
 msgid "Drops"
 msgstr "ドロップ"
+
+#: src/components/crafts/PayoutHistoryDialog.tsx
+msgid "No transactions yet."
+msgstr ""
 
 #: src/components/app-sidebar.tsx
 msgid "Tree view"
@@ -1587,10 +1617,6 @@ msgstr "ロック中"
 msgid "Paving Tile"
 msgstr ""
 
-#: src/routes/tools/crafts/browse.tsx
-msgid "All Crafts"
-msgstr ""
-
 #. placeholder {0}: notification.event.craftId
 #: src/routes/tools/crafts/browse.tsx
 msgid "Craft {0}"
@@ -1706,6 +1732,7 @@ msgstr ""
 msgid "That is not a craft id."
 msgstr ""
 
+#: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/routes/account/payees.tsx
 msgid "Amount"
 msgstr ""
@@ -1783,6 +1810,10 @@ msgstr ""
 #: src/routes/database/building/[id].tsx
 msgid "Unenterable"
 msgstr "進入不可"
+
+#: src/routes/account/loyalty.tsx
+msgid "e.g. 50000"
+msgstr ""
 
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -2043,6 +2074,10 @@ msgstr ""
 msgid "Category"
 msgstr "カテゴリー"
 
+#: src/components/crafts/PlayerPicker.tsx
+msgid "Select claims…"
+msgstr ""
+
 #: src/lib/relations.ts
 msgid "Sell {itemName} to {npcName}"
 msgstr "{npcName}に{itemName}を売却する"
@@ -2059,12 +2094,22 @@ msgstr ""
 msgid "Used By"
 msgstr "使用先"
 
+#: src/routes/account/loyalty.tsx
+msgid "No automatic rules yet."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Cargo"
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "is not"
+msgstr ""
+
+#: src/components/crafts/PayoutHistoryDialog.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Payment history"
 msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
@@ -2445,6 +2490,10 @@ msgstr ""
 msgid "Trade <0/> for <1/> to {npcName}"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Enter a valid effort threshold."
+msgstr ""
+
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
 msgstr ""
@@ -2458,6 +2507,10 @@ msgstr ""
 #: src/lib/recipe-sources.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Chance per hit"
+msgstr ""
+
+#: src/components/crafts/PayoutHistoryDialog.tsx
+msgid "Date"
 msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
@@ -2926,6 +2979,9 @@ msgstr "ダーク"
 msgid "{verbPhrase} {targetName}"
 msgstr "{targetName}を{verbPhrase}する"
 
+#: src/components/crafts/PayoutHistoryDialog.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
 #: src/routes/settings.tsx
 msgid "Loading…"
 msgstr ""
@@ -3001,6 +3057,10 @@ msgstr "降順"
 msgid "Collectibles"
 msgstr "収集品"
 
+#: src/routes/account/loyalty.tsx
+msgid "e.g. 1.025"
+msgstr ""
+
 #: src/routes/account/payees.tsx
 msgid "Record payment"
 msgstr ""
@@ -3016,6 +3076,10 @@ msgstr "要件"
 
 #: src/routes/account/bounties.tsx
 msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft — a rate of currency per unit of effort — and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That loyalty rule no longer exists."
 msgstr ""
 
 #. placeholder {0}: req.chunksDiscovered
@@ -3094,6 +3158,10 @@ msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
+msgstr ""
+
+#: src/components/crafts/PlayerPicker.tsx
+msgid "Search claims…"
 msgstr ""
 
 #: src/lib/table-defs/food-table.tsx
@@ -3231,6 +3299,10 @@ msgstr ""
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Crafts Into"
 msgstr "製作先"
+
+#: src/routes/account/loyalty.tsx
+msgid "Could not save loyalty rule"
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Item List"
@@ -3636,6 +3708,10 @@ msgstr ""
 msgid "Placeable on Land"
 msgstr "地面に設置可能"
 
+#: src/routes/account/loyalty.tsx
+msgid "Could not delete loyalty rule"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Consumed on Ability Use"
 msgstr ""
@@ -3724,6 +3800,10 @@ msgstr "チャットリンクをコピー"
 msgid "Structure"
 msgstr "建造物"
 
+#: src/components/crafts/PayoutHistoryDialog.tsx
+msgid "Player"
+msgstr ""
+
 #: src/components/shared/PlaceableGraph.tsx
 msgid "{qty}× {name}"
 msgstr ""
@@ -3757,6 +3837,10 @@ msgstr ""
 msgid "Required Players"
 msgstr "必要なプレイヤー数"
 
+#: src/routes/account/loyalty.tsx
+msgid "Effort of any currency"
+msgstr ""
+
 #: src/components/data-table/table-view-options.tsx
 msgid "Toggle columns"
 msgstr ""
@@ -3781,6 +3865,10 @@ msgstr ""
 
 #: src/components/crafts/LocalGroupingsManager.tsx
 msgid "Group name"
+msgstr ""
+
+#: src/routes/account/loyalty.tsx
+msgid "Resolved automatic bonuses"
 msgstr ""
 
 #: src/routes/database/buff/[id].tsx
@@ -3827,6 +3915,10 @@ msgstr ""
 #: src/routes/database/claim-research/[id].tsx
 msgid "Members"
 msgstr "メンバー数"
+
+#: src/routes/account/loyalty.tsx
+msgid "A standing condition — claim membership or cumulative effort — that grants a bonus to whichever payee currently satisfies it, on top of any manual assignment above. All applicable bonuses are added, not multiplied, with each other."
+msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Show Time Left"
@@ -4103,6 +4195,10 @@ msgstr "デスポーン時間"
 msgid "Unlocks hidden easter-egg features scattered across the site."
 msgstr ""
 
+#: src/routes/account/loyalty.tsx
+msgid "Automatic loyalty rules"
+msgstr ""
+
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Scaling"
 msgstr "ステータスのスケーリング"
@@ -4110,6 +4206,10 @@ msgstr "ステータスのスケーリング"
 #: src/lib/recipe-sources.tsx
 msgid "Required Knowledge:"
 msgstr "必要な知識："
+
+#: src/components/crafts/PlayerPicker.tsx
+msgid "Select claim…"
+msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Contributors"
@@ -4242,6 +4342,10 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 msgid "Creatures"
 msgstr "クリーチャー"
+
+#: src/routes/account/loyalty.tsx
+msgid "Delete loyalty rule"
+msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/account/payees.tsx

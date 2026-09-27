@@ -381,6 +381,14 @@ export const recordBountyPayment = spacetimedb.reducer(
                 updatedAt: ctx.timestamp,
             });
         }
+        ctx.db.bounty_payout_record_log.insert({
+            id: 0n,
+            payerAccountIdentity: ctx.sender,
+            payeePlayerId,
+            currency,
+            amount: delta,
+            createdAt: ctx.timestamp,
+        });
     }
 );
 

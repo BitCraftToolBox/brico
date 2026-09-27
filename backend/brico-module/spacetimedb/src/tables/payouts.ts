@@ -182,3 +182,27 @@ export const bounty_payout_record = table(
         updatedAt: t.timestamp(),
     }
 );
+
+/**
+ * The append-only transaction log behind `bounty_payout_record.paidTotal` — one row per
+ * `recordBountyPayment` call, in whatever direction (positive or negative `amount`) it was
+ * recorded. Rows are inserted, never edited or deleted: `bounty_payout_record.paidTotal` is (and
+ * must remain) the running sum of every row here for that (payer, payee, currency) triple, but is
+ * kept as its own table rather than recomputed from this log on every read, so aggregate reports
+ * never have to scan a payer's full transaction history.
+ */
+export const bounty_payout_record_log = table(
+    {
+        name: 'bounty_payout_record_log',
+        indexes: [{accessor: 'by_payer_payee', algorithm: 'btree', columns: ['payerAccountIdentity', 'payeePlayerId']}],
+    },
+    {
+        id: t.u64().primaryKey().autoInc(),
+        payerAccountIdentity: t.identity(),
+        // Same reasoning as `bounty_entitlement_total.payeePlayerId` above.
+        payeePlayerId: t.u64().index('btree'),
+        currency: t.string(),
+        amount: t.i64(),
+        createdAt: t.timestamp(),
+    }
+);

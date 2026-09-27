@@ -3,71 +3,104 @@
  * payee view) and `/account/payees` (the payer view).
  */
 import {tables} from "@brico/bindings/brico-app";
-import type {ContributorEntitlementRow, PayerEntitlementRow} from "@brico/bindings/brico-app/types";
+import type {BountyPayoutLogRow, ContributorEntitlementRow, PayerEntitlementRow} from "@brico/bindings/brico-app/types";
 import {type Accessor, createEffect, createSignal, untrack} from "solid-js";
 import {useAccount} from "~/lib/account/state";
 import type {LocalPayeeGrouping} from "~/lib/settings";
+import type {BricoAppConnection} from "~/lib/spacetime/brico-app";
 import {BRICO_APP_SERVER, bricoAppTable} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
 
-export function createContributorEntitlements(): Accessor<ContributorEntitlementRow[]> {
-    const acc = useAccount();
-    const conn = useConnection(BRICO_APP_SERVER);
-    const [rows, setRows] = createSignal<ContributorEntitlementRow[]>([]);
-
-    function readRows() {
-        const active = conn.active();
-        setRows(active ? [...active.db.myEntitlementsAsContributor.iter()] as ContributorEntitlementRow[] : []);
-    }
-
-    let release: (() => void) | null = null;
-    function subscribe() {
-        if (release) return;
-        const request = untrack(() =>
-            conn.requestResource({key: "entitlements:contributor", tables: [bricoAppTable(tables.myEntitlementsAsContributor)]}, readRows)
-        );
-        release = request.release;
-    }
-    function unsubscribe() {
-        release?.();
-        release = null;
-        setRows([]);
-    }
-    createEffect(() => {
-        if (acc.isLoggedIn()) subscribe(); else unsubscribe();
-    });
-
-    return rows;
+export interface LiveReport<TRow> {
+    rows: Accessor<TRow[]>;
+    /** True once this report's subscription has delivered its rows — the difference between "the
+     * caller genuinely has none" and "still loading" (same reasoning as `CraftDetailRelay.ready`
+     * in `~/lib/crafts/relay.ts`). Reset to `false` while logged out, same as `rows`. */
+    ready: Accessor<boolean>;
 }
 
-export function createPayerEntitlements(): Accessor<PayerEntitlementRow[]> {
+/**
+ * Subscribes to one of `brico-app`'s per-caller report views for the lifetime of the calling
+ * component — live and re-subscribed whenever the caller logs in, torn down (rows/ready reset)
+ * whenever they log out. Every report below is the same shape: one whole-view resource, read back
+ * with `readRows` whenever it changes.
+ */
+function createLiveReport<TRow>(
+    resourceKey: string,
+    table: ReturnType<typeof bricoAppTable>,
+    readRows: (conn: BricoAppConnection) => TRow[],
+): LiveReport<TRow> {
     const acc = useAccount();
     const conn = useConnection(BRICO_APP_SERVER);
-    const [rows, setRows] = createSignal<PayerEntitlementRow[]>([]);
+    const [rows, setRows] = createSignal<TRow[]>([]);
+    const [ready, setReady] = createSignal(false);
 
-    function readRows() {
+    function rebuild() {
         const active = conn.active();
-        setRows(active ? [...active.db.myEntitlementsAsPayer.iter()] as PayerEntitlementRow[] : []);
+        setRows(active ? readRows(active) : []);
     }
 
     let release: (() => void) | null = null;
     function subscribe() {
         if (release) return;
-        const request = untrack(() =>
-            conn.requestResource({key: "entitlements:payer", tables: [bricoAppTable(tables.myEntitlementsAsPayer)]}, readRows)
-        );
+        const request = untrack(() => conn.requestResource({key: resourceKey, tables: [table]}, rebuild));
         release = request.release;
+        createEffect(() => {
+            const isReady = request.ready();
+            // Rebuild synchronously on readiness — same reasoning as `createPlayerNames`'s
+            // identical effect — so `ready` never reports true over stale/empty rows.
+            if (isReady) rebuild();
+            setReady(isReady);
+        });
     }
     function unsubscribe() {
         release?.();
         release = null;
         setRows([]);
+        setReady(false);
     }
     createEffect(() => {
         if (acc.isLoggedIn()) subscribe(); else unsubscribe();
     });
 
-    return rows;
+    return {rows, ready};
+}
+
+export function createContributorEntitlements(): LiveReport<ContributorEntitlementRow> {
+    return createLiveReport(
+        "entitlements:contributor",
+        bricoAppTable(tables.myEntitlementsAsContributor),
+        conn => [...conn.db.myEntitlementsAsContributor.iter()] as ContributorEntitlementRow[],
+    );
+}
+
+export function createPayerEntitlements(): LiveReport<PayerEntitlementRow> {
+    return createLiveReport(
+        "entitlements:payer",
+        bricoAppTable(tables.myEntitlementsAsPayer),
+        conn => [...conn.db.myEntitlementsAsPayer.iter()] as PayerEntitlementRow[],
+    );
+}
+
+/** The caller's own transaction log as a payer — every `recordBountyPayment` row they've ever
+ * appended, across every payee and currency. Backs the payment-history dialog on `/account/payees`. */
+export function createPayoutLogAsPayer(): LiveReport<BountyPayoutLogRow> {
+    return createLiveReport(
+        "entitlements:payout-log-payer",
+        bricoAppTable(tables.myBountyPayoutRecordLogAsPayer),
+        conn => [...conn.db.myBountyPayoutRecordLogAsPayer.iter()] as BountyPayoutLogRow[],
+    );
+}
+
+/** The other direction of `createPayoutLogAsPayer` — the caller's own transaction log as a
+ * contributor, across every BitCraft player id they've ever linked. Backs the payment-history
+ * dialog on `/account/payouts`. */
+export function createPayoutLogAsContributor(): LiveReport<BountyPayoutLogRow> {
+    return createLiveReport(
+        "entitlements:payout-log-contributor",
+        bricoAppTable(tables.myBountyPayoutRecordLogAsContributor),
+        conn => [...conn.db.myBountyPayoutRecordLogAsContributor.iter()] as BountyPayoutLogRow[],
+    );
 }
 
 /** One payer's earnings, broken down by one of the caller's own linked BitCraft player ids. */
