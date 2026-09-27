@@ -90,16 +90,14 @@ export const loyalty_bonus_total = table(
 );
 
 /**
- * Per-(craft, contributor, currency) earnings ledger. Unlike a full-history recompute, `entitledTotal`
- * only ever grows: each `upsertCraftBountyEntitlement` call converts *new* effort (since
- * `lastAssignedEffort`) at whatever ratio is in effect right now, adds that to `entitledTotal`, and
- * carries whatever didn't reach a whole currency unit forward in `remainderNumerator`/
- * `remainderDenominator` — so a bounty rate change only ever applies to effort accrued after the
- * change, never re-valuing effort already paid out under the old rate. This stays keyed per-craft
- * (unlike the two totals tables below) because the math is per-effort against that craft's own bounty
- * ratio. Both the craft and the per-craft effort have to be stored somewhere to run the delta
- * computation, but nothing else ever needs to see a bounty broken down by craft, only by
- * payer/payee/currency.
+ * Per-(craft, contributor, currency) baseline for computing each `upsertCraftBountyEntitlement`
+ * call's *new* effort (since `lastAssignedEffort`) at whatever ratio is in effect right now — so a
+ * bounty rate change only ever applies to effort accrued after the change, never re-valuing effort
+ * already priced under the old rate. This stays keyed per-craft (unlike the two totals tables below)
+ * because the delta computation is per-effort against that craft's own bounty ratio. The actual
+ * currency math (flooring, fractional carry) happens once, pooled across every craft, in
+ * `bounty_entitlement_total` below — this table has no currency total of its own, only the effort
+ * baseline needed to compute each call's delta.
  */
 export const craft_bounty_entitlement = table(
     {
@@ -115,25 +113,15 @@ export const craft_bounty_entitlement = table(
         currency: t.string(),
         /** Cumulative contribution as of the last computation. */
         lastAssignedEffort: t.i64(),
-        entitledTotal: t.i64(),
         updatedAt: t.timestamp(),
-        /**
-         * The fractional currency amount (< 1, exact — see `@brico/crafts/entitlement`'s `addRatio`)
-         * left over after the last floor, carried into the next computation's sum rather than
-         * dropped. Stored as an exact fraction, not an effort amount: a ratio's numerator need not be
-         * 1, so "effort not yet worth a whole currency unit" doesn't correspond to a whole number of
-         * effort units, only to a fractional currency amount.
-         */
-        remainderNumerator: t.i64().default(0n),
-        remainderDenominator: t.i64().default(1n),
     }
 );
 
 /**
- * The sum of a payee's `craft_bounty_entitlement` across every craft a given payer has bountied
- * for them, per currency. Kept updated atomically by `upsertCraftBountyEntitlement` whenever it
- * records a per-craft delta, so this table is always the running sum, never recomputed. Same shape
- * as `bounty_payout_record` below on purpose — they're the "owed" and"paid" side of the same
+ * The sum of a payee's earnings across every craft a given payer has bountied for them, per
+ * currency. Kept updated atomically by `upsertCraftBountyEntitlement` whenever it records a
+ * per-craft delta, so this table is always the running sum, never recomputed. Same shape as
+ * `bounty_payout_record` below on purpose — they're the "owed" and "paid" side of the same
  * payer/payee/currency relationship.
  */
 export const bounty_entitlement_total = table(
@@ -159,6 +147,17 @@ export const bounty_entitlement_total = table(
         total: t.i64(),
         totalEffort: t.i64(),
         updatedAt: t.timestamp(),
+        /**
+         * The fractional currency amount (< 1, exact — see `@brico/crafts/entitlement`'s `addRatio`)
+         * left over after the last floor, carried into the next craft's delta rather than dropped —
+         * pooled across *every* craft this payer has ever bountied this payee in, per currency, so a
+         * craft that finishes owing e.g. 0.7 currency doesn't strand that fraction: it's still here
+         * to combine with the next craft's delta, whichever craft that is. Stored as an exact
+         * fraction, not an effort amount: a ratio's numerator need not be 1, so "effort not yet worth
+         * a whole currency unit" doesn't correspond to a whole number of effort units.
+         */
+        remainderNumerator: t.i64(),
+        remainderDenominator: t.i64(),
     }
 );
 

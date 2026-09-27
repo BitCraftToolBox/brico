@@ -13,4 +13,6 @@ export default __t.row({
   total: __t.i64(),
   totalEffort: __t.i64().name("total_effort"),
   updatedAt: __t.timestamp().name("updated_at"),
+  remainderNumerator: __t.i64().name("remainder_numerator"),
+  remainderDenominator: __t.i64().name("remainder_denominator"),
 });

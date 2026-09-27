@@ -190,9 +190,14 @@ export const deleteLoyaltyBonusTotal = spacetimedb.reducer(
 );
 
 /**
- * Adds `delta` to the (payer, payee, currency) row of `bounty_entitlement_total`, inserting a new
- * row at `delta` if none exists yet — the atomic "update the total" half of
- * `upsertCraftBountyEntitlement` below. Looked up via `by_payer_payee` and filtered to `currency`
+ * Folds `deltaFraction` (this call's new effort, priced at whatever ratio is in effect right now —
+ * *not* yet floored) into the (payer, payee, currency) row of `bounty_entitlement_total`, inserting
+ * a new row if none exists yet — the atomic "update the total" half of `upsertCraftBountyEntitlement`
+ * below. Combines `deltaFraction` with whatever fraction this row is already carrying from a
+ * *previous* call (from this craft or any other craft this payer has bountied this payee in),
+ * floors once, grows `total` by that floored amount, and carries whatever's left of the combined
+ * fraction forward — so a fractional remainder is pooled across every craft, not stranded in
+ * whichever craft happened to produce it. Looked up via `by_payer_payee` and filtered to `currency`
  * in JS rather than a dedicated 3-column index, since uniqueness on the triple is enforced here,
  * not by the database (see the table's doc comment).
  */
@@ -201,16 +206,33 @@ function addToEntitlementTotal(
     payerAccountIdentity: Identity,
     payeePlayerId: bigint,
     currency: string,
-    delta: bigint,
+    deltaFraction: {numerator: bigint; denominator: bigint},
     deltaEffort: bigint,
     updatedAt: Timestamp,
 ): void {
     const existing = [...ctx.db.bounty_entitlement_total.by_payer_payee.filter([payerAccountIdentity, payeePlayerId])]
         .find(row => row.currency === currency);
+    const carriedRemainder = existing === undefined
+        ? {numerator: 0n, denominator: 1n}
+        : {numerator: existing.remainderNumerator, denominator: existing.remainderDenominator};
+
+    const combined = addRatio(carriedRemainder, deltaFraction);
+    const earned = combined.numerator / combined.denominator;
+    const remainder = reduceRatio(combined.numerator - earned * combined.denominator, combined.denominator);
+
     if (existing === undefined) {
-        ctx.db.bounty_entitlement_total.insert({id: 0n, payerAccountIdentity, payeePlayerId, currency, total: delta, totalEffort: deltaEffort, updatedAt});
+        ctx.db.bounty_entitlement_total.insert({
+            id: 0n, payerAccountIdentity, payeePlayerId, currency,
+            total: earned, totalEffort: deltaEffort,
+            remainderNumerator: remainder.numerator, remainderDenominator: remainder.denominator,
+            updatedAt,
+        });
     } else {
-        ctx.db.bounty_entitlement_total.id.update({...existing, total: existing.total + delta, totalEffort: existing.totalEffort + deltaEffort, updatedAt});
+        ctx.db.bounty_entitlement_total.id.update({
+            ...existing, total: existing.total + earned, totalEffort: existing.totalEffort + deltaEffort,
+            remainderNumerator: remainder.numerator, remainderDenominator: remainder.denominator,
+            updatedAt,
+        });
     }
 }
 
@@ -245,8 +267,7 @@ export const seedCraftBountyEntitlement = spacetimedb.reducer(
         if (existing !== null) return;
 
         ctx.db.craft_bounty_entitlement.insert({
-            id: 0n, craftId, playerId, currency,
-            lastAssignedEffort: effort, remainderNumerator: 0n, remainderDenominator: 1n, entitledTotal: 0n, updatedAt,
+            id: 0n, craftId, playerId, currency, lastAssignedEffort: effort, updatedAt,
         });
     }
 );
@@ -257,41 +278,36 @@ export const seedCraftBountyEntitlement = spacetimedb.reducer(
  * bonus resolves differently, for a craft that has a `craft_bounty_assignment`. `effort` is always
  * the contributor's current *cumulative* contribution (a fact straight from prism, independent of
  * this table's own state), and `ratioNumerator`/`ratioDenominator` is whatever ratio is in effect
- * right now. The actual currency math happens here, server-side, against this reducer's own
- * transactional view of the row: the new effort since `lastAssignedEffort` is priced at that ratio
- * as an *exact fraction* (`@brico/crafts/entitlement`'s `addRatio`/`reduceRatio` — never effort
- * units, since a ratio whose numerator isn't 1 has no whole-effort equivalent for a fractional
- * currency amount), added to whatever fraction `remainderNumerator`/`remainderDenominator` was still
- * carrying, floored once to grow `entitledTotal`, and whatever's left of that fraction is carried
- * forward.
+ * right now. This reducer only computes the new effort since `lastAssignedEffort` and prices it at
+ * that ratio as an *exact fraction* (`@brico/crafts/entitlement`'s `addRatio`/`reduceRatio` — never
+ * effort units, since a ratio whose numerator isn't 1 has no whole-effort equivalent for a fractional
+ * currency amount); the actual flooring and fractional carry happens in `addToEntitlementTotal`,
+ * pooled across every craft this payer has bountied this payee in, not per-craft — see that
+ * function's doc comment for why.
  *
- * A triple with no `existing` row is treated as a zero baseline (zero effort, zero remainder, zero
- * earned so far) and priced normally from there — *not* seeded at zero and skipped, the way
- * `seedCraftBountyEntitlement` handles a craft's pre-existing contributors the moment its bounty is
- * assigned. By the time this reducer is called for a triple that really does have effort predating
- * the bounty, `seedCraftBountyEntitlement` has already given it a real (non-zero) baseline row, so
- * this call sees `existing !== null` and prices only the effort since that baseline. A triple that
- * reaches here with no row at all is therefore a contributor who started *after* the bounty already
- * existed — their whole observed effort is fair to price from zero, since there was no unprotected,
- * bounty-free period for them to begin with.
+ * A triple with no `existing` row is treated as a zero effort baseline and priced normally from
+ * there — *not* seeded at zero and skipped, the way `seedCraftBountyEntitlement` handles a craft's
+ * pre-existing contributors the moment its bounty is assigned. By the time this reducer is called
+ * for a triple that really does have effort predating the bounty, `seedCraftBountyEntitlement` has
+ * already given it a real (non-zero) baseline row, so this call sees `existing !== null` and prices
+ * only the effort since that baseline. A triple that reaches here with no row at all is therefore a
+ * contributor who started *after* the bounty already existed — their whole observed effort is fair
+ * to price from zero, since there was no unprotected, bounty-free period for them to begin with.
  *
  * An `existing` row can itself predate a *gap*: a bounty can be cleared (its assignment row deleted)
  * and reassigned later while the contributor keeps working the craft in between. `assignedAt` is only
  * ever set on a true insert (see `assignCraftBounty`), so `assignment.assignedAt` newer than this
  * row's own `updatedAt` means the row hasn't been priced since *this* continuous assignment began —
  * there was a bounty-free gap since it was last touched. In that case the effort baseline jumps
- * straight to the current `effort` (so this call's delta, and hence its earned amount, is zero — the
- * gap's effort is never priced), while `entitledTotal` and the remainder fraction carry over
- * untouched: nothing already earned is lost, only the gap's effort is excluded. A plain ratio/payer/
- * currency edit on a bounty that was never cleared leaves `assignedAt` untouched too, so it can never
- * be mistaken for a gap.
+ * straight to the current `effort` (so this call's delta is zero — the gap's effort is never priced).
+ * A plain ratio/payer/currency edit on a bounty that was never cleared leaves `assignedAt` untouched
+ * too, so it can never be mistaken for a gap.
  *
- * Also folds the *delta* since that triple's last-recorded `entitledTotal` into
- * `bounty_entitlement_total`'s running (payer, payee, currency) sum, keyed off the bounty's current
- * `assignedByAccountIdentity` — so if a craft's bounty is ever reassigned to a different payer
- * mid-craft, effort already recorded under the old payer stays theirs, and only new effort from here
- * on accrues to whoever pays now. That craft must have an assignment, since the bot only ever calls
- * this for a craft that has one.
+ * Also folds the delta into `bounty_entitlement_total`'s running (payer, payee, currency) sum, keyed
+ * off the bounty's current `assignedByAccountIdentity` — so if a craft's bounty is ever reassigned to
+ * a different payer mid-craft, effort already recorded under the old payer stays theirs, and only new
+ * effort from here on accrues to whoever pays now. That craft must have an assignment, since the bot
+ * only ever calls this for a craft that has one.
  */
 export const upsertCraftBountyEntitlement = spacetimedb.reducer(
     {
@@ -313,42 +329,23 @@ export const upsertCraftBountyEntitlement = spacetimedb.reducer(
         const existing = [...ctx.db.craft_bounty_entitlement.by_craft_player_currency.filter([craftId, playerId, currency])][0] ?? null;
         // A gap: this row hasn't been priced since the *current* (continuous) assignment began, so
         // whatever effort accrued in between (while the bounty was actually cleared) must not be
-        // priced — jump the effort baseline to now, but keep everything already earned.
+        // priced — jump the effort baseline to now.
         const hasGap = existing !== null && assignment.assignedAt.microsSinceUnixEpoch > existing.updatedAt.microsSinceUnixEpoch;
-        const baseline = existing === null
-            ? {lastAssignedEffort: 0n, remainderNumerator: 0n, remainderDenominator: 1n, entitledTotal: 0n}
-            : hasGap
-                ? {...existing, lastAssignedEffort: effort}
-                : existing;
-
-        const deltaEffort = effort - baseline.lastAssignedEffort;
-        // The new effort's exact currency value at the ratio in effect *now*, added to whatever
-        // fraction was still owed from last time — never derived from `baseline.entitledTotal`,
-        // which is why a previous call's ratio can never be retroactively revisited by this one.
-        const combined = addRatio(
-            {numerator: baseline.remainderNumerator, denominator: baseline.remainderDenominator},
-            {numerator: deltaEffort * ratioNumerator, denominator: ratioDenominator},
-        );
-        const earned = combined.numerator / combined.denominator;
-        const remainder = reduceRatio(combined.numerator - earned * combined.denominator, combined.denominator);
-        const entitledTotal = baseline.entitledTotal + earned;
+        const lastAssignedEffort = existing === null || hasGap ? effort : existing.lastAssignedEffort;
+        const deltaEffort = effort - lastAssignedEffort;
 
         if (existing === null) {
-            ctx.db.craft_bounty_entitlement.insert({
-                id: 0n, craftId, playerId, currency, lastAssignedEffort: effort,
-                remainderNumerator: remainder.numerator, remainderDenominator: remainder.denominator,
-                entitledTotal, updatedAt,
-            });
+            ctx.db.craft_bounty_entitlement.insert({id: 0n, craftId, playerId, currency, lastAssignedEffort: effort, updatedAt});
         } else {
-            ctx.db.craft_bounty_entitlement.id.update({
-                ...existing, lastAssignedEffort: effort,
-                remainderNumerator: remainder.numerator, remainderDenominator: remainder.denominator,
-                entitledTotal, updatedAt,
-            });
+            ctx.db.craft_bounty_entitlement.id.update({...existing, lastAssignedEffort: effort, updatedAt});
         }
 
-        if (earned !== 0n || deltaEffort !== 0n) {
-            addToEntitlementTotal(ctx, assignment.assignedByAccountIdentity, playerId, currency, earned, deltaEffort, updatedAt);
+        if (deltaEffort !== 0n) {
+            // The new effort's exact currency value at the ratio in effect *now* — not yet floored;
+            // `addToEntitlementTotal` combines it with whatever fraction is still owed from any craft
+            // and floors once, pooled.
+            const deltaFraction = reduceRatio(deltaEffort * ratioNumerator, ratioDenominator);
+            addToEntitlementTotal(ctx, assignment.assignedByAccountIdentity, playerId, currency, deltaFraction, deltaEffort, updatedAt);
         }
     }
 );
@@ -432,7 +429,8 @@ export const importHistoricalBountyLedger = spacetimedb.reducer(
                 .find(row => row.currency === currency);
             if (existingEntitlement === undefined) {
                 ctx.db.bounty_entitlement_total.insert({
-                    id: 0n, payerAccountIdentity, payeePlayerId, currency, total, totalEffort, updatedAt: ctx.timestamp,
+                    id: 0n, payerAccountIdentity, payeePlayerId, currency, total, totalEffort,
+                    remainderNumerator: 0n, remainderDenominator: 1n, updatedAt: ctx.timestamp,
                 });
             } else {
                 ctx.db.bounty_entitlement_total.id.update({...existingEntitlement, total, totalEffort, updatedAt: ctx.timestamp});

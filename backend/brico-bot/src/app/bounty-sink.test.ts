@@ -41,7 +41,10 @@ function effortThresholdRule(overrides: {allCurrencies?: boolean; threshold?: bi
 }
 
 function entitlementTotal(playerId: bigint, currency: string, totalEffort: bigint): BountyEntitlementTotal {
-    return {id: 0n, payerAccountIdentity: PAYER, payeePlayerId: playerId, currency, total: 0n, totalEffort, updatedAt: Timestamp.now()};
+    return {
+        id: 0n, payerAccountIdentity: PAYER, payeePlayerId: playerId, currency, total: 0n, totalEffort,
+        remainderNumerator: 0n, remainderDenominator: 1n, updatedAt: Timestamp.now(),
+    };
 }
 
 function member(overrides: Partial<Omit<ClaimMember, "entityId" | "regionId" | "claimEntityId" | "playerEntityId">> = {}): ClaimMember {
