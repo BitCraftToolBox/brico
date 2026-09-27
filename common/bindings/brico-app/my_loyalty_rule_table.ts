@@ -4,15 +4,17 @@
 /* eslint-disable */
 /* tslint:disable */
 import {t as __t,} from "spacetimedb";
+import {LoyaltyRuleSpec,} from "./types";
+
 
 export default __t.row({
   id: __t.u64().primaryKey(),
-  craftId: __t.u64().name("craft_id"),
-  playerId: __t.u64().name("player_id"),
+  payerAccountIdentity: __t.identity().name("payer_account_identity"),
   currency: __t.string(),
-  lastAssignedEffort: __t.i64().name("last_assigned_effort"),
-  remainderNumerator: __t.i64().name("remainder_numerator"),
-  remainderDenominator: __t.i64().name("remainder_denominator"),
-  entitledTotal: __t.i64().name("entitled_total"),
+  get spec() {
+    return LoyaltyRuleSpec;
+  },
+  bonusRatioNumerator: __t.i64().name("bonus_ratio_numerator"),
+  bonusRatioDenominator: __t.i64().name("bonus_ratio_denominator"),
   updatedAt: __t.timestamp().name("updated_at"),
 });

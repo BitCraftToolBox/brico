@@ -6,29 +6,30 @@
 /* eslint-disable */
 /* tslint:disable */
 import {
-    convertToAccessorMap as __convertToAccessorMap,
-    DbConnectionBuilder as __DbConnectionBuilder,
-    type DbConnectionConfig as __DbConnectionConfig,
-    DbConnectionImpl as __DbConnectionImpl,
-    type ErrorContextInterface as __ErrorContextInterface,
-    type EventContextInterface as __EventContextInterface,
-    makeQueryBuilder as __makeQueryBuilder,
-    procedures as __procedures,
-    procedureSchema as __procedureSchema,
-    type QueryBuilder as __QueryBuilder,
-    type ReducerEventContextInterface as __ReducerEventContextInterface,
-    reducers as __reducers,
-    reducerSchema as __reducerSchema,
-    type RemoteModule as __RemoteModule,
-    schema as __schema,
-    SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
-    type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
-    type SubscriptionHandleImpl as __SubscriptionHandleImpl,
-    table as __table,
+  convertToAccessorMap as __convertToAccessorMap,
+  DbConnectionBuilder as __DbConnectionBuilder,
+  type DbConnectionConfig as __DbConnectionConfig,
+  DbConnectionImpl as __DbConnectionImpl,
+  type ErrorContextInterface as __ErrorContextInterface,
+  type EventContextInterface as __EventContextInterface,
+  makeQueryBuilder as __makeQueryBuilder,
+  procedures as __procedures,
+  procedureSchema as __procedureSchema,
+  type QueryBuilder as __QueryBuilder,
+  type ReducerEventContextInterface as __ReducerEventContextInterface,
+  reducers as __reducers,
+  reducerSchema as __reducerSchema,
+  type RemoteModule as __RemoteModule,
+  schema as __schema,
+  SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
+  type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
+  type SubscriptionHandleImpl as __SubscriptionHandleImpl,
+  table as __table,
 } from "spacetimedb";
 
 // Import all table schema definitions
 import AllAccountRow from "./all_account_table";
+import AllBountyEntitlementTotalRow from "./all_bounty_entitlement_total_table";
 import AllBountyRuleRow from "./all_bounty_rule_table";
 import AllCraftBountyAssignmentRow from "./all_craft_bounty_assignment_table";
 import AllCraftBountyEntitlementRow from "./all_craft_bounty_entitlement_table";
@@ -36,7 +37,9 @@ import AllCraftBountyOverrideRow from "./all_craft_bounty_override_table";
 import AllCraftFilterWatchRow from "./all_craft_filter_watch_table";
 import AllIntegrationLinkRequestRow from "./all_integration_link_request_table";
 import AllLinkedIntegrationRow from "./all_linked_integration_table";
+import AllLoyaltyBonusTotalRow from "./all_loyalty_bonus_total_table";
 import AllLoyaltyRewardRow from "./all_loyalty_reward_table";
+import AllLoyaltyRuleRow from "./all_loyalty_rule_table";
 import AllPrivateCraftBountyAssignmentRow from "./all_private_craft_bounty_assignment_table";
 import AllSavedCraftFilterRow from "./all_saved_craft_filter_table";
 
@@ -52,12 +55,13 @@ import * as CreateSharedFiltersProcedure from "./create_shared_filters_procedure
 import DeleteBountyRuleReducer from "./delete_bounty_rule_reducer";
 import DeleteCraftBountyOverrideReducer from "./delete_craft_bounty_override_reducer";
 import DeleteCraftFilterWatchReducer from "./delete_craft_filter_watch_reducer";
+import DeleteLoyaltyBonusTotalReducer from "./delete_loyalty_bonus_total_reducer";
 import DeleteLoyaltyRewardReducer from "./delete_loyalty_reward_reducer";
+import DeleteLoyaltyRuleReducer from "./delete_loyalty_rule_reducer";
 import DeleteNotificationReducer from "./delete_notification_reducer";
 import DeleteSavedCraftFilterReducer from "./delete_saved_craft_filter_reducer";
 import EnsureAccountReducer from "./ensure_account_reducer";
 import ImportHistoricalBountyLedgerReducer from "./import_historical_bounty_ledger_reducer";
-import ImportHistoricalLoyaltyRewardReducer from "./import_historical_loyalty_reward_reducer";
 import LinkDiscordViaSpacetimeAuthReducer from "./link_discord_via_spacetime_auth_reducer";
 import LinkIntegrationReducer from "./link_integration_reducer";
 import MarkAllNotificationsReadReducer from "./mark_all_notifications_read_reducer";
@@ -71,7 +75,9 @@ import MyEntitlementsAsContributorRow from "./my_entitlements_as_contributor_tab
 import MyEntitlementsAsPayerRow from "./my_entitlements_as_payer_table";
 import MyIntegrationLinkRequestRow from "./my_integration_link_request_table";
 import MyLinkedIntegrationRow from "./my_linked_integration_table";
+import MyLoyaltyBonusTotalRow from "./my_loyalty_bonus_total_table";
 import MyLoyaltyRewardRow from "./my_loyalty_reward_table";
+import MyLoyaltyRuleRow from "./my_loyalty_rule_table";
 import MyNotificationRow from "./my_notification_table";
 import MyPrivateCraftBountyAssignmentRow from "./my_private_craft_bounty_assignment_table";
 import MySavedCraftFilterRow from "./my_saved_craft_filter_table";
@@ -82,13 +88,16 @@ import RecordBountyPaymentReducer from "./record_bounty_payment_reducer";
 import RegisterServicePrincipalReducer from "./register_service_principal_reducer";
 import ReorderBountyRulesReducer from "./reorder_bounty_rules_reducer";
 import RevokeServicePrincipalReducer from "./revoke_service_principal_reducer";
+import SeedCraftBountyEntitlementReducer from "./seed_craft_bounty_entitlement_reducer";
 import SetDisplayNameReducer from "./set_display_name_reducer";
 import UnlinkIntegrationReducer from "./unlink_integration_reducer";
 import UpsertBountyRuleReducer from "./upsert_bounty_rule_reducer";
 import UpsertCraftBountyEntitlementReducer from "./upsert_craft_bounty_entitlement_reducer";
 import UpsertCraftBountyOverrideReducer from "./upsert_craft_bounty_override_reducer";
 import UpsertCraftFilterWatchReducer from "./upsert_craft_filter_watch_reducer";
+import UpsertLoyaltyBonusTotalReducer from "./upsert_loyalty_bonus_total_reducer";
 import UpsertLoyaltyRewardReducer from "./upsert_loyalty_reward_reducer";
+import UpsertLoyaltyRuleReducer from "./upsert_loyalty_rule_reducer";
 import UpsertSavedCraftFilterReducer from "./upsert_saved_craft_filter_reducer";
 
 /** Type-only namespace exports for generated type groups. */
@@ -102,6 +111,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllAccountRow),
+  allBountyEntitlementTotal: __table({
+    name: 'all_bounty_entitlement_total',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllBountyEntitlementTotalRow),
   allBountyRule: __table({
     name: 'all_bounty_rule',
     indexes: [
@@ -151,6 +167,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllLinkedIntegrationRow),
+  allLoyaltyBonusTotal: __table({
+    name: 'all_loyalty_bonus_total',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllLoyaltyBonusTotalRow),
   allLoyaltyReward: __table({
     name: 'all_loyalty_reward',
     indexes: [
@@ -158,6 +181,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllLoyaltyRewardRow),
+  allLoyaltyRule: __table({
+    name: 'all_loyalty_rule',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllLoyaltyRuleRow),
   allPrivateCraftBountyAssignment: __table({
     name: 'all_private_craft_bounty_assignment',
     indexes: [
@@ -235,6 +265,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MyLinkedIntegrationRow),
+  myLoyaltyBonusTotal: __table({
+    name: 'my_loyalty_bonus_total',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyLoyaltyBonusTotalRow),
   myLoyaltyReward: __table({
     name: 'my_loyalty_reward',
     indexes: [
@@ -242,6 +279,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MyLoyaltyRewardRow),
+  myLoyaltyRule: __table({
+    name: 'my_loyalty_rule',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyLoyaltyRuleRow),
   myNotification: __table({
     name: 'my_notification',
     indexes: [
@@ -275,12 +319,13 @@ const reducersSchema = __reducers(
   __reducerSchema("delete_bounty_rule", DeleteBountyRuleReducer),
   __reducerSchema("delete_craft_bounty_override", DeleteCraftBountyOverrideReducer),
   __reducerSchema("delete_craft_filter_watch", DeleteCraftFilterWatchReducer),
+  __reducerSchema("delete_loyalty_bonus_total", DeleteLoyaltyBonusTotalReducer),
   __reducerSchema("delete_loyalty_reward", DeleteLoyaltyRewardReducer),
+  __reducerSchema("delete_loyalty_rule", DeleteLoyaltyRuleReducer),
   __reducerSchema("delete_notification", DeleteNotificationReducer),
   __reducerSchema("delete_saved_craft_filter", DeleteSavedCraftFilterReducer),
   __reducerSchema("ensure_account", EnsureAccountReducer),
   __reducerSchema("import_historical_bounty_ledger", ImportHistoricalBountyLedgerReducer),
-  __reducerSchema("import_historical_loyalty_reward", ImportHistoricalLoyaltyRewardReducer),
   __reducerSchema("link_discord_via_spacetime_auth", LinkDiscordViaSpacetimeAuthReducer),
   __reducerSchema("link_integration", LinkIntegrationReducer),
   __reducerSchema("mark_all_notifications_read", MarkAllNotificationsReadReducer),
@@ -291,13 +336,16 @@ const reducersSchema = __reducers(
   __reducerSchema("register_service_principal", RegisterServicePrincipalReducer),
   __reducerSchema("reorder_bounty_rules", ReorderBountyRulesReducer),
   __reducerSchema("revoke_service_principal", RevokeServicePrincipalReducer),
+  __reducerSchema("seed_craft_bounty_entitlement", SeedCraftBountyEntitlementReducer),
   __reducerSchema("set_display_name", SetDisplayNameReducer),
   __reducerSchema("unlink_integration", UnlinkIntegrationReducer),
   __reducerSchema("upsert_bounty_rule", UpsertBountyRuleReducer),
   __reducerSchema("upsert_craft_bounty_entitlement", UpsertCraftBountyEntitlementReducer),
   __reducerSchema("upsert_craft_bounty_override", UpsertCraftBountyOverrideReducer),
   __reducerSchema("upsert_craft_filter_watch", UpsertCraftFilterWatchReducer),
+  __reducerSchema("upsert_loyalty_bonus_total", UpsertLoyaltyBonusTotalReducer),
   __reducerSchema("upsert_loyalty_reward", UpsertLoyaltyRewardReducer),
+  __reducerSchema("upsert_loyalty_rule", UpsertLoyaltyRuleReducer),
   __reducerSchema("upsert_saved_craft_filter", UpsertSavedCraftFilterReducer),
 );
 

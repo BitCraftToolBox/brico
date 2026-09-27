@@ -5,11 +5,11 @@
 /* tslint:disable */
 import {t as __t,} from "spacetimedb";
 
+import {HistoricalBountyLedgerRow,} from "./types";
+
 export default {
   payerAccountIdentity: __t.identity(),
-  payeePlayerId: __t.u64(),
-  currency: __t.string(),
-  totalEffort: __t.i64(),
-  total: __t.i64(),
-  paidTotal: __t.i64(),
+  get rows() {
+    return __t.array(HistoricalBountyLedgerRow);
+  },
 };

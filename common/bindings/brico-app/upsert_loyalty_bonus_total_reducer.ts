@@ -6,11 +6,10 @@
 import {t as __t,} from "spacetimedb";
 
 export default {
-  craftId: __t.u64(),
-  playerId: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  payeePlayerId: __t.u64(),
   currency: __t.string(),
-  effort: __t.i64(),
-  ratioNumerator: __t.i64(),
-  ratioDenominator: __t.i64(),
+  bonusRatioNumerator: __t.i64(),
+  bonusRatioDenominator: __t.i64(),
   updatedAt: __t.timestamp(),
 };

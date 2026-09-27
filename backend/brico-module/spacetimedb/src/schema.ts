@@ -5,7 +5,7 @@ import {bounty_rule, craft_bounty_assignment, craft_bounty_override, craft_priva
 import {craft_filter_watch, saved_craft_filter, shared_filter} from './tables/crafts';
 import {integration_link_request, linked_integration} from './tables/integrations';
 import {notification} from './tables/notifications';
-import {bounty_entitlement_total, bounty_payout_record, craft_bounty_entitlement, loyalty_reward} from './tables/payouts';
+import {bounty_entitlement_total, bounty_payout_record, craft_bounty_entitlement, loyalty_bonus_total, loyalty_reward, loyalty_rule} from './tables/payouts';
 
 const spacetimedb = schema({
     account,
@@ -24,6 +24,8 @@ const spacetimedb = schema({
     bounty_entitlement_total,
     bounty_payout_record,
     loyalty_reward,
+    loyalty_rule,
+    loyalty_bonus_total,
 });
 
 export {spacetimedb};

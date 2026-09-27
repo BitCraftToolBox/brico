@@ -97,6 +97,12 @@ export const CraftError = {
     UNKNOWN_CURRENCY: 'UNKNOWN_CURRENCY',
     /** `upsertLoyaltyReward` — a loyalty reward is a *reward*, never a penalty: `ratioNumerator` must be at least `ratioDenominator` (multiplier >= 1). */
     LOYALTY_MULTIPLIER_TOO_SMALL: 'LOYALTY_MULTIPLIER_TOO_SMALL',
+    /** `upsertLoyaltyRule` with a non-null `id` that doesn't resolve to an existing row (already deleted, or never existed). */
+    UNKNOWN_LOYALTY_RULE: 'UNKNOWN_LOYALTY_RULE',
+    /** Dynamic — carries the rejected flag as its `:`-suffix. `upsertLoyaltyRule`'s `claimMembership.requiredAccess` must be one of `CLAIM_ACCESS_FLAGS`. */
+    UNKNOWN_CLAIM_ACCESS_FLAG: 'UNKNOWN_CLAIM_ACCESS_FLAG',
+    /** `upsertLoyaltyRule`'s `effortThreshold.threshold` must be non-negative. */
+    EFFORT_THRESHOLD_MUST_NOT_BE_NEGATIVE: 'EFFORT_THRESHOLD_MUST_NOT_BE_NEGATIVE',
 
     // Saved filter sharing
     NO_FILTERS_SELECTED: 'NO_FILTERS_SELECTED',

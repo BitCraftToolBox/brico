@@ -7,7 +7,8 @@
     "build": "cd .. && spacetime build",
     "publish:local": "node ../scripts/publish-local.mjs",
     "publish:prod": "cd .. && spacetime publish --server local --yes",
-    "generate": "cd .. && spacetime generate --lang typescript --out-dir ../../common/bindings/brico-app --module-path ./spacetimedb"
+    "generate": "cd .. && spacetime generate --yes --lang typescript --out-dir ../../common/bindings/brico-app --module-path ./spacetimedb",
+    "import:payouts": "tsx ../scripts/import-payouts.ts"
   },
   "dependencies": {
     "@brico/crafts": "file:../../../common/crafts",

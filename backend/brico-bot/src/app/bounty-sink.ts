@@ -8,18 +8,32 @@
  * the bot recomputes a craft's bounty from scratch on every relevant snapshot, so there is no
  * separate "what changed" tracking to get wrong — an unchanged resolution is simply skipped.
  */
-import type {BountyRuleValue, CraftBountyOverride} from "@brico/bindings/brico-app/types";
-import {computeEntitlement, reduceRatio} from "@brico/crafts/entitlement";
-import type {CraftSubject} from "@brico/crafts/filter";
+import type {DbConnection} from "@brico/bindings/brico-app";
+import type {BountyEntitlementTotal, BountyRuleValue, CraftBountyOverride, LoyaltyBonusTotal, LoyaltyRule} from "@brico/bindings/brico-app/types";
+import type {ClaimMember} from "@brico/bindings/prism/types";
+import {addRatio, bonusFromMultiplier, reduceRatio} from "@brico/crafts/entitlement";
+import type {ClaimAccessFlag, CraftSubject} from "@brico/crafts/filter";
 import {evaluateFilter} from "@brico/crafts/filter";
 import type {CraftBountyFacts} from "@brico/crafts/subject";
+import {claimAccessFlags} from "@brico/crafts/subject";
 import {Identity, Timestamp} from "spacetimedb";
 
 import type {Logger} from "../log.ts";
 import {timeReducerCall} from "../metrics.ts";
 import type {CraftSnapshot} from "../relay/prism.ts";
 import type {CraftRow} from "../relay/subject.ts";
-import {type BountyRuleSpec, loadAssignments, loadBountyRules, loadEntitlements, loadLoyaltyRewards, loadOverrides, resolvePlayerAccounts} from "./bounty-source.ts";
+import {
+    type BountyRuleSpec,
+    loadAssignments,
+    loadBountyEntitlementTotals,
+    loadBountyRules,
+    loadEntitlements,
+    loadLoyaltyBonusTotals,
+    loadLoyaltyRewards,
+    loadLoyaltyRules,
+    loadOverrides,
+    resolvePlayerAccounts,
+} from "./bounty-source.ts";
 import type {BricoAppConnection} from "./connection.ts";
 
 interface ResolvedBounty {
@@ -114,6 +128,105 @@ export function resolveCraftBounty(
     return null;
 }
 
+/**
+ * A payee's total effort for one payer, either for one specific `currency` or (when `currency` is
+ * `undefined`, an `effortThreshold` rule's `allCurrencies: true`) summed across every currency that
+ * payer has ever bountied them in. Reads whatever `bounty_entitlement_total` last committed as of
+ * the start of the current tick — this tick's own in-flight `upsertCraftBountyEntitlement` calls
+ * haven't round-tripped back into the bot's subscribed table state yet, so this is naturally "before
+ * the current deltas" with no special handling needed.
+ */
+function effortFor(
+    entitlementTotals: ReadonlyMap<string, BountyEntitlementTotal>,
+    payer: Identity,
+    playerId: bigint,
+    currency: string | undefined,
+): bigint {
+    if (currency !== undefined) {
+        return entitlementTotals.get(`${payer.toHexString()}:${playerId}:${currency}`)?.totalEffort ?? 0n;
+    }
+    let sum = 0n;
+    for (const total of entitlementTotals.values()) {
+        if (total.payeePlayerId === playerId && total.payerAccountIdentity.isEqual(payer)) sum += total.totalEffort;
+    }
+    return sum;
+}
+
+/**
+ * Every currently-satisfied `loyalty_rule` bonus for one (payer, payee, currency), summed as an
+ * exact bonus fraction (see `@brico/crafts/entitlement`'s `addRatio` — several bonuses add, they
+ * never compound). `claimMembers` is `snapshot.claimMembers`, already loaded for *every*
+ * claim/player pair in the game (not narrowed to craft owners), so a claim-membership rule naming
+ * any claim id and any contributor is answerable with no new prism subscription.
+ *
+ * `rule.bonusRatioNumerator`/`bonusRatioDenominator` is **already a bonus-only fraction** (e.g.
+ * `1/40` for +2.5%) — unlike `loyalty_reward`'s `ratioNumerator`/`ratioDenominator`, which is a
+ * multiplier (>=1) and needs `bonusFromMultiplier` to convert it. `upsertLoyaltyRule`'s caller (the
+ * frontend's `RuleRow`) does that conversion once, at input time, before ever calling the reducer —
+ * applying it again here would double-convert (e.g. a stored `1/40` becoming `(1-40)/40 = -97.5%`),
+ * which is exactly the bug that produced wildly negative resolved totals before this fix.
+ */
+export function resolveAutomaticBonus(
+    rules: readonly LoyaltyRule[],
+    claimMembers: ReadonlyMap<string, ClaimMember>,
+    entitlementTotals: ReadonlyMap<string, BountyEntitlementTotal>,
+    payer: Identity,
+    playerId: bigint,
+    currency: string,
+): {numerator: bigint; denominator: bigint} {
+    let bonus = {numerator: 0n, denominator: 1n};
+    for (const rule of rules) {
+        if (rule.currency !== currency) continue;
+        const satisfied = rule.spec.tag === "ClaimMembership"
+            ? claimAccessFlags(claimMembers.get(`${rule.spec.value.claimEntityId}:${playerId}`))
+                .includes(rule.spec.value.requiredAccess as ClaimAccessFlag)
+            : effortFor(entitlementTotals, payer, playerId, rule.spec.value.allCurrencies ? undefined : currency)
+                >= rule.spec.value.threshold;
+        if (!satisfied) continue;
+        bonus = addRatio(bonus, {numerator: rule.bonusRatioNumerator, denominator: rule.bonusRatioDenominator});
+    }
+    return bonus;
+}
+
+/**
+ * Writes (or clears) `loyalty_bonus_total` for one (payer, payee, currency) if `bonus` differs from
+ * what was last resolved — the diff-and-no-op-when-unchanged half both `updateEntitlements`'s
+ * per-craft loop and the full `resyncLoyaltyBonuses` pass share, so there is one code path for
+ * "recompute and write this triple's automated bonus," not two hand-copies.
+ */
+function writeLoyaltyBonusIfChanged(
+    conn: DbConnection,
+    scoped: Logger,
+    existingBonusTotals: ReadonlyMap<string, LoyaltyBonusTotal>,
+    payer: Identity,
+    playerId: bigint,
+    currency: string,
+    bonus: {numerator: bigint; denominator: bigint},
+): void {
+    const key = `${payer.toHexString()}:${playerId}:${currency}`;
+    const previous = existingBonusTotals.get(key);
+    const previousBonus = previous
+        ? {numerator: previous.bonusRatioNumerator, denominator: previous.bonusRatioDenominator}
+        : {numerator: 0n, denominator: 1n};
+    if (bonus.numerator === previousBonus.numerator && bonus.denominator === previousBonus.denominator) return;
+
+    if (bonus.numerator === 0n) {
+        if (!previous) return;
+        timeReducerCall("delete_loyalty_bonus_total", conn.reducers.deleteLoyaltyBonusTotal({
+            payerAccountIdentity: payer, payeePlayerId: playerId, currency,
+        })).catch(cause => {
+            scoped.error("delete_loyalty_bonus_total failed", {payer: payer.toHexString(), playerId: playerId.toString(), currency, error: cause instanceof Error ? cause.message : String(cause)});
+        });
+    } else {
+        timeReducerCall("upsert_loyalty_bonus_total", conn.reducers.upsertLoyaltyBonusTotal({
+            payerAccountIdentity: payer, payeePlayerId: playerId, currency,
+            bonusRatioNumerator: bonus.numerator, bonusRatioDenominator: bonus.denominator, updatedAt: Timestamp.now(),
+        })).catch(cause => {
+            scoped.error("upsert_loyalty_bonus_total failed", {payer: payer.toHexString(), playerId: playerId.toString(), currency, error: cause instanceof Error ? cause.message : String(cause)});
+        });
+    }
+}
+
 export interface BountyEngine {
     /**
      * Resolves every row's bounty against current `brico-app` state, writes any that changed, and
@@ -123,6 +236,18 @@ export interface BountyEngine {
     assign(snapshot: CraftSnapshot, rows: readonly CraftRow[]): ReadonlyMap<bigint, CraftBountyFacts>;
     /** Recomputes and writes any changed per-contributor entitlements for the given assignments. */
     updateEntitlements(snapshot: CraftSnapshot, assignments: ReadonlyMap<bigint, CraftBountyFacts>): void;
+    /**
+     * Recomputes `loyalty_bonus_total` for every (payer, payee, currency) triple known to
+     * `bounty_entitlement_total` — not just whoever has a live contribution this tick. A no-op
+     * unless a resync is actually pending (startup, a claim-membership change, or a loyalty
+     * rule/reward edit — see `markMembershipChanged`/`markLoyaltyRulesChanged`), and a no-op again if
+     * `brico-app` isn't live yet (the pending flag stays set and is retried next tick).
+     */
+    resyncLoyaltyBonuses(snapshot: CraftSnapshot): void;
+    /** Marks a loyalty-bonus resync pending — call on any `claim_member` row change. */
+    markMembershipChanged(): void;
+    /** Marks a loyalty-bonus resync pending — call on any `loyalty_rule`/`loyalty_reward` row change. */
+    markLoyaltyRulesChanged(): void;
 }
 
 export function createBountyEngine(app: BricoAppConnection, log: Logger): BountyEngine {
@@ -133,6 +258,9 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
     // wholesale on every `assign()` call, which always runs immediately before `updateEntitlements`
     // in the same tick (see `bridge.ts`'s `onSnapshot`), so it's never stale when read.
     let assignedByCraft = new Map<bigint, Identity>();
+    // Starts `true` so the very first opportunity (once both connections are ready) runs one full
+    // `resyncLoyaltyBonuses` pass — see that method's doc comment for the other two triggers.
+    let loyaltyResyncPending = true;
 
     return {
         assign(snapshot, rows) {
@@ -183,6 +311,26 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
                     })).catch(cause => {
                         scoped.error("assign_craft_bounty failed", {craftId: row.id, error: cause instanceof Error ? cause.message : String(cause)});
                     });
+
+                    // This craft had no bounty as of last tick. This seeds a zero-earning baseline for
+                    // everyone already contributing to it, so `updateEntitlements`'s next call for
+                    // each of them (this same tick or later) prices only effort from here on, not
+                    // whatever they'd already done before the bounty existed. A brand-new contributor
+                    // who shows up *after* this point never gets seeded, and correctly earns from
+                    // zero the first time `updateEntitlements` sees them.
+                    if (previous === undefined) {
+                        for (const [playerId, effort] of snapshot.contributions.get(craftId) ?? []) {
+                            if (playerId === ownerEntityId) continue;
+                            timeReducerCall("seed_craft_bounty_entitlement", conn.reducers.seedCraftBountyEntitlement({
+                                craftId, playerId, currency: bounty.currency, effort, updatedAt: Timestamp.now(),
+                            })).catch(cause => {
+                                scoped.error("seed_craft_bounty_entitlement failed", {
+                                    craftId: row.id, playerId: playerId.toString(),
+                                    error: cause instanceof Error ? cause.message : String(cause),
+                                });
+                            });
+                        }
+                    }
                 } else {
                     timeReducerCall("clear_craft_bounty", conn.reducers.clearCraftBounty({craftId})).catch(cause => {
                         scoped.error("clear_craft_bounty failed", {craftId: row.id, error: cause instanceof Error ? cause.message : String(cause)});
@@ -215,6 +363,10 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
 
             const existing = loadEntitlements(app);
             const loyaltyRewards = loadLoyaltyRewards(app);
+            const loyaltyRulesByPayer = loadLoyaltyRules(app);
+            const entitlementTotals = loadBountyEntitlementTotals(app);
+            const loyaltyBonusTotals = loadLoyaltyBonusTotals(app);
+
             for (const [craftId, bounty] of assignments) {
                 const byPlayer = snapshot.contributions.get(craftId);
                 if (!byPlayer) continue;
@@ -226,30 +378,47 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
                     // bounty is meaningless.
                     if (playerId === ownerEntityId) continue;
 
-                    // Loyalty rewards fold into the bounty ratio *before* the floor, keeping this a single
-                    // floor operation, matching `computeEntitlement`'s own no-carryover guarantee. This makes
+                    // Every bonus (manual assignment + every currently-satisfied automated rule)
+                    // folds into the bounty ratio *before* the floor the module applies to new
+                    // effort, keeping this a single floor operation per conversion. This makes
                     // `craft_bounty_entitlement`/`bounty_entitlement_total` the loyalty-adjusted
                     // ("actual") ledger; the frontend's estimated-payout preview never sees a
                     // multiplier and keeps using the raw assigned ratio.
                     const assignedByAccountIdentity = assignedByCraft.get(craftId);
-                    const loyalty = assignedByAccountIdentity
-                        ? loyaltyRewards.get(`${assignedByAccountIdentity.toHexString()}:${playerId}:${bounty.currency}`)
-                        : undefined;
-                    const effectiveRatio = loyalty
-                        ? reduceRatio(bounty.ratioNumerator * loyalty.ratioNumerator, bounty.ratioDenominator * loyalty.ratioDenominator)
-                        : {numerator: bounty.ratioNumerator, denominator: bounty.ratioDenominator};
+                    let effectiveRatio = {numerator: bounty.ratioNumerator, denominator: bounty.ratioDenominator};
+                    if (assignedByAccountIdentity) {
+                        const loyalty = loyaltyRewards.get(`${assignedByAccountIdentity.toHexString()}:${playerId}:${bounty.currency}`);
+                        const manualBonus = loyalty ? bonusFromMultiplier(loyalty.ratioNumerator, loyalty.ratioDenominator) : {numerator: 0n, denominator: 1n};
+                        const automaticBonus = resolveAutomaticBonus(
+                            loyaltyRulesByPayer.get(assignedByAccountIdentity.toHexString()) ?? [],
+                            snapshot.claimMembers, entitlementTotals, assignedByAccountIdentity, playerId, bounty.currency,
+                        );
+                        const totalBonus = addRatio(manualBonus, automaticBonus);
+                        if (totalBonus.numerator !== 0n) {
+                            effectiveRatio = reduceRatio(
+                                bounty.ratioNumerator * (totalBonus.numerator + totalBonus.denominator),
+                                bounty.ratioDenominator * totalBonus.denominator,
+                            );
+                        }
+                        writeLoyaltyBonusIfChanged(conn, scoped, loyaltyBonusTotals, assignedByAccountIdentity, playerId, bounty.currency, automaticBonus);
+                    }
 
-                    const entitledTotal = computeEntitlement(effort, effectiveRatio.numerator, effectiveRatio.denominator);
+                    // The module owns the actual conversion math (new effort at *this* ratio, plus
+                    // whatever it's carrying in `remainderEffort`) — this call only ever hands over
+                    // current facts (cumulative effort, current ratio), never a precomputed total, so
+                    // a rate change here only prices effort from here on, never revalues the past. See
+                    // `upsertCraftBountyEntitlement`'s doc comment.
                     const id = `${craftId}:${playerId}:${bounty.currency}`;
                     const previous = existing.get(id);
-                    if (previous && previous.lastAssignedEffort === effort && previous.entitledTotal === entitledTotal) continue;
+                    if (previous && previous.lastAssignedEffort === effort) continue;
 
                     timeReducerCall("upsert_craft_bounty_entitlement", conn.reducers.upsertCraftBountyEntitlement({
                         craftId,
                         playerId,
                         currency: bounty.currency,
-                        lastAssignedEffort: effort,
-                        entitledTotal,
+                        effort,
+                        ratioNumerator: effectiveRatio.numerator,
+                        ratioDenominator: effectiveRatio.denominator,
                         updatedAt: Timestamp.now(),
                     })).catch(cause => {
                         scoped.error("upsert_craft_bounty_entitlement failed", {
@@ -260,6 +429,34 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
                     });
                 }
             }
+        },
+
+        resyncLoyaltyBonuses(snapshot) {
+            if (!loyaltyResyncPending) return;
+            const conn = app.connection?.connection;
+            if (!conn?.isActive || !app.isLive) return;
+            loyaltyResyncPending = false;
+
+            const rulesByPayer = loadLoyaltyRules(app);
+            const entitlementTotals = loadBountyEntitlementTotals(app);
+            const bonusTotals = loadLoyaltyBonusTotals(app);
+
+            for (const total of entitlementTotals.values()) {
+                const automaticBonus = resolveAutomaticBonus(
+                    rulesByPayer.get(total.payerAccountIdentity.toHexString()) ?? [],
+                    snapshot.claimMembers, entitlementTotals,
+                    total.payerAccountIdentity, total.payeePlayerId, total.currency,
+                );
+                writeLoyaltyBonusIfChanged(conn, scoped, bonusTotals, total.payerAccountIdentity, total.payeePlayerId, total.currency, automaticBonus);
+            }
+        },
+
+        markMembershipChanged() {
+            loyaltyResyncPending = true;
+        },
+
+        markLoyaltyRulesChanged() {
+            loyaltyResyncPending = true;
         },
     };
 }

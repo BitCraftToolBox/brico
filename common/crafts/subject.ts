@@ -74,6 +74,27 @@ export function craftTier(levelRequired: number): number {
 }
 
 /**
+ * The claim access flags a `claim_member` row grants — `"member"` whenever a row exists at all
+ * (even with every permission flag clear), plus one flag per set permission. An absent row (`undefined`)
+ * grants nothing.
+ *
+ * Shared by `ownerClaimAccessFor` below (the craft owner's access in the craft's own claim) and, in
+ * `backend/brico-bot`, an automated `loyalty_rule`'s claim-membership check against an arbitrary
+ * contributor and claim id — the same flag-set logic either way, just with a different concrete
+ * claim/player pair supplied by each caller.
+ */
+export function claimAccessFlags(member: ClaimMemberFlags | undefined): readonly ClaimAccessFlag[] {
+    if (!member) return [];
+    const flags: ClaimAccessFlag[] = ["member"];
+    if (member.build) flags.push("build");
+    if (member.inventory) flags.push("inventory");
+    if (member.officer) flags.push("officer");
+    if (member.coOwner) flags.push("coOwner");
+    if (member.owner) flags.push("owner");
+    return flags;
+}
+
+/**
  * The claim access flags the craft's **owner** holds in the craft's **own** claim — not an
  * arbitrary claim and not any other member.
  *
@@ -88,14 +109,7 @@ export function ownerClaimAccessFor(
     member: ClaimMemberFlags | undefined,
 ): readonly ClaimAccessFlag[] | null {
     if (claimEntityId === 0n || ownerEntityId === 0n) return null;
-    if (!member) return [];
-    const flags: ClaimAccessFlag[] = ["member"];
-    if (member.build) flags.push("build");
-    if (member.inventory) flags.push("inventory");
-    if (member.officer) flags.push("officer");
-    if (member.coOwner) flags.push("coOwner");
-    if (member.owner) flags.push("owner");
-    return flags;
+    return claimAccessFlags(member);
 }
 
 /**

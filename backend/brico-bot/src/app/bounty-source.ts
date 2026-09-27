@@ -9,7 +9,16 @@
  * excluded from the frontend's field picker), since a bounty rule that could condition on the very
  * bounty it assigns would be circular.
  */
-import type {BountyRule, BountyRuleValue, CraftBountyEntitlement, CraftBountyOverride, LoyaltyReward} from "@brico/bindings/brico-app/types";
+import type {
+    BountyEntitlementTotal,
+    BountyRule,
+    BountyRuleValue,
+    CraftBountyEntitlement,
+    CraftBountyOverride,
+    LoyaltyBonusTotal,
+    LoyaltyReward,
+    LoyaltyRule
+} from "@brico/bindings/brico-app/types";
 import {type FilterNode, parseFilter, validateFilter} from "@brico/crafts/filter";
 import type {Identity} from "spacetimedb";
 
@@ -151,6 +160,58 @@ export function loadLoyaltyRewards(app: BricoAppConnection): Map<string, Loyalty
     if (!conn?.isActive || !app.isLive) return byId;
     for (const reward of conn.db.allLoyaltyReward.iter() as Iterable<LoyaltyReward>) {
         byId.set(`${reward.payerAccountIdentity.toHexString()}:${reward.payeePlayerId}:${reward.currency}`, reward);
+    }
+    return byId;
+}
+
+/**
+ * Every payer's automated loyalty rules, grouped by payer account identity hex — no priority sort
+ * (unlike `loadBountyRules`): rules add, they don't shadow each other, so evaluation order never
+ * matters.
+ */
+export function loadLoyaltyRules(app: BricoAppConnection): Map<string, LoyaltyRule[]> {
+    const byPayer = new Map<string, LoyaltyRule[]>();
+    const conn = app.connection?.connection;
+    if (!conn?.isActive || !app.isLive) return byPayer;
+    for (const rule of conn.db.allLoyaltyRule.iter() as Iterable<LoyaltyRule>) {
+        const key = rule.payerAccountIdentity.toHexString();
+        const rules = byPayer.get(key);
+        if (rules) rules.push(rule);
+        else byPayer.set(key, [rule]);
+    }
+    return byPayer;
+}
+
+/**
+ * `${payerAccountIdentity}:${payeePlayerId}:${currency}` -> `bounty_entitlement_total` row —
+ * a payee's existing total effort per (payer, payee, currency), read back so an `effortThreshold`
+ * loyalty rule can be evaluated against it. Since this reads whatever was last committed as of the
+ * start of the current snapshot tick (this tick's own `upsertCraftBountyEntitlement` calls haven't
+ * round-tripped back into the bot's subscribed table state yet), it's naturally "before the current
+ * deltas" with no special handling needed.
+ */
+export function loadBountyEntitlementTotals(app: BricoAppConnection): Map<string, BountyEntitlementTotal> {
+    const byId = new Map<string, BountyEntitlementTotal>();
+    const conn = app.connection?.connection;
+    if (!conn?.isActive || !app.isLive) return byId;
+    for (const total of conn.db.allBountyEntitlementTotal.iter() as Iterable<BountyEntitlementTotal>) {
+        byId.set(`${total.payerAccountIdentity.toHexString()}:${total.payeePlayerId}:${total.currency}`, total);
+    }
+    return byId;
+}
+
+/**
+ * `${payerAccountIdentity}:${payeePlayerId}:${currency}` -> `loyalty_bonus_total` row — the
+ * previously-resolved automated bonus, read back so `bounty-sink.ts` can diff against it before
+ * writing (skip a redundant `upsertLoyaltyBonusTotal` call when nothing changed), the same role
+ * `loadEntitlements` plays for the per-craft ledger.
+ */
+export function loadLoyaltyBonusTotals(app: BricoAppConnection): Map<string, LoyaltyBonusTotal> {
+    const byId = new Map<string, LoyaltyBonusTotal>();
+    const conn = app.connection?.connection;
+    if (!conn?.isActive || !app.isLive) return byId;
+    for (const total of conn.db.allLoyaltyBonusTotal.iter() as Iterable<LoyaltyBonusTotal>) {
+        byId.set(`${total.payerAccountIdentity.toHexString()}:${total.payeePlayerId}:${total.currency}`, total);
     }
     return byId;
 }

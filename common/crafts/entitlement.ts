@@ -27,6 +27,31 @@ export function reduceRatio(numerator: bigint, denominator: bigint): {numerator:
 }
 
 /**
+ * Converts a multiplier (>=1, e.g. `1.025` for +2.5% — the shape every loyalty multiplier/bonus is
+ * typed in and stored as) into a bonus-only fraction (e.g. `1/40`). Several bonuses (a manual
+ * assignment plus any number of satisfied automated rules) must **add** — 2%+2.5%+1.5%+2%=8% — not
+ * compound as multipliers (`1.02 x 1.025 x 1.015 x 1.02 =/= 1.08`), so every bonus source is
+ * converted to this shape before summing (`addRatio`) and the sum is converted back to a multiplier
+ * (`1 + bonus`) once, immediately before composing with a craft's bounty ratio.
+ */
+export function bonusFromMultiplier(numerator: bigint, denominator: bigint): {numerator: bigint; denominator: bigint} {
+    return reduceRatio(numerator - denominator, denominator);
+}
+
+/** The inverse of `bonusFromMultiplier` — a bonus-only fraction back to a multiplier (e.g. `1/40` -> `41/40`, i.e. `1.025`), for displaying a stored bonus in the same "type 1.025" units a multiplier field edits. */
+export function multiplierFromBonus(numerator: bigint, denominator: bigint): {numerator: bigint; denominator: bigint} {
+    return reduceRatio(numerator + denominator, denominator);
+}
+
+/** Exact fraction addition (`a + b`), reduced — never through a float. */
+export function addRatio(
+    a: {numerator: bigint; denominator: bigint},
+    b: {numerator: bigint; denominator: bigint},
+): {numerator: bigint; denominator: bigint} {
+    return reduceRatio(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
+}
+
+/**
  * A contributor's total entitlement off their own cumulative effort — a monotonic floor, never
  * negative-adjusted: `floor(cumulativeEffort × ratioNumerator / ratioDenominator)`.
  *

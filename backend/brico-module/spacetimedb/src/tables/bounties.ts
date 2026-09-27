@@ -72,6 +72,10 @@ export const craft_bounty_override = table(
 
 /**
  * The resolved, effectively-public bounty for a craft. Only `brico-bot` ever writes this table.
+ *
+ * `assignedAt` means "assigned continuously since," not "last edited" (that's `updatedAt`) — see
+ * `assignCraftBounty`'s doc comment. `upsertCraftBountyEntitlement` relies on it to tell a plain
+ * ratio/payer edit of a still-active bounty apart from a real clear-then-reassign gap.
  */
 export const craft_bounty_assignment = table(
     {name: 'craft_bounty_assignment'},

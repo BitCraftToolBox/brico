@@ -109,6 +109,10 @@ export function createBridge(options: BridgeOptions): Bridge {
                 options.bounty.updateEntitlements(snapshot, assignments);
                 entitlementTimer();
 
+                // Decoupled from craft-contribution activity — see `resyncLoyaltyBonuses`'s doc
+                // comment. A no-op unless a resync is actually pending.
+                options.bounty.resyncLoyaltyBonuses(snapshot);
+
                 rows = craftRowsFrom(snapshot, options.recipes, assignments);
             }
 

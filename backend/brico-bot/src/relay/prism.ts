@@ -133,6 +133,12 @@ export interface PrismRelay {
     readonly snapshot: CraftSnapshot;
     start(): void;
     stop(): void;
+    /**
+     * Marks the coalescer dirty so the next tick (within `snapshotIntervalMs`) rebuilds and
+     * dispatches, even though nothing in prism itself changed — used to promptly reflect a
+     * `brico-app`-only change (a bounty rule or loyalty reward edit) without a second timer.
+     */
+    mark(): void;
 }
 
 export interface PrismRelayOptions extends SupervisorOptions {
@@ -141,6 +147,13 @@ export interface PrismRelayOptions extends SupervisorOptions {
     snapshotIntervalMs: number;
     /** Called with each freshly built snapshot. This is what drives the bridge. */
     onSnapshot(snapshot: CraftSnapshot): void;
+    /**
+     * Called specifically on a `claim_member` row change (insert/delete/update), alongside (not
+     * instead of) the normal coalescer mark — lets `BountyEngine` mark its loyalty-bonus resync
+     * pending so a claim-membership change is reflected in `loyalty_bonus_total` even for a payee
+     * with no currently-live craft contribution.
+     */
+    onClaimMembershipChanged?(): void;
 }
 
 export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
@@ -175,17 +188,25 @@ export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
                 current = conn;
 
                 for (const table of [
-                    conn.db.craft_meta,
-                    conn.db.craft_progress,
-                    conn.db.claim_info,
-                    conn.db.claim_member,
-                    conn.db.craft_contribution,
-                    conn.db.player_state,
+                    conn.db.craftMeta,
+                    conn.db.craftProgress,
+                    conn.db.claimInfo,
+                    conn.db.claimMember,
+                    conn.db.craftContribution,
+                    conn.db.playerState,
                     conn.db.region,
                 ]) {
                     table.onInsert(coalescer.mark);
                     table.onDelete(coalescer.mark);
                     table.onUpdate(coalescer.mark);
+                }
+
+                // Narrower than the loop above: only `claim_member` changes should mark a
+                // loyalty-bonus resync pending, alongside (not instead of) the normal coalescer mark.
+                if (options.onClaimMembershipChanged) {
+                    conn.db.claimMember.onInsert(options.onClaimMembershipChanged);
+                    conn.db.claimMember.onDelete(options.onClaimMembershipChanged);
+                    conn.db.claimMember.onUpdate(options.onClaimMembershipChanged);
                 }
 
                 let subscription: SubscriptionHandle | null = conn
@@ -239,5 +260,6 @@ export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
             coalescer.stop();
             connection.stop();
         },
+        mark: coalescer.mark,
     };
 }
