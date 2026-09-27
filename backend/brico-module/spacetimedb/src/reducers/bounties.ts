@@ -198,10 +198,21 @@ export const deleteCraftBountyOverride = spacetimedb.reducer(
  * personal owner beats claim owner) — never directly by a browser, same reasoning as
  * `postCraftNotification`. Always a full upsert: the bot recomputes the whole row from scratch.
  *
+ * `assignedAt` is only ever set on a true insert — an update *preserves* whatever the row already
+ * had, even though the bot passes a fresh `Timestamp.now()` on every call, including plain ratio/
+ * payer/currency edits. That's what makes it mean "assigned (continuously) since," not "last edited"
+ * (`updatedAt` already covers that): `upsertCraftBountyEntitlement` compares it against a
+ * contributor's own `craft_bounty_entitlement.updatedAt` to tell an ordinary edit of a still-active
+ * bounty (no gap, price normally) apart from a bounty that was cleared and only later reassigned
+ * (a real gap, whose effort must not retroactively price) — a plain ratio edit must never look like
+ * a gap, or every rate change would re-trigger the same retroactive-repricing bug this was meant to
+ * close.
+ *
  * `private` (sourced from whichever rule/override matched) selects which of the two mutually
  * exclusive assignment tables gets the row — the other table's row for this craft, if any, is
  * deleted, so a craft never has a resolved assignment in both at once (e.g. a rule that used to be
- * public and is now marked private).
+ * public and is now marked private). Switching tables is itself a delete-then-insert, so it resets
+ * `assignedAt` in the table gaining the row — same as any other clear-then-reassign.
  */
 export const assignCraftBounty = spacetimedb.reducer(
     {
@@ -232,7 +243,7 @@ export const assignCraftBounty = spacetimedb.reducer(
                 });
             } else {
                 ctx.db.craft_private_bounty_assignment.craftId.update({
-                    ...existing, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, assignedAt, updatedAt,
+                    ...existing, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, updatedAt,
                 });
             }
         } else {
@@ -246,7 +257,7 @@ export const assignCraftBounty = spacetimedb.reducer(
                 });
             } else {
                 ctx.db.craft_bounty_assignment.craftId.update({
-                    ...existing, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, assignedAt, updatedAt,
+                    ...existing, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, updatedAt,
                 });
             }
         }

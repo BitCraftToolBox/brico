@@ -14,7 +14,7 @@ interface AppTable {
     /** Row-change callbacks, so the bridge re-reads when the module's state moves. */
     listen(conn: DbConnection, onChange: () => void): void;
     /** Row count, for the "the second socket really carries rows" log line. */
-    count(conn: DbConnection): number;
+    count(conn: DbConnection): bigint;
 }
 
 /**
@@ -31,7 +31,7 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allAccount.onDelete(onChange);
             conn.db.allAccount.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allAccount.iter()].length,
+        count: conn => conn.db.allAccount.count(),
     },
     all_linked_integration: {
         query: tables.allLinkedIntegration,
@@ -40,7 +40,7 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allLinkedIntegration.onDelete(onChange);
             conn.db.allLinkedIntegration.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allLinkedIntegration.iter()].length,
+        count: conn => conn.db.allLinkedIntegration.count(),
     },
     all_saved_craft_filter: {
         query: tables.allSavedCraftFilter,
@@ -49,7 +49,7 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allSavedCraftFilter.onDelete(onChange);
             conn.db.allSavedCraftFilter.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allSavedCraftFilter.iter()].length,
+        count: conn => conn.db.allSavedCraftFilter.count(),
     },
     all_craft_filter_watch: {
         query: tables.allCraftFilterWatch,
@@ -58,7 +58,7 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allCraftFilterWatch.onDelete(onChange);
             conn.db.allCraftFilterWatch.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allCraftFilterWatch.iter()].length,
+        count: conn => conn.db.allCraftFilterWatch.count(),
     },
     all_bounty_rule: {
         query: tables.allBountyRule,
@@ -67,7 +67,7 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allBountyRule.onDelete(onChange);
             conn.db.allBountyRule.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allBountyRule.iter()].length,
+        count: conn => conn.db.allBountyRule.count(),
     },
     all_craft_bounty_override: {
         query: tables.allCraftBountyOverride,
@@ -76,7 +76,7 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allCraftBountyOverride.onDelete(onChange);
             conn.db.allCraftBountyOverride.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allCraftBountyOverride.iter()].length,
+        count: conn => conn.db.allCraftBountyOverride.count(),
     },
     all_craft_bounty_assignment: {
         query: tables.allCraftBountyAssignment,
@@ -85,7 +85,9 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allCraftBountyAssignment.onDelete(onChange);
             conn.db.allCraftBountyAssignment.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allCraftBountyAssignment.iter()].length,
+        // this is currently only used for the emptiness check to ensure service principal
+        // so we fake a 0 for this one table as it's always public
+        count: _ => 0n, // conn.db.allCraftBountyAssignment.count(),
     },
     all_private_craft_bounty_assignment: {
         query: tables.allPrivateCraftBountyAssignment,
@@ -94,7 +96,7 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allPrivateCraftBountyAssignment.onDelete(onChange);
             conn.db.allPrivateCraftBountyAssignment.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allPrivateCraftBountyAssignment.iter()].length,
+        count: conn => conn.db.allPrivateCraftBountyAssignment.count(),
     },
     all_craft_bounty_entitlement: {
         query: tables.allCraftBountyEntitlement,
@@ -103,7 +105,7 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allCraftBountyEntitlement.onDelete(onChange);
             conn.db.allCraftBountyEntitlement.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allCraftBountyEntitlement.iter()].length,
+        count: conn => conn.db.allCraftBountyEntitlement.count(),
     },
     all_loyalty_reward: {
         query: tables.allLoyaltyReward,
@@ -112,7 +114,34 @@ const APP_TABLES: Record<string, AppTable> = {
             conn.db.allLoyaltyReward.onDelete(onChange);
             conn.db.allLoyaltyReward.onUpdate(onChange);
         },
-        count: conn => [...conn.db.allLoyaltyReward.iter()].length,
+        count: conn => conn.db.allLoyaltyReward.count(),
+    },
+    all_loyalty_rule: {
+        query: tables.allLoyaltyRule,
+        listen: (conn, onChange) => {
+            conn.db.allLoyaltyRule.onInsert(onChange);
+            conn.db.allLoyaltyRule.onDelete(onChange);
+            conn.db.allLoyaltyRule.onUpdate(onChange);
+        },
+        count: conn => conn.db.allLoyaltyRule.count(),
+    },
+    all_loyalty_bonus_total: {
+        query: tables.allLoyaltyBonusTotal,
+        listen: (conn, onChange) => {
+            conn.db.allLoyaltyBonusTotal.onInsert(onChange);
+            conn.db.allLoyaltyBonusTotal.onDelete(onChange);
+            conn.db.allLoyaltyBonusTotal.onUpdate(onChange);
+        },
+        count: conn => conn.db.allLoyaltyBonusTotal.count(),
+    },
+    all_bounty_entitlement_total: {
+        query: tables.allBountyEntitlementTotal,
+        listen: (conn, onChange) => {
+            conn.db.allBountyEntitlementTotal.onInsert(onChange);
+            conn.db.allBountyEntitlementTotal.onDelete(onChange);
+            conn.db.allBountyEntitlementTotal.onUpdate(onChange);
+        },
+        count: conn => conn.db.allBountyEntitlementTotal.count(),
     },
 };
 
@@ -131,6 +160,13 @@ export interface BricoAppOptions extends SupervisorOptions {
     target: SpacetimeTarget | null;
     /** Called whenever the module's rows change, so the watch source re-reads on the next snapshot. */
     onRowsChanged(): void;
+    /**
+     * Called specifically when `all_loyalty_rule` or `all_loyalty_reward` changes (a payer added,
+     * edited, or deleted a manual reward or automated rule) — narrower than `onRowsChanged`, which
+     * fires for any `brico-app` table. Lets `BountyEngine` mark its loyalty-bonus resync pending
+     * without re-running it for unrelated changes (a saved filter edit, a notification setting).
+     */
+    onLoyaltyRulesChanged(): void;
 }
 
 export function startBricoAppConnection(options: BricoAppOptions): BricoAppConnection {
@@ -170,6 +206,15 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
                 const tables = Object.keys(APP_TABLES);
                 for (const name of tables) APP_TABLES[name].listen(conn, options.onRowsChanged);
 
+                // Narrower than the loop above: only these two tables' changes should mark a
+                // loyalty-bonus resync pending, not every `brico-app` change.
+                conn.db.allLoyaltyRule.onInsert(options.onLoyaltyRulesChanged);
+                conn.db.allLoyaltyRule.onDelete(options.onLoyaltyRulesChanged);
+                conn.db.allLoyaltyRule.onUpdate(options.onLoyaltyRulesChanged);
+                conn.db.allLoyaltyReward.onInsert(options.onLoyaltyRulesChanged);
+                conn.db.allLoyaltyReward.onDelete(options.onLoyaltyRulesChanged);
+                conn.db.allLoyaltyReward.onUpdate(options.onLoyaltyRulesChanged);
+
                 let subscription: SubscriptionHandle | null = conn
                     .subscriptionBuilder()
                     .onApplied(() => {
@@ -178,7 +223,7 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
                         options.onRowsChanged();
                         const counts = tables.map(name => `${name}=${APP_TABLES[name].count(conn)}`).join(" ");
                         log.info("initial subscription applied", {identity: identityHex ?? "?", rows: counts});
-                        if (tables.every(name => APP_TABLES[name].count(conn) === 0)) {
+                        if (tables.every(name => APP_TABLES[name].count(conn) === 0n)) {
                             // Almost always the authorization case rather than an empty database:
                             // the `all_*` views return nothing to an unregistered identity.
                             log.warn(

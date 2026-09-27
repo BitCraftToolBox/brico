@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {describe, it} from "node:test";
-import {computeEntitlement, parseDecimalRatio, reduceRatio} from "./entitlement.ts";
+import {addRatio, bonusFromMultiplier, computeEntitlement, multiplierFromBonus, parseDecimalRatio, reduceRatio} from "./entitlement.ts";
 
 describe("computeEntitlement", () => {
     it("matches the worked example: ratio 1 Hex Coin per 20 effort", () => {
@@ -98,5 +98,57 @@ describe("parseDecimalRatio", () => {
         assert.equal(parseDecimalRatio("-1"), null);
         assert.equal(parseDecimalRatio("abc"), null);
         assert.equal(parseDecimalRatio("1,5"), null);
+    });
+});
+
+describe("bonusFromMultiplier", () => {
+    it("converts a multiplier to a bonus-only fraction", () => {
+        assert.deepEqual(bonusFromMultiplier(105n, 100n), {numerator: 1n, denominator: 20n});
+    });
+
+    it("is zero for an exact no-op multiplier", () => {
+        assert.deepEqual(bonusFromMultiplier(100n, 100n), {numerator: 0n, denominator: 1n});
+    });
+});
+
+describe("multiplierFromBonus", () => {
+    it("is the inverse of bonusFromMultiplier", () => {
+        assert.deepEqual(multiplierFromBonus(1n, 40n), {numerator: 41n, denominator: 40n});
+        const bonus = bonusFromMultiplier(105n, 100n);
+        assert.deepEqual(multiplierFromBonus(bonus.numerator, bonus.denominator), reduceRatio(105n, 100n));
+    });
+
+    it("is 1 for a zero bonus", () => {
+        assert.deepEqual(multiplierFromBonus(0n, 1n), {numerator: 1n, denominator: 1n});
+    });
+});
+
+describe("addRatio", () => {
+    it("adds two fractions with different denominators, reduced", () => {
+        assert.deepEqual(addRatio({numerator: 1n, denominator: 2n}, {numerator: 1n, denominator: 3n}), {numerator: 5n, denominator: 6n});
+    });
+
+    it("is the identity when adding zero", () => {
+        assert.deepEqual(addRatio({numerator: 0n, denominator: 1n}, {numerator: 3n, denominator: 7n}), {numerator: 3n, denominator: 7n});
+    });
+
+    it("matches the worked 2%+2.5%+1.5%+2%=8% example, additive rather than compounding", () => {
+        const manual = bonusFromMultiplier(102n, 100n); // +2%
+        const claimRule = bonusFromMultiplier(1025n, 1000n); // +2.5%
+        const effortTier1 = bonusFromMultiplier(1015n, 1000n); // +1.5%
+        const effortTier2 = bonusFromMultiplier(102n, 100n); // +2%
+
+        const totalBonus = [claimRule, effortTier1, effortTier2].reduce(addRatio, manual);
+        assert.deepEqual(totalBonus, {numerator: 2n, denominator: 25n}); // 8% = 2/25
+
+        const finalMultiplier = {numerator: totalBonus.numerator + totalBonus.denominator, denominator: totalBonus.denominator};
+        assert.deepEqual(finalMultiplier, {numerator: 27n, denominator: 25n}); // 1.08
+
+        // Composed against a sample bounty ratio (1 Hex Coin per 20 effort), one floor
+        const bountyRatioNumerator = 1n;
+        const bountyRatioDenominator = 20n;
+        const effectiveNumerator = bountyRatioNumerator * finalMultiplier.numerator;
+        const effectiveDenominator = bountyRatioDenominator * finalMultiplier.denominator;
+        assert.equal(computeEntitlement(500n, effectiveNumerator, effectiveDenominator), 27n); // floor(500/20 * 1.08) = floor(27) = 27
     });
 });

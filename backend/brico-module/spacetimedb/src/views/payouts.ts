@@ -4,7 +4,7 @@ import type {Identity, Timestamp} from 'spacetimedb';
 import {t} from 'spacetimedb/server';
 import type {VCtx} from '../schema';
 import {spacetimedb} from '../schema';
-import {bounty_payout_record, craft_bounty_entitlement, loyalty_reward} from '../tables/payouts';
+import {bounty_entitlement_total, bounty_payout_record, craft_bounty_entitlement, loyalty_bonus_total, loyalty_reward, loyalty_rule} from '../tables/payouts';
 
 /** Unfiltered entitlement feed for brico-bot, which needs to read current entitlements back to compute deltas. */
 export const allCraftBountyEntitlement = spacetimedb.view(
@@ -30,6 +30,55 @@ export const allLoyaltyReward = spacetimedb.view(
     ctx => {
         const isTrusted = ctx.db.service_principal.identity.find(ctx.sender) !== null;
         return ctx.from.loyalty_reward.where(_ => isTrusted);
+    }
+);
+
+/** The caller's own automated loyalty rules, as a payer. */
+export const myLoyaltyRule = spacetimedb.view(
+    {name: 'my_loyalty_rule', public: true},
+    t.array(loyalty_rule.rowType),
+    ctx => ctx.from.loyalty_rule.where(r => r.payerAccountIdentity.eq(ctx.sender))
+);
+
+/** Unfiltered loyalty-rule feed for brico-bot, which needs every payer's rules to resolve automated bonuses. */
+export const allLoyaltyRule = spacetimedb.view(
+    {name: 'all_loyalty_rule', public: true},
+    t.array(loyalty_rule.rowType),
+    ctx => {
+        const isTrusted = ctx.db.service_principal.identity.find(ctx.sender) !== null;
+        return ctx.from.loyalty_rule.where(_ => isTrusted);
+    }
+);
+
+/** The caller's own resolved automated-bonus totals, as a payer — for the loyalty page's read-only display. */
+export const myLoyaltyBonusTotal = spacetimedb.view(
+    {name: 'my_loyalty_bonus_total', public: true},
+    t.array(loyalty_bonus_total.rowType),
+    ctx => ctx.from.loyalty_bonus_total.where(r => r.payerAccountIdentity.eq(ctx.sender))
+);
+
+/** Unfiltered resolved-bonus-total feed for brico-bot, which reads this back to diff against before writing. */
+export const allLoyaltyBonusTotal = spacetimedb.view(
+    {name: 'all_loyalty_bonus_total', public: true},
+    t.array(loyalty_bonus_total.rowType),
+    ctx => {
+        const isTrusted = ctx.db.service_principal.identity.find(ctx.sender) !== null;
+        return ctx.from.loyalty_bonus_total.where(_ => isTrusted);
+    }
+);
+
+/**
+ * Unfiltered `bounty_entitlement_total` feed for brico-bot — needed so it can read a payee's
+ * existing total effort per (payer, payee, currency) to evaluate an `effortThreshold` loyalty rule.
+ * `bounty_entitlement_total` otherwise has no service-principal view, only the two per-caller
+ * procedural views (`myEntitlementsAsContributor`/`myEntitlementsAsPayer` below).
+ */
+export const allBountyEntitlementTotal = spacetimedb.view(
+    {name: 'all_bounty_entitlement_total', public: true},
+    t.array(bounty_entitlement_total.rowType),
+    ctx => {
+        const isTrusted = ctx.db.service_principal.identity.find(ctx.sender) !== null;
+        return ctx.from.bounty_entitlement_total.where(_ => isTrusted);
     }
 );
 

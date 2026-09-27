@@ -18,6 +18,9 @@ export type Account = __Infer<typeof Account>;
 export const AllAccount = __t.object("AllAccount", {});
 export type AllAccount = __Infer<typeof AllAccount>;
 
+export const AllBountyEntitlementTotal = __t.object("AllBountyEntitlementTotal", {});
+export type AllBountyEntitlementTotal = __Infer<typeof AllBountyEntitlementTotal>;
+
 export const AllBountyRule = __t.object("AllBountyRule", {});
 export type AllBountyRule = __Infer<typeof AllBountyRule>;
 
@@ -39,8 +42,14 @@ export type AllIntegrationLinkRequest = __Infer<typeof AllIntegrationLinkRequest
 export const AllLinkedIntegration = __t.object("AllLinkedIntegration", {});
 export type AllLinkedIntegration = __Infer<typeof AllLinkedIntegration>;
 
+export const AllLoyaltyBonusTotal = __t.object("AllLoyaltyBonusTotal", {});
+export type AllLoyaltyBonusTotal = __Infer<typeof AllLoyaltyBonusTotal>;
+
 export const AllLoyaltyReward = __t.object("AllLoyaltyReward", {});
 export type AllLoyaltyReward = __Infer<typeof AllLoyaltyReward>;
+
+export const AllLoyaltyRule = __t.object("AllLoyaltyRule", {});
+export type AllLoyaltyRule = __Infer<typeof AllLoyaltyRule>;
 
 export const AllPrivateCraftBountyAssignment = __t.object("AllPrivateCraftBountyAssignment", {});
 export type AllPrivateCraftBountyAssignment = __Infer<typeof AllPrivateCraftBountyAssignment>;
@@ -95,6 +104,12 @@ export const BountyRuleValue = __t.enum("BountyRuleValue", {
 });
 export type BountyRuleValue = __Infer<typeof BountyRuleValue>;
 
+export const ClaimMembershipLoyaltyRule = __t.object("ClaimMembershipLoyaltyRule", {
+  claimEntityId: __t.u64(),
+  requiredAccess: __t.string(),
+});
+export type ClaimMembershipLoyaltyRule = __Infer<typeof ClaimMembershipLoyaltyRule>;
+
 export const ContributorEntitlementRow = __t.object("ContributorEntitlementRow", {
   id: __t.string(),
   payerAccountIdentity: __t.identity(),
@@ -124,6 +139,8 @@ export const CraftBountyEntitlement = __t.object("CraftBountyEntitlement", {
   playerId: __t.u64(),
   currency: __t.string(),
   lastAssignedEffort: __t.i64(),
+  remainderNumerator: __t.i64(),
+  remainderDenominator: __t.i64(),
   entitledTotal: __t.i64(),
   updatedAt: __t.timestamp(),
 });
@@ -179,6 +196,12 @@ export const CreateSharedFiltersResult = __t.object("CreateSharedFiltersResult",
 });
 export type CreateSharedFiltersResult = __Infer<typeof CreateSharedFiltersResult>;
 
+export const EffortThresholdLoyaltyRule = __t.object("EffortThresholdLoyaltyRule", {
+  allCurrencies: __t.bool(),
+  threshold: __t.i64(),
+});
+export type EffortThresholdLoyaltyRule = __Infer<typeof EffortThresholdLoyaltyRule>;
+
 export const FlatBountyValue = __t.object("FlatBountyValue", {
   ratioNumerator: __t.i64(),
   ratioDenominator: __t.i64(),
@@ -201,6 +224,15 @@ export const GridCell = __t.object("GridCell", {
   ratioDenominator: __t.i64(),
 });
 export type GridCell = __Infer<typeof GridCell>;
+
+export const HistoricalBountyLedgerRow = __t.object("HistoricalBountyLedgerRow", {
+  payeePlayerId: __t.u64(),
+  currency: __t.string(),
+  totalEffort: __t.i64(),
+  total: __t.i64(),
+  paidTotal: __t.i64(),
+});
+export type HistoricalBountyLedgerRow = __Infer<typeof HistoricalBountyLedgerRow>;
 
 export const IntegrationLinkRequest = __t.object("IntegrationLinkRequest", {
   id: __t.u64(),
@@ -225,6 +257,17 @@ export const LinkedIntegration = __t.object("LinkedIntegration", {
 });
 export type LinkedIntegration = __Infer<typeof LinkedIntegration>;
 
+export const LoyaltyBonusTotal = __t.object("LoyaltyBonusTotal", {
+  id: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  payeePlayerId: __t.u64(),
+  currency: __t.string(),
+  bonusRatioNumerator: __t.i64(),
+  bonusRatioDenominator: __t.i64(),
+  updatedAt: __t.timestamp(),
+});
+export type LoyaltyBonusTotal = __Infer<typeof LoyaltyBonusTotal>;
+
 export const LoyaltyReward = __t.object("LoyaltyReward", {
   id: __t.u64(),
   payerAccountIdentity: __t.identity(),
@@ -235,6 +278,30 @@ export const LoyaltyReward = __t.object("LoyaltyReward", {
   updatedAt: __t.timestamp(),
 });
 export type LoyaltyReward = __Infer<typeof LoyaltyReward>;
+
+export const LoyaltyRule = __t.object("LoyaltyRule", {
+  id: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  currency: __t.string(),
+  get spec() {
+    return LoyaltyRuleSpec;
+  },
+  bonusRatioNumerator: __t.i64(),
+  bonusRatioDenominator: __t.i64(),
+  updatedAt: __t.timestamp(),
+});
+export type LoyaltyRule = __Infer<typeof LoyaltyRule>;
+
+// The tagged union or sum type for the algebraic type `LoyaltyRuleSpec`.
+export const LoyaltyRuleSpec = __t.enum("LoyaltyRuleSpec", {
+  get ClaimMembership() {
+    return ClaimMembershipLoyaltyRule;
+  },
+  get EffortThreshold() {
+    return EffortThresholdLoyaltyRule;
+  },
+});
+export type LoyaltyRuleSpec = __Infer<typeof LoyaltyRuleSpec>;
 
 export const MyAccount = __t.object("MyAccount", {});
 export type MyAccount = __Infer<typeof MyAccount>;
@@ -263,8 +330,14 @@ export type MyIntegrationLinkRequest = __Infer<typeof MyIntegrationLinkRequest>;
 export const MyLinkedIntegration = __t.object("MyLinkedIntegration", {});
 export type MyLinkedIntegration = __Infer<typeof MyLinkedIntegration>;
 
+export const MyLoyaltyBonusTotal = __t.object("MyLoyaltyBonusTotal", {});
+export type MyLoyaltyBonusTotal = __Infer<typeof MyLoyaltyBonusTotal>;
+
 export const MyLoyaltyReward = __t.object("MyLoyaltyReward", {});
 export type MyLoyaltyReward = __Infer<typeof MyLoyaltyReward>;
+
+export const MyLoyaltyRule = __t.object("MyLoyaltyRule", {});
+export type MyLoyaltyRule = __Infer<typeof MyLoyaltyRule>;
 
 export const MyNotification = __t.object("MyNotification", {});
 export type MyNotification = __Infer<typeof MyNotification>;

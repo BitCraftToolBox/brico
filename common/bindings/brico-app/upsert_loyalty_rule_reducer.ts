@@ -5,12 +5,15 @@
 /* tslint:disable */
 import {t as __t,} from "spacetimedb";
 
+import {LoyaltyRuleSpec,} from "./types";
+
 export default {
-  craftId: __t.u64(),
-  playerId: __t.u64(),
+  id: __t.option(__t.u64()),
   currency: __t.string(),
-  effort: __t.i64(),
-  ratioNumerator: __t.i64(),
-  ratioDenominator: __t.i64(),
+  get spec() {
+    return LoyaltyRuleSpec;
+  },
+  bonusRatioNumerator: __t.i64(),
+  bonusRatioDenominator: __t.i64(),
   updatedAt: __t.timestamp(),
 };

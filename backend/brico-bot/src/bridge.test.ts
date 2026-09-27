@@ -128,9 +128,34 @@ test("bounties are assigned before watches are evaluated in the same tick", () =
     const bounty: BountyEngine = {
         assign: () => new Map<bigint, CraftBountyFacts>([[1n, {ratioNumerator: 1n, ratioDenominator: 20n, currency: "hex-coin", private: false}]]),
         updateEntitlements: () => {},
+        resyncLoyaltyBonuses: () => {},
+        markMembershipChanged: () => {},
+        markLoyaltyRulesChanged: () => {},
     };
     const bridge = createBridge({log: createLogger("error"), watches, sink: event => void events.push(event), recipes: RECIPES, bounty});
 
     bridge.onSnapshot(snapshot([craft()]));
     assert.equal(bridge.stats.matchCounts.get("w"), 1, "the bounty-carrying craft matches on the very first snapshot");
+});
+
+test("resyncLoyaltyBonuses is called every tick, alongside assign/updateEntitlements", () => {
+    // `bridge.ts` doesn't gate this call itself — `BountyEngine.resyncLoyaltyBonuses` is expected to
+    // no-op internally unless a resync is actually pending (see bounty-sink.test.ts for that gating).
+    // This only asserts the bridge wires the call through on every snapshot.
+    let resyncCalls = 0;
+    const watches: WatchSource = {origin: "test", watches: () => []};
+    const bounty: BountyEngine = {
+        assign: () => new Map(),
+        updateEntitlements: () => {},
+        resyncLoyaltyBonuses: () => {
+            resyncCalls += 1;
+        },
+        markMembershipChanged: () => {},
+        markLoyaltyRulesChanged: () => {},
+    };
+    const bridge = createBridge({log: createLogger("error"), watches, sink: () => {}, recipes: RECIPES, bounty});
+
+    bridge.onSnapshot(snapshot([craft()]));
+    bridge.onSnapshot(snapshot([craft()]));
+    assert.equal(resyncCalls, 2);
 });

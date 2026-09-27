@@ -7,12 +7,10 @@ import {t as __t,} from "spacetimedb";
 
 export default __t.row({
   id: __t.u64().primaryKey(),
-  craftId: __t.u64().name("craft_id"),
-  playerId: __t.u64().name("player_id"),
+  payerAccountIdentity: __t.identity().name("payer_account_identity"),
+  payeePlayerId: __t.u64().name("payee_player_id"),
   currency: __t.string(),
-  lastAssignedEffort: __t.i64().name("last_assigned_effort"),
-  remainderNumerator: __t.i64().name("remainder_numerator"),
-  remainderDenominator: __t.i64().name("remainder_denominator"),
-  entitledTotal: __t.i64().name("entitled_total"),
+  total: __t.i64(),
+  totalEffort: __t.i64().name("total_effort"),
   updatedAt: __t.timestamp().name("updated_at"),
 });

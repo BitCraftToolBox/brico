@@ -6,9 +6,9 @@
 import {t as __t,} from "spacetimedb";
 
 export default {
-  payerAccountIdentity: __t.identity(),
-  payeePlayerId: __t.u64(),
+  craftId: __t.u64(),
+  playerId: __t.u64(),
   currency: __t.string(),
-  ratioNumerator: __t.i64(),
-  ratioDenominator: __t.i64(),
+  effort: __t.i64(),
+  updatedAt: __t.timestamp(),
 };

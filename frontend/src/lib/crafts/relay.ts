@@ -6,6 +6,7 @@
  */
 import {tables} from "@brico/bindings/prism";
 import type {ClaimInfo, ClaimMember, CraftContribution, CraftMeta, CraftProgress, PlayerState, Region} from "@brico/bindings/prism/types";
+import {claimDisplayName} from "@brico/crafts/names";
 import {leadingAndTrailing, throttle} from "@solid-primitives/scheduled";
 import {type Accessor, createEffect, createSignal, onCleanup, onMount} from "solid-js";
 import type {ConnectionStatus, ResourceSpec} from "~/lib/spacetime/connection";
@@ -466,6 +467,49 @@ export function createPlayerNames(): {names: Accessor<Map<string, string>>; read
         const isReady = request.ready();
         // Same reasoning as `createCraftReferenceSelf`'s identical effect: rebuild synchronously
         // on readiness so `ready` never reports true over an empty name map.
+        if (isReady) rebuild();
+        setReady(isReady);
+    });
+
+    return {names, ready};
+}
+
+/**
+ * The reference table for resolving claim ids to their live names — every claim is a legitimate
+ * thing to build a loyalty rule against, not just ones the account owns or has crafts on, so this
+ * is a whole-table subscription rather than narrowed to any particular account (same reasoning as
+ * `craftReferenceSelfResource`'s own `claimInfo` subscription).
+ */
+export const CLAIM_NAMES_RESOURCE: ResourceSpec<PrismQuery> = {
+    key: "crafts:reference:claim-names",
+    tables: [prismTable(tables.claimInfo)],
+};
+
+/**
+ * Opens the relay for the lifetime of the calling component and exposes live, resolved names
+ * (`claimDisplayName`, which handles the auto-named ruin/cave localization template) for every
+ * known claim, keyed by entity id.
+ */
+export function createClaimNames(): {names: Accessor<Map<bigint, string>>; ready: Accessor<boolean>} {
+    const [names, setNames] = createSignal<Map<bigint, string>>(new Map());
+    const [ready, setReady] = createSignal(false);
+    const connection = useConnection(PRISM_SERVER);
+
+    const rebuild = () => {
+        const conn = connection.active();
+        if (!conn) return;
+        const map = new Map<bigint, string>();
+        for (const row of conn.db.claimInfo.iter() as Iterable<ClaimInfo>) {
+            map.set(row.entityId, claimDisplayName(row.name));
+        }
+        setNames(map);
+    };
+    const scheduleRebuild = throttle(rebuild, REBUILD_INTERVAL_MS);
+    onCleanup(() => scheduleRebuild.clear());
+
+    const request = connection.requestResource(CLAIM_NAMES_RESOURCE, scheduleRebuild);
+    createEffect(() => {
+        const isReady = request.ready();
         if (isReady) rebuild();
         setReady(isReady);
     });

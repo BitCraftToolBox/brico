@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {describe, it} from "node:test";
-import {buildCraftSubject, type CraftFacts, craftTier, optionalId, ownerClaimAccessFor, type RecipeStatic} from "./subject.ts";
+import {buildCraftSubject, claimAccessFlags, type CraftFacts, craftTier, optionalId, ownerClaimAccessFor, type RecipeStatic} from "./subject.ts";
 
 function facts(overrides: Partial<CraftFacts> = {}): CraftFacts {
     return {
@@ -41,6 +41,26 @@ describe("craftTier", () => {
         assert.equal(craftTier(10), 1);
         assert.equal(craftTier(25), 2);
         assert.equal(craftTier(99), 9);
+    });
+});
+
+describe("claimAccessFlags", () => {
+    it("is empty for an absent row", () => {
+        assert.deepEqual(claimAccessFlags(undefined), []);
+    });
+
+    it("always includes member, plus one flag per set permission", () => {
+        assert.deepEqual(
+            claimAccessFlags({build: true, inventory: false, officer: true, coOwner: false, owner: false}),
+            ["member", "build", "officer"],
+        );
+    });
+
+    it("is exactly member when every permission is clear", () => {
+        assert.deepEqual(
+            claimAccessFlags({build: false, inventory: false, officer: false, coOwner: false, owner: false}),
+            ["member"],
+        );
     });
 });
 
