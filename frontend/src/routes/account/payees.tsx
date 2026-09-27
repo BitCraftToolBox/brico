@@ -24,12 +24,13 @@
  * now, not here — see `LocalGroupingsManager`'s doc comment.
  */
 import {LoyaltyReward} from "@brico/bindings/brico-app/types";
-import {msg} from "@lingui/core/macro";
+import {msg, t} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
 import type {CellContext, ColumnDef} from "@tanstack/solid-table";
-import {TbOutlineChevronRight as IconChevronRight} from "solid-icons/tb";
+import {TbOutlineChevronRight as IconChevronRight, TbOutlineHistory as IconHistory} from "solid-icons/tb";
 import {type Accessor, createEffect, createMemo, createSignal, Show} from "solid-js";
+import {PayoutHistoryDialog, type PayoutHistoryFilter} from "~/components/crafts/PayoutHistoryDialog";
 import {LiveTable} from "~/components/data-table/live-table";
 import MainLayout from "~/components/MainLayout";
 import {ConnectionStatusBadge} from "~/components/shared/ConnectionStatusBadge";
@@ -42,7 +43,7 @@ import {TextField, TextFieldInput} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
 import {bountyTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state";
-import {applyLocalGroupings, createPayerEntitlements, groupPayerRows, type PayeeGroup} from "~/lib/crafts/entitlement-reports";
+import {applyLocalGroupings, createPayerEntitlements, createPayoutLogAsPayer, groupPayerRows, type PayeeGroup} from "~/lib/crafts/entitlement-reports";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
 import {currencyData} from "~/lib/crafts/filter-vocab";
@@ -65,6 +66,10 @@ interface PayeeRow {
      * subrow under a multi-player group. `null` on a multi-player group's parent row, since a
      * payment always targets one player, never a whole account. */
     playerId: string | null;
+    /** Every payee player id this row covers — just `[playerId]` for a single-player row, or the
+     * union of every sub-row's player id for a multi-player group's parent row. Scopes the
+     * history icon's filter, since transactions are recorded per-player, not per-group. */
+    playerIds: string[];
     currency: string;
     loyalty?: [bigint, bigint];
     effortTotal: bigint;
@@ -92,15 +97,17 @@ function toRows(groups: readonly PayeeGroup[], playerNames: ReadonlyMap<string, 
             paidTotal: group.paidTotal,
         };
         if (group.players.length <= 1) {
-            return {...base, playerId: soloId, loyalty: loyaltyMap.get(`${soloId}:${group.currency}`)};
+            return {...base, playerId: soloId, playerIds: soloId ? [soloId] : [], loyalty: loyaltyMap.get(`${soloId}:${group.currency}`)};
         }
         return {
             ...base,
             playerId: null,
+            playerIds: group.players.map(player => player.playerId),
             subRows: group.players.map(player => ({
                 id: `${group.groupKey}:${player.playerId}`,
                 name: playerNames.get(player.playerId) ?? player.playerId,
                 playerId: player.playerId,
+                playerIds: [player.playerId],
                 currency: group.currency,
                 loyalty: loyaltyMap.get(`${player.playerId}:${group.currency}`),
                 effortTotal: player.effortTotal,
@@ -172,7 +179,7 @@ function PaymentDialog(props: {target: Accessor<EditTarget | null>; onClose: () 
                     <Show when={props.target()}>{target => <DialogDescription>{target().label}</DialogDescription>}</Show>
                 </DialogHeader>
                 <TextField value={amount()} onChange={setAmount}>
-                    <TextFieldInput class="h-9" placeholder={_(msg`Amount`)}/>
+                    <TextFieldInput type="number" class="h-9" placeholder={_(msg`Amount`)}/>
                 </TextField>
                 <DialogFooter>
                     <Button variant="outline" disabled={busy() || !amount().trim()} onClick={() => record(-1n)}>−</Button>
@@ -185,7 +192,7 @@ function PaymentDialog(props: {target: Accessor<EditTarget | null>; onClose: () 
 
 type Cell<TValue> = CellContext<PayeeRow, TValue>;
 
-function buildColumns(onEdit: (target: EditTarget) => void, label: LabelResolver): ColumnDef<PayeeRow, any>[] {
+function buildColumns(onEdit: (target: EditTarget) => void, onHistory: (row: PayeeRow) => void, label: LabelResolver): ColumnDef<PayeeRow, any>[] {
     return [
         {
             id: "name",
@@ -207,6 +214,15 @@ function buildColumns(onEdit: (target: EditTarget) => void, label: LabelResolver
                             return <Badge variant="outline" title={String(raw)}>{fixFloat(raw)}×</Badge>
                         }}
                     </Show>
+                    <button
+                        type="button"
+                        class="text-muted-foreground hover:text-foreground"
+                        aria-label={t`Payment history`}
+                        title={t`Payment history`}
+                        onClick={() => onHistory(props.row.original)}
+                    >
+                        <IconHistory class="size-3.5"/>
+                    </button>
                 </div>
             ),
         },
@@ -280,15 +296,22 @@ export default function PayeesPage() {
     const settings = useSettings();
     const bricoConn = useConnection(BRICO_APP_SERVER);
     const prismConn = useConnection(PRISM_SERVER);
-    const rows = createPayerEntitlements();
+    const {rows, ready: rowsReady} = createPayerEntitlements();
     const {rewards} = createLoyaltyRewards();
     const accountGroups = createMemo(() => groupPayerRows(rows()));
     const {names: playerNames} = createPlayerNames();
     const groups = createMemo(() => applyLocalGroupings(accountGroups(), settings.localPayeeGroupings()));
     const tableRows = createMemo(() => toRows(groups(), playerNames(), rewards()));
+    const {rows: paymentLog, ready: paymentLogReady} = createPayoutLogAsPayer();
 
     const [editing, setEditing] = createSignal<EditTarget | null>(null);
-    const columns = buildColumns(setEditing, label);
+    const [historyOpen, setHistoryOpen] = createSignal(false);
+    const [historyFilter, setHistoryFilter] = createSignal<PayoutHistoryFilter | null>(null);
+    const openHistory = (row: PayeeRow) => {
+        setHistoryFilter({currency: row.currency, playerIds: row.playerIds});
+        setHistoryOpen(true);
+    };
+    const columns = buildColumns(setEditing, openHistory, label);
 
     return (
         <MainLayout
@@ -325,11 +348,28 @@ export default function PayeesPage() {
                         initialState={{sorting: [{id: "effort", desc: true}]}}
                         getRowId={row => row.id}
                         getSubRows={row => row.subRows}
-                        empty={<Trans>You haven't assigned any bounties yet.</Trans>}
+                        searchColumnId="name"
+                        empty={rowsReady() ? <Trans>You haven't assigned any bounties yet.</Trans> : <Trans>Loading…</Trans>}
+                        toolbar={
+                            <Button
+                                variant="outline" size="sm" class="h-8"
+                                onClick={() => {setHistoryFilter(null); setHistoryOpen(true);}}
+                            >
+                                <IconHistory class="mr-1 size-4"/><Trans>History</Trans>
+                            </Button>
+                        }
                     />
                 </Show>
             </div>
             <PaymentDialog target={editing} onClose={() => setEditing(null)}/>
+            <PayoutHistoryDialog
+                open={historyOpen()}
+                onOpenChange={setHistoryOpen}
+                rows={paymentLog()}
+                ready={paymentLogReady()}
+                filter={historyFilter()}
+                playerName={id => playerNames().get(id) ?? id}
+            />
         </MainLayout>
     );
 }

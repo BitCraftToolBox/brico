@@ -132,6 +132,67 @@ function resolvePayeeAccount(ctx: VCtx, payeePlayerId: bigint): { identity: Iden
 }
 
 /**
+ * One row of the append-only `bounty_payout_record_log` (see its doc comment), `payerName`
+ * resolved server-side same as `ContributorEntitlementRow`/`PayerEntitlementRow` below. Shared by
+ * both directions — `myBountyPayoutRecordLogAsPayer` and `myBountyPayoutRecordLogAsContributor`
+ * differ only in which underlying rows they return, never the shape.
+ */
+const BountyPayoutLogRow = t.row('BountyPayoutLogRow', {
+    id: t.u64().primaryKey(),
+    payerAccountIdentity: t.identity(),
+    payerName: t.string(),
+    payeePlayerId: t.u64(),
+    currency: t.string(),
+    amount: t.i64(),
+    createdAt: t.timestamp(),
+});
+
+/** The caller's own transaction log as a payer — every row `recordBountyPayment` appended under
+ * the caller's own identity, across every payee and currency. */
+export const myBountyPayoutRecordLogAsPayer = spacetimedb.view(
+    {name: 'my_bounty_payout_record_log_as_payer', public: true},
+    t.array(BountyPayoutLogRow),
+    ctx => {
+        const payerName = resolvePayerDisplayName(ctx, ctx.sender);
+        return [...ctx.db.bounty_payout_record_log.by_payer_payee.filter(ctx.sender)].map(row => ({
+            id: row.id,
+            payerAccountIdentity: row.payerAccountIdentity,
+            payerName,
+            payeePlayerId: row.payeePlayerId,
+            currency: row.currency,
+            amount: row.amount,
+            createdAt: row.createdAt,
+        }));
+    }
+);
+
+/** The caller's own transaction log as a contributor, across every BitCraft player id they've ever
+ * linked — same player-id resolution as `myEntitlementsAsContributor` below. */
+export const myBountyPayoutRecordLogAsContributor = spacetimedb.view(
+    {name: 'my_bounty_payout_record_log_as_contributor', public: true},
+    t.array(BountyPayoutLogRow),
+    ctx => {
+        const playerIds = new Set<bigint>();
+        for (const link of ctx.db.linked_integration.accountIdentity.filter(ctx.sender)) {
+            if (link.provider === 'bitcraft-ea2') playerIds.add(BigInt(link.externalId));
+        }
+        if (playerIds.size === 0) return [];
+
+        return [...playerIds].flatMap(playerId =>
+            [...ctx.db.bounty_payout_record_log.payeePlayerId.filter(playerId)].map(row => ({
+                id: row.id,
+                payerAccountIdentity: row.payerAccountIdentity,
+                payerName: resolvePayerDisplayName(ctx, row.payerAccountIdentity),
+                payeePlayerId: row.payeePlayerId,
+                currency: row.currency,
+                amount: row.amount,
+                createdAt: row.createdAt,
+            }))
+        );
+    }
+);
+
+/**
  * Output row for `myEntitlementsAsContributor`: one per (payer, currency) the caller has earned
  * from or been paid by, across any of their own linked BitCraft player ids. `payerName` is
  * resolved by the view itself (see `resolvePayerDisplayName`): never left for the frontend to look up,

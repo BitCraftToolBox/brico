@@ -163,6 +163,11 @@ msgstr ""
 msgid "TF2 Mode"
 msgstr "crwdns4374:0crwdne4374:0"
 
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "History"
+msgstr ""
+
 #. placeholder {0}: props.loaded
 #. placeholder {1}: props.total
 #: src/components/AppLoadingScreen.tsx
@@ -442,6 +447,10 @@ msgstr ""
 msgid "Unlink this account?"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "\"{flag}\" isn't a valid claim permission."
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "Output item tag"
 msgstr ""
@@ -481,6 +490,10 @@ msgstr ""
 
 #: src/routes/account/loyalty.tsx
 msgid "Could not delete loyalty reward"
+msgstr ""
+
+#: src/routes/account/loyalty.tsx
+msgid "Effort of this currency"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -740,6 +753,10 @@ msgstr "crwdns4510:0crwdne4510:0"
 #: src/routes/database/creature/[id].tsx
 msgid "Contribution Loot"
 msgstr "crwdns4512:0crwdne4512:0"
+
+#: src/routes/account/loyalty.tsx
+msgid "Effort threshold"
+msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "You need to be logged in to do that."
@@ -1152,6 +1169,10 @@ msgstr ""
 msgid "Builds from"
 msgstr "crwdns4630:0crwdne4630:0"
 
+#: src/routes/account/loyalty.tsx
+msgid "Who currently qualifies for a bonus from the rules above, and how much."
+msgstr ""
+
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Total Cargo Size"
 msgstr "crwdns4632:0crwdne4632:0"
@@ -1195,6 +1216,7 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
+#: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/routes/account/payouts.tsx
 msgid "Payer"
 msgstr ""
@@ -1443,6 +1465,10 @@ msgstr "crwdns4722:0crwdne4722:0"
 msgid "Stages"
 msgstr "crwdns4724:0crwdne4724:0"
 
+#: src/routes/account/loyalty.tsx
+msgid "Claim membership"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/cargo/[id].tsx
@@ -1466,6 +1492,10 @@ msgstr "crwdns4732:0crwdne4732:0"
 #: src/routes/database/creature/[id].tsx
 msgid "Drops"
 msgstr "crwdns4734:0crwdne4734:0"
+
+#: src/components/crafts/PayoutHistoryDialog.tsx
+msgid "No transactions yet."
+msgstr ""
 
 #: src/components/app-sidebar.tsx
 msgid "Tree view"
@@ -1587,10 +1617,6 @@ msgstr "crwdns4770:0crwdne4770:0"
 msgid "Paving Tile"
 msgstr "crwdns4772:0crwdne4772:0"
 
-#: src/routes/tools/crafts/browse.tsx
-msgid "All Crafts"
-msgstr ""
-
 #. placeholder {0}: notification.event.craftId
 #: src/routes/tools/crafts/browse.tsx
 msgid "Craft {0}"
@@ -1706,6 +1732,7 @@ msgstr ""
 msgid "That is not a craft id."
 msgstr ""
 
+#: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/routes/account/payees.tsx
 msgid "Amount"
 msgstr ""
@@ -1783,6 +1810,10 @@ msgstr ""
 #: src/routes/database/building/[id].tsx
 msgid "Unenterable"
 msgstr "crwdns4824:0crwdne4824:0"
+
+#: src/routes/account/loyalty.tsx
+msgid "e.g. 50000"
+msgstr ""
 
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -2043,6 +2074,10 @@ msgstr "crwdns4898:0crwdne4898:0"
 msgid "Category"
 msgstr "crwdns4900:0crwdne4900:0"
 
+#: src/components/crafts/PlayerPicker.tsx
+msgid "Select claims…"
+msgstr ""
+
 #: src/lib/relations.ts
 msgid "Sell {itemName} to {npcName}"
 msgstr "crwdns4902:0{itemName}crwdnd4902:0{npcName}crwdne4902:0"
@@ -2059,12 +2094,22 @@ msgstr ""
 msgid "Used By"
 msgstr "crwdns4906:0crwdne4906:0"
 
+#: src/routes/account/loyalty.tsx
+msgid "No automatic rules yet."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Cargo"
 msgstr "crwdns5514:0crwdne5514:0"
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "is not"
+msgstr ""
+
+#: src/components/crafts/PayoutHistoryDialog.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Payment history"
 msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
@@ -2445,6 +2490,10 @@ msgstr ""
 msgid "Trade <0/> for <1/> to {npcName}"
 msgstr "crwdns5570:0{npcName}crwdne5570:0"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Enter a valid effort threshold."
+msgstr ""
+
 #: src/components/data-table/table-view-options.tsx
 msgid "Show All"
 msgstr "crwdns5006:0crwdne5006:0"
@@ -2459,6 +2508,10 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 msgid "Chance per hit"
 msgstr "crwdns5518:0crwdne5518:0"
+
+#: src/components/crafts/PayoutHistoryDialog.tsx
+msgid "Date"
+msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "No results found."
@@ -2926,6 +2979,9 @@ msgstr "crwdns5138:0crwdne5138:0"
 msgid "{verbPhrase} {targetName}"
 msgstr "crwdns5140:0{verbPhrase}crwdnd5140:0{targetName}crwdne5140:0"
 
+#: src/components/crafts/PayoutHistoryDialog.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
 #: src/routes/settings.tsx
 msgid "Loading…"
 msgstr "crwdns5142:0crwdne5142:0"
@@ -3001,6 +3057,10 @@ msgstr "crwdns5162:0crwdne5162:0"
 msgid "Collectibles"
 msgstr "crwdns5164:0crwdne5164:0"
 
+#: src/routes/account/loyalty.tsx
+msgid "e.g. 1.025"
+msgstr ""
+
 #: src/routes/account/payees.tsx
 msgid "Record payment"
 msgstr ""
@@ -3016,6 +3076,10 @@ msgstr "crwdns5166:0crwdne5166:0"
 
 #: src/routes/account/bounties.tsx
 msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft — a rate of currency per unit of effort — and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That loyalty rule no longer exists."
 msgstr ""
 
 #. placeholder {0}: req.chunksDiscovered
@@ -3095,6 +3159,10 @@ msgstr ""
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource extraction."
 msgstr "crwdns5188:0{minRad}crwdnd5188:0{maxRad}crwdne5188:0"
+
+#: src/components/crafts/PlayerPicker.tsx
+msgid "Search claims…"
+msgstr ""
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -3231,6 +3299,10 @@ msgstr "crwdns5226:0crwdne5226:0"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Crafts Into"
 msgstr "crwdns5228:0crwdne5228:0"
+
+#: src/routes/account/loyalty.tsx
+msgid "Could not save loyalty rule"
+msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Item List"
@@ -3636,6 +3708,10 @@ msgstr ""
 msgid "Placeable on Land"
 msgstr "crwdns5318:0crwdne5318:0"
 
+#: src/routes/account/loyalty.tsx
+msgid "Could not delete loyalty rule"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Consumed on Ability Use"
 msgstr "crwdns5320:0crwdne5320:0"
@@ -3724,6 +3800,10 @@ msgstr "crwdns5342:0crwdne5342:0"
 msgid "Structure"
 msgstr "crwdns5344:0crwdne5344:0"
 
+#: src/components/crafts/PayoutHistoryDialog.tsx
+msgid "Player"
+msgstr ""
+
 #: src/components/shared/PlaceableGraph.tsx
 msgid "{qty}× {name}"
 msgstr ""
@@ -3757,6 +3837,10 @@ msgstr "crwdns5352:0{level}crwdnd5352:0{toolName}crwdnd5352:0{power}crwdne5352:0
 msgid "Required Players"
 msgstr "crwdns5354:0crwdne5354:0"
 
+#: src/routes/account/loyalty.tsx
+msgid "Effort of any currency"
+msgstr ""
+
 #: src/components/data-table/table-view-options.tsx
 msgid "Toggle columns"
 msgstr "crwdns5356:0crwdne5356:0"
@@ -3781,6 +3865,10 @@ msgstr "crwdns5540:0crwdne5540:0"
 
 #: src/components/crafts/LocalGroupingsManager.tsx
 msgid "Group name"
+msgstr ""
+
+#: src/routes/account/loyalty.tsx
+msgid "Resolved automatic bonuses"
 msgstr ""
 
 #: src/routes/database/buff/[id].tsx
@@ -3827,6 +3915,10 @@ msgstr "crwdns5378:0{minRad}crwdnd5378:0{maxRad}crwdne5378:0"
 #: src/routes/database/claim-research/[id].tsx
 msgid "Members"
 msgstr "crwdns5380:0crwdne5380:0"
+
+#: src/routes/account/loyalty.tsx
+msgid "A standing condition — claim membership or cumulative effort — that grants a bonus to whichever payee currently satisfies it, on top of any manual assignment above. All applicable bonuses are added, not multiplied, with each other."
+msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Show Time Left"
@@ -4103,6 +4195,10 @@ msgstr "crwdns5456:0crwdne5456:0"
 msgid "Unlocks hidden easter-egg features scattered across the site."
 msgstr "crwdns5458:0crwdne5458:0"
 
+#: src/routes/account/loyalty.tsx
+msgid "Automatic loyalty rules"
+msgstr ""
+
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Scaling"
 msgstr "crwdns5462:0crwdne5462:0"
@@ -4110,6 +4206,10 @@ msgstr "crwdns5462:0crwdne5462:0"
 #: src/lib/recipe-sources.tsx
 msgid "Required Knowledge:"
 msgstr "crwdns5464:0crwdne5464:0"
+
+#: src/components/crafts/PlayerPicker.tsx
+msgid "Select claim…"
+msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Contributors"
@@ -4242,6 +4342,10 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 msgid "Creatures"
 msgstr "crwdns5504:0crwdne5504:0"
+
+#: src/routes/account/loyalty.tsx
+msgid "Delete loyalty rule"
+msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/account/payees.tsx

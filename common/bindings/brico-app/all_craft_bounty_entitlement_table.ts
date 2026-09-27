@@ -11,8 +11,8 @@ export default __t.row({
   playerId: __t.u64().name("player_id"),
   currency: __t.string(),
   lastAssignedEffort: __t.i64().name("last_assigned_effort"),
-  remainderNumerator: __t.i64().name("remainder_numerator"),
-  remainderDenominator: __t.i64().name("remainder_denominator"),
   entitledTotal: __t.i64().name("entitled_total"),
   updatedAt: __t.timestamp().name("updated_at"),
+  remainderNumerator: __t.i64().name("remainder_numerator"),
+  remainderDenominator: __t.i64().name("remainder_denominator"),
 });

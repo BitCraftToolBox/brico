@@ -68,6 +68,8 @@ import MarkAllNotificationsReadReducer from "./mark_all_notifications_read_reduc
 import MarkNotificationReadReducer from "./mark_notification_read_reducer";
 import MyAccountRow from "./my_account_table";
 import MyBountyPayoutRecordAsPayerRow from "./my_bounty_payout_record_as_payer_table";
+import MyBountyPayoutRecordLogAsContributorRow from "./my_bounty_payout_record_log_as_contributor_table";
+import MyBountyPayoutRecordLogAsPayerRow from "./my_bounty_payout_record_log_as_payer_table";
 import MyBountyRuleRow from "./my_bounty_rule_table";
 import MyCraftBountyOverrideRow from "./my_craft_bounty_override_table";
 import MyCraftFilterWatchRow from "./my_craft_filter_watch_table";
@@ -216,6 +218,20 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MyBountyPayoutRecordAsPayerRow),
+  myBountyPayoutRecordLogAsContributor: __table({
+    name: 'my_bounty_payout_record_log_as_contributor',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyBountyPayoutRecordLogAsContributorRow),
+  myBountyPayoutRecordLogAsPayer: __table({
+    name: 'my_bounty_payout_record_log_as_payer',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyBountyPayoutRecordLogAsPayerRow),
   myBountyRule: __table({
     name: 'my_bounty_rule',
     indexes: [

@@ -68,6 +68,17 @@ export const BountyEntitlementTotal = __t.object("BountyEntitlementTotal", {
 });
 export type BountyEntitlementTotal = __Infer<typeof BountyEntitlementTotal>;
 
+export const BountyPayoutLogRow = __t.object("BountyPayoutLogRow", {
+  id: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  payerName: __t.string(),
+  payeePlayerId: __t.u64(),
+  currency: __t.string(),
+  amount: __t.i64(),
+  createdAt: __t.timestamp(),
+});
+export type BountyPayoutLogRow = __Infer<typeof BountyPayoutLogRow>;
+
 export const BountyPayoutRecord = __t.object("BountyPayoutRecord", {
   id: __t.u64(),
   payerAccountIdentity: __t.identity(),
@@ -77,6 +88,16 @@ export const BountyPayoutRecord = __t.object("BountyPayoutRecord", {
   updatedAt: __t.timestamp(),
 });
 export type BountyPayoutRecord = __Infer<typeof BountyPayoutRecord>;
+
+export const BountyPayoutRecordLog = __t.object("BountyPayoutRecordLog", {
+  id: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  payeePlayerId: __t.u64(),
+  currency: __t.string(),
+  amount: __t.i64(),
+  createdAt: __t.timestamp(),
+});
+export type BountyPayoutRecordLog = __Infer<typeof BountyPayoutRecordLog>;
 
 export const BountyRule = __t.object("BountyRule", {
   id: __t.string(),
@@ -139,10 +160,10 @@ export const CraftBountyEntitlement = __t.object("CraftBountyEntitlement", {
   playerId: __t.u64(),
   currency: __t.string(),
   lastAssignedEffort: __t.i64(),
-  remainderNumerator: __t.i64(),
-  remainderDenominator: __t.i64(),
   entitledTotal: __t.i64(),
   updatedAt: __t.timestamp(),
+  remainderNumerator: __t.i64(),
+  remainderDenominator: __t.i64(),
 });
 export type CraftBountyEntitlement = __Infer<typeof CraftBountyEntitlement>;
 
@@ -308,6 +329,12 @@ export type MyAccount = __Infer<typeof MyAccount>;
 
 export const MyBountyPayoutRecordAsPayer = __t.object("MyBountyPayoutRecordAsPayer", {});
 export type MyBountyPayoutRecordAsPayer = __Infer<typeof MyBountyPayoutRecordAsPayer>;
+
+export const MyBountyPayoutRecordLogAsContributor = __t.object("MyBountyPayoutRecordLogAsContributor", {});
+export type MyBountyPayoutRecordLogAsContributor = __Infer<typeof MyBountyPayoutRecordLogAsContributor>;
+
+export const MyBountyPayoutRecordLogAsPayer = __t.object("MyBountyPayoutRecordLogAsPayer", {});
+export type MyBountyPayoutRecordLogAsPayer = __Infer<typeof MyBountyPayoutRecordLogAsPayer>;
 
 export const MyBountyRule = __t.object("MyBountyRule", {});
 export type MyBountyRule = __Infer<typeof MyBountyRule>;
