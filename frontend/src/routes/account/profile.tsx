@@ -19,7 +19,7 @@ import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, Di
 import {TextField, TextFieldErrorMessage, TextFieldInput, TextFieldLabel} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip.tsx";
-import {bitAuthLoginUrl, discordLoginUrl} from "~/lib/account/brico-bot";
+import {bitAuthLoginUrl, discordLoginUrl, installDiscordBotUrl} from "~/lib/account/brico-bot";
 import {useLinkedIntegrations} from "~/lib/account/links";
 import {accountTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state";
@@ -284,17 +284,17 @@ export default function ProfilePage() {
                                 onLink={linkBitCraft}
                                 onUnlink={(id) => setUnlinkTarget({id, label: BITCRAFT_PROVIDER})}
                             />
-                            {/* hide this until it's fully implemented */}
-                            <Show when={devMenusEnabled()}>
-                                <IntegrationRow
-                                    label={<Trans>Discord</Trans>}
-                                    link={discordLink()}
-                                    linkLabel={loginMethod() === "discord" ? <Trans>Link Discord</Trans> : <Trans>Link via Discord</Trans>}
-                                    busy={busyProvider() === DISCORD_PROVIDER}
-                                    onLink={linkDiscord}
-                                    onUnlink={(id) => setUnlinkTarget({id, label: DISCORD_PROVIDER})}
-                                />
-                            </Show>
+                            <IntegrationRow
+                                label={<Trans>Discord</Trans>}
+                                link={discordLink()}
+                                linkLabel={loginMethod() === "discord" ? <Trans>Link Discord</Trans> : <Trans>Link via Discord</Trans>}
+                                busy={busyProvider() === DISCORD_PROVIDER}
+                                onLink={linkDiscord}
+                                onUnlink={(id) => setUnlinkTarget({id, label: DISCORD_PROVIDER})}
+                            />
+                            <Button as="a" href={installDiscordBotUrl()} variant="outline" class="self-start">
+                                <Trans>Add the Brico.app bot to your Discord server</Trans>
+                            </Button>
                         </CardContent>
                     </Card>
 

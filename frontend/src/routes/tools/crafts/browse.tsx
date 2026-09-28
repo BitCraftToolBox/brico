@@ -48,6 +48,7 @@ import {
 import {createEffect, createMemo, createSignal, For, Show} from "solid-js";
 import {type FieldOption, FilterBuilder} from "~/components/crafts/FilterBuilder";
 import {OutputIcon} from "~/components/crafts/OutputIcon";
+import {PayoutRateButton} from "~/components/crafts/PayoutRateButton";
 import {QuickFilterGrid} from "~/components/crafts/QuickFilterGrid";
 import {type FilterExport, SavedFiltersDialog} from "~/components/crafts/SavedFiltersDialog";
 import {LiveTable} from "~/components/data-table/live-table";
@@ -58,11 +59,8 @@ import {TierIcon} from "~/components/shared/GameIcon";
 import {Badge} from "~/components/ui/badge";
 import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "~/components/ui/card";
-import {Checkbox} from "~/components/ui/checkbox";
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "~/components/ui/collapsible";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "~/components/ui/dialog";
-import {Label} from "~/components/ui/label";
-import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
 import {TextField, TextFieldInput} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
 import {useLinkedIntegrations} from "~/lib/account/links.tsx";
@@ -73,7 +71,6 @@ import {craftEntriesFrom, type CraftEntry} from "~/lib/crafts/entries";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
 import {claimAccessFlagLabel, currencyData} from "~/lib/crafts/filter-vocab";
 import {byLabel, craftStaticOptions, SKILL_ORDER} from "~/lib/crafts/options";
-import {formatPayoutRate} from "~/lib/crafts/payout";
 import {type CraftSnapshot, createCraftRelay, EMPTY_SNAPSHOT} from "~/lib/crafts/relay";
 import {createCraftWatchRunner, type WatchNotification} from "~/lib/crafts/watches";
 import {breadcrumbCurrent} from "~/lib/game-links";
@@ -178,21 +175,6 @@ function OrDash(props: {value: string | null}) {
 
 type CraftCell<TValue> = CellContext<CraftEntry, TValue>;
 
-/** A craft's bounty rate, decimal-formatted in whichever direction the shared display setting prefers. */
-function PayoutRateCell(props: {rate: number; currency: string}) {
-    const {_} = useLingui();
-    const settings = useSettings();
-    return (
-        <button
-            class="hover:underline"
-            title={_(msg`Switch between currency/effort and effort/currency`)}
-            onClick={() => settings.setPayoutDisplayMode(settings.payoutDisplayMode() === "currencyPerEffort" ? "effortPerCurrency" : "currencyPerEffort")}
-        >
-            {formatPayoutRate(props.rate, props.currency, settings.payoutDisplayMode())}
-        </button>
-    );
-}
-
 /**
  * The table's columns.
  *
@@ -279,8 +261,8 @@ const COLUMNS: ColumnDef<CraftEntry, any>[] = [
             const entry = props.row.original;
             return (
                 <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                    <span class="inline-flex items-center gap-1.5">
-                        <PayoutRateCell rate={entry.subject.payout!} currency={entry.subject.currency!}/>
+                    <span class="inline-flex flex-nowrap text-nowrap gap-1.5">
+                        <PayoutRateButton rate={entry.subject.payout!} currency={entry.subject.currency!}/>
                         <Show when={entry.subject.bountyPrivate}>
                             <IconLock class="size-3.5 text-muted-foreground"/>
                         </Show>
@@ -299,9 +281,12 @@ const COLUMNS: ColumnDef<CraftEntry, any>[] = [
             const entry = props.row.original;
             return (
                 <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                    <span class="tabular-nums">
-                        {(entry.subject.payout! * entry.effortTotal).toLocaleString(uiLocale(), {maximumFractionDigits: 0})} <CurrencyLabel currency={entry.subject.currency!}/>
-                    </span>
+                    <div class="flex flex-row justify-center">
+                        <span class="inline-flex gap-1 tabular-nums">
+                            {(entry.subject.payout! * entry.effortRemaining).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
+                            <CurrencyLabel currency={entry.subject.currency!} iconOnly={true}/>
+                        </span>
+                    </div>
                 </Show>
             );
         },
@@ -314,10 +299,12 @@ const COLUMNS: ColumnDef<CraftEntry, any>[] = [
             const entry = props.row.original;
             return (
                 <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                    <span class="inline-flex gap-1 tabular-nums">
-                        {(entry.subject.payout! * entry.effortRemaining).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
-                        <CurrencyLabel currency={entry.subject.currency!} iconOnly={true}/>
-                    </span>
+                    <div class="flex flex-row justify-center">
+                        <span class="inline-flex gap-1 tabular-nums">
+                            {(entry.subject.payout! * entry.effortRemaining).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
+                            <CurrencyLabel currency={entry.subject.currency!} iconOnly={true}/>
+                        </span>
+                    </div>
                 </Show>
             );
         },
@@ -354,41 +341,11 @@ const COLUMNS: ColumnDef<CraftEntry, any>[] = [
 /** A watch with every trigger off — equivalent to no watch, and never persisted as such. */
 const NO_WATCH: CraftWatchTriggers = {added: false, finished: false, removed: false};
 
-/** The three watch triggers, in the order the bell popover lists them. */
-const WATCH_TRIGGERS: {key: TriggerKind; label: MessageDescriptor}[] = [
-    {key: "added", label: msg`Added`},
-    {key: "finished", label: msg`Finished`},
-    {key: "removed", label: msg`Removed`},
-];
-
-/** Popover body for a filter chip's bell: one checkbox per trigger, committed immediately. */
-function WatchTriggerPicker(props: {watch: CraftWatchTriggers; onChange: (next: CraftWatchTriggers) => void}) {
-    const {_} = useLingui();
-    return (
-        <PopoverContent class="w-48 space-y-2 p-3">
-            <p class="text-xs font-medium text-muted-foreground"><Trans>Notify when a matching craft is…</Trans></p>
-            <div class="space-y-1.5">
-                <For each={WATCH_TRIGGERS}>
-                    {trigger => (
-                        <div class="flex flex-row gap-2">
-                            <Checkbox
-                                checked={props.watch[trigger.key]}
-                                onChange={(checked: boolean) => props.onChange({...props.watch, [trigger.key]: checked})}
-                            />
-                            <Label>{_(trigger.label)}</Label>
-                        </div>
-                    )}
-                </For>
-            </div>
-        </PopoverContent>
-    );
-}
-
 /**
- * One chip in the saved-filters row: load on click, copy as JSON, watch bell, delete with
- * confirmation. `active` is purely cosmetic — it marks a chip whose filter exactly matches
- * (`filtersEqual`) the live filter, same "primary" treatment as the Open Crafts/My Crafts/Advanced
- * Filters buttons; it never changes what clicking the chip does.
+ * One chip in the saved-filters row: load on click, copy as JSON, notification-settings link,
+ * delete with confirmation. `active` is purely cosmetic — it marks a chip whose filter exactly
+ * matches (`filtersEqual`) the live filter, same "primary" treatment as the Open Crafts/My Crafts/
+ * Advanced Filters buttons; it never changes what clicking the chip does.
  */
 function SavedFilterChip(props: {
     saved: SavedCraftFilter;
@@ -396,7 +353,6 @@ function SavedFilterChip(props: {
     active: boolean;
     onLoad: () => void;
     onDelete: () => void;
-    onWatchChange: (next: CraftWatchTriggers) => void;
 }) {
     const {_} = useLingui();
     const [confirmOpen, setConfirmOpen] = createSignal(false);
@@ -413,21 +369,20 @@ function SavedFilterChip(props: {
             props.active ? "border-primary bg-primary text-primary-foreground" : "border-border",
         )}>
             <button class="hover:underline" onClick={props.onLoad}>{props.saved.name}</button>
-            <Popover>
-                <PopoverTrigger
-                    class={cn(iconClass(), !props.active && watchActive() && "text-primary hover:text-primary")}
-                    aria-label={_(msg`Watch settings for filter ${props.saved.name}`)}
-                    title={watchActive() ? _(msg`Watch active`) : _(msg`Watch this filter`)}
-                >
-                    <Show when={watchActive()} fallback={<IconBell class="size-3.5"/>}>
-                        <IconBellRinging class="size-3.5"/>
-                    </Show>
-                </PopoverTrigger>
-                <WatchTriggerPicker watch={props.watch} onChange={props.onWatchChange}/>
-            </Popover>
+            <A
+                href="/account/settings"
+                class={cn(iconClass(), !props.active && watchActive() && "text-primary hover:text-primary")}
+                aria-label={_(msg`Notification settings for filter ${props.saved.name}`)}
+                title={_(msg`Configure notifications in account settings`)}
+            >
+                <Show when={watchActive()} fallback={<IconBell class="size-3.5"/>}>
+                    <IconBellRinging class="size-3.5"/>
+                </Show>
+            </A>
             <button
-                class={iconClass()}
+                class={cn(iconClass(), "cursor-pointer")}
                 aria-label={_(msg`Copy filter ${props.saved.name} as JSON`)}
+                title={_(msg`Copy filter ${props.saved.name} as JSON`)}
                 onClick={copy}
             >
                 <Show when={copied()} fallback={<IconCopy class="size-3.5"/>}>
@@ -436,7 +391,9 @@ function SavedFilterChip(props: {
             </button>
             <Dialog open={confirmOpen()} onOpenChange={setConfirmOpen}>
                 <DialogTrigger
-                    class={iconClass()} aria-label={_(msg`Delete filter ${props.saved.name}`)}
+                    class={cn(iconClass(), "cursor-pointer")}
+                    aria-label={_(msg`Delete filter ${props.saved.name}`)}
+                    title={_(msg`Delete filter ${props.saved.name}`)}
                     onClick={e => { if (e.shiftKey) props.onDelete(); }}
                 >
                     <IconRemove class="size-3.5"/>
@@ -737,7 +694,6 @@ export default function CraftBrowser() {
                                                         setSavedCraftFilters(savedCraftFilters().filter(other => other.id !== saved.id));
                                                         setWatchFor(saved.id, NO_WATCH);
                                                     }}
-                                                    onWatchChange={next => setWatchFor(saved.id, next)}
                                                 />
                                             )}
                                         </For>

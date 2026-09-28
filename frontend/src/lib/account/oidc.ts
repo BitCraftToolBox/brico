@@ -12,7 +12,7 @@
  * discipline in `lib/spacetime/connection.ts` — it is never constructed at module scope, only
  * lazily on first use from a browser-only call site (a click handler or an `onMount`).
  */
-import {type User, UserManager} from "oidc-client-ts";
+import {type User, UserManager, WebStorageStateStore} from "oidc-client-ts";
 
 /** SpacetimeDB's own beta OIDC provider. Not configurable — there is only one. */
 const AUTHORITY = "https://auth.spacetimedb.com/oidc";
@@ -36,6 +36,9 @@ function getManager(): UserManager {
             // a tab that's open past those 15 minutes fresh in the background, proactively.
             // The reactive case (cold-start) would be handled by `renewSilently` below.
             automaticSilentRenew: true,
+            // Default is `sessionStorage`, which a tab opened from an external link (e.g. Discord)
+            // doesn't share with the tab that logged in.
+            userStore: new WebStorageStateStore({store: window.localStorage}),
         });
     }
     return manager;
@@ -95,7 +98,7 @@ export function onSilentRenewError(callback: (error: Error) => void): () => void
     return getManager().events.addSilentRenewError(callback);
 }
 
-/** Forgets the local session. No SpacetimeAuth-side (RP-initiated) logout — see the plan's note. */
+/** Forgets the local session. No SpacetimeAuth-side (RP-initiated) logout. */
 export function clearLocalSession(): Promise<void> {
     return getManager().removeUser();
 }

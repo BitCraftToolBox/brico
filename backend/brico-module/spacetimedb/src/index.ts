@@ -8,6 +8,8 @@
  *   - notifications: generic, craft-sourced notifications
  *   - bounties:      bounty rules, per-craft overrides and resolved assignments
  *   - payouts:       entitlement ledgers, payment records and manual loyalty rewards
+ *   - discord:       Discord bot watch displays, notification sinks and guild installs
+ *   - notify:        per-(filter, sink) notification triggers
  */
 
 export {default} from './schema';
@@ -18,6 +20,8 @@ export * from './reducers/crafts';
 export * from './reducers/notifications';
 export * from './reducers/bounties';
 export * from './reducers/payouts';
+export * from './reducers/discord';
+export * from './reducers/notify';
 
 export * from './views/accounts';
 export * from './views/integrations';
@@ -25,3 +29,5 @@ export * from './views/crafts';
 export * from './views/notifications';
 export * from './views/bounties';
 export * from './views/payouts';
+export * from './views/discord';
+export * from './views/notify';

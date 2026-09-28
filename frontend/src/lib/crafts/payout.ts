@@ -7,27 +7,11 @@
  * craft browser's columns, a craft's detail page, and the bounty rule builder's amount inputs do.
  */
 import {parseDecimalRatio, reduceRatio} from "@brico/crafts/entitlement";
-import {msg} from "@lingui/core/macro";
-import {useLingui} from "@lingui/solid";
 import {createEffect, createSignal} from "solid-js";
-import {currencyData} from "~/lib/crafts/filter-vocab";
-import {uiLocale} from "~/lib/i18n";
-import {useLabel} from "~/lib/labels";
 import type {PayoutDisplayMode} from "~/lib/settings";
 
 /** An exact currency-per-effort fraction — never a float, never a re-parsed decimal string, so repeatedly flipping `PayoutDisplayMode` can't drift it (`1/18` has no finite decimal representation, so round-tripping it through a decimal string and back loses precision every time). */
 export type Ratio = {numerator: bigint; denominator: bigint};
-
-/** `"0.05 Hex Coin / effort"` or, inverted, `"20 effort / Hex Coin"` — `rate` is always currency-per-effort. */
-export function formatPayoutRate(rate: number, currency: string, mode: PayoutDisplayMode): string {
-    const {_} = useLingui();
-    const label = useLabel();
-    const data = currencyData(currency);
-    const currencyLabel = data ? label(data.label) : currency;
-    const value = mode === "effortPerCurrency" ? (rate > 0 ? 1 / rate : 0) : rate;
-    const rateText = value.toLocaleString(uiLocale(), {maximumFractionDigits: 4});
-    return _(mode === "effortPerCurrency" ? msg`${rateText} effort / ${currencyLabel}` : msg`${rateText} ${currencyLabel} / effort`);
-}
 
 /** An exact currency-per-effort ratio, as the plain decimal amount `mode` would display it as. */
 export function ratioToDisplayAmount(ratioNumerator: bigint, ratioDenominator: bigint, mode: PayoutDisplayMode): string {

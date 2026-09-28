@@ -78,7 +78,7 @@ export const StatLineList: Component<{ stats?: StatLine[] }> = (props) => {
                             <div class="text-nowrap mr-2">
                                 {typeof pair[0] === "function" ? (pair[0] as () => JSX.Element)() : pair[0]}
                             </div>
-                            <div class="dots-before flex flex-1 text-nowrap">
+                            <div class="dots-before flex flex-1 min-w-0">
                                 {typeof pair[1] === "function"
                                     ? (pair[1] as () => JSX.Element)()
                                     : typeof pair[1] === "number" ? String(pair[1]) : pair[1]}

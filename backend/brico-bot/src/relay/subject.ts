@@ -24,6 +24,8 @@ export interface CraftRow {
     count: number;
     claimName: string | null;
     ownerName: string | null;
+    /** `craft_meta.firstSeen` in millis. */
+    firstSeenMs: bigint;
     subject: CraftSubject;
 }
 
@@ -61,6 +63,7 @@ export function craftRowsFrom(
             count: craft.count,
             claimName: claim ? claimDisplayName(claim.name) : null,
             ownerName: owner?.name ?? null,
+            firstSeenMs: craft.firstSeen.toMillis(),
             subject,
         } satisfies CraftRow;
     });

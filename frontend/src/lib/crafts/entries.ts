@@ -227,8 +227,6 @@ export interface CraftContributor {
     estimatedPayout: bigint | null;
     /** The bounty's currency, alongside `estimatedPayout` — `null` exactly when it is. */
     currency: string | null;
-    /** Whether this contributor is the owner of the craft. */
-    isOwner: boolean;
 }
 
 /**
@@ -257,6 +255,5 @@ export function craftContributorsFrom(
             percentTotal: effortTotal > 0 ? row.contribution / effortTotal : 0,
             estimatedPayout: bounty ? computeEntitlement(BigInt(row.contribution), bounty.ratioNumerator, bounty.ratioDenominator) : null,
             currency: bounty?.currency ?? null,
-            isOwner: row.playerId === craft?.ownerEntityId,
         }));
 }

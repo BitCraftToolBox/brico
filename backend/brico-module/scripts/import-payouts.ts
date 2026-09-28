@@ -23,6 +23,7 @@
 
 import {DbConnection} from '@brico/bindings/brico-app';
 import type {HistoricalBountyLedgerRow} from '@brico/bindings/brico-app/types';
+import {csvParse} from 'd3-dsv';
 import * as fs from 'node:fs';
 import {readFileSync} from 'node:fs';
 import path from 'node:path';
@@ -81,13 +82,14 @@ function normalizeIdentity(raw: string): string {
 }
 
 /**
- * Parses a u64 player id, rejecting anything but a plain integer literal — in particular the
- * scientific notation (e.g. "5.76461E+17") a spreadsheet produces for a cell it auto-formatted as a
- * number, which has already thrown away the digits needed to recover the real id. Kept as a string,
- * never round-tripped through `Number`, since these ids routinely exceed `Number.MAX_SAFE_INTEGER`.
+ * Parses a u64 player id, rejecting anything but a plain integer literal (thousands separators
+ * stripped first) — in particular the scientific notation (e.g. "5.76461E+17") a spreadsheet
+ * produces for a cell it auto-formatted as a number, which has already thrown away the digits
+ * needed to recover the real id. Kept as a string, never round-tripped through `Number`, since
+ * these ids routinely exceed `Number.MAX_SAFE_INTEGER`.
  */
 function parsePlayerId(raw: string): bigint | null {
-    const trimmed = raw.trim();
+    const trimmed = raw.trim().replace(/,/g, '');
     return /^[0-9]+$/.test(trimmed) ? BigInt(trimmed) : null;
 }
 
@@ -96,9 +98,10 @@ function parsePlayerId(raw: string): bigint | null {
  * bigint arithmetic. `Math.floor(Number(str))` would round-trip through a 64-bit float, which is
  * exact for every value these sheets actually contain, but floors ties on negative values the wrong
  * way if it's ever off by an ULP — doing it on the digit string sidesteps the question entirely.
+ * Thousands separators (e.g. "1,234.56") are stripped before parsing.
  */
 function floorDecimalToBigInt(raw: string | undefined): bigint {
-    const trimmed = (raw ?? '').trim();
+    const trimmed = (raw ?? '').trim().replace(/,/g, '');
     if (trimmed === '') return 0n;
     const negative = trimmed.startsWith('-');
     const abs = negative ? trimmed.slice(1) : trimmed;
@@ -109,43 +112,40 @@ function floorDecimalToBigInt(raw: string | undefined): bigint {
     return hasFraction ? -(intValue + 1n) : -intValue;
 }
 
-/** No quoted fields in these exports (names are ignored, so a stray comma in one doesn't matter). */
-function parseCsv(filePath: string): {rows: string[][]; columnIndex: (name: string) => number} {
-    if (!fs.existsSync(filePath)) return {rows: [], columnIndex: () => 0};
+/** Parses an RFC4180 CSV (quoted fields may contain commas). */
+function parseCsv(filePath: string): {rows: Record<string, string>[]; requireColumns: (...names: string[]) => void} {
+    if (!fs.existsSync(filePath)) return {rows: [], requireColumns: () => {}};
     const text = readFileSync(filePath, 'utf8');
-    const lines = text.split(/\r?\n/).filter(line => line.length > 0);
-    const header = lines[0].split(',').map(cell => cell.trim());
-    const rows = lines.slice(1).map(line => line.split(','));
-    const columnIndex = (name: string) => {
-        const index = header.indexOf(name);
-        if (index === -1) throw new Error(`${filePath}: missing expected column "${name}" (found: ${header.join(', ')})`);
-        return index;
+    const parsed = csvParse(text);
+    const requireColumns = (...names: string[]) => {
+        for (const name of names) {
+            if (!parsed.columns.includes(name)) {
+                throw new Error(`${filePath}: missing expected column "${name}" (found: ${parsed.columns.join(', ')})`);
+            }
+        }
     };
-    return {rows, columnIndex};
+    return {rows: parsed, requireColumns};
 }
 
 function buildRows(options: Options): {rows: HistoricalBountyLedgerRow[]; skipped: number} {
-    const {rows: csvRows, columnIndex} = parseCsv(options.entitledAndPaid);
-    const idCol = columnIndex('entityId');
-    const effortCol = columnIndex('totalEffort');
-    const coinsCol = columnIndex('coins');
-    const paidCol = columnIndex('paidOut');
+    const {rows: csvRows, requireColumns} = parseCsv(options.entitledAndPaid);
+    requireColumns('entityId', 'totalEffort', 'coins', 'paidOut');
 
     const rows: HistoricalBountyLedgerRow[] = [];
     let skipped = 0;
     for (const row of csvRows) {
-        const payeePlayerId = parsePlayerId(row[idCol] ?? '');
+        const payeePlayerId = parsePlayerId(row.entityId ?? '');
         if (payeePlayerId === null) {
-            console.warn(`entitled_and_paid: skipping row with unusable player id: ${row.join(',')}`);
+            console.warn(`entitled_and_paid: skipping row with unusable player id: ${JSON.stringify(row)}`);
             skipped++;
             continue;
         }
         rows.push({
             payeePlayerId,
             currency: CURRENCY,
-            totalEffort: floorDecimalToBigInt(row[effortCol]),
-            total: floorDecimalToBigInt(row[coinsCol]),
-            paidTotal: floorDecimalToBigInt(row[paidCol]),
+            totalEffort: floorDecimalToBigInt(row.totalEffort),
+            total: floorDecimalToBigInt(row.coins),
+            paidTotal: floorDecimalToBigInt(row.paidOut),
         });
     }
     return {rows, skipped};

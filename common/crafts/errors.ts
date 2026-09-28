@@ -1,10 +1,6 @@
 /**
  * errors.ts — the shared `SenderError` code contract between `backend/brico-module` and the
- * frontend, per `docs/craft-manager-i18n-design.md` part 2's decided design (option A: structured
- * error codes, not the frontend-only regex table the doc originally recommended — codes turned out
- * to be legible enough in `spacetime logs`/`spacetime call` output on their own that there was no
- * "keep the log text human-sentence-readable" cost left to justify the regex approach's ongoing
- * drift risk).
+ * frontend.
  *
  * Plain TypeScript, no imports — this lives in `@brico/crafts` (already a dependency of both
  * `backend/brico-module` and the frontend) rather than a new package, since colocating it costs
@@ -29,6 +25,10 @@ export const MAX_DISPLAY_NAME_LENGTH = 40;
 export const MAX_FILTER_NAME_LENGTH = 80;
 export const MAX_FILTER_JSON_LENGTH = 8 * 1024;
 export const MAX_SHARED_FILTER_IDS = 200;
+/** `attachDiscordWatchDisplay`'s `template` content; only length is validated, not token grammar. */
+export const MAX_DISPLAY_TEMPLATE_LENGTH = 2000;
+/** `discord_notify_target`'s `added`/`finished`/`removedTemplate` columns (single-line messages). */
+export const MAX_NOTIFY_TEMPLATE_LENGTH = 250;
 
 // ── Error codes ──────────────────────────────────────────────────
 
@@ -36,13 +36,6 @@ export const MAX_SHARED_FILTER_IDS = 200;
  * A `const` object (not a bare `type` union) so both `backend/brico-module` and the frontend get
  * autocomplete and refactor-safety at every `throw new SenderError(CraftError.SOME_CODE)` call site,
  * instead of hand-typed string literals repeated ~40 times.
- *
- * Every reducer/procedure that can reject a caller-triggered request needs *a* code here — including
- * the internal/service-principal-only ones nobody but `brico-bot` can trigger — because the value of
- * this contract is being exhaustive: `frontend/src/lib/crafts/error-vocab.ts`'s `ERROR_VOCAB` is a
- * plain (non-`Partial`) `Record<CraftErrorCode, ...>`, so TypeScript refuses to compile if this
- * object grows an entry that file hasn't caught up to. Low-priority codes just get plain, unfancy
- * `msg` text there rather than bespoke wording.
  */
 export const CraftError = {
     // Account / identity
@@ -110,6 +103,44 @@ export const CraftError = {
     TOO_MANY_FILTERS_SELECTED: 'TOO_MANY_FILTERS_SELECTED',
     SHARE_CODE_GENERATION_FAILED: 'SHARE_CODE_GENERATION_FAILED',
     UNKNOWN_SHARE_CODE: 'UNKNOWN_SHARE_CODE',
+
+    // Discord watch displays
+    /** Dynamic — carries the rejected key as its `:`-suffix. `attachDiscordWatchDisplay`'s `content: {tag: 'presets', ...}` — every entry must be one of `@brico/crafts/discord-display`'s `DISCORD_DISPLAY_FIELD_PRESET_KEYS`. */
+    UNKNOWN_FIELD_PRESET: 'UNKNOWN_FIELD_PRESET',
+    /** `attachDiscordWatchDisplay`'s `content: {tag: 'template', ...}` — see `MAX_DISPLAY_TEMPLATE_LENGTH`. */
+    DISPLAY_TEMPLATE_TOO_LONG: 'DISPLAY_TEMPLATE_TOO_LONG',
+    /** `attachDiscordWatchDisplay` — must be one of `DISCORD_DISPLAY_STYLES`. */
+    UNKNOWN_DISPLAY_STYLE: 'UNKNOWN_DISPLAY_STYLE',
+    /** `attachDiscordWatchDisplay` — must be one of `DISCORD_DISPLAY_SORT_FIELDS`. */
+    UNKNOWN_SORT_FIELD: 'UNKNOWN_SORT_FIELD',
+    /** `attachDiscordWatchDisplay` — must be `'asc'` or `'desc'`. */
+    UNKNOWN_SORT_DIRECTION: 'UNKNOWN_SORT_DIRECTION',
+    /** See `MAX_DISPLAY_ROWS_HARD_CAP`. */
+    DISPLAY_LIMIT_TOO_LARGE: 'DISPLAY_LIMIT_TOO_LARGE',
+    /** See `MIN_DISPLAY_REFRESH_SECONDS`/`MAX_DISPLAY_REFRESH_SECONDS`. */
+    DISPLAY_REFRESH_OUT_OF_RANGE: 'DISPLAY_REFRESH_OUT_OF_RANGE',
+    /** See `MIN_STICKY_MINUTES`/`MAX_STICKY_MINUTES`. */
+    STICKY_MINUTES_OUT_OF_RANGE: 'STICKY_MINUTES_OUT_OF_RANGE',
+    /** `attachDiscordWatchDisplay`'s `filterId` doesn't resolve to a live `saved_craft_filter` owned by `accountIdentity`. */
+    UNKNOWN_SAVED_FILTER_FOR_DISPLAY: 'UNKNOWN_SAVED_FILTER_FOR_DISPLAY',
+    /** `detachDiscordWatchDisplay`/`setDiscordWatchDisplayMessage` — no such row. */
+    UNKNOWN_DISCORD_WATCH_DISPLAY: 'UNKNOWN_DISCORD_WATCH_DISPLAY',
+
+    // Discord notification sink
+    /** `detachDiscordNotifySink` — no such row. Also thrown by `upsertDiscordNotifyTargetTemplate`/`attachDiscordNotifyTarget` when the referenced sink doesn't exist, is tombstoned, or belongs to another account. */
+    UNKNOWN_DISCORD_NOTIFY_SINK: 'UNKNOWN_DISCORD_NOTIFY_SINK',
+    /** `upsertCraftFilterNotifyTrigger`'s `filterId` doesn't resolve to a live `saved_craft_filter` owned by the caller. */
+    UNKNOWN_SAVED_FILTER_FOR_NOTIFY: 'UNKNOWN_SAVED_FILTER_FOR_NOTIFY',
+    /** `detachCraftFilterNotifyTrigger` — the row (found by its own global id) belongs to a different account. A missing row is a silent no-op. */
+    CRAFT_FILTER_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT: 'CRAFT_FILTER_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT',
+    /** `detachDiscordNotifyTarget` — the row belongs to a different account. */
+    DISCORD_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT: 'DISCORD_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT',
+    /** See `MAX_NOTIFY_TEMPLATE_LENGTH`. */
+    NOTIFY_TEMPLATE_TOO_LONG: 'NOTIFY_TEMPLATE_TOO_LONG',
+
+    // Discord guild install
+    /** Dynamic — carries the rejected value as its `:`-suffix. `upsertDiscordGuildInstall`'s `commandMode` must be one of `@brico/crafts/discord-guild`'s `DISCORD_COMMAND_MODES`. */
+    UNKNOWN_COMMAND_MODE: 'UNKNOWN_COMMAND_MODE',
 } as const;
 
 export type CraftErrorCode = (typeof CraftError)[keyof typeof CraftError];

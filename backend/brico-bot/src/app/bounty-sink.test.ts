@@ -3,7 +3,7 @@ import type {ClaimMember} from "@brico/bindings/prism/types";
 import assert from "node:assert/strict";
 import {describe, it} from "node:test";
 import {Identity, Timestamp} from "spacetimedb";
-import {resolveAutomaticBonus} from "./bounty-sink.ts";
+import {assignmentBaselines, FRESH_CRAFT_WINDOW_MS, resolveAutomaticBonus} from "./bounty-sink.ts";
 
 const PAYER = new Identity(1n);
 const PLAYER_ID = 500n;
@@ -133,5 +133,32 @@ describe("resolveAutomaticBonus", () => {
         const claimMembers = new Map([["100:500", member({officer: true})]]);
         const totals = new Map([[`${PAYER.toHexString()}:${PLAYER_ID}:${CURRENCY}`, entitlementTotal(PLAYER_ID, CURRENCY, 1500000n)]]);
         assert.deepEqual(resolveAutomaticBonus(rules, claimMembers, totals, PAYER, PLAYER_ID, CURRENCY), {numerator: 3n, denominator: 50n}); // +6%
+    });
+});
+
+describe("assignmentBaselines", () => {
+    const contributions = new Map([[500n, 120n], [501n, 30n]]);
+    const firstSeen = 1_000_000n;
+
+    it("protects everyone's existing effort on an established craft", () => {
+        const now = firstSeen + FRESH_CRAFT_WINDOW_MS + 1n;
+        assert.deepEqual(assignmentBaselines(contributions, firstSeen, now), [
+            {playerId: 500n, effort: 120n},
+            {playerId: 501n, effort: 30n},
+        ]);
+    });
+
+    it("protects nothing on a brand-new craft, so effort that landed before the bot's first look still counts", () => {
+        assert.deepEqual(assignmentBaselines(contributions, firstSeen, firstSeen + 600n), []);
+        assert.deepEqual(assignmentBaselines(contributions, firstSeen, firstSeen + FRESH_CRAFT_WINDOW_MS), []);
+    });
+
+    it("includes the craft's owner like any other contributor", () => {
+        const now = firstSeen + FRESH_CRAFT_WINDOW_MS + 1n;
+        assert.equal(assignmentBaselines(new Map([[999n, 10n]]), firstSeen, now).length, 1);
+    });
+
+    it("is empty for a craft nobody has contributed to", () => {
+        assert.deepEqual(assignmentBaselines(undefined, firstSeen, firstSeen + 60_000n), []);
     });
 });

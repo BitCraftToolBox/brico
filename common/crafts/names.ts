@@ -39,3 +39,24 @@ export function regionDisplayName(name: string | null | undefined, id: number): 
     const trimmed = name?.trim();
     return trimmed ? `${trimmed} (R${id})` : `Region ${id}`;
 }
+
+/** Building requirement ids whose recipes are named after their output item rather than the recipe name template. */
+const OUTPUT_ONLY_NAME_BUILDING_TYPES = [104950060, 1837107818];
+
+/**
+ * Resolves a crafting recipe's display name: substitutes `{0}`/`{1}` in `recipe.name` with the
+ * output/input item names. Pass `undefined` for an unresolved name; its placeholder is left as-is.
+ */
+export function craftingRecipeDisplayName(
+    recipeName: string,
+    outputItemName: string | undefined,
+    inputItemName: string | undefined,
+    buildingType: number | null,
+): string {
+    if (buildingType !== null && OUTPUT_ONLY_NAME_BUILDING_TYPES.includes(buildingType)) {
+        return outputItemName ?? recipeName;
+    }
+    return recipeName
+        .replace("{1}", inputItemName || "{1}")
+        .replace("{0}", outputItemName || "{0}");
+}

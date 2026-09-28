@@ -227,6 +227,27 @@ function writeLoyaltyBonusIfChanged(
     }
 }
 
+/**
+ * A craft assigned a bounty within this long of prism first seeing it has all its effort counted,
+ * since contributions in the gap before the bot's first snapshot are not "pre-bounty".
+ */
+export const FRESH_CRAFT_WINDOW_MS = 5000n;
+
+/**
+ * Pre-bounty effort `assignCraftBounty` should protect (treat as unpaid) on a craft's first
+ * assignment: everyone's current effort, or nothing for a fresh craft. Compares prism's
+ * `craft_meta.firstSeen` to the bot's clock, so skew beyond the window misclassifies.
+ */
+export function assignmentBaselines(
+    byPlayer: ReadonlyMap<bigint, bigint> | undefined,
+    firstSeenMs: bigint,
+    nowMs: bigint,
+): {playerId: bigint; effort: bigint}[] {
+    if (byPlayer === undefined) return [];
+    if (nowMs - firstSeenMs <= FRESH_CRAFT_WINDOW_MS) return [];
+    return [...byPlayer].map(([playerId, effort]) => ({playerId, effort}));
+}
+
 export interface BountyEngine {
     /**
      * Resolves every row's bounty against current `brico-app` state, writes any that changed, and
@@ -276,10 +297,9 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
 
             for (const row of rows) {
                 const craftId = BigInt(row.id);
-                const ownerEntityId = row.subject.owner ? BigInt(row.subject.owner) : 0n;
                 const claimEntityId = row.subject.claim ? BigInt(row.subject.claim) : 0n;
                 const bounty = resolveCraftBounty(
-                    craftId, row.subject, ownerEntityId, claimEntityId,
+                    craftId, row.subject, row.subject.owner ? BigInt(row.subject.owner) : 0n, claimEntityId,
                     playerAccounts, snapshot.claimOwners, rulesByAccount, overridesByCraft,
                 );
 
@@ -308,29 +328,13 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
                         private: bounty.private,
                         assignedAt: Timestamp.now(),
                         updatedAt: Timestamp.now(),
+                        // Only a craft with no assignment as of last tick needs baselines.
+                        baselines: previous === undefined
+                            ? assignmentBaselines(snapshot.contributions.get(craftId), row.firstSeenMs, BigInt(Date.now()))
+                            : [],
                     })).catch(cause => {
                         scoped.error("assign_craft_bounty failed", {craftId: row.id, error: cause instanceof Error ? cause.message : String(cause)});
                     });
-
-                    // This craft had no bounty as of last tick. This seeds a zero-earning baseline for
-                    // everyone already contributing to it, so `updateEntitlements`'s next call for
-                    // each of them (this same tick or later) prices only effort from here on, not
-                    // whatever they'd already done before the bounty existed. A brand-new contributor
-                    // who shows up *after* this point never gets seeded, and correctly earns from
-                    // zero the first time `updateEntitlements` sees them.
-                    if (previous === undefined) {
-                        for (const [playerId, effort] of snapshot.contributions.get(craftId) ?? []) {
-                            if (playerId === ownerEntityId) continue;
-                            timeReducerCall("seed_craft_bounty_entitlement", conn.reducers.seedCraftBountyEntitlement({
-                                craftId, playerId, currency: bounty.currency, effort, updatedAt: Timestamp.now(),
-                            })).catch(cause => {
-                                scoped.error("seed_craft_bounty_entitlement failed", {
-                                    craftId: row.id, playerId: playerId.toString(),
-                                    error: cause instanceof Error ? cause.message : String(cause),
-                                });
-                            });
-                        }
-                    }
                 } else {
                     timeReducerCall("clear_craft_bounty", conn.reducers.clearCraftBounty({craftId})).catch(cause => {
                         scoped.error("clear_craft_bounty failed", {craftId: row.id, error: cause instanceof Error ? cause.message : String(cause)});
@@ -356,11 +360,6 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
             const conn = app.connection?.connection;
             if (!conn?.isActive) return;
 
-            const ownerByCraft = new Map<bigint, bigint>();
-            for (const craft of snapshot.crafts) {
-                if (craft.ownerEntityId !== 0n) ownerByCraft.set(craft.entityId, craft.ownerEntityId);
-            }
-
             const existing = loadEntitlements(app);
             const loyaltyRewards = loadLoyaltyRewards(app);
             const loyaltyRulesByPayer = loadLoyaltyRules(app);
@@ -370,14 +369,7 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
             for (const [craftId, bounty] of assignments) {
                 const byPlayer = snapshot.contributions.get(craftId);
                 if (!byPlayer) continue;
-                const ownerEntityId = ownerByCraft.get(craftId);
-
                 for (const [playerId, effort] of byPlayer) {
-                    // A craft's own owner never earns an entitlement for it — whoever pays the
-                    // bounty is by definition someone else, so paying the owner out of their own
-                    // bounty is meaningless.
-                    if (playerId === ownerEntityId) continue;
-
                     // Every bonus (manual assignment + every currently-satisfied automated rule)
                     // folds into the bounty ratio *before* the floor the module applies to new
                     // effort, keeping this a single floor operation per conversion. This makes

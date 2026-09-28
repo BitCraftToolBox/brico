@@ -14,3 +14,6 @@ function loginUrl(provider: "bitauth" | "discord", linkCode: string): string {
 
 export const bitAuthLoginUrl = (linkCode: string): string => loginUrl("bitauth", linkCode);
 export const discordLoginUrl = (linkCode: string): string => loginUrl("discord", linkCode);
+
+/** `/discord/install`, the "add brico to your server" redirect; ends at `/discord/installed`. Carries no `linkCode` or `returnUrl`. */
+export const installDiscordBotUrl = (): string => `${BASE_URL}/discord/install`;

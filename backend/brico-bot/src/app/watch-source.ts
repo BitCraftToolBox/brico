@@ -1,11 +1,13 @@
 /**
  * watch-source.ts — where the bridge gets the filters it evaluates.
  *
- * `brico-app`'s `saved_craft_filter` × `craft_filter_watch` join, read off the second connection,
- * is the real source.
+ * `brico-app`'s `saved_craft_filter` × `craft_filter_notify_trigger` join,
+ * read off the second connection, is the real source.
  */
-import type {SavedCraftFilter} from "@brico/bindings/brico-app/types";
+import type {DbConnection} from "@brico/bindings/brico-app";
+import type {CraftFilterNotifyTrigger, SavedCraftFilter} from "@brico/bindings/brico-app/types";
 import {type FilterNode, parseFilter, validateFilter} from "@brico/crafts/filter";
+import type {Identity} from "spacetimedb";
 
 import type {Logger} from "../log.ts";
 import type {BricoAppConnection} from "./connection.ts";
@@ -28,14 +30,35 @@ export interface WatchSource {
 }
 
 /**
- * Watches derived from `brico-app`'s live `all_saved_craft_filter` × `all_craft_filter_watch` join.
+ * The live trigger row for `(accountIdentity, filterId)` whose sink satisfies `matchSink`
+ * (e.g. `sink => sink.tag === "Toast"`); lets a `MatchSink` check its own enablement. `null` if none.
+ */
+export function findNotifyTrigger(
+    conn: DbConnection,
+    accountIdentity: Identity,
+    filterId: string,
+    matchSink: (sink: CraftFilterNotifyTrigger["sink"]) => boolean,
+): CraftFilterNotifyTrigger | null {
+    for (const trigger of conn.db.allCraftFilterNotifyTrigger.iter()) {
+        if (trigger.deletedAt !== undefined) continue;
+        if (trigger.filterId !== filterId) continue;
+        if (!trigger.accountIdentity.isEqual(accountIdentity)) continue;
+        if (!matchSink(trigger.sink)) continue;
+        return trigger;
+    }
+    return null;
+}
+
+/**
+ * Watches derived from `brico-app`'s live `all_saved_craft_filter` × `all_craft_filter_notify_trigger`
+ * join.
  *
- * For each non-tombstoned `all_craft_filter_watch` row, the matching `all_saved_craft_filter` row
- * supplies the actual `FilterNode`. This is untrusted JSON at this boundary, so it goes through
- * `parseFilter` and is skipped with a `log.warn` on failure, never thrown. A watch row with no matching
- * (or mismatched-owner, or tombstoned) filter row is skipped the same way.
+ * A filter is watched if it has any non-tombstoned trigger row; its `triggers` are the OR across
+ * sinks. `filterJson` is untrusted, so it goes through `parseFilter` and is skipped with a
+ * `log.warn` on failure, never thrown. A trigger row with no matching (or mismatched-owner, or
+ * tombstoned) filter row is skipped the same way.
  *
- * This is a genuine cross-database join: accounts' filters/watches come off the `brico-app`
+ * This is a genuine cross-database join: accounts' filters/triggers come off the `brico-app`
  * connection, crafts off prism's, and the same `@brico/crafts/filter` engine decides what each
  * account would be notified about.
  *
@@ -45,7 +68,7 @@ export interface WatchSource {
 export function createAccountWatchSource(app: BricoAppConnection, log: Logger): WatchSource {
     let lastCount = -1;
     return {
-        origin: "brico-app all_saved_craft_filter × all_craft_filter_watch",
+        origin: "brico-app all_saved_craft_filter × all_craft_filter_notify_trigger",
         watches() {
             const conn = app.connection?.connection;
             if (!conn?.isActive || !app.isLive) return [];
@@ -56,31 +79,43 @@ export function createAccountWatchSource(app: BricoAppConnection, log: Logger): 
                 filtersById.set(savedFilter.id, savedFilter);
             }
 
-            const specs: WatchSpec[] = [];
-            for (const watch of conn.db.allCraftFilterWatch.iter()) {
-                if (watch.deletedAt !== undefined) continue;
+            // Group by filterId so multiple sinks on one filter collapse into one WatchSpec.
+            const triggersByFilterId = new Map<string, CraftFilterNotifyTrigger[]>();
+            for (const trigger of conn.db.allCraftFilterNotifyTrigger.iter()) {
+                if (trigger.deletedAt !== undefined) continue;
+                const bucket = triggersByFilterId.get(trigger.filterId);
+                if (bucket) bucket.push(trigger);
+                else triggersByFilterId.set(trigger.filterId, [trigger]);
+            }
 
-                const savedFilter = filtersById.get(watch.filterId);
-                if (!savedFilter || !savedFilter.accountIdentity.isEqual(watch.accountIdentity)) {
-                    log.warn("skipping watch: no matching saved filter", {filterId: watch.filterId});
+            const specs: WatchSpec[] = [];
+            for (const [filterId, triggers] of triggersByFilterId) {
+                const savedFilter = filtersById.get(filterId);
+                const owner = triggers[0]?.accountIdentity;
+                if (!savedFilter || !owner || !savedFilter.accountIdentity.isEqual(owner)) {
+                    log.warn("skipping watch: no matching saved filter", {filterId});
                     continue;
                 }
 
                 const filter = parseFilter(JSON.parse(savedFilter.filterJson));
                 if (!filter) {
                     log.warn("skipping watch: invalid filterJson", {
-                        filterId: watch.filterId,
+                        filterId,
                         problems: validateFilter(JSON.parse(savedFilter.filterJson)).join("; "),
                     });
                     continue;
                 }
 
                 specs.push({
-                    id: `watch:${watch.filterId}`,
+                    id: `watch:${filterId}`,
                     name: savedFilter.name,
-                    owner: watch.accountIdentity.toHexString(),
-                    filterId: watch.filterId,
-                    triggers: {added: watch.added, finished: watch.finished, removed: watch.removed},
+                    owner: owner.toHexString(),
+                    filterId,
+                    triggers: {
+                        added: triggers.some(t => t.added),
+                        finished: triggers.some(t => t.finished),
+                        removed: triggers.some(t => t.removed),
+                    },
                     filter,
                 });
             }

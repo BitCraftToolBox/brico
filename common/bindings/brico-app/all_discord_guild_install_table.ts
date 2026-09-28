@@ -6,11 +6,8 @@
 import {t as __t,} from "spacetimedb";
 
 export default __t.row({
-  filterId: __t.string().primaryKey().name("filter_id"),
-  accountIdentity: __t.identity().name("account_identity"),
-  added: __t.bool(),
-  finished: __t.bool(),
-  removed: __t.bool(),
+  guildId: __t.string().primaryKey().name("guild_id"),
+  commandMode: __t.string().name("command_mode"),
+  createdAt: __t.timestamp().name("created_at"),
   updatedAt: __t.timestamp().name("updated_at"),
-  deletedAt: __t.option(__t.timestamp()).name("deleted_at"),
 });

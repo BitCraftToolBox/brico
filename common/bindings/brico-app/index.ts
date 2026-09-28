@@ -6,25 +6,25 @@
 /* eslint-disable */
 /* tslint:disable */
 import {
-  convertToAccessorMap as __convertToAccessorMap,
-  DbConnectionBuilder as __DbConnectionBuilder,
-  type DbConnectionConfig as __DbConnectionConfig,
-  DbConnectionImpl as __DbConnectionImpl,
-  type ErrorContextInterface as __ErrorContextInterface,
-  type EventContextInterface as __EventContextInterface,
-  makeQueryBuilder as __makeQueryBuilder,
-  procedures as __procedures,
-  procedureSchema as __procedureSchema,
-  type QueryBuilder as __QueryBuilder,
-  type ReducerEventContextInterface as __ReducerEventContextInterface,
-  reducers as __reducers,
-  reducerSchema as __reducerSchema,
-  type RemoteModule as __RemoteModule,
-  schema as __schema,
-  SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
-  type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
-  type SubscriptionHandleImpl as __SubscriptionHandleImpl,
-  table as __table,
+    convertToAccessorMap as __convertToAccessorMap,
+    DbConnectionBuilder as __DbConnectionBuilder,
+    type DbConnectionConfig as __DbConnectionConfig,
+    DbConnectionImpl as __DbConnectionImpl,
+    type ErrorContextInterface as __ErrorContextInterface,
+    type EventContextInterface as __EventContextInterface,
+    makeQueryBuilder as __makeQueryBuilder,
+    procedures as __procedures,
+    procedureSchema as __procedureSchema,
+    type QueryBuilder as __QueryBuilder,
+    type ReducerEventContextInterface as __ReducerEventContextInterface,
+    reducers as __reducers,
+    reducerSchema as __reducerSchema,
+    type RemoteModule as __RemoteModule,
+    schema as __schema,
+    SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
+    type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
+    type SubscriptionHandleImpl as __SubscriptionHandleImpl,
+    table as __table,
 } from "spacetimedb";
 
 // Import all table schema definitions
@@ -34,7 +34,11 @@ import AllBountyRuleRow from "./all_bounty_rule_table";
 import AllCraftBountyAssignmentRow from "./all_craft_bounty_assignment_table";
 import AllCraftBountyEntitlementRow from "./all_craft_bounty_entitlement_table";
 import AllCraftBountyOverrideRow from "./all_craft_bounty_override_table";
-import AllCraftFilterWatchRow from "./all_craft_filter_watch_table";
+import AllCraftFilterNotifyTriggerRow from "./all_craft_filter_notify_trigger_table";
+import AllDiscordGuildInstallRow from "./all_discord_guild_install_table";
+import AllDiscordNotifySinkRow from "./all_discord_notify_sink_table";
+import AllDiscordNotifyTargetRow from "./all_discord_notify_target_table";
+import AllDiscordWatchDisplayRow from "./all_discord_watch_display_table";
 import AllIntegrationLinkRequestRow from "./all_integration_link_request_table";
 import AllLinkedIntegrationRow from "./all_linked_integration_table";
 import AllLoyaltyBonusTotalRow from "./all_loyalty_bonus_total_table";
@@ -45,6 +49,9 @@ import AllSavedCraftFilterRow from "./all_saved_craft_filter_table";
 
 // Import all reducer arg schemas
 import AssignCraftBountyReducer from "./assign_craft_bounty_reducer";
+import AttachDiscordNotifySinkReducer from "./attach_discord_notify_sink_reducer";
+import AttachDiscordNotifyTargetReducer from "./attach_discord_notify_target_reducer";
+import AttachDiscordWatchDisplayReducer from "./attach_discord_watch_display_reducer";
 import BeginIntegrationLinkForExternalReducer from "./begin_integration_link_for_external_reducer";
 import BeginIntegrationLinkReducer from "./begin_integration_link_reducer";
 import ClaimIntegrationLinkReducer from "./claim_integration_link_reducer";
@@ -54,12 +61,15 @@ import ClearCraftBountyReducer from "./clear_craft_bounty_reducer";
 import * as CreateSharedFiltersProcedure from "./create_shared_filters_procedure";
 import DeleteBountyRuleReducer from "./delete_bounty_rule_reducer";
 import DeleteCraftBountyOverrideReducer from "./delete_craft_bounty_override_reducer";
-import DeleteCraftFilterWatchReducer from "./delete_craft_filter_watch_reducer";
 import DeleteLoyaltyBonusTotalReducer from "./delete_loyalty_bonus_total_reducer";
 import DeleteLoyaltyRewardReducer from "./delete_loyalty_reward_reducer";
 import DeleteLoyaltyRuleReducer from "./delete_loyalty_rule_reducer";
 import DeleteNotificationReducer from "./delete_notification_reducer";
 import DeleteSavedCraftFilterReducer from "./delete_saved_craft_filter_reducer";
+import DetachCraftFilterNotifyTriggerReducer from "./detach_craft_filter_notify_trigger_reducer";
+import DetachDiscordNotifySinkReducer from "./detach_discord_notify_sink_reducer";
+import DetachDiscordNotifyTargetReducer from "./detach_discord_notify_target_reducer";
+import DetachDiscordWatchDisplayReducer from "./detach_discord_watch_display_reducer";
 import EnsureAccountReducer from "./ensure_account_reducer";
 import ImportHistoricalBountyLedgerReducer from "./import_historical_bounty_ledger_reducer";
 import LinkDiscordViaSpacetimeAuthReducer from "./link_discord_via_spacetime_auth_reducer";
@@ -72,7 +82,10 @@ import MyBountyPayoutRecordLogAsContributorRow from "./my_bounty_payout_record_l
 import MyBountyPayoutRecordLogAsPayerRow from "./my_bounty_payout_record_log_as_payer_table";
 import MyBountyRuleRow from "./my_bounty_rule_table";
 import MyCraftBountyOverrideRow from "./my_craft_bounty_override_table";
-import MyCraftFilterWatchRow from "./my_craft_filter_watch_table";
+import MyCraftFilterNotifyTriggerRow from "./my_craft_filter_notify_trigger_table";
+import MyDiscordNotifySinkRow from "./my_discord_notify_sink_table";
+import MyDiscordNotifyTargetRow from "./my_discord_notify_target_table";
+import MyDiscordWatchDisplayRow from "./my_discord_watch_display_table";
 import MyEntitlementsAsContributorRow from "./my_entitlements_as_contributor_table";
 import MyEntitlementsAsPayerRow from "./my_entitlements_as_payer_table";
 import MyIntegrationLinkRequestRow from "./my_integration_link_request_table";
@@ -90,13 +103,15 @@ import RecordBountyPaymentReducer from "./record_bounty_payment_reducer";
 import RegisterServicePrincipalReducer from "./register_service_principal_reducer";
 import ReorderBountyRulesReducer from "./reorder_bounty_rules_reducer";
 import RevokeServicePrincipalReducer from "./revoke_service_principal_reducer";
-import SeedCraftBountyEntitlementReducer from "./seed_craft_bounty_entitlement_reducer";
+import SetDiscordWatchDisplayMessageReducer from "./set_discord_watch_display_message_reducer";
 import SetDisplayNameReducer from "./set_display_name_reducer";
 import UnlinkIntegrationReducer from "./unlink_integration_reducer";
 import UpsertBountyRuleReducer from "./upsert_bounty_rule_reducer";
 import UpsertCraftBountyEntitlementReducer from "./upsert_craft_bounty_entitlement_reducer";
 import UpsertCraftBountyOverrideReducer from "./upsert_craft_bounty_override_reducer";
-import UpsertCraftFilterWatchReducer from "./upsert_craft_filter_watch_reducer";
+import UpsertCraftFilterNotifyTriggerReducer from "./upsert_craft_filter_notify_trigger_reducer";
+import UpsertDiscordGuildInstallReducer from "./upsert_discord_guild_install_reducer";
+import UpsertDiscordNotifyTargetTemplateReducer from "./upsert_discord_notify_target_template_reducer";
 import UpsertLoyaltyBonusTotalReducer from "./upsert_loyalty_bonus_total_reducer";
 import UpsertLoyaltyRewardReducer from "./upsert_loyalty_reward_reducer";
 import UpsertLoyaltyRuleReducer from "./upsert_loyalty_rule_reducer";
@@ -148,13 +163,41 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllCraftBountyOverrideRow),
-  allCraftFilterWatch: __table({
-    name: 'all_craft_filter_watch',
+  allCraftFilterNotifyTrigger: __table({
+    name: 'all_craft_filter_notify_trigger',
     indexes: [
     ],
     constraints: [
     ],
-  }, AllCraftFilterWatchRow),
+  }, AllCraftFilterNotifyTriggerRow),
+  allDiscordGuildInstall: __table({
+    name: 'all_discord_guild_install',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllDiscordGuildInstallRow),
+  allDiscordNotifySink: __table({
+    name: 'all_discord_notify_sink',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllDiscordNotifySinkRow),
+  allDiscordNotifyTarget: __table({
+    name: 'all_discord_notify_target',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllDiscordNotifyTargetRow),
+  allDiscordWatchDisplay: __table({
+    name: 'all_discord_watch_display',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllDiscordWatchDisplayRow),
   allIntegrationLinkRequest: __table({
     name: 'all_integration_link_request',
     indexes: [
@@ -246,13 +289,34 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MyCraftBountyOverrideRow),
-  myCraftFilterWatch: __table({
-    name: 'my_craft_filter_watch',
+  myCraftFilterNotifyTrigger: __table({
+    name: 'my_craft_filter_notify_trigger',
     indexes: [
     ],
     constraints: [
     ],
-  }, MyCraftFilterWatchRow),
+  }, MyCraftFilterNotifyTriggerRow),
+  myDiscordNotifySink: __table({
+    name: 'my_discord_notify_sink',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyDiscordNotifySinkRow),
+  myDiscordNotifyTarget: __table({
+    name: 'my_discord_notify_target',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyDiscordNotifyTargetRow),
+  myDiscordWatchDisplay: __table({
+    name: 'my_discord_watch_display',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyDiscordWatchDisplayRow),
   myEntitlementsAsContributor: __table({
     name: 'my_entitlements_as_contributor',
     indexes: [
@@ -328,18 +392,24 @@ const tablesSchema = __schema({
 /** The schema information for all reducers in this module. This is defined the same way as the reducers would have been defined in the server, except the body of the reducer is omitted in code generation. */
 const reducersSchema = __reducers(
   __reducerSchema("assign_craft_bounty", AssignCraftBountyReducer),
+  __reducerSchema("attach_discord_notify_sink", AttachDiscordNotifySinkReducer),
+  __reducerSchema("attach_discord_notify_target", AttachDiscordNotifyTargetReducer),
+  __reducerSchema("attach_discord_watch_display", AttachDiscordWatchDisplayReducer),
   __reducerSchema("begin_integration_link", BeginIntegrationLinkReducer),
   __reducerSchema("begin_integration_link_for_external", BeginIntegrationLinkForExternalReducer),
   __reducerSchema("claim_integration_link", ClaimIntegrationLinkReducer),
   __reducerSchema("clear_craft_bounty", ClearCraftBountyReducer),
   __reducerSchema("delete_bounty_rule", DeleteBountyRuleReducer),
   __reducerSchema("delete_craft_bounty_override", DeleteCraftBountyOverrideReducer),
-  __reducerSchema("delete_craft_filter_watch", DeleteCraftFilterWatchReducer),
   __reducerSchema("delete_loyalty_bonus_total", DeleteLoyaltyBonusTotalReducer),
   __reducerSchema("delete_loyalty_reward", DeleteLoyaltyRewardReducer),
   __reducerSchema("delete_loyalty_rule", DeleteLoyaltyRuleReducer),
   __reducerSchema("delete_notification", DeleteNotificationReducer),
   __reducerSchema("delete_saved_craft_filter", DeleteSavedCraftFilterReducer),
+  __reducerSchema("detach_craft_filter_notify_trigger", DetachCraftFilterNotifyTriggerReducer),
+  __reducerSchema("detach_discord_notify_sink", DetachDiscordNotifySinkReducer),
+  __reducerSchema("detach_discord_notify_target", DetachDiscordNotifyTargetReducer),
+  __reducerSchema("detach_discord_watch_display", DetachDiscordWatchDisplayReducer),
   __reducerSchema("ensure_account", EnsureAccountReducer),
   __reducerSchema("import_historical_bounty_ledger", ImportHistoricalBountyLedgerReducer),
   __reducerSchema("link_discord_via_spacetime_auth", LinkDiscordViaSpacetimeAuthReducer),
@@ -352,13 +422,15 @@ const reducersSchema = __reducers(
   __reducerSchema("register_service_principal", RegisterServicePrincipalReducer),
   __reducerSchema("reorder_bounty_rules", ReorderBountyRulesReducer),
   __reducerSchema("revoke_service_principal", RevokeServicePrincipalReducer),
-  __reducerSchema("seed_craft_bounty_entitlement", SeedCraftBountyEntitlementReducer),
+  __reducerSchema("set_discord_watch_display_message", SetDiscordWatchDisplayMessageReducer),
   __reducerSchema("set_display_name", SetDisplayNameReducer),
   __reducerSchema("unlink_integration", UnlinkIntegrationReducer),
   __reducerSchema("upsert_bounty_rule", UpsertBountyRuleReducer),
   __reducerSchema("upsert_craft_bounty_entitlement", UpsertCraftBountyEntitlementReducer),
   __reducerSchema("upsert_craft_bounty_override", UpsertCraftBountyOverrideReducer),
-  __reducerSchema("upsert_craft_filter_watch", UpsertCraftFilterWatchReducer),
+  __reducerSchema("upsert_craft_filter_notify_trigger", UpsertCraftFilterNotifyTriggerReducer),
+  __reducerSchema("upsert_discord_guild_install", UpsertDiscordGuildInstallReducer),
+  __reducerSchema("upsert_discord_notify_target_template", UpsertDiscordNotifyTargetTemplateReducer),
   __reducerSchema("upsert_loyalty_bonus_total", UpsertLoyaltyBonusTotalReducer),
   __reducerSchema("upsert_loyalty_reward", UpsertLoyaltyRewardReducer),
   __reducerSchema("upsert_loyalty_rule", UpsertLoyaltyRuleReducer),

@@ -480,7 +480,6 @@ function createSettings(): AppSettings {
         }
         return clean;
     });
-
     // game data
     const completedQuests = createMemo(() => new Set(completedQuestsRaw()));
     const setCompletedQuests = (ids: number[]) => setCompletedQuestsRaw(ids);

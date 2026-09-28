@@ -256,7 +256,7 @@ function buildColumns(onEdit: (target: EditTarget) => void, onHistory: (row: Pay
             accessorFn: row => row.earnedTotal - row.paidTotal,
             cell: (props: Cell<bigint>) => {
                 const diff = props.getValue();
-                return <Badge variant={diff > 0n ? "default" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toString()}</Badge>;
+                return <Badge variant={diff > 0n ? "outline" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toString()}</Badge>;
             },
         },
         {
@@ -349,7 +349,7 @@ export default function PayeesPage() {
                         getRowId={row => row.id}
                         getSubRows={row => row.subRows}
                         searchColumnId="name"
-                        empty={rowsReady() ? <Trans>You haven't assigned any bounties yet.</Trans> : <Trans>Loading…</Trans>}
+                        empty={rowsReady() ? <Trans>No matches.</Trans> : <Trans>Loading…</Trans>}
                         toolbar={
                             <Button
                                 variant="outline" size="sm" class="h-8"

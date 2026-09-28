@@ -46,6 +46,7 @@ import {
     TravelerTaskKnowledgeRequirementDesc,
     TravelerTradeOrderDesc
 } from "@brico/bitcraft-bindings/types";
+import {craftingRecipeDisplayName} from "@brico/crafts/names";
 import {t} from "@lingui/core/macro";
 import {createMemo} from "solid-js";
 import {BitCraftTables} from "~/lib/bitcraft-data";
@@ -551,27 +552,20 @@ export function knowledgeUsedBy(knowledgeId: number): KnowledgeUsage[] {
 
 // ─── Display Name Helpers ───────────────────────────────────────
 
-/** Resolve a crafting recipe's display name, substituting item names into the template */
+/** Resolve a crafting recipe's display name, substituting item names into the template (shared logic: `craftingRecipeDisplayName`). */
 export function getCraftingRecipeName(recipe: CraftingRecipeDesc): string {
     const itemData = BitCraftTables.ItemDesc.indexedBy("id")();
     const cargoData = BitCraftTables.CargoDesc.indexedBy("id")();
     const mainOutput = recipe.craftedItemStacks.at(0);
     const mainInput = recipe.consumedItemStacks.at(0);
-    if (!mainOutput) return recipe.name;
-    const outputItem = mainOutput.itemType.tag === ItemType.Item.tag
-        ? itemData.get(mainOutput.itemId) : cargoData.get(mainOutput.itemId);
+    const outputItem = mainOutput
+        ? (mainOutput.itemType.tag === ItemType.Item.tag ? itemData.get(mainOutput.itemId) : cargoData.get(mainOutput.itemId))
+        : undefined;
     const inputItem = mainInput
         ? (mainInput.itemType.tag === ItemType.Item.tag
             ? itemData.get(mainInput.itemId) : cargoData.get(mainInput.itemId))
         : undefined;
-    const building = recipe.buildingRequirement?.buildingType;
-    if (building && [104950060, 1837107818].includes(building)) {
-        // Taming Workstation, Sailing Workstation. Blame CWL. Something is hardcoded into the client and I assume it's this.
-        return outputItem?.name ?? recipe.name;
-    }
-    return recipe.name
-        .replace("{1}", inputItem?.name || "{1}")
-        .replace("{0}", outputItem?.name || "{0}");
+    return craftingRecipeDisplayName(recipe.name, outputItem?.name, inputItem?.name, recipe.buildingRequirement?.buildingType ?? null);
 }
 
 /**

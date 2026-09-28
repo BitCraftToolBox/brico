@@ -1,22 +1,20 @@
 /**
- * notification-sink.ts — turns a fired watch into a `notification` row on `brico-app`.
+ * notification-sink.ts — turns a fired watch into a `notification` row on `brico-app`, for the Toast
+ * sink. `event.watch.triggers` is the OR across all sinks, so this re-checks the filter's own
+ * toast-sink trigger row.
  */
 import {Identity} from "spacetimedb";
 import type {MatchSink} from "../bridge.ts";
 import type {Logger} from "../log.ts";
 import {timeReducerCall} from "../metrics.ts";
 import type {BricoAppConnection} from "./connection.ts";
+import {findNotifyTrigger} from "./watch-source.ts";
 
 export function createNotificationSink(app: BricoAppConnection, log: Logger): MatchSink {
     const scoped = log.child("notify");
     return event => {
         // File/default watches have no account — nothing to notify.
         if (event.watch.owner === null || event.watch.filterId === null) return;
-        // The user didn't ask to be notified about this transition kind for this watch — the
-        // bridge still matched and logged it (useful for debugging what the filter matches), but
-        // it must not become a `notification` row. Same gate the frontend's own local watch
-        // runner (`~/lib/crafts/watches.ts`) applies before calling `onNotify`.
-        if (!event.watch.triggers[event.kind]) return;
 
         const conn = app.connection?.connection;
         if (!conn?.isActive) {
@@ -24,9 +22,14 @@ export function createNotificationSink(app: BricoAppConnection, log: Logger): Ma
             return;
         }
 
+        const accountIdentity = Identity.fromString(event.watch.owner);
+        const trigger = findNotifyTrigger(conn, accountIdentity, event.watch.filterId, sink => sink.tag === "Toast");
+        // Not enabled for this transition kind on the toast sink: matched and logged, but no notification row.
+        if (!trigger || !trigger[event.kind]) return;
+
         const craft = event.craft;
         timeReducerCall("post_craft_notification", conn.reducers.postCraftNotification({
-            accountIdentity: Identity.fromString(event.watch.owner),
+            accountIdentity,
             payload: {
                 watchId: event.watch.filterId,
                 filterName: event.watch.name,

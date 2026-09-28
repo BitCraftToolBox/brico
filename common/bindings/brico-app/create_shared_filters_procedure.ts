@@ -9,5 +9,6 @@ import {CreateSharedFiltersResult,} from "./types";
 
 export const params = {
   filterIds: __t.array(__t.string()),
+  accountIdentity: __t.option(__t.identity()),
 };
 export const returnType = CreateSharedFiltersResult

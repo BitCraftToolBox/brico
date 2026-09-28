@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {describe, it} from "node:test";
-import {claimDisplayName, regionDisplayName} from "./names.ts";
+import {claimDisplayName, craftingRecipeDisplayName, regionDisplayName} from "./names.ts";
 
 describe("claimDisplayName", () => {
     it("passes a player-named claim through untouched", () => {
@@ -36,5 +36,28 @@ describe("regionDisplayName", () => {
         assert.equal(regionDisplayName(null, 3), "Region 3");
         // The relay ships an empty string for a region it knows of but has no name for yet.
         assert.equal(regionDisplayName("   ", 3), "Region 3");
+    });
+});
+
+describe("craftingRecipeDisplayName", () => {
+    it("substitutes output and input item names into the template", () => {
+        assert.equal(craftingRecipeDisplayName("Craft {0} from {1}", "Plank", "Log", null), "Craft Plank from Log");
+    });
+
+    it("leaves a placeholder as-is when its item hasn't resolved", () => {
+        assert.equal(craftingRecipeDisplayName("Craft {0} from {1}", undefined, "Log", null), "Craft {0} from Log");
+        assert.equal(craftingRecipeDisplayName("Craft {0} from {1}", "Plank", undefined, null), "Craft Plank from {1}");
+    });
+
+    it("names an output-only building's recipe after its output item, ignoring the template", () => {
+        assert.equal(craftingRecipeDisplayName("{0}|~Tame", "Tamed Wolf", "Meat", 104950060), "Tamed Wolf");
+    });
+
+    it("falls back to the raw recipe name when the output item hasn't resolved either", () => {
+        assert.equal(craftingRecipeDisplayName("Taming Workstation", undefined, undefined, 104950060), "Taming Workstation");
+    });
+
+    it("ignores the building special case for an unrelated building type", () => {
+        assert.equal(craftingRecipeDisplayName("Craft {0}", "Plank", undefined, 999), "Craft Plank");
     });
 });

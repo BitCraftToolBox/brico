@@ -8,13 +8,16 @@
     "publish:local": "node ../scripts/publish-local.mjs",
     "publish:prod": "cd .. && spacetime publish --server local --yes",
     "generate": "cd .. && spacetime generate --yes --lang typescript --out-dir ../../common/bindings/brico-app --module-path ./spacetimedb",
-    "import:payouts": "tsx ../scripts/import-payouts.ts"
+    "import:payouts": "tsx ../scripts/import-payouts.ts",
+    "seed:dev": "bash ../scripts/seed-dev-data.sh"
   },
   "dependencies": {
     "@brico/crafts": "file:../../../common/crafts",
     "spacetimedb": "2.10.0"
   },
   "devDependencies": {
+    "@types/d3-dsv": "^3.0.7",
+    "d3-dsv": "^3.0.1",
     "typescript": "~5.6.2"
   }
 }

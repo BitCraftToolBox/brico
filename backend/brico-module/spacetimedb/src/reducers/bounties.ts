@@ -20,6 +20,12 @@ import {BountyRuleValue} from '../tables/bounties';
  */
 const BOUNTY_RULE_DISALLOWED_FIELDS: readonly FilterField[] = ['payout', 'currency'];
 
+/** One contributor's pre-bounty effort on a craft, see `assignCraftBounty`'s `baselines`. */
+const AssignmentBaseline = t.object('AssignmentBaseline', {
+    playerId: t.u64(),
+    effort: t.i64(),
+});
+
 /**
  * Create or edit one of the caller's own bounty rules. Editing (including re-editing a
  * tombstoned row) clears `deletedAt`, same "un-delete/resurrect" convention as
@@ -208,6 +214,11 @@ export const deleteCraftBountyOverride = spacetimedb.reducer(
  * a gap, or every rate change would re-trigger the same retroactive-repricing bug this was meant to
  * close.
  *
+ * `baselines` (contributors' effort before this bounty) is applied only when this call creates the
+ * assignment: each listed player without a `craft_bounty_entitlement` row gets one at that effort
+ * (with `assignedAt` as `updatedAt`, so it is not seen as a gap), so `upsertCraftBountyEntitlement`
+ * prices only later effort. Omit players whose existing effort should be paid in full.
+ *
  * `private` (sourced from whichever rule/override matched) selects which of the two mutually
  * exclusive assignment tables gets the row — the other table's row for this craft, if any, is
  * deleted, so a craft never has a resolved assignment in both at once (e.g. a rule that used to be
@@ -224,12 +235,21 @@ export const assignCraftBounty = spacetimedb.reducer(
         private: t.bool(),
         assignedAt: t.timestamp(),
         updatedAt: t.timestamp(),
+        baselines: t.array(AssignmentBaseline),
     },
-    (ctx, {craftId, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, private: isPrivate, assignedAt, updatedAt}) => {
+    (ctx, {craftId, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, private: isPrivate, assignedAt, updatedAt, baselines}) => {
         requireServicePrincipal(ctx);
         validateBountyCurrency(currency);
         if (ctx.db.account.identity.find(assignedByAccountIdentity) === null) {
             throw new SenderError(CraftError.UNKNOWN_BRICO_ACCOUNT);
+        }
+
+        if (ctx.db.craft_bounty_assignment.craftId.find(craftId) === null
+            && ctx.db.craft_private_bounty_assignment.craftId.find(craftId) === null) {
+            for (const {playerId, effort} of baselines) {
+                if ([...ctx.db.craft_bounty_entitlement.by_craft_player_currency.filter([craftId, playerId, currency])].length > 0) continue;
+                ctx.db.craft_bounty_entitlement.insert({id: 0n, craftId, playerId, currency, lastAssignedEffort: effort, updatedAt: assignedAt});
+            }
         }
 
         if (isPrivate) {

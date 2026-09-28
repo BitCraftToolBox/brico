@@ -67,6 +67,8 @@ export interface BridgeOptions {
      * evaluated in the same tick — see the ordering note in `onSnapshot`.
      */
     bounty?: BountyEngine;
+    /** Called once per snapshot with the resolved rows (post-bounty-assignment), before watch matching. */
+    onRowsComputed?(rows: CraftRow[]): void;
 }
 
 export function createBridge(options: BridgeOptions): Bridge {
@@ -115,6 +117,8 @@ export function createBridge(options: BridgeOptions): Bridge {
 
                 rows = craftRowsFrom(snapshot, options.recipes, assignments);
             }
+
+            options.onRowsComputed?.(rows);
 
             const watches = options.watches.watches();
 

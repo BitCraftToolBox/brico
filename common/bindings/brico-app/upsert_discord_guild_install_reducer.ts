@@ -6,9 +6,6 @@
 import {t as __t,} from "spacetimedb";
 
 export default {
-  filterId: __t.string(),
-  added: __t.bool(),
-  finished: __t.bool(),
-  removed: __t.bool(),
-  updatedAt: __t.timestamp(),
+  guildId: __t.string(),
+  commandMode: __t.string(),
 };

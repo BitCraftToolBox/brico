@@ -26,6 +26,14 @@ msgstr ""
 msgid "You are now a developer!"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "Unlink this channel?"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "Notification targets"
+msgstr ""
+
 #. placeholder {0}: pendingImport()?.length ?? 0
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Import {0, plural, one {# filter} other {# filters}}?"
@@ -174,13 +182,17 @@ msgstr ""
 msgid "Loading game data… {0}/{1}"
 msgstr ""
 
-#: src/routes/account/payees.tsx
-msgid "You haven't assigned any bounties yet."
+#: src/routes/account/settings.tsx
+msgid "Match"
 msgstr ""
 
 #: src/routes/account/callback.tsx
 #: src/routes/account/link.tsx
 msgid "Back to account"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That isn't a known display style."
 msgstr ""
 
 #: src/routes/account/bounties.tsx
@@ -232,10 +244,6 @@ msgstr ""
 
 #: src/components/data-table/live-table.tsx
 msgid "No results."
-msgstr ""
-
-#: src/lib/crafts/payout.ts
-msgid "{rateText} {currencyLabel} / effort"
 msgstr ""
 
 #. placeholder {0}: props.row.name
@@ -338,6 +346,11 @@ msgstr ""
 msgid "Upload file"
 msgstr ""
 
+#. placeholder {0}: rateText()
+#: src/components/crafts/PayoutRateButton.tsx
+msgid "{0} <0/> / effort"
+msgstr ""
+
 #: src/routes/account/notifications.tsx
 msgid "Mark read"
 msgstr ""
@@ -402,6 +415,10 @@ msgstr ""
 msgid "Is Hint"
 msgstr ""
 
+#: src/routes/discord/installed.tsx
+msgid "Brico.app is now in your Discord server"
+msgstr ""
+
 #: src/routes/account/bounties.tsx
 msgid "Get paid for helping with other players' crafts."
 msgstr ""
@@ -451,6 +468,10 @@ msgstr ""
 msgid "\"{flag}\" isn't a valid claim permission."
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Choose a sticky interval between {MIN_STICKY_MINUTES} and {MAX_STICKY_MINUTES} minutes."
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "Output item tag"
 msgstr ""
@@ -462,7 +483,7 @@ msgstr ""
 msgid "Rewards"
 msgstr "Recompensas"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/routes/account/settings.tsx
 msgid "Finished"
 msgstr ""
 
@@ -494,6 +515,10 @@ msgstr ""
 
 #: src/routes/account/loyalty.tsx
 msgid "Effort of this currency"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "A watch display can show at most {MAX_DISPLAY_ROWS_HARD_CAP} crafts."
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -600,6 +625,7 @@ msgid "Default rows per page"
 msgstr ""
 
 #: src/routes/account/profile.tsx
+#: src/routes/account/settings.tsx
 msgid "Unlink"
 msgstr ""
 
@@ -630,6 +656,10 @@ msgstr ""
 #: src/routes/account/settings.tsx
 #: src/routes/settings.tsx
 msgid "How bounty rates are shown and entered — currency per effort, or effort per currency."
+msgstr ""
+
+#: src/routes/discord/installed.tsx
+msgid "Brico.app Discord Bot"
 msgstr ""
 
 #: src/routes/account/bounty-rules.tsx
@@ -676,11 +706,6 @@ msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Flattenable"
-msgstr ""
-
-#. placeholder {0}: props.saved.name
-#: src/routes/tools/crafts/browse.tsx
-msgid "Watch settings for filter {0}"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -814,10 +839,6 @@ msgstr ""
 msgid "Join the project on Crowdin and contribute by using <0>translate.brico.app</0>."
 msgstr ""
 
-#: src/routes/tools/crafts/browse.tsx
-msgid "Watch this filter"
-msgstr ""
-
 #: src/routes/database/buff/[id].tsx
 msgid "If No, buff ticks down while offline."
 msgstr ""
@@ -914,6 +935,10 @@ msgstr ""
 msgid "Weapon"
 msgstr "Arma"
 
+#: src/routes/account/settings.tsx
+msgid "Toast"
+msgstr ""
+
 #: src/routes/database/resource/[id].tsx
 msgid "Grows Into"
 msgstr ""
@@ -937,6 +962,10 @@ msgstr ""
 msgid "Radius"
 msgstr ""
 
+#: src/routes/discord/installed.tsx
+msgid "An admin can run <0>/command-mode flat</0> or <1>/command-mode grouped</1> to choose how commands are organized (top-level, or grouped under <2>/brico</2>)."
+msgstr ""
+
 #. placeholder {0}: props.searchColumns[0]
 #: src/components/data-table/table-toolbar.tsx
 msgid "Search by {0}..."
@@ -955,12 +984,24 @@ msgstr ""
 msgid "Supply Cost"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That Discord notification setting belongs to a different account."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "A notification message can be at most {MAX_NOTIFY_TEMPLATE_LENGTH} characters."
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Strength Multiplier"
 msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Self Buffs"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "(none)"
 msgstr ""
 
 #: src/routes/account/link.tsx
@@ -981,6 +1022,11 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "This action is restricted."
+msgstr ""
+
+#. placeholder {0}: discordMentionFor(props.filter.id, sink.id)?.name ?? _(msg`(none)`)
+#: src/routes/account/settings.tsx
+msgid "Mention: {0}"
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
@@ -1241,6 +1287,10 @@ msgstr ""
 msgid "Brico's Toolbox Discord"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "Discord columns appear once a channel or DM is linked via <0>/watch notify-link</0>."
+msgstr ""
+
 #: src/routes/database/deployable/[id].tsx
 msgid "Show After Logout"
 msgstr ""
@@ -1290,6 +1340,7 @@ msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/account/profile.tsx
+#: src/routes/account/settings.tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "Cancel"
 msgstr ""
@@ -1439,10 +1490,6 @@ msgstr ""
 msgid "Today, bounties are paid in Hex Coin. This is a <0>trust-based ledger</0>, not an automatic in-game transfer: the site keeps track of what's earned, but the actual Hex Coin still has to change hands in-game. Only work on bounties from owners you trust to pay you, and only mark a bounty as paid once you've actually sent the currency."
 msgstr ""
 
-#: src/routes/tools/crafts/browse.tsx
-msgid "Notify when a matching craft is…"
-msgstr ""
-
 #: src/routes/settings.tsx
 msgid "All items visible"
 msgstr ""
@@ -1452,7 +1499,7 @@ msgstr ""
 msgid "Buff"
 msgstr ""
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/routes/account/settings.tsx
 msgid "Removed"
 msgstr ""
 
@@ -1493,6 +1540,10 @@ msgstr ""
 msgid "Drops"
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "Trust-less bounties, where payment is held in escrow and paid out automatically, are coming soon via <0>Stelo <1/></0>."
+msgstr ""
+
 #: src/components/crafts/PayoutHistoryDialog.tsx
 msgid "No transactions yet."
 msgstr ""
@@ -1512,6 +1563,10 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Bonuses"
+msgstr ""
+
+#: src/routes/discord/installed.tsx
+msgid "Get notified about matches with <0>/watch notify-link</0> then <1>/watch notify-setup</1>."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -1737,6 +1792,10 @@ msgstr ""
 msgid "Amount"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That isn't a known command layout."
+msgstr ""
+
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "not in"
 msgid "{quantifier} {field} {cmpEl} {value}"
@@ -1758,10 +1817,6 @@ msgstr ""
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Level Requirements"
-msgstr ""
-
-#: src/routes/tools/crafts/browse.tsx
-msgid "Added"
 msgstr ""
 
 #: src/lib/table-defs/prospecting-table.tsx
@@ -1818,6 +1873,10 @@ msgstr ""
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Cost"
+msgstr ""
+
+#: src/routes/discord/installed.tsx
+msgid "A few commands to finish setting it up:"
 msgstr ""
 
 #: src/lib/table-defs/abilities-table.tsx
@@ -1959,8 +2018,8 @@ msgstr ""
 msgid "Building:"
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-msgid "Trust-less bounties, where payment is held in escrow and guaranteed automatically, are coming soon via <0>Stelo <1/></0>."
+#: src/lib/crafts/error-vocab.ts
+msgid "That watch display no longer exists."
 msgstr ""
 
 #: src/routes/account/bounties.tsx
@@ -2342,6 +2401,10 @@ msgstr "Progressão"
 msgid "Any"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "Reset to default wording"
+msgstr ""
+
 #: src/lib/crafts/error-vocab.ts
 msgid "That filter is too large (maximum {MAX_FILTER_JSON_LENGTH} bytes)."
 msgstr ""
@@ -2467,6 +2530,11 @@ msgstr ""
 
 #: src/routes/account/profile.tsx
 msgid "BitCraft characters"
+msgstr ""
+
+#. placeholder {0}: sink.channelName ?? sink.channelId
+#: src/routes/account/settings.tsx
+msgid "Customize settings for {0}"
 msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
@@ -2601,6 +2669,10 @@ msgstr "Energizar"
 msgid "Developer Mode"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Choose a refresh interval between {MIN_DISPLAY_REFRESH_SECONDS} and {MAX_DISPLAY_REFRESH_SECONDS} seconds."
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "has all of"
 msgstr ""
@@ -2616,6 +2688,10 @@ msgstr ""
 #: src/lib/table-defs/biome-table.tsx
 #: src/routes/database/biome/[id].tsx
 msgid "Hazard"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "set via <0>/watch notify-setup</0> in Discord."
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
@@ -2641,6 +2717,10 @@ msgstr ""
 msgid "Interior Tier:"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "Notifications for every saved filter configured here will stop. You can link it again later with <0>/watch notify-link</0>."
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Emblem Editor"
 msgstr ""
@@ -2651,6 +2731,10 @@ msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "hex coin per day per occupied slot"
+msgstr ""
+
+#: src/routes/discord/installed.tsx
+msgid "Set up a live craft display with <0>/watch display</0>."
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -2689,6 +2773,7 @@ msgid "Unlock achievement <0/>"
 msgstr ""
 
 #: src/routes/account/profile.tsx
+#: src/routes/account/settings.tsx
 msgid "Something went wrong"
 msgstr ""
 
@@ -2708,6 +2793,10 @@ msgstr "Movimento"
 
 #: src/routes/account/notifications.tsx
 msgid "No notifications yet."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "A display's template can be at most {MAX_DISPLAY_TEMPLATE_LENGTH} characters."
 msgstr ""
 
 #: src/lib/table-utils/column-builders.tsx
@@ -2761,6 +2850,10 @@ msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "Terraform"
+msgstr ""
+
+#: src/routes/account/profile.tsx
+msgid "Add the Brico.app bot to your Discord server"
 msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
@@ -2826,11 +2919,8 @@ msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
 #: src/components/crafts/PlayerPicker.tsx
+#: src/routes/account/payees.tsx
 msgid "No matches."
-msgstr ""
-
-#: src/lib/crafts/payout.ts
-msgid "{rateText} effort / {currencyLabel}"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -2843,6 +2933,10 @@ msgstr "Tags"
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Building"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "Log in for additional options such as Discord notifications."
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
@@ -2908,6 +3002,10 @@ msgstr ""
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Traveler"
+msgstr ""
+
+#: src/routes/discord/installed.tsx
+msgid "Run <0>/link</0> in your server to connect your Brico.app account."
 msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
@@ -2984,6 +3082,10 @@ msgstr ""
 #: src/routes/account/payouts.tsx
 #: src/routes/settings.tsx
 msgid "Loading…"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "Per saved filter, which targets notify on which events."
 msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
@@ -3215,6 +3317,10 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "Unlink this channel"
+msgstr ""
+
 #: src/routes/database/collectible/[id].tsx
 msgid "Collectible Type"
 msgstr ""
@@ -3276,6 +3382,11 @@ msgstr ""
 msgid "Sources"
 msgstr ""
 
+#. placeholder {0}: rateText()
+#: src/components/crafts/PayoutRateButton.tsx
+msgid "{0} effort / <0/>"
+msgstr ""
+
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Paste a filter, a list of filters, or a share code"
 msgstr ""
@@ -3332,6 +3443,7 @@ msgstr ""
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
 #: src/routes/account/profile.tsx
+#: src/routes/discord/installed.tsx
 msgid "Log in"
 msgstr ""
 
@@ -3366,6 +3478,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Configure notifications in account settings"
 msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
@@ -3446,10 +3562,6 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That filter belongs to a different account."
-msgstr ""
-
-#: src/routes/tools/crafts/browse.tsx
-msgid "Watch active"
 msgstr ""
 
 #. placeholder {0}: task.levelRequirement.minLevel
@@ -3699,6 +3811,10 @@ msgstr ""
 msgid "Night Detect Range"
 msgstr ""
 
+#: src/routes/discord/installed.tsx
+msgid "Couldn't add Brico"
+msgstr ""
+
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
 msgid "Paid"
@@ -3754,6 +3870,11 @@ msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Owner's claim access"
+msgstr ""
+
+#. placeholder {0}: props.saved.name
+#: src/routes/tools/crafts/browse.tsx
+msgid "Notification settings for filter {0}"
 msgstr ""
 
 #. placeholder {0}: props.effortTotal.toLocaleString(uiLocale())
@@ -3823,6 +3944,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Language"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That notification setting belongs to a different account."
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -3929,9 +4054,9 @@ msgid "Blocks Path"
 msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
+#: src/components/crafts/PayoutRateButton.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Switch between currency/effort and effort/currency"
 msgstr ""
 
@@ -4176,6 +4301,7 @@ msgstr ""
 msgid "Despawn"
 msgstr ""
 
+#: src/components/data-table/live-table.tsx
 #: src/components/data-table/table-toolbar.tsx
 #: src/components/GlobalSearchInput.tsx
 #: src/components/Nav.tsx
@@ -4205,6 +4331,18 @@ msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Required Knowledge:"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That isn't a known display field preset: {preset}"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That isn't a known sort field."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That isn't a known sort direction."
 msgstr ""
 
 #: src/components/crafts/PlayerPicker.tsx
@@ -4280,6 +4418,10 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That Discord channel isn't linked for notifications anymore."
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts

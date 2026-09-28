@@ -9,7 +9,17 @@
  * — TypeScript refuses to compile if `@brico/crafts/errors` grows a code this file hasn't caught up
  * to, the same compile-time guarantee `filter-vocab.ts` uses for field/comparator labels.
  */
-import {CraftError, type CraftErrorCode, MAX_DISPLAY_NAME_LENGTH, MAX_FILTER_JSON_LENGTH, MAX_FILTER_NAME_LENGTH, MAX_SHARED_FILTER_IDS,} from "@brico/crafts/errors";
+import {MAX_DISPLAY_REFRESH_SECONDS, MAX_DISPLAY_ROWS_HARD_CAP, MAX_STICKY_MINUTES, MIN_DISPLAY_REFRESH_SECONDS, MIN_STICKY_MINUTES} from "@brico/crafts/discord-display";
+import {
+    CraftError,
+    type CraftErrorCode,
+    MAX_DISPLAY_NAME_LENGTH,
+    MAX_DISPLAY_TEMPLATE_LENGTH,
+    MAX_FILTER_JSON_LENGTH,
+    MAX_FILTER_NAME_LENGTH,
+    MAX_NOTIFY_TEMPLATE_LENGTH,
+    MAX_SHARED_FILTER_IDS,
+} from "@brico/crafts/errors";
 import {i18n, type MessageDescriptor} from "@lingui/core";
 import {msg} from "@lingui/core/macro";
 
@@ -63,6 +73,22 @@ const ERROR_VOCAB: Record<CraftErrorCode, VocabEntry> = {
     [CraftError.TOO_MANY_FILTERS_SELECTED]: msg`Too many filters selected (maximum ${MAX_SHARED_FILTER_IDS}).`,
     [CraftError.SHARE_CODE_GENERATION_FAILED]: msg`Could not generate a share code — try again.`,
     [CraftError.UNKNOWN_SHARE_CODE]: msg`That share code doesn't exist.`,
+    [CraftError.UNKNOWN_FIELD_PRESET]: (preset) => msg`That isn't a known display field preset: ${preset}`,
+    [CraftError.DISPLAY_TEMPLATE_TOO_LONG]: msg`A display's template can be at most ${MAX_DISPLAY_TEMPLATE_LENGTH} characters.`,
+    [CraftError.UNKNOWN_DISPLAY_STYLE]: msg`That isn't a known display style.`,
+    [CraftError.UNKNOWN_SORT_FIELD]: msg`That isn't a known sort field.`,
+    [CraftError.UNKNOWN_SORT_DIRECTION]: msg`That isn't a known sort direction.`,
+    [CraftError.DISPLAY_LIMIT_TOO_LARGE]: msg`A watch display can show at most ${MAX_DISPLAY_ROWS_HARD_CAP} crafts.`,
+    [CraftError.DISPLAY_REFRESH_OUT_OF_RANGE]: msg`Choose a refresh interval between ${MIN_DISPLAY_REFRESH_SECONDS} and ${MAX_DISPLAY_REFRESH_SECONDS} seconds.`,
+    [CraftError.STICKY_MINUTES_OUT_OF_RANGE]: msg`Choose a sticky interval between ${MIN_STICKY_MINUTES} and ${MAX_STICKY_MINUTES} minutes.`,
+    [CraftError.UNKNOWN_SAVED_FILTER_FOR_DISPLAY]: msg`That saved filter no longer exists.`,
+    [CraftError.UNKNOWN_DISCORD_WATCH_DISPLAY]: msg`That watch display no longer exists.`,
+    [CraftError.UNKNOWN_DISCORD_NOTIFY_SINK]: msg`That Discord channel isn't linked for notifications anymore.`,
+    [CraftError.UNKNOWN_SAVED_FILTER_FOR_NOTIFY]: msg`That saved filter no longer exists.`,
+    [CraftError.CRAFT_FILTER_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT]: msg`That notification setting belongs to a different account.`,
+    [CraftError.DISCORD_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT]: msg`That Discord notification setting belongs to a different account.`,
+    [CraftError.NOTIFY_TEMPLATE_TOO_LONG]: msg`A notification message can be at most ${MAX_NOTIFY_TEMPLATE_LENGTH} characters.`,
+    [CraftError.UNKNOWN_COMMAND_MODE]: msg`That isn't a known command layout.`,
 };
 
 /**

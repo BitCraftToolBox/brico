@@ -6,6 +6,6 @@
 import {t as __t,} from "spacetimedb";
 
 export default {
-  filterId: __t.string(),
+  id: __t.string(),
   deletedAt: __t.timestamp(),
 };

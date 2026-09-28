@@ -5,6 +5,8 @@
 /* tslint:disable */
 import {t as __t,} from "spacetimedb";
 
+import {AssignmentBaseline,} from "./types";
+
 export default {
   craftId: __t.u64(),
   ratioNumerator: __t.i64(),
@@ -14,4 +16,7 @@ export default {
   private: __t.bool(),
   assignedAt: __t.timestamp(),
   updatedAt: __t.timestamp(),
+  get baselines() {
+    return __t.array(AssignmentBaseline);
+  },
 };

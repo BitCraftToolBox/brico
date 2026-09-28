@@ -23,10 +23,7 @@ export const saved_craft_filter = table(
 );
 
 /**
- * Watch trigger flags for a saved filter, 1:1 on `filterId` (no own id) — mirrors
- * `craftFilterWatches: Record<filterId, triggers>` in `settings.tsx`. No row / a tombstoned row /
- * all-flags-false are all "off", matching the frontend's convention of dropping the map entry
- * when every trigger goes false, so there is no separate `enabled` column.
+ * DEPRECATED: do not use.
  */
 export const craft_filter_watch = table(
     {name: 'craft_filter_watch'},

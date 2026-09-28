@@ -103,6 +103,11 @@ export const CURRENCY_LABELS: Record<string, string> = {
     "hex-coin": "Hex Coin",
 };
 
+export const CURRENCY_EMOJI: Record<string, string> = {
+    "hex-coin": "<:HexCoin:1555600295235559514>",
+    "stelo-hex-coin": "<:Stelo:1555606560028368936>",
+};
+
 export type FilterValue = string | number | boolean;
 
 export interface FieldMeta {

@@ -1,23 +1,14 @@
 /**
- * filter-sync.tsx — syncs saved craft filters/watches between localStorage and `brico-app`.
+ * filter-sync.tsx — syncs saved craft filters (`saved_craft_filter`) and their Toast triggers
+ * (`craft_filter_notify_trigger` with `sink: {tag: "Toast"}`) between localStorage and `brico-app`.
+ * The merge decision is `filter-sync-merge.ts`'s `reconcile()`; this file is the Solid/SpacetimeDB wiring.
+ * Discord notification settings are login-only and live in `discord-notify-settings.ts`, not here.
  *
- * The actual merge decision (push / pull / no-op / conflict-toast) is `filter-sync-merge.ts`'s
- * `reconcile()`, a pure function shared identically by filters and watches — see its doc comment
- * for the algorithm itself. This file is just the Solid/SpacetimeDB wiring around it: reading
- * `savedCraftFilters()` and the
- * live `mySavedCraftFilter` view into the shapes `reconcile()` wants, persisting its own
- * `syncMeta` shadow maps (one per entity, in their own localStorage keys — this state belongs to
- * the sync layer, not to `settings.tsx`), and turning its `pushes`/`conflicts` output into reducer
- * calls and toasts.
- *
- * Filters are always reconciled before watches within one pass: a watch's `upsertCraftFilterWatch`
- * reducer requires its `saved_craft_filter` to already exist server-side, so a brand-new
- * filter+watch pair created together must reach the server in that order. Calls on the same
- * connection are processed in the order they're sent, so doing the filter push first here is
- * enough — no need to wait for its round trip before sending the watch push.
+ * Filters are reconciled before triggers within one pass: the trigger reducer requires its saved
+ * filter to exist server-side, and calls on one connection are processed in send order.
  */
 import {tables} from "@brico/bindings/brico-app";
-import type {CraftFilterWatch, SavedCraftFilter as RemoteSavedCraftFilter} from "@brico/bindings/brico-app/types";
+import type {CraftFilterNotifyTrigger, SavedCraftFilter as RemoteSavedCraftFilter} from "@brico/bindings/brico-app/types";
 import {type FilterNode, parseFilter} from "@brico/crafts/filter";
 import {createContext, createEffect, createSignal, type JSX, untrack, useContext} from "solid-js";
 import {isServer} from "solid-js/web";
@@ -31,7 +22,7 @@ import {BRICO_APP_SERVER, bricoAppTable} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
 
 const FILTER_SYNC_META_KEY = "brico:crafts:filter-sync-meta";
-const WATCH_SYNC_META_KEY = "brico:crafts:watch-sync-meta";
+const TOAST_TRIGGER_SYNC_META_KEY = "brico:crafts:toast-trigger-sync-meta";
 
 type FilterContent = {name: string; filter: FilterNode};
 
@@ -77,20 +68,26 @@ function remoteFiltersFrom(rows: Iterable<RemoteSavedCraftFilter>): Record<strin
     return out;
 }
 
-function remoteWatchesFrom(rows: Iterable<CraftFilterWatch>): Record<string, RemoteEntityRow<CraftWatchTriggers>> {
-    const out: Record<string, RemoteEntityRow<CraftWatchTriggers>> = {};
+/** `remote`/`remoteIdByKey` for the Toast slice of `craft_filter_notify_trigger`, keyed by `filterId`. */
+function remoteToastTriggersFrom(
+    rows: Iterable<CraftFilterNotifyTrigger>,
+): {remote: Record<string, RemoteEntityRow<CraftWatchTriggers>>; remoteIdByKey: Map<string, string>} {
+    const remote: Record<string, RemoteEntityRow<CraftWatchTriggers>> = {};
+    const remoteIdByKey = new Map<string, string>();
     for (const row of rows) {
-        out[row.filterId] = {
+        if (row.sink.tag !== "Toast") continue;
+        remote[row.filterId] = {
             content: {added: row.added, finished: row.finished, removed: row.removed},
             updatedAtMs: Number(row.updatedAt.toMillis()),
             deletedAtMs: row.deletedAt !== undefined ? Number(row.deletedAt.toMillis()) : null,
         };
+        remoteIdByKey.set(row.filterId, row.id);
     }
-    return out;
+    return {remote, remoteIdByKey};
 }
 
 export interface FilterSyncContextValue {
-    /** Message from the most recent failed push, if any — for a future settings/debug surface. */
+    /** Message from the most recent failed push, if any. */
     lastError: () => string | null;
 }
 
@@ -98,35 +95,30 @@ const FilterSyncContext = createContext<FilterSyncContextValue>();
 
 export function FilterSyncProvider(props: {children: JSX.Element}) {
     const acc = useAccount();
-    const {savedCraftFilters, setSavedCraftFilters, craftFilterWatches, setCraftFilterWatches} = useSettings();
+    const {
+        savedCraftFilters, setSavedCraftFilters,
+        craftFilterWatches, setCraftFilterWatches,
+    } = useSettings();
     const conn = useConnection(BRICO_APP_SERVER);
 
     const [lastError, setLastError] = createSignal<string | null>(null);
 
-    // Tracks whether the "filters:self" resource's own subscription has applied — NOT the same
-    // as the connection being active. `conn` is shared with `AccountProvider` (same (uri,module)
-    // key), so `conn.active()` flips true as soon as *that* provider's own "account:self"
-    // subscription opens the socket — well before this provider's `subscribe()` below even runs
-    // (which itself waits on `acc.isLoggedIn()`, one more round trip behind). Gating on a real
-    // Solid signal here (rather than reading `conn.active()` alone) matters for more than just
-    // `runReconcile`'s own early return: the local-settings effect below calls `runReconcile()`
-    // inside a tracked scope, so whatever signals `runReconcile` reads become that effect's
-    // dependencies too — reading this signal is what makes that effect automatically re-run once
-    // the resource actually becomes ready, instead of only ever seeing an empty remote set.
+    // Whether the "filters:self" subscription has applied. Not the same as `conn.active()`, which
+    // flips true as soon as `AccountProvider` opens the shared socket. Read inside `runReconcile` so
+    // the effects that call it re-run once the resource is ready.
     const [resourceReady, setResourceReady] = createSignal(false);
 
     // Loaded lazily (not at module scope) so this never touches localStorage during SSR.
     let filterSyncMeta: SyncMetaMap | null = null;
-    let watchSyncMeta: SyncMetaMap | null = null;
+    let toastTriggerSyncMeta: SyncMetaMap | null = null;
     function ensureMetaLoaded() {
         if (filterSyncMeta === null) filterSyncMeta = loadSyncMeta(FILTER_SYNC_META_KEY);
-        if (watchSyncMeta === null) watchSyncMeta = loadSyncMeta(WATCH_SYNC_META_KEY);
+        if (toastTriggerSyncMeta === null) toastTriggerSyncMeta = loadSyncMeta(TOAST_TRIGGER_SYNC_META_KEY);
     }
 
-    function reportConflict(filterId: string, fallbackName: string) {
-        const name = savedCraftFilters().find(f => f.id === filterId)?.name ?? fallbackName;
+    function reportConflict(name: string) {
         showToast({
-            title: () => "Filter updated elsewhere",
+            title: () => "Notification setting updated elsewhere",
             description: () => `An offline change to "${name}" was overwritten by a newer version from another device.`,
         });
     }
@@ -134,9 +126,6 @@ export function FilterSyncProvider(props: {children: JSX.Element}) {
     function runReconcile() {
         if (isServer) return;
         const active = conn.active();
-        // `resourceReady()` must be read even though `active` alone looks sufficient — see the
-        // signal's doc comment above; this is what stops a reconcile pass from running against
-        // `mySavedCraftFilter`/`myCraftFilterWatch` before they've actually been subscribed.
         if (!active || !resourceReady()) return;
         ensureMetaLoaded();
         const nowMs = Date.now();
@@ -181,65 +170,63 @@ export function FilterSyncProvider(props: {children: JSX.Element}) {
         }
 
         for (const id of filterResult.conflicts) {
-            reportConflict(id, filterResult.localUpserts[id]?.name ?? id);
+            reportConflict(savedCraftFilters().find(f => f.id === id)?.name ?? filterResult.localUpserts[id]?.name ?? id);
         }
 
-        // --- Watches --- (after filters: see the file doc comment on ordering)
-        const watchResult = reconcile({
+        // --- Toast triggers (after filters, see file header) ---
+        const {remote: toastRemote, remoteIdByKey: toastIdByFilterId} = remoteToastTriggersFrom(active.db.myCraftFilterNotifyTrigger.iter());
+        const toastResult = reconcile({
             localContent: craftFilterWatches(),
-            syncMeta: watchSyncMeta!,
-            remote: remoteWatchesFrom(active.db.myCraftFilterWatch.iter()),
+            syncMeta: toastTriggerSyncMeta!,
+            remote: toastRemote,
             nowMs,
         });
-        watchSyncMeta = watchResult.syncMeta;
-        saveSyncMeta(WATCH_SYNC_META_KEY, watchSyncMeta);
+        toastTriggerSyncMeta = toastResult.syncMeta;
+        saveSyncMeta(TOAST_TRIGGER_SYNC_META_KEY, toastTriggerSyncMeta);
 
-        if (Object.keys(watchResult.localUpserts).length > 0 || watchResult.localRemovals.length > 0) {
+        if (Object.keys(toastResult.localUpserts).length > 0 || toastResult.localRemovals.length > 0) {
             const next = {...craftFilterWatches()};
-            for (const id of watchResult.localRemovals) delete next[id];
-            for (const [id, triggers] of Object.entries(watchResult.localUpserts)) next[id] = triggers;
+            for (const id of toastResult.localRemovals) delete next[id];
+            for (const [id, triggers] of Object.entries(toastResult.localUpserts)) next[id] = triggers;
             setCraftFilterWatches(next);
         }
 
-        for (const push of watchResult.pushes) {
+        for (const push of toastResult.pushes) {
             const updatedAt = Timestamp.fromDate(new Date(push.updatedAtMs));
+            const id = toastIdByFilterId.get(push.id) ?? crypto.randomUUID();
             const call = push.upsert
-                ? active.reducers.upsertCraftFilterWatch({
+                ? active.reducers.upsertCraftFilterNotifyTrigger({
+                    id,
                     filterId: push.id,
+                    sink: {tag: "Toast", value: {}},
                     added: push.upsert.added,
                     finished: push.upsert.finished,
                     removed: push.upsert.removed,
                     updatedAt,
                 })
-                : active.reducers.deleteCraftFilterWatch({filterId: push.id, deletedAt: updatedAt});
+                : active.reducers.detachCraftFilterNotifyTrigger({id, deletedAt: updatedAt});
             call.catch(err => setLastError(describeServerError(err)));
         }
 
-        for (const id of watchResult.conflicts) {
-            reportConflict(id, id);
-        }
+        for (const id of toastResult.conflicts) reportConflict(id);
     }
 
     let release: (() => void) | null = null;
     function subscribe() {
         if (release) return;
-        // `untrack` is load-bearing: `subscribe()` runs synchronously inside the login-gated
-        // `createEffect` below, and `conn.requestResource` internally *reads* this resource's own
-        // `ready` signal (to decide whether to nudge a late joiner via `queueMicrotask`). Without
-        // `untrack`, that read leaks into the effect's own dependency list — so the moment the
-        // subscription actually applies and `ready` flips, the effect gets rescheduled, Solid
-        // disposes its *previous* run first (auto-`onCleanup`-releasing the very resource we just
-        // requested), and the re-run's `subscribe()` call sees a stale non-null `release` and
-        // no-ops. The resource then sits at 0 refs and the manager's grace timer tears it down —
-        // "filters:self" going quiet a few seconds after login, with `myAccount` staying live,
-        // is this bug's exact signature.
+        // `untrack` is load-bearing: `conn.requestResource` reads the resource's own `ready` signal,
+        // which would otherwise become a dependency of the calling effect; its re-run would dispose
+        // (release) the resource just requested.
         const request = untrack(() =>
             conn.requestResource(
-                {key: "filters:self", tables: [bricoAppTable(tables.mySavedCraftFilter), bricoAppTable(tables.myCraftFilterWatch)]},
+                {
+                    key: "filters:self",
+                    tables: [
+                        bricoAppTable(tables.mySavedCraftFilter),
+                        bricoAppTable(tables.myCraftFilterNotifyTrigger),
+                    ],
+                },
                 () => {
-                    // Set before `runReconcile()` so this very call already sees `resourceReady()`
-                    // as true — `onChange` only fires once the SDK has actually applied the rows
-                    // (or on a later row change), never speculatively.
                     setResourceReady(true);
                     runReconcile();
                 },

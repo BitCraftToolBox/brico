@@ -45,8 +45,11 @@ export interface AccountContextValue {
      * exchange, so the freshly-stored session is picked up in-place; the alternative (a full page
      * reload) would also re-run every other data fetch the app does on load, which is unnecessary
      * churn for what is otherwise a plain client-side navigation back to `/account`.
+     *
+     * Resolves with whether a session was found, not whether `isLoggedIn()` is true yet: the account
+     * row loads asynchronously, so watch `isLoggedIn()` reactively instead of reading it after awaiting.
      */
-    refresh: () => Promise<void>;
+    refresh: () => Promise<boolean>;
 }
 
 const AccountContext = createContext<AccountContextValue>();
@@ -94,8 +97,8 @@ export function AccountProvider(props: {children: JSX.Element}) {
         setAccount(null);
     }
 
-    async function refresh() {
-        if (isServer) return;
+    async function refresh(): Promise<boolean> {
+        if (isServer) return false;
         // `getCurrentUser()` alone comes back empty for a tab reloaded after the ~15 minute
         // id_token already expired.
         // try to silently renew those here, though that's subject to SpacetimeAuth working
@@ -106,8 +109,10 @@ export function AccountProvider(props: {children: JSX.Element}) {
             const method = user.profile?.login_method;
             setLoginMethod(typeof method === "string" ? method : null);
             subscribe();
+            return true;
         } else {
             setLoginMethod(null);
+            return false;
         }
     }
 

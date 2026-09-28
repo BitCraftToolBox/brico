@@ -3,7 +3,7 @@
 import {CraftError, MAX_FILTER_JSON_LENGTH, MAX_FILTER_NAME_LENGTH, MAX_SHARED_FILTER_IDS} from '@brico/crafts/errors';
 import type {Random} from 'spacetimedb/server';
 import {SenderError, t} from 'spacetimedb/server';
-import {requireAccount} from '../lib/auth';
+import {requireAccount, requireServicePrincipal} from '../lib/auth';
 import {requireValidFilterJson} from '../lib/filters';
 import {clampClientTimestamp, isAtLeastAsNew} from '../lib/sync';
 import {spacetimedb} from '../schema';
@@ -77,75 +77,6 @@ export const deleteSavedCraftFilter = spacetimedb.reducer(
         if (!isAtLeastAsNew(clampedDeletedAt, existing.updatedAt)) return;
 
         ctx.db.saved_craft_filter.id.update({...existing, updatedAt: clampedDeletedAt, deletedAt: clampedDeletedAt});
-
-        const watch = ctx.db.craft_filter_watch.filterId.find(id);
-        if (watch !== null && watch.deletedAt === undefined) {
-            ctx.db.craft_filter_watch.filterId.update({...watch, updatedAt: clampedDeletedAt, deletedAt: clampedDeletedAt});
-        }
-    }
-);
-
-/**
- * Create or edit the watch on one of the caller's own saved filters. Requires the referenced
- * `saved_craft_filter` to exist and belong to the caller — a watch can't outlive or outrun its
- * filter's ownership.
- */
-export const upsertCraftFilterWatch = spacetimedb.reducer(
-    {filterId: t.string(), added: t.bool(), finished: t.bool(), removed: t.bool(), updatedAt: t.timestamp()},
-    (ctx, {filterId, added, finished, removed, updatedAt}) => {
-        requireAccount(ctx);
-
-        const filter = ctx.db.saved_craft_filter.id.find(filterId);
-        if (filter === null || !filter.accountIdentity.isEqual(ctx.sender)) {
-            throw new SenderError(CraftError.UNKNOWN_SAVED_FILTER);
-        }
-
-        const existing = ctx.db.craft_filter_watch.filterId.find(filterId);
-        if (existing !== null && !existing.accountIdentity.isEqual(ctx.sender)) {
-            throw new SenderError(CraftError.WATCH_BELONGS_TO_ANOTHER_ACCOUNT);
-        }
-
-        const clampedUpdatedAt = clampClientTimestamp(ctx, updatedAt);
-        if (existing !== null && !isAtLeastAsNew(clampedUpdatedAt, existing.updatedAt)) return;
-
-        if (existing === null) {
-            ctx.db.craft_filter_watch.insert({
-                filterId,
-                accountIdentity: ctx.sender,
-                added,
-                finished,
-                removed,
-                updatedAt: clampedUpdatedAt,
-                deletedAt: undefined,
-            });
-        } else {
-            ctx.db.craft_filter_watch.filterId.update({
-                ...existing,
-                added,
-                finished,
-                removed,
-                updatedAt: clampedUpdatedAt,
-                deletedAt: undefined,
-            });
-        }
-    }
-);
-
-/** Tombstones the caller's own watch row (no hard delete). */
-export const deleteCraftFilterWatch = spacetimedb.reducer(
-    {filterId: t.string(), deletedAt: t.timestamp()},
-    (ctx, {filterId, deletedAt}) => {
-        requireAccount(ctx);
-        const existing = ctx.db.craft_filter_watch.filterId.find(filterId);
-        if (existing === null) return;
-        if (!existing.accountIdentity.isEqual(ctx.sender)) {
-            throw new SenderError(CraftError.WATCH_BELONGS_TO_ANOTHER_ACCOUNT);
-        }
-
-        const clampedDeletedAt = clampClientTimestamp(ctx, deletedAt);
-        if (!isAtLeastAsNew(clampedDeletedAt, existing.updatedAt)) return;
-
-        ctx.db.craft_filter_watch.filterId.update({...existing, updatedAt: clampedDeletedAt, deletedAt: clampedDeletedAt});
     }
 );
 
@@ -180,23 +111,29 @@ const CreateSharedFiltersResult = t.object('CreateSharedFiltersResult', {
  * Mints a share code for one or more of the caller's own saved filters. Ownership of every id in
  * `filterIds` is checked inside the same transaction that inserts the `shared_filter` row, so a
  * filter deleted or transferred mid-call can't slip a code past the check.
+ *
+ * A service principal (`brico-bot`) may pass `accountIdentity` to mint a code on behalf of that
+ * account; self-service callers omit it.
  */
 export const createSharedFilters = spacetimedb.procedure(
-    {filterIds: t.array(t.string())},
+    {filterIds: t.array(t.string()), accountIdentity: t.option(t.identity())},
     CreateSharedFiltersResult,
-    (ctx, {filterIds}) => {
+    (ctx, {filterIds, accountIdentity}) => {
         if (filterIds.length === 0) throw new SenderError(CraftError.NO_FILTERS_SELECTED);
         if (filterIds.length > MAX_SHARED_FILTER_IDS) {
             throw new SenderError(CraftError.TOO_MANY_FILTERS_SELECTED);
         }
+        const actingIdentity = accountIdentity ?? ctx.sender;
 
         return ctx.withTx(tx => {
-            if (tx.db.account.identity.find(ctx.sender) === null) {
+            // Checked on `tx`: the outer `ProcedureCtx` has no `db`.
+            if (!actingIdentity.isEqual(ctx.sender)) requireServicePrincipal(tx);
+            if (tx.db.account.identity.find(actingIdentity) === null) {
                 throw new SenderError(CraftError.NO_BRICO_ACCOUNT);
             }
             for (const id of filterIds) {
                 const filter = tx.db.saved_craft_filter.id.find(id);
-                if (filter === null || !filter.accountIdentity.isEqual(ctx.sender) || filter.deletedAt !== undefined) {
+                if (filter === null || !filter.accountIdentity.isEqual(actingIdentity) || filter.deletedAt !== undefined) {
                     throw new SenderError(CraftError.UNKNOWN_SAVED_FILTER);
                 }
             }
@@ -213,7 +150,7 @@ export const createSharedFilters = spacetimedb.procedure(
 
             tx.db.shared_filter.insert({
                 code,
-                accountIdentity: ctx.sender,
+                accountIdentity: actingIdentity,
                 filterIds: [...filterIds],
                 createdAt: tx.timestamp,
             });

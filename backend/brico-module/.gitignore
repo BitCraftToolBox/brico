@@ -5,3 +5,4 @@ spacetime.local.json
 
 # import-payouts.ts's own SpacetimeDB connection identity/token. only a localhost-signed, but no reason to commit.
 scripts/*.token
+scripts/*.csv

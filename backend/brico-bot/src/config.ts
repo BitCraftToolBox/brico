@@ -51,6 +51,20 @@ export interface DiscordOAuthConfig {
     redirectUri: string;
 }
 
+/** Config for the Discord bot itself (slash commands + REST delivery), separate from account linking. */
+export interface DiscordBotConfig {
+    /** Bot token, used to authenticate every outgoing REST call (`Authorization: Bot <token>`). */
+    token: string;
+    /** Ed25519 public key Discord signs every interaction payload with — verified by `verifyKey`. */
+    publicKey: string;
+    /** Addresses the application's command-registration and interaction-followup routes. */
+    applicationId: string;
+    /** Guild the registration script targets by default. */
+    testGuildId: string | null;
+    /** OAuth2 client secret for the `/discord/install` callback; `null` disables only that flow. */
+    installClientSecret: string | null;
+}
+
 export interface BotConfig {
     /** prism's `relay-module` — the read-mirror of BitCraft. Always required. */
     prism: SpacetimeTarget;
@@ -72,9 +86,13 @@ export interface BotConfig {
      * Directory holding BitCraft's offline BSATN static-data files (`<table>.bsatn`)
      */
     gameDataDir: string;
+    /** CDN origin that `iconAssetName` sprite paths resolve against (same as the frontend's `getAssetURL`). */
+    assetCdnBase: string;
     /** Host/port the BitAuth/Discord link callback HTTP server binds. */
     httpHost: string;
     httpPort: number;
+    /** This process's public origin (e.g. `https://bot.brico.app`), used for redirect URIs and icon URLs. */
+    httpBaseUrl: string;
     /** Default/fallback for where the browser is redirected after a link attempt,
      * `?linked=<provider>` or `?linkError=<message>` appended. Used when the login request didn't
      * supply a `returnUrl` (or supplied one outside `linkReturnUrlAllowedOrigins`). */
@@ -88,6 +106,8 @@ export interface BotConfig {
     bitauth: BitAuthConfig | null;
     /** `null` disables Discord's OAuth-handshake linking route */
     discordOAuth: DiscordOAuthConfig | null;
+    /** `null` disables the Discord bot (interactions route 503s, no REST client). */
+    discordBot: DiscordBotConfig | null;
 }
 
 function str(name: string, fallback: string): string {
@@ -139,6 +159,21 @@ function bitAuthConfig(httpBaseUrl: string): BitAuthConfig | null {
     };
 }
 
+/** `null` unless token, public key and application id are all set. */
+function discordBotConfig(): DiscordBotConfig | null {
+    const token = optionalStr("DISCORD_BOT_TOKEN");
+    const publicKey = optionalStr("DISCORD_PUBLIC_KEY");
+    const applicationId = optionalStr("DISCORD_APPLICATION_ID");
+    if (token === null || publicKey === null || applicationId === null) return null;
+    return {
+        token,
+        publicKey,
+        applicationId,
+        testGuildId: optionalStr("DISCORD_TEST_GUILD_ID"),
+        installClientSecret: optionalStr("DISCORD_BOT_CLIENT_SECRET"),
+    };
+}
+
 function discordOAuthConfig(httpBaseUrl: string): DiscordOAuthConfig | null {
     const clientId = optionalStr("DISCORD_OAUTH_CLIENT_ID");
     const clientSecret = optionalStr("DISCORD_OAUTH_CLIENT_SECRET");
@@ -187,8 +222,10 @@ export function loadConfig(): BotConfig {
         logLevel: logLevel(),
         heartbeatMs: int("BRICO_BOT_HEARTBEAT_MS", 60_000),
         gameDataDir: path.resolve(PACKAGE_ROOT, str("BRICO_BOT_GAME_DATA_DIR", "../../frontend/public/bsatn/static")),
+        assetCdnBase: str("BRICO_ASSET_CDN_BASE", "https://cdn.brico.app"),
         httpHost,
         httpPort,
+        httpBaseUrl,
         linkReturnUrl: str("BRICO_BOT_LINK_RETURN_URL", "https://brico.app/account/profile"),
         linkReturnUrlAllowedOrigins: (optionalStr("BRICO_BOT_LINK_RETURN_URL_ALLOWED_ORIGINS") ?? "")
             .split(",")
@@ -196,5 +233,6 @@ export function loadConfig(): BotConfig {
             .filter(origin => origin !== ""),
         bitauth: bitAuthConfig(httpBaseUrl),
         discordOAuth: discordOAuthConfig(httpBaseUrl),
+        discordBot: discordBotConfig(),
     };
 }

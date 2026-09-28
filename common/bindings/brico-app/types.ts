@@ -33,8 +33,20 @@ export type AllCraftBountyEntitlement = __Infer<typeof AllCraftBountyEntitlement
 export const AllCraftBountyOverride = __t.object("AllCraftBountyOverride", {});
 export type AllCraftBountyOverride = __Infer<typeof AllCraftBountyOverride>;
 
-export const AllCraftFilterWatch = __t.object("AllCraftFilterWatch", {});
-export type AllCraftFilterWatch = __Infer<typeof AllCraftFilterWatch>;
+export const AllCraftFilterNotifyTrigger = __t.object("AllCraftFilterNotifyTrigger", {});
+export type AllCraftFilterNotifyTrigger = __Infer<typeof AllCraftFilterNotifyTrigger>;
+
+export const AllDiscordGuildInstall = __t.object("AllDiscordGuildInstall", {});
+export type AllDiscordGuildInstall = __Infer<typeof AllDiscordGuildInstall>;
+
+export const AllDiscordNotifySink = __t.object("AllDiscordNotifySink", {});
+export type AllDiscordNotifySink = __Infer<typeof AllDiscordNotifySink>;
+
+export const AllDiscordNotifyTarget = __t.object("AllDiscordNotifyTarget", {});
+export type AllDiscordNotifyTarget = __Infer<typeof AllDiscordNotifyTarget>;
+
+export const AllDiscordWatchDisplay = __t.object("AllDiscordWatchDisplay", {});
+export type AllDiscordWatchDisplay = __Infer<typeof AllDiscordWatchDisplay>;
 
 export const AllIntegrationLinkRequest = __t.object("AllIntegrationLinkRequest", {});
 export type AllIntegrationLinkRequest = __Infer<typeof AllIntegrationLinkRequest>;
@@ -56,6 +68,12 @@ export type AllPrivateCraftBountyAssignment = __Infer<typeof AllPrivateCraftBoun
 
 export const AllSavedCraftFilter = __t.object("AllSavedCraftFilter", {});
 export type AllSavedCraftFilter = __Infer<typeof AllSavedCraftFilter>;
+
+export const AssignmentBaseline = __t.object("AssignmentBaseline", {
+  playerId: __t.u64(),
+  effort: __t.i64(),
+});
+export type AssignmentBaseline = __Infer<typeof AssignmentBaseline>;
 
 export const BountyEntitlementTotal = __t.object("BountyEntitlementTotal", {
   id: __t.u64(),
@@ -177,6 +195,21 @@ export const CraftBountyOverride = __t.object("CraftBountyOverride", {
 });
 export type CraftBountyOverride = __Infer<typeof CraftBountyOverride>;
 
+export const CraftFilterNotifyTrigger = __t.object("CraftFilterNotifyTrigger", {
+  id: __t.string(),
+  accountIdentity: __t.identity(),
+  filterId: __t.string(),
+  get sink() {
+    return NotifySinkRef;
+  },
+  added: __t.bool(),
+  finished: __t.bool(),
+  removed: __t.bool(),
+  updatedAt: __t.timestamp(),
+  deletedAt: __t.option(__t.timestamp()),
+});
+export type CraftFilterNotifyTrigger = __Infer<typeof CraftFilterNotifyTrigger>;
+
 export const CraftFilterWatch = __t.object("CraftFilterWatch", {
   filterId: __t.string(),
   accountIdentity: __t.identity(),
@@ -215,6 +248,94 @@ export const CreateSharedFiltersResult = __t.object("CreateSharedFiltersResult",
   code: __t.string(),
 });
 export type CreateSharedFiltersResult = __Infer<typeof CreateSharedFiltersResult>;
+
+export const DiscordGuildInstall = __t.object("DiscordGuildInstall", {
+  guildId: __t.string(),
+  commandMode: __t.string(),
+  createdAt: __t.timestamp(),
+  updatedAt: __t.timestamp(),
+});
+export type DiscordGuildInstall = __Infer<typeof DiscordGuildInstall>;
+
+export const DiscordNotifySink = __t.object("DiscordNotifySink", {
+  id: __t.string(),
+  accountIdentity: __t.identity(),
+  channelId: __t.string(),
+  channelName: __t.option(__t.string()),
+  defaultMentionType: __t.option(__t.string()),
+  defaultMentionId: __t.option(__t.string()),
+  defaultMentionName: __t.option(__t.string()),
+  createdAt: __t.timestamp(),
+  updatedAt: __t.timestamp(),
+  deletedAt: __t.option(__t.timestamp()),
+});
+export type DiscordNotifySink = __Infer<typeof DiscordNotifySink>;
+
+export const DiscordNotifySinkRef = __t.object("DiscordNotifySinkRef", {
+  sinkId: __t.string(),
+});
+export type DiscordNotifySinkRef = __Infer<typeof DiscordNotifySinkRef>;
+
+export const DiscordNotifyTarget = __t.object("DiscordNotifyTarget", {
+  id: __t.string(),
+  accountIdentity: __t.identity(),
+  filterId: __t.string(),
+  sinkId: __t.string(),
+  addedTemplate: __t.option(__t.string()),
+  finishedTemplate: __t.option(__t.string()),
+  removedTemplate: __t.option(__t.string()),
+  mentionType: __t.option(__t.string()),
+  mentionId: __t.option(__t.string()),
+  mentionName: __t.option(__t.string()),
+  updatedAt: __t.timestamp(),
+  deletedAt: __t.option(__t.timestamp()),
+});
+export type DiscordNotifyTarget = __Infer<typeof DiscordNotifyTarget>;
+
+export const DiscordWatchDisplay = __t.object("DiscordWatchDisplay", {
+  id: __t.string(),
+  accountIdentity: __t.identity(),
+  filterId: __t.string(),
+  channelId: __t.string(),
+  get content() {
+    return DiscordWatchDisplayContent;
+  },
+  style: __t.string(),
+  sortField: __t.string(),
+  sortDirection: __t.string(),
+  limit: __t.u32(),
+  stickyMinutes: __t.u32(),
+  refreshIntervalSeconds: __t.u32(),
+  shareCode: __t.option(__t.string()),
+  messageId: __t.option(__t.string()),
+  lastPostedAt: __t.option(__t.timestamp()),
+  lastEditedAt: __t.option(__t.timestamp()),
+  createdAt: __t.timestamp(),
+  updatedAt: __t.timestamp(),
+  deletedAt: __t.option(__t.timestamp()),
+});
+export type DiscordWatchDisplay = __Infer<typeof DiscordWatchDisplay>;
+
+// The tagged union or sum type for the algebraic type `DiscordWatchDisplayContent`.
+export const DiscordWatchDisplayContent = __t.enum("DiscordWatchDisplayContent", {
+  get Presets() {
+    return DiscordWatchDisplayPresets;
+  },
+  get Template() {
+    return DiscordWatchDisplayTemplate;
+  },
+});
+export type DiscordWatchDisplayContent = __Infer<typeof DiscordWatchDisplayContent>;
+
+export const DiscordWatchDisplayPresets = __t.object("DiscordWatchDisplayPresets", {
+  presets: __t.array(__t.string()),
+});
+export type DiscordWatchDisplayPresets = __Infer<typeof DiscordWatchDisplayPresets>;
+
+export const DiscordWatchDisplayTemplate = __t.object("DiscordWatchDisplayTemplate", {
+  template: __t.string(),
+});
+export type DiscordWatchDisplayTemplate = __Infer<typeof DiscordWatchDisplayTemplate>;
 
 export const EffortThresholdLoyaltyRule = __t.object("EffortThresholdLoyaltyRule", {
   allCurrencies: __t.bool(),
@@ -341,8 +462,17 @@ export type MyBountyRule = __Infer<typeof MyBountyRule>;
 export const MyCraftBountyOverride = __t.object("MyCraftBountyOverride", {});
 export type MyCraftBountyOverride = __Infer<typeof MyCraftBountyOverride>;
 
-export const MyCraftFilterWatch = __t.object("MyCraftFilterWatch", {});
-export type MyCraftFilterWatch = __Infer<typeof MyCraftFilterWatch>;
+export const MyCraftFilterNotifyTrigger = __t.object("MyCraftFilterNotifyTrigger", {});
+export type MyCraftFilterNotifyTrigger = __Infer<typeof MyCraftFilterNotifyTrigger>;
+
+export const MyDiscordNotifySink = __t.object("MyDiscordNotifySink", {});
+export type MyDiscordNotifySink = __Infer<typeof MyDiscordNotifySink>;
+
+export const MyDiscordNotifyTarget = __t.object("MyDiscordNotifyTarget", {});
+export type MyDiscordNotifyTarget = __Infer<typeof MyDiscordNotifyTarget>;
+
+export const MyDiscordWatchDisplay = __t.object("MyDiscordWatchDisplay", {});
+export type MyDiscordWatchDisplay = __Infer<typeof MyDiscordWatchDisplay>;
 
 export const MyEntitlementsAsContributor = __t.object("MyEntitlementsAsContributor", {});
 export type MyEntitlementsAsContributor = __Infer<typeof MyEntitlementsAsContributor>;
@@ -392,6 +522,17 @@ export const NotificationPayload = __t.enum("NotificationPayload", {
   },
 });
 export type NotificationPayload = __Infer<typeof NotificationPayload>;
+
+// The tagged union or sum type for the algebraic type `NotifySinkRef`.
+export const NotifySinkRef = __t.enum("NotifySinkRef", {
+  get Toast() {
+    return ToastNotifySinkRef;
+  },
+  get Discord() {
+    return DiscordNotifySinkRef;
+  },
+});
+export type NotifySinkRef = __Infer<typeof NotifySinkRef>;
 
 export const PayerEntitlementRow = __t.object("PayerEntitlementRow", {
   id: __t.string(),
@@ -443,4 +584,7 @@ export const SharedFilterRow = __t.object("SharedFilterRow", {
   filterJson: __t.string(),
 });
 export type SharedFilterRow = __Infer<typeof SharedFilterRow>;
+
+export const ToastNotifySinkRef = __t.object("ToastNotifySinkRef", {});
+export type ToastNotifySinkRef = __Infer<typeof ToastNotifySinkRef>;
 

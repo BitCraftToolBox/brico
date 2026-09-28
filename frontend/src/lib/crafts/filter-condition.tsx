@@ -58,7 +58,7 @@ export function CurrencyLabel(props: {currency: string; iconOnly?: boolean}) {
                     when={props.iconOnly}
                     fallback={<span class="align-bottom inline-flex items-center gap-1">{v().icon()} {label(v().label)}</span>}
                 >
-                    <span title={label(v().label)} class="flex items-center">{v().icon()}</span>
+                    <span title={label(v().label)} class="flex shrink-0 items-center">{v().icon()}</span>
                 </Show>
             )}
         </Show>

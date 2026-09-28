@@ -17,6 +17,7 @@ import {TbOutlineClipboardCheck as IconClipboardCheck, TbOutlineClipboardCopy as
 import {createMemo, createSignal, type JSX, Show} from "solid-js";
 import {Timestamp} from "spacetimedb";
 import {OutputIcon} from "~/components/crafts/OutputIcon";
+import {PayoutRateButton} from "~/components/crafts/PayoutRateButton";
 import {LiveTable} from "~/components/data-table/live-table";
 import {FontIcon} from "~/components/icons/font-icons";
 import MainLayout from "~/components/MainLayout";
@@ -38,7 +39,7 @@ import {createBountyAssignments} from "~/lib/crafts/bounty";
 import {type CraftContributor, craftContributorsFrom, craftEntriesFrom} from "~/lib/crafts/entries";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
-import {formatPayoutRate, type Ratio, useAmountField} from "~/lib/crafts/payout";
+import {type Ratio, useAmountField} from "~/lib/crafts/payout";
 import {createCraftDetailRelay} from "~/lib/crafts/relay";
 import {breadcrumb} from "~/lib/game-links";
 import {uiLocale} from "~/lib/i18n.ts";
@@ -125,7 +126,7 @@ const CONTRIBUTOR_COLUMNS: ColumnDef<CraftContributor, any>[] = [
         accessorFn: contributor => contributor.estimatedPayout?.toString() ?? "",
         cell: (props: ContributorCell<string>) => (
             <Show when={props.row.original.estimatedPayout !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                <span class={`inline-flex gap-1 tabular-nums ${props.row.original.isOwner ? "text-muted-foreground" : ""}`}>
+                <span class="inline-flex gap-1 tabular-nums">
                     {props.row.original.estimatedPayout!.toString()} <CurrencyLabel currency={props.row.original.currency!} iconOnly={true}/>
                 </span>
             </Show>
@@ -169,7 +170,7 @@ function MetaRow(props: {label: string; children: JSX.Element}) {
     return (
         <div class="flex flex-row">
             <div class="mr-2 shrink-0 text-nowrap text-muted-foreground">{props.label}</div>
-            <div class="dots-before flex flex-1 justify-end text-nowrap">{props.children}</div>
+            <div class="dots-before flex flex-1 min-w-0 justify-end">{props.children}</div>
         </div>
     );
 }
@@ -180,27 +181,6 @@ function OrDash(props: {value: string | null}) {
         <Show when={props.value} fallback={<span class="text-muted-foreground">—</span>}>
             {value => <>{value()}</>}
         </Show>
-    );
-}
-
-/**
- * A bounty's rate, decimal-formatted in whichever direction `~/lib/settings`'s shared
- * `payoutDisplayMode` currently prefers — clicking it flips that setting (and so every other page
- * showing a rate, not just this one). Storage never changes shape based on it; the stored fraction
- * is always currency-per-effort.
- */
-function BountyRateText(props: {ratioNumerator: bigint; ratioDenominator: bigint; currency: string}) {
-    const {_} = useLingui();
-    const settings = useSettings();
-    const rate = () => Number(props.ratioNumerator) / Number(props.ratioDenominator);
-    return (
-        <button
-            class="hover:underline"
-            title={_(msg`Switch between currency/effort and effort/currency`)}
-            onClick={() => settings.setPayoutDisplayMode(settings.payoutDisplayMode() === "currencyPerEffort" ? "effortPerCurrency" : "currencyPerEffort")}
-        >
-            {formatPayoutRate(rate(), props.currency, settings.payoutDisplayMode())}
-        </button>
     );
 }
 
@@ -551,8 +531,8 @@ export default function CraftDetail() {
                                     <MetaRow label={label(msg`Bounty`)}>
                                         <Show when={bounty()} fallback={<span class="text-muted-foreground">—</span>}>
                                             {b => (
-                                                <span class="inline-flex items-center gap-1.5">
-                                                    <BountyRateText ratioNumerator={b().ratioNumerator} ratioDenominator={b().ratioDenominator} currency={b().currency}/>
+                                                <span class="inline-flex flex-nowrap text-nowrap gap-1.5">
+                                                    <PayoutRateButton rate={Number(b().ratioNumerator) / Number(b().ratioDenominator)} currency={b().currency}/>
                                                     <Show when={b().private}>
                                                         <IconLock class="size-3.5 text-muted-foreground" title={label(msg`Private bounty`)}/>
                                                     </Show>

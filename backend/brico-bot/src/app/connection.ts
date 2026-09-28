@@ -20,8 +20,8 @@ interface AppTable {
 /**
  * Tables/views the bridge knows how to subscribe to on `brico-app`, keyed by SQL name.
  *
- * `all_saved_craft_filter`/`all_craft_filter_watch` are the tables the bridge reads its filters
- * from; the real join lives in `watch-source.ts`'s `createAccountWatchSource`.
+ * `all_saved_craft_filter`/`all_craft_filter_notify_trigger` are the tables the bridge reads its
+ * filters from; the real join lives in `watch-source.ts`'s `createAccountWatchSource`.
  */
 const APP_TABLES: Record<string, AppTable> = {
     all_account: {
@@ -51,14 +51,32 @@ const APP_TABLES: Record<string, AppTable> = {
         },
         count: conn => conn.db.allSavedCraftFilter.count(),
     },
-    all_craft_filter_watch: {
-        query: tables.allCraftFilterWatch,
+    all_craft_filter_notify_trigger: {
+        query: tables.allCraftFilterNotifyTrigger,
         listen: (conn, onChange) => {
-            conn.db.allCraftFilterWatch.onInsert(onChange);
-            conn.db.allCraftFilterWatch.onDelete(onChange);
-            conn.db.allCraftFilterWatch.onUpdate(onChange);
+            conn.db.allCraftFilterNotifyTrigger.onInsert(onChange);
+            conn.db.allCraftFilterNotifyTrigger.onDelete(onChange);
+            conn.db.allCraftFilterNotifyTrigger.onUpdate(onChange);
         },
-        count: conn => conn.db.allCraftFilterWatch.count(),
+        count: conn => conn.db.allCraftFilterNotifyTrigger.count(),
+    },
+    all_discord_notify_sink: {
+        query: tables.allDiscordNotifySink,
+        listen: (conn, onChange) => {
+            conn.db.allDiscordNotifySink.onInsert(onChange);
+            conn.db.allDiscordNotifySink.onDelete(onChange);
+            conn.db.allDiscordNotifySink.onUpdate(onChange);
+        },
+        count: conn => conn.db.allDiscordNotifySink.count(),
+    },
+    all_discord_notify_target: {
+        query: tables.allDiscordNotifyTarget,
+        listen: (conn, onChange) => {
+            conn.db.allDiscordNotifyTarget.onInsert(onChange);
+            conn.db.allDiscordNotifyTarget.onDelete(onChange);
+            conn.db.allDiscordNotifyTarget.onUpdate(onChange);
+        },
+        count: conn => conn.db.allDiscordNotifyTarget.count(),
     },
     all_bounty_rule: {
         query: tables.allBountyRule,
@@ -143,6 +161,24 @@ const APP_TABLES: Record<string, AppTable> = {
         },
         count: conn => conn.db.allBountyEntitlementTotal.count(),
     },
+    all_discord_watch_display: {
+        query: tables.allDiscordWatchDisplay,
+        listen: (conn, onChange) => {
+            conn.db.allDiscordWatchDisplay.onInsert(onChange);
+            conn.db.allDiscordWatchDisplay.onDelete(onChange);
+            conn.db.allDiscordWatchDisplay.onUpdate(onChange);
+        },
+        count: conn => conn.db.allDiscordWatchDisplay.count(),
+    },
+    all_discord_guild_install: {
+        query: tables.allDiscordGuildInstall,
+        listen: (conn, onChange) => {
+            conn.db.allDiscordGuildInstall.onInsert(onChange);
+            conn.db.allDiscordGuildInstall.onDelete(onChange);
+            conn.db.allDiscordGuildInstall.onUpdate(onChange);
+        },
+        count: conn => conn.db.allDiscordGuildInstall.count(),
+    },
 };
 
 export interface BricoAppConnection {
@@ -167,6 +203,8 @@ export interface BricoAppOptions extends SupervisorOptions {
      * without re-running it for unrelated changes (a saved filter edit, a notification setting).
      */
     onLoyaltyRulesChanged(): void;
+    /** Called each time the initial subscription is applied (including after a reconnect), not on row changes. */
+    onReady?(): void;
 }
 
 export function startBricoAppConnection(options: BricoAppOptions): BricoAppConnection {
@@ -221,6 +259,7 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
                         if (!ctx.isCurrent()) return;
                         ctx.setLive();
                         options.onRowsChanged();
+                        options.onReady?.();
                         const counts = tables.map(name => `${name}=${APP_TABLES[name].count(conn)}`).join(" ");
                         log.info("initial subscription applied", {identity: identityHex ?? "?", rows: counts});
                         if (tables.every(name => APP_TABLES[name].count(conn) === 0n)) {

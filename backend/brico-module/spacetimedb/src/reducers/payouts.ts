@@ -246,33 +246,6 @@ function findCraftBountyAssignment(ctx: Ctx, craftId: bigint) {
 }
 
 /**
- * Establishes a zero-earning baseline row for a (craft, contributor, currency) triple the moment
- * `brico-bot` sees that craft's bounty get assigned. This prevents whatever effort the contributor had
- * already accrued *before* the bounty existed from being retroactively paid out by
- * `upsertCraftBountyEntitlement`'s first call for that triple. Deliberately a no-op if a row already
- * exists — safe to call redundantly or late: once a real entitlement row exists, this must never reset
- * or overwrite it. This only ever covers a triple with *no* row at all; a triple whose bounty
- * was cleared and later reassigned already has a row, and is instead protected by
- * `upsertCraftBountyEntitlement`'s own gap detection.
- */
-export const seedCraftBountyEntitlement = spacetimedb.reducer(
-    {craftId: t.u64(), playerId: t.u64(), currency: t.string(), effort: t.i64(), updatedAt: t.timestamp()},
-    (ctx, {craftId, playerId, currency, effort, updatedAt}) => {
-        requireServicePrincipal(ctx);
-
-        const assignment = findCraftBountyAssignment(ctx, craftId);
-        if (assignment === null) throw new SenderError(CraftError.NO_BOUNTY_ASSIGNMENT);
-
-        const existing = [...ctx.db.craft_bounty_entitlement.by_craft_player_currency.filter([craftId, playerId, currency])][0] ?? null;
-        if (existing !== null) return;
-
-        ctx.db.craft_bounty_entitlement.insert({
-            id: 0n, craftId, playerId, currency, lastAssignedEffort: effort, updatedAt,
-        });
-    }
-);
-
-/**
  * Written by `brico-bot` whenever a (craft, contributor, currency) triple's cumulative effort or
  * effective ratio might have changed — i.e. whenever `craft_contribution` changes, or a loyalty
  * bonus resolves differently, for a craft that has a `craft_bounty_assignment`. `effort` is always
@@ -285,14 +258,9 @@ export const seedCraftBountyEntitlement = spacetimedb.reducer(
  * pooled across every craft this payer has bountied this payee in, not per-craft — see that
  * function's doc comment for why.
  *
- * A triple with no `existing` row is treated as a zero effort baseline and priced normally from
- * there — *not* seeded at zero and skipped, the way `seedCraftBountyEntitlement` handles a craft's
- * pre-existing contributors the moment its bounty is assigned. By the time this reducer is called
- * for a triple that really does have effort predating the bounty, `seedCraftBountyEntitlement` has
- * already given it a real (non-zero) baseline row, so this call sees `existing !== null` and prices
- * only the effort since that baseline. A triple that reaches here with no row at all is therefore a
- * contributor who started *after* the bounty already existed — their whole observed effort is fair
- * to price from zero, since there was no unprotected, bounty-free period for them to begin with.
+ * A triple with no `existing` row is priced from a zero baseline. Effort predating the bounty is
+ * excluded because `assignCraftBounty` inserts baseline rows for existing contributors in the same
+ * transaction that creates the assignment.
  *
  * An `existing` row can itself predate a *gap*: a bounty can be cleared (its assignment row deleted)
  * and reassigned later while the contributor keeps working the craft in between. `assignedAt` is only
@@ -331,7 +299,7 @@ export const upsertCraftBountyEntitlement = spacetimedb.reducer(
         // whatever effort accrued in between (while the bounty was actually cleared) must not be
         // priced — jump the effort baseline to now.
         const hasGap = existing !== null && assignment.assignedAt.microsSinceUnixEpoch > existing.updatedAt.microsSinceUnixEpoch;
-        const lastAssignedEffort = existing === null || hasGap ? effort : existing.lastAssignedEffort;
+        const lastAssignedEffort = existing === null ? 0n : hasGap ? effort : existing.lastAssignedEffort;
         const deltaEffort = effort - lastAssignedEffort;
 
         if (existing === null) {

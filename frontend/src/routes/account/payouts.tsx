@@ -149,7 +149,7 @@ function buildColumns(onHistory: (row: PayoutRow) => void): ColumnDef<PayoutRow,
             accessorFn: row => row.earnedTotal - row.paidTotal,
             cell: (props: Cell<bigint>) => {
                 const diff = props.getValue();
-                return <Badge variant={diff > 0n ? "default" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toString()}</Badge>;
+                return <Badge variant={diff > 0n ? "outline" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toString()}</Badge>;
             },
         },
     ];

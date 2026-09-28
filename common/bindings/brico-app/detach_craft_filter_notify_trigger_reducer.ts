@@ -6,9 +6,6 @@
 import {t as __t,} from "spacetimedb";
 
 export default {
-  craftId: __t.u64(),
-  playerId: __t.u64(),
-  currency: __t.string(),
-  effort: __t.i64(),
-  updatedAt: __t.timestamp(),
+  id: __t.string(),
+  deletedAt: __t.timestamp(),
 };

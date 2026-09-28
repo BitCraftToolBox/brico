@@ -49,7 +49,7 @@ export default function BountyOverviewPage() {
                         </p>
                         <p>
                             <Trans>
-                                Trust-less bounties, where payment is held in escrow and guaranteed automatically, are coming soon via
+                                Trust-less bounties, where payment is held in escrow and paid out automatically, are coming soon via
                                 {" "}<a href="https://stelo.finance/" target="_blank" class="underline">Stelo <IconExternal class="inline size-3.5"/></a>.
                             </Trans>
                         </p>

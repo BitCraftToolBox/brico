@@ -6,11 +6,14 @@
 import {t as __t,} from "spacetimedb";
 
 export default __t.row({
-  filterId: __t.string().primaryKey().name("filter_id"),
+  id: __t.string().primaryKey(),
   accountIdentity: __t.identity().name("account_identity"),
-  added: __t.bool(),
-  finished: __t.bool(),
-  removed: __t.bool(),
+  channelId: __t.string().name("channel_id"),
+  channelName: __t.option(__t.string()).name("channel_name"),
+  defaultMentionType: __t.option(__t.string()).name("default_mention_type"),
+  defaultMentionId: __t.option(__t.string()).name("default_mention_id"),
+  defaultMentionName: __t.option(__t.string()).name("default_mention_name"),
+  createdAt: __t.timestamp().name("created_at"),
   updatedAt: __t.timestamp().name("updated_at"),
   deletedAt: __t.option(__t.timestamp()).name("deleted_at"),
 });

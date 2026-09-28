@@ -13,7 +13,7 @@ import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
 import {A, useSearchParams} from "@solidjs/router";
-import {createSignal, onMount, Show} from "solid-js";
+import {createEffect, createSignal, onMount, Show} from "solid-js";
 import MainLayout from "~/components/MainLayout";
 import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components/ui/card";
@@ -26,7 +26,7 @@ type Status = "claiming" | "need-login" | "success" | "error";
 export default function AccountLinkPage() {
     const {_} = useLingui();
     const [searchParams] = useSearchParams();
-    const {isLoggedIn, login} = useAccount();
+    const {isLoggedIn, login, refresh} = useAccount();
     const {claimLink} = useLinkedIntegrations();
 
     const code = () => {
@@ -36,6 +36,8 @@ export default function AccountLinkPage() {
 
     const [status, setStatus] = createSignal<Status>("claiming");
     const [error, setError] = createSignal("");
+    /** Prevents the effect below from re-entering `claimLink` while a call is in flight. */
+    let claiming = false;
 
     onMount(async () => {
         if (!code()) {
@@ -43,17 +45,24 @@ export default function AccountLinkPage() {
             setError(_(msg`Missing link code.`));
             return;
         }
-        if (!isLoggedIn()) {
-            setStatus("need-login");
-            return;
-        }
-        try {
-            await claimLink(code());
-            setStatus("success");
-        } catch (e) {
-            setStatus("error");
-            setError(describeServerError(e));
-        }
+        // A found session doesn't mean `isLoggedIn()` is true yet; the effect below handles that.
+        const hasSession = await refresh();
+        if (!hasSession) setStatus("need-login");
+    });
+
+    // `isLoggedIn()` is a memo, so this only re-runs when the boolean flips.
+    createEffect(() => {
+        if (status() !== "claiming" || claiming || !isLoggedIn()) return;
+        claiming = true;
+        void (async () => {
+            try {
+                await claimLink(code());
+                setStatus("success");
+            } catch (e) {
+                setStatus("error");
+                setError(describeServerError(e));
+            }
+        })();
     });
 
     function loginThenClaim() {
@@ -89,7 +98,7 @@ export default function AccountLinkPage() {
                             <Button onClick={loginThenClaim}><Trans>Log in</Trans></Button>
                         </Show>
                         <Show when={status() === "success" || status() === "error"}>
-                            <Button as={A} href="/account" variant="outline"><Trans>Back to account</Trans></Button>
+                            <Button as={A} href="/account/profile" variant="outline"><Trans>Back to account</Trans></Button>
                         </Show>
                     </CardContent>
                 </Card>
