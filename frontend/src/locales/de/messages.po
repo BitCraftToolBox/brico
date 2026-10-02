@@ -62,10 +62,6 @@ msgstr ""
 msgid "Change language"
 msgstr ""
 
-#: src/routes/database/buff/[id].tsx
-msgid "Unspecified"
-msgstr ""
-
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Equivalent \"player inventory\" slots."
 msgstr ""
@@ -1227,6 +1223,10 @@ msgstr "Gesundheit"
 msgid "Despawns"
 msgstr ""
 
+#: src/lib/utils.ts
+msgid "Infinite"
+msgstr ""
+
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Visible to Others"
@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Global Cooldown"
 msgstr ""
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Duration"

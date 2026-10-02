@@ -62,10 +62,6 @@ msgstr "crwdns4348:0{0}crwdnd4348:0{1}crwdne4348:0"
 msgid "Change language"
 msgstr "crwdns4350:0crwdne4350:0"
 
-#: src/routes/database/buff/[id].tsx
-msgid "Unspecified"
-msgstr "crwdns4352:0crwdne4352:0"
-
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Equivalent \"player inventory\" slots."
 msgstr "crwdns4354:0crwdne4354:0"
@@ -1227,6 +1223,10 @@ msgstr "crwdns4844:0crwdne4844:0"
 msgid "Despawns"
 msgstr "crwdns4846:0crwdne4846:0"
 
+#: src/lib/utils.ts
+msgid "Infinite"
+msgstr ""
+
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Visible to Others"
@@ -1487,6 +1487,7 @@ msgstr "crwdns4950:0crwdne4950:0"
 msgid "Global Cooldown"
 msgstr "crwdns4954:0crwdne4954:0"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Duration"
