@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-04 08:30\n"
+"PO-Revision-Date: 2026-10-02 10:18\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -61,10 +61,6 @@ msgstr ""
 #: src/components/Nav.tsx
 msgid "Change language"
 msgstr "言語を変更"
-
-#: src/routes/database/buff/[id].tsx
-msgid "Unspecified"
-msgstr "未指定"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Equivalent \"player inventory\" slots."
@@ -1227,6 +1223,10 @@ msgstr "体力"
 msgid "Despawns"
 msgstr "デスポーン"
 
+#: src/lib/utils.ts
+msgid "Infinite"
+msgstr ""
+
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Visible to Others"
@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Global Cooldown"
 msgstr "グローバルクールダウン"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Duration"
@@ -2795,3 +2796,4 @@ msgstr "Brico's Toolboxは、<0>BitCraft</0>のアイテム、レシピ、生き
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "{buildingName}を解体"
+
