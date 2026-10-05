@@ -8,7 +8,7 @@ msgstr ""
 "Language: zu\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-04 08:30\n"
+"PO-Revision-Date: 2026-10-02 10:18\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -61,10 +61,6 @@ msgstr "crwdns4348:0{0}crwdnd4348:0{1}crwdne4348:0"
 #: src/components/Nav.tsx
 msgid "Change language"
 msgstr "crwdns4350:0crwdne4350:0"
-
-#: src/routes/database/buff/[id].tsx
-msgid "Unspecified"
-msgstr "crwdns4352:0crwdne4352:0"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Equivalent \"player inventory\" slots."
@@ -213,7 +209,7 @@ msgstr "crwdns4408:0crwdne4408:0"
 
 #: src/components/shared/PlaceableGraph.tsx
 msgid "→ {outputQty}× {outputName}"
-msgstr ""
+msgstr "crwdns5612:0{outputQty}crwdnd5612:0{outputName}crwdne5612:0"
 
 #: src/routes/settings.tsx
 msgid "Hats"
@@ -652,7 +648,7 @@ msgstr "crwdns4590:0crwdne4590:0"
 
 #: src/components/shared/PlaceableGraph.tsx
 msgid "{itemsList} per action"
-msgstr ""
+msgstr "crwdns5614:0{itemsList}crwdne5614:0"
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/paving/[id].tsx
@@ -1227,6 +1223,10 @@ msgstr "crwdns4844:0crwdne4844:0"
 msgid "Despawns"
 msgstr "crwdns4846:0crwdne4846:0"
 
+#: src/lib/utils.ts
+msgid "Infinite"
+msgstr "crwdns5616:0crwdne5616:0"
+
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Visible to Others"
@@ -1343,7 +1343,7 @@ msgstr "crwdns5512:0crwdne5512:0"
 
 #: src/components/shared/PlaceableGraph.tsx
 msgid "Place ({placeDuration})"
-msgstr ""
+msgstr "crwdns5618:0{placeDuration}crwdne5618:0"
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Chance"
@@ -1487,6 +1487,7 @@ msgstr "crwdns4950:0crwdne4950:0"
 msgid "Global Cooldown"
 msgstr "crwdns4954:0crwdne4954:0"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Duration"
@@ -2165,7 +2166,7 @@ msgstr "crwdns5588:0crwdne5588:0"
 
 #: src/components/shared/PlaceableGraph.tsx
 msgid "{maxHp} effort required, ignoring base tool power"
-msgstr ""
+msgstr "crwdns5620:0{maxHp}crwdne5620:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Rewarded from Quests"
@@ -2433,7 +2434,7 @@ msgstr "crwdns5344:0crwdne5344:0"
 
 #: src/components/shared/PlaceableGraph.tsx
 msgid "{qty}× {name}"
-msgstr ""
+msgstr "crwdns5622:0{qty}crwdnd5622:0{name}crwdne5622:0"
 
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Reward"
@@ -2539,7 +2540,7 @@ msgstr "crwdns5392:0crwdne5392:0"
 
 #: src/components/shared/PlaceableGraph.tsx
 msgid "{maxHp} effort required, using tool power"
-msgstr ""
+msgstr "crwdns5624:0{maxHp}crwdne5624:0"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required for Reward"
@@ -2795,3 +2796,4 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
+
