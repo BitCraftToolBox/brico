@@ -190,7 +190,7 @@ function OptionPicker(props: {
      * order (already alphabetical, from every caller), so this only re-groups, never re-sorts.
      */
     const matches = createMemo(() => {
-        const needle = search().toLowerCase().trim();
+        const needle = search().toLowerCase();
         const selected = new Set(current());
         const bucket = (option: FieldOption): number => {
             if (needle) {

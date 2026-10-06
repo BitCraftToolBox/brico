@@ -201,7 +201,7 @@ function readReference(conn: PrismConnection): Omit<CraftSnapshot, "crafts"> {
 
 /** Every open craft in the cache, resolved against the reference tables. */
 export function readSnapshot(conn: PrismConnection): CraftSnapshot {
-    return {...readReference(conn), crafts: [...conn.db.craftMeta.iter()].filter(isActive)};
+    return {...readReference(conn), crafts: conn.db.craftMeta.iter().filter(isActive).toArray()};
 }
 
 /**

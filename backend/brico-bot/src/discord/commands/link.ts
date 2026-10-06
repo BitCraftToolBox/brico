@@ -35,7 +35,7 @@ async function handleLink(interaction: APIChatInputApplicationCommandInteraction
     const redemptionUrl = `${new URL(deps.linkReturnUrl).origin}/account/link?code=${code}`;
     return {
         content:
-            `Open this link while signed in to Brico.app to finish linking your Discord account:\n${redemptionUrl}\n\n` +
+            `Open this link while signed in to Brico.app to finish linking your Discord account:\n<${redemptionUrl}>\n\n` +
             "This link expires in 15 minutes.",
     };
 }

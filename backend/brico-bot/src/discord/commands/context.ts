@@ -85,12 +85,9 @@ export function requirePermission(ctx: CommandContext): CommandReply | null {
 
 /** Maps a Discord user id to the linked brico account via `linked_integration`; `null` if not linked. */
 export function resolveAccountIdentity(conn: DbConnection, discordUserId: string): Identity | null {
-    for (const link of conn.db.allLinkedIntegration.iter()) {
-        if (link.provider === "discord" && link.externalId === discordUserId && link.revokedAt === undefined) {
-            return link.accountIdentity;
-        }
-    }
-    return null;
+    const link = conn.db.allLinkedIntegration.iter()
+        .find(l => l.provider === "discord" && l.externalId === discordUserId && l.revokedAt === undefined);
+    return link?.accountIdentity ?? null;
 }
 
 export function requireLinkedAccount(conn: DbConnection, discordUserId: string): Identity | CommandReply {

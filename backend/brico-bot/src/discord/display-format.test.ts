@@ -220,7 +220,7 @@ test("icon style renders one Section per row with an icon thumbnail, no separato
     const section = components.find((c): c is APISectionComponent => c.type === ComponentType.Section)!;
     assert.ok(section, "expected a Section component for the one matching row");
     const [text] = section.components;
-    assert.match(text.content, /\*\*Plank \[↗]\(https:\/\/brico\.app\/tools\/crafts\/42\)\*\*/);
+    assert.match(text.content, /\*\*Plank \[↗]\(<https:\/\/brico\.app\/tools\/crafts\/42>\)\*\*/);
     assert.match(text.content, /Effort left:/);
     assert.equal(section.accessory.type, ComponentType.Thumbnail);
     assert.equal((section.accessory as APIThumbnailComponent).media.url, `${BOT_HTTP_BASE_URL}/icons/item/501.webp`);

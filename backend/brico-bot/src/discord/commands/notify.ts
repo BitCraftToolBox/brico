@@ -33,7 +33,7 @@ import {discordUserIdFor, isCommandReply, requireInteractionContext, requireLink
 import {type ModalMentionable, modalMentionableSelectValue, modalTextInputValue} from "./modal-options.ts";
 import {leafOptions, mentionableOption, stringOption} from "./options.ts";
 import type {CommandDeps, CommandHandler, CommandReply, CommandShowModal, LeafCommand, ModalSubmitHandler} from "./registry.ts";
-import {labelField, ownSavedFilters, watchDisplayFilterAutocomplete} from "./watch.ts";
+import {findOwnSavedFilter, labelField, watchDisplayFilterAutocomplete} from "./watch.ts";
 
 const FILTER_OPTION_NAME = "filter";
 const MENTIONABLE_OPTION_NAME = "mentionable";
@@ -43,20 +43,15 @@ const TEMPLATE_FIELD_IDS: Record<TriggerKind, string> = {added: "added", finishe
 
 /** The caller's own, non-tombstoned sink for this channel; `null` if `/watch notify-link` hasn't been run here. */
 function findOwnDiscordNotifySink(conn: DbConnection, accountIdentity: Identity, channelId: string): DiscordNotifySink | null {
-    for (const sink of conn.db.allDiscordNotifySink.iter()) {
-        if (sink.deletedAt !== undefined) continue;
-        if (sink.accountIdentity.isEqual(accountIdentity) && sink.channelId === channelId) return sink;
-    }
-    return null;
+    return conn.db.allDiscordNotifySink.iter()
+        .find(sink => sink.deletedAt === undefined && sink.accountIdentity.isEqual(accountIdentity) && sink.channelId === channelId) ?? null;
 }
 
 /** The existing `(account, filter, sink)` target, if any. */
 function findOwnDiscordNotifyTarget(conn: DbConnection, accountIdentity: Identity, filterId: string, sinkId: string): DiscordNotifyTarget | null {
-    for (const target of conn.db.allDiscordNotifyTarget.iter()) {
-        if (target.deletedAt !== undefined) continue;
-        if (target.accountIdentity.isEqual(accountIdentity) && target.filterId === filterId && target.sinkId === sinkId) return target;
-    }
-    return null;
+    return conn.db.allDiscordNotifyTarget.iter().find(target =>
+        target.deletedAt === undefined && target.accountIdentity.isEqual(accountIdentity) && target.filterId === filterId && target.sinkId === sinkId,
+    ) ?? null;
 }
 
 const handleNotifyLink: CommandHandler = async (interaction: APIChatInputApplicationCommandInteraction, deps: CommandDeps): Promise<CommandReply> => {
@@ -210,7 +205,7 @@ const handleNotifySetup: CommandHandler = async (interaction: APIChatInputApplic
     if (!sink) return {content: "This channel isn't linked yet — run `/watch notify-link` first."};
 
     const filterId = stringOption(leafOptions(interaction), FILTER_OPTION_NAME);
-    const filter = filterId ? [...ownSavedFilters(conn, accountIdentity)].find(saved => saved.id === filterId) : undefined;
+    const filter = filterId ? findOwnSavedFilter(conn, accountIdentity, filterId) : undefined;
     if (!filter) return {content: "That filter is no longer available — pick it again."};
 
     const existing = findOwnDiscordNotifyTarget(conn, accountIdentity, filter.id, sink.id);
@@ -230,7 +225,7 @@ const handleNotifySetupSubmit: ModalSubmitHandler = async (interaction: APIModal
     if (!sink) return {content: "This channel isn't linked yet — run `/watch notify-link` first."};
 
     const filterId = interaction.data.custom_id.slice(`${WATCH_NOTIFY_SETUP_MODAL_ID}:`.length);
-    const filter = [...ownSavedFilters(conn, accountIdentity)].find(saved => saved.id === filterId);
+    const filter = findOwnSavedFilter(conn, accountIdentity, filterId);
     if (!filter) return {content: "That filter is no longer available — run `/watch notify-setup` again."};
 
     const submission: APIModalSubmission = interaction.data;

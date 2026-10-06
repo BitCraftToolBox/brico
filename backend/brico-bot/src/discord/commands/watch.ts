@@ -51,6 +51,7 @@ const WATCH_DISPLAY_MODAL_ID = "watch_display_setup";
 /** The slash-command option name; `FILTER_FIELD_ID` below is the modal field's `custom_id`. */
 const FILTER_OPTION_NAME = "filter";
 const FILTER_FIELD_ID = "filter";
+const DISPLAY_OPTION_NAME = "display";
 const STYLE_FIELD_ID = "style";
 const PRESETS_FIELD_ID = "presets";
 /** Combined sort field + direction; option values are `"<field>:<direction>"`. */
@@ -70,31 +71,28 @@ function parseSortOptionValue(value: string): {field: string; direction: string}
     return field && direction ? {field, direction} : null;
 }
 
-/** The caller's own non-tombstoned saved filters. Scans the table because `all_saved_craft_filter` has no client-side index on `accountIdentity`. */
-export function* ownSavedFilters(conn: DbConnection, accountIdentity: Identity) {
-    for (const saved of conn.db.allSavedCraftFilter.iter()) {
-        if (saved.deletedAt === undefined && saved.accountIdentity.isEqual(accountIdentity)) yield saved;
-    }
+/** The caller's own non-tombstoned saved filters. Scans the table because `all_saved_craft_filter` is only indexed on `id`. */
+export function ownSavedFilters(conn: DbConnection, accountIdentity: Identity) {
+    return conn.db.allSavedCraftFilter.iter().filter(saved => saved.deletedAt === undefined && saved.accountIdentity.isEqual(accountIdentity));
+}
+
+/** One of the caller's own non-tombstoned saved filters by id; `undefined` if it's missing, deleted, or someone else's. */
+export function findOwnSavedFilter(conn: DbConnection, accountIdentity: Identity, filterId: string) {
+    const saved = conn.db.allSavedCraftFilter.id.find(filterId);
+    return saved && saved.deletedAt === undefined && saved.accountIdentity.isEqual(accountIdentity) ? saved : undefined;
 }
 
 /** Any existing display for this `(account, channel)`, regardless of filter; used to prefill the modal when no `filter` argument is given. */
 function findExistingDisplayForChannel(conn: DbConnection, accountIdentity: Identity, channelId: string): DiscordWatchDisplay | null {
-    for (const display of conn.db.allDiscordWatchDisplay.iter()) {
-        if (display.deletedAt !== undefined) continue;
-        if (display.accountIdentity.isEqual(accountIdentity) && display.channelId === channelId) return display;
-    }
-    return null;
+    return conn.db.allDiscordWatchDisplay.iter()
+        .find(display => display.deletedAt === undefined && display.accountIdentity.isEqual(accountIdentity) && display.channelId === channelId) ?? null;
 }
 
 /** The existing display for this exact `(account, filter, channel)`, if any. */
 export function findExistingDisplay(conn: DbConnection, accountIdentity: Identity, filterId: string, channelId: string): DiscordWatchDisplay | null {
-    for (const display of conn.db.allDiscordWatchDisplay.iter()) {
-        if (display.deletedAt !== undefined) continue;
-        if (display.accountIdentity.isEqual(accountIdentity) && display.filterId === filterId && display.channelId === channelId) {
-            return display;
-        }
-    }
-    return null;
+    return conn.db.allDiscordWatchDisplay.iter().find(display =>
+        display.deletedAt === undefined && display.accountIdentity.isEqual(accountIdentity) && display.filterId === filterId && display.channelId === channelId,
+    ) ?? null;
 }
 
 /** Autocomplete for a `filter` option: the caller's saved filters matching the typed text. */
@@ -109,10 +107,33 @@ export const watchDisplayFilterAutocomplete: AutocompleteHandler = async (intera
     }
 
     const typed = (stringOption(leafOptions(interaction), FILTER_OPTION_NAME) ?? "").toLowerCase();
-    return [...ownSavedFilters(ctx.conn, accountIdentity)]
+    return ownSavedFilters(ctx.conn, accountIdentity)
         .filter(saved => saved.name.toLowerCase().includes(typed))
-        .slice(0, 25)
-        .map(saved => ({name: saved.name, value: saved.id}));
+        .take(25)
+        .map(saved => ({name: saved.name, value: saved.id}))
+        .toArray();
+};
+
+/** Every non-tombstoned display in the channel, whoever created it. */
+function channelDisplays(conn: DbConnection, channelId: string) {
+    return conn.db.allDiscordWatchDisplay.iter().filter(display => display.deletedAt === undefined && display.channelId === channelId);
+}
+
+/** Autocomplete for `/watch display-remove`: the channel's existing displays, labeled by their filter's name; the value is the display id. */
+const watchDisplayRemoveAutocomplete: AutocompleteHandler = async (interaction: APIApplicationCommandAutocompleteInteraction, deps: CommandDeps) => {
+    const ctx = requireInteractionContext(interaction, deps);
+    if (isCommandReply(ctx)) return [{name: "brico is temporarily unavailable — try again in a moment.", value: "unavailable"}];
+
+    if (resolveAccountIdentity(ctx.conn, discordUserIdFor(ctx)) === null) {
+        return [{name: "Link your brico account first — run /link", value: "unlinked"}];
+    }
+
+    const typed = (stringOption(leafOptions(interaction), DISPLAY_OPTION_NAME) ?? "").toLowerCase();
+    return channelDisplays(ctx.conn, ctx.channelId)
+        .map(display => ({name: ctx.conn.db.allSavedCraftFilter.id.find(display.filterId)?.name ?? "deleted filter", value: display.id}))
+        .filter(choice => choice.name.toLowerCase().includes(typed))
+        .take(25)
+        .toArray();
 };
 
 export function labelField(label: string, component: APIComponentInLabel, description?: string): APILabelComponent {
@@ -187,7 +208,7 @@ async function handleWatchDisplay(interaction: APIChatInputApplicationCommandInt
     if (isCommandReply(accountIdentity)) return accountIdentity;
 
     // Discord's cap on select menu options.
-    const savedFilters = [...ownSavedFilters(ctx.conn, accountIdentity)].slice(0, 25);
+    const savedFilters = ownSavedFilters(ctx.conn, accountIdentity).take(25).toArray();
     if (savedFilters.length === 0) {
         return {content: "You don't have any saved filters yet — save one on the Craft Browser first, then run this again."};
     }
@@ -216,7 +237,7 @@ async function handleWatchDisplaySubmit(interaction: APIModalSubmitInteraction, 
     const submission: APIModalSubmission = interaction.data;
 
     const filterId = modalStringSelectValue(submission, FILTER_FIELD_ID);
-    const filter = filterId ? [...ownSavedFilters(conn, accountIdentity)].find(saved => saved.id === filterId) : undefined;
+    const filter = filterId ? findOwnSavedFilter(conn, accountIdentity, filterId) : undefined;
     if (!filter) return {content: "That filter is no longer available — run `/watch display` again."};
 
     const style = modalStringSelectValue(submission, STYLE_FIELD_ID);
@@ -304,12 +325,12 @@ const handleWatchDisplayRemove: CommandHandler = async (interaction: APIChatInpu
     if (isCommandReply(accountIdentity)) return accountIdentity;
     const {conn, channelId} = ctx;
 
-    const filterId = stringOption(leafOptions(interaction), FILTER_OPTION_NAME);
-    const filter = filterId ? [...ownSavedFilters(conn, accountIdentity)].find(saved => saved.id === filterId) : undefined;
-    if (!filter) return {content: "That filter is no longer available — pick it again."};
-
-    const existing = findExistingDisplay(conn, accountIdentity, filter.id, channelId);
-    if (!existing) return {content: `There's no watch display for "${filter.name}" in this channel.`};
+    const displayId = stringOption(leafOptions(interaction), DISPLAY_OPTION_NAME);
+    const found = displayId ? conn.db.allDiscordWatchDisplay.id.find(displayId) : undefined;
+    const existing = found && found.deletedAt === undefined && found.channelId === channelId ? found : undefined;
+    if (!existing) return {content: "That watch display no longer exists in this channel — pick it again."};
+    const filter = conn.db.allSavedCraftFilter.id.find(existing.filterId);
+    const filterName = filter?.name ?? "deleted filter";
 
     try {
         await timeReducerCall("detach_discord_watch_display", conn.reducers.detachDiscordWatchDisplay({id: existing.id}));
@@ -319,7 +340,7 @@ const handleWatchDisplayRemove: CommandHandler = async (interaction: APIChatInpu
         return {content: `Couldn't remove that display: ${message}`};
     }
 
-    return {content: `Watch display for "${filter.name}" disabled.`};
+    return {content: `Watch display for "${filterName}" disabled.`};
 };
 
 export const watchDisplayRemoveCommand: LeafCommand = {
@@ -328,12 +349,12 @@ export const watchDisplayRemoveCommand: LeafCommand = {
     options: [
         {
             type: ApplicationCommandOptionType.String,
-            name: FILTER_OPTION_NAME,
-            description: "Which watch display to remove (by its saved filter).",
+            name: DISPLAY_OPTION_NAME,
+            description: "Which watch display in this channel to remove (by its saved filter).",
             required: true,
             autocomplete: true,
         },
     ],
     handler: handleWatchDisplayRemove,
-    autocomplete: watchDisplayFilterAutocomplete,
+    autocomplete: watchDisplayRemoveAutocomplete,
 };

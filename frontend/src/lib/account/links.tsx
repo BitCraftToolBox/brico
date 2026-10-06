@@ -82,7 +82,7 @@ export function LinkedIntegrationsProvider(props: {children: JSX.Element}) {
             setPendingRequests([]);
             return;
         }
-        setLinks(([...active.db.myLinkedIntegration.iter()] as LinkedIntegration[]).filter(l => l.revokedAt === undefined));
+        setLinks(active.db.myLinkedIntegration.iter().filter(l => l.revokedAt === undefined).toArray() as LinkedIntegration[]);
         setPendingRequests([...active.db.myIntegrationLinkRequest.iter()] as IntegrationLinkRequest[]);
     }
 

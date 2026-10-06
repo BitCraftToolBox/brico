@@ -12,7 +12,7 @@ import {timeReducerCall} from "../../metrics.ts";
 import {discordUserIdFor, isCommandReply, requireInteractionContext, requireLinkedAccount, requirePermission} from "./context.ts";
 import {integerOption, leafOptions, stringOption} from "./options.ts";
 import type {CommandDeps, CommandHandler, CommandReply, LeafCommand} from "./registry.ts";
-import {findExistingDisplay, ownSavedFilters, watchDisplayFilterAutocomplete} from "./watch.ts";
+import {findExistingDisplay, findOwnSavedFilter, watchDisplayFilterAutocomplete} from "./watch.ts";
 
 const FILTER_OPTION_NAME = "filter";
 
@@ -42,7 +42,7 @@ function makeWatchDisplayOptionCommand(spec: WatchDisplayOptionSpec): LeafComman
         const value = integerOption(options, spec.optionName);
         if (!filterId || value === undefined) return {content: "Choose a filter and a value."};
 
-        const filter = [...ownSavedFilters(conn, accountIdentity)].find(saved => saved.id === filterId);
+        const filter = findOwnSavedFilter(conn, accountIdentity, filterId);
         if (!filter) return {content: "That filter is no longer available — pick it again."};
 
         const existing = findExistingDisplay(conn, accountIdentity, filterId, channelId);

@@ -55,9 +55,9 @@ export function createDiscordNotifySettings(): DiscordNotifySettings {
     function refresh() {
         const active = conn.active();
         if (!active) return;
-        setSinks([...active.db.myDiscordNotifySink.iter()].filter(s => s.deletedAt === undefined));
-        setTargetRows([...active.db.myDiscordNotifyTarget.iter()].filter(t => t.deletedAt === undefined));
-        setTriggerRows([...active.db.myCraftFilterNotifyTrigger.iter()].filter(r => r.deletedAt === undefined && r.sink.tag === "Discord"));
+        setSinks(active.db.myDiscordNotifySink.iter().filter(s => s.deletedAt === undefined).toArray());
+        setTargetRows(active.db.myDiscordNotifyTarget.iter().filter(t => t.deletedAt === undefined).toArray());
+        setTriggerRows(active.db.myCraftFilterNotifyTrigger.iter().filter(r => r.deletedAt === undefined && r.sink.tag === "Discord").toArray());
     }
 
     let release: (() => void) | null = null;

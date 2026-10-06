@@ -145,7 +145,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
 
     async function refresh(conn: DbConnection, display: DiscordWatchDisplay, sticky: boolean, privateBountyOwners: ReadonlyMap<string, string>): Promise<void> {
         const savedFilter = conn.db.allSavedCraftFilter.id.find(display.filterId);
-        if (!savedFilter || savedFilter.deletedAt !== undefined || !savedFilter.accountIdentity.isEqual(display.accountIdentity)) {
+        if (!savedFilter || !savedFilter.accountIdentity.isEqual(display.accountIdentity)) {
             log.warn("skipping display: its saved filter is gone", {display: display.id});
             return;
         }

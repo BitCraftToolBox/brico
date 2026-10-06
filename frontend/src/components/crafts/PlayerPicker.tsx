@@ -55,7 +55,7 @@ function EntityPicker(props: {
      * Visible options, ranked so the ones someone is actually looking for surface first.
      */
     const matches = createMemo(() => {
-        const needle = search().toLowerCase().trim();
+        const needle = search().toLowerCase();
         const selected = new Set(props.selected);
         const bucket = (option: EntityOption): number => {
             if (needle) {

@@ -35,7 +35,7 @@ test("formatCompact abbreviates large numbers", () => {
 test("renderDiscordTemplate substitutes every known token", () => {
     assert.equal(
         renderDiscordTemplate("{craft:link}", ctx()),
-        "[Peerless Spool of Thread](https://brico.app/tools/crafts/123)",
+        "[Peerless Spool of Thread](<https://brico.app/tools/crafts/123>)",
     );
     assert.equal(renderDiscordTemplate("{username}", ctx()), "Vasus");
     assert.equal(renderDiscordTemplate("{claim}", ctx()), "Notsolis");
@@ -73,7 +73,7 @@ test("renderDiscordTemplate reproduces the full example layout from all four pre
     assert.equal(
         rendered,
         [
-            "**Peerless Spool of Thread [↗](https://brico.app/tools/crafts/123)**",
+            "**Peerless Spool of Thread [↗](<https://brico.app/tools/crafts/123>)**",
             "Vasus · Notsolis (R14)",
             "T2 Tailoring",
             "Effort left: 20 · 80% done",
