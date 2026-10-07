@@ -49,6 +49,19 @@ export function findNotifyTrigger(
     return null;
 }
 
+/** `filterJson` as a `FilterNode`, or `null` (after a `log.warn`) when it is not valid JSON or not a valid filter. */
+function parseWatchFilter(filterId: string, filterJson: string, log: Logger): FilterNode | null {
+    try {
+        const raw: unknown = JSON.parse(filterJson);
+        const filter = parseFilter(raw);
+        if (filter) return filter;
+        log.warn("skipping watch: invalid filterJson", {filterId, problems: validateFilter(raw).join("; ")});
+    } catch {
+        log.warn("skipping watch: filterJson is not valid JSON", {filterId});
+    }
+    return null;
+}
+
 /**
  * Watches derived from `brico-app`'s live `all_saved_craft_filter` × `all_craft_filter_notify_trigger`
  * join.
@@ -67,6 +80,9 @@ export function findNotifyTrigger(
  */
 export function createAccountWatchSource(app: BricoAppConnection, log: Logger): WatchSource {
     let lastCount = -1;
+    // Parsed filter per saved-filter id, valid while its `filterJson` is unchanged (`null` = unusable,
+    // already warned about). Keeps each `FilterNode`'s identity stable across snapshots.
+    const parsedFilters = new Map<string, {json: string; filter: FilterNode | null}>();
     return {
         origin: "brico-app all_saved_craft_filter × all_craft_filter_notify_trigger",
         watches() {
@@ -97,14 +113,13 @@ export function createAccountWatchSource(app: BricoAppConnection, log: Logger): 
                     continue;
                 }
 
-                const filter = parseFilter(JSON.parse(savedFilter.filterJson));
-                if (!filter) {
-                    log.warn("skipping watch: invalid filterJson", {
-                        filterId,
-                        problems: validateFilter(JSON.parse(savedFilter.filterJson)).join("; "),
-                    });
-                    continue;
+                let cached = parsedFilters.get(filterId);
+                if (!cached || cached.json !== savedFilter.filterJson) {
+                    cached = {json: savedFilter.filterJson, filter: parseWatchFilter(filterId, savedFilter.filterJson, log)};
+                    parsedFilters.set(filterId, cached);
                 }
+                const filter = cached.filter;
+                if (!filter) continue;
 
                 specs.push({
                     id: `watch:${filterId}`,
@@ -118,6 +133,10 @@ export function createAccountWatchSource(app: BricoAppConnection, log: Logger): 
                     },
                     filter,
                 });
+            }
+
+            for (const filterId of parsedFilters.keys()) {
+                if (!triggersByFilterId.has(filterId)) parsedFilters.delete(filterId);
             }
 
             if (specs.length !== lastCount) {

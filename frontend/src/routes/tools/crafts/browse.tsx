@@ -259,13 +259,14 @@ const COLUMNS: ColumnDef<CraftEntry, any>[] = [
         accessorFn: entry => entry.subject.payout ?? undefined,
         cell: (props: CraftCell<number>) => {
             const entry = props.row.original;
+            const label = useLabel();
             return (
                 <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                    <span class="inline-flex flex-nowrap text-nowrap gap-1.5">
-                        <PayoutRateButton rate={entry.subject.payout!} currency={entry.subject.currency!}/>
+                    <span class="inline-flex flex-nowrap text-nowrap items-center gap-1">
                         <Show when={entry.subject.bountyPrivate}>
-                            <IconLock class="size-3.5 text-muted-foreground"/>
+                            <IconLock class="size-3.5 text-muted-foreground" title={label(msg`Private bounty`)}/>
                         </Show>
+                        <PayoutRateButton rate={entry.subject.payout!} currency={entry.subject.currency!}/>
                     </span>
                 </Show>
             );
@@ -401,7 +402,7 @@ function SavedFilterChip(props: {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle><Trans>Delete "{props.saved.name}"?</Trans></DialogTitle>
-                        <DialogDescription><Trans>This can't be undone. The filter will still be available via previously created share codes.</Trans></DialogDescription>
+                        <DialogDescription><Trans>This can't be undone. The filter will still be visible via previously created share codes, Discord displays, etc.</Trans></DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setConfirmOpen(false)}><Trans>Cancel</Trans></Button>

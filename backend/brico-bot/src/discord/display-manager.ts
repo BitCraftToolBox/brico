@@ -15,7 +15,7 @@ import type {BricoAppConnection} from "../app/connection.ts";
 import type {RecipeDisplayIndex} from "../game-data/recipes.ts";
 import type {SkillNameIndex} from "../game-data/skills.ts";
 import type {Logger} from "../log.ts";
-import {timeReducerCall} from "../metrics.ts";
+import {activeDisplays, displayFilters, displayRenderDuration, displayUpdatesTotal, timeReducerCall} from "../metrics.ts";
 import type {CraftRow} from "../relay/subject.ts";
 import type {DiscordWatchDisplayContentValue} from "./display-format.ts";
 import {buildDisplayComponents, selectDisplayRows} from "./display-format.ts";
@@ -74,6 +74,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
         if (!sticky && messageId !== undefined) {
             try {
                 await options.rest.patch(Routes.channelMessage(display.channelId, messageId), {body});
+                displayUpdatesTotal.inc({outcome: "edited"});
                 await recordMessage(conn, display.id, messageId, true);
                 return;
             } catch (cause) {
@@ -82,6 +83,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
                     return;
                 }
                 if (!isNotFound(cause)) {
+                    displayUpdatesTotal.inc({outcome: "failed"});
                     log.error("failed to edit display message", {display: display.id, error: describeError(cause)});
                     return;
                 }
@@ -100,12 +102,14 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
 
         try {
             const posted = (await options.rest.post(Routes.channelMessages(display.channelId), {body})) as {id: string};
+            displayUpdatesTotal.inc({outcome: "posted"});
             await recordMessage(conn, display.id, posted.id, false);
         } catch (cause) {
             if (isForbidden(cause) || isNotFound(cause)) {
                 await markDeleted(conn, display);
                 return;
             }
+            displayUpdatesTotal.inc({outcome: "failed"});
             log.error("failed to post display message", {display: display.id, error: describeError(cause)});
         }
     }
@@ -123,6 +127,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
     /** The channel stopped accepting posts (403/404): tombstone the display (same reducer as `/watch display-remove`). */
     async function markDeleted(conn: DbConnection, display: DiscordWatchDisplay): Promise<void> {
         if (!conn.isActive) return;
+        displayUpdatesTotal.inc({outcome: "detached"});
         log.warn("display channel no longer accessible; removing display", {display: display.id, channel: display.channelId});
         await timeReducerCall(
             "detach_discord_watch_display",
@@ -135,10 +140,12 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
     async function refresh(conn: DbConnection, display: DiscordWatchDisplay, sticky: boolean): Promise<void> {
         const savedFilter = conn.db.allSavedCraftFilter.id.find(display.filterId);
         if (!savedFilter || !savedFilter.accountIdentity.isEqual(display.accountIdentity)) {
+            displayUpdatesTotal.inc({outcome: "skipped"});
             log.warn("skipping display: its saved filter is gone", {display: display.id});
             return;
         }
         if (!isDiscordDisplayStyle(display.style) || !isDiscordDisplaySortField(display.sortField) || !isDiscordDisplaySortDirection(display.sortDirection)) {
+            displayUpdatesTotal.inc({outcome: "skipped"});
             log.warn("skipping display: unknown style/sort field/sort direction", {
                 display: display.id, style: display.style, sortField: display.sortField, sortDirection: display.sortDirection,
             });
@@ -147,10 +154,12 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
 
         const filter = parseFilter(JSON.parse(savedFilter.filterJson));
         if (!filter) {
+            displayUpdatesTotal.inc({outcome: "skipped"});
             log.warn("skipping display: its saved filter's JSON is invalid", {display: display.id});
             return;
         }
 
+        const stopRender = displayRenderDuration.startTimer();
         const {rows, totalMatches} = selectDisplayRows(latestRows, filter, display.accountIdentity.toHexString(), display.sortField, display.sortDirection, display.limit);
         const components = buildDisplayComponents(
             savedFilter.name,
@@ -165,6 +174,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
             options.assetCdnBase,
             display.shareCode,
         );
+        stopRender();
         await postOrEdit(conn, display, components, sticky);
     }
 
@@ -174,10 +184,12 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
 
         const now = Date.now();
         const liveIds = new Set<string>();
+        const filterIds = new Set<string>();
 
         for (const display of conn.db.allDiscordWatchDisplay.iter()) {
             if (display.deletedAt !== undefined) continue;
             liveIds.add(display.id);
+            filterIds.add(display.filterId);
 
             let dueAt = nextDueAtMs.get(display.id);
             if (dueAt === undefined) {
@@ -208,6 +220,9 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
                 log.error("display refresh threw", {display: display.id, error: describeError(cause)});
             });
         }
+
+        activeDisplays.set(liveIds.size);
+        displayFilters.set(filterIds.size);
 
         // Drop timers for displays that disappeared.
         for (const id of [...nextDueAtMs.keys()]) {

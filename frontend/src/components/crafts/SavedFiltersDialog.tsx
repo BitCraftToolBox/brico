@@ -181,7 +181,7 @@ function ExportRowView(props: {row: ExportRow; canShare: boolean; onShare: (filt
                                     <Trans>Delete all filters?</Trans>
                                 </Show>
                             </DialogTitle>
-                            <DialogDescription><Trans>This can't be undone. The filter will still be available via previously created share codes.</Trans></DialogDescription>
+                            <DialogDescription><Trans>This can't be undone. The filter will still be visible via previously created share codes, Discord displays, etc.</Trans></DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
                             <Button variant="outline" onClick={() => setConfirmOpen(false)}><Trans>Cancel</Trans></Button>

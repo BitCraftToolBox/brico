@@ -72,8 +72,10 @@ export interface BotConfig {
      * brico's own module. `null` disables the second connection entirely.
      */
     bricoApp: SpacetimeTarget | null;
-    /** How long row changes are coalesced before the snapshot is rebuilt and filters re-run. */
+    /** How long row changes are coalesced before changed crafts are re-matched against the watches. */
     snapshotIntervalMs: number;
+    /** How often the incremental row cache is compared against a full table read. 0 disables. */
+    reconcileIntervalMs: number;
     /** First reconnect delay; doubles per consecutive failure up to `reconnectMaxDelayMs`. */
     reconnectDelayMs: number;
     reconnectMaxDelayMs: number;
@@ -216,6 +218,7 @@ export function loadConfig(): BotConfig {
         prism,
         bricoApp,
         snapshotIntervalMs: int("BRICO_BOT_SNAPSHOT_INTERVAL_MS", 1000),
+        reconcileIntervalMs: int("BRICO_BOT_RECONCILE_INTERVAL_MS", 300_000),
         reconnectDelayMs: int("BRICO_BOT_RECONNECT_DELAY_MS", 5000),
         reconnectMaxDelayMs: int("BRICO_BOT_RECONNECT_MAX_DELAY_MS", 60_000),
         stateDir,

@@ -1020,6 +1020,11 @@ msgstr ""
 msgid "Min Level"
 msgstr "crwdns4578:0crwdne4578:0"
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/tools/crafts/browse.tsx
+msgid "This can't be undone. The filter will still be visible via previously created share codes, Discord displays, etc."
+msgstr ""
+
 #: src/lib/crafts/error-vocab.ts
 msgid "This action is restricted."
 msgstr ""
@@ -2359,6 +2364,7 @@ msgid "Match any"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/browse.tsx
 msgid "Private bounty"
 msgstr ""
 
@@ -4307,11 +4313,6 @@ msgstr "crwdns5452:0crwdne5452:0"
 #: src/components/Nav.tsx
 msgid "Search..."
 msgstr "crwdns5454:0crwdne5454:0"
-
-#: src/components/crafts/SavedFiltersDialog.tsx
-#: src/routes/tools/crafts/browse.tsx
-msgid "This can't be undone. The filter will still be available via previously created share codes."
-msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Despawn Time"

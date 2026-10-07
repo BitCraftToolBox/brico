@@ -23,6 +23,7 @@ import {createBridge, type MatchEvent} from "./bridge.ts";
 import type {RecipeIndex, RecipeStatic} from "./game-data/recipes.ts";
 import {createLogger} from "./log.ts";
 import {type CraftSnapshot, EMPTY_SNAPSHOT} from "./relay/prism.ts";
+import {createRowCache} from "./relay/row-cache.ts";
 import type {AssignedBounty} from "./relay/subject.ts";
 
 const RECIPE: RecipeStatic = {
@@ -183,4 +184,32 @@ test("a private bounty is invisible to every watch but its assigner's", () => {
     assert.equal(events[0].craft?.subject.payout, 0.05);
     assert.equal(bridge.stats.matchCounts.get("other"), 0);
     assert.equal(bridge.stats.matchCounts.get("ownerless"), 0);
+});
+
+test("a tick over cache changes reports only what those changes caused, and an edited filter re-evaluates every craft", () => {
+    const events: MatchEvent[] = [];
+    let filter: FilterNode = openWorkFilter();
+    const watches: WatchSource = {
+        origin: "test",
+        watches: () => [{id: "w", name: "test watch", owner: null, filterId: null, triggers: {added: true, finished: true, removed: true}, filter}],
+    };
+    const cache = createRowCache(RECIPES);
+    const bridge = createBridge({log: createLogger("error"), watches, sink: event => void events.push(event), recipes: RECIPES, cache});
+
+    bridge.onSnapshot(snapshot([craft()]));
+    cache.craftMeta.insert(craft({entityId: 2n}));
+    bridge.onTick();
+    assert.deepEqual(events.map(e => [e.kind, e.craftId]), [["added", "2"]]);
+
+    bridge.onTick();
+    assert.equal(events.length, 1, "a tick with nothing changed reports nothing");
+
+    cache.craftMeta.update(craft({entityId: 2n}), craft({entityId: 2n, status: {tag: "Claimed"}} as Partial<CraftMeta>));
+    bridge.onTick();
+    assert.deepEqual(events.slice(1).map(e => [e.kind, e.craftId]), [["removed", "2"]]);
+
+    filter = {field: "region", cmp: "eq", value: 999};
+    bridge.onTick();
+    assert.deepEqual(events.slice(2).map(e => [e.kind, e.craftId]), [["removed", "1"]]);
+    assert.equal(bridge.stats.matchCounts.get("w"), 0);
 });

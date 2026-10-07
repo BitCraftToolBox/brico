@@ -1,23 +1,21 @@
 /**
  * prism.ts — the bridge's connection to prism's `relay-module` (the BitCraft read-mirror).
  *
- * Publishes a coalesced *snapshot* of raw relay rows rather than per-row events, for the same
- * reason `frontend/src/lib/crafts/relay.ts` does: filter evaluation needs the whole joined picture
- * (a craft's claim, its owner's membership in that claim), so a per-row callback can't usefully
- * answer "does this match" on its own, and progress deltas arrive far faster than any consumer
- * needs to re-decide. A craft's *recipe* is deliberately not part of this — that's static game
- * data, read once from offline BSATN via `../game-data/recipes.ts`, not something to subscribe to.
- *
- * The snapshot holds relay rows untouched. Projecting them into something the filter engine can
- * evaluate is `subject.ts`'s job.
+ * Row callbacks feed a `RowCache` (`row-cache.ts`), which keeps the joined craft rows current;
+ * the coalescer then ticks the consumer at most once per interval. The full table read
+ * (`readSnapshot`) seeds the cache when a subscription applies and is what the periodic
+ * reconciliation compares the cache against. A craft's *recipe* is not subscribed to — that's static
+ * game data, read once from offline BSATN via `../game-data/recipes.ts`.
  */
 import {DbConnection, type SubscriptionHandle, tables} from "@brico/bindings/prism";
 import type {ClaimInfo, ClaimMember, CraftMeta, CraftProgress, PlayerState, Region} from "@brico/bindings/prism/types";
 import type {SpacetimeTarget} from "../config.ts";
+import type {RecipeIndex} from "../game-data/recipes.ts";
 import type {Logger} from "../log.ts";
-import {snapshotBuildDuration, startStep} from "../metrics.ts";
+import {relayDriftTotal, snapshotBuildDuration, startStep} from "../metrics.ts";
 import {createCoalescer} from "../spacetime/coalesce.ts";
 import {createSupervisedConnection, type SupervisedConnection, type SupervisorOptions} from "../spacetime/connection.ts";
+import {findDrift, type RowCache, type TableFeed} from "./row-cache.ts";
 
 /** How much progress-per-player has arrived on a still-open craft, for the payout phase's per-contributor entitlement math. */
 type ContributionMap = Map<bigint, Map<bigint, bigint>>;
@@ -76,13 +74,7 @@ function isOpen(craft: CraftMeta): boolean {
     return craft.status.tag === "Active";
 }
 
-export function readSnapshot(conn: DbConnection): CraftSnapshot {
-    const progress = new Map<bigint, CraftProgress>();
-    for (const row of conn.db.craftProgress.iter()) progress.set(row.entityId, row);
-
-    const claims = new Map<bigint, ClaimInfo>();
-    for (const row of conn.db.claimInfo.iter()) claims.set(row.entityId, row);
-
+function readClaimMembers(conn: DbConnection): Pick<CraftSnapshot, "claimMembers" | "claimOwners"> {
     const claimMembers = new Map<string, ClaimMember>();
     const claimOwners = new Map<bigint, bigint[]>();
     for (const row of conn.db.claimMember.iter() as Iterable<ClaimMember>) {
@@ -93,6 +85,18 @@ export function readSnapshot(conn: DbConnection): CraftSnapshot {
             else claimOwners.set(row.claimEntityId, [row.playerEntityId]);
         }
     }
+    return {claimMembers, claimOwners};
+}
+
+/** Reads every relay table into a snapshot. */
+export function readSnapshot(conn: DbConnection): CraftSnapshot {
+    const progress = new Map<bigint, CraftProgress>();
+    for (const row of conn.db.craftProgress.iter()) progress.set(row.entityId, row);
+
+    const claims = new Map<bigint, ClaimInfo>();
+    for (const row of conn.db.claimInfo.iter()) claims.set(row.entityId, row);
+
+    const {claimMembers, claimOwners} = readClaimMembers(conn);
 
     const contributions: ContributionMap = new Map();
     for (const row of conn.db.craftContribution.iter()) {
@@ -129,24 +133,27 @@ export function readSnapshot(conn: DbConnection): CraftSnapshot {
 
 export interface PrismRelay {
     readonly connection: SupervisedConnection<DbConnection>;
-    /** Most recent coalesced snapshot; `EMPTY_SNAPSHOT` until the first subscription applies. */
-    readonly snapshot: CraftSnapshot;
     start(): void;
     stop(): void;
     /**
-     * Marks the coalescer dirty so the next tick (within `snapshotIntervalMs`) rebuilds and
-     * dispatches, even though nothing in prism itself changed — used to promptly reflect a
-     * `brico-app`-only change (a bounty rule or loyalty reward edit) without a second timer.
+     * Marks the coalescer dirty so the next tick (within `snapshotIntervalMs`) runs, even though
+     * nothing in prism itself changed — used to promptly reflect a `brico-app`-only change (a bounty
+     * rule or loyalty reward edit) without a second timer.
      */
     mark(): void;
 }
 
 export interface PrismRelayOptions extends SupervisorOptions {
     target: SpacetimeTarget;
-    /** How long row changes are coalesced before the snapshot is rebuilt. */
+    /** How long row changes are coalesced before `onTick` runs. */
     snapshotIntervalMs: number;
-    /** Called with each freshly built snapshot. This is what drives the bridge. */
-    onSnapshot(snapshot: CraftSnapshot): void;
+    /** Kept current by the relay's row callbacks; the consumer drains it from `onTick`. */
+    cache: RowCache;
+    recipes: RecipeIndex;
+    /** Called once per coalesced tick, after the cache has been loaded from the initial subscription. */
+    onTick(): void;
+    /** How often to compare the cache against a full table read, adopting the full read on drift. 0 disables. */
+    reconcileIntervalMs: number;
     /**
      * Called specifically on a `claim_member` row change (insert/delete/update), alongside (not
      * instead of) the normal coalescer mark — lets `BountyEngine` mark its loyalty-bonus resync
@@ -156,19 +163,42 @@ export interface PrismRelayOptions extends SupervisorOptions {
     onClaimMembershipChanged?(): void;
 }
 
+/** The slice of a generated table the relay attaches row callbacks to. */
+interface RowEvents<T> {
+    onInsert(cb: (ctx: {event: {tag: string}}, row: T) => void): void;
+    onDelete(cb: (ctx: {event: {tag: string}}, row: T) => void): void;
+    onUpdate(cb: (ctx: {event: {tag: string}}, before: T, after: T) => void): void;
+}
+
 export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
     const log: Logger = options.log.child("relay");
-    let snapshot: CraftSnapshot = EMPTY_SNAPSHOT;
+    const {cache} = options;
     let current: DbConnection | null = null;
+    // Row callbacks are ignored until the initial subscription has been loaded into the cache.
+    let live = false;
+    let lastReconcileMs = Date.now();
+
+    const reconcile = (conn: DbConnection) => {
+        const stop = startStep("reconcile");
+        const drift = findDrift(cache, readSnapshot(conn), options.recipes);
+        if (drift) {
+            relayDriftTotal.inc();
+            log.error("row cache drifted from the relay tables; adopting a full read", drift);
+            cache.load(readSnapshot(conn));
+            coalescer.mark();
+        }
+        stop();
+    };
 
     const rebuild = () => {
-        if (!current?.isActive) return;
-        const timer = snapshotBuildDuration.startTimer();
-        snapshot = readSnapshot(current);
-        timer();
+        if (!current?.isActive || !live) return;
         const stopTick = startStep("tick_total");
-        options.onSnapshot(snapshot);
+        options.onTick();
         stopTick();
+        if (options.reconcileIntervalMs > 0 && Date.now() - lastReconcileMs >= options.reconcileIntervalMs) {
+            lastReconcileMs = Date.now();
+            reconcile(current);
+        }
     };
     const coalescer = createCoalescer(rebuild, options.snapshotIntervalMs);
 
@@ -188,42 +218,67 @@ export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
                     .build(),
             onConnected: (conn, ctx) => {
                 current = conn;
+                live = false;
 
-                for (const table of [
-                    conn.db.craftMeta,
-                    conn.db.craftProgress,
-                    conn.db.claimInfo,
-                    conn.db.claimMember,
-                    conn.db.craftContribution,
-                    conn.db.playerState,
-                    conn.db.region,
-                ]) {
-                    table.onInsert(coalescer.mark);
-                    table.onDelete(coalescer.mark);
-                    table.onUpdate(coalescer.mark);
-                }
+                // Rows delivered with the initial subscription are covered by the full read at
+                // `onApplied`, so only later transactions reach the cache.
+                const accepts = (callbackCtx: {event: {tag: string}}) => live && callbackCtx.event.tag !== "SubscribeApplied";
+                const feed = <T>(table: RowEvents<T>, target: TableFeed<T>, changed: (before: T, after: T) => boolean = () => true) => {
+                    table.onInsert((callbackCtx, row) => {
+                        if (!accepts(callbackCtx)) return;
+                        target.insert(row);
+                        coalescer.mark();
+                    });
+                    table.onDelete((callbackCtx, row) => {
+                        if (!accepts(callbackCtx)) return;
+                        target.delete(row);
+                        coalescer.mark();
+                    });
+                    table.onUpdate((callbackCtx, before, after) => {
+                        if (!accepts(callbackCtx)) return;
+                        target.update(before, after);
+                        if (changed(before, after)) coalescer.mark();
+                    });
+                };
+                feed(conn.db.craftMeta, cache.craftMeta);
+                feed(conn.db.craftProgress, cache.craftProgress);
+                feed(conn.db.craftContribution, cache.craftContribution);
+                feed(conn.db.claimInfo, cache.claimInfo);
+                feed(conn.db.claimMember, cache.claimMember);
+                feed(conn.db.region, cache.region);
+                // A player's `online` flag and region churn constantly and nothing reads them; only a
+                // rename changes what a row says.
+                feed(conn.db.playerState, cache.playerState, (before, after) => before.name !== after.name);
 
-                // Narrower than the loop above: only `claim_member` changes should mark a
+                // Narrower than the feeds above: only `claim_member` changes should mark a
                 // loyalty-bonus resync pending, alongside (not instead of) the normal coalescer mark.
                 if (options.onClaimMembershipChanged) {
-                    conn.db.claimMember.onInsert(options.onClaimMembershipChanged);
-                    conn.db.claimMember.onDelete(options.onClaimMembershipChanged);
-                    conn.db.claimMember.onUpdate(options.onClaimMembershipChanged);
+                    const notify = (callbackCtx: {event: {tag: string}}) => {
+                        if (accepts(callbackCtx)) options.onClaimMembershipChanged?.();
+                    };
+                    conn.db.claimMember.onInsert(notify);
+                    conn.db.claimMember.onDelete(notify);
+                    conn.db.claimMember.onUpdate(notify);
                 }
 
                 let subscription: SubscriptionHandle | null = conn
                     .subscriptionBuilder()
                     .onApplied(() => {
                         if (!ctx.isCurrent()) return;
+                        const timer = snapshotBuildDuration.startTimer();
+                        cache.load(readSnapshot(conn));
+                        timer();
+                        live = true;
+                        lastReconcileMs = Date.now();
                         ctx.setLive();
                         coalescer.flush();
                         log.info("initial snapshot applied", {
-                            openCrafts: snapshot.crafts.length,
-                            claims: snapshot.claims.size,
-                            claimMembers: snapshot.claimMembers.size,
-                            contributingCrafts: snapshot.contributions.size,
-                            players: snapshot.players.size,
-                            regions: snapshot.regions.size,
+                            openCrafts: cache.baseRows.size,
+                            claims: cache.snapshot.claims.size,
+                            claimMembers: cache.snapshot.claimMembers.size,
+                            contributingCrafts: cache.snapshot.contributions.size,
+                            players: cache.snapshot.players.size,
+                            regions: cache.snapshot.regions.size,
                         });
                     })
                     .onError(errorCtx => {
@@ -240,6 +295,7 @@ export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
                     ]);
 
                 return () => {
+                    live = false;
                     subscription?.unsubscribe();
                     subscription = null;
                     if (current === conn) current = null;
@@ -251,9 +307,6 @@ export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
 
     return {
         connection,
-        get snapshot() {
-            return snapshot;
-        },
         start() {
             coalescer.start();
             connection.start();

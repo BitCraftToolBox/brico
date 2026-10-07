@@ -457,6 +457,98 @@ export function evaluateFilter(node: FilterNode, subject: CraftSubject): boolean
     }
 }
 
+/** A `FilterNode` precompiled by `compileFilter`; same answers as `evaluateFilter`, cheaper per call. */
+export type CompiledFilter = (subject: CraftSubject) => boolean;
+
+function compileLeaf(leaf: FilterLeaf): CompiledFilter {
+    const meta = FIELDS[leaf.field];
+    if (!meta) return () => false;
+    if (meta.quantified) {
+        const field = leaf.field;
+        const all = (leaf.quantifier ?? "any") === "all";
+        const byKey = field === "inputItem";
+        return subject => {
+            const items = subject.inputItems;
+            if (items.length === 0) return false;
+            for (const item of items) {
+                const value = byKey ? item.key : item.tag;
+                const hit = value !== null && compareScalar(value, leaf);
+                if (hit !== all) return hit;
+            }
+            return all;
+        };
+    }
+    if (meta.setValued) {
+        return subject => subject.ownerClaimAccess !== null && compareSet(subject.ownerClaimAccess, leaf);
+    }
+
+    const field = leaf.field as Exclude<FilterField, "ownerAccess" | "inputItem" | "inputItemTag">;
+    const {cmp, value} = leaf;
+    switch (cmp) {
+        case "eq":
+            return subject => {
+                const v = subject[field];
+                return v !== null && v !== undefined && v === value;
+            };
+        case "neq":
+            return subject => {
+                const v = subject[field];
+                return v !== null && v !== undefined && v !== value;
+            };
+        case "in":
+        case "notIn": {
+            if (!Array.isArray(value)) return () => false;
+            const members = new Set<FilterValue>(value);
+            const wanted = cmp === "in";
+            return subject => {
+                const v = subject[field];
+                return v !== null && v !== undefined && members.has(v) === wanted;
+            };
+        }
+        case "gte":
+            return subject => {
+                const v = subject[field];
+                return typeof v === "number" && typeof value === "number" && v >= value;
+            };
+        case "lte":
+            return subject => {
+                const v = subject[field];
+                return typeof v === "number" && typeof value === "number" && v <= value;
+            };
+        default:
+            return () => false;
+    }
+}
+
+/**
+ * Compiles `node` once into a closure that answers exactly what `evaluateFilter(node, subject)` does.
+ * Worth it when one filter is applied to many subjects (a watch over every open craft); `node` must
+ * not be mutated afterward.
+ */
+export function compileFilter(node: FilterNode): CompiledFilter {
+    if (isLeaf(node)) return compileLeaf(node);
+    switch (node.op) {
+        case "and": {
+            const children = node.children.map(compileFilter);
+            return subject => {
+                for (const child of children) if (!child(subject)) return false;
+                return true;
+            };
+        }
+        case "or": {
+            const children = node.children.map(compileFilter);
+            return subject => {
+                for (const child of children) if (child(subject)) return true;
+                return false;
+            };
+        }
+        case "not": {
+            const child = compileFilter(node.child);
+            return subject => !child(subject);
+        }
+    }
+}
+
 /**
  * Would `node` match `subject` if the craft had not (yet) finished?
  *
@@ -469,9 +561,9 @@ export function evaluateFilter(node: FilterNode, subject: CraftSubject): boolean
  * was the *only* thing that changed, and a watcher whose mental model is "tell me about this open
  * work" should hear "finished" once, not silence followed by an unexplained "removed".
  */
-export function wouldMatchIfOpen(node: FilterNode, subject: CraftSubject): boolean {
-    if (!subject.complete) return evaluateFilter(node, subject);
-    return evaluateFilter(node, {...subject, complete: false});
+export function wouldMatchIfOpen(node: FilterNode | CompiledFilter, subject: CraftSubject): boolean {
+    const test = typeof node === "function" ? node : (candidate: CraftSubject) => evaluateFilter(node, candidate);
+    return test(subject.complete ? {...subject, complete: false} : subject);
 }
 
 // ── Validation / parsing ──────────────────────────────────────

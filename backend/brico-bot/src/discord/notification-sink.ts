@@ -16,7 +16,7 @@ import type {MatchEvent, MatchSink} from "../bridge.ts";
 import type {RecipeDisplayIndex} from "../game-data/recipes.ts";
 import type {SkillNameIndex} from "../game-data/skills.ts";
 import type {Logger} from "../log.ts";
-import {timeReducerCall} from "../metrics.ts";
+import {notificationsTotal, timeReducerCall} from "../metrics.ts";
 import type {CraftRow} from "../relay/subject.ts";
 
 export interface DiscordNotificationSinkOptions {
@@ -147,7 +147,9 @@ async function sendNotification(
 
     try {
         await options.rest.post(Routes.channelMessages(sink.channelId), {body});
+        notificationsTotal.inc({sink: "discord", kind: event.kind, outcome: "ok"});
     } catch (cause) {
+        notificationsTotal.inc({sink: "discord", kind: event.kind, outcome: isGone(cause) ? "detached" : "failed"});
         if (isGone(cause)) {
             log.warn("notify sink channel no longer accessible; removing sink", {sink: sink.id, channel: sink.channelId});
             const conn = options.app.connection?.connection;

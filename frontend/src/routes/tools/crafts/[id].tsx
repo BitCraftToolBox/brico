@@ -531,11 +531,11 @@ export default function CraftDetail() {
                                     <MetaRow label={label(msg`Bounty`)}>
                                         <Show when={bounty()} fallback={<span class="text-muted-foreground">—</span>}>
                                             {b => (
-                                                <span class="inline-flex flex-nowrap text-nowrap gap-1.5">
-                                                    <PayoutRateButton rate={Number(b().ratioNumerator) / Number(b().ratioDenominator)} currency={b().currency}/>
+                                                <span class="inline-flex flex-nowrap text-nowrap items-center gap-1">
                                                     <Show when={b().private}>
                                                         <IconLock class="size-3.5 text-muted-foreground" title={label(msg`Private bounty`)}/>
                                                     </Show>
+                                                    <PayoutRateButton rate={Number(b().ratioNumerator) / Number(b().ratioDenominator)} currency={b().currency}/>
                                                 </span>
                                             )}
                                         </Show>

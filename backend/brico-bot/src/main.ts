@@ -33,6 +33,7 @@ import {createLinkHttpServer} from "./http-server.ts";
 import {createLogger} from "./log.ts";
 import {timeReducerCall} from "./metrics.ts";
 import {createPrismRelay, type PrismRelay} from "./relay/prism.ts";
+import {createRowCache} from "./relay/row-cache.ts";
 import {createFileTokenStore} from "./spacetime/token-store.ts";
 
 async function main(): Promise<void> {
@@ -221,8 +222,10 @@ async function main(): Promise<void> {
 
     bounty = createBountyEngine(app, log);
 
+    const cache = createRowCache(recipes);
     const bridge = createBridge({
         log,
+        cache,
         watches,
         sink: combineSinks(
             createLoggingSink(log),
@@ -238,7 +241,10 @@ async function main(): Promise<void> {
         ...supervisor,
         target: config.prism,
         snapshotIntervalMs: config.snapshotIntervalMs,
-        onSnapshot: snapshot => bridge.onSnapshot(snapshot),
+        cache,
+        recipes,
+        reconcileIntervalMs: config.reconcileIntervalMs,
+        onTick: () => bridge.onTick(),
         onClaimMembershipChanged: () => bounty?.markMembershipChanged(),
     });
     relay.start();

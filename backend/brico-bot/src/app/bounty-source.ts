@@ -34,6 +34,30 @@ export interface BountyRuleSpec {
     private: boolean;
 }
 
+/** Parsed filter per rule id, valid while the rule's `filterJson` is unchanged; `null` = unusable (already warned about). */
+const parsedRuleFilters = new Map<string, {json: string; filter: FilterNode | null}>();
+
+function parseRuleFilter(rule: BountyRule, log: Logger): FilterNode | null {
+    const cached = parsedRuleFilters.get(rule.id);
+    if (cached && cached.json === rule.filterJson) return cached.filter;
+
+    let filter: FilterNode | null = null;
+    try {
+        const parsedJson: unknown = JSON.parse(rule.filterJson);
+        const problems = validateFilter(parsedJson, "filter", ["payout", "currency"]);
+        if (problems.length > 0) {
+            log.warn("skipping bounty rule: invalid or disallowed filter", {ruleId: rule.id, problems: problems.join("; ")});
+        } else {
+            filter = parseFilter(parsedJson);
+            if (!filter) log.warn("skipping bounty rule: filter did not parse", {ruleId: rule.id});
+        }
+    } catch {
+        log.warn("skipping bounty rule: filterJson is not valid JSON", {ruleId: rule.id});
+    }
+    parsedRuleFilters.set(rule.id, {json: rule.filterJson, filter});
+    return filter;
+}
+
 /** `bitcraft-ea2` player entity id -> the brico account it's linked to, revoked links excluded. */
 export function resolvePlayerAccounts(app: BricoAppConnection): Map<bigint, Identity> {
     const byPlayer = new Map<bigint, Identity>();
@@ -50,35 +74,21 @@ export function resolvePlayerAccounts(app: BricoAppConnection): Map<bigint, Iden
 /**
  * Every account's usable bounty rules, keyed by account identity hex and sorted by priority
  * (ascending — `reorderBountyRules` rewrites priorities to `0..N-1`, so 0 is evaluated first).
- * Tombstoned, unparseable, or `payout`/`currency`-referencing rules are skipped with a `log.warn`,
- * never thrown — a malformed or invalid rule must not take the bridge down.
+ * Tombstoned, unparseable, or `payout`/`currency`-referencing rules are skipped (warned about once
+ * per edit), never thrown. Parsed filters are cached per rule so their identity is stable across ticks — a malformed or invalid rule must not take the bridge down.
  */
 export function loadBountyRules(app: BricoAppConnection, log: Logger): Map<string, BountyRuleSpec[]> {
     const byAccount = new Map<string, BountyRuleSpec[]>();
     const conn = app.connection?.connection;
     if (!conn?.isActive || !app.isLive) return byAccount;
 
+    const seen = new Set<string>();
     for (const rule of conn.db.allBountyRule.iter() as Iterable<BountyRule>) {
         if (rule.deletedAt !== undefined) continue;
+        seen.add(rule.id);
 
-        let parsedJson: unknown;
-        try {
-            parsedJson = JSON.parse(rule.filterJson);
-        } catch {
-            log.warn("skipping bounty rule: filterJson is not valid JSON", {ruleId: rule.id});
-            continue;
-        }
-
-        const problems = validateFilter(parsedJson, "filter", ["payout", "currency"]);
-        if (problems.length > 0) {
-            log.warn("skipping bounty rule: invalid or disallowed filter", {ruleId: rule.id, problems: problems.join("; ")});
-            continue;
-        }
-        const filter = parseFilter(parsedJson);
-        if (!filter) {
-            log.warn("skipping bounty rule: filter did not parse", {ruleId: rule.id});
-            continue;
-        }
+        const filter = parseRuleFilter(rule, log);
+        if (!filter) continue;
 
         const key = rule.accountIdentity.toHexString();
         const specs = byAccount.get(key);
@@ -87,6 +97,9 @@ export function loadBountyRules(app: BricoAppConnection, log: Logger): Map<strin
         else byAccount.set(key, [spec]);
     }
 
+    for (const id of parsedRuleFilters.keys()) {
+        if (!seen.has(id)) parsedRuleFilters.delete(id);
+    }
     for (const specs of byAccount.values()) specs.sort((a, b) => a.priority - b.priority);
     return byAccount;
 }

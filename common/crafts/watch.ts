@@ -16,7 +16,7 @@
  * localStorage-backed set and toast/notification sink) and stays there.
  */
 import type {CraftSubject} from "./filter.ts";
-import {evaluateFilter, type FilterNode, wouldMatchIfOpen} from "./filter.ts";
+import {type CompiledFilter, evaluateFilter, type FilterNode, wouldMatchIfOpen} from "./filter.ts";
 
 /** The minimum shape a matcher needs from a row: its identity and its evaluable projection. */
 export interface MatchRow {
@@ -57,7 +57,14 @@ export interface WatchMatcher<TRow extends MatchRow> {
      * cheap (called once per row per update) and return the same row when nothing is hidden. Omit it
      * when every row is visible.
      */
-    update(filter: FilterNode, rows: readonly TRow[], view?: (row: TRow) => TRow): MatchEvent<TRow>[];
+    update(filter: FilterNode | CompiledFilter, rows: readonly TRow[], view?: (row: TRow) => TRow): MatchEvent<TRow>[];
+    /**
+     * Same transitions as `update`, but only for `changed` rows (new or modified, current state) and
+     * `removedIds` (crafts that left the source entirely); every other row is assumed unchanged since
+     * the last `update`/`applyDelta` with this same `filter` and `view`. Events come out in `changed`
+     * order, then `removedIds` order. Requires a primed matcher — prime with `update` first.
+     */
+    applyDelta(filter: FilterNode | CompiledFilter, changed: readonly TRow[], removedIds: readonly string[], view?: (row: TRow) => TRow): MatchEvent<TRow>[];
     /** Crafts currently matching, as of the last `update`. */
     readonly matchCount: number;
     /** False until the first snapshot has been absorbed — see `update`. */
@@ -85,12 +92,13 @@ export function createWatchMatcher<TRow extends MatchRow>(): WatchMatcher<TRow> 
 
         update(filter, rows, view) {
             const events: MatchEvent<TRow>[] = [];
-            const byId = new Map(rows.map(row => [row.id, row]));
+            const test = typeof filter === "function" ? filter : (subject: CraftSubject) => evaluateFilter(filter, subject);
+            let byId: Map<string, TRow> | undefined;
             const stillMatched = new Map<string, MatchedEntry<TRow>>();
 
             for (const source of rows) {
                 const row = view ? view(source) : source;
-                if (!evaluateFilter(filter, row.subject)) continue;
+                if (!test(row.subject)) continue;
                 const previous = matched.get(row.id);
                 stillMatched.set(row.id, {complete: row.subject.complete, row});
                 if (!primed) continue;
@@ -110,6 +118,7 @@ export function createWatchMatcher<TRow extends MatchRow>(): WatchMatcher<TRow> 
                     // Prefer the current snapshot's row (it's still there, just not matching), and
                     // fall back to the last row seen while it did match — the snapshot this update
                     // was fed may already have dropped the craft entirely (claimed/removed).
+                    byId ??= new Map(rows.map(row => [row.id, row]));
                     const current = byId.get(craftId);
                     const row = current ? (view ? view(current) : current) : previous.row;
                     // A craft that finished — and would still match this filter if it hadn't — is a
@@ -128,6 +137,37 @@ export function createWatchMatcher<TRow extends MatchRow>(): WatchMatcher<TRow> 
             }
 
             matched = stillMatched;
+            return events;
+        },
+
+        applyDelta(filter, changed, removedIds, view) {
+            if (!primed) throw new Error("applyDelta requires a primed matcher; call update first");
+            const events: MatchEvent<TRow>[] = [];
+            const test = typeof filter === "function" ? filter : (subject: CraftSubject) => evaluateFilter(filter, subject);
+
+            for (const source of changed) {
+                const row = view ? view(source) : source;
+                const previous = matched.get(row.id);
+                if (test(row.subject)) {
+                    matched.set(row.id, {complete: row.subject.complete, row});
+                    if (previous === undefined) {
+                        events.push({kind: "added", craft: row, craftId: row.id});
+                    } else if (!previous.complete && row.subject.complete) {
+                        events.push({kind: "finished", craft: row, craftId: row.id});
+                    }
+                } else if (previous !== undefined) {
+                    matched.delete(row.id);
+                    const kind = !previous.complete && row.subject.complete && wouldMatchIfOpen(filter, row.subject) ? "finished" : "removed";
+                    events.push({kind, craft: row, craftId: row.id});
+                }
+            }
+
+            for (const craftId of removedIds) {
+                const previous = matched.get(craftId);
+                if (previous === undefined) continue;
+                matched.delete(craftId);
+                events.push({kind: "removed", craft: previous.row, craftId});
+            }
             return events;
         },
     };

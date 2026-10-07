@@ -7,31 +7,52 @@ import {collectDefaultMetrics, Counter, Gauge, Histogram, Registry} from "prom-c
 export const registry = new Registry();
 collectDefaultMetrics({register: registry});
 
-/** Time to rebuild a `CraftSnapshot` from prism's relay tables (`relay/prism.ts`'s `readSnapshot`). */
+/** Sub-millisecond to one-second buckets; the per-tick work is mostly a few milliseconds. */
+const FINE_BUCKETS = [0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1];
+
+/** Time to read prism's relay tables into the row cache when a subscription applies (`relay/prism.ts`'s `readSnapshot`). */
 export const snapshotBuildDuration = new Histogram({
     name: "brico_bot_snapshot_build_duration_seconds",
-    help: "Time to build a CraftSnapshot from prism's relay tables",
+    help: "Time to read prism's relay tables into the row cache",
     registers: [registry],
 });
 
-/** Time to run every watch's filter against one snapshot (the loop in `bridge.ts`'s `onSnapshot`). */
+/** Times the row cache disagreed with a full read of the relay tables during reconciliation. */
+export const relayDriftTotal = new Counter({
+    name: "brico_bot_relay_drift_total",
+    help: "Reconciliations that found the row cache differing from a full read of the relay tables",
+    registers: [registry],
+});
+
+/** Crafts whose rows changed in one tick (the rows the watch matchers re-evaluated). */
+export const dirtyCraftsPerTick = new Histogram({
+    name: "brico_bot_dirty_crafts_per_tick",
+    help: "Crafts whose row changed since the previous tick",
+    buckets: [0, 1, 5, 10, 25, 50, 100, 150, 250, 500, 1000, 5000, 20000],
+    registers: [registry],
+});
+
+/** Time to run every watch's filter against one snapshot (the loop in `bridge.ts`'s `tick`). */
 export const watchEvaluationDuration = new Histogram({
     name: "brico_bot_watch_evaluation_duration_seconds",
-    help: "Time to evaluate every watch's filter against one snapshot",
+    help: "Time to evaluate every watch's filter against the crafts that changed in one tick",
+    buckets: FINE_BUCKETS,
     registers: [registry],
 });
 
 /** Time spent resolving + writing bounty assignments for one snapshot (`BountyEngine.assign`). */
 export const bountyAssignDuration = new Histogram({
     name: "brico_bot_bounty_assign_duration_seconds",
-    help: "Time to resolve and write craft bounty assignments for one snapshot",
+    help: "Time to resolve and write craft bounty assignments for one tick",
+    buckets: FINE_BUCKETS,
     registers: [registry],
 });
 
 /** Time spent resolving + writing per-contributor entitlements (`BountyEngine.updateEntitlements`). */
 export const bountyEntitlementDuration = new Histogram({
     name: "brico_bot_bounty_entitlement_duration_seconds",
-    help: "Time to resolve and write per-contributor bounty entitlements for one snapshot",
+    help: "Time to resolve and write per-contributor bounty entitlements for one tick",
+    buckets: FINE_BUCKETS,
     registers: [registry],
 });
 
@@ -40,7 +61,7 @@ export const tickStepDuration = new Histogram({
     name: "brico_bot_tick_step_duration_seconds",
     help: "Time spent in one step of the per-snapshot pipeline",
     labelNames: ["step"] as const,
-    buckets: [0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1],
+    buckets: FINE_BUCKETS,
     registers: [registry],
 });
 
@@ -77,6 +98,44 @@ export const activeWatches = new Gauge({
 export const currentMatches = new Gauge({
     name: "brico_bot_current_matches",
     help: "Sum of current match counts across all watches, as of the most recent snapshot",
+    registers: [registry],
+});
+
+/** Notifications handed to a sink, by sink (`toast`/`discord`), transition kind and outcome (`ok`, `failed`, `dropped`, `detached`). */
+export const notificationsTotal = new Counter({
+    name: "brico_bot_notifications_total",
+    help: "Notifications sent to a sink, by sink, kind and outcome",
+    labelNames: ["sink", "kind", "outcome"] as const,
+    registers: [registry],
+});
+
+/** `/watch display` messages currently being kept in sync. */
+export const activeDisplays = new Gauge({
+    name: "brico_bot_active_displays",
+    help: "Live Discord watch displays",
+    registers: [registry],
+});
+
+/** Distinct saved filters those displays evaluate — includes filters that were deleted but are still displayed. */
+export const displayFilters = new Gauge({
+    name: "brico_bot_display_filters",
+    help: "Distinct saved filters evaluated by live Discord watch displays",
+    registers: [registry],
+});
+
+/** Display refreshes by outcome: `edited`, `posted`, `skipped` (filter gone or invalid), `failed`, `detached` (channel no longer accessible). */
+export const displayUpdatesTotal = new Counter({
+    name: "brico_bot_display_updates_total",
+    help: "Discord watch display refreshes by outcome",
+    labelNames: ["outcome"] as const,
+    registers: [registry],
+});
+
+/** Time to select and render one display's rows (filter evaluation over every open craft plus formatting), excluding the Discord call. */
+export const displayRenderDuration = new Histogram({
+    name: "brico_bot_display_render_duration_seconds",
+    help: "Time to select and render one Discord watch display's rows",
+    buckets: FINE_BUCKETS,
     registers: [registry],
 });
 

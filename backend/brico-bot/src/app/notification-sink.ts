@@ -6,7 +6,7 @@
 import {Identity} from "spacetimedb";
 import type {MatchSink} from "../bridge.ts";
 import type {Logger} from "../log.ts";
-import {timeReducerCall} from "../metrics.ts";
+import {notificationsTotal, timeReducerCall} from "../metrics.ts";
 import type {BricoAppConnection} from "./connection.ts";
 import {findNotifyTrigger} from "./watch-source.ts";
 
@@ -19,6 +19,7 @@ export function createNotificationSink(app: BricoAppConnection, log: Logger): Ma
         const conn = app.connection?.connection;
         if (!conn?.isActive) {
             scoped.warn("dropping notification: brico-app not live", {watch: event.watch.id, kind: event.kind});
+            notificationsTotal.inc({sink: "toast", kind: event.kind, outcome: "dropped"});
             return;
         }
 
@@ -40,7 +41,10 @@ export function createNotificationSink(app: BricoAppConnection, log: Logger): Ma
                 claimName: craft?.claimName ?? undefined,
                 ownerName: craft?.ownerName ?? undefined,
             },
-        })).catch(cause => {
+        })).then(() => {
+            notificationsTotal.inc({sink: "toast", kind: event.kind, outcome: "ok"});
+        }).catch(cause => {
+            notificationsTotal.inc({sink: "toast", kind: event.kind, outcome: "failed"});
             scoped.error("post_craft_notification failed", {
                 watch: event.watch.id,
                 kind: event.kind,

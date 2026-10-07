@@ -5,11 +5,12 @@
  */
 import {composeTemplateFromPresets, type DiscordDisplaySortDirection, type DiscordDisplaySortField, type DiscordDisplayStyle,} from "@brico/crafts/discord-display";
 import {renderDiscordTemplate} from "@brico/crafts/discord-template";
-import {evaluateFilter, type FilterNode} from "@brico/crafts/filter";
+import type {FilterNode} from "@brico/crafts/filter";
 import {tierColorHex} from "@brico/crafts/icon-render";
 import type {APIActionRowComponent, APIButtonComponentWithURL, APIContainerComponent, APIMessageTopLevelComponent, APISectionComponent} from "discord-api-types/v10";
 import {ButtonStyle, ComponentType} from "discord-api-types/v10";
 
+import {compiledFilter} from "../compiled-filter.ts";
 import type {RecipeDisplayIndex, RecipeDisplayInfo, RecipeIconRef} from "../game-data/recipes.ts";
 import type {SkillNameIndex} from "../game-data/skills.ts";
 import {type CraftRow, rowFor} from "../relay/subject.ts";
@@ -64,10 +65,11 @@ export function selectDisplayRows(
 ): DisplaySelection {
     const ascending = compareAscending(sortField);
     const compare = sortDirection === "desc" ? (a: CraftRow, b: CraftRow) => -ascending(a, b) : ascending;
+    const test = compiledFilter(filter);
     const matches: CraftRow[] = [];
     for (const row of rows) {
         const visible = rowFor(row, viewerAccountHex);
-        if (evaluateFilter(filter, visible.subject)) matches.push(visible);
+        if (test(visible.subject)) matches.push(visible);
     }
     matches.sort(compare);
     return {rows: matches.slice(0, limit), totalMatches: matches.length};

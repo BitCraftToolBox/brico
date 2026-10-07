@@ -45,6 +45,9 @@ function subject(overrides: Partial<CraftSubject> = {}): CraftSubject {
 function row(overrides: Partial<CraftRow> = {}): CraftRow {
     return {
         id: "1",
+        entityId: 1n,
+        claimEntityId: 0n,
+        ownerEntityId: 0n,
         regionId: 14,
         regionName: "Lumethis (R14)",
         recipeId: 7,

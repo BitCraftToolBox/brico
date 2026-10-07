@@ -5,6 +5,7 @@
 import assert from "node:assert/strict";
 import {describe, it} from "node:test";
 import {
+    compileFilter,
     type CraftSubject,
     describeFilter,
     evaluateFilter,
@@ -479,5 +480,62 @@ describe("wouldMatchIfOpen", () => {
         const tierOnly: FilterNode = {field: "tier", cmp: "eq", value: 4};
         assert.equal(wouldMatchIfOpen(tierOnly, craft({complete: true, tier: 4})), true);
         assert.equal(wouldMatchIfOpen(tierOnly, craft({complete: true, tier: 5})), false);
+    });
+});
+
+describe("compileFilter", () => {
+    // Small seeded PRNG so a failure reproduces.
+    function rng(seed: number) {
+        let state = seed;
+        return () => {
+            state = (state * 1664525 + 1013904223) >>> 0;
+            return state / 2 ** 32;
+        };
+    }
+
+    it("answers exactly what evaluateFilter does over random filters and subjects", () => {
+        const rand = rng(42);
+        const pick = <T>(items: readonly T[]): T => items[Math.floor(rand() * items.length)]!;
+
+        const leaves: (() => FilterNode)[] = [
+            () => ({field: "region", cmp: pick(["eq", "neq"] as const), value: pick([3, 4])}),
+            () => ({field: "tier", cmp: pick(["gte", "lte", "eq"] as const), value: pick([1, 4, 6])}),
+            () => ({field: "skill", cmp: pick(["in", "notIn"] as const), value: [12, 5]}),
+            () => ({field: "skill", cmp: "in", value: 12}),
+            () => ({field: "complete", cmp: pick(["eq", "neq"] as const), value: pick([true, false])}),
+            () => ({field: "payout", cmp: pick(["gte", "lte", "neq"] as const), value: pick([0, 0.5])}),
+            () => ({field: "currency", cmp: pick(["eq", "in", "notIn"] as const), value: pick(["hex-coin", ["hex-coin"]]) as never}),
+            () => ({field: "claim", cmp: pick(["eq", "neq"] as const), value: "360287970189639680"}),
+            () => ({field: "ownerAccess", cmp: pick(["eq", "neq", "in", "notIn", "all"] as const), value: pick(["build", ["build", "owner"]]) as never}),
+            () => ({field: "inputItem", cmp: pick(["eq", "neq", "in"] as const), value: pick(["item:2", ["item:2", "item:9"]]) as never, quantifier: pick(["any", "all", undefined])}),
+            () => ({field: "inputItemTag", cmp: pick(["eq", "neq", "notIn"] as const), value: pick(["Ingredients", ["Ingredients"]]) as never, quantifier: pick(["any", "all"] as const)}),
+            () => ({field: "nonsense" as never, cmp: "eq", value: 1}),
+        ];
+        const tree = (depth: number): FilterNode => {
+            if (depth === 0 || rand() < 0.35) return pick(leaves)();
+            const kind = pick(["and", "or", "not"] as const);
+            if (kind === "not") return {op: "not", child: tree(depth - 1)};
+            return {op: kind, children: Array.from({length: Math.floor(rand() * 4)}, () => tree(depth - 1))};
+        };
+        const subjects = [
+            craft(),
+            craft({claim: null, owner: null, ownerClaimAccess: null, tier: null, skill: null, item: null}),
+            craft({inputItems: [], ownerClaimAccess: [], payout: 0.5, currency: "hex-coin", complete: true}),
+            craft({inputItems: [{key: "item:2", tag: null}], payout: 0, currency: "hex-coin", region: 4, tier: 6}),
+        ];
+
+        for (let i = 0; i < 3000; i++) {
+            const node = tree(3);
+            const compiled = compileFilter(node);
+            for (const subject of subjects) {
+                assert.equal(compiled(subject), evaluateFilter(node, subject), JSON.stringify(node));
+            }
+        }
+    });
+
+    it("lets wouldMatchIfOpen take a compiled filter", () => {
+        const filter = compileFilter(openWorkFilter());
+        assert.equal(wouldMatchIfOpen(filter, craft({complete: true})), true);
+        assert.equal(wouldMatchIfOpen(filter, craft({complete: true, public: false})), false);
     });
 });

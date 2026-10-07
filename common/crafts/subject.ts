@@ -63,6 +63,17 @@ export interface CraftFacts {
     progressRaw: number;
 }
 
+/** The `CraftSubject` fields a resolved bounty (or its absence) determines. */
+export function bountyFields(bounty: CraftBountyFacts | undefined): Pick<CraftSubject, "payout" | "currency" | "bountyPrivate"> {
+    return {
+        // A float approximation of the exact ratio, for filtering/sorting/display only — see
+        // `CraftSubject.payout`'s doc comment. The real ledger math never goes through this.
+        payout: bounty ? Number(bounty.ratioNumerator) / Number(bounty.ratioDenominator) : null,
+        currency: bounty?.currency ?? null,
+        bountyPrivate: bounty?.private ?? false,
+    };
+}
+
 /** BitCraft ids are never negative, so 0 is the relay's "absent" marker for an entity reference. */
 export function optionalId(value: bigint): string | null {
     return value === 0n ? null : value.toString();
@@ -145,10 +156,6 @@ export function buildCraftSubject(
         complete: effortTotal > 0 && effortRemaining === 0,
         owner: optionalId(craft.ownerEntityId),
         ownerClaimAccess: ownerClaimAccessFor(craft.claimEntityId, craft.ownerEntityId, ownerClaimMember),
-        // A float approximation of the exact ratio, for filtering/sorting/display only — see
-        // `CraftSubject.payout`'s doc comment. The real ledger math never goes through this.
-        payout: bounty ? Number(bounty.ratioNumerator) / Number(bounty.ratioDenominator) : null,
-        currency: bounty?.currency ?? null,
-        bountyPrivate: bounty?.private ?? false,
+        ...bountyFields(bounty),
     };
 }
