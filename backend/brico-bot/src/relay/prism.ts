@@ -15,7 +15,7 @@ import {DbConnection, type SubscriptionHandle, tables} from "@brico/bindings/pri
 import type {ClaimInfo, ClaimMember, CraftMeta, CraftProgress, PlayerState, Region} from "@brico/bindings/prism/types";
 import type {SpacetimeTarget} from "../config.ts";
 import type {Logger} from "../log.ts";
-import {snapshotBuildDuration} from "../metrics.ts";
+import {snapshotBuildDuration, startStep} from "../metrics.ts";
 import {createCoalescer} from "../spacetime/coalesce.ts";
 import {createSupervisedConnection, type SupervisedConnection, type SupervisorOptions} from "../spacetime/connection.ts";
 
@@ -76,7 +76,7 @@ function isOpen(craft: CraftMeta): boolean {
     return craft.status.tag === "Active";
 }
 
-function readSnapshot(conn: DbConnection): CraftSnapshot {
+export function readSnapshot(conn: DbConnection): CraftSnapshot {
     const progress = new Map<bigint, CraftProgress>();
     for (const row of conn.db.craftProgress.iter()) progress.set(row.entityId, row);
 
@@ -166,7 +166,9 @@ export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
         const timer = snapshotBuildDuration.startTimer();
         snapshot = readSnapshot(current);
         timer();
+        const stopTick = startStep("tick_total");
         options.onSnapshot(snapshot);
+        stopTick();
     };
     const coalescer = createCoalescer(rebuild, options.snapshotIntervalMs);
 

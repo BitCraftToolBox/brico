@@ -35,6 +35,21 @@ export const bountyEntitlementDuration = new Histogram({
     registers: [registry],
 });
 
+/** Time spent in one named step of the per-snapshot pipeline (`bridge.ts`, `bounty-sink.ts`). */
+export const tickStepDuration = new Histogram({
+    name: "brico_bot_tick_step_duration_seconds",
+    help: "Time spent in one step of the per-snapshot pipeline",
+    labelNames: ["step"] as const,
+    buckets: [0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1],
+    registers: [registry],
+});
+
+/** Starts a `tickStepDuration` timer for `step`; call the returned function to stop it. */
+export function startStep(step: string): () => void {
+    const stop = tickStepDuration.startTimer({step});
+    return () => void stop();
+}
+
 /** Round-trip duration of a `brico-app` reducer call, by reducer name and outcome. */
 export const reducerCallDuration = new Histogram({
     name: "brico_bot_reducer_call_duration_seconds",

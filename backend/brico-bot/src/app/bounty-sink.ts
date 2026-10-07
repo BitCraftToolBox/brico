@@ -14,14 +14,13 @@ import type {ClaimMember} from "@brico/bindings/prism/types";
 import {addRatio, bonusFromMultiplier, reduceRatio} from "@brico/crafts/entitlement";
 import type {ClaimAccessFlag, CraftSubject} from "@brico/crafts/filter";
 import {evaluateFilter} from "@brico/crafts/filter";
-import type {CraftBountyFacts} from "@brico/crafts/subject";
 import {claimAccessFlags} from "@brico/crafts/subject";
 import {Identity, Timestamp} from "spacetimedb";
 
 import type {Logger} from "../log.ts";
-import {timeReducerCall} from "../metrics.ts";
+import {startStep, timeReducerCall} from "../metrics.ts";
 import type {CraftSnapshot} from "../relay/prism.ts";
-import type {CraftRow} from "../relay/subject.ts";
+import type {AssignedBounty, CraftRow} from "../relay/subject.ts";
 import {
     type BountyRuleSpec,
     loadAssignments,
@@ -254,9 +253,9 @@ export interface BountyEngine {
      * returns the fresh `craftId -> bounty` map — feed this into a second `craftRowsFrom` pass so
      * `CraftSubject.payout` is live before watches are evaluated in the same tick.
      */
-    assign(snapshot: CraftSnapshot, rows: readonly CraftRow[]): ReadonlyMap<bigint, CraftBountyFacts>;
+    assign(snapshot: CraftSnapshot, rows: readonly CraftRow[]): ReadonlyMap<bigint, AssignedBounty>;
     /** Recomputes and writes any changed per-contributor entitlements for the given assignments. */
-    updateEntitlements(snapshot: CraftSnapshot, assignments: ReadonlyMap<bigint, CraftBountyFacts>): void;
+    updateEntitlements(snapshot: CraftSnapshot, assignments: ReadonlyMap<bigint, AssignedBounty>): void;
     /**
      * Recomputes `loyalty_bonus_total` for every (payer, payee, currency) triple known to
      * `bounty_entitlement_total` — not just whoever has a live contribution this tick. A no-op
@@ -286,14 +285,24 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
     return {
         assign(snapshot, rows) {
             const conn = app.connection?.connection;
-            const resolved = new Map<bigint, CraftBountyFacts>();
+            const resolved = new Map<bigint, AssignedBounty>();
             if (!conn?.isActive) return resolved;
 
+            let stop = startStep("assign_load_accounts");
             const playerAccounts = resolvePlayerAccounts(app);
+            stop();
+            stop = startStep("assign_load_rules");
             const rulesByAccount = loadBountyRules(app, scoped);
+            stop();
+            stop = startStep("assign_load_overrides");
             const overridesByCraft = loadOverrides(app);
+            stop();
+            stop = startStep("assign_load_assignments");
             const existingAssignments = loadAssignments(app);
+            stop();
             const nextAssignedByCraft = new Map<bigint, Identity>();
+
+            stop = startStep("assign_resolve_loop");
 
             for (const row of rows) {
                 const craftId = BigInt(row.id);
@@ -342,6 +351,8 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
                 }
             }
 
+            stop();
+
             // `rows` only covers Active crafts, so a craft that has aged all the way out of
             // `craft_meta` (past the 24-hour Claimed/Removed tail — see `isOpen` in prism.ts) never
             // shows up above and its assignment would otherwise linger forever. Sweep those here.
@@ -360,12 +371,15 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
             const conn = app.connection?.connection;
             if (!conn?.isActive) return;
 
+            let stop = startStep("ent_load");
             const existing = loadEntitlements(app);
             const loyaltyRewards = loadLoyaltyRewards(app);
             const loyaltyRulesByPayer = loadLoyaltyRules(app);
             const entitlementTotals = loadBountyEntitlementTotals(app);
             const loyaltyBonusTotals = loadLoyaltyBonusTotals(app);
+            stop();
 
+            stop = startStep("ent_loop");
             for (const [craftId, bounty] of assignments) {
                 const byPlayer = snapshot.contributions.get(craftId);
                 if (!byPlayer) continue;
@@ -421,6 +435,7 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
                     });
                 }
             }
+            stop();
         },
 
         resyncLoyaltyBonuses(snapshot) {

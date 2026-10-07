@@ -20,9 +20,9 @@ import type {WatchSource, WatchSpec} from "./app/watch-source.ts";
 
 import type {RecipeIndex} from "./game-data/recipes.ts";
 import type {Logger} from "./log.ts";
-import {activeWatches, bountyAssignDuration, bountyEntitlementDuration, currentMatches, watchEvaluationDuration, watchMatchesTotal} from "./metrics.ts";
+import {activeWatches, bountyAssignDuration, bountyEntitlementDuration, currentMatches, startStep, watchEvaluationDuration, watchMatchesTotal} from "./metrics.ts";
 import type {CraftSnapshot} from "./relay/prism.ts";
-import {type CraftRow, craftRowsFrom} from "./relay/subject.ts";
+import {type CraftRow, craftRowsFrom, rowFor} from "./relay/subject.ts";
 
 /** What the sink is told about. `finished` fires once, on the transition into completeness. */
 export type TriggerKind = EngineMatchEvent<CraftRow>["kind"];
@@ -95,7 +95,9 @@ export function createBridge(options: BridgeOptions): Bridge {
         stats,
 
         onSnapshot(snapshot) {
+            let stop = startStep("rows_initial");
             let rows = craftRowsFrom(snapshot, options.recipes);
+            stop();
 
             // Bounties must be assigned before watches are evaluated in this same tick — otherwise
             // a filter/notification referencing `payout` could see stale (null) data for a craft
@@ -113,14 +115,20 @@ export function createBridge(options: BridgeOptions): Bridge {
 
                 // Decoupled from craft-contribution activity — see `resyncLoyaltyBonuses`'s doc
                 // comment. A no-op unless a resync is actually pending.
+                stop = startStep("loyalty_resync");
                 options.bounty.resyncLoyaltyBonuses(snapshot);
+                stop();
 
+                stop = startStep("rows_with_bounty");
                 rows = craftRowsFrom(snapshot, options.recipes, assignments);
+                stop();
             }
 
             options.onRowsComputed?.(rows);
 
+            stop = startStep("watch_source");
             const watches = options.watches.watches();
+            stop();
 
             stats.snapshots += 1;
             stats.lastSnapshotAtMs = snapshot.builtAtMs;
@@ -143,7 +151,7 @@ export function createBridge(options: BridgeOptions): Bridge {
                 }
 
                 const wasPrimed = matcher.primed;
-                for (const event of matcher.update(watch.filter, rows)) {
+                for (const event of matcher.update(watch.filter, rows, row => rowFor(row, watch.owner))) {
                     emit({...event, watch});
                 }
                 if (!wasPrimed) {

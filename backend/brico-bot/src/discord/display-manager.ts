@@ -10,7 +10,6 @@ import {DiscordAPIError, type REST} from "@discordjs/rest";
 import type {APIMessageTopLevelComponent} from "discord-api-types/v10";
 import {MessageFlags, Routes} from "discord-api-types/v10";
 import {Timestamp} from "spacetimedb";
-import {loadAssignments} from "../app/bounty-source.ts";
 
 import type {BricoAppConnection} from "../app/connection.ts";
 import type {RecipeDisplayIndex} from "../game-data/recipes.ts";
@@ -19,7 +18,7 @@ import type {Logger} from "../log.ts";
 import {timeReducerCall} from "../metrics.ts";
 import type {CraftRow} from "../relay/subject.ts";
 import type {DiscordWatchDisplayContentValue} from "./display-format.ts";
-import {buildDisplayComponents, maskInvisibleBounties, selectDisplayRows} from "./display-format.ts";
+import {buildDisplayComponents, selectDisplayRows} from "./display-format.ts";
 
 /** How often the sweep runs. */
 const SWEEP_INTERVAL_MS = 5_000;
@@ -58,16 +57,6 @@ function isNotFound(cause: unknown): boolean {
 /** The bot can no longer post in the channel (kicked, permission removed). */
 function isForbidden(cause: unknown): boolean {
     return cause instanceof DiscordAPIError && cause.status === 403;
-}
-
-/** Craft id (`CraftRow.id`) -> assigning account's hex identity, for private bounties only (input to `maskInvisibleBounties`). */
-function loadPrivateBountyOwners(app: BricoAppConnection): Map<string, string> {
-    const owners = new Map<string, string>();
-    for (const [craftId, assignment] of loadAssignments(app)) {
-        if (!assignment.private) continue;
-        owners.set(craftId.toString(), assignment.assignedByAccountIdentity.toHexString());
-    }
-    return owners;
 }
 
 export function createDisplayManager(options: DisplayManagerOptions): DisplayManager {
@@ -143,7 +132,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
         });
     }
 
-    async function refresh(conn: DbConnection, display: DiscordWatchDisplay, sticky: boolean, privateBountyOwners: ReadonlyMap<string, string>): Promise<void> {
+    async function refresh(conn: DbConnection, display: DiscordWatchDisplay, sticky: boolean): Promise<void> {
         const savedFilter = conn.db.allSavedCraftFilter.id.find(display.filterId);
         if (!savedFilter || !savedFilter.accountIdentity.isEqual(display.accountIdentity)) {
             log.warn("skipping display: its saved filter is gone", {display: display.id});
@@ -162,8 +151,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
             return;
         }
 
-        const visibleRows = maskInvisibleBounties(latestRows, privateBountyOwners, display.accountIdentity.toHexString());
-        const {rows, totalMatches} = selectDisplayRows(visibleRows, filter, display.sortField, display.sortDirection, display.limit);
+        const {rows, totalMatches} = selectDisplayRows(latestRows, filter, display.accountIdentity.toHexString(), display.sortField, display.sortDirection, display.limit);
         const components = buildDisplayComponents(
             savedFilter.name,
             display.content as DiscordWatchDisplayContentValue,
@@ -186,8 +174,6 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
 
         const now = Date.now();
         const liveIds = new Set<string>();
-        // Loaded once per tick and shared by every due display.
-        const privateBountyOwners = loadPrivateBountyOwners(options.app);
 
         for (const display of conn.db.allDiscordWatchDisplay.iter()) {
             if (display.deletedAt !== undefined) continue;
@@ -218,7 +204,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
             if (!stickyDue && now < dueAt) continue;
 
             nextDueAtMs.set(display.id, now + display.refreshIntervalSeconds * 1000);
-            await refresh(conn, display, stickyDue, privateBountyOwners).catch(cause => {
+            await refresh(conn, display, stickyDue).catch(cause => {
                 log.error("display refresh threw", {display: display.id, error: describeError(cause)});
             });
         }

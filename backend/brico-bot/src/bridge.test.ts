@@ -12,8 +12,7 @@
  * `node` because the workspace packages export raw `.ts`.
  */
 import type {CraftMeta, CraftProgress} from "@brico/bindings/prism/types";
-import {openWorkFilter} from "@brico/crafts/filter";
-import type {CraftBountyFacts} from "@brico/crafts/subject";
+import {type FilterNode, openWorkFilter} from "@brico/crafts/filter";
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {Timestamp} from "spacetimedb";
@@ -24,6 +23,7 @@ import {createBridge, type MatchEvent} from "./bridge.ts";
 import type {RecipeIndex, RecipeStatic} from "./game-data/recipes.ts";
 import {createLogger} from "./log.ts";
 import {type CraftSnapshot, EMPTY_SNAPSHOT} from "./relay/prism.ts";
+import type {AssignedBounty} from "./relay/subject.ts";
 
 const RECIPE: RecipeStatic = {
     effortRequired: 100,
@@ -126,7 +126,7 @@ test("bounties are assigned before watches are evaluated in the same tick", () =
         }],
     };
     const bounty: BountyEngine = {
-        assign: () => new Map<bigint, CraftBountyFacts>([[1n, {ratioNumerator: 1n, ratioDenominator: 20n, currency: "hex-coin", private: false}]]),
+        assign: () => new Map<bigint, AssignedBounty>([[1n, {ratioNumerator: 1n, ratioDenominator: 20n, currency: "hex-coin", private: false, assignedByAccountIdentity: {toHexString: () => "owner-hex"}}]]),
         updateEntitlements: () => {},
         resyncLoyaltyBonuses: () => {},
         markMembershipChanged: () => {},
@@ -158,4 +158,29 @@ test("resyncLoyaltyBonuses is called every tick, alongside assign/updateEntitlem
     bridge.onSnapshot(snapshot([craft()]));
     bridge.onSnapshot(snapshot([craft()]));
     assert.equal(resyncCalls, 2);
+});
+
+test("a private bounty is invisible to every watch but its assigner's", () => {
+    const hasBounty: FilterNode = {field: "payout", cmp: "gte", value: 0};
+    const spec = (id: string, owner: string | null) => ({id, name: id, owner, filterId: null, triggers: {added: true, finished: true, removed: true}, filter: hasBounty});
+    const watches: WatchSource = {origin: "test", watches: () => [spec("assigner", "owner-hex"), spec("other", "other-hex"), spec("ownerless", null)]};
+    const bountied = new Map<bigint, AssignedBounty>();
+    const bounty: BountyEngine = {
+        assign: () => bountied,
+        updateEntitlements: () => {},
+        resyncLoyaltyBonuses: () => {},
+        markMembershipChanged: () => {},
+        markLoyaltyRulesChanged: () => {},
+    };
+    const events: MatchEvent[] = [];
+    const bridge = createBridge({log: createLogger("error"), watches, sink: event => void events.push(event), recipes: RECIPES, bounty});
+
+    bridge.onSnapshot(snapshot([craft()]));
+    bountied.set(1n, {ratioNumerator: 1n, ratioDenominator: 20n, currency: "hex-coin", private: true, assignedByAccountIdentity: {toHexString: () => "owner-hex"}});
+    bridge.onSnapshot(snapshot([craft()]));
+
+    assert.deepEqual(events.map(e => [e.watch.id, e.kind]), [["assigner", "added"]]);
+    assert.equal(events[0].craft?.subject.payout, 0.05);
+    assert.equal(bridge.stats.matchCounts.get("other"), 0);
+    assert.equal(bridge.stats.matchCounts.get("ownerless"), 0);
 });

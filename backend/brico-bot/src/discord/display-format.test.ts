@@ -1,6 +1,6 @@
 /** display-format.test.ts — filter/sort/render logic for watch display messages. */
 import {MAX_DISPLAY_ROWS_HARD_CAP} from "@brico/crafts/discord-display";
-import type {CraftSubject} from "@brico/crafts/filter";
+import type {CraftSubject, FilterNode} from "@brico/crafts/filter";
 import {matchAll} from "@brico/crafts/filter";
 import type {
     APIActionRowComponent,
@@ -17,7 +17,7 @@ import type {RecipeDisplayIndex} from "../game-data/recipes.ts";
 import type {SkillNameIndex} from "../game-data/skills.ts";
 import type {CraftRow} from "../relay/subject.ts";
 import type {DiscordWatchDisplayContentValue} from "./display-format.ts";
-import {buildDisplayComponents, maskInvisibleBounties, selectDisplayRows} from "./display-format.ts";
+import {buildDisplayComponents, selectDisplayRows} from "./display-format.ts";
 
 function subject(overrides: Partial<CraftSubject> = {}): CraftSubject {
     return {
@@ -53,7 +53,21 @@ function row(overrides: Partial<CraftRow> = {}): CraftRow {
         ownerName: null,
         firstSeenMs: 0n,
         subject: subject(),
+        privateBountyOwner: null,
+        publicView: null,
         ...overrides,
+    };
+}
+
+/** A row whose bounty is private to `owner`, with the public view the real row builder attaches. */
+function privateBountyRow(id: string, owner: string, payout: number): CraftRow {
+    const full = subject({payout, currency: "hex-coin", bountyPrivate: true});
+    const base = row({id});
+    return {
+        ...base,
+        subject: full,
+        privateBountyOwner: owner,
+        publicView: {...base, subject: {...full, payout: null, currency: null, bountyPrivate: false}},
     };
 }
 
@@ -86,32 +100,27 @@ function build(
     );
 }
 
-test("maskInvisibleBounties leaves a public bounty untouched regardless of owner", () => {
-    const rows = [row({id: "a", subject: subject({payout: 0.5, currency: "hex-coin", bountyPrivate: false})})];
-    const masked = maskInvisibleBounties(rows, new Map(), "viewer-hex");
-    assert.deepEqual(masked, rows);
+test("selectDisplayRows lets a private bounty's owner match, sort and render it", () => {
+    const rows = [privateBountyRow("a", "viewer-hex", 0.5), row({id: "b", subject: subject({payout: 0.1, currency: "hex-coin"})})];
+    const hasBounty: FilterNode = {field: "payout", cmp: "gte", value: 0};
+    const selected = selectDisplayRows(rows, hasBounty, "viewer-hex", "bounty", "desc", 10);
+    assert.deepEqual(selected.rows.map(r => [r.id, r.subject.payout]), [["a", 0.5], ["b", 0.1]]);
 });
 
-test("maskInvisibleBounties leaves a private bounty untouched for its own owner", () => {
-    const rows = [row({id: "a", subject: subject({payout: 0.5, currency: "hex-coin", bountyPrivate: true})})];
-    const masked = maskInvisibleBounties(rows, new Map([["a", "viewer-hex"]]), "viewer-hex");
-    assert.deepEqual(masked, rows);
-});
+test("selectDisplayRows hides a private bounty from everyone else without dropping the craft", () => {
+    const rows = [privateBountyRow("a", "owner-hex", 0.5), row({id: "b", subject: subject({payout: 0.1, currency: "hex-coin"})})];
 
-test("maskInvisibleBounties hides a private bounty from anyone else, without dropping the craft row", () => {
-    const rows = [row({id: "a", subject: subject({payout: 0.5, currency: "hex-coin", bountyPrivate: true})})];
-    const masked = maskInvisibleBounties(rows, new Map([["a", "other-hex"]]), "viewer-hex");
-    assert.equal(masked.length, 1);
-    assert.equal(masked[0].id, "a");
-    assert.equal(masked[0].subject.payout, null);
-    assert.equal(masked[0].subject.currency, null);
-    assert.equal(masked[0].subject.bountyPrivate, false);
-});
+    const bountied = selectDisplayRows(rows, {field: "payout", cmp: "gte", value: 0}, "viewer-hex", "bounty", "desc", 10);
+    assert.deepEqual(bountied.rows.map(r => r.id), ["b"], "a payout filter never matches the hidden bounty");
 
-test("maskInvisibleBounties hides a private bounty missing from the owner map (treated as not owned by the viewer)", () => {
-    const rows = [row({id: "a", subject: subject({payout: 0.5, currency: "hex-coin", bountyPrivate: true})})];
-    const masked = maskInvisibleBounties(rows, new Map(), "viewer-hex");
-    assert.equal(masked[0].subject.payout, null);
+    const everything = selectDisplayRows(rows, matchAll(), "viewer-hex", "bounty", "desc", 10);
+    const hidden = everything.rows.find(r => r.id === "a");
+    assert.equal(hidden?.subject.payout, null);
+    assert.equal(hidden?.subject.currency, null);
+    assert.equal(hidden?.subject.bountyPrivate, false);
+
+    const anonymous = selectDisplayRows(rows, matchAll(), null, "bounty", "desc", 10);
+    assert.equal(anonymous.rows.find(r => r.id === "a")?.subject.payout, null);
 });
 
 test("selectDisplayRows filters, sorts ascending by remaining effort, and caps at limit", () => {
@@ -120,7 +129,7 @@ test("selectDisplayRows filters, sorts ascending by remaining effort, and caps a
         row({id: "b", subject: subject({effortRemaining: 10})}),
         row({id: "c", subject: subject({effortRemaining: 20})}),
     ];
-    const selected = selectDisplayRows(rows, matchAll(), "remaining", "asc", 2);
+    const selected = selectDisplayRows(rows, matchAll(), null, "remaining", "asc", 2);
     assert.deepEqual(selected.rows.map(r => r.id), ["b", "c"]);
     assert.equal(selected.totalMatches, 3);
 });
@@ -131,7 +140,7 @@ test("selectDisplayRows sorts descending when asked", () => {
         row({id: "b", subject: subject({effortRemaining: 10})}),
         row({id: "c", subject: subject({effortRemaining: 20})}),
     ];
-    const selected = selectDisplayRows(rows, matchAll(), "remaining", "desc", 10);
+    const selected = selectDisplayRows(rows, matchAll(), null, "remaining", "desc", 10);
     assert.deepEqual(selected.rows.map(r => r.id), ["a", "c", "b"]);
 });
 
@@ -141,7 +150,7 @@ test("selectDisplayRows sorts by newest (firstSeen)", () => {
         row({id: "new", firstSeenMs: 5000n}),
         row({id: "mid", firstSeenMs: 3000n}),
     ];
-    const selected = selectDisplayRows(rows, matchAll(), "newest", "desc", 10);
+    const selected = selectDisplayRows(rows, matchAll(), null, "newest", "desc", 10);
     assert.deepEqual(selected.rows.map(r => r.id), ["new", "mid", "old"]);
 });
 
@@ -150,7 +159,7 @@ test("selectDisplayRows sorts by total effort", () => {
         row({id: "small", subject: subject({effortTotal: 10})}),
         row({id: "big", subject: subject({effortTotal: 100})}),
     ];
-    const selected = selectDisplayRows(rows, matchAll(), "effort", "asc", 10);
+    const selected = selectDisplayRows(rows, matchAll(), null, "effort", "asc", 10);
     assert.deepEqual(selected.rows.map(r => r.id), ["small", "big"]);
 });
 
@@ -160,14 +169,14 @@ test("selectDisplayRows sorts by bounty, treating no-bounty as lowest", () => {
         row({id: "low", subject: subject({payout: 0.1, currency: "hex-coin"})}),
         row({id: "high", subject: subject({payout: 0.9, currency: "hex-coin"})}),
     ];
-    const selected = selectDisplayRows(rows, matchAll(), "bounty", "desc", 10);
+    const selected = selectDisplayRows(rows, matchAll(), null, "bounty", "desc", 10);
     assert.deepEqual(selected.rows.map(r => r.id), ["high", "low", "none"]);
 });
 
 test("selectDisplayRows only returns rows the filter actually matches, and totalMatches reflects that too", () => {
     const rows = [row({id: "public", subject: subject({public: true})}), row({id: "private", subject: subject({public: false})})];
     const publicOnly = {field: "public" as const, cmp: "eq" as const, value: true};
-    const selected = selectDisplayRows(rows, publicOnly, "newest", "asc", 10);
+    const selected = selectDisplayRows(rows, publicOnly, null, "newest", "asc", 10);
     assert.deepEqual(selected.rows.map(r => r.id), ["public"]);
     assert.equal(selected.totalMatches, 1);
 });

@@ -124,4 +124,28 @@ describe("createWatchMatcher", () => {
         assert.deepEqual(kinds(events), ["removed"]);
         assert.equal(matcher.matchCount, 0);
     });
+
+    it("evaluates the filter against the viewed row and reports the viewed row", () => {
+        const hideBounty = (r: Row): Row => (r.subject.bountyPrivate ? {...r, subject: {...r.subject, payout: null, bountyPrivate: false}} : r);
+        const hasBounty: FilterNode = {field: "payout", cmp: "gte", value: 0};
+        const secret = (): Row => row("1", {payout: 1, bountyPrivate: true});
+
+        const blind = createWatchMatcher<Row>();
+        blind.update(hasBounty, [], hideBounty);
+        assert.deepEqual(blind.update(hasBounty, [secret()], hideBounty), []);
+        assert.equal(blind.matchCount, 0);
+
+        const owner = createWatchMatcher<Row>();
+        owner.update(hasBounty, []);
+        const events = owner.update(hasBounty, [secret()]);
+        assert.deepEqual(kinds(events), ["added"]);
+        assert.equal(events[0].craft?.subject.payout, 1);
+
+        const negated: FilterNode = {op: "not", child: hasBounty};
+        const unmasked = createWatchMatcher<Row>();
+        unmasked.update(negated, [], hideBounty);
+        const leaked = unmasked.update(negated, [secret()], hideBounty);
+        assert.equal(leaked[0].craft?.subject.payout, null);
+        assert.equal(leaked[0].craft?.subject.bountyPrivate, false);
+    });
 });

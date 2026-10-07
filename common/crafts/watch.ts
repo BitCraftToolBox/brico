@@ -51,8 +51,13 @@ export interface WatchMatcher<TRow extends MatchRow> {
      * snapshot hands over every currently-open craft at once, and reporting `added` for all of them
      * would mean a fresh watch (or a restart) re-notifies a whole backlog. Events start on the
      * second call.
+     *
+     * `view` maps each row to what *this* watch's viewer may see (e.g. with another account's private
+     * bounty cleared); the filter is evaluated against, and events carry, the viewed row. It must be
+     * cheap (called once per row per update) and return the same row when nothing is hidden. Omit it
+     * when every row is visible.
      */
-    update(filter: FilterNode, rows: readonly TRow[]): MatchEvent<TRow>[];
+    update(filter: FilterNode, rows: readonly TRow[], view?: (row: TRow) => TRow): MatchEvent<TRow>[];
     /** Crafts currently matching, as of the last `update`. */
     readonly matchCount: number;
     /** False until the first snapshot has been absorbed — see `update`. */
@@ -78,12 +83,13 @@ export function createWatchMatcher<TRow extends MatchRow>(): WatchMatcher<TRow> 
             return primed;
         },
 
-        update(filter, rows) {
+        update(filter, rows, view) {
             const events: MatchEvent<TRow>[] = [];
             const byId = new Map(rows.map(row => [row.id, row]));
             const stillMatched = new Map<string, MatchedEntry<TRow>>();
 
-            for (const row of rows) {
+            for (const source of rows) {
+                const row = view ? view(source) : source;
                 if (!evaluateFilter(filter, row.subject)) continue;
                 const previous = matched.get(row.id);
                 stillMatched.set(row.id, {complete: row.subject.complete, row});
@@ -104,7 +110,8 @@ export function createWatchMatcher<TRow extends MatchRow>(): WatchMatcher<TRow> 
                     // Prefer the current snapshot's row (it's still there, just not matching), and
                     // fall back to the last row seen while it did match — the snapshot this update
                     // was fed may already have dropped the craft entirely (claimed/removed).
-                    const row = byId.get(craftId) ?? previous.row;
+                    const current = byId.get(craftId);
+                    const row = current ? (view ? view(current) : current) : previous.row;
                     // A craft that finished — and would still match this filter if it hadn't — is a
                     // `finished` transition, not a `removed` one, even though it fell out of
                     // `stillMatched` exactly the same way a claimed/gone-private craft would.

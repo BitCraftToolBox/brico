@@ -27,12 +27,26 @@ export interface CraftRow {
     /** `craft_meta.firstSeen` in millis. */
     firstSeenMs: bigint;
     subject: CraftSubject;
+    /** Hex identity of the account that assigned this craft's bounty, only when that bounty is private. */
+    privateBountyOwner: string | null;
+    /** This row as everyone but `privateBountyOwner` sees it (bounty cleared); `null` unless the bounty is private. */
+    publicView: CraftRow | null;
+}
+
+/** A resolved bounty plus the account it came from, which decides who may see it if private. */
+export interface AssignedBounty extends CraftBountyFacts {
+    assignedByAccountIdentity: {toHexString(): string};
+}
+
+/** The row `viewerAccountHex` may see: a private bounty is hidden from everyone but its assigner. Allocation-free. */
+export function rowFor(row: CraftRow, viewerAccountHex: string | null): CraftRow {
+    return row.publicView !== null && row.privateBountyOwner !== viewerAccountHex ? row.publicView : row;
 }
 
 export function craftRowsFrom(
     snapshot: CraftSnapshot,
     recipes: RecipeIndex,
-    assignments?: ReadonlyMap<bigint, CraftBountyFacts>,
+    assignments?: ReadonlyMap<bigint, AssignedBounty>,
 ): CraftRow[] {
     return snapshot.crafts.map(craft => {
         const recipe = recipes.get(craft.recipeId);
@@ -41,6 +55,7 @@ export function craftRowsFrom(
         const owner = craft.ownerEntityId === 0n ? undefined : snapshot.players.get(craft.ownerEntityId);
         const ownerClaimMember = snapshot.claimMembers.get(`${craft.claimEntityId}:${craft.ownerEntityId}`);
 
+        const bounty = assignments?.get(craft.entityId);
         const subject = buildCraftSubject(
             {
                 regionId: craft.regionId,
@@ -52,10 +67,10 @@ export function craftRowsFrom(
             },
             recipe,
             ownerClaimMember,
-            assignments?.get(craft.entityId),
+            bounty,
         );
 
-        return {
+        const row: CraftRow = {
             id: craft.entityId.toString(),
             regionId: craft.regionId,
             regionName: regionDisplayName(snapshot.regions.get(craft.regionId)?.name, craft.regionId),
@@ -65,6 +80,13 @@ export function craftRowsFrom(
             ownerName: owner?.name ?? null,
             firstSeenMs: craft.firstSeen.toMillis(),
             subject,
-        } satisfies CraftRow;
+            privateBountyOwner: null,
+            publicView: null,
+        };
+        if (bounty?.private) {
+            row.privateBountyOwner = bounty.assignedByAccountIdentity.toHexString();
+            row.publicView = {...row, subject: {...subject, payout: null, currency: null, bountyPrivate: false}, privateBountyOwner: null};
+        }
+        return row;
     });
 }

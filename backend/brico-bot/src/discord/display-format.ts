@@ -12,7 +12,7 @@ import {ButtonStyle, ComponentType} from "discord-api-types/v10";
 
 import type {RecipeDisplayIndex, RecipeDisplayInfo, RecipeIconRef} from "../game-data/recipes.ts";
 import type {SkillNameIndex} from "../game-data/skills.ts";
-import type {CraftRow} from "../relay/subject.ts";
+import {type CraftRow, rowFor} from "../relay/subject.ts";
 
 /** Generated-binding shape of `discord_watch_display.content` (enum tags are PascalCase client-side). */
 export type DiscordWatchDisplayContentValue =
@@ -51,33 +51,24 @@ export interface DisplaySelection {
 }
 
 /**
- * Masks private bounties not owned by `viewerAccountHex` (payout/currency null, `bountyPrivate`
- * false) so they affect neither sorting nor rendering; public bounties pass through.
- * `bountyOwnerByCraftId` maps craft id (`CraftRow.id`) to the assigning account's hex identity; a
- * private craft missing from it is masked rather than risk leaking someone else's bounty.
+ * Filters `rows` by `filter` as seen by `viewerAccountHex` (a private bounty is invisible to
+ * everyone but its assigner, for matching, sorting and rendering alike), sorts them, and caps at `limit`.
  */
-export function maskInvisibleBounties(
-    rows: readonly CraftRow[],
-    bountyOwnerByCraftId: ReadonlyMap<string, string>,
-    viewerAccountHex: string,
-): CraftRow[] {
-    return rows.map(row => {
-        if (!row.subject.bountyPrivate || bountyOwnerByCraftId.get(row.id) === viewerAccountHex) return row;
-        return {...row, subject: {...row.subject, payout: null, currency: null, bountyPrivate: false}};
-    });
-}
-
-/** Filters `rows` by `filter`, sorts them, and caps at `limit`. */
 export function selectDisplayRows(
     rows: readonly CraftRow[],
     filter: FilterNode,
+    viewerAccountHex: string | null,
     sortField: DiscordDisplaySortField,
     sortDirection: DiscordDisplaySortDirection,
     limit: number,
 ): DisplaySelection {
     const ascending = compareAscending(sortField);
     const compare = sortDirection === "desc" ? (a: CraftRow, b: CraftRow) => -ascending(a, b) : ascending;
-    const matches = rows.filter(row => evaluateFilter(filter, row.subject));
+    const matches: CraftRow[] = [];
+    for (const row of rows) {
+        const visible = rowFor(row, viewerAccountHex);
+        if (evaluateFilter(filter, visible.subject)) matches.push(visible);
+    }
     matches.sort(compare);
     return {rows: matches.slice(0, limit), totalMatches: matches.length};
 }
