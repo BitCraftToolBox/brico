@@ -29,6 +29,7 @@ import {useAccount} from "~/lib/account/state";
 import {type ContributorPayerGroup, createContributorEntitlements, createPayoutLogAsContributor, groupContributorRows} from "~/lib/crafts/entitlement-reports";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
 import {breadcrumb} from "~/lib/game-links";
+import {uiLocale} from "~/lib/i18n";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
 import {cn} from "~/lib/utils";
@@ -127,29 +128,29 @@ function buildColumns(onHistory: (row: PayoutRow) => void): ColumnDef<PayoutRow,
         },
         {
             id: "effort",
-            meta: {label: msg`Effort`},
+            meta: {label: msg`Effort`, align: "right"},
             accessorFn: row => row.effortTotal,
-            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toString()}</span>,
+            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toLocaleString(uiLocale())}</span>,
         },
         {
             id: "entitled",
-            meta: {label: msg`Entitled`},
+            meta: {label: msg`Entitled`, align: "right"},
             accessorFn: row => row.earnedTotal,
-            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toString()}</span>,
+            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toLocaleString(uiLocale())}</span>,
         },
         {
             id: "paid",
-            meta: {label: msg`Paid`},
+            meta: {label: msg`Paid`, align: "right"},
             accessorFn: row => row.paidTotal,
-            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toString()}</span>,
+            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toLocaleString(uiLocale())}</span>,
         },
         {
             id: "difference",
-            meta: {label: msg`Difference`},
+            meta: {label: msg`Difference`, align: "right"},
             accessorFn: row => row.earnedTotal - row.paidTotal,
             cell: (props: Cell<bigint>) => {
                 const diff = props.getValue();
-                return <Badge variant={diff > 0n ? "outline" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toString()}</Badge>;
+                return <Badge variant={diff > 0n ? "outline" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toLocaleString(uiLocale())}</Badge>;
             },
         },
     ];

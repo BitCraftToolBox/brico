@@ -201,7 +201,7 @@ export function LiveTable<TData>(props: LiveTableProps<TData>) {
                                 <TableRow>
                                     <For each={headerGroup.headers}>
                                         {header => (
-                                            <TableHead colSpan={header.colSpan}>
+                                            <TableHead colSpan={header.colSpan} class={header.column.columnDef.meta?.align === "right" ? "text-right" : undefined}>
                                                 <Show when={!header.isPlaceholder}>
                                                     <Dynamic component={header.column.columnDef.header} {...header.getContext()}/>
                                                 </Show>
@@ -244,7 +244,7 @@ export function LiveTable<TData>(props: LiveTableProps<TData>) {
                                                 <TableRow>
                                                     <For each={currentRow().getVisibleCells()}>
                                                         {cell => (
-                                                            <TableCell>
+                                                            <TableCell class={cell.column.columnDef.meta?.align === "right" ? "text-right" : undefined}>
                                                                 <Dynamic component={cell.column.columnDef.cell} {...cell.getContext()}/>
                                                             </TableCell>
                                                         )}

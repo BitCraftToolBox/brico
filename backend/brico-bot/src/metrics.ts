@@ -139,6 +139,14 @@ export const displayRenderDuration = new Histogram({
     registers: [registry],
 });
 
+/** Slash command invocations by command path (e.g. `watch.display`), context (`guild` or `dm`), and result (`ok` or `error`). */
+export const commandInvocationsTotal = new Counter({
+    name: "brico_bot_command_invocations_total",
+    help: "Slash command invocations by command and context",
+    labelNames: ["command", "context", "result"] as const,
+    registers: [registry],
+});
+
 /**
  * Times a fire-and-forget reducer call without changing its resolve/reject behavior — callers keep
  * their existing `.catch(...)` chain, this just sits between the reducer call and it.

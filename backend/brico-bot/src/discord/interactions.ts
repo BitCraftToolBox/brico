@@ -11,6 +11,7 @@ import {verifyKey} from "discord-interactions";
 import type {IncomingMessage, ServerResponse} from "node:http";
 
 import type {Logger} from "../log.ts";
+import {commandInvocationsTotal} from "../metrics.ts";
 import type {CommandDeps, LeafCommand} from "./commands/registry.ts";
 import {resolveCommand, resolveModalLeaf} from "./commands/registry.ts";
 
@@ -138,6 +139,7 @@ export function createInteractionsHandler(options: InteractionsHandlerOptions) {
             return;
         }
 
+        let status: string = "";
         try {
             const result = await command.handler(commandInteraction, options.deps);
             if ("modal" in result) {
@@ -145,12 +147,20 @@ export function createInteractionsHandler(options: InteractionsHandlerOptions) {
             } else {
                 sendJson(res, 200, messageResponse(result.content, result.ephemeral ?? true));
             }
+            status = "ok";
         } catch (cause) {
             options.log.error("command handler threw", {
                 command: command.path.join("."),
                 error: cause instanceof Error ? cause.message : String(cause),
             });
             sendJson(res, 200, messageResponse("Something went wrong running that command.", true));
+            status = "error";
+        } finally {
+            commandInvocationsTotal.inc({
+                command: command.path.join("."),
+                context: commandInteraction.guild_id ? "guild" : "dm",
+                result: status
+            });
         }
     };
 }

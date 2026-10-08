@@ -31,10 +31,9 @@ export default function BountyOverviewPage() {
                         <CardTitle><Trans>What are bounties?</Trans></CardTitle>
                         <CardDescription>
                             <Trans>
-                                Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a
-                                bounty to a craft — a rate of currency per unit of effort — and every player who contributes to that
-                                craft earns a share automatically, in proportion to how much effort they actually put in. Someone who
-                                does twice the work earns twice the payout.
+                                Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty
+                                to a craft and every player who contributes to that craft earns a share automatically, in proportion to how
+                                much effort they actually put in. Someone who does twice the work earns twice the payout.
                             </Trans>
                         </CardDescription>
                     </CardHeader>

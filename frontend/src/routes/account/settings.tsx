@@ -35,6 +35,7 @@ import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, Di
 import {Label} from "~/components/ui/label";
 import {TextField, TextFieldInput, TextFieldLabel} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
+import {installDiscordBotUrl} from "~/lib/account/brico-bot.ts";
 import {accountTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state.tsx";
 import {createDiscordNotifySettings, type DiscordNotifySettings, type DiscordNotifyTemplates} from "~/lib/crafts/discord-notify-settings";
@@ -258,7 +259,7 @@ export default function AccountSettingsPage() {
                     <CardHeader>
                         <CardTitle class="text-base"><Trans>Payout display</Trans></CardTitle>
                         <CardDescription>
-                            <Trans>How bounty rates are shown and entered — currency per effort, or effort per currency.</Trans>
+                            <Trans>How bounty rates are shown and entered.</Trans>
                         </CardDescription>
                     </CardHeader>
                     <CardContent class="flex justify-center">
@@ -286,6 +287,11 @@ export default function AccountSettingsPage() {
                                 >
                                     <Trans>Log in for additional options such as Discord notifications.</Trans>
                                 </Show>
+                                <div class="flex flex-col items-center">
+                                    <Button as="a" href={installDiscordBotUrl()} variant="outline" class="mt-3">
+                                        <Trans>Add the Brico.app bot to your Discord server</Trans>
+                                    </Button>
+                                </div>
                             </CardDescription>
                         </CardHeader>
                         <CardContent class="flex flex-col gap-3">

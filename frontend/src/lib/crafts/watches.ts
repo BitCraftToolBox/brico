@@ -2,6 +2,7 @@
  * watches.ts — runs the shared `@brico/crafts/watch` transition engine over the craft browser's own
  * live feed, entirely client-side.
  */
+import {type CompiledFilter, compileFilter} from "@brico/crafts/filter";
 import {createWatchMatcher, type MatchEvent, type WatchMatcher} from "@brico/crafts/watch";
 import {type Accessor, createEffect, onCleanup} from "solid-js";
 import type {CraftEntry} from "~/lib/crafts/entries";
@@ -40,6 +41,17 @@ export function createCraftWatchRunner(
     onNotify: (notification: WatchNotification) => void,
 ): void {
     const matchers = new Map<string, WatchMatcher<CraftEntry>>();
+    // Saved filters are store values with no stable identity, so the compiled form is keyed on JSON.
+    const compiled = new Map<string, {json: string; test: CompiledFilter}>();
+    const compiledFor = (saved: SavedCraftFilter): CompiledFilter => {
+        const json = JSON.stringify(saved.filter);
+        let entry = compiled.get(saved.id);
+        if (!entry || entry.json !== json) {
+            entry = {json, test: compileFilter(saved.filter)};
+            compiled.set(saved.id, entry);
+        }
+        return entry.test;
+    };
 
     createEffect(() => {
         if (!ready()) return;
@@ -57,7 +69,7 @@ export function createCraftWatchRunner(
                 matcher = createWatchMatcher<CraftEntry>();
                 matchers.set(saved.id, matcher);
             }
-            for (const event of matcher.update(saved.filter, rows)) {
+            for (const event of matcher.update(compiledFor(saved), rows)) {
                 if (!triggers[event.kind]) continue;
                 onNotify({filterId: saved.id, filterName: saved.name, event});
             }
@@ -68,7 +80,13 @@ export function createCraftWatchRunner(
         for (const id of matchers.keys()) {
             if (!activeIds.has(id)) matchers.delete(id);
         }
+        for (const id of compiled.keys()) {
+            if (!activeIds.has(id)) compiled.delete(id);
+        }
     });
 
-    onCleanup(() => matchers.clear());
+    onCleanup(() => {
+        matchers.clear();
+        compiled.clear();
+    });
 }

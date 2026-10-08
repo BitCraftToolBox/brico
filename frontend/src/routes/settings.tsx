@@ -489,7 +489,7 @@ export default function SettingsPage() {
                 >
                     <SettingsRow
                         label={<Trans>Payout display</Trans>}
-                        description={<Trans>How bounty rates are shown and entered — currency per effort, or effort per currency.</Trans>}
+                        description={<Trans>How bounty rates are shown and entered.</Trans>}
                     >
                         <ButtonGroup<PayoutDisplayMode>
                             value={settings.payoutDisplayMode()}

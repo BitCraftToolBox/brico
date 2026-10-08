@@ -50,6 +50,7 @@ import {currencyData} from "~/lib/crafts/filter-vocab";
 import {createLoyaltyRewards} from "~/lib/crafts/loyalty-rewards.ts";
 import {createPlayerNames} from "~/lib/crafts/relay";
 import {breadcrumb} from "~/lib/game-links";
+import {uiLocale} from "~/lib/i18n";
 import {type LabelResolver, useLabel} from "~/lib/labels";
 import {useSettings} from "~/lib/settings";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
@@ -234,29 +235,29 @@ function buildColumns(onEdit: (target: EditTarget) => void, onHistory: (row: Pay
         },
         {
             id: "effort",
-            meta: {label: msg`Effort`},
+            meta: {label: msg`Effort`, align: "right"},
             accessorFn: row => row.effortTotal,
-            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toString()}</span>,
+            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toLocaleString(uiLocale())}</span>,
         },
         {
             id: "entitled",
-            meta: {label: msg`Entitled`},
+            meta: {label: msg`Entitled`, align: "right"},
             accessorFn: row => row.earnedTotal,
-            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toString()}</span>,
+            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toLocaleString(uiLocale())}</span>,
         },
         {
             id: "paid",
-            meta: {label: msg`Paid`},
+            meta: {label: msg`Paid`, align: "right"},
             accessorFn: row => row.paidTotal,
-            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toString()}</span>,
+            cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toLocaleString(uiLocale())}</span>,
         },
         {
             id: "difference",
-            meta: {label: msg`Difference`},
+            meta: {label: msg`Difference`, align: "right"},
             accessorFn: row => row.earnedTotal - row.paidTotal,
             cell: (props: Cell<bigint>) => {
                 const diff = props.getValue();
-                return <Badge variant={diff > 0n ? "outline" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toString()}</Badge>;
+                return <Badge variant={diff > 0n ? "outline" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toLocaleString(uiLocale())}</Badge>;
             },
         },
         {

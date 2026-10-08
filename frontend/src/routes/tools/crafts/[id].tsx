@@ -448,7 +448,7 @@ export default function CraftDetail() {
             description="Live BitCraft craft progress: view craft details, progress, and contributions."
             navTitle={breadcrumb(BROWSE_HREF)}
         >
-            <div class="w-full space-y-4 px-4 pb-8">
+            <div class="mx-auto max-w-4xl space-y-4 pb-8">
                 <div class="flex flex-wrap items-center gap-3">
                     <h1 class="text-3xl font-bold text-foreground">{heading()}</h1>
                     <Show when={craft()}>

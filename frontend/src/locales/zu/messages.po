@@ -653,11 +653,6 @@ msgstr "crwdns4484:0crwdne4484:0"
 msgid "Supplies"
 msgstr "crwdns4486:0crwdne4486:0"
 
-#: src/routes/account/settings.tsx
-#: src/routes/settings.tsx
-msgid "How bounty rates are shown and entered — currency per effort, or effort per currency."
-msgstr ""
-
 #: src/routes/discord/installed.tsx
 msgid "Brico.app Discord Bot"
 msgstr ""
@@ -1736,6 +1731,10 @@ msgstr "crwdns4792:0crwdne4792:0"
 #: src/lib/recipe-sources.tsx
 msgid "Minimum distance to Group:"
 msgstr "crwdns4794:0crwdne4794:0"
+
+#: src/routes/account/bounties.tsx
+msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
+msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
 msgid "not"
@@ -2858,7 +2857,7 @@ msgstr ""
 msgid "Terraform"
 msgstr "crwdns5086:0crwdne5086:0"
 
-#: src/routes/account/profile.tsx
+#: src/routes/account/settings.tsx
 msgid "Add the Brico.app bot to your Discord server"
 msgstr ""
 
@@ -3182,10 +3181,6 @@ msgstr ""
 msgid "Requirements"
 msgstr "crwdns5166:0crwdne5166:0"
 
-#: src/routes/account/bounties.tsx
-msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft — a rate of currency per unit of effort — and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
-msgstr ""
-
 #: src/lib/crafts/error-vocab.ts
 msgid "That loyalty rule no longer exists."
 msgstr ""
@@ -3289,6 +3284,11 @@ msgstr ""
 
 #: src/routes/account/link.tsx
 msgid "Link account"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+#: src/routes/settings.tsx
+msgid "How bounty rates are shown and entered."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -3648,12 +3648,6 @@ msgstr "crwdns5276:0crwdne5276:0"
 msgid "A–Z"
 msgstr "crwdns5278:0crwdne5278:0"
 
-#. placeholder {0}: new Date(Number(link().linkedAt.toMillis())).toLocaleDateString(uiLocale())
-#. placeholder {0}: new Date(Number(link.linkedAt.toMillis())).toLocaleDateString(uiLocale())
-#: src/routes/account/profile.tsx
-msgid "linked {0}"
-msgstr ""
-
 #: src/routes/tools/crafts/[id].tsx
 msgid "remaining"
 msgstr ""
@@ -3985,6 +3979,10 @@ msgstr "crwdns5358:0crwdne5358:0"
 #: src/routes/database/placeable/[id].tsx
 msgid "Extracted from"
 msgstr "crwdns5360:0crwdne5360:0"
+
+#: src/routes/account/profile.tsx
+msgid "Link Discord to use slash commands and receive notifications there."
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Builds into"

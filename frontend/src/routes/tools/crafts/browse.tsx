@@ -14,7 +14,7 @@
 import {
     BOUNTY_CURRENCIES,
     CLAIM_ACCESS_FLAGS,
-    evaluateFilter,
+    compileFilter,
     type FilterField,
     type FilterNode,
     filtersEqual,
@@ -554,8 +554,8 @@ export default function CraftBrowser() {
     };
 
     const matched = createMemo(() => {
-        const active = filter();
-        return entries().filter(entry => evaluateFilter(active, entry.subject));
+        const test = compileFilter(filter());
+        return entries().filter(entry => test(entry.subject));
     });
     const completeCount = createMemo(() => matched().filter(entry => entry.complete).length);
 

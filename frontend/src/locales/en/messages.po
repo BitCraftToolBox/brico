@@ -648,11 +648,6 @@ msgstr "Range"
 msgid "Supplies"
 msgstr "Supplies"
 
-#: src/routes/account/settings.tsx
-#: src/routes/settings.tsx
-msgid "How bounty rates are shown and entered — currency per effort, or effort per currency."
-msgstr "How bounty rates are shown and entered — currency per effort, or effort per currency."
-
 #: src/routes/discord/installed.tsx
 msgid "Brico.app Discord Bot"
 msgstr "Brico.app Discord Bot"
@@ -1731,6 +1726,10 @@ msgstr "Is Secret"
 #: src/lib/recipe-sources.tsx
 msgid "Minimum distance to Group:"
 msgstr "Minimum distance to Group:"
+
+#: src/routes/account/bounties.tsx
+msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
+msgstr "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
 
 #: src/components/crafts/FilterBuilder.tsx
 msgid "not"
@@ -2853,7 +2852,7 @@ msgstr "{quantifier} {field} {cmpEl} {value}"
 msgid "Terraform"
 msgstr "Terraform"
 
-#: src/routes/account/profile.tsx
+#: src/routes/account/settings.tsx
 msgid "Add the Brico.app bot to your Discord server"
 msgstr "Add the Brico.app bot to your Discord server"
 
@@ -3177,10 +3176,6 @@ msgstr "Remove group"
 msgid "Requirements"
 msgstr "Requirements"
 
-#: src/routes/account/bounties.tsx
-msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft — a rate of currency per unit of effort — and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
-msgstr "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft — a rate of currency per unit of effort — and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
-
 #: src/lib/crafts/error-vocab.ts
 msgid "That loyalty rule no longer exists."
 msgstr "That loyalty rule no longer exists."
@@ -3285,6 +3280,11 @@ msgstr "That share code has no importable filters."
 #: src/routes/account/link.tsx
 msgid "Link account"
 msgstr "Link account"
+
+#: src/routes/account/settings.tsx
+#: src/routes/settings.tsx
+msgid "How bounty rates are shown and entered."
+msgstr "How bounty rates are shown and entered."
 
 #: src/routes/settings.tsx
 msgid "Reset hidden columns"
@@ -3643,12 +3643,6 @@ msgstr "Settings"
 msgid "A–Z"
 msgstr "A–Z"
 
-#. placeholder {0}: new Date(Number(link().linkedAt.toMillis())).toLocaleDateString(uiLocale())
-#. placeholder {0}: new Date(Number(link.linkedAt.toMillis())).toLocaleDateString(uiLocale())
-#: src/routes/account/profile.tsx
-msgid "linked {0}"
-msgstr "linked {0}"
-
 #: src/routes/tools/crafts/[id].tsx
 msgid "remaining"
 msgstr "remaining"
@@ -3980,6 +3974,10 @@ msgstr "Unstartable"
 #: src/routes/database/placeable/[id].tsx
 msgid "Extracted from"
 msgstr "Extracted from"
+
+#: src/routes/account/profile.tsx
+msgid "Link Discord to use slash commands and receive notifications there."
+msgstr "Link Discord to use slash commands and receive notifications there."
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Builds into"

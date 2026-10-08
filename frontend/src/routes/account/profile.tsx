@@ -19,14 +19,12 @@ import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, Di
 import {TextField, TextFieldErrorMessage, TextFieldInput, TextFieldLabel} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip.tsx";
-import {bitAuthLoginUrl, discordLoginUrl, installDiscordBotUrl} from "~/lib/account/brico-bot";
+import {bitAuthLoginUrl, discordLoginUrl} from "~/lib/account/brico-bot";
 import {useLinkedIntegrations} from "~/lib/account/links";
 import {accountTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {breadcrumb} from "~/lib/game-links";
-import {uiLocale} from "~/lib/i18n";
-import {useSettings} from "~/lib/settings.tsx";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
 
@@ -45,32 +43,32 @@ function IntegrationRow(props: {
     onUnlink: (id: bigint) => void;
 }) {
     return (
-        <div class="flex items-center justify-between gap-3 rounded-md border p-3">
-            <div class="min-w-0">
-                <p class="text-sm font-medium">{props.label}</p>
+        <div class="flex flex-col rounded-md border p-3">
+            <p class="text-sm font-medium pb-3">{props.label}</p>
+            <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <Show
+                        when={props.link}
+                        fallback={<p class="text-sm text-muted-foreground"><Trans>Not linked.</Trans></p>}
+                    >
+                        {link => (
+                            <p class="text-sm truncate">
+                                {link().externalHandle ?? link().externalId}
+                            </p>
+                        )}
+                    </Show>
+                </div>
                 <Show
                     when={props.link}
-                    fallback={<p class="text-sm text-muted-foreground"><Trans>Not linked.</Trans></p>}
+                    fallback={<Button size="sm" disabled={props.busy} onClick={props.onLink}>{props.linkLabel}</Button>}
                 >
                     {link => (
-                        <p class="text-sm text-muted-foreground truncate">
-                            {link().externalHandle ?? link().externalId}
-                            {" · "}
-                            <Trans>linked {new Date(Number(link().linkedAt.toMillis())).toLocaleDateString(uiLocale())}</Trans>
-                        </p>
+                        <Button variant="outline" size="sm" disabled={props.busy} onClick={() => props.onUnlink(link().id)}>
+                            <Trans>Unlink</Trans>
+                        </Button>
                     )}
                 </Show>
             </div>
-            <Show
-                when={props.link}
-                fallback={<Button size="sm" disabled={props.busy} onClick={props.onLink}>{props.linkLabel}</Button>}
-            >
-                {link => (
-                    <Button variant="outline" size="sm" disabled={props.busy} onClick={() => props.onUnlink(link().id)}>
-                        <Trans>Unlink</Trans>
-                    </Button>
-                )}
-            </Show>
         </div>
     );
 }
@@ -90,7 +88,9 @@ function BitCraftLinksRow(props: {
     return (
         <div class="flex flex-col gap-2 rounded-md border p-3">
             <div class="flex items-center justify-between gap-3">
-                <p class="text-sm font-medium"><Trans>BitCraft characters</Trans></p>
+                <p class="text-sm font-medium inline-flex gap-1.5 items-center">
+                    <img src="/bitcraft.svg" alt="BitCraft" class="size-6"/><Trans>BitCraft characters</Trans>
+                </p>
                 <Button size="sm" disabled={props.busy} onClick={props.onLink}>{props.linkLabel}</Button>
             </div>
             <Show
@@ -101,10 +101,8 @@ function BitCraftLinksRow(props: {
                     <For each={props.links}>
                         {link => (
                             <li class="flex items-center justify-between gap-3">
-                                <p class="text-sm text-muted-foreground truncate">
+                                <p class="text-sm truncate">
                                     {link.externalHandle ?? link.externalId}
-                                    {" · "}
-                                    <Trans>linked {new Date(Number(link.linkedAt.toMillis())).toLocaleDateString(uiLocale())}</Trans>
                                 </p>
                                 <Button variant="outline" size="sm" disabled={props.busy} onClick={() => props.onUnlink(link.id)}>
                                     <Trans>Unlink</Trans>
@@ -120,7 +118,6 @@ function BitCraftLinksRow(props: {
 
 export default function ProfilePage() {
     const {_} = useLingui();
-    const {devMenusEnabled} = useSettings();
     const {isLoggedIn, account, login, logout, setDisplayName, loginMethod} = useAccount();
     const {links, beginLink, linkDiscordShortcut, unlink} = useLinkedIntegrations();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -268,12 +265,10 @@ export default function ProfilePage() {
                                 <Trans>
                                     Link your BitCraft account to get credit for crafts and contributions.
                                 </Trans>
-                                {/*
                                 <br/>
                                 <Trans>
                                     Link Discord to use slash commands and receive notifications there.
                                 </Trans>
-                                */}
                             </CardDescription>
                         </CardHeader>
                         <CardContent class="flex flex-col gap-2">
@@ -285,16 +280,18 @@ export default function ProfilePage() {
                                 onUnlink={(id) => setUnlinkTarget({id, label: BITCRAFT_PROVIDER})}
                             />
                             <IntegrationRow
-                                label={<Trans>Discord</Trans>}
+                                label={
+                                    <div class="flex flex-row gap-1.5 items-center">
+                                        <img src="/discord.svg" alt="Discord" class="size-6"/>
+                                        <Trans>Discord</Trans>
+                                    </div>
+                                }
                                 link={discordLink()}
                                 linkLabel={loginMethod() === "discord" ? <Trans>Link Discord</Trans> : <Trans>Link via Discord</Trans>}
                                 busy={busyProvider() === DISCORD_PROVIDER}
                                 onLink={linkDiscord}
                                 onUnlink={(id) => setUnlinkTarget({id, label: DISCORD_PROVIDER})}
                             />
-                            <Button as="a" href={installDiscordBotUrl()} variant="outline" class="self-start">
-                                <Trans>Add the Brico.app bot to your Discord server</Trans>
-                            </Button>
                         </CardContent>
                     </Card>
 

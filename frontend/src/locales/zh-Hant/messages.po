@@ -653,11 +653,6 @@ msgstr "範圍"
 msgid "Supplies"
 msgstr ""
 
-#: src/routes/account/settings.tsx
-#: src/routes/settings.tsx
-msgid "How bounty rates are shown and entered — currency per effort, or effort per currency."
-msgstr ""
-
 #: src/routes/discord/installed.tsx
 msgid "Brico.app Discord Bot"
 msgstr ""
@@ -1735,6 +1730,10 @@ msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Minimum distance to Group:"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
 msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
@@ -2858,7 +2857,7 @@ msgstr ""
 msgid "Terraform"
 msgstr ""
 
-#: src/routes/account/profile.tsx
+#: src/routes/account/settings.tsx
 msgid "Add the Brico.app bot to your Discord server"
 msgstr ""
 
@@ -3182,10 +3181,6 @@ msgstr ""
 msgid "Requirements"
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft — a rate of currency per unit of effort — and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
-msgstr ""
-
 #: src/lib/crafts/error-vocab.ts
 msgid "That loyalty rule no longer exists."
 msgstr ""
@@ -3289,6 +3284,11 @@ msgstr ""
 
 #: src/routes/account/link.tsx
 msgid "Link account"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+#: src/routes/settings.tsx
+msgid "How bounty rates are shown and entered."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -3648,12 +3648,6 @@ msgstr ""
 msgid "A–Z"
 msgstr ""
 
-#. placeholder {0}: new Date(Number(link().linkedAt.toMillis())).toLocaleDateString(uiLocale())
-#. placeholder {0}: new Date(Number(link.linkedAt.toMillis())).toLocaleDateString(uiLocale())
-#: src/routes/account/profile.tsx
-msgid "linked {0}"
-msgstr ""
-
 #: src/routes/tools/crafts/[id].tsx
 msgid "remaining"
 msgstr ""
@@ -3984,6 +3978,10 @@ msgstr ""
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Extracted from"
+msgstr ""
+
+#: src/routes/account/profile.tsx
+msgid "Link Discord to use slash commands and receive notifications there."
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
