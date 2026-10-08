@@ -35,10 +35,10 @@ export default function BuffDetail() {
         const groups: DetailGroup[] = [{
             properties: [
                 {label: msg`Buff Type`, value: buffType()?.name},
-                {label: msg`Duration`, value: b.duration ? readableSeconds(b.duration) : () => <Trans>Unspecified</Trans>},
+                {label: msg`Duration`, value: readableSeconds(b.duration)},
                 {label: msg`Priority`, value: b.priority},
                 {label: msg`Beneficial`, value: b.beneficial},
-                {label: msg`Warn Time`, value: b.warnTime ? `${fixFloat(b.warnTime)}s` : undefined},
+                {label: msg`Warn Time`, value: readableSeconds(b.warnTime)},
                 {
                     label: msg`Online Timestamp`,
                     value: () => <Tooltip openOnTouchStart>

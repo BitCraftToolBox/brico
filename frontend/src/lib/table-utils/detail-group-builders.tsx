@@ -15,7 +15,7 @@ export function buffsGroups(buffs: BuffEffect[]): DetailGroup[] {
         const label = buff ? category ? `${buff.description} (${category.name})` : buff.description : `Buff #${buffEffect.buffId}`;
         const props: DetailProperty[] = [{
             label: msg`Duration`,
-            value: readableSeconds(fixFloat(buffEffect.duration ?? buff?.duration)) ?? "Infinite"
+            value: readableSeconds(buffEffect.duration ?? buff?.duration)
         }];
         props.push(...buff?.stats?.map(s => ({
             label: statLabel(s.id?.tag),

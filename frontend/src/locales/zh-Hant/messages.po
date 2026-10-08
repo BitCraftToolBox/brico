@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-04 08:30\n"
+"PO-Revision-Date: 2026-10-02 10:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -60,10 +60,6 @@ msgstr ""
 
 #: src/components/Nav.tsx
 msgid "Change language"
-msgstr ""
-
-#: src/routes/database/buff/[id].tsx
-msgid "Unspecified"
 msgstr ""
 
 #: src/lib/table-defs/deployables-table.tsx
@@ -1227,6 +1223,10 @@ msgstr "生命值"
 msgid "Despawns"
 msgstr ""
 
+#: src/lib/utils.ts
+msgid "Infinite"
+msgstr ""
+
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Visible to Others"
@@ -1487,6 +1487,7 @@ msgstr ""
 msgid "Global Cooldown"
 msgstr ""
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Duration"
@@ -2795,3 +2796,4 @@ msgstr ""
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr ""
+
