@@ -57,10 +57,6 @@ msgstr "Drops within {0}–{1} tiles."
 msgid "Change language"
 msgstr "Change language"
 
-#: src/routes/database/buff/[id].tsx
-msgid "Unspecified"
-msgstr "Unspecified"
-
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Equivalent \"player inventory\" slots."
 msgstr "Equivalent \"player inventory\" slots."
@@ -1222,6 +1218,10 @@ msgstr "HP"
 msgid "Despawns"
 msgstr "Despawns"
 
+#: src/lib/utils.ts
+msgid "Infinite"
+msgstr "Infinite"
+
 #: src/lib/table-defs/placeables-table.tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Visible to Others"
@@ -1482,6 +1482,7 @@ msgstr "No items visible <0>You know you can just collapse the sidebar, right? D
 msgid "Global Cooldown"
 msgstr "Global Cooldown"
 
+#: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Duration"

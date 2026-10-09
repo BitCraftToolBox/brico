@@ -2796,4 +2796,3 @@ msgstr ""
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr ""
-
