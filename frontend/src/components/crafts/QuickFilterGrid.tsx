@@ -1,10 +1,15 @@
 /**
- * QuickFilterGrid.tsx — the craft browser's skill/tier toggle grids.
+ * QuickFilterGrid.tsx — the craft browser's claim/player/item pickers and skill/tier toggle grids.
  */
+import type {FilterValue} from "@brico/crafts/filter";
+import {msg} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
 import {For, Show} from "solid-js";
+import {type FieldOption, OptionPicker} from "~/components/crafts/FilterBuilder";
 import {FontIcon} from "~/components/icons/font-icons";
 import {TierIcon} from "~/components/shared/GameIcon";
 import {Button} from "~/components/ui/button";
+import {cn} from "~/lib/utils";
 
 export interface QuickFilterSkill {
     id: number;
@@ -12,7 +17,33 @@ export interface QuickFilterSkill {
     iconAssetName?: string;
 }
 
+/** One of the picker dropdowns: its option list and current selection. */
+export interface QuickFilterPicker {
+    options: FieldOption[];
+    selected: FilterValue[];
+    onChange: (values: FilterValue[]) => void;
+}
+
+/**
+ * Reads `picker` through `props` so the `OptionPicker` is created once: the page hands in a fresh
+ * `picker` object on every snapshot, and rebuilding the element would close an open dropdown.
+ */
+function QuickPicker(props: {picker: QuickFilterPicker; placeholder: string}) {
+    return (
+        <OptionPicker
+            options={props.picker.options}
+            selected={props.picker.selected}
+            multiple
+            placeholder={props.placeholder}
+            onChange={values => props.picker.onChange(values)}
+        />
+    );
+}
+
 export function QuickFilterGrid(props: {
+    claim: QuickFilterPicker;
+    owner: QuickFilterPicker;
+    item: QuickFilterPicker;
     skills: QuickFilterSkill[];
     tiers: number[];
     selectedSkills: ReadonlySet<number>;
@@ -21,8 +52,14 @@ export function QuickFilterGrid(props: {
     onToggleSkill: (id: number) => void;
     onToggleTier: (tier: number) => void;
 }) {
+    const {_} = useLingui();
     return (
         <div class="space-y-2 md:flex md:flex-wrap md:gap-4 md:justify-center">
+            <div class={cn("flex flex-col flex-wrap justify-center gap-2", !props.active && "pointer-events-none opacity-50")}>
+                <QuickPicker picker={props.claim} placeholder={_(msg`Claim`)}/>
+                <QuickPicker picker={props.owner} placeholder={_(msg`Player`)}/>
+                <QuickPicker picker={props.item} placeholder={_(msg`Item`)}/>
+            </div>
             <div class="grid grid-cols-4 gap-y-1.5 gap-x-3">
                 <For each={props.skills}>
                     {skill => {

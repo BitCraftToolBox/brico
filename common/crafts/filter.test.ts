@@ -16,6 +16,7 @@ import {
     openWorkFilter,
     parseFilter,
     quickWorkFilter,
+    type QuickWorkFilterState,
     quickWorkFilterState,
     validateFilter,
     wouldMatchIfOpen,
@@ -326,23 +327,25 @@ describe("openWorkFilter", () => {
     });
 });
 
+const quick = (state: Partial<QuickWorkFilterState>): QuickWorkFilterState => ({claims: [], owners: [], items: [], skills: [], tiers: [], ...state});
+
 describe("quickWorkFilterState / quickWorkFilter", () => {
     it("recognizes the bare open-work filter as an empty selection", () => {
-        assert.deepEqual(quickWorkFilterState(openWorkFilter()), {skills: [], tiers: []});
+        assert.deepEqual(quickWorkFilterState(openWorkFilter()), quick({}));
     });
 
     it("recognizes open-work plus a skill selection", () => {
-        const node = quickWorkFilter({skills: [3, 5], tiers: []});
-        assert.deepEqual(quickWorkFilterState(node), {skills: [3, 5], tiers: []});
+        const node = quickWorkFilter(quick({skills: [3, 5]}));
+        assert.deepEqual(quickWorkFilterState(node), quick({skills: [3, 5]}));
     });
 
     it("recognizes open-work plus a tier selection", () => {
-        const node = quickWorkFilter({skills: [], tiers: [4, 6]});
-        assert.deepEqual(quickWorkFilterState(node), {skills: [], tiers: [4, 6]});
+        const node = quickWorkFilter(quick({tiers: [4, 6]}));
+        assert.deepEqual(quickWorkFilterState(node), quick({tiers: [4, 6]}));
     });
 
     it("recognizes open-work plus both selections, regardless of leaf order", () => {
-        const state = {skills: [2], tiers: [7]};
+        const state = quick({skills: [2], tiers: [7]});
         assert.deepEqual(quickWorkFilterState(quickWorkFilter(state)), state);
 
         const reordered: FilterNode = {
@@ -355,6 +358,12 @@ describe("quickWorkFilterState / quickWorkFilter", () => {
             ],
         };
         assert.deepEqual(quickWorkFilterState(reordered), state);
+    });
+
+    it("recognizes claim, owner and item selections", () => {
+        const state = quick({claims: ["11"], owners: ["22", "33"], items: ["item:5"], skills: [1], tiers: [2]});
+        assert.deepEqual(validateFilter(quickWorkFilter(state)), []);
+        assert.deepEqual(quickWorkFilterState(quickWorkFilter(state)), state);
     });
 
     it("rejects a bare leaf", () => {
@@ -407,7 +416,7 @@ describe("quickWorkFilterState / quickWorkFilter", () => {
 describe("filtersEqual", () => {
     it("is true for two independently-built but structurally identical trees", () => {
         assert.equal(filtersEqual(openWorkFilter(), openWorkFilter()), true);
-        assert.equal(filtersEqual(quickWorkFilter({skills: [3, 5], tiers: []}), quickWorkFilter({skills: [3, 5], tiers: []})), true);
+        assert.equal(filtersEqual(quickWorkFilter(quick({skills: [3, 5]})), quickWorkFilter(quick({skills: [3, 5]}))), true);
     });
 
     it("ignores object key order", () => {
@@ -444,7 +453,7 @@ describe("filtersEqual", () => {
 
     it("is false when one tree has an extra child the other doesn't", () => {
         const a = openWorkFilter();
-        const b = quickWorkFilter({skills: [1], tiers: []});
+        const b = quickWorkFilter(quick({skills: [1]}));
         assert.equal(filtersEqual(a, b), false);
     });
 });

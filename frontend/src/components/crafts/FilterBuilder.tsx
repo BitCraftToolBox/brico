@@ -35,7 +35,7 @@ import {
     TbOutlineCopy as IconCopy,
     TbOutlineTrash as IconRemove,
 } from "solid-icons/tb";
-import {createMemo, createSignal, For, Match, Show, Switch} from "solid-js";
+import {createEffect, createMemo, createSignal, For, Match, Show, Switch} from "solid-js";
 import {TierIcon} from "~/components/shared/GameIcon";
 import {Badge} from "~/components/ui/badge";
 import {Button} from "~/components/ui/button";
@@ -161,7 +161,7 @@ function OptionLabel(props: {option: FieldOption | undefined; fallback: string})
 }
 
 /** Searchable single/multi picker over a known option set. */
-function OptionPicker(props: {
+export function OptionPicker(props: {
     options: FieldOption[];
     selected: FilterValue[];
     multiple: boolean;
@@ -170,6 +170,17 @@ function OptionPicker(props: {
 }) {
     const [search, setSearch] = createSignal("");
     const [open, setOpen] = createSignal(false);
+
+    /**
+     * The options being shown: a copy of `props.options`, refreshed only while the popover is
+     * closed. Callers rebuild the list on a timer, and swapping it under an open list resets
+     * scroll position and highlight.
+     */
+    const [shown, setShown] = createSignal(props.options);
+    createEffect(() => {
+        const latest = props.options;
+        if (!open()) setShown(() => latest);
+    });
 
     /**
      * Ticks made while the popover is open, held back until it closes.
@@ -200,7 +211,7 @@ function OptionPicker(props: {
             if (selected.has(option.value)) return 0;
             return option.active ? 1 : 2;
         };
-        const visible = needle ? props.options.filter(o => o.label.toLowerCase().includes(needle)) : props.options;
+        const visible = needle ? shown().filter(o => o.label.toLowerCase().includes(needle)) : shown();
         return visible
             .map((option, index) => ({option, index, bucket: bucket(option)}))
             .sort((a, b) => a.bucket - b.bucket || a.index - b.index)
@@ -208,7 +219,7 @@ function OptionPicker(props: {
             .map(({option}) => option);
     });
 
-    const optionFor = (value: FilterValue) => props.options.find(o => o.value === value);
+    const optionFor = (value: FilterValue) => shown().find(o => o.value === value);
 
     const toggle = (value: FilterValue) => {
         if (!props.multiple) {

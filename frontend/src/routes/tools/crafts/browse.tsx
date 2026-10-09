@@ -22,6 +22,7 @@ import {
     openWorkFilter,
     parseFilter,
     quickWorkFilter,
+    type QuickWorkFilterState,
     quickWorkFilterState,
 } from "@brico/crafts/filter";
 import {claimDisplayName, regionDisplayName} from "@brico/crafts/names";
@@ -49,7 +50,7 @@ import {createEffect, createMemo, createSignal, For, Show} from "solid-js";
 import {type FieldOption, FilterBuilder} from "~/components/crafts/FilterBuilder";
 import {OutputIcon} from "~/components/crafts/OutputIcon";
 import {PayoutRateButton} from "~/components/crafts/PayoutRateButton";
-import {QuickFilterGrid} from "~/components/crafts/QuickFilterGrid";
+import {QuickFilterGrid, type QuickFilterPicker} from "~/components/crafts/QuickFilterGrid";
 import {type FilterExport, SavedFiltersDialog} from "~/components/crafts/SavedFiltersDialog";
 import {LiveTable} from "~/components/data-table/live-table";
 import {FontIcon} from "~/components/icons/font-icons";
@@ -284,7 +285,7 @@ const COLUMNS: ColumnDef<CraftEntry, any>[] = [
                 <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
                     <div class="flex flex-row justify-center">
                         <span class="inline-flex gap-1 tabular-nums">
-                            {(entry.subject.payout! * entry.effortRemaining).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
+                            {(entry.subject.payout! * entry.effortTotal).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
                             <CurrencyLabel currency={entry.subject.currency!} iconOnly={true}/>
                         </span>
                     </div>
@@ -496,24 +497,29 @@ export default function CraftBrowser() {
     });
 
     // `null` whenever the current filter isn't exactly `openWorkFilter()` plus an optional
-    // skill/tier selection — see `quickWorkFilterState`'s doc comment. The grids only ever
-    // *reflect* that one shape; anything else (a hand-edited filter, an imported one, ...) renders
-    // them inert rather than guessing at a partial match, so a stray click there can't silently
-    // discard whatever more complex filter is actually active.
+    // claim/player/item/skill/tier selection — see `quickWorkFilterState`'s doc comment. The quick
+    // filters only ever *reflect* that one shape; anything else (a hand-edited filter, an imported
+    // one, ...) renders them inert rather than guessing at a partial match, so a stray click there
+    // can't silently discard whatever more complex filter is actually active.
     const quickState = createMemo(() => quickWorkFilterState(filter()));
     const quickActive = createMemo(() => quickState() !== null);
-    const toggleQuickSkill = (id: number) => {
+    const setQuickList = <K extends keyof QuickWorkFilterState>(key: K, values: QuickWorkFilterState[K]) => {
         const current = quickState();
-        if (!current) return;
-        const skills = current.skills.includes(id) ? current.skills.filter(s => s !== id) : [...current.skills, id];
-        setFilter(quickWorkFilter({...current, skills}));
+        if (current) setFilter(quickWorkFilter({...current, [key]: values}));
+    };
+    const toggleQuickSkill = (id: number) => {
+        const skills = quickState()?.skills ?? [];
+        setQuickList("skills", skills.includes(id) ? skills.filter(s => s !== id) : [...skills, id]);
     };
     const toggleQuickTier = (tier: number) => {
-        const current = quickState();
-        if (!current) return;
-        const tiers = current.tiers.includes(tier) ? current.tiers.filter(t => t !== tier) : [...current.tiers, tier];
-        setFilter(quickWorkFilter({...current, tiers}));
+        const tiers = quickState()?.tiers ?? [];
+        setQuickList("tiers", tiers.includes(tier) ? tiers.filter(t => t !== tier) : [...tiers, tier]);
     };
+    const quickPicker = (field: "claim" | "owner" | "item", key: "claims" | "owners" | "items"): QuickFilterPicker => ({
+        options: options()[field] ?? [],
+        selected: quickState()?.[key] ?? [],
+        onChange: values => setQuickList(key, values as string[]),
+    });
 
     const staticOptions = createMemo(() => craftStaticOptions());
 
@@ -705,6 +711,9 @@ export default function CraftBrowser() {
                         <CollapsibleContent>
                             <CardContent class="space-y-4">
                                 <QuickFilterGrid
+                                    claim={quickPicker("claim", "claims")}
+                                    owner={quickPicker("owner", "owners")}
+                                    item={quickPicker("item", "items")}
                                     skills={quickFilterSkills()}
                                     tiers={quickFilterTiers()}
                                     selectedSkills={new Set(quickState()?.skills ?? [])}

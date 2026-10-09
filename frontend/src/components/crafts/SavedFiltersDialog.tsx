@@ -1,11 +1,11 @@
 /**
  * SavedFiltersDialog.tsx — the craft browser's "Saved Filters" import/export dialog.
  *
- * Import accepts three shapes in one textarea: a single `{name, filter}` export (or a bare
- * `FilterNode`), a JSON array of either (batch import — invalid entries are skipped rather than
- * failing the whole paste), or a share code minted by `createSharedFilters` (redeemed via the
- * `readSharedFilters` procedure). A file upload always goes through the JSON path — a file's
- * contents are never a bare 6-character code.
+ * Import accepts three shapes in one textarea:
+ * - a single `{name?, filter}` export
+ * - a JSON array of exports (invalid entries are skipped rather than failing the whole paste)
+ * - a share code minted by `createSharedFilters` (redeemed via the `readSharedFilters` procedure).
+ * A file upload always goes through the JSON path.
  *
  * Export lists one row per saved filter plus a synthetic "All filters" row bundling every one of
  * them; each row can be copied as JSON, downloaded as a file, or (logged in only, since a share
@@ -158,18 +158,18 @@ function ExportRowView(props: {row: ExportRow; canShare: boolean; onShare: (filt
                         </PopoverContent>
                     </Popover>
                 </Show>
-                <Button variant="ghost" size="icon" class="size-8" aria-label={_(msg`Copy ${props.row.name} as JSON`)} onClick={copy}>
+                <Button variant="ghost" size="icon" class="size-8" aria-label={_(msg`Copy ${props.row.name} as JSON`)} title={_(msg`Copy JSON`)} onClick={copy}>
                     <Show when={copied()} fallback={<IconCopy class="size-4"/>}><IconClipboardCheck class="size-4"/></Show>
                 </Button>
                 <Button
-                    variant="ghost" size="icon" class="size-8" aria-label={_(msg`Download ${props.row.name}`)}
+                    variant="ghost" size="icon" class="size-8" aria-label={_(msg`Download ${props.row.name}`)} title={_(msg`Download file`)}
                     onClick={() => downloadTextFile(`${props.row.name}.json`, props.row.json)}
                 >
                     <IconDownload class="size-4"/>
                 </Button>
                 <Dialog open={confirmOpen()} onOpenChange={setConfirmOpen}>
                     <DialogTrigger
-                        class="text-muted-foreground hover:text-foreground" aria-label={_(msg`Delete filter ${props.row.name}`)}
+                        class="text-muted-foreground hover:text-foreground" aria-label={_(msg`Delete filter "${props.row.name}"`)}
                         onClick={e => { if (e.shiftKey) props.onDelete(props.row.key); }}
                     >
                         <IconRemove class="size-3.5"/>
@@ -177,7 +177,7 @@ function ExportRowView(props: {row: ExportRow; canShare: boolean; onShare: (filt
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>
-                                <Show when={props.row.key === "__all__"} fallback={<Trans>Delete {props.row.name}?</Trans>}>
+                                <Show when={props.row.key === "__all__"} fallback={<Trans>Delete "{props.row.name}"?</Trans>}>
                                     <Trans>Delete all filters?</Trans>
                                 </Show>
                             </DialogTitle>
@@ -326,7 +326,7 @@ export function SavedFiltersDialog(props: {
         <Dialog open={props.open} onOpenChange={props.onOpenChange}>
             <DialogContent class="max-w-lg">
                 <DialogHeader>
-                    <DialogTitle><Trans>Saved Filters</Trans></DialogTitle>
+                    <DialogTitle><Trans>Import / Export</Trans></DialogTitle>
                 </DialogHeader>
                 <div class="space-y-5">
                     <div class="space-y-2">

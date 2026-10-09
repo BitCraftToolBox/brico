@@ -255,30 +255,43 @@ function deepEqualJson(a: unknown, b: unknown): boolean {
 }
 
 /**
- * The skill/tier selection a quick-filter UI drives on top of `openWorkFilter()` — see
- * `quickWorkFilterState`/`quickWorkFilter`.
+ * The selection a quick-filter UI drives on top of `openWorkFilter()` — see
+ * `quickWorkFilterState`/`quickWorkFilter`. `claims`/`owners`/`items` hold the same string ids the
+ * `claim`/`owner`/`item` fields compare against.
  */
 export interface QuickWorkFilterState {
+    claims: string[];
+    owners: string[];
+    items: string[];
     skills: number[];
     tiers: number[];
 }
 
+/** Leaf order in `quickWorkFilter`'s output, and the state key each `in` leaf maps to. */
+const QUICK_LIST_FIELDS = [
+    {field: "claim", key: "claims"},
+    {field: "owner", key: "owners"},
+    {field: "item", key: "items"},
+    {field: "skill", key: "skills"},
+    {field: "tier", key: "tiers"},
+] as const satisfies readonly {field: FilterField; key: keyof QuickWorkFilterState}[];
+
 /**
- * Recognizes `node` as *exactly* `openWorkFilter()` plus an optional `skill in [...]` and/or
- * `tier in [...]` leaf, in either order and nothing else — the one shape the craft browser's
- * quick-filter skill/tier grids can drive with a plain toggle. Returns `null` for anything else,
- * including a hand-edited filter that happens to be semantically equivalent but structured
- * differently (an explicit `or` of two tiers, an extra redundant leaf, a negation, ...): the grids
- * only ever *reflect* this exact shape, they don't try to interpret arbitrary filters, so a
- * "doesn't match" filter renders them inert rather than guessing at some partial selection.
+ * Recognizes `node` as *exactly* `openWorkFilter()` plus an optional `in` leaf for each of claim,
+ * owner, item, skill and tier, in any order and nothing else — the one shape the craft browser's
+ * quick filters can drive. Returns `null` for anything else, including a hand-edited filter that
+ * happens to be semantically equivalent but structured differently (an explicit `or` of two tiers,
+ * an extra redundant leaf, a negation, ...): the quick filters only ever *reflect* this exact shape,
+ * they don't try to interpret arbitrary filters, so a "doesn't match" filter renders them inert
+ * rather than guessing at some partial selection.
  */
 export function quickWorkFilterState(node: FilterNode): QuickWorkFilterState | null {
     if (isLeaf(node) || node.op !== "and") return null;
 
     let sawPublic = false;
     let sawComplete = false;
-    let skills: number[] | null = null;
-    let tiers: number[] | null = null;
+    const state: QuickWorkFilterState = {claims: [], owners: [], items: [], skills: [], tiers: []};
+    const seen = new Set<string>();
 
     for (const child of node.children) {
         if (!isLeaf(child)) return null;
@@ -286,23 +299,23 @@ export function quickWorkFilterState(node: FilterNode): QuickWorkFilterState | n
             sawPublic = true;
         } else if (child.field === "complete" && child.cmp === "eq" && child.value === false) {
             sawComplete = true;
-        } else if (child.field === "skill" && child.cmp === "in" && Array.isArray(child.value) && skills === null) {
-            skills = child.value as number[];
-        } else if (child.field === "tier" && child.cmp === "in" && Array.isArray(child.value) && tiers === null) {
-            tiers = child.value as number[];
         } else {
-            return null;
+            const list = QUICK_LIST_FIELDS.find(entry => entry.field === child.field);
+            if (!list || child.cmp !== "in" || !Array.isArray(child.value) || seen.has(list.key)) return null;
+            seen.add(list.key);
+            (state[list.key] as FilterValue[]) = child.value;
         }
     }
 
-    return sawPublic && sawComplete ? {skills: skills ?? [], tiers: tiers ?? []} : null;
+    return sawPublic && sawComplete ? state : null;
 }
 
-/** The inverse of `quickWorkFilterState`: `openWorkFilter()` plus `state`'s skill/tier selection. */
+/** The inverse of `quickWorkFilterState`: `openWorkFilter()` plus `state`'s selections. */
 export function quickWorkFilter(state: QuickWorkFilterState): FilterNode {
     const children: FilterNode[] = [...(openWorkFilter() as {op: "and"; children: FilterNode[]}).children];
-    if (state.skills.length > 0) children.push({field: "skill", cmp: "in", value: state.skills});
-    if (state.tiers.length > 0) children.push({field: "tier", cmp: "in", value: state.tiers});
+    for (const {field, key} of QUICK_LIST_FIELDS) {
+        if (state[key].length > 0) children.push({field, cmp: "in", value: state[key]});
+    }
     return {op: "and", children};
 }
 

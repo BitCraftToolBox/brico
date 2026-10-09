@@ -225,6 +225,7 @@ msgstr ""
 msgid "Unknown event: {kind}"
 msgstr ""
 
+#: src/lib/sidebar-items.ts
 #: src/routes/account/bounties.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/tools/crafts/browse.tsx
@@ -891,6 +892,7 @@ msgstr ""
 
 #: src/components/app-sidebar.tsx
 #: src/lib/game-links.tsx
+#: src/lib/sidebar-items.ts
 #: src/routes/account/index.tsx
 #: src/routes/account/notifications.tsx
 #: src/routes/account/profile.tsx
@@ -1507,6 +1509,10 @@ msgstr ""
 msgid "All items visible"
 msgstr ""
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Import / Export"
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Buff"
@@ -1830,6 +1836,7 @@ msgstr ""
 msgid "Loading translations…"
 msgstr ""
 
+#: src/components/crafts/QuickFilterGrid.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
 #: src/routes/tools/crafts/browse.tsx
@@ -1873,6 +1880,7 @@ msgstr ""
 msgid "Select player…"
 msgstr ""
 
+#: src/components/crafts/QuickFilterGrid.tsx
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
@@ -2205,6 +2213,7 @@ msgstr ""
 msgid "Linking failed"
 msgstr ""
 
+#: src/components/crafts/SavedFiltersDialog.tsx
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Copy JSON"
 msgstr ""
@@ -2225,7 +2234,9 @@ msgstr ""
 msgid "Prospecting Hits"
 msgstr ""
 
+#. placeholder {0}: props.row.name
 #. placeholder {0}: props.saved.name
+#: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "Delete \"{0}\"?"
 msgstr ""
@@ -2318,7 +2329,6 @@ msgstr "Vitesse"
 msgid "No loyalty rewards yet."
 msgstr ""
 
-#: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "Saved Filters"
 msgstr ""
@@ -3581,11 +3591,6 @@ msgstr ""
 msgid "Whether to show the sidebar in its collapsed (icon only) state on initial load."
 msgstr ""
 
-#. placeholder {0}: props.row.name
-#: src/components/crafts/SavedFiltersDialog.tsx
-msgid "Delete {0}?"
-msgstr ""
-
 #: src/components/crafts/LocalGroupingsManager.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/loyalty.tsx
@@ -3951,6 +3956,7 @@ msgid "Structure"
 msgstr ""
 
 #: src/components/crafts/PayoutHistoryDialog.tsx
+#: src/components/crafts/QuickFilterGrid.tsx
 msgid "Player"
 msgstr ""
 
@@ -4023,6 +4029,10 @@ msgstr ""
 
 #: src/components/crafts/LocalGroupingsManager.tsx
 msgid "Group name"
+msgstr ""
+
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Download file"
 msgstr ""
 
 #: src/routes/account/loyalty.tsx
@@ -4149,9 +4159,7 @@ msgstr ""
 msgid "Link via BitAuth"
 msgstr ""
 
-#. placeholder {0}: props.row.name
 #. placeholder {0}: props.saved.name
-#: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "Delete filter {0}"
 msgstr ""
@@ -4323,6 +4331,11 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Health Regen"
+msgstr ""
+
+#. placeholder {0}: props.row.name
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Delete filter \"{0}\""
 msgstr ""
 
 #: src/routes/account/notifications.tsx
