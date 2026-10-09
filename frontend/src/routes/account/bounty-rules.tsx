@@ -13,8 +13,9 @@ import {claimDisplayName, regionDisplayName} from "@brico/crafts/names";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
+import {useBeforeLeave} from "@solidjs/router";
 import {TbOutlineArrowsExchange as IconSwap, TbOutlineTrash as IconRemove} from "solid-icons/tb";
-import {createMemo, createSignal, For, Show} from "solid-js";
+import {createEffect, createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
 import {CurrencySelect} from "~/components/crafts/CurrencySelect";
 import {type FieldOption, type FieldOptions, FilterBuilder} from "~/components/crafts/FilterBuilder";
 import {FontIcon} from "~/components/icons/font-icons.tsx";
@@ -25,6 +26,7 @@ import RouteTabHeader from "~/components/shared/RouteTabHeader";
 import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components/ui/card";
 import {Checkbox} from "~/components/ui/checkbox";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "~/components/ui/dialog";
 import {Label} from "~/components/ui/label";
 import {TextField, TextFieldInput} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
@@ -47,6 +49,7 @@ import {type PayoutDisplayMode, useSettings} from "~/lib/settings";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
 import {PRISM_SERVER} from "~/lib/spacetime/prism";
+import {cn} from "~/lib/utils";
 
 const DISALLOWED_FIELDS = ["payout", "currency"] as const;
 // skill tiers, not item tiers
@@ -85,6 +88,14 @@ function draftFrom(rule: BountyRule): RuleDraft {
 
 function emptyDraft(): RuleDraft {
     return {filter: matchAll(), mode: "flat", flatAmount: null, flatCurrency: BOUNTY_CURRENCIES[0], gridCurrency: BOUNTY_CURRENCIES[0], gridCells: new Map(), private: false};
+}
+
+/** Canonical string for comparing drafts: grid cells sorted by key, bigints stringified. */
+function draftSignature(draft: RuleDraft): string {
+    return JSON.stringify(
+        {...draft, gridCells: [...draft.gridCells].sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)},
+        (_key, value) => typeof value === "bigint" ? value.toString() : value,
+    );
 }
 
 /** The `BountyRuleValue` a draft currently describes, or `null` when an amount is missing/didn't parse. */
@@ -203,11 +214,17 @@ function RuleCard(props: {
     onMoveUp: () => void;
     onMoveDown: () => void;
     onDiscard?: () => void;
+    /** Called with a save action (resolving to whether it succeeded) while this card has unsaved edits, and `null` once clean or unmounted. */
+    onDirtyChange: (save: (() => Promise<boolean>) | null) => void;
 }) {
     const {_} = useLingui();
     const [id] = createSignal(props.rule?.id ?? crypto.randomUUID());
     const [draft, setDraft] = createSignal<RuleDraft>(props.rule ? draftFrom(props.rule) : emptyDraft());
     const [busy, setBusy] = createSignal(false);
+    const [deleteOpen, setDeleteOpen] = createSignal(false);
+    const dirty = createMemo(() => draftSignature(draft()) !== draftSignature(props.rule ? draftFrom(props.rule) : emptyDraft()));
+    createEffect(() => props.onDirtyChange(dirty() ? save : null));
+    onCleanup(() => props.onDirtyChange(null));
     const skillOrder = new Map(SKILL_ORDER.map((id, index) => [id, index]));
     const skills = () => (BitCraftTables.SkillDesc.get() ?? [])
         .filter(s => skillOrder.has(s.id))
@@ -257,23 +274,25 @@ function RuleCard(props: {
 
     const filterProblems = createMemo(() => validateFilter(draft().filter, "filter", [...DISALLOWED_FIELDS]));
 
-    const save = async () => {
+    const save = async (): Promise<boolean> => {
         const value = valueFrom(draft());
         if (!value) {
             reportError(_(msg`Could not save rule`), new Error(_(msg`Enter a plain non-negative number for each rate, e.g. 0.05 or 12.`)));
-            return;
+            return false;
         }
         if (filterProblems().length > 0) {
             // `filterProblems()[0]` comes from `@brico/crafts/filter`'s `validateFilter`, which is
             // English-only by design (shared with `brico-bot`, no i18n dependency) — left untranslated.
             reportError(_(msg`Could not save rule`), new Error(filterProblems()[0]));
-            return;
+            return false;
         }
         setBusy(true);
         try {
             await props.onSave(id(), JSON.stringify(draft().filter), value, props.priority, draft().private);
+            return true;
         } catch (cause) {
             reportError(_(msg`Could not save rule`), cause);
+            return false;
         } finally {
             setBusy(false);
         }
@@ -426,12 +445,24 @@ function RuleCard(props: {
 
                 <div class="flex justify-end gap-2">
                     <Show when={props.rule}>
-                        <Button variant="destructive" size="sm" disabled={busy()} onClick={del}><Trans>Delete</Trans></Button>
+                        <Dialog open={deleteOpen()} onOpenChange={setDeleteOpen}>
+                            <Button variant="destructive" size="sm" disabled={busy()} onClick={() => setDeleteOpen(true)}><Trans>Delete</Trans></Button>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle><Trans>Delete this rule?</Trans></DialogTitle>
+                                    <DialogDescription><Trans>This can't be undone.</Trans></DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setDeleteOpen(false)}><Trans>Cancel</Trans></Button>
+                                    <Button variant="destructive" onClick={() => {setDeleteOpen(false); void del();}}><Trans>Delete</Trans></Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </Show>
                     <Show when={!props.rule && props.onDiscard}>
                         <Button variant="outline" size="sm" onClick={props.onDiscard}><Trans>Discard</Trans></Button>
                     </Show>
-                    <Button size="sm" disabled={busy()} onClick={save}><Trans>Save</Trans></Button>
+                    <Button size="sm" class={cn(dirty() && "ring-ring ring-2 ring-offset-2")} disabled={busy()} onClick={() => void save()}><Trans>Save</Trans></Button>
                 </div>
             </CardContent>
         </Card>
@@ -447,6 +478,47 @@ export default function BountyRulesPage() {
     const prismConn = useConnection(PRISM_SERVER);
     const {rules, upsert, remove, reorder} = createBountyRules();
     const [drafting, setDrafting] = createSignal(false);
+
+    // Save actions of the cards with unsaved edits, keyed by a per-card token; `dirtyCount` mirrors its size reactively.
+    const dirtySaves = new Map<symbol, () => Promise<boolean>>();
+    const [dirtyCount, setDirtyCount] = createSignal(0);
+    const trackDirty = () => {
+        const token = Symbol();
+        return (save: (() => Promise<boolean>) | null) => {
+            if (save) dirtySaves.set(token, save);
+            else dirtySaves.delete(token);
+            setDirtyCount(dirtySaves.size);
+        };
+    };
+    const [leaveRetry, setLeaveRetry] = createSignal<(() => void) | null>(null);
+    const [leaveBusy, setLeaveBusy] = createSignal(false);
+    useBeforeLeave(e => {
+        if (dirtyCount() === 0 || e.defaultPrevented) return;
+        e.preventDefault();
+        setLeaveRetry(() => () => e.retry(true));
+    });
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+        if (dirtyCount() > 0) e.preventDefault();
+    };
+    onMount(() => {
+        window.addEventListener("beforeunload", onBeforeUnload);
+        onCleanup(() => window.removeEventListener("beforeunload", onBeforeUnload));
+    });
+    const leave = () => {
+        const retry = leaveRetry();
+        setLeaveRetry(null);
+        retry?.();
+    };
+    const saveAllAndLeave = async () => {
+        setLeaveBusy(true);
+        try {
+            const results = await Promise.all([...dirtySaves.values()].map(save => save()));
+            if (results.every(Boolean)) leave();
+            else setLeaveRetry(null);
+        } finally {
+            setLeaveBusy(false);
+        }
+    };
 
     // The account's own linked BitCraft player ids — see `craftReferenceSelfResource`'s doc comment
     // for why this page previews only its own characters (every claim is still offered, per
@@ -545,6 +617,7 @@ export default function BountyRulesPage() {
                                 onDelete={remove}
                                 onMoveUp={() => move(index(), -1)}
                                 onMoveDown={() => move(index(), 1)}
+                                onDirtyChange={trackDirty()}
                             />
                         )}
                     </For>
@@ -561,6 +634,7 @@ export default function BountyRulesPage() {
                             onMoveUp={() => {}}
                             onMoveDown={() => {}}
                             onDiscard={() => setDrafting(false)}
+                            onDirtyChange={trackDirty()}
                         />
                     </Show>
 
@@ -568,6 +642,20 @@ export default function BountyRulesPage() {
                         <p class="text-sm text-muted-foreground"><Trans>No bounty rules yet.</Trans></p>
                     </Show>
                 </Show>
+
+                <Dialog open={leaveRetry() !== null} onOpenChange={open => { if (!open) setLeaveRetry(null); }}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle><Trans>Unsaved changes</Trans></DialogTitle>
+                            <DialogDescription><Trans>Some rules have edits that haven't been saved.</Trans></DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setLeaveRetry(null)}><Trans>Stay</Trans></Button>
+                            <Button variant="destructive" disabled={leaveBusy()} onClick={leave}><Trans>Discard changes</Trans></Button>
+                            <Button disabled={leaveBusy()} onClick={() => void saveAllAndLeave()}><Trans>Save and leave</Trans></Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </MainLayout>
     );

@@ -208,6 +208,10 @@ msgstr ""
 msgid "That link no longer exists."
 msgstr ""
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Some rules have edits that haven't been saved."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Resource Depletion"
 msgstr "リソースの枯渇"
@@ -426,6 +430,10 @@ msgstr ""
 #: src/routes/settings.tsx
 msgid "Interface language"
 msgstr "インタフェースの言語"
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Discard changes"
+msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Set bounty"
@@ -1202,6 +1210,10 @@ msgstr "権利証"
 msgid "Effort Required:"
 msgstr "要求される労力："
 
+#: src/routes/account/bounty-rules.tsx
+msgid "This can't be undone."
+msgstr ""
+
 #: src/lib/table-defs/prospecting-table.tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Count"
@@ -1339,6 +1351,7 @@ msgid "Durability"
 msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/account/bounty-rules.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
 #: src/routes/tools/crafts/browse.tsx
@@ -1668,6 +1681,10 @@ msgstr "総HP"
 msgid "Locked"
 msgstr "ロック中"
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Delete this rule?"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Paving Tile"
 msgstr ""
@@ -1682,6 +1699,10 @@ msgstr ""
 #: src/routes/database/combat/[id].tsx
 msgid "Weapon Type"
 msgstr "武器タイプ"
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Stay"
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Required for"
@@ -3247,6 +3268,10 @@ msgstr "展開時間"
 msgid "Enemy Drops"
 msgstr "敵のドロップ"
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Save and leave"
+msgstr ""
+
 #: src/routes/tools/crafts/browse.tsx
 msgid "Save Copy"
 msgstr ""
@@ -3400,6 +3425,10 @@ msgstr ""
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
 msgstr "認識のしきい値"
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Unsaved changes"
+msgstr ""
 
 #: src/components/crafts/LocalGroupingsManager.tsx
 msgid "Group payees who haven't linked a shared account under a name of your own, just for the totals on the <0>Payouts</0> page. Stored only in this browser."

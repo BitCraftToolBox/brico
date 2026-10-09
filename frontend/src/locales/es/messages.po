@@ -208,6 +208,10 @@ msgstr ""
 msgid "That link no longer exists."
 msgstr ""
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Some rules have edits that haven't been saved."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Resource Depletion"
 msgstr ""
@@ -425,6 +429,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Interface language"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Discard changes"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -1202,6 +1210,10 @@ msgstr "Escritura"
 msgid "Effort Required:"
 msgstr ""
 
+#: src/routes/account/bounty-rules.tsx
+msgid "This can't be undone."
+msgstr ""
+
 #: src/lib/table-defs/prospecting-table.tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Count"
@@ -1339,6 +1351,7 @@ msgid "Durability"
 msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/account/bounty-rules.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
 #: src/routes/tools/crafts/browse.tsx
@@ -1668,6 +1681,10 @@ msgstr ""
 msgid "Locked"
 msgstr ""
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Delete this rule?"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Paving Tile"
 msgstr ""
@@ -1681,6 +1698,10 @@ msgstr ""
 #: src/lib/table-defs/weapon-table.tsx
 #: src/routes/database/combat/[id].tsx
 msgid "Weapon Type"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Stay"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -3247,6 +3268,10 @@ msgstr ""
 msgid "Enemy Drops"
 msgstr ""
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Save and leave"
+msgstr ""
+
 #: src/routes/tools/crafts/browse.tsx
 msgid "Save Copy"
 msgstr ""
@@ -3399,6 +3424,10 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Unsaved changes"
 msgstr ""
 
 #: src/components/crafts/LocalGroupingsManager.tsx

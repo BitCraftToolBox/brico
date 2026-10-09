@@ -203,6 +203,10 @@ msgstr "{0, plural, one {Imported # filter.} other {Imported # filters.}}"
 msgid "That link no longer exists."
 msgstr "That link no longer exists."
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Some rules have edits that haven't been saved."
+msgstr "Some rules have edits that haven't been saved."
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Resource Depletion"
 msgstr "Resource Depletion"
@@ -421,6 +425,10 @@ msgstr "Get paid for helping with other players' crafts."
 #: src/routes/settings.tsx
 msgid "Interface language"
 msgstr "Interface language"
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Discard changes"
+msgstr "Discard changes"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Set bounty"
@@ -1197,6 +1205,10 @@ msgstr "Deed"
 msgid "Effort Required:"
 msgstr "Effort Required:"
 
+#: src/routes/account/bounty-rules.tsx
+msgid "This can't be undone."
+msgstr "This can't be undone."
+
 #: src/lib/table-defs/prospecting-table.tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Count"
@@ -1334,6 +1346,7 @@ msgid "Durability"
 msgstr "Durability"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/account/bounty-rules.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
 #: src/routes/tools/crafts/browse.tsx
@@ -1663,6 +1676,10 @@ msgstr "Total HP"
 msgid "Locked"
 msgstr "Locked"
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Delete this rule?"
+msgstr "Delete this rule?"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Paving Tile"
 msgstr "Paving Tile"
@@ -1677,6 +1694,10 @@ msgstr "Craft {0}"
 #: src/routes/database/combat/[id].tsx
 msgid "Weapon Type"
 msgstr "Weapon Type"
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Stay"
+msgstr "Stay"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Required for"
@@ -3242,6 +3263,10 @@ msgstr "Deploy time"
 msgid "Enemy Drops"
 msgstr "Enemy Drops"
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Save and leave"
+msgstr "Save and leave"
+
 #: src/routes/tools/crafts/browse.tsx
 msgid "Save Copy"
 msgstr "Save Copy"
@@ -3395,6 +3420,10 @@ msgstr "Paste a filter, a list of filters, or a share code"
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
 msgstr "Awareness Threshold"
+
+#: src/routes/account/bounty-rules.tsx
+msgid "Unsaved changes"
+msgstr "Unsaved changes"
 
 #: src/components/crafts/LocalGroupingsManager.tsx
 msgid "Group payees who haven't linked a shared account under a name of your own, just for the totals on the <0>Payouts</0> page. Stored only in this browser."
