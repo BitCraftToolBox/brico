@@ -11,15 +11,9 @@ import type {ClaimInfo, ClaimMember, CraftMeta, CraftProgress, PlayerState, Regi
 import {isDeepStrictEqual} from "node:util";
 
 import type {RecipeIndex} from "../game-data/recipes.ts";
+import {keyedFeed, type TableFeed} from "../spacetime/feed.ts";
 import type {CraftSnapshot} from "./prism.ts";
 import {applyBounty, type AssignedBounty, buildRow, type CraftRow, craftRowsFrom, displayFields} from "./subject.ts";
-
-/** What a table's row callbacks feed in. `update` carries the whole before/after pair like the SDK's `onUpdate`. */
-export interface TableFeed<T> {
-    insert(row: T): void;
-    update(before: T, after: T): void;
-    delete(row: T): void;
-}
 
 /** What `drain()` found changed since the previous drain. */
 export interface RowDelta {
@@ -31,6 +25,10 @@ export interface RowDelta {
     removedIds: string[];
     /** Crafts whose contributions changed; the entitlement step's work list. */
     contributionCrafts: Set<bigint>;
+    /** Players with a changed `claim_member` row; their automated loyalty bonuses may resolve differently. */
+    memberPlayers: Set<bigint>;
+    /** Crafts whose `craft_meta` row was deleted outright (not merely closed), whose stored bounty assignments can go. */
+    deletedCrafts: Set<bigint>;
     /** Crafts in claims whose list of owners changed; their rows are unchanged but whose bounty resolution may differ. */
     ownerChangedCrafts: Set<bigint>;
 }
@@ -46,8 +44,12 @@ export interface RowCache {
 
     /** Replaces everything with `snapshot`'s contents and marks every open craft dirty. */
     load(snapshot: CraftSnapshot): void;
-    /** Diffs against the previous assignments and dirties each craft whose bounty changed. */
-    setAssignments(assignments: ReadonlyMap<bigint, AssignedBounty>): void;
+    /**
+     * Adopts `assignments` and dirties each craft whose bounty changed. With `changed` (the crafts the
+     * caller already knows differ), those are dirtied without diffing, and `assignments` is read live
+     * afterwards rather than copied, so the caller must keep it current.
+     */
+    setAssignments(assignments: ReadonlyMap<bigint, AssignedBounty>, changed?: Iterable<bigint>): void;
     drain(): RowDelta;
 
     /** Every open craft's current row, bounties applied, keyed by `CraftRow.id`. */
@@ -108,6 +110,8 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
     let subjectDirty = new Set<bigint>();
     let displayDirty = new Set<bigint>();
     let contributionCrafts = new Set<bigint>();
+    let memberPlayers = new Set<bigint>();
+    let deletedCrafts = new Set<bigint>();
     let ownerChangedCrafts = new Set<bigint>();
     let fullPending = false;
 
@@ -139,6 +143,7 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
         members.set(row.playerEntityId, row);
         refreshOwners(row.claimEntityId);
         dirtyAll(craftsByClaimOwner, `${row.claimEntityId}:${row.playerEntityId}`, subjectDirty);
+        memberPlayers.add(row.playerEntityId);
     }
 
     function deleteMember(row: ClaimMember): void {
@@ -148,6 +153,7 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
         if (members?.size === 0) membersByClaim.delete(row.claimEntityId);
         refreshOwners(row.claimEntityId);
         dirtyAll(craftsByClaimOwner, `${row.claimEntityId}:${row.playerEntityId}`, subjectDirty);
+        memberPlayers.add(row.playerEntityId);
     }
 
     function refreshOwners(claimId: bigint): void {
@@ -184,21 +190,12 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
         snapshot.allCraftIds.delete(row.entityId);
         openCrafts.delete(row.entityId);
         subjectDirty.add(row.entityId);
+        deletedCrafts.add(row.entityId);
     }
 
     function regionRowsDirty(regionId: number): void {
         for (const row of baseRows.values()) if (row.regionId === regionId) displayDirty.add(row.entityId);
     }
-
-    // An update that keeps the primary key overwrites in place, so row order matches the SDK's table cache.
-    const feed = <T>(key: (row: T) => unknown, set: (row: T) => void, remove: (row: T) => void): TableFeed<T> => ({
-        insert: set,
-        update: (before, after) => {
-            if (key(before) !== key(after)) remove(before);
-            set(after);
-        },
-        delete: remove,
-    });
 
     function finalRow(base: CraftRow): CraftRow {
         const bounty = assignments.get(base.entityId);
@@ -206,8 +203,8 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
     }
 
     return {
-        craftMeta: feed(row => row.entityId, setCraft, deleteCraft),
-        craftProgress: feed(
+        craftMeta: keyedFeed(row => row.entityId, setCraft, deleteCraft),
+        craftProgress: keyedFeed(
             row => row.entityId,
             row => {
                 snapshot.progress.set(row.entityId, row);
@@ -218,8 +215,8 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
                 subjectDirty.add(row.entityId);
             },
         ),
-        craftContribution: feed(row => `${row.craftId}:${row.playerId}`, setContribution, deleteContribution),
-        claimInfo: feed(
+        craftContribution: keyedFeed(row => `${row.craftId}:${row.playerId}`, setContribution, deleteContribution),
+        claimInfo: keyedFeed(
             row => row.entityId,
             row => {
                 snapshot.claims.set(row.entityId, row);
@@ -230,7 +227,7 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
                 dirtyAll(craftsByClaim, row.entityId, displayDirty);
             },
         ),
-        claimMember: feed(row => `${row.claimEntityId}:${row.playerEntityId}`, setMember, deleteMember),
+        claimMember: keyedFeed(row => `${row.claimEntityId}:${row.playerEntityId}`, setMember, deleteMember),
         playerState: {
             insert(row) {
                 snapshot.players.set(row.entityId, row);
@@ -246,7 +243,7 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
                 dirtyAll(craftsByOwner, row.entityId, displayDirty);
             },
         },
-        region: feed(
+        region: keyedFeed(
             row => row.id,
             row => {
                 snapshot.regions.set(row.id, row);
@@ -285,11 +282,18 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
             subjectDirty = new Set(openCrafts.keys());
             displayDirty = new Set();
             contributionCrafts = new Set(snapshot.contributions.keys());
+            memberPlayers = new Set();
+            deletedCrafts = new Set();
             ownerChangedCrafts = new Set();
             fullPending = true;
         },
 
-        setAssignments(next) {
+        setAssignments(next, changed) {
+            if (changed) {
+                for (const craftId of changed) subjectDirty.add(craftId);
+                assignments = next;
+                return;
+            }
             for (const [craftId, bounty] of next) {
                 const previous = assignments.get(craftId);
                 if (!previous || !sameBounty(previous, bounty)) subjectDirty.add(craftId);
@@ -333,11 +337,13 @@ export function createRowCache(recipes: RecipeIndex): RowCache {
                 rows.set(id, finalRow(base));
             }
 
-            const delta = {full: fullPending, changed, removedIds, contributionCrafts, ownerChangedCrafts};
+            const delta = {full: fullPending, changed, removedIds, contributionCrafts, memberPlayers, deletedCrafts, ownerChangedCrafts};
             fullPending = false;
             subjectDirty = new Set();
             displayDirty = new Set();
             contributionCrafts = new Set();
+            memberPlayers = new Set();
+            deletedCrafts = new Set();
             ownerChangedCrafts = new Set();
             return delta;
         },

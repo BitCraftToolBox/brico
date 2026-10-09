@@ -24,6 +24,13 @@ export const relayDriftTotal = new Counter({
     registers: [registry],
 });
 
+/** Times the `brico-app` cache disagreed with a full read of the tables during reconciliation. */
+export const appDriftTotal = new Counter({
+    name: "brico_bot_app_drift_total",
+    help: "Reconciliations that found the brico-app cache differing from a full read of the tables",
+    registers: [registry],
+});
+
 /** Crafts whose rows changed in one tick (the rows the watch matchers re-evaluated). */
 export const dirtyCraftsPerTick = new Histogram({
     name: "brico_bot_dirty_crafts_per_tick",

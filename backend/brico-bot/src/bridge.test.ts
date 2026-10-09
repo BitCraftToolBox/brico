@@ -15,8 +15,9 @@ import type {CraftMeta, CraftProgress} from "@brico/bindings/prism/types";
 import {type FilterNode, openWorkFilter} from "@brico/crafts/filter";
 import assert from "node:assert/strict";
 import {test} from "node:test";
-import {Timestamp} from "spacetimedb";
-import type {BountyEngine} from "./app/bounty-sink.ts";
+import {Identity, Timestamp} from "spacetimedb";
+import {createAppCache} from "./app/app-cache.ts";
+import type {BountyEngine, BountyScope} from "./app/bounty-sink.ts";
 import type {WatchSource} from "./app/watch-source.ts";
 
 import {createBridge, type MatchEvent} from "./bridge.ts";
@@ -127,11 +128,12 @@ test("bounties are assigned before watches are evaluated in the same tick", () =
         }],
     };
     const bounty: BountyEngine = {
-        assign: () => new Map<bigint, AssignedBounty>([[1n, {ratioNumerator: 1n, ratioDenominator: 20n, currency: "hex-coin", private: false, assignedByAccountIdentity: {toHexString: () => "owner-hex"}}]]),
+        assign: () => ({
+            bounties: new Map<bigint, AssignedBounty>([[1n, {ratioNumerator: 1n, ratioDenominator: 20n, currency: "hex-coin", private: false, assignedByAccountIdentity: new Identity(1n)}]]),
+            changed: new Set([1n]),
+        }),
         updateEntitlements: () => {},
-        resyncLoyaltyBonuses: () => {},
-        markMembershipChanged: () => {},
-        markLoyaltyRulesChanged: () => {},
+        updateLoyaltyBonuses: () => {},
     };
     const bridge = createBridge({log: createLogger("error"), watches, sink: event => void events.push(event), recipes: RECIPES, bounty});
 
@@ -139,26 +141,37 @@ test("bounties are assigned before watches are evaluated in the same tick", () =
     assert.equal(bridge.stats.matchCounts.get("w"), 1, "the bounty-carrying craft matches on the very first snapshot");
 });
 
-test("resyncLoyaltyBonuses is called every tick, alongside assign/updateEntitlements", () => {
-    // `bridge.ts` doesn't gate this call itself — `BountyEngine.resyncLoyaltyBonuses` is expected to
-    // no-op internally unless a resync is actually pending (see bounty-sink.test.ts for that gating).
-    // This only asserts the bridge wires the call through on every snapshot.
-    let resyncCalls = 0;
+test("each tick hands the bounty steps the prism row changes and the brico-app changes", () => {
+    const scopes: BountyScope[] = [];
     const watches: WatchSource = {origin: "test", watches: () => []};
+    const cache = createRowCache(RECIPES);
+    const appCache = createAppCache(createLogger("error"));
+    const payer = new Identity(1n);
     const bounty: BountyEngine = {
-        assign: () => new Map(),
-        updateEntitlements: () => {},
-        resyncLoyaltyBonuses: () => {
-            resyncCalls += 1;
+        assign: (_snapshot, _rows, scope) => {
+            scopes.push(scope);
+            return {bounties: new Map(), changed: new Set()};
         },
-        markMembershipChanged: () => {},
-        markLoyaltyRulesChanged: () => {},
+        updateEntitlements: () => {},
+        updateLoyaltyBonuses: () => {},
     };
-    const bridge = createBridge({log: createLogger("error"), watches, sink: () => {}, recipes: RECIPES, bounty});
+    const bridge = createBridge({log: createLogger("error"), watches, sink: () => {}, recipes: RECIPES, cache, appCache, bounty});
 
     bridge.onSnapshot(snapshot([craft()]));
-    bridge.onSnapshot(snapshot([craft()]));
-    assert.equal(resyncCalls, 2);
+    cache.claimMember.insert({entityId: 0n, regionId: 0, claimEntityId: 100n, playerEntityId: 7n, build: false, inventory: false, officer: false, coOwner: false, owner: false});
+    appCache.loyaltyRule.insert({
+        id: 1n, payerAccountIdentity: payer, currency: "hex-coin", spec: {tag: "EffortThreshold", value: {allCurrencies: false, threshold: 10n}},
+        bonusRatioNumerator: 1n, bonusRatioDenominator: 50n, updatedAt: Timestamp.now(),
+    });
+    bridge.onTick();
+    bridge.onTick();
+
+    assert.equal(scopes.length, 3);
+    assert.equal(scopes[0].full, true, "a snapshot load is a full pass");
+    assert.equal(scopes[1].full, false);
+    assert.deepEqual([...scopes[1].memberPlayers], [7n]);
+    assert.deepEqual([...scopes[1].app.loyaltyRulePayers], [payer.toHexString()]);
+    assert.equal(scopes[2].memberPlayers.size + scopes[2].app.loyaltyRulePayers.size, 0, "drained changes are not reported twice");
 });
 
 test("a private bounty is invisible to every watch but its assigner's", () => {
@@ -167,11 +180,9 @@ test("a private bounty is invisible to every watch but its assigner's", () => {
     const watches: WatchSource = {origin: "test", watches: () => [spec("assigner", "owner-hex"), spec("other", "other-hex"), spec("ownerless", null)]};
     const bountied = new Map<bigint, AssignedBounty>();
     const bounty: BountyEngine = {
-        assign: () => bountied,
+        assign: () => ({bounties: bountied, changed: new Set(bountied.keys())}),
         updateEntitlements: () => {},
-        resyncLoyaltyBonuses: () => {},
-        markMembershipChanged: () => {},
-        markLoyaltyRulesChanged: () => {},
+        updateLoyaltyBonuses: () => {},
     };
     const events: MatchEvent[] = [];
     const bridge = createBridge({log: createLogger("error"), watches, sink: event => void events.push(event), recipes: RECIPES, bounty});

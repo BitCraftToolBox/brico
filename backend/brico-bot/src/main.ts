@@ -9,7 +9,8 @@
  * relay/watch-matching machinery. A future Discord bot or report HTTP API attaches the same way:
  * each is a *consumer* of an existing connection, started after it and shut down with it.
  */
-import {type BountyEngine, createBountyEngine} from "./app/bounty-sink.ts";
+import {createAppCache} from "./app/app-cache.ts";
+import {createBountyEngine} from "./app/bounty-sink.ts";
 import {startBricoAppConnection} from "./app/connection.ts";
 import {createNotificationSink} from "./app/notification-sink.ts";
 import {createAccountWatchSource} from "./app/watch-source.ts";
@@ -75,12 +76,12 @@ async function main(): Promise<void> {
         maxDelayMs: config.reconnectMaxDelayMs,
     };
 
-    // Forward references: `app`'s own callbacks are only ever invoked later (once its socket is
-    // live), by which point both `relay`/`bounty` below are already assigned — this lets `app`
-    // (constructed first, so the watch source can consult it from the very first prism snapshot)
-    // reach `relay.mark()`/`bounty.markLoyaltyRulesChanged()` without restructuring construction order.
+    // Forward reference: `app`'s own callbacks are only ever invoked later (once its socket is
+    // live), by which point `relay` below is already assigned — this lets `app` (constructed first,
+    // so the watch source can consult it from the very first prism snapshot) reach `relay.mark()`
+    // without restructuring construction order.
     let relay: PrismRelay | undefined;
-    let bounty: BountyEngine | undefined;
+    const appCache = createAppCache(log.child("app"));
 
     // The brico-app connection comes up first so the watch source can consult it from the very
     // first prism snapshot. Non-blocking — the socket dials in the background — and an unreachable
@@ -88,13 +89,14 @@ async function main(): Promise<void> {
     const app = startBricoAppConnection({
         ...supervisor,
         target: config.bricoApp,
+        cache: appCache,
+        reconcileIntervalMs: config.reconcileIntervalMs,
         onRowsChanged: () => {
             log.debug("brico-app rows changed");
             // No second timer: piggyback on prism's own coalesced tick, so a rule/reward edit with
             // no coincidental prism activity still lands within one `snapshotIntervalMs`.
             relay?.mark();
         },
-        onLoyaltyRulesChanged: () => bounty?.markLoyaltyRulesChanged(),
         // Forward reference: `discordBot`/`discordRest` are declared below but assigned before the socket is live.
         onReady: () => {
             if (!discordBot || !discordRest) return;
@@ -220,7 +222,7 @@ async function main(): Promise<void> {
 
     const watches = createAccountWatchSource(app, log.child("watches"));
 
-    bounty = createBountyEngine(app, log);
+    const bounty = createBountyEngine(app, appCache, log);
 
     const cache = createRowCache(recipes);
     const bridge = createBridge({
@@ -234,6 +236,7 @@ async function main(): Promise<void> {
         ),
         recipes,
         bounty,
+        appCache,
         onRowsComputed: rows => displayManager?.onRowsComputed(rows),
     });
 
@@ -245,7 +248,6 @@ async function main(): Promise<void> {
         recipes,
         reconcileIntervalMs: config.reconcileIntervalMs,
         onTick: () => bridge.onTick(),
-        onClaimMembershipChanged: () => bounty?.markMembershipChanged(),
     });
     relay.start();
 

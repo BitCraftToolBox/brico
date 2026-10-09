@@ -128,8 +128,9 @@ to get a fresh identity). Running as the database owner also works and needs no 
 | `src/app/connection.ts` | `brico-app` connection and its table registry. |
 | `src/app/watch-source.ts` | Where watches come from: `brico-app` accounts, a JSON file, or built-in defaults. |
 | `src/app/notification-sink.ts` | Turns a fired watch into a `notification` row on `brico-app` via `postCraftNotification`. |
-| `src/app/bounty-source.ts` | Loads bounty rules/overrides/assignments/entitlements/loyalty rewards off `brico-app`'s `all_*` views. |
-| `src/app/bounty-sink.ts` | Resolves each open craft's bounty and per-contributor entitlement, writing `craft_bounty_assignment`/`craft_bounty_entitlement`. |
+| `src/app/app-cache.ts` | The bounty-related `brico-app` tables mirrored from row callbacks, with a per-tick delta of what changed. |
+| `src/app/bounty-sink.ts` | Per tick, over the changed crafts and ledger rows only: resolves each craft's bounty, prices contributor effort, and resolves loyalty bonuses, writing `craft_bounty_assignment`/`craft_bounty_entitlement`/`loyalty_bonus_total`. |
+| `src/spacetime/feed.ts` | Row-callback wiring shared by the prism row cache and the `brico-app` cache. |
 | `src/http-server.ts` | The BitAuth/Discord link callback HTTP server. |
 | `src/auth/oidc-client.ts` | Generic OIDC Authorization Code + PKCE relying-party client, used for BitAuth. |
 | `src/auth/discord-oauth.ts` | Discord's plain-OAuth2 account-linking handshake. |

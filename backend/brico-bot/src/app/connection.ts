@@ -6,7 +6,10 @@ import type {RowTypedQuery} from "spacetimedb";
 
 import type {SpacetimeTarget} from "../config.ts";
 import type {Logger} from "../log.ts";
+import {appDriftTotal, startStep} from "../metrics.ts";
 import {createSupervisedConnection, type SupervisedConnection, type SupervisorOptions} from "../spacetime/connection.ts";
+import {attachFeed} from "../spacetime/feed.ts";
+import {type AppCache, findAppDrift} from "./app-cache.ts";
 
 interface AppTable {
     /** Generated query builder for the subscription. */
@@ -196,13 +199,10 @@ export interface BricoAppOptions extends SupervisorOptions {
     target: SpacetimeTarget | null;
     /** Called whenever the module's rows change, so the watch source re-reads on the next snapshot. */
     onRowsChanged(): void;
-    /**
-     * Called specifically when `all_loyalty_rule` or `all_loyalty_reward` changes (a payer added,
-     * edited, or deleted a manual reward or automated rule) — narrower than `onRowsChanged`, which
-     * fires for any `brico-app` table. Lets `BountyEngine` mark its loyalty-bonus resync pending
-     * without re-running it for unrelated changes (a saved filter edit, a notification setting).
-     */
-    onLoyaltyRulesChanged(): void;
+    /** Mirror of the bounty tables: fed from row callbacks, and replaced by a full read each time the initial subscription applies. */
+    cache: AppCache;
+    /** How often to compare the cache against a full table read, adopting the full read on drift. 0 disables. */
+    reconcileIntervalMs: number;
     /** Called each time the initial subscription is applied (including after a reconnect), not on row changes. */
     onReady?(): void;
 }
@@ -222,6 +222,8 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
     }
 
     let identityHex: string | null = null;
+    let current: DbConnection | null = null;
+    const {cache} = options;
 
     const connection = createSupervisedConnection<DbConnection>(
         {
@@ -244,19 +246,28 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
                 const tables = Object.keys(APP_TABLES);
                 for (const name of tables) APP_TABLES[name].listen(conn, options.onRowsChanged);
 
-                // Narrower than the loop above: only these two tables' changes should mark a
-                // loyalty-bonus resync pending, not every `brico-app` change.
-                conn.db.allLoyaltyRule.onInsert(options.onLoyaltyRulesChanged);
-                conn.db.allLoyaltyRule.onDelete(options.onLoyaltyRulesChanged);
-                conn.db.allLoyaltyRule.onUpdate(options.onLoyaltyRulesChanged);
-                conn.db.allLoyaltyReward.onInsert(options.onLoyaltyRulesChanged);
-                conn.db.allLoyaltyReward.onDelete(options.onLoyaltyRulesChanged);
-                conn.db.allLoyaltyReward.onUpdate(options.onLoyaltyRulesChanged);
+                current = conn;
+                // Rows delivered with the initial subscription are covered by the full read at
+                // `onApplied`, so only later transactions reach the cache.
+                let loaded = false;
+                const accepts = (callbackCtx: {event: {tag: string}}) => loaded && callbackCtx.event.tag !== "SubscribeApplied";
+                attachFeed(conn.db.allLinkedIntegration, cache.linkedIntegration, accepts);
+                attachFeed(conn.db.allBountyRule, cache.bountyRule, accepts);
+                attachFeed(conn.db.allCraftBountyOverride, cache.craftBountyOverride, accepts);
+                attachFeed(conn.db.allCraftBountyAssignment, cache.craftBountyAssignment, accepts);
+                attachFeed(conn.db.allPrivateCraftBountyAssignment, cache.privateCraftBountyAssignment, accepts);
+                attachFeed(conn.db.allCraftBountyEntitlement, cache.craftBountyEntitlement, accepts);
+                attachFeed(conn.db.allLoyaltyReward, cache.loyaltyReward, accepts);
+                attachFeed(conn.db.allLoyaltyRule, cache.loyaltyRule, accepts);
+                attachFeed(conn.db.allLoyaltyBonusTotal, cache.loyaltyBonusTotal, accepts);
+                attachFeed(conn.db.allBountyEntitlementTotal, cache.bountyEntitlementTotal, accepts);
 
                 let subscription: SubscriptionHandle | null = conn
                     .subscriptionBuilder()
                     .onApplied(() => {
                         if (!ctx.isCurrent()) return;
+                        cache.load(conn);
+                        loaded = true;
                         ctx.setLive();
                         options.onRowsChanged();
                         options.onReady?.();
@@ -277,8 +288,10 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
                     .subscribe(Object.values(APP_TABLES).map(t => t.query));
 
                 return () => {
+                    loaded = false;
                     subscription?.unsubscribe();
                     subscription = null;
+                    if (current === conn) current = null;
                 };
             },
         },
@@ -286,6 +299,22 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
     );
 
     connection.start();
+
+    const reconcileTimer = options.reconcileIntervalMs > 0
+        ? setInterval(() => {
+            if (!current?.isActive || !connection.isLive) return;
+            const stop = startStep("reconcile");
+            const drift = findAppDrift(cache, current);
+            if (drift) {
+                appDriftTotal.inc();
+                log.error("app cache drifted from the brico-app tables; adopting a full read", {tables: drift});
+                cache.load(current);
+                options.onRowsChanged();
+            }
+            stop();
+        }, options.reconcileIntervalMs)
+        : null;
+    reconcileTimer?.unref();
 
     return {
         connection,
@@ -296,6 +325,9 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
         get identityHex() {
             return identityHex;
         },
-        stop: () => connection.stop(),
+        stop: () => {
+            if (reconcileTimer) clearInterval(reconcileTimer);
+            connection.stop();
+        },
     };
 }

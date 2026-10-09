@@ -117,6 +117,21 @@ describe("resolveAutomaticBonus", () => {
         assert.deepEqual(resolveAutomaticBonus(rules, new Map(), totals, PAYER, PLAYER_ID, CURRENCY), {numerator: 3n, denominator: 200n});
     });
 
+    it("sums only the payee's own totals when given the payee index", () => {
+        const rules = [effortThresholdRule({threshold: 50000n, allCurrencies: true})];
+        const other = new Identity(2n);
+        const mine = [`${PAYER.toHexString()}:${PLAYER_ID}:hex-coin`, `${PAYER.toHexString()}:${PLAYER_ID}:other-coin`];
+        const totals = new Map([
+            [mine[0], entitlementTotal(PLAYER_ID, "hex-coin", 30000n)],
+            [mine[1], entitlementTotal(PLAYER_ID, "other-coin", 25000n)],
+            [`${PAYER.toHexString()}:501:hex-coin`, entitlementTotal(501n, "hex-coin", 99999n)],
+            [`${other.toHexString()}:${PLAYER_ID}:hex-coin`, {...entitlementTotal(PLAYER_ID, "hex-coin", 99999n), payerAccountIdentity: other}],
+        ]);
+        const byPayee = new Map([[PLAYER_ID, new Set(mine)], [501n, new Set([`${PAYER.toHexString()}:501:hex-coin`])]]);
+        assert.deepEqual(resolveAutomaticBonus(rules, new Map(), totals, PAYER, PLAYER_ID, CURRENCY, byPayee), {numerator: 3n, denominator: 200n});
+        assert.deepEqual(resolveAutomaticBonus(rules, new Map(), totals, PAYER, 999n, CURRENCY, byPayee), {numerator: 0n, denominator: 1n});
+    });
+
     it("ignores a rule for a different currency than the one being resolved", () => {
         const rules = [claimMembershipRule({currency: "other-coin", requiredAccess: "member"})];
         const claimMembers = new Map([["100:500", member()]]);

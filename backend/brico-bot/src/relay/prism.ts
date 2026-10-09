@@ -15,7 +15,8 @@ import type {Logger} from "../log.ts";
 import {relayDriftTotal, snapshotBuildDuration, startStep} from "../metrics.ts";
 import {createCoalescer} from "../spacetime/coalesce.ts";
 import {createSupervisedConnection, type SupervisedConnection, type SupervisorOptions} from "../spacetime/connection.ts";
-import {findDrift, type RowCache, type TableFeed} from "./row-cache.ts";
+import {attachFeed, type RowEvents, type TableFeed} from "../spacetime/feed.ts";
+import {findDrift, type RowCache} from "./row-cache.ts";
 
 /** How much progress-per-player has arrived on a still-open craft, for the payout phase's per-contributor entitlement math. */
 type ContributionMap = Map<bigint, Map<bigint, bigint>>;
@@ -154,20 +155,6 @@ export interface PrismRelayOptions extends SupervisorOptions {
     onTick(): void;
     /** How often to compare the cache against a full table read, adopting the full read on drift. 0 disables. */
     reconcileIntervalMs: number;
-    /**
-     * Called specifically on a `claim_member` row change (insert/delete/update), alongside (not
-     * instead of) the normal coalescer mark — lets `BountyEngine` mark its loyalty-bonus resync
-     * pending so a claim-membership change is reflected in `loyalty_bonus_total` even for a payee
-     * with no currently-live craft contribution.
-     */
-    onClaimMembershipChanged?(): void;
-}
-
-/** The slice of a generated table the relay attaches row callbacks to. */
-interface RowEvents<T> {
-    onInsert(cb: (ctx: {event: {tag: string}}, row: T) => void): void;
-    onDelete(cb: (ctx: {event: {tag: string}}, row: T) => void): void;
-    onUpdate(cb: (ctx: {event: {tag: string}}, before: T, after: T) => void): void;
 }
 
 export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
@@ -223,23 +210,8 @@ export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
                 // Rows delivered with the initial subscription are covered by the full read at
                 // `onApplied`, so only later transactions reach the cache.
                 const accepts = (callbackCtx: {event: {tag: string}}) => live && callbackCtx.event.tag !== "SubscribeApplied";
-                const feed = <T>(table: RowEvents<T>, target: TableFeed<T>, changed: (before: T, after: T) => boolean = () => true) => {
-                    table.onInsert((callbackCtx, row) => {
-                        if (!accepts(callbackCtx)) return;
-                        target.insert(row);
-                        coalescer.mark();
-                    });
-                    table.onDelete((callbackCtx, row) => {
-                        if (!accepts(callbackCtx)) return;
-                        target.delete(row);
-                        coalescer.mark();
-                    });
-                    table.onUpdate((callbackCtx, before, after) => {
-                        if (!accepts(callbackCtx)) return;
-                        target.update(before, after);
-                        if (changed(before, after)) coalescer.mark();
-                    });
-                };
+                const feed = <T>(table: RowEvents<T>, target: TableFeed<T>, changed?: (before: T, after: T) => boolean) =>
+                    attachFeed(table, target, accepts, coalescer.mark, changed);
                 feed(conn.db.craftMeta, cache.craftMeta);
                 feed(conn.db.craftProgress, cache.craftProgress);
                 feed(conn.db.craftContribution, cache.craftContribution);
@@ -249,17 +221,6 @@ export function createPrismRelay(options: PrismRelayOptions): PrismRelay {
                 // A player's `online` flag and region churn constantly and nothing reads them; only a
                 // rename changes what a row says.
                 feed(conn.db.playerState, cache.playerState, (before, after) => before.name !== after.name);
-
-                // Narrower than the feeds above: only `claim_member` changes should mark a
-                // loyalty-bonus resync pending, alongside (not instead of) the normal coalescer mark.
-                if (options.onClaimMembershipChanged) {
-                    const notify = (callbackCtx: {event: {tag: string}}) => {
-                        if (accepts(callbackCtx)) options.onClaimMembershipChanged?.();
-                    };
-                    conn.db.claimMember.onInsert(notify);
-                    conn.db.claimMember.onDelete(notify);
-                    conn.db.claimMember.onUpdate(notify);
-                }
 
                 let subscription: SubscriptionHandle | null = conn
                     .subscriptionBuilder()

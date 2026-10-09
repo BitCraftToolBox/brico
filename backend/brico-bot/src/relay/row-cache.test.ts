@@ -13,8 +13,9 @@ import {Timestamp} from "spacetimedb";
 import {compiledFilter} from "../compiled-filter.ts";
 
 import type {RecipeIndex, RecipeStatic} from "../game-data/recipes.ts";
+import {fakeTable} from "../testing/fake-table.ts";
 import {readSnapshot} from "./prism.ts";
-import {createRowCache, findDrift, type TableFeed} from "./row-cache.ts";
+import {createRowCache, findDrift} from "./row-cache.ts";
 import {applyBounties, type AssignedBounty, type CraftRow, craftRowsFrom, rowFor} from "./subject.ts";
 
 function rng(seed: number) {
@@ -36,27 +37,6 @@ const CLAIM_IDS = [0n, 100n, 101n, 102n];
 const PLAYER_IDS = [0n, 200n, 201n, 202n, 203n];
 const REGION_IDS = [1, 2, 3];
 const ACCOUNTS = ["acctA", "acctB"];
-
-/** A keyed table that fires the cache's feed on every operation, like the SDK's row callbacks. */
-function fakeTable<T>(key: (row: T) => string, feed: TableFeed<T>) {
-    const rows = new Map<string, T>();
-    return {
-        rows,
-        iter: () => rows.values(),
-        upsert(row: T) {
-            const before = rows.get(key(row));
-            rows.set(key(row), row);
-            if (before) feed.update(before, row);
-            else feed.insert(row);
-        },
-        remove(k: string) {
-            const before = rows.get(k);
-            if (!before) return;
-            rows.delete(k);
-            feed.delete(before);
-        },
-    };
-}
 
 function harness(seed: number) {
     const rand = rng(seed);
@@ -211,4 +191,32 @@ test("findDrift reports a table change the cache never heard about", () => {
 
     tables.craftMeta.rows.delete("1");
     assert.match(findDrift(cache, readSnapshot(conn), RECIPES)?.first ?? "", /craft ids.*craft 1 \(not open\)/);
+});
+
+test("drain reports the players whose claim membership changed and the crafts deleted outright, then resets", () => {
+    const {cache, conn, tables} = harness(12);
+    cache.load(readSnapshot(conn));
+    cache.drain();
+
+    const craft = (status: "Active" | "Claimed") => ({
+        entityId: 1n, ownerEntityId: 200n, claimEntityId: 100n, buildingEntityId: 0n, firstSeen: new Timestamp(0n),
+        recipeId: 1, count: 1, regionId: 1, public: true, status: {tag: status},
+    }) as CraftMeta;
+    tables.craftMeta.upsert(craft("Active"));
+    tables.claimMember.upsert({claimEntityId: 100n, playerEntityId: 200n, build: true, inventory: false, officer: false, coOwner: false, owner: false} as ClaimMember);
+    let delta = cache.drain();
+    assert.deepEqual([...delta.memberPlayers], [200n]);
+    assert.equal(delta.deletedCrafts.size, 0);
+
+    tables.craftMeta.upsert(craft("Claimed"));
+    delta = cache.drain();
+    assert.deepEqual(delta.removedIds, ["1"]);
+    assert.equal(delta.deletedCrafts.size, 0, "closing a craft is not deleting it");
+    assert.equal(delta.memberPlayers.size, 0);
+
+    tables.claimMember.remove("100:200");
+    tables.craftMeta.remove("1");
+    delta = cache.drain();
+    assert.deepEqual([...delta.memberPlayers], [200n]);
+    assert.deepEqual([...delta.deletedCrafts], [1n]);
 });

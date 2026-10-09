@@ -17,7 +17,8 @@
  */
 import {type CompiledFilter, describeFilter} from "@brico/crafts/filter";
 import {createWatchMatcher, type MatchEvent as EngineMatchEvent, type WatchMatcher} from "@brico/crafts/watch";
-import type {BountyEngine} from "./app/bounty-sink.ts";
+import {type AppCache, emptyAppDelta} from "./app/app-cache.ts";
+import {type BountyEngine, bountyScope} from "./app/bounty-sink.ts";
 import type {WatchSource, WatchSpec} from "./app/watch-source.ts";
 import {compiledFilter} from "./compiled-filter.ts";
 
@@ -84,6 +85,8 @@ export interface BridgeOptions {
      * evaluated in the same tick — see the ordering note in `tick`.
      */
     bounty?: BountyEngine;
+    /** The `brico-app` mirror `bounty` reads; its changes are drained each tick. Without one, `bounty` sees no `brico-app` changes. */
+    appCache?: AppCache;
     /** Called once per tick with every open craft's resolved row (post-bounty-assignment), before watch matching. */
     onRowsComputed?(rows: CraftRow[]): void;
 }
@@ -105,6 +108,8 @@ function mergeDeltas(first: RowDelta, second: RowDelta): RowDelta {
         changed: [...changed.values()],
         removedIds: [...first.removedIds, ...second.removedIds],
         contributionCrafts: new Set([...first.contributionCrafts, ...second.contributionCrafts]),
+        memberPlayers: new Set([...first.memberPlayers, ...second.memberPlayers]),
+        deletedCrafts: new Set([...first.deletedCrafts, ...second.deletedCrafts]),
         ownerChangedCrafts: new Set([...first.ownerChangedCrafts, ...second.ownerChangedCrafts]),
     };
 }
@@ -133,6 +138,7 @@ export function createBridge(options: BridgeOptions): Bridge {
     function tick(builtAtMs: number): void {
         let stop = startStep("cache_drain");
         let delta = cache.drain();
+        const appDelta = options.appCache?.drain() ?? emptyAppDelta();
         stop();
 
         // Bounties must be assigned before watches are evaluated in this same tick — otherwise
@@ -141,28 +147,19 @@ export function createBridge(options: BridgeOptions): Bridge {
         // craft whose bounty changed comes back from the second drain with `CraftSubject.payout`/
         // `currency` applied, so the watch-matching loop below sees live data.
         if (options.bounty) {
+            const scope = bountyScope(delta, appDelta, cache.baseRows);
             const assignTimer = bountyAssignDuration.startTimer();
-            const changedIds = new Set<string>(delta.changed.map(row => row.id));
-            for (const craftId of delta.ownerChangedCrafts) changedIds.add(craftId.toString());
-            const assignments = options.bounty.assign(cache.snapshot, cache.baseRows.values(), {
-                full: delta.full,
-                changed: [...changedIds].flatMap(id => cache.baseRows.get(id) ?? []),
-                rowOf: craftId => cache.baseRows.get(craftId.toString()),
-            });
+            const assigned = options.bounty.assign(cache.snapshot, cache.baseRows.values(), scope);
             assignTimer();
 
             const entitlementTimer = bountyEntitlementDuration.startTimer();
-            options.bounty.updateEntitlements(cache.snapshot, assignments);
+            options.bounty.updateEntitlements(cache.snapshot, scope);
             entitlementTimer();
 
-            // Decoupled from craft-contribution activity — see `resyncLoyaltyBonuses`'s doc
-            // comment. A no-op unless a resync is actually pending.
-            stop = startStep("loyalty_resync");
-            options.bounty.resyncLoyaltyBonuses(cache.snapshot);
-            stop();
+            options.bounty.updateLoyaltyBonuses(cache.snapshot, scope);
 
             stop = startStep("cache_assignments");
-            cache.setAssignments(assignments);
+            cache.setAssignments(assigned.bounties, assigned.changed);
             delta = mergeDeltas(delta, cache.drain());
             stop();
         }

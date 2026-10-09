@@ -1,15 +1,14 @@
 /**
- * bounty-sink.ts — resolves and writes `craft_bounty_assignment`/`craft_bounty_entitlement`.
- * The bot is the sole writer of both tables: only it can see prism's craft/claim ownership *and*
- * `brico-app`'s rules/overrides at the same time.
+ * bounty-sink.ts — resolves and writes `craft_bounty_assignment`, `craft_bounty_entitlement` and
+ * `loyalty_bonus_total`. The bot is the sole writer of these tables: only it can see prism's
+ * craft/claim ownership *and* `brico-app`'s rules/overrides at the same time.
  *
- * `resolveCraftBounty` mirrors `notification-sink.ts`'s fire-and-forget reducer-call style for the
- * actual writes, but every write here is a full upsert/delete rather than an insert-only append:
- * each tick's resolved bounties are diffed against what the tables already hold, so a failed write
- * is retried and an unchanged resolution is simply skipped.
+ * Each step works only on what a tick's `BountyScope` says changed, reading `brico-app` state from
+ * the `AppCache`. Writes are fire-and-forget reducer calls diffed against the stored rows; a failed
+ * write is retried on the next tick.
  */
 import type {DbConnection} from "@brico/bindings/brico-app";
-import type {BountyEntitlementTotal, BountyRuleValue, CraftBountyOverride, LoyaltyBonusTotal, LoyaltyRule} from "@brico/bindings/brico-app/types";
+import type {BountyEntitlementTotal, BountyRuleValue, CraftBountyOverride, LoyaltyRule} from "@brico/bindings/brico-app/types";
 import type {ClaimMember} from "@brico/bindings/prism/types";
 import {addRatio, bonusFromMultiplier, reduceRatio} from "@brico/crafts/entitlement";
 import type {ClaimAccessFlag, CraftSubject} from "@brico/crafts/filter";
@@ -20,22 +19,12 @@ import {compiledFilter} from "../compiled-filter.ts";
 import type {Logger} from "../log.ts";
 import {startStep, timeReducerCall} from "../metrics.ts";
 import type {CraftSnapshot} from "../relay/prism.ts";
+import type {RowDelta} from "../relay/row-cache.ts";
 import type {AssignedBounty, CraftRow} from "../relay/subject.ts";
-import {
-    type BountyRuleSpec,
-    loadAssignments,
-    loadBountyEntitlementTotals,
-    loadBountyRules,
-    loadEntitlements,
-    loadLoyaltyBonusTotals,
-    loadLoyaltyRewards,
-    loadLoyaltyRules,
-    loadOverrides,
-    resolvePlayerAccounts,
-} from "./bounty-source.ts";
+import {type AppCache, type AppDelta, type BountyRuleSpec, type Triple, tripleKey} from "./app-cache.ts";
 import type {BricoAppConnection} from "./connection.ts";
 
-interface ResolvedBounty {
+export interface ResolvedBounty {
     ratioNumerator: bigint;
     ratioDenominator: bigint;
     currency: string;
@@ -133,19 +122,22 @@ export function resolveCraftBounty(
  * payer has ever bountied them in. Reads whatever `bounty_entitlement_total` last committed as of
  * the start of the current tick — this tick's own in-flight `upsertCraftBountyEntitlement` calls
  * haven't round-tripped back into the bot's subscribed table state yet, so this is naturally "before
- * the current deltas" with no special handling needed.
+ * the current deltas" with no special handling needed. `totalKeysByPayee` narrows the all-currencies
+ * sum to the payee's own rows.
  */
 function effortFor(
     entitlementTotals: ReadonlyMap<string, BountyEntitlementTotal>,
+    totalKeysByPayee: ReadonlyMap<bigint, ReadonlySet<string>> | undefined,
     payer: Identity,
     playerId: bigint,
     currency: string | undefined,
 ): bigint {
     if (currency !== undefined) {
-        return entitlementTotals.get(`${payer.toHexString()}:${playerId}:${currency}`)?.totalEffort ?? 0n;
+        return entitlementTotals.get(tripleKey(payer, playerId, currency))?.totalEffort ?? 0n;
     }
     let sum = 0n;
-    for (const total of entitlementTotals.values()) {
+    const candidates = totalKeysByPayee ? [...(totalKeysByPayee.get(playerId) ?? [])].flatMap(key => entitlementTotals.get(key) ?? []) : entitlementTotals.values();
+    for (const total of candidates) {
         if (total.payeePlayerId === playerId && total.payerAccountIdentity.isEqual(payer)) sum += total.totalEffort;
     }
     return sum;
@@ -172,6 +164,7 @@ export function resolveAutomaticBonus(
     payer: Identity,
     playerId: bigint,
     currency: string,
+    totalKeysByPayee?: ReadonlyMap<bigint, ReadonlySet<string>>,
 ): {numerator: bigint; denominator: bigint} {
     let bonus = {numerator: 0n, denominator: 1n};
     for (const rule of rules) {
@@ -179,51 +172,12 @@ export function resolveAutomaticBonus(
         const satisfied = rule.spec.tag === "ClaimMembership"
             ? claimAccessFlags(claimMembers.get(`${rule.spec.value.claimEntityId}:${playerId}`))
                 .includes(rule.spec.value.requiredAccess as ClaimAccessFlag)
-            : effortFor(entitlementTotals, payer, playerId, rule.spec.value.allCurrencies ? undefined : currency)
+            : effortFor(entitlementTotals, totalKeysByPayee, payer, playerId, rule.spec.value.allCurrencies ? undefined : currency)
                 >= rule.spec.value.threshold;
         if (!satisfied) continue;
         bonus = addRatio(bonus, {numerator: rule.bonusRatioNumerator, denominator: rule.bonusRatioDenominator});
     }
     return bonus;
-}
-
-/**
- * Writes (or clears) `loyalty_bonus_total` for one (payer, payee, currency) if `bonus` differs from
- * what was last resolved — the diff-and-no-op-when-unchanged half both `updateEntitlements`'s
- * per-craft loop and the full `resyncLoyaltyBonuses` pass share, so there is one code path for
- * "recompute and write this triple's automated bonus," not two hand-copies.
- */
-function writeLoyaltyBonusIfChanged(
-    conn: DbConnection,
-    scoped: Logger,
-    existingBonusTotals: ReadonlyMap<string, LoyaltyBonusTotal>,
-    payer: Identity,
-    playerId: bigint,
-    currency: string,
-    bonus: {numerator: bigint; denominator: bigint},
-): void {
-    const key = `${payer.toHexString()}:${playerId}:${currency}`;
-    const previous = existingBonusTotals.get(key);
-    const previousBonus = previous
-        ? {numerator: previous.bonusRatioNumerator, denominator: previous.bonusRatioDenominator}
-        : {numerator: 0n, denominator: 1n};
-    if (bonus.numerator === previousBonus.numerator && bonus.denominator === previousBonus.denominator) return;
-
-    if (bonus.numerator === 0n) {
-        if (!previous) return;
-        timeReducerCall("delete_loyalty_bonus_total", conn.reducers.deleteLoyaltyBonusTotal({
-            payerAccountIdentity: payer, payeePlayerId: playerId, currency,
-        })).catch(cause => {
-            scoped.error("delete_loyalty_bonus_total failed", {payer: payer.toHexString(), playerId: playerId.toString(), currency, error: cause instanceof Error ? cause.message : String(cause)});
-        });
-    } else {
-        timeReducerCall("upsert_loyalty_bonus_total", conn.reducers.upsertLoyaltyBonusTotal({
-            payerAccountIdentity: payer, payeePlayerId: playerId, currency,
-            bonusRatioNumerator: bonus.numerator, bonusRatioDenominator: bonus.denominator, updatedAt: Timestamp.now(),
-        })).catch(cause => {
-            scoped.error("upsert_loyalty_bonus_total failed", {payer: payer.toHexString(), playerId: playerId.toString(), currency, error: cause instanceof Error ? cause.message : String(cause)});
-        });
-    }
 }
 
 /**
@@ -247,233 +201,296 @@ export function assignmentBaselines(
     return [...byPlayer].map(([playerId, effort]) => ({playerId, effort}));
 }
 
-function sameMap<K, V>(a: ReadonlyMap<K, V>, b: ReadonlyMap<K, V>): boolean {
-    if (a.size !== b.size) return false;
-    for (const [key, value] of a) if (b.get(key) !== value) return false;
-    return true;
+function sameBounty(a: ResolvedBounty, b: ResolvedBounty): boolean {
+    return a.ratioNumerator === b.ratioNumerator
+        && a.ratioDenominator === b.ratioDenominator
+        && a.currency === b.currency
+        && a.private === b.private
+        && a.assignedByAccountIdentity.isEqual(b.assignedByAccountIdentity);
 }
 
-/** Whether two rule sets hold the same rules in the same order; parsed filters are cached per rule, so unchanged rules compare equal by reference. */
-function sameRules(a: ReadonlyMap<string, BountyRuleSpec[]>, b: ReadonlyMap<string, BountyRuleSpec[]>): boolean {
-    if (a.size !== b.size) return false;
-    for (const [account, specs] of a) {
-        const other = b.get(account);
-        if (!other || other.length !== specs.length) return false;
-        for (let i = 0; i < specs.length; i++) {
-            const x = specs[i]!, y = other[i]!;
-            if (x.id !== y.id || x.priority !== y.priority || x.filter !== y.filter || x.value !== y.value || x.private !== y.private) return false;
-        }
-    }
-    return true;
-}
-
-/** Keys whose value was added, removed, or replaced between `before` and `after`. */
-function changedKeys<K, V>(before: ReadonlyMap<K, V>, after: ReadonlyMap<K, V>): K[] {
-    const keys: K[] = [];
-    for (const [key, value] of after) if (before.get(key) !== value) keys.push(key);
-    for (const key of before.keys()) if (!after.has(key)) keys.push(key);
-    return keys;
-}
-
-/** Which crafts `BountyEngine.assign` has to re-resolve this tick. */
-export interface AssignScope {
-    /** Re-resolve every row rather than only `changed` (first call, cache reload). */
+/** What one tick's steps have to look at: the prism row changes plus the `brico-app` changes. */
+export interface BountyScope {
+    /** Re-evaluate everything rather than only what changed (first tick, cache reload). */
     full: boolean;
     /** Rows (without bounties) whose subject, owner or claim changed, or whose claim's owners changed. */
     changed: readonly CraftRow[];
+    /** Crafts that left the open set. */
+    removed: readonly bigint[];
+    /** Crafts whose `craft_meta` row was deleted outright. */
+    deleted: ReadonlySet<bigint>;
     /** An open craft's row (without bounty) by id; `undefined` when the craft isn't open. */
     rowOf(craftId: bigint): CraftRow | undefined;
+    /** Crafts whose contributions changed. */
+    contributionCrafts: ReadonlySet<bigint>;
+    /** Players whose claim membership changed. */
+    memberPlayers: ReadonlySet<bigint>;
+    app: AppDelta;
 }
 
+/** The scope for the tick whose changes are `delta` (prism) and `app`; `baseRows` is the row cache's rows without bounties. */
+export function bountyScope(delta: RowDelta, app: AppDelta, baseRows: ReadonlyMap<string, CraftRow>): BountyScope {
+    const changedIds = new Set<string>(delta.changed.map(row => row.id));
+    for (const craftId of delta.ownerChangedCrafts) changedIds.add(craftId.toString());
+    return {
+        full: delta.full || app.full,
+        changed: [...changedIds].flatMap(id => baseRows.get(id) ?? []),
+        removed: delta.removedIds.map(id => BigInt(id)),
+        deleted: delta.deletedCrafts,
+        rowOf: craftId => baseRows.get(craftId.toString()),
+        contributionCrafts: delta.contributionCrafts,
+        memberPlayers: delta.memberPlayers,
+        app,
+    };
+}
+
+export interface AssignResult {
+    /** `craftId -> bounty` for the open crafts that have one; the engine mutates it in place on later ticks. */
+    bounties: ReadonlyMap<bigint, AssignedBounty>;
+    /** Crafts whose resolved bounty differs from the previous call's. */
+    changed: ReadonlySet<bigint>;
+}
+
+/** The three steps run once per tick, in this order. */
 export interface BountyEngine {
     /**
-     * Brings every open craft's bounty up to date against current `brico-app` state, writes any
-     * that differ from the stored assignments, and returns the `craftId -> bounty` map of crafts
-     * that have one (valid until the next call) — feed this into the row cache so
-     * `CraftSubject.payout` is live before watches are evaluated in the same tick.
-     *
-     * With a `scope`, only `scope.changed` rows (plus crafts whose override changed) are re-resolved
-     * unless the rules or player-account links changed, which re-resolves everything; without one,
-     * every row in `rows` is resolved. `rows` is only iterated when everything is re-resolved.
+     * Brings the bounty of every craft `scope` touches up to date against current `brico-app` state,
+     * writes any that differ from the stored assignments, and returns the resolved bounties — feed
+     * these into the row cache so `CraftSubject.payout` is live before watches are evaluated in the
+     * same tick. A change to the bounty rules or player-account links re-resolves every open craft;
+     * `rows` is only iterated then. Writes the assignment before `updateEntitlements` prices effort on it.
      */
-    assign(snapshot: CraftSnapshot, rows: Iterable<CraftRow>, scope?: AssignScope): ReadonlyMap<bigint, AssignedBounty>;
-    /** Recomputes and writes any changed per-contributor entitlements for the given assignments. */
-    updateEntitlements(snapshot: CraftSnapshot, assignments: ReadonlyMap<bigint, AssignedBounty>): void;
+    assign(snapshot: CraftSnapshot, rows: Iterable<CraftRow>, scope: BountyScope): AssignResult;
     /**
-     * Recomputes `loyalty_bonus_total` for every (payer, payee, currency) triple known to
-     * `bounty_entitlement_total` — not just whoever has a live contribution this tick. A no-op
-     * unless a resync is actually pending (startup, a claim-membership change, or a loyalty
-     * rule/reward edit — see `markMembershipChanged`/`markLoyaltyRulesChanged`), and a no-op again if
-     * `brico-app` isn't live yet (the pending flag stays set and is retried next tick).
+     * Prices new contributor effort into `craft_bounty_entitlement` for the crafts whose
+     * contributions changed or whose bounty was just assigned or changed.
      */
-    resyncLoyaltyBonuses(snapshot: CraftSnapshot): void;
-    /** Marks a loyalty-bonus resync pending — call on any `claim_member` row change. */
-    markMembershipChanged(): void;
-    /** Marks a loyalty-bonus resync pending — call on any `loyalty_rule`/`loyalty_reward` row change. */
-    markLoyaltyRulesChanged(): void;
+    updateEntitlements(snapshot: CraftSnapshot, scope: BountyScope): void;
+    /**
+     * Recomputes `loyalty_bonus_total` for the (payer, payee, currency) triples known to
+     * `bounty_entitlement_total` whose inputs changed: their total (or another currency's total of
+     * the same payer and payee, for `allCurrencies` rules), the payee's claim membership, or the
+     * payer's loyalty rules.
+     */
+    updateLoyaltyBonuses(snapshot: CraftSnapshot, scope: BountyScope): void;
 }
 
-export function createBountyEngine(app: BricoAppConnection, log: Logger): BountyEngine {
+export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log: Logger): BountyEngine {
     const scoped = log.child("bounty");
-    // Every open craft's resolved bounty, carried across ticks and patched by `assign()`. Its
-    // `assignedByAccountIdentity` is the payer `updateEntitlements` keys its loyalty-reward lookup
-    // on; that call always follows `assign()` in the same tick (see `bridge.ts`'s `tick`).
+    // Every open craft's resolved bounty, patched by `assign()`. `updateEntitlements` reads it, so
+    // it always follows `assign()` in the same tick (see `bridge.ts`'s `tick`).
     let resolved = new Map<bigint, ResolvedBounty>();
-    // The rule/account/override inputs `resolved` was computed from, to notice when they change.
-    let inputs: {accounts: ReadonlyMap<bigint, Identity>; rules: ReadonlyMap<string, BountyRuleSpec[]>; overrides: ReadonlyMap<bigint, CraftBountyOverride>} | null = null;
-    // Starts `true` so the very first opportunity (once both connections are ready) runs one full
-    // `resyncLoyaltyBonuses` pass — see that method's doc comment for the other two triggers.
-    let loyaltyResyncPending = true;
+    // `resolved` reflects a pass over every open craft; false until the first one, and after the connection drops.
+    let primed = false;
+    // Crafts whose bounty changed in `assign()`, waiting for `updateEntitlements` to price them.
+    let unpriced = new Set<bigint>();
+    let needFullPricing = true;
+    let needFullLoyalty = true;
+    // Work whose reducer call failed, retried next tick.
+    const retryAssign = new Set<bigint>();
+    const retryEntitlement = new Set<bigint>();
+    const retryBonus = new Map<string, Triple>();
+    // Triples whose bonus was already written this tick, since the stored rows haven't changed yet.
+    const writtenBonus = new Set<string>();
+
+    const liveConnection = (): DbConnection | null => {
+        const conn = app.connection?.connection;
+        return conn?.isActive && app.isLive ? conn : null;
+    };
+
+    /** Writes (or clears) `loyalty_bonus_total` for one triple if `bonus` differs from what is stored. */
+    function writeBonus(conn: DbConnection, triple: Triple, bonus: {numerator: bigint; denominator: bigint}): void {
+        const key = tripleKey(triple.payer, triple.payee, triple.currency);
+        if (writtenBonus.has(key)) return;
+        const previous = cache.state.loyaltyBonusTotals.get(key);
+        const previousBonus = previous
+            ? {numerator: previous.bonusRatioNumerator, denominator: previous.bonusRatioDenominator}
+            : {numerator: 0n, denominator: 1n};
+        if (bonus.numerator === previousBonus.numerator && bonus.denominator === previousBonus.denominator) return;
+        if (bonus.numerator === 0n && !previous) return;
+        writtenBonus.add(key);
+
+        const fields = {payerAccountIdentity: triple.payer, payeePlayerId: triple.payee, currency: triple.currency};
+        const failed = (reducer: string) => (cause: unknown) => {
+            retryBonus.set(key, triple);
+            scoped.error(`${reducer} failed`, {payer: triple.payer.toHexString(), playerId: triple.payee.toString(), currency: triple.currency, error: cause instanceof Error ? cause.message : String(cause)});
+        };
+        if (bonus.numerator === 0n) {
+            timeReducerCall("delete_loyalty_bonus_total", conn.reducers.deleteLoyaltyBonusTotal(fields)).catch(failed("delete_loyalty_bonus_total"));
+        } else {
+            timeReducerCall("upsert_loyalty_bonus_total", conn.reducers.upsertLoyaltyBonusTotal({
+                ...fields, bonusRatioNumerator: bonus.numerator, bonusRatioDenominator: bonus.denominator, updatedAt: Timestamp.now(),
+            })).catch(failed("upsert_loyalty_bonus_total"));
+        }
+    }
 
     return {
         assign(snapshot, rows, scope) {
-            const conn = app.connection?.connection;
-            if (!conn?.isActive) {
+            const conn = liveConnection();
+            if (!conn) {
+                const previous = resolved;
                 resolved = new Map();
-                inputs = null;
-                return resolved;
+                primed = false;
+                needFullPricing = true;
+                needFullLoyalty = true;
+                return {bounties: resolved, changed: new Set(previous.keys())};
             }
 
-            let stop = startStep("assign_load_accounts");
-            const playerAccounts = resolvePlayerAccounts(app);
-            stop();
-            stop = startStep("assign_load_rules");
-            const rulesByAccount = loadBountyRules(app, scoped);
-            stop();
-            stop = startStep("assign_load_overrides");
-            const overridesByCraft = loadOverrides(app);
-            stop();
-            stop = startStep("assign_load_assignments");
-            const existingAssignments = loadAssignments(app);
-            stop();
+            const state = cache.state;
+            const everything = !primed || scope.full || scope.app.resolveAll;
+            const resolve = (row: CraftRow): ResolvedBounty | undefined => resolveCraftBounty(
+                row.entityId, row.subject, row.ownerEntityId, row.claimEntityId,
+                state.playerAccounts, snapshot.claimOwners, state.bountyRules, state.overrides,
+            ) ?? undefined;
 
-            stop = startStep("assign_resolve_loop");
-            const rowIndex = scope ? undefined : new Map<bigint, CraftRow>();
-            const rowOf = scope ? scope.rowOf : (craftId: bigint) => rowIndex?.get(craftId);
-            const everything = !scope || scope.full || inputs === null
-                || !sameMap(inputs.accounts, playerAccounts) || !sameRules(inputs.rules, rulesByAccount);
-
-            const resolve = (row: CraftRow) => {
-                const bounty = resolveCraftBounty(
-                    row.entityId, row.subject, row.ownerEntityId, row.claimEntityId,
-                    playerAccounts, snapshot.claimOwners, rulesByAccount, overridesByCraft,
-                );
-                if (bounty) resolved.set(row.entityId, bounty);
-                else resolved.delete(row.entityId);
-            };
-
-            if (everything || !inputs) {
+            let stop = startStep("assign_resolve_loop");
+            const changed = new Set<bigint>();
+            const candidates = new Set<bigint>();
+            if (everything) {
+                const previous = resolved;
                 resolved = new Map();
                 for (const row of rows) {
-                    rowIndex?.set(row.entityId, row);
-                    resolve(row);
+                    const bounty = resolve(row);
+                    if (bounty) resolved.set(row.entityId, bounty);
                 }
+                for (const [craftId, bounty] of resolved) {
+                    const before = previous.get(craftId);
+                    if (!before || !sameBounty(before, bounty)) changed.add(craftId);
+                    candidates.add(craftId);
+                }
+                for (const craftId of previous.keys()) if (!resolved.has(craftId)) changed.add(craftId);
+                for (const craftId of state.assignments.keys()) candidates.add(craftId);
+                primed = true;
             } else {
-                for (const row of scope.changed) resolve(row);
-                for (const craftId of changedKeys(inputs.overrides, overridesByCraft)) {
-                    const row = rowOf(craftId);
-                    if (row) resolve(row);
+                const touched = new Set<bigint>();
+                const before = new Map<bigint, ResolvedBounty | undefined>();
+                const update = (craftId: bigint, bounty: ResolvedBounty | undefined) => {
+                    touched.add(craftId);
+                    if (!before.has(craftId)) before.set(craftId, resolved.get(craftId));
+                    if (bounty) resolved.set(craftId, bounty);
+                    else resolved.delete(craftId);
+                };
+                for (const row of scope.changed) update(row.entityId, resolve(row));
+                for (const craftId of scope.app.overrideCrafts) {
+                    const row = scope.rowOf(craftId);
+                    update(craftId, row ? resolve(row) : undefined);
                 }
-                for (const craftId of [...resolved.keys()]) if (!rowOf(craftId)) resolved.delete(craftId);
+                for (const craftId of scope.removed) update(craftId, undefined);
+                for (const [craftId, previous] of before) {
+                    const bounty = resolved.get(craftId);
+                    if (!!previous !== !!bounty || (previous && bounty && !sameBounty(previous, bounty))) changed.add(craftId);
+                }
+                for (const craftId of touched) candidates.add(craftId);
+                for (const craftId of scope.deleted) candidates.add(craftId);
+                for (const craftId of scope.app.assignmentCrafts) candidates.add(craftId);
+                for (const craftId of retryAssign) candidates.add(craftId);
             }
-            inputs = {accounts: playerAccounts, rules: rulesByAccount, overrides: overridesByCraft};
+            retryAssign.clear();
+            for (const craftId of changed) unpriced.add(craftId);
             stop();
 
             stop = startStep("assign_write_loop");
-            for (const [craftId, bounty] of resolved) {
-                const previous = existingAssignments.get(craftId);
-                const unchanged = previous !== undefined
-                    && previous.ratioNumerator === bounty.ratioNumerator
-                    && previous.ratioDenominator === bounty.ratioDenominator
-                    && previous.currency === bounty.currency
-                    && previous.assignedByAccountIdentity.isEqual(bounty.assignedByAccountIdentity)
-                    && previous.private === bounty.private;
-                if (unchanged) continue;
+            for (const craftId of candidates) {
+                const bounty = resolved.get(craftId);
+                const previous = state.assignments.get(craftId);
+                if (bounty) {
+                    const unchanged = previous !== undefined
+                        && previous.ratioNumerator === bounty.ratioNumerator
+                        && previous.ratioDenominator === bounty.ratioDenominator
+                        && previous.currency === bounty.currency
+                        && previous.assignedByAccountIdentity.isEqual(bounty.assignedByAccountIdentity)
+                        && previous.private === bounty.private;
+                    if (unchanged) continue;
 
-                const row = rowOf(craftId);
-                timeReducerCall("assign_craft_bounty", conn.reducers.assignCraftBounty({
-                    craftId,
-                    ratioNumerator: bounty.ratioNumerator,
-                    ratioDenominator: bounty.ratioDenominator,
-                    currency: bounty.currency,
-                    assignedByAccountIdentity: bounty.assignedByAccountIdentity,
-                    private: bounty.private,
-                    assignedAt: Timestamp.now(),
-                    updatedAt: Timestamp.now(),
-                    // Only a craft with no assignment as of last tick needs baselines.
-                    baselines: previous === undefined && row
-                        ? assignmentBaselines(snapshot.contributions.get(craftId), row.firstSeenMs, BigInt(Date.now()))
-                        : [],
-                })).catch(cause => {
-                    scoped.error("assign_craft_bounty failed", {craftId: craftId.toString(), error: cause instanceof Error ? cause.message : String(cause)});
-                });
-            }
-
-            // A stored assignment with no resolved bounty is cleared if its craft is open (the bounty
-            // went away) or gone from `craft_meta` entirely (past the 24-hour Claimed/Removed tail —
-            // see `isOpen` in prism.ts); one on a closed craft still in that tail is left alone.
-            for (const craftId of existingAssignments.keys()) {
-                if (resolved.has(craftId)) continue;
-                if (!rowOf(craftId) && snapshot.allCraftIds.has(craftId)) continue;
-                timeReducerCall("clear_craft_bounty", conn.reducers.clearCraftBounty({craftId})).catch(cause => {
-                    scoped.error("clear_craft_bounty failed", {craftId: craftId.toString(), error: cause instanceof Error ? cause.message : String(cause)});
-                });
+                    const row = scope.rowOf(craftId);
+                    timeReducerCall("assign_craft_bounty", conn.reducers.assignCraftBounty({
+                        craftId,
+                        ratioNumerator: bounty.ratioNumerator,
+                        ratioDenominator: bounty.ratioDenominator,
+                        currency: bounty.currency,
+                        assignedByAccountIdentity: bounty.assignedByAccountIdentity,
+                        private: bounty.private,
+                        assignedAt: Timestamp.now(),
+                        updatedAt: Timestamp.now(),
+                        // Only a craft with no assignment as of last tick needs baselines.
+                        baselines: previous === undefined && row
+                            ? assignmentBaselines(snapshot.contributions.get(craftId), row.firstSeenMs, BigInt(Date.now()))
+                            : [],
+                    })).catch(cause => {
+                        retryAssign.add(craftId);
+                        scoped.error("assign_craft_bounty failed", {craftId: craftId.toString(), error: cause instanceof Error ? cause.message : String(cause)});
+                    });
+                } else if (previous) {
+                    // A stored assignment with no resolved bounty is cleared if its craft is open (the
+                    // bounty went away) or gone from `craft_meta` entirely (past the 24-hour
+                    // Claimed/Removed tail — see `isOpen` in prism.ts); one on a closed craft still in
+                    // that tail is left alone.
+                    if (!scope.rowOf(craftId) && snapshot.allCraftIds.has(craftId)) continue;
+                    timeReducerCall("clear_craft_bounty", conn.reducers.clearCraftBounty({craftId})).catch(cause => {
+                        retryAssign.add(craftId);
+                        scoped.error("clear_craft_bounty failed", {craftId: craftId.toString(), error: cause instanceof Error ? cause.message : String(cause)});
+                    });
+                }
             }
             stop();
 
-            return resolved;
+            return {bounties: resolved, changed};
         },
 
-        updateEntitlements(snapshot, assignments) {
-            const conn = app.connection?.connection;
-            if (!conn?.isActive) return;
+        updateEntitlements(snapshot, scope) {
+            const conn = liveConnection();
+            if (!conn) return;
 
-            let stop = startStep("ent_load");
-            const existing = loadEntitlements(app);
-            const loyaltyRewards = loadLoyaltyRewards(app);
-            const loyaltyRulesByPayer = loadLoyaltyRules(app);
-            const entitlementTotals = loadBountyEntitlementTotals(app);
-            const loyaltyBonusTotals = loadLoyaltyBonusTotals(app);
-            stop();
+            const state = cache.state;
+            const full = needFullPricing || scope.full;
+            needFullPricing = false;
+            writtenBonus.clear();
 
-            stop = startStep("ent_loop");
-            for (const [craftId, bounty] of assignments) {
+            let crafts: Iterable<bigint>;
+            if (full) {
+                crafts = [...resolved.keys()];
+            } else {
+                crafts = new Set([...scope.contributionCrafts, ...unpriced, ...retryEntitlement]);
+            }
+            unpriced = new Set();
+            retryEntitlement.clear();
+
+            const stop = startStep("ent_loop");
+            for (const craftId of crafts) {
+                const bounty = resolved.get(craftId);
                 const byPlayer = snapshot.contributions.get(craftId);
-                if (!byPlayer) continue;
+                if (!bounty || !byPlayer) continue;
                 for (const [playerId, effort] of byPlayer) {
+                    // The module owns the actual conversion math (new effort at *this* ratio, plus
+                    // whatever it's carrying in `remainderEffort`) — this call only ever hands over
+                    // current facts (cumulative effort, current ratio), never a precomputed total, so
+                    // a rate change here only prices effort from here on, never revalues the past. See
+                    // `upsertCraftBountyEntitlement`'s doc comment.
+                    const previous = state.entitlements.get(`${craftId}:${playerId}:${bounty.currency}`);
+                    if (previous && previous.lastAssignedEffort === effort) continue;
+
                     // Every bonus (manual assignment + every currently-satisfied automated rule)
                     // folds into the bounty ratio *before* the floor the module applies to new
                     // effort, keeping this a single floor operation per conversion. This makes
                     // `craft_bounty_entitlement`/`bounty_entitlement_total` the loyalty-adjusted
                     // ("actual") ledger; the frontend's estimated-payout preview never sees a
                     // multiplier and keeps using the raw assigned ratio.
-                    const assignedByAccountIdentity = resolved.get(craftId)?.assignedByAccountIdentity;
+                    const payer = bounty.assignedByAccountIdentity;
+                    const loyalty = state.loyaltyRewards.get(tripleKey(payer, playerId, bounty.currency));
+                    const manualBonus = loyalty ? bonusFromMultiplier(loyalty.ratioNumerator, loyalty.ratioDenominator) : {numerator: 0n, denominator: 1n};
+                    const automaticBonus = resolveAutomaticBonus(
+                        state.loyaltyRules.get(payer.toHexString()) ?? [],
+                        snapshot.claimMembers, state.entitlementTotals, payer, playerId, bounty.currency, state.totalKeysByPayee,
+                    );
+                    const totalBonus = addRatio(manualBonus, automaticBonus);
                     let effectiveRatio = {numerator: bounty.ratioNumerator, denominator: bounty.ratioDenominator};
-                    if (assignedByAccountIdentity) {
-                        const loyalty = loyaltyRewards.get(`${assignedByAccountIdentity.toHexString()}:${playerId}:${bounty.currency}`);
-                        const manualBonus = loyalty ? bonusFromMultiplier(loyalty.ratioNumerator, loyalty.ratioDenominator) : {numerator: 0n, denominator: 1n};
-                        const automaticBonus = resolveAutomaticBonus(
-                            loyaltyRulesByPayer.get(assignedByAccountIdentity.toHexString()) ?? [],
-                            snapshot.claimMembers, entitlementTotals, assignedByAccountIdentity, playerId, bounty.currency,
+                    if (totalBonus.numerator !== 0n) {
+                        effectiveRatio = reduceRatio(
+                            bounty.ratioNumerator * (totalBonus.numerator + totalBonus.denominator),
+                            bounty.ratioDenominator * totalBonus.denominator,
                         );
-                        const totalBonus = addRatio(manualBonus, automaticBonus);
-                        if (totalBonus.numerator !== 0n) {
-                            effectiveRatio = reduceRatio(
-                                bounty.ratioNumerator * (totalBonus.numerator + totalBonus.denominator),
-                                bounty.ratioDenominator * totalBonus.denominator,
-                            );
-                        }
-                        writeLoyaltyBonusIfChanged(conn, scoped, loyaltyBonusTotals, assignedByAccountIdentity, playerId, bounty.currency, automaticBonus);
                     }
-
-                    // The module owns the actual conversion math (new effort at *this* ratio, plus
-                    // whatever it's carrying in `remainderEffort`) — this call only ever hands over
-                    // current facts (cumulative effort, current ratio), never a precomputed total, so
-                    // a rate change here only prices effort from here on, never revalues the past. See
-                    // `upsertCraftBountyEntitlement`'s doc comment.
-                    const id = `${craftId}:${playerId}:${bounty.currency}`;
-                    const previous = existing.get(id);
-                    if (previous && previous.lastAssignedEffort === effort) continue;
+                    writeBonus(conn, {payer, payee: playerId, currency: bounty.currency}, automaticBonus);
 
                     timeReducerCall("upsert_craft_bounty_entitlement", conn.reducers.upsertCraftBountyEntitlement({
                         craftId,
@@ -484,6 +501,7 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
                         ratioDenominator: effectiveRatio.denominator,
                         updatedAt: Timestamp.now(),
                     })).catch(cause => {
+                        retryEntitlement.add(craftId);
                         scoped.error("upsert_craft_bounty_entitlement failed", {
                             craftId: craftId.toString(),
                             playerId: playerId.toString(),
@@ -495,32 +513,44 @@ export function createBountyEngine(app: BricoAppConnection, log: Logger): Bounty
             stop();
         },
 
-        resyncLoyaltyBonuses(snapshot) {
-            if (!loyaltyResyncPending) return;
-            const conn = app.connection?.connection;
-            if (!conn?.isActive || !app.isLive) return;
-            loyaltyResyncPending = false;
+        updateLoyaltyBonuses(snapshot, scope) {
+            const conn = liveConnection();
+            if (!conn) return;
 
-            const rulesByPayer = loadLoyaltyRules(app);
-            const entitlementTotals = loadBountyEntitlementTotals(app);
-            const bonusTotals = loadLoyaltyBonusTotals(app);
+            const state = cache.state;
+            const full = needFullLoyalty || scope.full;
+            needFullLoyalty = false;
 
-            for (const total of entitlementTotals.values()) {
-                const automaticBonus = resolveAutomaticBonus(
-                    rulesByPayer.get(total.payerAccountIdentity.toHexString()) ?? [],
-                    snapshot.claimMembers, entitlementTotals,
-                    total.payerAccountIdentity, total.payeePlayerId, total.currency,
-                );
-                writeLoyaltyBonusIfChanged(conn, scoped, bonusTotals, total.payerAccountIdentity, total.payeePlayerId, total.currency, automaticBonus);
+            const stop = startStep("loyalty_loop");
+            const triples = new Map<string, Triple>();
+            const addKnown = (key: string) => {
+                const total = state.entitlementTotals.get(key);
+                if (total) triples.set(key, {payer: total.payerAccountIdentity, payee: total.payeePlayerId, currency: total.currency});
+            };
+            if (full) {
+                for (const key of state.entitlementTotals.keys()) addKnown(key);
+            } else {
+                // An `allCurrencies` threshold sums the payee's totals across currencies, so a
+                // change in one total can move the bonus of every currency of that payer and payee.
+                for (const changed of scope.app.totals.values()) {
+                    for (const key of state.totalKeysByPayee.get(changed.payee) ?? []) {
+                        if (state.entitlementTotals.get(key)?.payerAccountIdentity.isEqual(changed.payer)) addKnown(key);
+                    }
+                }
+                for (const playerId of scope.memberPlayers) for (const key of state.totalKeysByPayee.get(playerId) ?? []) addKnown(key);
+                for (const payer of scope.app.loyaltyRulePayers) for (const key of state.totalKeysByPayer.get(payer) ?? []) addKnown(key);
             }
-        },
+            for (const [key, triple] of retryBonus) triples.set(key, triple);
+            retryBonus.clear();
 
-        markMembershipChanged() {
-            loyaltyResyncPending = true;
-        },
-
-        markLoyaltyRulesChanged() {
-            loyaltyResyncPending = true;
+            for (const triple of triples.values()) {
+                const bonus = resolveAutomaticBonus(
+                    state.loyaltyRules.get(triple.payer.toHexString()) ?? [],
+                    snapshot.claimMembers, state.entitlementTotals, triple.payer, triple.payee, triple.currency, state.totalKeysByPayee,
+                );
+                writeBonus(conn, triple, bonus);
+            }
+            stop();
         },
     };
 }
