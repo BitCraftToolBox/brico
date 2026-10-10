@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import {addRatio, reduceRatio} from '@brico/crafts/entitlement';
+import {advancePool, reduceRatio} from '@brico/crafts/entitlement';
 import {CraftError} from '@brico/crafts/errors';
 import {CLAIM_ACCESS_FLAGS} from '@brico/crafts/filter';
 import type {Identity, Timestamp} from 'spacetimedb';
@@ -216,9 +216,7 @@ function addToEntitlementTotal(
         ? {numerator: 0n, denominator: 1n}
         : {numerator: existing.remainderNumerator, denominator: existing.remainderDenominator};
 
-    const combined = addRatio(carriedRemainder, deltaFraction);
-    const earned = combined.numerator / combined.denominator;
-    const remainder = reduceRatio(combined.numerator - earned * combined.denominator, combined.denominator);
+    const {earned, remainder} = advancePool(carriedRemainder, deltaFraction);
 
     if (existing === undefined) {
         ctx.db.bounty_entitlement_total.insert({

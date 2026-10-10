@@ -89,3 +89,33 @@ export function parseDecimalRatio(input: string): {numerator: bigint; denominato
     // fine, so no special-casing is needed beyond the regex accepting the shape at all.
     return reduceRatio(BigInt(integerPart + fractionalPart), 10n ** BigInt(fractionalPart.length));
 }
+
+const I64_MAX = 2n ** 63n - 1n;
+const FIT_DENOMINATOR = 10n ** 18n;
+
+/**
+ * Returns a non-negative fraction that fits i64, unchanged when it already does. Otherwise it is
+ * rounded down to a `10^-18` grid — denominators multiply on every `addRatio` of unlike ratios and
+ * would otherwise outgrow the column, which wraps silently on write.
+ */
+export function fitFraction(f: {numerator: bigint; denominator: bigint}): {numerator: bigint; denominator: bigint} {
+    if (f.numerator <= I64_MAX && f.denominator <= I64_MAX) return f;
+    return reduceRatio((f.numerator * FIT_DENOMINATOR) / f.denominator, FIT_DENOMINATOR);
+}
+
+/**
+ * Adds `delta` (an unfloored currency amount) to a pool's carried fraction, floors once, and
+ * returns the whole units earned plus the new carry in `[0, 1)`, rounded down to fit i64 if needed.
+ * A negative `delta` (effort that dropped) can make `earned` negative.
+ */
+export function advancePool(
+    carry: {numerator: bigint; denominator: bigint},
+    delta: {numerator: bigint; denominator: bigint},
+): {earned: bigint; remainder: {numerator: bigint; denominator: bigint}} {
+    const combined = addRatio(carry, delta);
+    let earned = combined.numerator / combined.denominator;
+    // bigint division truncates toward zero; step down so the remainder is never negative.
+    if (combined.numerator < 0n && earned * combined.denominator !== combined.numerator) earned -= 1n;
+    const remainder = fitFraction(reduceRatio(combined.numerator - earned * combined.denominator, combined.denominator));
+    return {earned, remainder};
+}

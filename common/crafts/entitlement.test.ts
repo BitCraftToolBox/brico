@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {describe, it} from "node:test";
-import {addRatio, bonusFromMultiplier, computeEntitlement, multiplierFromBonus, parseDecimalRatio, reduceRatio} from "./entitlement.ts";
+import {addRatio, advancePool, bonusFromMultiplier, computeEntitlement, fitFraction, multiplierFromBonus, parseDecimalRatio, reduceRatio} from "./entitlement.ts";
 
 describe("computeEntitlement", () => {
     it("matches the worked example: ratio 1 Hex Coin per 20 effort", () => {
@@ -150,5 +150,38 @@ describe("addRatio", () => {
         const effectiveNumerator = bountyRatioNumerator * finalMultiplier.numerator;
         const effectiveDenominator = bountyRatioDenominator * finalMultiplier.denominator;
         assert.equal(computeEntitlement(500n, effectiveNumerator, effectiveDenominator), 27n); // floor(500/20 * 1.08) = floor(27) = 27
+    });
+});
+
+describe("advancePool", () => {
+    const f = (numerator: bigint, denominator: bigint) => ({numerator, denominator});
+
+    it("floors and carries like the single-pool rule", () => {
+        let carry = f(0n, 1n);
+        let total = 0n;
+        for (const delta of [f(3n, 5n), f(3n, 5n), f(1n, 2n)]) {
+            const {earned, remainder} = advancePool(carry, delta);
+            total += earned;
+            carry = remainder;
+        }
+        assert.equal(total, 1n);
+        assert.deepEqual(carry, f(7n, 10n));
+    });
+
+    it("rounds a carry that does not fit i64 down instead of overflowing", () => {
+        const {earned, remainder} = advancePool(f(1n, 2n ** 62n + 1n), f(1n, 2n ** 62n - 1n));
+        assert.equal(earned, 0n);
+        assert.ok(remainder.denominator <= 2n ** 63n - 1n);
+        assert.ok(remainder.numerator * (2n ** 62n + 1n) * (2n ** 62n - 1n) <= (2n ** 62n - 1n + 2n ** 62n + 1n) * remainder.denominator);
+    });
+
+    it("floors a negative delta so the carry stays in [0, 1)", () => {
+        const {earned, remainder} = advancePool(f(1n, 4n), f(-1n, 2n));
+        assert.equal(earned, -1n);
+        assert.deepEqual(remainder, f(3n, 4n));
+    });
+
+    it("fitFraction leaves a fitting fraction exact", () => {
+        assert.deepEqual(fitFraction(f(3n, 7n)), f(3n, 7n));
     });
 });
