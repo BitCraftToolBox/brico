@@ -90,32 +90,89 @@ export function parseDecimalRatio(input: string): {numerator: bigint; denominato
     return reduceRatio(BigInt(integerPart + fractionalPart), 10n ** BigInt(fractionalPart.length));
 }
 
+// ---------------------------------------------------------------------------
+// Escrow: pooled fractional carry and the guaranteed/unsecured split
+// ---------------------------------------------------------------------------
+
+export type Fraction = {numerator: bigint; denominator: bigint};
+
 const I64_MAX = 2n ** 63n - 1n;
+
+/** Throws if `value` doesn't fit a signed 64-bit column, so an oversized fraction fails loudly instead of trapping on write. */
+export function assertFitsI64(value: bigint): bigint {
+    if (value > I64_MAX || value < -I64_MAX - 1n) throw new RangeError(`value ${value} does not fit i64`);
+    return value;
+}
+
+/** `ceil(numerator / denominator)` for a non-negative fraction. */
+export function ceilRatio(f: Fraction): bigint {
+    return (f.numerator + f.denominator - 1n) / f.denominator;
+}
+
 const FIT_DENOMINATOR = 10n ** 18n;
 
 /**
  * Returns a non-negative fraction that fits i64, unchanged when it already does. Otherwise it is
- * rounded down to a `10^-18` grid — denominators multiply on every `addRatio` of unlike ratios and
- * would otherwise outgrow the column, which wraps silently on write.
+ * rounded to a `10^-18` grid — down, or up with `roundUp` — since denominators multiply on every
+ * `addRatio` of unlike ratios and would otherwise outgrow the column.
  */
-export function fitFraction(f: {numerator: bigint; denominator: bigint}): {numerator: bigint; denominator: bigint} {
+export function fitFraction(f: Fraction, roundUp = false): Fraction {
     if (f.numerator <= I64_MAX && f.denominator <= I64_MAX) return f;
-    return reduceRatio((f.numerator * FIT_DENOMINATOR) / f.denominator, FIT_DENOMINATOR);
+    const scaled = f.numerator * FIT_DENOMINATOR;
+    const numerator = roundUp ? (scaled + f.denominator - 1n) / f.denominator : scaled / f.denominator;
+    return reduceRatio(numerator, FIT_DENOMINATOR);
 }
 
 /**
  * Adds `delta` (an unfloored currency amount) to a pool's carried fraction, floors once, and
  * returns the whole units earned plus the new carry in `[0, 1)`, rounded down to fit i64 if needed.
- * A negative `delta` (effort that dropped) can make `earned` negative.
+ * A negative `delta` (effort that dropped) can make `earned` negative. This is the one carry/floor
+ * implementation: a non-escrow pool and both of an escrow pool's sums (full and guaranteed) call it.
  */
-export function advancePool(
-    carry: {numerator: bigint; denominator: bigint},
-    delta: {numerator: bigint; denominator: bigint},
-): {earned: bigint; remainder: {numerator: bigint; denominator: bigint}} {
+export function advancePool(carry: Fraction, delta: Fraction): {earned: bigint; remainder: Fraction} {
     const combined = addRatio(carry, delta);
     let earned = combined.numerator / combined.denominator;
     // bigint division truncates toward zero; step down so the remainder is never negative.
     if (combined.numerator < 0n && earned * combined.denominator !== combined.numerator) earned -= 1n;
     const remainder = fitFraction(reduceRatio(combined.numerator - earned * combined.denominator, combined.denominator));
+    assertFitsI64(earned);
     return {earned, remainder};
+}
+
+/**
+ * What a craft's escrow must still hold to cover its guaranteed accrual at `ratio`:
+ * `ceil(accrued + ratio × (effortCovered − effortPriced))`. Effort priced beyond what the hold was
+ * sized for adds nothing.
+ */
+export function escrowRequired(accrued: Fraction, ratio: Fraction, effortCovered: bigint, effortPriced: bigint): bigint {
+    const remaining = effortCovered > effortPriced ? effortCovered - effortPriced : 0n;
+    return ceilRatio(addRatio(accrued, reduceRatio(ratio.numerator * remaining, ratio.denominator)));
+}
+
+/**
+ * Splits what a pool still owes its payee: `fromEscrow` is backed by money already held,
+ * `fromWallet` (loyalty extras) is pulled from the paying wallet when it's paid.
+ */
+export function splitPayout(pool: {total: bigint; guaranteedTotal: bigint; paidEscrow: bigint; paidDirect: bigint}): {
+    owed: bigint;
+    fromEscrow: bigint;
+    fromWallet: bigint;
+} {
+    const owed = pool.total - pool.paidEscrow - pool.paidDirect;
+    if (owed <= 0n) return {owed: 0n, fromEscrow: 0n, fromWallet: 0n};
+    const guaranteedLeft = pool.guaranteedTotal - pool.paidEscrow;
+    const fromEscrow = guaranteedLeft <= 0n ? 0n : guaranteedLeft < owed ? guaranteedLeft : owed;
+    return {owed, fromEscrow, fromWallet: owed - fromEscrow};
+}
+
+/**
+ * Units paid directly that have since become guaranteed (a payee's guaranteed total grew past what
+ * is still owed): they move from `paidDirect` to `paidEscrow`, and the paying wallet is owed the
+ * same amount back from escrow.
+ */
+export function overlapRelease(pool: {total: bigint; guaranteedTotal: bigint; paidEscrow: bigint; paidDirect: bigint}): bigint {
+    const owed = pool.total - pool.paidEscrow - pool.paidDirect;
+    const stillOwed = owed > 0n ? owed : 0n;
+    const r = pool.guaranteedTotal - pool.paidEscrow - stillOwed;
+    return r > 0n ? (r < pool.paidDirect ? r : pool.paidDirect) : 0n;
 }

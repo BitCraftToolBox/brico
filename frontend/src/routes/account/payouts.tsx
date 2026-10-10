@@ -3,19 +3,21 @@
  * overrides, grouped by payer.
  *
  * Live and tabular, like the rest of the crafts feature's reports — `LiveTable` with expandable
- * group→player subrows when an account has earned from a payer across more than one of the
- * caller's own linked BitCraft characters. Player names here come from `useLinkedIntegrations()`
- * (the caller's own links, already carrying a live `externalHandle`) — unlike the payer view
- * (`/account/payees`), this direction never needs a prism lookup, since these are always the
- * caller's own characters.
+ * payer→(character, currency) subrows when a payer has more than one such line; the parent sums
+ * across currencies and leaves the currency column blank if they differ. Player names here come
+ * from `useLinkedIntegrations()` (the caller's own links, already carrying an `externalHandle`)
  */
+import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/filter";
 import {msg, t} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
-import {Trans} from "@lingui/solid/macro";
+import {Plural, Trans} from "@lingui/solid/macro";
+import {A} from "@solidjs/router";
 import type {CellContext, ColumnDef} from "@tanstack/solid-table";
 import {TbOutlineChevronRight as IconChevronRight, TbOutlineHistory as IconHistory} from "solid-icons/tb";
-import {createMemo, createSignal, Show} from "solid-js";
+import {createMemo, createSignal, For, Show} from "solid-js";
+import {CurrencyFilterButton} from "~/components/crafts/CurrencyFilterButton";
 import {PayoutHistoryDialog, type PayoutHistoryFilter} from "~/components/crafts/PayoutHistoryDialog";
+import {PayoutScheduleLine} from "~/components/crafts/PayoutScheduleLine";
 import {LiveTable} from "~/components/data-table/live-table";
 import MainLayout from "~/components/MainLayout";
 import {ConnectionStatusBadge} from "~/components/shared/ConnectionStatusBadge";
@@ -26,8 +28,11 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/compo
 import {useLinkedIntegrations} from "~/lib/account/links";
 import {bountyTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state";
+import {createCurrencyPolicies} from "~/lib/crafts/currency-policy";
 import {type ContributorPayerGroup, createContributorEntitlements, createPayoutLogAsContributor, groupContributorRows} from "~/lib/crafts/entitlement-reports";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
+import {currenciesNeedingWallet, filterByCurrency} from "~/lib/crafts/report-math";
+import {useShownCurrencies} from "~/lib/crafts/shown-currencies";
 import {breadcrumb} from "~/lib/game-links";
 import {uiLocale} from "~/lib/i18n";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
@@ -39,53 +44,49 @@ const TABLE_NAME = "account-payouts";
 interface PayoutRow {
     id: string;
     name: string;
-    playerId: string | null;
-    /** Every player id this row covers — just `[playerId]` for a single-character row, or the
-     * union of every sub-row's player id for a multi-character group's parent row. Scopes the
-     * history icon's filter, since transactions are recorded per-player, not per-group. */
-    playerIds: string[];
+    /** Every (player, currency) pair this row covers — one for a single-line row, or the union of
+     * every sub-row's pair for a group's parent row. Scopes the history icon's filter, since
+     * transactions are recorded per-player and currency, not per-group. */
+    entries: {playerId: string; currency: string}[];
     /** The payer this row's earnings came from, as a hex identity — scopes the history icon's
-     * filter alongside `playerIds`/`currency`, since the caller can have transactions with more
-     * than one payer. */
+     * filter alongside `entries`, since the caller can have transactions with more than one payer. */
     payerAccountIdentity: string;
-    currency: string;
+    /** `null` on a parent row spanning several currencies. */
+    currency: string | null;
     effortTotal: bigint;
     earnedTotal: bigint;
     paidTotal: bigint;
     subRows?: PayoutRow[];
 }
 
-/** One row per group; a group earned across more than one of the caller's own characters expands
- * into per-character subrows, matching "no subrows needed" for the common single-character case. */
+/** One row per payer; a payer with more than one (character, currency) line expands into one
+ * subrow per line. The parent shows a currency only when all its lines share one. */
 function toRows(groups: readonly ContributorPayerGroup[], ownNames: ReadonlyMap<string, string>): PayoutRow[] {
     return groups.map(group => {
+        const entries = group.lines.map(line => ({playerId: line.playerId, currency: line.currency}));
+        const currencies = new Set(group.lines.map(line => line.currency));
         const base = {
-            id: `${group.payerAccountIdentity}:${group.currency}`,
+            id: group.payerAccountIdentity,
             name: group.payerName,
             payerAccountIdentity: group.payerAccountIdentity,
-            currency: group.currency,
+            currency: currencies.size === 1 ? [...currencies][0] : null,
+            entries,
             effortTotal: group.effortTotal,
             earnedTotal: group.earnedTotal,
             paidTotal: group.paidTotal,
         };
-        if (group.players.length <= 1) {
-            const soloId = group.players[0]?.playerId ?? null;
-            return {...base, playerId: soloId, playerIds: soloId ? [soloId] : []};
-        }
+        if (group.lines.length <= 1) return base;
         return {
             ...base,
-            playerId: null,
-            playerIds: group.players.map(player => player.playerId),
-            subRows: group.players.map(player => ({
-                id: `${base.id}:${player.playerId}`,
-                name: ownNames.get(player.playerId) ?? player.playerId,
-                playerId: player.playerId,
-                playerIds: [player.playerId],
+            subRows: group.lines.map(line => ({
+                id: `${base.id}:${line.playerId}:${line.currency}`,
+                name: ownNames.get(line.playerId) ?? line.playerId,
                 payerAccountIdentity: group.payerAccountIdentity,
-                currency: group.currency,
-                effortTotal: player.effortTotal,
-                earnedTotal: player.earnedTotal,
-                paidTotal: player.paidTotal,
+                currency: line.currency,
+                entries: [{playerId: line.playerId, currency: line.currency}],
+                effortTotal: line.effortTotal,
+                earnedTotal: line.earnedTotal,
+                paidTotal: line.paidTotal,
             })),
         };
     });
@@ -124,7 +125,7 @@ function buildColumns(onHistory: (row: PayoutRow) => void): ColumnDef<PayoutRow,
             id: "currency",
             meta: {label: msg`Currency`},
             accessorFn: row => row.currency,
-            cell: (props: Cell<string>) => <CurrencyLabel currency={props.getValue()}/>,
+            cell: (props: Cell<string | null>) => <Show when={props.getValue()}>{currency => <CurrencyLabel currency={currency()}/>}</Show>,
         },
         {
             id: "effort",
@@ -159,10 +160,23 @@ function buildColumns(onHistory: (row: PayoutRow) => void): ColumnDef<PayoutRow,
 export default function PayoutsPage() {
     const {_} = useLingui();
     const {isLoggedIn, login} = useAccount();
-    const {links} = useLinkedIntegrations();
+    const {links, steloWalletsFor, walletsReady} = useLinkedIntegrations();
     const conn = useConnection(BRICO_APP_SERVER);
     const {rows, ready: rowsReady} = createContributorEntitlements();
-    const groups = createMemo(() => groupContributorRows(rows()));
+    const [currencyFilter, setCurrencyFilter] = createSignal<string[]>([]);
+    const groups = createMemo(() => groupContributorRows(filterByCurrency(rows(), currencyFilter())));
+    const presentCurrencies = createMemo(() => [...new Set(rows().map(row => row.currency))]);
+    const shownCurrencies = useShownCurrencies(presentCurrencies);
+    const filterCurrencies = createMemo(() => shownCurrencies().filter(currency => presentCurrencies().includes(currency)));
+    const hasEscrowed = createMemo(() => presentCurrencies().some(currency => ESCROWED_BOUNTY_CURRENCIES.includes(currency)));
+    const policies = createCurrencyPolicies();
+    const walletless = createMemo(() => walletsReady()
+        ? currenciesNeedingWallet(
+            rows(),
+            currency => ESCROWED_BOUNTY_CURRENCIES.includes(currency),
+            currency => steloWalletsFor(currency).some(wallet => wallet.isReceiving),
+        )
+        : []);
     const ownNames = createMemo(() => new Map(
         links().filter(link => link.provider === "bitcraft-ea2").map(link => [link.externalId, link.externalHandle ?? link.externalId]),
     ));
@@ -172,7 +186,7 @@ export default function PayoutsPage() {
     const [historyOpen, setHistoryOpen] = createSignal(false);
     const [historyFilter, setHistoryFilter] = createSignal<PayoutHistoryFilter | null>(null);
     const openHistory = (row: PayoutRow) => {
-        setHistoryFilter({currency: row.currency, playerIds: row.playerIds, payerAccountIdentity: row.payerAccountIdentity});
+        setHistoryFilter({entries: row.entries, payerAccountIdentity: row.payerAccountIdentity});
         setHistoryOpen(true);
     };
     const columns = buildColumns(openHistory);
@@ -185,9 +199,9 @@ export default function PayoutsPage() {
             description="What you've earned from craft bounties."
             navTitle={breadcrumb("/account", msg`My payouts`)}
         >
-            <div class="mx-auto flex max-w-4xl flex-col gap-4 px-4 pb-6">
+            <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 pb-6">
                 <RouteTabHeader
-                    title={<Trans>Bounty payouts</Trans>}
+                    title={<Trans>Craft Bounties</Trans>}
                     tabs={bountyTabs()}
                     status={<ConnectionStatusBadge connections={[conn]}/>}
                 />
@@ -206,6 +220,34 @@ export default function PayoutsPage() {
                         </Card>
                     }
                 >
+                    <PayoutScheduleLine show={hasEscrowed()}/>
+                    <For each={walletless()}>
+                        {currency => (
+                            <Card class="border-warning-foreground">
+                                <CardContent class="flex flex-wrap items-center gap-1 pt-6 text-sm">
+                                    <CurrencyLabel currency={currency}/>
+                                    <Trans>
+                                        You are owed money in this currency but have no wallet to receive it. Link a wallet on your{" "}
+                                        <A href="/account/profile" class="underline">profile</A>.
+                                    </Trans>
+                                    <Show when={policies().get(currency)}>
+                                        {policy => (
+                                            <Show
+                                                when={policy().action === "rollover" && policy().rollTo}
+                                                fallback={<Trans>Otherwise it is returned to the payer <Plural value={policy().afterDays} one="# day" other="# days"/> from its payout.</Trans>}
+                                            >
+                                                {rollTo => (
+                                                    <Trans>
+                                                        Otherwise it is rolled over to <CurrencyLabel currency={rollTo()}/> <Plural value={policy().afterDays} one="# day" other="# days"/> from its payout.
+                                                    </Trans>
+                                                )}
+                                            </Show>
+                                        )}
+                                    </Show>
+                                </CardContent>
+                            </Card>
+                        )}
+                    </For>
                     <LiveTable
                         name={TABLE_NAME}
                         columns={columns}
@@ -215,12 +257,15 @@ export default function PayoutsPage() {
                         searchColumnId="name"
                         empty={rowsReady() ? <Trans>No bounty earnings yet.</Trans> : <Trans>Loading…</Trans>}
                         toolbar={
-                            <Button
-                                variant="outline" size="sm" class="h-8"
-                                onClick={() => {setHistoryFilter(null); setHistoryOpen(true);}}
-                            >
-                                <IconHistory class="mr-1 size-4"/><Trans>History</Trans>
-                            </Button>
+                            <>
+                                <CurrencyFilterButton currencies={filterCurrencies()} selected={currencyFilter()} onChange={setCurrencyFilter}/>
+                                <Button
+                                    variant="outline" size="sm" class="h-8"
+                                    onClick={() => {setHistoryFilter(null); setHistoryOpen(true);}}
+                                >
+                                    <IconHistory class="mr-1 size-4"/><Trans>History</Trans>
+                                </Button>
+                            </>
                         }
                     />
                 </Show>

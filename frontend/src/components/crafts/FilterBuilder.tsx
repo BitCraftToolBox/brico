@@ -36,6 +36,7 @@ import {
     TbOutlineTrash as IconRemove,
 } from "solid-icons/tb";
 import {createEffect, createMemo, createSignal, For, Match, Show, Switch} from "solid-js";
+import {CurrencySelect} from "~/components/crafts/CurrencySelect";
 import {TierIcon} from "~/components/shared/GameIcon";
 import {Badge} from "~/components/ui/badge";
 import {Button} from "~/components/ui/button";
@@ -46,7 +47,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/c
 import {Switch as Toggle, SwitchControl as ToggleControl, SwitchLabel as ToggleLabel, SwitchThumb as ToggleThumb} from "~/components/ui/switch";
 import {Rarities} from "~/lib/bitcraft-utils";
 import {ConditionPhrase} from "~/lib/crafts/filter-condition";
-import {cmpLabel, fieldLabel, quantifierLabel} from "~/lib/crafts/filter-vocab";
+import {cmpLabel, currencyData, fieldLabel, quantifierLabel} from "~/lib/crafts/filter-vocab";
 import {useLabel} from "~/lib/labels";
 import {useSettings} from "~/lib/settings";
 import {cn, useCopy} from "~/lib/utils";
@@ -443,7 +444,14 @@ function LeafRow(props: {
     const label = useLabel();
     const fieldChoices = () => FILTER_FIELDS.filter(field => !props.disallowedFields?.includes(field));
     const meta = () => FIELDS[props.leaf.field];
-    const fieldOptions = () => props.options(props.leaf.field);
+    // A saved filter on a currency the user has since hidden must still display, so the leaf's own values are added back.
+    const fieldOptions = () => {
+        const options = props.options(props.leaf.field);
+        if (!options || props.leaf.field !== "currency") return options;
+        const own = (Array.isArray(props.leaf.value) ? props.leaf.value : [props.leaf.value])
+            .filter(value => !options.some(option => option.value === value));
+        return [...options, ...own.map(value => ({value, label: currencyData(String(value)) ? label(currencyData(String(value))!.label) : String(value)}))];
+    };
     const wantsList = () => wantsListValue(props.leaf.cmp);
     const isBool = () => meta().kind === "bool";
     const isQuantified = () => meta().quantified === true;
@@ -523,6 +531,12 @@ function LeafRow(props: {
         >
             <Match when={props.leaf.field === "payout" && !wantsList()}>
                 <PayoutValueEditor leaf={props.leaf} onChange={value => props.onChange({...props.leaf, value})}/>
+            </Match>
+            <Match when={props.leaf.field === "currency" && !wantsList()}>
+                <CurrencySelect
+                    value={String(Array.isArray(props.leaf.value) ? props.leaf.value[0] : props.leaf.value)}
+                    onChange={value => props.onChange({...props.leaf, value})}
+                />
             </Match>
             <Match when={fieldOptions()}>
                 {options => (

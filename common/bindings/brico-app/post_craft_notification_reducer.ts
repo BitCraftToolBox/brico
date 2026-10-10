@@ -3,9 +3,16 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {t as __t,} from "spacetimedb";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
-import {CraftNotificationPayload,} from "./types";
+import {
+  CraftNotificationPayload,
+} from "./types";
 
 export default {
   accountIdentity: __t.identity(),

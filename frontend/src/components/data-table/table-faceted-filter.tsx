@@ -16,6 +16,7 @@ import {Slider, SliderFill, SliderLabel, SliderThumb, SliderTrack, SliderValueLa
 import {type Label, useLabel} from "~/lib/labels";
 import {cn, ensurePagesVisible} from "~/lib/utils"
 import {Switch, SwitchControl, SwitchLabel, SwitchThumb} from "../ui/switch"
+import {ValueFilterPopover} from "./value-filter-popover"
 
 
 type OptionBase = {
@@ -439,284 +440,215 @@ export function TableFacetedFilter<TData>(props: TableFacetedFilterProps<TData>)
             : (props.column?.getFilterValue() ?? []) as [number, number];
     };
 
-    const [search, setSearch] = createSignal("");
     const [popoverOpen, setPopoverOpen] = createSignal<boolean>(false);
     const [editingWithNumberInputs, setEditingWithNumberInputs] = createSignal<boolean>(false);
     let sliderEditMin!: HTMLInputElement | null;
     let sliderEditMax!: HTMLInputElement | null;
 
-    const filteredOptions = () => {
-        let s = search();
-        if (!isValueBased()) return [];
-        const o = resolvedOptions() as ValueBasedOption[];
-        s = s.trim().toLowerCase()
-        if (!s) return o;
-        return o.filter((option) => {
-            const label = option.label.toLowerCase();
-            if (label.includes(s)) {
-                return true;
-            }
-        });
-    }
-
     return (
-        <Popover
-            fitViewport={true} slide={true} overlap={true}
-            placement="bottom-start" open={popoverOpen()}
-            onOpenChange={(open) => {
-                setPopoverOpen(open);
-                setEditingWithNumberInputs(false);
-            }}
-        >
-            <PopoverTrigger
-                as={Button<"button">} variant="outline" size="sm" onclick={() => setPopoverOpen(!popoverOpen())}
-                class={`h-8 border-dashed ${selectedValues().length ? "border-muted-foreground border-solid" : ""}`}
+        <Show when={isValueBased()} fallback={
+            <Popover
+                fitViewport={true} slide={true} overlap={true}
+                placement="bottom-start" open={popoverOpen()}
+                onOpenChange={(open) => {
+                    setPopoverOpen(open);
+                    setEditingWithNumberInputs(false);
+                }}
             >
-                <IconCirclePlus/>
-                {title()}
-                <Show when={selectedValues().length}>
-                    <Separator orientation="vertical" class="mx-2 h-4"/>
-                    <Show when={isStatsBased()}>
-                        {/* Stats-based badges */}
-                        {(() => {
-                            const keys = selectedValues() as string[];
-                            const statsOpts = resolvedOptions() as StatsBasedOption;
-                            return (
-                                <Show when={keys.length < 3} fallback={
-                                    <StatsFilterBadge
-                                        table={props.table} column={props.column}
-                                        statKey="" label={label(msg({message: plural(keys.length, {one: "# stat", other: "# stats"})}))}
-                                    />
-                                }>
-                                    <div class="hidden space-x-1 lg:flex">
-                                        <For each={keys}>
-                                            {(key) => {
-                                                const stat = statsOpts.stats.find(s => s.key === key);
-                                                return (
-                                                    <StatsFilterBadge
-                                                        table={props.table} column={props.column}
-                                                        statKey={key} label={stat?.label ?? key}
-                                                    />
-                                                );
-                                            }}
-                                        </For>
-                                    </div>
-                                    <StatsFilterBadge
-                                        table={props.table} column={props.column}
-                                        statKey="" label={String(keys.length)}
-                                    />
-                                </Show>
-                            );
-                        })()}
-                    </Show>
-                    <Show when={isNumberBased()}>
-                        <FilterBadge values={selectedValues} table={props.table} column={props.column}>
-                            {selectedValues()[0] + "-" + selectedValues()[1]}
-                        </FilterBadge>
-                    </Show>
-                    <Show when={isValueBased() || isBoolBased()}>
-                        <FilterBadge values={selectedValues} table={props.table} column={props.column} class="lg:hidden">
-                            {selectedValues().length}
-                        </FilterBadge>
-                        <div class="hidden space-x-1 lg:flex">
-                            <Show
-                                when={selectedValues().length < 3}
-                                fallback={
-                                    <FilterBadge values={selectedValues} table={props.table} column={props.column}>
-                                        <Trans>{selectedValues().length} selected</Trans>
-                                    </FilterBadge>
-                                }
-                            >
-                                <For each={selectedValues()}>
-                                    {(option: any) =>
-                                        <FilterBadge values={selectedValues} table={props.table} column={props.column}
-                                                     option={option as string}>
-                                            {/* Selected values are canonical (English game text,
-                                                or a raw boolean), so show the option's label. */}
-                                            {optionLabel(option)}
+                <PopoverTrigger
+                    as={Button<"button">} variant="outline" size="sm" onclick={() => setPopoverOpen(!popoverOpen())}
+                    class={`h-8 border-dashed ${selectedValues().length ? "border-muted-foreground border-solid" : ""}`}
+                >
+                    <IconCirclePlus/>
+                    {title()}
+                    <Show when={selectedValues().length}>
+                        <Separator orientation="vertical" class="mx-2 h-4"/>
+                        <Show when={isStatsBased()}>
+                            {/* Stats-based badges */}
+                            {(() => {
+                                const keys = selectedValues() as string[];
+                                const statsOpts = resolvedOptions() as StatsBasedOption;
+                                return (
+                                    <Show when={keys.length < 3} fallback={
+                                        <StatsFilterBadge
+                                            table={props.table} column={props.column}
+                                            statKey="" label={label(msg({message: plural(keys.length, {one: "# stat", other: "# stats"})}))}
+                                        />
+                                    }>
+                                        <div class="hidden space-x-1 lg:flex">
+                                            <For each={keys}>
+                                                {(key) => {
+                                                    const stat = statsOpts.stats.find(s => s.key === key);
+                                                    return (
+                                                        <StatsFilterBadge
+                                                            table={props.table} column={props.column}
+                                                            statKey={key} label={stat?.label ?? key}
+                                                        />
+                                                    );
+                                                }}
+                                            </For>
+                                        </div>
+                                        <StatsFilterBadge
+                                            table={props.table} column={props.column}
+                                            statKey="" label={String(keys.length)}
+                                        />
+                                    </Show>
+                                );
+                            })()}
+                        </Show>
+                        <Show when={isNumberBased()}>
+                            <FilterBadge values={selectedValues} table={props.table} column={props.column}>
+                                {selectedValues()[0] + "-" + selectedValues()[1]}
+                            </FilterBadge>
+                        </Show>
+                        <Show when={isBoolBased()}>
+                            <FilterBadge values={selectedValues} table={props.table} column={props.column} class="lg:hidden">
+                                {selectedValues().length}
+                            </FilterBadge>
+                            <div class="hidden space-x-1 lg:flex">
+                                <Show
+                                    when={selectedValues().length < 3}
+                                    fallback={
+                                        <FilterBadge values={selectedValues} table={props.table} column={props.column}>
+                                            <Trans>{selectedValues().length} selected</Trans>
                                         </FilterBadge>
                                     }
-                                </For>
-                            </Show>
-                        </div>
-                    </Show>
-                </Show>
-            </PopoverTrigger>
-            <PopoverContent class={cn("p-0", isStatsBased() ? "w-[300px]" : "w-[250px]")}>
-                {/* Stats-based filter */}
-                <Show when={isStatsBased()}>
-                    <StatsFilterContent
-                        table={props.table}
-                        column={props.column}
-                        options={resolvedOptions() as StatsBasedOption}
-                    />
-                </Show>
-                {/* Number range filter */}
-                <Show when={isNumberBased()}>
-                    <Slider
-                        disabled={(facets() as [number, number])[0] === (facets() as [number, number])[1]}
-                        minValue={(facets() as [number, number])[0]}
-                        maxValue={(facets() as [number, number])[1]}
-                        defaultValue={
-                            (selectedValues().length ? selectedValues() : facets()) as [number, number]
-                        }
-                        getValueLabel={(params) => `${params.values[0]} - ${params.values[1]}`}
-                        onChangeEnd={(vals) => {
-                            if (isNaN(vals[0]) || isNaN(vals[1])) {
-                                return;
-                            }
-                            props.column?.setFilterValue(vals as [number, number])
-                            ensurePagesVisible(props.table);
-                        }}
-                    >
-                        <div class="flex flex-col w-full gap-3">
-                            <div class="flex flex-row w-full justify-between px-2 pt-2">
-                                <SliderLabel><Trans>Range</Trans></SliderLabel>
-                                <SliderValueLabel
-                                    class={`${editingWithNumberInputs() ? "" : "underline "}decoration-1 decoration-dashed`}
-                                    onclick={() => setEditingWithNumberInputs(true)}
-                                />
-                            </div>
-                            <div class="flex flex-row w-full justify-center items-center gap-1 px-2 pb-2">
-                                <Show when={editingWithNumberInputs()} fallback={
-                                    <SliderTrack class="m-2 bg-muted">
-                                        <SliderFill/>
-                                        <SliderThumb/>
-                                        <SliderThumb/>
-                                    </SliderTrack>
-                                }>
-                                    <NumberField class="w-20"
-                                                 defaultValue={((selectedValues().length ? selectedValues() : facets()) as [number, number])[0]}
-                                                 minValue={(facets() as [number, number])[0]}
-                                                 maxValue={((selectedValues().length ? selectedValues() : facets()) as [number, number])[1]}
-                                    >
-                                        <NumberFieldGroup>
-                                            <NumberFieldInput ref={sliderEditMin}/>
-                                            <NumberFieldIncrementTrigger/>
-                                            <NumberFieldDecrementTrigger/>
-                                        </NumberFieldGroup>
-                                    </NumberField>
-                                    <span class="text-xs text-muted-foreground">–</span>
-                                    <NumberField class="w-20"
-                                                 defaultValue={((selectedValues().length ? selectedValues() : facets()) as [number, number])[1]}
-                                                 minValue={((selectedValues().length ? selectedValues() : facets()) as [number, number])[0]}
-                                                 maxValue={(facets() as [number, number])[1]}
-                                    >
-                                        <NumberFieldGroup>
-                                            <NumberFieldInput ref={sliderEditMax}/>
-                                            <NumberFieldIncrementTrigger/>
-                                            <NumberFieldDecrementTrigger/>
-                                        </NumberFieldGroup>
-                                    </NumberField>
-                                    <Button variant="ghost" onclick={() => {
-                                        if (sliderEditMin && sliderEditMax) {
-                                            const min = +sliderEditMin!.value.replace(/[^-.\d]/g, '');
-                                            const max = +sliderEditMax!.value.replace(/[^-.\d]/g, '');
-                                            if (!isNaN(min) && !isNaN(max)) {
-                                                props.column?.setFilterValue([min, max]);
-                                                ensurePagesVisible(props.table);
-                                            }
+                                >
+                                    <For each={selectedValues()}>
+                                        {(option: any) =>
+                                            <FilterBadge values={selectedValues} table={props.table} column={props.column}
+                                                         option={option as string}>
+                                                {/* Selected values are canonical (English game text,
+                                                or a raw boolean), so show the option's label. */}
+                                                {optionLabel(option)}
+                                            </FilterBadge>
                                         }
-                                        setPopoverOpen(false);
-                                        setEditingWithNumberInputs(false);
-                                    }}><IconCheck/></Button>
+                                    </For>
                                 </Show>
                             </div>
-                        </div>
-                    </Slider>
-                </Show>
-                {/* Value-based filter */}
-                <Show when={isValueBased()}>
-                    <Command shouldFilter={false}>
-                        <CommandInput placeholder={title()} value={search()} onValueChange={setSearch}/>
-                        <CommandList>
-                            <CommandEmpty><Trans>No results found.</Trans></CommandEmpty>
-                            <CommandGroup>
-                                <For each={filteredOptions()}>
-                                    {(option) => {
-                                        const isSelected = () => (selectedValues() as any[]).includes(option.value)
-                                        return (
-                                            <CommandItem
-                                                onSelect={() => {
-                                                    let newValues
-                                                    if (isSelected()) {
-                                                        newValues = (selectedValues() as any[]).filter((item) => item !== option.value)
-                                                    } else {
-                                                        newValues = [...selectedValues(), option.value]
-                                                    }
-                                                    props.column?.setFilterValue(newValues.length ? newValues : undefined)
-                                                    ensurePagesVisible(props.table);
-                                                }}
-                                            >
-                                                <div
-                                                    class={cn(
-                                                        "mr-2 flex size-4 items-center justify-center rounded-sm border border-primary",
-                                                        isSelected()
-                                                            ? "bg-primary text-primary-foreground"
-                                                            : "opacity-50 [&_svg]:invisible"
-                                                    )}
-                                                >
-                                                    <IconCheck/>
-                                                </div>
-                                                <Show when={option.icon} keyed>
-                                                    {(icon) => icon({value: option.value, class: "mr-2 size-4 text-muted-foreground"})}
-                                                </Show>
-                                                <span>{option.label}</span>
-                                                <Show when={(facets() as Map<any, number>)?.get(option.value)}>
-                                                    {(count) => (
-                                                        <span class="ml-auto flex size-4 items-center justify-center font-mono text-xs">
-                                                            {count()}
-                                                        </span>
-                                                    )}
-                                                </Show>
-                                            </CommandItem>
-                                        )
-                                    }}
-                                </For>
-                            </CommandGroup>
-                            <Show when={(selectedValues() as any[]).length > 0}>
-                                <>
-                                    <CommandSeparator/>
-                                    <CommandGroup>
-                                        <CommandItem
-                                            onSelect={() => {
-                                                props.column?.setFilterValue(undefined)
-                                            }}
-                                            class="justify-center text-center"
+                        </Show>
+                    </Show>
+                </PopoverTrigger>
+                <PopoverContent class={cn("p-0", isStatsBased() ? "w-[300px]" : "w-[250px]")}>
+                    {/* Stats-based filter */}
+                    <Show when={isStatsBased()}>
+                        <StatsFilterContent
+                            table={props.table}
+                            column={props.column}
+                            options={resolvedOptions() as StatsBasedOption}
+                        />
+                    </Show>
+                    {/* Number range filter */}
+                    <Show when={isNumberBased()}>
+                        <Slider
+                            disabled={(facets() as [number, number])[0] === (facets() as [number, number])[1]}
+                            minValue={(facets() as [number, number])[0]}
+                            maxValue={(facets() as [number, number])[1]}
+                            defaultValue={
+                                (selectedValues().length ? selectedValues() : facets()) as [number, number]
+                            }
+                            getValueLabel={(params) => `${params.values[0]} - ${params.values[1]}`}
+                            onChangeEnd={(vals) => {
+                                if (isNaN(vals[0]) || isNaN(vals[1])) {
+                                    return;
+                                }
+                                props.column?.setFilterValue(vals as [number, number])
+                                ensurePagesVisible(props.table);
+                            }}
+                        >
+                            <div class="flex flex-col w-full gap-3">
+                                <div class="flex flex-row w-full justify-between px-2 pt-2">
+                                    <SliderLabel><Trans>Range</Trans></SliderLabel>
+                                    <SliderValueLabel
+                                        class={`${editingWithNumberInputs() ? "" : "underline "}decoration-1 decoration-dashed`}
+                                        onclick={() => setEditingWithNumberInputs(true)}
+                                    />
+                                </div>
+                                <div class="flex flex-row w-full justify-center items-center gap-1 px-2 pb-2">
+                                    <Show when={editingWithNumberInputs()} fallback={
+                                        <SliderTrack class="m-2 bg-muted">
+                                            <SliderFill/>
+                                            <SliderThumb/>
+                                            <SliderThumb/>
+                                        </SliderTrack>
+                                    }>
+                                        <NumberField class="w-20"
+                                                     defaultValue={((selectedValues().length ? selectedValues() : facets()) as [number, number])[0]}
+                                                     minValue={(facets() as [number, number])[0]}
+                                                     maxValue={((selectedValues().length ? selectedValues() : facets()) as [number, number])[1]}
                                         >
-                                            <Trans>Clear filters</Trans>
-                                        </CommandItem>
-                                    </CommandGroup>
-                                </>
-                            </Show>
-                        </CommandList>
-                    </Command>
-                </Show>
-                <Show when={isBoolBased()}>
-                    <Command class="w-full h-full">
-                        <CommandList>
-                            <div class="flex flex-col w-full justify-around px-2 py-2">
-                                <BoolFilterItem
-                                    value={true}
-                                    column={props.column}
-                                    table={props.table}
-                                    selectedValues={selectedValues()}
-                                    resolvedOptions={resolvedOptions() as ValueBasedOption[]}
-                                    facets={facets() as Map<any, number>}
-                                />
-                                <BoolFilterItem
-                                    value={false}
-                                    column={props.column}
-                                    table={props.table}
-                                    selectedValues={selectedValues()}
-                                    resolvedOptions={resolvedOptions() as ValueBasedOption[]}
-                                    facets={facets() as Map<any, number>}
-                                />
+                                            <NumberFieldGroup>
+                                                <NumberFieldInput ref={sliderEditMin}/>
+                                                <NumberFieldIncrementTrigger/>
+                                                <NumberFieldDecrementTrigger/>
+                                            </NumberFieldGroup>
+                                        </NumberField>
+                                        <span class="text-xs text-muted-foreground">–</span>
+                                        <NumberField class="w-20"
+                                                     defaultValue={((selectedValues().length ? selectedValues() : facets()) as [number, number])[1]}
+                                                     minValue={((selectedValues().length ? selectedValues() : facets()) as [number, number])[0]}
+                                                     maxValue={(facets() as [number, number])[1]}
+                                        >
+                                            <NumberFieldGroup>
+                                                <NumberFieldInput ref={sliderEditMax}/>
+                                                <NumberFieldIncrementTrigger/>
+                                                <NumberFieldDecrementTrigger/>
+                                            </NumberFieldGroup>
+                                        </NumberField>
+                                        <Button variant="ghost" onclick={() => {
+                                            if (sliderEditMin && sliderEditMax) {
+                                                const min = +sliderEditMin!.value.replace(/[^-.\d]/g, '');
+                                                const max = +sliderEditMax!.value.replace(/[^-.\d]/g, '');
+                                                if (!isNaN(min) && !isNaN(max)) {
+                                                    props.column?.setFilterValue([min, max]);
+                                                    ensurePagesVisible(props.table);
+                                                }
+                                            }
+                                            setPopoverOpen(false);
+                                            setEditingWithNumberInputs(false);
+                                        }}><IconCheck/></Button>
+                                    </Show>
+                                </div>
                             </div>
-                        </CommandList>
-                    </Command>
-                </Show>
-            </PopoverContent>
-        </Popover>
+                        </Slider>
+                    </Show>
+                    <Show when={isBoolBased()}>
+                        <Command class="w-full h-full">
+                            <CommandList>
+                                <div class="flex flex-col w-full justify-around px-2 py-2">
+                                    <BoolFilterItem
+                                        value={true}
+                                        column={props.column}
+                                        table={props.table}
+                                        selectedValues={selectedValues()}
+                                        resolvedOptions={resolvedOptions() as ValueBasedOption[]}
+                                        facets={facets() as Map<any, number>}
+                                    />
+                                    <BoolFilterItem
+                                        value={false}
+                                        column={props.column}
+                                        table={props.table}
+                                        selectedValues={selectedValues()}
+                                        resolvedOptions={resolvedOptions() as ValueBasedOption[]}
+                                        facets={facets() as Map<any, number>}
+                                    />
+                                </div>
+                            </CommandList>
+                        </Command>
+                    </Show>
+                </PopoverContent>
+            </Popover>
+        }>
+            <ValueFilterPopover
+                title={title()}
+                options={resolvedOptions() as ValueBasedOption[]}
+                selected={selectedValues() as any[]}
+                counts={facets() as Map<any, number> | undefined}
+                onChange={values => {
+                    props.column?.setFilterValue(values.length ? values : undefined);
+                    ensurePagesVisible(props.table);
+                }}
+            />
+        </Show>
     )
 }

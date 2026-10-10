@@ -8,5 +8,5 @@
  * specifier or an alias-free relative file. Splitting the bare id list out here is what lets that
  * test check `BOUNTY_CURRENCIES` coverage without dragging in the whole label-resolution stack.
  */
-export const CURRENCY_IDS = ["hex-coin"] as const;
+export const CURRENCY_IDS = ["hex-coin", "stelo-hex-coin"] as const;
 export type VocabCurrencyId = (typeof CURRENCY_IDS)[number];

@@ -12,7 +12,6 @@
  * thousand rows twice a second for nothing.
  */
 import {
-    BOUNTY_CURRENCIES,
     CLAIM_ACCESS_FLAGS,
     compileFilter,
     type FilterField,
@@ -41,6 +40,7 @@ import {
     TbOutlineClipboardCheck as IconClipboardCheck,
     TbOutlineCopy as IconCopy,
     TbOutlineDeviceFloppy as IconSave,
+    TbOutlineEyeOff as IconEyeOff,
     TbOutlineFileExport as IconSavedFilters,
     TbOutlineInfoCircle as IconBountyOverview,
     TbOutlineLock as IconLock,
@@ -73,6 +73,7 @@ import {CurrencyLabel} from "~/lib/crafts/filter-condition";
 import {claimAccessFlagLabel, currencyData} from "~/lib/crafts/filter-vocab";
 import {byLabel, craftStaticOptions, SKILL_ORDER} from "~/lib/crafts/options";
 import {type CraftSnapshot, createCraftRelay, EMPTY_SNAPSHOT} from "~/lib/crafts/relay";
+import {useShownCurrencies} from "~/lib/crafts/shown-currencies";
 import {createCraftWatchRunner, type WatchNotification} from "~/lib/crafts/watches";
 import {breadcrumbCurrent} from "~/lib/game-links";
 import {trackUILocale, uiLocale} from "~/lib/i18n";
@@ -176,6 +177,12 @@ function OrDash(props: {value: string | null}) {
 
 type CraftCell<TValue> = CellContext<CraftEntry, TValue>;
 
+/** Whether the entry's bounty currency is outside the user's visible currencies; call from a cell. */
+function useBountyHidden(entry: CraftEntry): () => boolean {
+    const settings = useSettings();
+    return () => entry.subject.currency !== null && !settings.visibleCurrencies().includes(entry.subject.currency);
+}
+
 /**
  * The table's columns.
  *
@@ -261,14 +268,24 @@ const COLUMNS: ColumnDef<CraftEntry, any>[] = [
         cell: (props: CraftCell<number>) => {
             const entry = props.row.original;
             const label = useLabel();
+            const hidden = useBountyHidden(entry);
+            const hiddenTitle = () => {
+                const data = currencyData(entry.subject.currency!);
+                return `${label(msg`Hidden currency`)}: ${data ? label(data.label) : entry.subject.currency}`;
+            };
             return (
-                <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                    <span class="inline-flex flex-nowrap text-nowrap items-center gap-1">
-                        <Show when={entry.subject.bountyPrivate}>
-                            <IconLock class="size-3.5 text-muted-foreground" title={label(msg`Private bounty`)}/>
-                        </Show>
-                        <PayoutRateButton rate={entry.subject.payout!} currency={entry.subject.currency!}/>
-                    </span>
+                <Show
+                    when={!hidden()}
+                    fallback={<IconEyeOff class="size-4 text-muted-foreground" title={hiddenTitle()}/>}
+                >
+                    <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
+                        <span class="inline-flex flex-nowrap text-nowrap items-center gap-1">
+                            <Show when={entry.subject.bountyPrivate}>
+                                <IconLock class="size-3.5 text-muted-foreground" title={label(msg`Private bounty`)}/>
+                            </Show>
+                            <PayoutRateButton rate={entry.subject.payout!} currency={entry.subject.currency!}/>
+                        </span>
+                    </Show>
                 </Show>
             );
         },
@@ -449,7 +466,7 @@ function notifyWatch(notification: WatchNotification, suppressLocal: (key: strin
 export default function CraftBrowser() {
     const {_} = useLingui();
     const label = useLabel();
-    const {savedCraftFilters, setSavedCraftFilters, craftFilterWatches, setCraftFilterWatches, craftBrowserState} = useSettings();
+    const {savedCraftFilters, setSavedCraftFilters, craftFilterWatches, setCraftFilterWatches, craftBrowserState, visibleCurrencies} = useSettings();
     const {suppressLocal} = useNotifications();
     const {isLoggedIn} = useAccount();
     const {links: linkedAccounts} = useLinkedIntegrations();
@@ -563,6 +580,14 @@ export default function CraftBrowser() {
         const test = compileFilter(filter());
         return entries().filter(entry => test(entry.subject));
     });
+    // Rows whose bounty currency is hidden lose their payout so the payout columns sort them as "no bounty".
+    const tableRows = createMemo(() => {
+        const visible = new Set(visibleCurrencies());
+        return matched().map(entry => {
+            const {currency} = entry.subject;
+            return currency !== null && !visible.has(currency) ? {...entry, subject: {...entry.subject, payout: null}} : entry;
+        });
+    });
     const completeCount = createMemo(() => matched().filter(entry => entry.complete).length);
 
     // The full universe of pickable values. `active` (see `FieldOption`'s doc comment) is what tells
@@ -575,6 +600,7 @@ export default function CraftBrowser() {
         refreshOptions({entries: entries(), snapshot: relay.snapshot()});
     });
 
+    const shownCurrencies = useShownCurrencies();
     const options = createMemo(() => {
         const {entries: rows, snapshot} = optionSource();
         const withActive = <T extends FilterValue>(list: FieldOption[], active: ReadonlySet<T>): FieldOption[] =>
@@ -607,7 +633,7 @@ export default function CraftBrowser() {
             ownerAccess: CLAIM_ACCESS_FLAGS.map(flag => ({value: flag, label: label(claimAccessFlagLabel(flag))})),
             // Same reasoning as `ownerAccess`: a fixed, closed allow-list, not something derived
             // from live crafts.
-            currency: BOUNTY_CURRENCIES.map(id => ({value: id, label: currencyData(id) ? label(currencyData(id)!.label) : id})),
+            currency: shownCurrencies().map(id => ({value: id, label: currencyData(id) ? label(currencyData(id)!.label) : id})),
         };
         return byField;
     });
@@ -785,7 +811,7 @@ export default function CraftBrowser() {
                 <LiveTable
                     name={TABLE_NAME}
                     columns={COLUMNS}
-                    data={matched()}
+                    data={tableRows()}
                     initialState={{
                         sorting: [{id: "bounty", desc: true}, {id: "remaining", desc: true}]
                     }}

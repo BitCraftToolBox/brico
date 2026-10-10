@@ -141,6 +141,50 @@ export const CraftError = {
     // Discord guild install
     /** Dynamic — carries the rejected value as its `:`-suffix. `upsertDiscordGuildInstall`'s `commandMode` must be one of `@brico/crafts/discord-guild`'s `DISCORD_COMMAND_MODES`. */
     UNKNOWN_COMMAND_MODE: 'UNKNOWN_COMMAND_MODE',
+
+    // Stelo escrow
+    /** A reducer that only applies to an escrowed currency (`ESCROWED_BOUNTY_CURRENCIES`) was given another one. Dynamic — carries the currency as its `:`-suffix. */
+    CURRENCY_NOT_ESCROWED: 'CURRENCY_NOT_ESCROWED',
+    /** `upsertBountyRule`/`upsertCraftBountyOverride` — an escrowed currency needs a `fundingLinkId`. */
+    FUNDING_WALLET_REQUIRED: 'FUNDING_WALLET_REQUIRED',
+    /** `upsertBountyRule`/`upsertCraftBountyOverride` — `fundingLinkId` only applies to an escrowed currency. */
+    FUNDING_WALLET_NOT_ALLOWED: 'FUNDING_WALLET_NOT_ALLOWED',
+    /** The named Stelo wallet isn't an active wallet of the caller on the bounty's currency (unlinked, someone else's, or on another ledger). */
+    INVALID_FUNDING_WALLET: 'INVALID_FUNDING_WALLET',
+    /** `assignCraftBounty` for an escrowed currency with no open escrow hold of the same payer and currency for the craft. */
+    ESCROW_REQUIRED: 'ESCROW_REQUIRED',
+    /** `assignCraftBounty` with a ratio above what the craft's escrow secures. */
+    ESCROW_RATIO_EXCEEDED: 'ESCROW_RATIO_EXCEEDED',
+    /** `upsertCraftBountyEntitlement` — the effective ratio must be at least the base ratio. */
+    EFFECTIVE_RATIO_BELOW_BASE: 'EFFECTIVE_RATIO_BELOW_BASE',
+    /** `recordSteloTransferIntent` — the craft already has an open escrow row or an unsettled hold. */
+    ESCROW_ALREADY_FUNDED: 'ESCROW_ALREADY_FUNDED',
+    NO_OPEN_ESCROW: 'NO_OPEN_ESCROW',
+    UNKNOWN_STELO_TRANSFER: 'UNKNOWN_STELO_TRANSFER',
+    /** `recordSteloTransferIntent` — an argument doesn't match what the books allow for that purpose. Dynamic — carries the reason as its `:`-suffix. */
+    INVALID_STELO_TRANSFER: 'INVALID_STELO_TRANSFER',
+    UNKNOWN_ESCROW_POOL: 'UNKNOWN_ESCROW_POOL',
+    /** A payout for this pool and source is already unsettled. */
+    PAYOUT_ALREADY_PENDING: 'PAYOUT_ALREADY_PENDING',
+    NOTHING_OWED: 'NOTHING_OWED',
+    /** `settleUnclaimedPayee` — the payee has a receiving wallet for the currency, or the pool hasn't been flagged unclaimed. */
+    PAYEE_NOT_UNCLAIMED: 'PAYEE_NOT_UNCLAIMED',
+    /** `settleUnclaimedPayee` — the rollover currency must be one of `MANUALLY_RECORDED_BOUNTY_CURRENCIES`. */
+    ROLLOVER_CURRENCY_NOT_MANUAL: 'ROLLOVER_CURRENCY_NOT_MANUAL',
+    /** `registerSteloWallet`/`setSteloReceivingWallet` — the link isn't an active `stelo` link of that account. */
+    NOT_AN_ACTIVE_STELO_LINK: 'NOT_AN_ACTIVE_STELO_LINK',
+    /** `submitIntegrationLinkCandidate` — wrong provider, someone else's request, or an empty address. */
+    INVALID_LINK_CANDIDATE: 'INVALID_LINK_CANDIDATE',
+    /** `noteIntegrationLinkExternal` for a `stelo` request whose `externalId` isn't the submitted candidate. */
+    LINK_CANDIDATE_MISMATCH: 'LINK_CANDIDATE_MISMATCH',
+    /** `noteIntegrationLinkExternal` for an unverified `stelo` link the browser has not confirmed yet. */
+    LINK_NOT_CONFIRMED: 'LINK_NOT_CONFIRMED',
+    /** A funding wallet must be one the bot has verified the linker still administers (`stelo_wallet_status.verified`). */
+    FUNDING_WALLET_UNVERIFIED: 'FUNDING_WALLET_UNVERIFIED',
+    /** `setCraftBountyFunding` — `state`, `source` or `reason` outside the `@brico/crafts/stelo` allow-lists. Dynamic — carries the field name as its `:`-suffix. */
+    INVALID_FUNDING_STATUS: 'INVALID_FUNDING_STATUS',
+    FUNDING_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT: 'FUNDING_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT',
+    DISCORD_FUNDING_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT: 'DISCORD_FUNDING_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT',
 } as const;
 
 export type CraftErrorCode = (typeof CraftError)[keyof typeof CraftError];

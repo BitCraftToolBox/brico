@@ -13,16 +13,32 @@
  * exactly that id.
  */
 import {tables} from "@brico/bindings/brico-app";
-import type {Notification} from "@brico/bindings/brico-app/types";
+import type {NotificationV2} from "@brico/bindings/brico-app/types";
+import {type NotificationPayload, parseNotificationPayload} from "@brico/crafts/notification";
 import {A, useLocation} from "@solidjs/router";
 import {createContext, createEffect, createMemo, createSignal, type JSX, untrack, useContext,} from "solid-js";
 import {showToast} from "~/components/ui/toast";
 import {useAccount} from "~/lib/account/state";
 import {BitCraftTables} from "~/lib/bitcraft-data";
+import {i18n} from "~/lib/i18n";
+import {fundingHeadline, FundingNotificationDetail, fundingSeverity} from "~/lib/notifications/funding";
 import {getCraftingRecipeName} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {BRICO_APP_SERVER, bricoAppTable} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
+
+/** A `my_notification` row with its JSON payload parsed. */
+export type Notification = Omit<NotificationV2, "payloadJson"> & {payload: NotificationPayload};
+
+/** Parses the view's rows, dropping any whose payload tag this client doesn't recognize. */
+function parseRows(rows: readonly NotificationV2[]): Notification[] {
+    const parsed: Notification[] = [];
+    for (const {payloadJson, ...rest} of rows) {
+        const payload = parseNotificationPayload(payloadJson);
+        if (payload !== null) parsed.push({...rest, payload});
+    }
+    return parsed;
+}
 
 /**
  * Comfortably longer than the bridge's snapshot interval + round trip (a watch match to a
@@ -32,10 +48,10 @@ import {useConnection} from "~/lib/spacetime/manager";
 const SUPPRESS_LOCAL_TTL_MS = 15_000;
 
 /**
- * The de-dup key a `Craft` notification and `browse.tsx`'s local watch runner agree on.
+ * The de-dup key a `craft` notification and `browse.tsx`'s local watch runner agree on.
  */
 function suppressKeyFor(row: Notification): string | null {
-    if (row.payload.tag !== "Craft") return null;
+    if (row.payload.tag !== "craft") return null;
     const {watchId, craftId, eventKind} = row.payload.value;
     return `${watchId}:${craftId}:${eventKind}`;
 }
@@ -59,9 +75,9 @@ function recipeNameFor(recipeId: number): string {
     return recipe ? getCraftingRecipeName(recipe) : `Recipe #${recipeId}`;
 }
 
-/** Toasts one `Craft` notification, styled like `browse.tsx`'s own `notifyWatch`. */
+/** Toasts one `craft` notification, styled like `browse.tsx`'s own `notifyWatch`. */
 function toastForCraftNotification(row: Notification, onDismiss: () => void) {
-    if (row.payload.tag !== "Craft") return;
+    if (row.payload.tag !== "craft") return;
     const value = row.payload.value;
     showToast({
         title: () => value.filterName,
@@ -74,6 +90,20 @@ function toastForCraftNotification(row: Notification, onDismiss: () => void) {
         variant: value.eventKind === "removed" ? "default" : "success",
         // Arrives passively, not from something the user just did — see `ShowToastOptions.priority`.
         priority: "low",
+        onDismiss,
+    });
+}
+
+/** Toasts one `funding` notification: high priority and long-lived, since it needs the payer's attention. */
+function toastForFundingNotification(row: Notification, onDismiss: () => void) {
+    if (row.payload.tag !== "funding") return;
+    const value = row.payload.value;
+    showToast({
+        title: () => i18n._(fundingHeadline(value)),
+        description: () => <FundingNotificationDetail value={value}/>,
+        variant: fundingSeverity(value.kind),
+        priority: "high",
+        duration: 15_000,
         onDismiss,
     });
 }
@@ -118,7 +148,7 @@ export function NotificationsProvider(props: {children: JSX.Element}) {
             previousIds = new Set();
             return;
         }
-        const rows = [...active.db.myNotification.iter()] as Notification[];
+        const rows = parseRows([...active.db.myNotification.iter()]);
         const currentIds = new Set(rows.map(row => row.id.toString()));
 
         // Only rows that are genuinely new since the last snapshot can be a local watch's
@@ -139,7 +169,10 @@ export function NotificationsProvider(props: {children: JSX.Element}) {
                 }
             }
 
-            if (alwaysToast || notifyToastEverywhere()) {
+            // A funding failure reaches the user wherever they are; the bot only posts it when the trigger is on.
+            if (row.payload.tag === "funding") {
+                toastForFundingNotification(row, () => markRead(row.id));
+            } else if (alwaysToast || notifyToastEverywhere()) {
                 toastForCraftNotification(row, () => markRead(row.id));
             }
         }

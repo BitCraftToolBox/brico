@@ -3,7 +3,12 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {t as __t,} from "spacetimedb";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
 export default __t.row({
   id: __t.string().primaryKey(),
@@ -13,5 +18,6 @@ export default __t.row({
   currency: __t.string(),
   effortTotal: __t.i64().name("effort_total"),
   earnedTotal: __t.i64().name("earned_total"),
+  guaranteedTotal: __t.i64().name("guaranteed_total"),
   paidTotal: __t.i64().name("paid_total"),
 });

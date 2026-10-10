@@ -38,11 +38,11 @@ import {findOwnSavedFilter, labelField, watchDisplayFilterAutocomplete} from "./
 const FILTER_OPTION_NAME = "filter";
 const MENTIONABLE_OPTION_NAME = "mentionable";
 const WATCH_NOTIFY_SETUP_MODAL_ID = "watch_notify_setup";
-const MENTIONABLE_FIELD_ID = "mentionable";
+export const MENTIONABLE_FIELD_ID = "mentionable";
 const TEMPLATE_FIELD_IDS: Record<TriggerKind, string> = {added: "added", finished: "finished", removed: "removed"};
 
 /** The caller's own, non-tombstoned sink for this channel; `null` if `/watch notify-link` hasn't been run here. */
-function findOwnDiscordNotifySink(conn: DbConnection, accountIdentity: Identity, channelId: string): DiscordNotifySink | null {
+export function findOwnDiscordNotifySink(conn: DbConnection, accountIdentity: Identity, channelId: string): DiscordNotifySink | null {
     return conn.db.allDiscordNotifySink.iter()
         .find(sink => sink.deletedAt === undefined && sink.accountIdentity.isEqual(accountIdentity) && sink.channelId === channelId) ?? null;
 }
@@ -139,7 +139,7 @@ export const watchNotifyUnlinkCommand: LeafCommand = {
     handler: handleNotifyUnlink,
 };
 
-function mentionableField(mentionType: string | undefined, mentionId: string | undefined): APILabelComponent {
+export function mentionableField(mentionType: string | undefined, mentionId: string | undefined): APILabelComponent {
     return labelField(
         "Mentionable",
         {

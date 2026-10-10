@@ -2,7 +2,7 @@
 
 import {t} from 'spacetimedb/server';
 import {spacetimedb} from '../schema';
-import {discord_guild_install, discord_notify_sink, discord_notify_target, discord_watch_display} from '../tables/discord';
+import {discord_funding_notify_target, discord_guild_install, discord_notify_sink, discord_notify_target, discord_watch_display} from '../tables/discord';
 
 /** The caller's own watch displays, tombstoned ones included — same reason as `mySavedCraftFilter`. */
 export const myDiscordWatchDisplay = spacetimedb.view(
@@ -62,5 +62,22 @@ export const allDiscordGuildInstall = spacetimedb.view(
     ctx => {
         const isTrusted = ctx.db.service_principal.identity.find(ctx.sender) !== null;
         return ctx.from.discord_guild_install.where(_ => isTrusted);
+    }
+);
+
+/** The caller's own Discord funding-alert targets, tombstoned ones included. */
+export const myDiscordFundingNotifyTarget = spacetimedb.view(
+    {name: 'my_discord_funding_notify_target', public: true},
+    t.array(discord_funding_notify_target.rowType),
+    ctx => ctx.from.discord_funding_notify_target.where(d => d.accountIdentity.eq(ctx.sender))
+);
+
+/** Unfiltered funding-target feed for brico-bot. Same trusted-constant-predicate query view as `all_account`. */
+export const allDiscordFundingNotifyTarget = spacetimedb.view(
+    {name: 'all_discord_funding_notify_target', public: true},
+    t.array(discord_funding_notify_target.rowType),
+    ctx => {
+        const isTrusted = ctx.db.service_principal.identity.find(ctx.sender) !== null;
+        return ctx.from.discord_funding_notify_target.where(_ => isTrusted);
     }
 );

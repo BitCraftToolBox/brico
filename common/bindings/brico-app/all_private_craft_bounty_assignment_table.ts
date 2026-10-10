@@ -13,4 +13,5 @@ export default __t.row({
   assignedByAccountIdentity: __t.identity().name("assigned_by_account_identity"),
   assignedAt: __t.timestamp().name("assigned_at"),
   updatedAt: __t.timestamp().name("updated_at"),
+  sticky: __t.bool(),
 });

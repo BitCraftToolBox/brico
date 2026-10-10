@@ -3,7 +3,12 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {type Infer as __Infer, t as __t,} from "spacetimedb";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
 export const Account = __t.object("Account", {
   identity: __t.identity(),
@@ -21,6 +26,15 @@ export type AllAccount = __Infer<typeof AllAccount>;
 export const AllBountyEntitlementTotal = __t.object("AllBountyEntitlementTotal", {});
 export type AllBountyEntitlementTotal = __Infer<typeof AllBountyEntitlementTotal>;
 
+export const AllBountyEscrowJournal = __t.object("AllBountyEscrowJournal", {});
+export type AllBountyEscrowJournal = __Infer<typeof AllBountyEscrowJournal>;
+
+export const AllBountyEscrowPool = __t.object("AllBountyEscrowPool", {});
+export type AllBountyEscrowPool = __Infer<typeof AllBountyEscrowPool>;
+
+export const AllBountyEscrowWallet = __t.object("AllBountyEscrowWallet", {});
+export type AllBountyEscrowWallet = __Infer<typeof AllBountyEscrowWallet>;
+
 export const AllBountyRule = __t.object("AllBountyRule", {});
 export type AllBountyRule = __Infer<typeof AllBountyRule>;
 
@@ -30,11 +44,20 @@ export type AllCraftBountyAssignment = __Infer<typeof AllCraftBountyAssignment>;
 export const AllCraftBountyEntitlement = __t.object("AllCraftBountyEntitlement", {});
 export type AllCraftBountyEntitlement = __Infer<typeof AllCraftBountyEntitlement>;
 
+export const AllCraftBountyEscrow = __t.object("AllCraftBountyEscrow", {});
+export type AllCraftBountyEscrow = __Infer<typeof AllCraftBountyEscrow>;
+
+export const AllCraftBountyFunding = __t.object("AllCraftBountyFunding", {});
+export type AllCraftBountyFunding = __Infer<typeof AllCraftBountyFunding>;
+
 export const AllCraftBountyOverride = __t.object("AllCraftBountyOverride", {});
 export type AllCraftBountyOverride = __Infer<typeof AllCraftBountyOverride>;
 
 export const AllCraftFilterNotifyTrigger = __t.object("AllCraftFilterNotifyTrigger", {});
 export type AllCraftFilterNotifyTrigger = __Infer<typeof AllCraftFilterNotifyTrigger>;
+
+export const AllDiscordFundingNotifyTarget = __t.object("AllDiscordFundingNotifyTarget", {});
+export type AllDiscordFundingNotifyTarget = __Infer<typeof AllDiscordFundingNotifyTarget>;
 
 export const AllDiscordGuildInstall = __t.object("AllDiscordGuildInstall", {});
 export type AllDiscordGuildInstall = __Infer<typeof AllDiscordGuildInstall>;
@@ -47,6 +70,9 @@ export type AllDiscordNotifyTarget = __Infer<typeof AllDiscordNotifyTarget>;
 
 export const AllDiscordWatchDisplay = __t.object("AllDiscordWatchDisplay", {});
 export type AllDiscordWatchDisplay = __Infer<typeof AllDiscordWatchDisplay>;
+
+export const AllFundingNotifyTrigger = __t.object("AllFundingNotifyTrigger", {});
+export type AllFundingNotifyTrigger = __Infer<typeof AllFundingNotifyTrigger>;
 
 export const AllIntegrationLinkRequest = __t.object("AllIntegrationLinkRequest", {});
 export type AllIntegrationLinkRequest = __Infer<typeof AllIntegrationLinkRequest>;
@@ -69,6 +95,18 @@ export type AllPrivateCraftBountyAssignment = __Infer<typeof AllPrivateCraftBoun
 export const AllSavedCraftFilter = __t.object("AllSavedCraftFilter", {});
 export type AllSavedCraftFilter = __Infer<typeof AllSavedCraftFilter>;
 
+export const AllSteloReceivingWallet = __t.object("AllSteloReceivingWallet", {});
+export type AllSteloReceivingWallet = __Infer<typeof AllSteloReceivingWallet>;
+
+export const AllSteloTransfer = __t.object("AllSteloTransfer", {});
+export type AllSteloTransfer = __Infer<typeof AllSteloTransfer>;
+
+export const AllSteloWallet = __t.object("AllSteloWallet", {});
+export type AllSteloWallet = __Infer<typeof AllSteloWallet>;
+
+export const AllSteloWalletStatus = __t.object("AllSteloWalletStatus", {});
+export type AllSteloWalletStatus = __Infer<typeof AllSteloWalletStatus>;
+
 export const AssignmentBaseline = __t.object("AssignmentBaseline", {
   playerId: __t.u64(),
   effort: __t.i64(),
@@ -88,6 +126,50 @@ export const BountyEntitlementTotal = __t.object("BountyEntitlementTotal", {
 });
 export type BountyEntitlementTotal = __Infer<typeof BountyEntitlementTotal>;
 
+export const BountyEscrowJournal = __t.object("BountyEscrowJournal", {
+  id: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  currency: __t.string(),
+  kind: __t.string(),
+  amount: __t.i64(),
+  fundingAccountId: __t.u64(),
+  craftId: __t.option(__t.u64()),
+  payeePlayerId: __t.option(__t.u64()),
+  transferId: __t.u64(),
+  createdAt: __t.timestamp(),
+});
+export type BountyEscrowJournal = __Infer<typeof BountyEscrowJournal>;
+
+export const BountyEscrowPool = __t.object("BountyEscrowPool", {
+  id: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  payeePlayerId: __t.u64(),
+  currency: __t.string(),
+  fundingAccountId: __t.u64(),
+  total: __t.i64(),
+  remainderNumerator: __t.i64(),
+  remainderDenominator: __t.i64(),
+  guaranteedTotal: __t.i64(),
+  guaranteedRemainderNumerator: __t.i64(),
+  guaranteedRemainderDenominator: __t.i64(),
+  paidEscrow: __t.i64(),
+  paidDirect: __t.i64(),
+  pulledExtras: __t.i64(),
+  unclaimedSince: __t.option(__t.timestamp()),
+  updatedAt: __t.timestamp(),
+});
+export type BountyEscrowPool = __Infer<typeof BountyEscrowPool>;
+
+export const BountyEscrowWallet = __t.object("BountyEscrowWallet", {
+  id: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  currency: __t.string(),
+  fundingAccountId: __t.u64(),
+  refundDue: __t.i64(),
+  updatedAt: __t.timestamp(),
+});
+export type BountyEscrowWallet = __Infer<typeof BountyEscrowWallet>;
+
 export const BountyPayoutLogRow = __t.object("BountyPayoutLogRow", {
   id: __t.u64(),
   payerAccountIdentity: __t.identity(),
@@ -96,6 +178,7 @@ export const BountyPayoutLogRow = __t.object("BountyPayoutLogRow", {
   currency: __t.string(),
   amount: __t.i64(),
   createdAt: __t.timestamp(),
+  source: __t.string(),
 });
 export type BountyPayoutLogRow = __Infer<typeof BountyPayoutLogRow>;
 
@@ -116,6 +199,7 @@ export const BountyPayoutRecordLog = __t.object("BountyPayoutRecordLog", {
   currency: __t.string(),
   amount: __t.i64(),
   createdAt: __t.timestamp(),
+  source: __t.string(),
 });
 export type BountyPayoutRecordLog = __Infer<typeof BountyPayoutRecordLog>;
 
@@ -131,6 +215,7 @@ export const BountyRule = __t.object("BountyRule", {
   createdAt: __t.timestamp(),
   updatedAt: __t.timestamp(),
   deletedAt: __t.option(__t.timestamp()),
+  fundingLinkId: __t.option(__t.u64()),
 });
 export type BountyRule = __Infer<typeof BountyRule>;
 
@@ -171,6 +256,7 @@ export const CraftBountyAssignment = __t.object("CraftBountyAssignment", {
   assignedByAccountIdentity: __t.identity(),
   assignedAt: __t.timestamp(),
   updatedAt: __t.timestamp(),
+  sticky: __t.bool(),
 });
 export type CraftBountyAssignment = __Infer<typeof CraftBountyAssignment>;
 
@@ -184,6 +270,43 @@ export const CraftBountyEntitlement = __t.object("CraftBountyEntitlement", {
 });
 export type CraftBountyEntitlement = __Infer<typeof CraftBountyEntitlement>;
 
+export const CraftBountyEscrow = __t.object("CraftBountyEscrow", {
+  id: __t.u64(),
+  craftId: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  currency: __t.string(),
+  fundingLinkId: __t.u64(),
+  fundingAccountId: __t.u64(),
+  heldAmount: __t.i64(),
+  releasedAmount: __t.i64(),
+  ratioNumerator: __t.i64(),
+  ratioDenominator: __t.i64(),
+  effortCovered: __t.i64(),
+  effortPriced: __t.i64(),
+  accruedNumerator: __t.i64(),
+  accruedDenominator: __t.i64(),
+  heldAt: __t.timestamp(),
+  updatedAt: __t.timestamp(),
+  closedAt: __t.option(__t.timestamp()),
+});
+export type CraftBountyEscrow = __Infer<typeof CraftBountyEscrow>;
+
+export const CraftBountyFunding = __t.object("CraftBountyFunding", {
+  craftId: __t.u64(),
+  payerAccountIdentity: __t.identity(),
+  source: __t.string(),
+  ruleId: __t.option(__t.string()),
+  currency: __t.string(),
+  fundingLinkId: __t.option(__t.u64()),
+  ratioNumerator: __t.i64(),
+  ratioDenominator: __t.i64(),
+  state: __t.string(),
+  reason: __t.option(__t.string()),
+  transferId: __t.option(__t.u64()),
+  updatedAt: __t.timestamp(),
+});
+export type CraftBountyFunding = __Infer<typeof CraftBountyFunding>;
+
 export const CraftBountyOverride = __t.object("CraftBountyOverride", {
   craftId: __t.u64(),
   accountIdentity: __t.identity(),
@@ -192,6 +315,7 @@ export const CraftBountyOverride = __t.object("CraftBountyOverride", {
   currency: __t.string(),
   private: __t.bool(),
   updatedAt: __t.timestamp(),
+  fundingLinkId: __t.option(__t.u64()),
 });
 export type CraftBountyOverride = __Infer<typeof CraftBountyOverride>;
 
@@ -241,6 +365,7 @@ export const CraftPrivateBountyAssignment = __t.object("CraftPrivateBountyAssign
   assignedByAccountIdentity: __t.identity(),
   assignedAt: __t.timestamp(),
   updatedAt: __t.timestamp(),
+  sticky: __t.bool(),
 });
 export type CraftPrivateBountyAssignment = __Infer<typeof CraftPrivateBountyAssignment>;
 
@@ -248,6 +373,21 @@ export const CreateSharedFiltersResult = __t.object("CreateSharedFiltersResult",
   code: __t.string(),
 });
 export type CreateSharedFiltersResult = __Infer<typeof CreateSharedFiltersResult>;
+
+export const DiscordFundingNotifyTarget = __t.object("DiscordFundingNotifyTarget", {
+  id: __t.string(),
+  accountIdentity: __t.identity(),
+  sinkId: __t.string(),
+  fundingFailedTemplate: __t.option(__t.string()),
+  payoutShortfallTemplate: __t.option(__t.string()),
+  unclaimedTemplate: __t.option(__t.string()),
+  mentionType: __t.option(__t.string()),
+  mentionId: __t.option(__t.string()),
+  mentionName: __t.option(__t.string()),
+  updatedAt: __t.timestamp(),
+  deletedAt: __t.option(__t.timestamp()),
+});
+export type DiscordFundingNotifyTarget = __Infer<typeof DiscordFundingNotifyTarget>;
 
 export const DiscordGuildInstall = __t.object("DiscordGuildInstall", {
   guildId: __t.string(),
@@ -350,6 +490,30 @@ export const FlatBountyValue = __t.object("FlatBountyValue", {
 });
 export type FlatBountyValue = __Infer<typeof FlatBountyValue>;
 
+export const FundingNotificationPayload = __t.object("FundingNotificationPayload", {
+  kind: __t.string(),
+  role: __t.string(),
+  currency: __t.string(),
+  craftId: __t.option(__t.u64()),
+  amount: __t.option(__t.i64()),
+  reason: __t.option(__t.string()),
+});
+export type FundingNotificationPayload = __Infer<typeof FundingNotificationPayload>;
+
+export const FundingNotifyTrigger = __t.object("FundingNotifyTrigger", {
+  id: __t.string(),
+  accountIdentity: __t.identity(),
+  get sink() {
+    return NotifySinkRef;
+  },
+  fundingFailed: __t.bool(),
+  payoutShortfall: __t.bool(),
+  unclaimed: __t.bool(),
+  updatedAt: __t.timestamp(),
+  deletedAt: __t.option(__t.timestamp()),
+});
+export type FundingNotifyTrigger = __Infer<typeof FundingNotifyTrigger>;
+
 export const GridBountyValue = __t.object("GridBountyValue", {
   get cells() {
     return __t.array(GridCell);
@@ -384,6 +548,11 @@ export const IntegrationLinkRequest = __t.object("IntegrationLinkRequest", {
   externalId: __t.option(__t.string()),
   externalHandle: __t.option(__t.string()),
   createdAt: __t.timestamp(),
+  candidateAddress: __t.option(__t.string()),
+  pendingReason: __t.option(__t.string()),
+  unverified: __t.bool(),
+  matchedUsername: __t.option(__t.string()),
+  confirmed: __t.bool(),
 });
 export type IntegrationLinkRequest = __Infer<typeof IntegrationLinkRequest>;
 
@@ -447,6 +616,9 @@ export type LoyaltyRuleSpec = __Infer<typeof LoyaltyRuleSpec>;
 export const MyAccount = __t.object("MyAccount", {});
 export type MyAccount = __Infer<typeof MyAccount>;
 
+export const MyBountyEscrowWallet = __t.object("MyBountyEscrowWallet", {});
+export type MyBountyEscrowWallet = __Infer<typeof MyBountyEscrowWallet>;
+
 export const MyBountyPayoutRecordAsPayer = __t.object("MyBountyPayoutRecordAsPayer", {});
 export type MyBountyPayoutRecordAsPayer = __Infer<typeof MyBountyPayoutRecordAsPayer>;
 
@@ -459,11 +631,20 @@ export type MyBountyPayoutRecordLogAsPayer = __Infer<typeof MyBountyPayoutRecord
 export const MyBountyRule = __t.object("MyBountyRule", {});
 export type MyBountyRule = __Infer<typeof MyBountyRule>;
 
+export const MyCraftBountyEscrow = __t.object("MyCraftBountyEscrow", {});
+export type MyCraftBountyEscrow = __Infer<typeof MyCraftBountyEscrow>;
+
+export const MyCraftBountyFunding = __t.object("MyCraftBountyFunding", {});
+export type MyCraftBountyFunding = __Infer<typeof MyCraftBountyFunding>;
+
 export const MyCraftBountyOverride = __t.object("MyCraftBountyOverride", {});
 export type MyCraftBountyOverride = __Infer<typeof MyCraftBountyOverride>;
 
 export const MyCraftFilterNotifyTrigger = __t.object("MyCraftFilterNotifyTrigger", {});
 export type MyCraftFilterNotifyTrigger = __Infer<typeof MyCraftFilterNotifyTrigger>;
+
+export const MyDiscordFundingNotifyTarget = __t.object("MyDiscordFundingNotifyTarget", {});
+export type MyDiscordFundingNotifyTarget = __Infer<typeof MyDiscordFundingNotifyTarget>;
 
 export const MyDiscordNotifySink = __t.object("MyDiscordNotifySink", {});
 export type MyDiscordNotifySink = __Infer<typeof MyDiscordNotifySink>;
@@ -479,6 +660,9 @@ export type MyEntitlementsAsContributor = __Infer<typeof MyEntitlementsAsContrib
 
 export const MyEntitlementsAsPayer = __t.object("MyEntitlementsAsPayer", {});
 export type MyEntitlementsAsPayer = __Infer<typeof MyEntitlementsAsPayer>;
+
+export const MyFundingNotifyTrigger = __t.object("MyFundingNotifyTrigger", {});
+export type MyFundingNotifyTrigger = __Infer<typeof MyFundingNotifyTrigger>;
 
 export const MyIntegrationLinkRequest = __t.object("MyIntegrationLinkRequest", {});
 export type MyIntegrationLinkRequest = __Infer<typeof MyIntegrationLinkRequest>;
@@ -504,6 +688,18 @@ export type MyPrivateCraftBountyAssignment = __Infer<typeof MyPrivateCraftBounty
 export const MySavedCraftFilter = __t.object("MySavedCraftFilter", {});
 export type MySavedCraftFilter = __Infer<typeof MySavedCraftFilter>;
 
+export const MySteloReceivingWallet = __t.object("MySteloReceivingWallet", {});
+export type MySteloReceivingWallet = __Infer<typeof MySteloReceivingWallet>;
+
+export const MySteloTransfer = __t.object("MySteloTransfer", {});
+export type MySteloTransfer = __Infer<typeof MySteloTransfer>;
+
+export const MySteloWallet = __t.object("MySteloWallet", {});
+export type MySteloWallet = __Infer<typeof MySteloWallet>;
+
+export const MySteloWalletStatus = __t.object("MySteloWalletStatus", {});
+export type MySteloWalletStatus = __Infer<typeof MySteloWalletStatus>;
+
 export const Notification = __t.object("Notification", {
   id: __t.u64(),
   accountIdentity: __t.identity(),
@@ -520,8 +716,20 @@ export const NotificationPayload = __t.enum("NotificationPayload", {
   get Craft() {
     return CraftNotificationPayload;
   },
+  get Funding() {
+    return FundingNotificationPayload;
+  },
 });
 export type NotificationPayload = __Infer<typeof NotificationPayload>;
+
+export const NotificationV2 = __t.object("NotificationV2", {
+  id: __t.u64(),
+  accountIdentity: __t.identity(),
+  payloadJson: __t.string(),
+  createdAt: __t.timestamp(),
+  readAt: __t.option(__t.timestamp()),
+});
+export type NotificationV2 = __Infer<typeof NotificationV2>;
 
 // The tagged union or sum type for the algebraic type `NotifySinkRef`.
 export const NotifySinkRef = __t.enum("NotifySinkRef", {
@@ -542,6 +750,7 @@ export const PayerEntitlementRow = __t.object("PayerEntitlementRow", {
   currency: __t.string(),
   effortTotal: __t.i64(),
   earnedTotal: __t.i64(),
+  guaranteedTotal: __t.i64(),
   paidTotal: __t.i64(),
 });
 export type PayerEntitlementRow = __Infer<typeof PayerEntitlementRow>;
@@ -584,6 +793,130 @@ export const SharedFilterRow = __t.object("SharedFilterRow", {
   filterJson: __t.string(),
 });
 export type SharedFilterRow = __Infer<typeof SharedFilterRow>;
+
+export const SteloCurrencyPolicy = __t.object("SteloCurrencyPolicy", {
+  currency: __t.string(),
+  action: __t.string(),
+  rollTo: __t.option(__t.string()),
+  afterDays: __t.u32(),
+});
+export type SteloCurrencyPolicy = __Infer<typeof SteloCurrencyPolicy>;
+
+export const SteloExtras = __t.object("SteloExtras", {
+  payeePlayerId: __t.u64(),
+  fundingAccountId: __t.u64(),
+});
+export type SteloExtras = __Infer<typeof SteloExtras>;
+
+export const SteloHold = __t.object("SteloHold", {
+  craftId: __t.u64(),
+  fundingLinkId: __t.u64(),
+  ratioNumerator: __t.i64(),
+  ratioDenominator: __t.i64(),
+  effortCovered: __t.i64(),
+});
+export type SteloHold = __Infer<typeof SteloHold>;
+
+export const SteloPayout = __t.object("SteloPayout", {
+  payeePlayerId: __t.u64(),
+  fundingAccountId: __t.u64(),
+  extras: __t.i64(),
+});
+export type SteloPayout = __Infer<typeof SteloPayout>;
+
+export const SteloPayoutSchedule = __t.object("SteloPayoutSchedule", {
+  id: __t.u8(),
+  intervalMicros: __t.i64(),
+  lastSweepAt: __t.timestamp(),
+});
+export type SteloPayoutSchedule = __Infer<typeof SteloPayoutSchedule>;
+
+export const SteloReceivingWallet = __t.object("SteloReceivingWallet", {
+  id: __t.u64(),
+  accountIdentity: __t.identity(),
+  currency: __t.string(),
+  linkId: __t.u64(),
+});
+export type SteloReceivingWallet = __Infer<typeof SteloReceivingWallet>;
+
+export const SteloRefund = __t.object("SteloRefund", {
+  fundingAccountId: __t.u64(),
+});
+export type SteloRefund = __Infer<typeof SteloRefund>;
+
+export const SteloTopUp = __t.object("SteloTopUp", {
+  craftId: __t.u64(),
+  ratioNumerator: __t.i64(),
+  ratioDenominator: __t.i64(),
+  reserved: __t.i64(),
+});
+export type SteloTopUp = __Infer<typeof SteloTopUp>;
+
+export const SteloTransfer = __t.object("SteloTransfer", {
+  id: __t.u64(),
+  ref: __t.string(),
+  currency: __t.string(),
+  payerAccountIdentity: __t.identity(),
+  fromAccountId: __t.u64(),
+  toAccountId: __t.u64(),
+  amount: __t.i64(),
+  steloAmount: __t.u64(),
+  get purpose() {
+    return SteloTransferPurpose;
+  },
+  get state() {
+    return SteloTransferState;
+  },
+  steloTransferId: __t.option(__t.u64()),
+  failureReason: __t.option(__t.string()),
+  createdAt: __t.timestamp(),
+  settledAt: __t.option(__t.timestamp()),
+});
+export type SteloTransfer = __Infer<typeof SteloTransfer>;
+
+// The tagged union or sum type for the algebraic type `SteloTransferPurpose`.
+export const SteloTransferPurpose = __t.enum("SteloTransferPurpose", {
+  get Hold() {
+    return SteloHold;
+  },
+  get TopUp() {
+    return SteloTopUp;
+  },
+  get Payout() {
+    return SteloPayout;
+  },
+  get Refund() {
+    return SteloRefund;
+  },
+  get Extras() {
+    return SteloExtras;
+  },
+});
+export type SteloTransferPurpose = __Infer<typeof SteloTransferPurpose>;
+
+// The tagged union or sum type for the algebraic type `SteloTransferState`.
+export const SteloTransferState = __t.enum("SteloTransferState", {
+  Pending: __t.unit(),
+  Settled: __t.unit(),
+  Failed: __t.unit(),
+});
+export type SteloTransferState = __Infer<typeof SteloTransferState>;
+
+export const SteloWallet = __t.object("SteloWallet", {
+  linkId: __t.u64(),
+  accountIdentity: __t.identity(),
+  currency: __t.string(),
+});
+export type SteloWallet = __Infer<typeof SteloWallet>;
+
+export const SteloWalletStatus = __t.object("SteloWalletStatus", {
+  linkId: __t.u64(),
+  accountIdentity: __t.identity(),
+  canPull: __t.bool(),
+  verified: __t.bool(),
+  updatedAt: __t.timestamp(),
+});
+export type SteloWalletStatus = __Infer<typeof SteloWalletStatus>;
 
 export const ToastNotifySinkRef = __t.object("ToastNotifySinkRef", {});
 export type ToastNotifySinkRef = __Infer<typeof ToastNotifySinkRef>;

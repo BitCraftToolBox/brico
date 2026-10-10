@@ -27,6 +27,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/c
 import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
 import {DATA_LOCALES, dataTranslationsPending} from "~/lib/data-translation";
 import {localeLabel, PSEUDOLOCALE_ENABLED, UI_LOCALES, uiLocaleLoading} from "~/lib/i18n";
+import {CurrencyVisibilitySelect} from "~/components/crafts/CurrencyVisibilitySelect";
 import {useLabel} from "~/lib/labels";
 import {AUTO_LOCALE, NaturalSortOrder, type PayoutDisplayMode, type SortMode, useSettings, type ViewMode} from "~/lib/settings";
 import {SIDEBAR_GROUPS, SidebarGroupDef, type SidebarItemDef} from "~/lib/sidebar-items";
@@ -499,6 +500,12 @@ export default function SettingsPage() {
                                 {value: "effortPerCurrency", icon: IconEffort, label: _(msg`Effort / currency`)},
                             ]}
                         />
+                    </SettingsRow>
+                    <SettingsRow
+                        label={<Trans>Currencies</Trans>}
+                        description={<Trans>Which bounty currencies are offered. Currencies already in use stay visible.</Trans>}
+                    >
+                        <CurrencyVisibilitySelect/>
                     </SettingsRow>
                 </SettingsSection>
 

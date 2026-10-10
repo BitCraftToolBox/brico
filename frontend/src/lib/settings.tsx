@@ -7,6 +7,7 @@ import {dataLocaleFor, isDataLocale} from "~/lib/data-translation";
 import {crowdinTargetUILocale, DEFAULT_UI_LOCALE, detectUILocale, isUILocale, PSEUDOLOCALE_ENABLED, type UILocale} from "~/lib/i18n";
 import type {ProgressionUnlock} from "~/lib/progression";
 import {ALL_SIDEBAR_HREFS} from "~/lib/sidebar-items";
+import {DEFAULT_VISIBLE_CURRENCIES, sanitizeVisibleCurrencies} from "~/lib/crafts/currency-visibility";
 
 /**
  * Sentinel stored in place of a locale to mean "derive it": the browser's preferred language for
@@ -233,6 +234,13 @@ export type AppSettings = {
     payoutDisplayMode: () => PayoutDisplayMode;
     setPayoutDisplayMode: (v: PayoutDisplayMode) => void;
 
+    /** Bounty currencies the user wants to see; unknown ids dropped, never empty. Read through `useShownCurrencies`. */
+    visibleCurrencies: () => string[];
+    setVisibleCurrencies: (currencies: string[]) => void;
+    /** Wallet currencies already added to `visibleCurrencies` once, so unchecking one sticks. */
+    seenWalletCurrencies: () => string[];
+    setSeenWalletCurrencies: (currencies: string[]) => void;
+
     /**
      * See `LocalPayeeGrouping`. Structurally invalid entries dropped, same reasoning as
      * `savedCraftFilters` — a hand-edited localStorage value must not be able to break the page.
@@ -281,6 +289,8 @@ export const KEYS = {
     progressionHiddenTypes: "brico:progression:hidden-types",
     progressionTargetLevels: "brico:progression:target-levels",
     payoutDisplayMode: "brico:payouts:payout-display-mode",
+    visibleCurrencies: "brico:crafts:visible-currencies",
+    seenWalletCurrencies: "brico:crafts:seen-wallet-currencies",
     localPayeeGroupings: "brico:payouts:local-groupings",
     devMenusEnabled: "brico:experimental:dev-menus",
 } as const;
@@ -418,6 +428,10 @@ function createSettings(): AppSettings {
     const [notifyToastEverywhere, setNotifyToastEverywhere] = persist(createSignal<boolean>(false), KEYS.notifyToastEverywhere);
 
     const [payoutDisplayMode, setPayoutDisplayMode] = persist(createSignal<PayoutDisplayMode>("currencyPerEffort"), KEYS.payoutDisplayMode);
+    const [visibleCurrenciesRaw, setVisibleCurrenciesRaw] = persist(createSignal<string[]>([...DEFAULT_VISIBLE_CURRENCIES]), KEYS.visibleCurrencies);
+    const [seenWalletCurrencies, setSeenWalletCurrencies] = persist(createSignal<string[]>([]), KEYS.seenWalletCurrencies);
+    const visibleCurrencies = createMemo(() => sanitizeVisibleCurrencies(visibleCurrenciesRaw()));
+    const setVisibleCurrencies = (currencies: string[]) => setVisibleCurrenciesRaw(sanitizeVisibleCurrencies(currencies));
     const [localPayeeGroupingsRaw, setLocalPayeeGroupingsRaw] = persist(createSignal<LocalPayeeGrouping[]>([]), KEYS.localPayeeGroupings);
 
     // experimental / dev settings
@@ -571,6 +585,8 @@ function createSettings(): AppSettings {
         {key: KEYS.progressionTargetLevels, get: progressionTargetLevels, set: setProgressionTargetLevels},
         {key: KEYS.payoutDisplayMode, get: payoutDisplayMode, set: setPayoutDisplayMode},
         {key: KEYS.localPayeeGroupings, get: localPayeeGroupingsRaw, set: setLocalPayeeGroupingsRaw},
+        {key: KEYS.visibleCurrencies, get: visibleCurrenciesRaw, set: setVisibleCurrenciesRaw},
+        {key: KEYS.seenWalletCurrencies, get: seenWalletCurrencies, set: setSeenWalletCurrencies},
     );
 
     return {
@@ -639,6 +655,10 @@ function createSettings(): AppSettings {
         getTableSession,
         payoutDisplayMode,
         setPayoutDisplayMode,
+        visibleCurrencies,
+        setVisibleCurrencies,
+        seenWalletCurrencies,
+        setSeenWalletCurrencies,
         localPayeeGroupings,
         setLocalPayeeGroupings: setLocalPayeeGroupingsRaw,
     };

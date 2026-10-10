@@ -5,6 +5,7 @@
  * inlined at build time by a bundler this process never runs, and reusing them would imply the
  * frontend's `.env.local` configures the bot (it doesn't).
  */
+import {ESCROWED_BOUNTY_CURRENCIES, MANUALLY_RECORDED_BOUNTY_CURRENCIES} from "@brico/crafts/filter";
 import {existsSync} from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
@@ -65,6 +66,47 @@ export interface DiscordBotConfig {
     installClientSecret: string | null;
 }
 
+/** What happens to escrow-backed money owed to a payee with no routable payout wallet, after `afterDays`. */
+export type UnclaimedPolicy =
+    | {action: "rollover"; to: string; afterDays: number}
+    | {action: "refund"; afterDays: number};
+
+/** One escrowed bounty currency's Stelo backing. */
+export interface SteloCurrencyConfig {
+    /** Name of the Stelo ledger this currency lives on. */
+    ledger: string;
+    /** Stelo account id of the Debit escrow wallet the bot holds this currency's funds in. */
+    escrowAccountId: bigint;
+    unclaimed: UnclaimedPolicy;
+}
+
+/**
+ * How the bot authenticates to Stelo. `permanent`: the state dir holds one long-lived id token.
+ * `refresh`: it holds a short-lived id token and a one-time-use refresh token, which the bot
+ * renews against `authority` (a human does the interactive login and seeds both files).
+ */
+export type SteloAuthConfig =
+    | {mode: "permanent"}
+    | {mode: "refresh"; authority: string; clientId: string; refreshIntervalMs: number};
+
+export interface SteloConfig {
+    target: SpacetimeTarget;
+    auth: SteloAuthConfig;
+    /** Discord webhook URL notified when Stelo auth fails and a human must re-authenticate; `null` only logs. */
+    authAlertWebhook: string | null;
+    /** Keyed by escrowed bounty currency id. */
+    currencies: Record<string, SteloCurrencyConfig>;
+    /** Prefix of every transfer ref (memo and idempotency key); distinct per deployment. */
+    refPrefix: string;
+    /** Sweep cadence for payouts to payees. */
+    payoutIntervalMs: number;
+    /** Smallest amount (whole units) a sweep will pay out. */
+    minPayout: number;
+    /** Funding-failure backoff: first delay, doubling up to the max. */
+    retryBaseMs: number;
+    retryMaxMs: number;
+}
+
 export interface BotConfig {
     /** prism's `relay-module` — the read-mirror of BitCraft. Always required. */
     prism: SpacetimeTarget;
@@ -72,6 +114,8 @@ export interface BotConfig {
      * brico's own module. `null` disables the second connection entirely.
      */
     bricoApp: SpacetimeTarget | null;
+    /** Stelo escrow for `stelo-hex-coin`-style currencies. `null` disables the third connection and every funding/payout step. */
+    stelo: SteloConfig | null;
     /** How long row changes are coalesced before changed crafts are re-matched against the watches. */
     snapshotIntervalMs: number;
     /** How often the incremental row cache is compared against a full table read. 0 disables. */
@@ -187,6 +231,73 @@ function discordOAuthConfig(httpBaseUrl: string): DiscordOAuthConfig | null {
     };
 }
 
+/** Parses `STELO_CURRENCIES`; every key must be an escrowed bounty currency and every rollover target a manually recorded one. */
+export function parseSteloCurrencies(raw: string): Record<string, SteloCurrencyConfig> {
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+        throw new Error("STELO_CURRENCIES must be a JSON object keyed by currency id");
+    }
+    const result: Record<string, SteloCurrencyConfig> = {};
+    for (const [currency, value] of Object.entries(parsed as Record<string, any>)) {
+        if (!ESCROWED_BOUNTY_CURRENCIES.includes(currency)) {
+            throw new Error(`STELO_CURRENCIES: "${currency}" is not an escrowed bounty currency`);
+        }
+        if (typeof value?.ledger !== "string" || value.ledger === "") throw new Error(`STELO_CURRENCIES.${currency}.ledger is required`);
+        if (!/^\d+$/.test(String(value.escrowAccountId ?? ""))) throw new Error(`STELO_CURRENCIES.${currency}.escrowAccountId must be an account id`);
+        const unclaimed = value.unclaimed;
+        const afterDays = Number(unclaimed?.afterDays);
+        if (!Number.isFinite(afterDays) || afterDays < 0) throw new Error(`STELO_CURRENCIES.${currency}.unclaimed.afterDays must be a non-negative number`);
+        let policy: UnclaimedPolicy;
+        if (unclaimed.action === "rollover") {
+            if (!MANUALLY_RECORDED_BOUNTY_CURRENCIES.includes(unclaimed.to)) {
+                throw new Error(`STELO_CURRENCIES.${currency}.unclaimed.to must be a manually recorded currency`);
+            }
+            policy = {action: "rollover", to: unclaimed.to, afterDays};
+        } else if (unclaimed.action === "refund") {
+            policy = {action: "refund", afterDays};
+        } else {
+            throw new Error(`STELO_CURRENCIES.${currency}.unclaimed.action must be "rollover" or "refund"`);
+        }
+        result[currency] = {ledger: value.ledger, escrowAccountId: BigInt(String(value.escrowAccountId)), unclaimed: policy};
+    }
+    return result;
+}
+
+function steloAuthConfig(): SteloAuthConfig {
+    const mode = str("STELO_AUTH_MODE", "permanent");
+    if (mode === "permanent") return {mode};
+    if (mode !== "refresh") throw new Error(`STELO_AUTH_MODE must be permanent|refresh, got ${JSON.stringify(mode)}`);
+    return {
+        mode,
+        authority: str("STELO_AUTH_AUTHORITY", "https://auth.spacetimedb.com/oidc"),
+        clientId: str("STELO_AUTH_CLIENT_ID", "client_033wW7fObq5GPPc4ESCFsF"),
+        refreshIntervalMs: int("STELO_AUTH_REFRESH_MS", 12 * 60 * 60 * 1000),
+    };
+}
+
+function steloConfig(): SteloConfig | null {
+    if (!bool("STELO_ENABLED", false)) return null;
+    const currencies = parseSteloCurrencies(optionalStr("STELO_CURRENCIES") ?? "{}");
+    if (Object.keys(currencies).length === 0) throw new Error("STELO_ENABLED needs STELO_CURRENCIES to name at least one currency");
+    const refPrefix = str("STELO_REF_PREFIX", "bx");
+    if (!/^[a-z0-9]{1,8}$/i.test(refPrefix)) throw new Error("STELO_REF_PREFIX must be 1-8 letters or digits");
+    return {
+        target: {
+            label: "stelo",
+            uri: str("STELO_HOST", "https://maincloud.spacetimedb.com"),
+            database: str("STELO_MODULE", "stelofinance"),
+        },
+        auth: steloAuthConfig(),
+        authAlertWebhook: optionalStr("STELO_AUTH_ALERT_WEBHOOK"),
+        currencies,
+        refPrefix,
+        payoutIntervalMs: int("STELO_PAYOUT_INTERVAL_MS", 24 * 60 * 60 * 1000),
+        minPayout: int("STELO_MIN_PAYOUT", 1),
+        retryBaseMs: int("STELO_RETRY_BASE_MS", 30_000),
+        retryMaxMs: int("STELO_RETRY_MAX_MS", 30 * 60 * 1000),
+    };
+}
+
 export function loadConfig(): BotConfig {
     const stateDir = path.resolve(PACKAGE_ROOT, str("BRICO_BOT_STATE_DIR", ".state"));
     // Defaults are container-friendly (bind every interface; the real public URL this deploys
@@ -217,6 +328,7 @@ export function loadConfig(): BotConfig {
     return {
         prism,
         bricoApp,
+        stelo: steloConfig(),
         snapshotIntervalMs: int("BRICO_BOT_SNAPSHOT_INTERVAL_MS", 1000),
         reconcileIntervalMs: int("BRICO_BOT_RECONCILE_INTERVAL_MS", 300_000),
         reconnectDelayMs: int("BRICO_BOT_RECONNECT_DELAY_MS", 5000),

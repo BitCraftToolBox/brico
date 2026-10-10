@@ -56,5 +56,15 @@ export const integration_link_request = table(
         externalId: t.option(t.string()),
         externalHandle: t.option(t.string()),
         createdAt: t.timestamp(),
+        /** `stelo` only: the normalized account address (letters, no `#`) the browser claims to control; `brico-bot` resolves and verifies it before finalizing. */
+        candidateAddress: t.option(t.string()).default(undefined),
+        /** `stelo` only: why verification hasn't passed yet, for the browser to show. */
+        pendingReason: t.option(t.string()).default(undefined),
+        /** `stelo` only: the browser accepts linking the wallet without proving ownership (receive-only). */
+        unverified: t.bool().default(false),
+        /** `stelo` only: the Stelo username of the account the bot matched, shown for confirmation of an unverified link. */
+        matchedUsername: t.option(t.string()).default(undefined),
+        /** `stelo` only: the browser confirmed the match of an unverified link. */
+        confirmed: t.bool().default(false),
     }
 );

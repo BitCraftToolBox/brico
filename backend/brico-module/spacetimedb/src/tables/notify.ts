@@ -28,3 +28,22 @@ export const craft_filter_notify_trigger = table(
         deletedAt: t.option(t.timestamp()),
     }
 );
+
+/**
+ * Per-(account, sink) on/off flags for funding alerts, independent of any saved filter. With no
+ * row the toast sink is on for every event and Discord is off; an explicit row overrides that.
+ * Wording and mentions for a Discord sink live in `discord_funding_notify_target`.
+ */
+export const funding_notify_trigger = table(
+    {name: 'funding_notify_trigger'},
+    {
+        id: t.string().primaryKey(), // client- (toast) or bot- (discord) generated uuid
+        accountIdentity: t.identity().index('btree'),
+        sink: NotifySinkRef,
+        fundingFailed: t.bool(),
+        payoutShortfall: t.bool(),
+        unclaimed: t.bool(),
+        updatedAt: t.timestamp(),
+        deletedAt: t.option(t.timestamp()),
+    }
+);

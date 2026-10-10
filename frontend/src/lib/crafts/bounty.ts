@@ -20,7 +20,7 @@ import {BRICO_APP_SERVER, type BricoAppQuery, bricoAppTable} from "~/lib/spaceti
 import type {ResourceSpec} from "~/lib/spacetime/connection";
 import {useConnection} from "~/lib/spacetime/manager";
 
-const CRAFT_BOUNTY_RESOURCE: ResourceSpec<BricoAppQuery> = {
+export const CRAFT_BOUNTY_RESOURCE: ResourceSpec<BricoAppQuery> = {
     key: "crafts:bounty-assignments",
     tables: [bricoAppTable(tables.allCraftBountyAssignment), bricoAppTable(tables.myPrivateCraftBountyAssignment)],
 };

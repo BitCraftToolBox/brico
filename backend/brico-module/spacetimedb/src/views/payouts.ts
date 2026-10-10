@@ -145,6 +145,7 @@ const BountyPayoutLogRow = t.row('BountyPayoutLogRow', {
     currency: t.string(),
     amount: t.i64(),
     createdAt: t.timestamp(),
+    source: t.string(),
 });
 
 /** The caller's own transaction log as a payer — every row `recordBountyPayment` appended under
@@ -162,6 +163,7 @@ export const myBountyPayoutRecordLogAsPayer = spacetimedb.view(
             currency: row.currency,
             amount: row.amount,
             createdAt: row.createdAt,
+            source: row.source,
         }));
     }
 );
@@ -187,6 +189,7 @@ export const myBountyPayoutRecordLogAsContributor = spacetimedb.view(
                 currency: row.currency,
                 amount: row.amount,
                 createdAt: row.createdAt,
+                source: row.source,
             }))
         );
     }
@@ -223,6 +226,8 @@ const PayerEntitlementRow = t.row('PayerEntitlementRow', {
     currency: t.string(),
     effortTotal: t.i64(),
     earnedTotal: t.i64(),
+    /** The part of `earnedTotal` an escrow hold covers; 0 for a currency without escrow. The rest is unsecured loyalty uplift, so payees never see it. */
+    guaranteedTotal: t.i64(),
     paidTotal: t.i64(),
 });
 
@@ -299,7 +304,7 @@ export const myEntitlementsAsPayer = spacetimedb.view(
     t.array(PayerEntitlementRow),
     ctx => {
         const keyOf = (playerId: bigint, currency: string) => `${playerId}:${currency}`;
-        const rows = new Map<string, { payeePlayerId: bigint; currency: string; effortTotal: bigint; earnedTotal: bigint; paidTotal: bigint }>();
+        const rows = new Map<string, { payeePlayerId: bigint; currency: string; effortTotal: bigint; earnedTotal: bigint; guaranteedTotal: bigint; paidTotal: bigint }>();
 
         for (const total of ctx.db.bounty_entitlement_total.by_payer_payee.filter(ctx.sender)) {
             rows.set(keyOf(total.payeePlayerId, total.currency), {
@@ -307,8 +312,13 @@ export const myEntitlementsAsPayer = spacetimedb.view(
                 currency: total.currency,
                 effortTotal: total.totalEffort,
                 earnedTotal: total.total,
+                guaranteedTotal: 0n,
                 paidTotal: 0n,
             });
+        }
+        for (const pool of ctx.db.bounty_escrow_pool.by_payer_payee.filter(ctx.sender)) {
+            const row = rows.get(keyOf(pool.payeePlayerId, pool.currency));
+            if (row) row.guaranteedTotal += pool.guaranteedTotal;
         }
         for (const paid of ctx.db.bounty_payout_record.by_payer_payee.filter(ctx.sender)) {
             const key = keyOf(paid.payeePlayerId, paid.currency);
@@ -319,6 +329,7 @@ export const myEntitlementsAsPayer = spacetimedb.view(
                 currency: paid.currency,
                 effortTotal: 0n,
                 earnedTotal: 0n,
+                guaranteedTotal: 0n,
                 paidTotal: paid.paidTotal,
             });
         }
@@ -333,6 +344,7 @@ export const myEntitlementsAsPayer = spacetimedb.view(
                 currency: row.currency,
                 effortTotal: row.effortTotal,
                 earnedTotal: row.earnedTotal,
+                guaranteedTotal: row.guaranteedTotal,
                 paidTotal: row.paidTotal,
             };
         });

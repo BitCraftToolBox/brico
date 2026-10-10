@@ -1,14 +1,9 @@
 /**
  * notifications.tsx — `/account/notifications`, the inbox behind the sidebar's unread badge.
  *
- * Styled like `routes/account/profile.tsx` (`MainLayout` + `Card`s). Rendering switches on
- * `payload.tag` (only `'craft'` today) — the seam a future watchable type's notification slots
- * into without touching this page's layout.
- *
- * The "toast everywhere" setting used to live on this page; it's on `/account/settings` now — see
- * that page's doc comment for why (this page needs a login, that one doesn't).
+ * Rendering switches on `payload.tag` (e.g. `craft` and `funding`), so a new notification
+ * source slots in without touching this page's layout.
  */
-import type {Notification} from "@brico/bindings/brico-app/types";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Plural, Trans} from "@lingui/solid/macro";
@@ -26,7 +21,8 @@ import {useAccount} from "~/lib/account/state";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {breadcrumb} from "~/lib/game-links";
 import {uiLocale} from "~/lib/i18n";
-import {useNotifications} from "~/lib/notifications/state";
+import {fundingHeadline, FundingNotificationDetail, fundingSeverity} from "~/lib/notifications/funding";
+import {type Notification, useNotifications} from "~/lib/notifications/state";
 import {getCraftingRecipeName} from "~/lib/relations";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
@@ -43,16 +39,35 @@ function recipeNameFor(recipeId: number): string {
     return recipe ? getCraftingRecipeName(recipe) : `Recipe #${recipeId}`;
 }
 
+/** The card border of a funding notification, matching its toast's variant. */
+const FUNDING_BORDER = {error: "border-error", warning: "border-warning"} as const;
+
 function NotificationRow(props: {notification: Notification; onMarkRead: () => void; onDelete: () => void}) {
     const {_} = useLingui();
     const unread = createMemo(() => props.notification.readAt === undefined);
+    const border = () => {
+        const payload = props.notification.payload;
+        return payload.tag === "funding" ? FUNDING_BORDER[fundingSeverity(payload.value.kind)] : "";
+    };
 
     return (
-        <div class={`flex items-start justify-between gap-3 rounded-md border p-3 ${unread() ? "bg-accent/40" : ""}`}>
+        <div class={`flex items-start justify-between gap-3 rounded-md border p-3 ${border()} ${unread() ? "bg-accent/40" : ""}`}>
             <div class="flex-1 space-y-1">
+                <Show when={props.notification.payload.tag === "funding" ? props.notification.payload.value : null}>
+                    {value => (
+                        <>
+                            <p class="text-sm font-medium">{_(fundingHeadline(value()))}</p>
+                            <p class="text-sm text-muted-foreground"><FundingNotificationDetail value={value()}/></p>
+                        </>
+                    )}
+                </Show>
                 <Show
-                    when={props.notification.payload.tag === "Craft" ? props.notification.payload.value : null}
-                    fallback={<p class="text-sm text-muted-foreground"><Trans>Unsupported notification.</Trans></p>}
+                    when={props.notification.payload.tag === "craft" ? props.notification.payload.value : null}
+                    fallback={
+                        <Show when={props.notification.payload.tag !== "funding"}>
+                            <p class="text-sm text-muted-foreground"><Trans>Unsupported notification.</Trans></p>
+                        </Show>
+                    }
                 >
                     {value => (
                         <>

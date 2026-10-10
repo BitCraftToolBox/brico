@@ -3,7 +3,12 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {t as __t,} from "spacetimedb";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
 export default {
   craftId: __t.u64(),
@@ -12,5 +17,7 @@ export default {
   effort: __t.i64(),
   ratioNumerator: __t.i64(),
   ratioDenominator: __t.i64(),
+  baseRatioNumerator: __t.i64(),
+  baseRatioDenominator: __t.i64(),
   updatedAt: __t.timestamp(),
 };

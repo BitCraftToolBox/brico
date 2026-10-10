@@ -30,6 +30,8 @@ export interface BountyRuleSpec {
     filter: FilterNode;
     value: BountyRuleValue;
     private: boolean;
+    /** The paying Stelo wallet for an escrowed currency. */
+    fundingLinkId: bigint | undefined;
 }
 
 /**
@@ -43,6 +45,7 @@ export interface ExistingBountyAssignment {
     currency: string;
     assignedByAccountIdentity: Identity;
     private: boolean;
+    sticky: boolean;
 }
 
 /** A (payer, payee, currency) ledger key. */
@@ -187,7 +190,7 @@ export function createAppCache(log: Logger): AppCache {
             const filter = parseRuleFilter(rule);
             if (!filter) continue;
             const key = rule.accountIdentity.toHexString();
-            const spec: BountyRuleSpec = {id: rule.id, priority: rule.priority, filter, value: rule.value, private: rule.private};
+            const spec: BountyRuleSpec = {id: rule.id, priority: rule.priority, filter, value: rule.value, private: rule.private, fundingLinkId: rule.fundingLinkId};
             const specs = byAccount.get(key);
             if (specs) specs.push(spec);
             else byAccount.set(key, [spec]);

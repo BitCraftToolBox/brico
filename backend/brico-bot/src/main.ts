@@ -12,6 +12,7 @@
 import {createAppCache} from "./app/app-cache.ts";
 import {createBountyEngine} from "./app/bounty-sink.ts";
 import {startBricoAppConnection} from "./app/connection.ts";
+import {createEscrowCache} from "./app/escrow-cache.ts";
 import {createNotificationSink} from "./app/notification-sink.ts";
 import {createAccountWatchSource} from "./app/watch-source.ts";
 import {createDiscordOAuthClient} from "./auth/discord-oauth.ts";
@@ -36,6 +37,10 @@ import {timeReducerCall} from "./metrics.ts";
 import {createPrismRelay, type PrismRelay} from "./relay/prism.ts";
 import {createRowCache} from "./relay/row-cache.ts";
 import {createFileTokenStore} from "./spacetime/token-store.ts";
+import {createSteloAuth, type SteloAuth} from "./stelo/auth.ts";
+import {startSteloConnection, type SteloConnection} from "./stelo/connection.ts";
+import {createSteloManager, type SteloManager} from "./stelo/manager.ts";
+import {createSteloCache} from "./stelo/stelo-cache.ts";
 
 async function main(): Promise<void> {
     const envFile = loadEnvFile();
@@ -47,6 +52,7 @@ async function main(): Promise<void> {
         node: process.version,
         prism: `${config.prism.uri}/${config.prism.database}`,
         bricoApp: config.bricoApp ? `${config.bricoApp.uri}/${config.bricoApp.database}` : "(disabled)",
+        stelo: config.stelo ? `${config.stelo.target.uri}/${config.stelo.target.database}` : "(disabled)",
         discordBot: config.discordBot ? "(enabled)" : "(disabled)",
         snapshotIntervalMs: config.snapshotIntervalMs,
         stateDir: config.stateDir,
@@ -82,6 +88,7 @@ async function main(): Promise<void> {
     // without restructuring construction order.
     let relay: PrismRelay | undefined;
     const appCache = createAppCache(log.child("app"));
+    const escrowCache = createEscrowCache();
 
     // The brico-app connection comes up first so the watch source can consult it from the very
     // first prism snapshot. Non-blocking — the socket dials in the background — and an unreachable
@@ -90,6 +97,7 @@ async function main(): Promise<void> {
         ...supervisor,
         target: config.bricoApp,
         cache: appCache,
+        escrow: escrowCache,
         reconcileIntervalMs: config.reconcileIntervalMs,
         onRowsChanged: () => {
             log.debug("brico-app rows changed");
@@ -109,6 +117,44 @@ async function main(): Promise<void> {
     });
     if (app.disabledReason) log.warn("brico-app half of the bridge is not running", {reason: app.disabledReason});
 
+    // Local copy so closures below can narrow it (TS won't narrow `config.discordBot` across them).
+    const discordBot = config.discordBot;
+
+    // Shared REST client for all outgoing Discord calls.
+    const discordRest = discordBot ? createDiscordRestClient(discordBot.token) : null;
+
+    // The Stelo connection holds escrowed bounty money. It needs brico-app too, since every transfer
+    // is recorded there first; without either, escrowed currencies simply never get funded.
+    let stelo: SteloConnection | null = null;
+    let steloAuth: SteloAuth | null = null;
+    let steloManager: SteloManager | null = null;
+    if (config.stelo && config.bricoApp) {
+        const steloCache = createSteloCache();
+        steloAuth = createSteloAuth({config: config.stelo, tokens, log});
+        steloAuth.start();
+        stelo = startSteloConnection({
+            log,
+            delayMs: supervisor.delayMs,
+            maxDelayMs: supervisor.maxDelayMs,
+            auth: steloAuth,
+            config: config.stelo,
+            cache: steloCache,
+            onRowsChanged: () => relay?.mark(),
+        });
+        steloManager = createSteloManager({
+            config: config.stelo,
+            app,
+            stelo,
+            escrow: escrowCache,
+            steloCache,
+            playerAccounts: () => appCache.state.playerAccounts,
+            discord: discordRest ? {rest: discordRest, frontendOrigin: new URL(config.linkReturnUrl).origin} : undefined,
+            log,
+        });
+    } else if (config.stelo) {
+        log.warn("Stelo escrow is disabled because brico-app is disabled");
+    }
+
     // The BitAuth/Discord OAuth relying-party HTTP surface. Independent of the bridge/watch
     // matching below; it only ever calls `noteIntegrationLinkExternal` on the same `brico-app`
     // connection.
@@ -124,12 +170,6 @@ async function main(): Promise<void> {
     const discordOAuthClient = config.discordOAuth ? createDiscordOAuthClient(config.discordOAuth) : null;
     if (!bitauthClient) log.warn("BitAuth linking is disabled — set BITAUTH_CLIENT_ID/BITAUTH_CLIENT_SECRET to enable it");
     if (!discordOAuthClient) log.warn("Discord OAuth linking is disabled — set DISCORD_OAUTH_CLIENT_ID/DISCORD_OAUTH_CLIENT_SECRET to enable it");
-
-    // Local copy so closures below can narrow it (TS won't narrow `config.discordBot` across them).
-    const discordBot = config.discordBot;
-
-    // Shared REST client for all outgoing Discord calls.
-    const discordRest = discordBot ? createDiscordRestClient(discordBot.token) : null;
 
     // Slash commands. No gateway: interactions arrive as signed HTTP POSTs on the HTTP server below.
     const discordInteractions = discordBot && discordRest
@@ -222,7 +262,7 @@ async function main(): Promise<void> {
 
     const watches = createAccountWatchSource(app, log.child("watches"));
 
-    const bounty = createBountyEngine(app, appCache, log);
+    const bounty = createBountyEngine(app, appCache, log, steloManager ? {escrow: escrowCache, gate: steloManager.funding, status: steloManager.fundingStatus} : undefined);
 
     const cache = createRowCache(recipes);
     const bridge = createBridge({
@@ -236,6 +276,7 @@ async function main(): Promise<void> {
         ),
         recipes,
         bounty,
+        stelo: steloManager ?? undefined,
         appCache,
         onRowsComputed: rows => displayManager?.onRowsComputed(rows),
     });
@@ -251,9 +292,13 @@ async function main(): Promise<void> {
     });
     relay.start();
 
+    // Time-based Stelo work (payout sweeps, retry backoff, resending an unechoed transfer) has no row change to trigger it.
+    const steloTimer = steloManager ? setInterval(() => relay?.mark(), 10_000) : null;
+    steloTimer?.unref();
+
     const heartbeat = config.heartbeatMs > 0
         ? setInterval(() => {
-            log.info(`heartbeat prism=${relay.connection.status} bricoApp=${app.connection?.status ?? "disabled"} ${bridge.describe()}`);
+            log.info(`heartbeat prism=${relay.connection.status} bricoApp=${app.connection?.status ?? "disabled"} stelo=${stelo?.connection?.status ?? "disabled"} ${bridge.describe()}`);
         }, config.heartbeatMs)
         : null;
 
@@ -263,10 +308,13 @@ async function main(): Promise<void> {
         shuttingDown = true;
         log.info("shutting down", {signal, summary: bridge.describe()});
         if (heartbeat) clearInterval(heartbeat);
+        if (steloTimer) clearInterval(steloTimer);
         displayManager?.stop();
         linkHttp.stop();
         relay.stop();
         app.stop();
+        stelo?.stop();
+        steloAuth?.stop();
         // Give the SDK's close frames a moment, then exit rather than trusting every handle to be
         // released — a bridge worker that hangs on SIGTERM gets SIGKILLed by its supervisor anyway.
         setTimeout(() => process.exit(0), 250).unref();

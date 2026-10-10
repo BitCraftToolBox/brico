@@ -13,10 +13,13 @@ import {
 } from '@brico/crafts/discord-display';
 import {isDiscordCommandMode} from '@brico/crafts/discord-guild';
 import {CraftError, MAX_DISPLAY_TEMPLATE_LENGTH, MAX_NOTIFY_TEMPLATE_LENGTH} from '@brico/crafts/errors';
+import type {Identity} from 'spacetimedb';
 import type {Infer} from 'spacetimedb/server';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount, requireServicePrincipal} from '../lib/auth';
+import {findFundingTrigger, requireOwnDiscordSink} from '../lib/notify';
 import {clampClientTimestamp, isAtLeastAsNew} from '../lib/sync';
+import type {Ctx} from '../schema';
 import {spacetimedb} from '../schema';
 import {DiscordWatchDisplayContent} from '../tables/discord';
 
@@ -445,6 +448,128 @@ export const upsertDiscordGuildInstall = spacetimedb.reducer(
             ctx.db.discord_guild_install.insert({guildId, commandMode, createdAt: ctx.timestamp, updatedAt: ctx.timestamp});
         } else {
             ctx.db.discord_guild_install.guildId.update({...existing, commandMode, updatedAt: ctx.timestamp});
+        }
+    }
+);
+
+function findFundingTarget(ctx: Ctx, account: Identity, sinkId: string) {
+    for (const row of ctx.db.discord_funding_notify_target.accountIdentity.filter(account)) {
+        if (row.sinkId === sinkId && row.deletedAt === undefined) return row;
+    }
+    return null;
+}
+
+/**
+ * Self-service edit of a Discord sink's funding-alert wording. Never touches `mention*` (bot-set) or
+ * `funding_notify_trigger`. An empty template stores as `undefined` (the default).
+ */
+export const upsertDiscordFundingTargetTemplate = spacetimedb.reducer(
+    {
+        id: t.string(),
+        discordSinkId: t.string(),
+        fundingFailedTemplate: t.string(),
+        payoutShortfallTemplate: t.string(),
+        unclaimedTemplate: t.string(),
+        updatedAt: t.timestamp(),
+    },
+    (ctx, {id, discordSinkId, fundingFailedTemplate, payoutShortfallTemplate, unclaimedTemplate, updatedAt}) => {
+        requireAccount(ctx);
+        requireOwnDiscordSink(ctx, ctx.sender, {tag: 'discord', value: {sinkId: discordSinkId}});
+        validateNotifyTemplateLength(fundingFailedTemplate);
+        validateNotifyTemplateLength(payoutShortfallTemplate);
+        validateNotifyTemplateLength(unclaimedTemplate);
+
+        const existing = findFundingTarget(ctx, ctx.sender, discordSinkId);
+        const clampedUpdatedAt = clampClientTimestamp(ctx, updatedAt);
+        if (existing !== null && !isAtLeastAsNew(clampedUpdatedAt, existing.updatedAt)) return;
+
+        const templates = {
+            fundingFailedTemplate: storedTemplate(fundingFailedTemplate),
+            payoutShortfallTemplate: storedTemplate(payoutShortfallTemplate),
+            unclaimedTemplate: storedTemplate(unclaimedTemplate),
+        };
+        if (existing === null) {
+            ctx.db.discord_funding_notify_target.insert({
+                id, accountIdentity: ctx.sender, sinkId: discordSinkId, ...templates,
+                mentionType: undefined, mentionId: undefined, mentionName: undefined,
+                updatedAt: clampedUpdatedAt, deletedAt: undefined,
+            });
+        } else {
+            ctx.db.discord_funding_notify_target.id.update({...existing, ...templates, updatedAt: clampedUpdatedAt, deletedAt: undefined});
+        }
+    }
+);
+
+/** Tombstones the caller's own Discord funding target. Silent no-op if already gone. */
+export const detachDiscordFundingTarget = spacetimedb.reducer(
+    {id: t.string(), deletedAt: t.timestamp()},
+    (ctx, {id, deletedAt}) => {
+        requireAccount(ctx);
+        const existing = ctx.db.discord_funding_notify_target.id.find(id);
+        if (existing === null) return;
+        if (!existing.accountIdentity.isEqual(ctx.sender)) {
+            throw new SenderError(CraftError.DISCORD_FUNDING_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT);
+        }
+        const clampedDeletedAt = clampClientTimestamp(ctx, deletedAt);
+        if (!isAtLeastAsNew(clampedDeletedAt, existing.updatedAt)) return;
+        ctx.db.discord_funding_notify_target.id.update({...existing, updatedAt: clampedDeletedAt, deletedAt: clampedDeletedAt});
+    }
+);
+
+/**
+ * Service-principal writer for `/watch funding-setup`: upserts the `discord_funding_notify_target` row
+ * (including `mention*`) and the matching `funding_notify_trigger` row for one Discord sink. Each
+ * event is on iff its template is non-empty.
+ */
+export const attachDiscordFundingTarget = spacetimedb.reducer(
+    {
+        id: t.string(),
+        accountIdentity: t.identity(),
+        discordSinkId: t.string(),
+        fundingFailedTemplate: t.string(),
+        payoutShortfallTemplate: t.string(),
+        unclaimedTemplate: t.string(),
+        mentionType: t.option(t.string()),
+        mentionId: t.option(t.string()),
+        mentionName: t.option(t.string()),
+    },
+    (ctx, {id, accountIdentity, discordSinkId, fundingFailedTemplate, payoutShortfallTemplate, unclaimedTemplate, mentionType, mentionId, mentionName}) => {
+        requireServicePrincipal(ctx);
+        const sinkRef = {tag: 'discord', value: {sinkId: discordSinkId}} as const;
+        requireOwnDiscordSink(ctx, accountIdentity, sinkRef);
+        validateNotifyTemplateLength(fundingFailedTemplate);
+        validateNotifyTemplateLength(payoutShortfallTemplate);
+        validateNotifyTemplateLength(unclaimedTemplate);
+
+        const templates = {
+            fundingFailedTemplate: storedTemplate(fundingFailedTemplate),
+            payoutShortfallTemplate: storedTemplate(payoutShortfallTemplate),
+            unclaimedTemplate: storedTemplate(unclaimedTemplate),
+        };
+        const existingTarget = findFundingTarget(ctx, accountIdentity, discordSinkId);
+        if (existingTarget === null) {
+            ctx.db.discord_funding_notify_target.insert({
+                id, accountIdentity, sinkId: discordSinkId, ...templates, mentionType, mentionId, mentionName,
+                updatedAt: ctx.timestamp, deletedAt: undefined,
+            });
+        } else {
+            ctx.db.discord_funding_notify_target.id.update({
+                ...existingTarget, ...templates, mentionType, mentionId, mentionName, updatedAt: ctx.timestamp,
+            });
+        }
+
+        const flags = {
+            fundingFailed: templates.fundingFailedTemplate !== undefined,
+            payoutShortfall: templates.payoutShortfallTemplate !== undefined,
+            unclaimed: templates.unclaimedTemplate !== undefined,
+        };
+        const existingTrigger = findFundingTrigger(ctx, accountIdentity, sinkRef);
+        if (existingTrigger === null) {
+            ctx.db.funding_notify_trigger.insert({
+                id, accountIdentity, sink: sinkRef, ...flags, updatedAt: ctx.timestamp, deletedAt: undefined,
+            });
+        } else {
+            ctx.db.funding_notify_trigger.id.update({...existingTrigger, ...flags, updatedAt: ctx.timestamp, deletedAt: undefined});
         }
     }
 );

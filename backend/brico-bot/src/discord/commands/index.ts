@@ -4,6 +4,7 @@
  */
 import {commandModeCommand} from "./admin.ts";
 import {clearCommand} from "./clear.ts";
+import {watchFundingSetupCommand} from "./funding.ts";
 import {linkCommand} from "./link.ts";
 import {watchNotifyLinkCommand, watchNotifySetupCommand, watchNotifyUnlinkCommand} from "./notify.ts";
 import type {LeafCommand} from "./registry.ts";
@@ -21,4 +22,5 @@ export const commands: LeafCommand[] = [
     watchNotifyLinkCommand,
     watchNotifyUnlinkCommand,
     watchNotifySetupCommand,
+    watchFundingSetupCommand,
 ];

@@ -108,3 +108,26 @@ export const discord_guild_install = table(
         updatedAt: t.timestamp(),
     }
 );
+
+/**
+ * Discord wording and mention config for one (account, Discord sink) pair's funding alerts; on/off
+ * lives in `funding_notify_trigger`. An `undefined` template means the default
+ * (`@brico/crafts/stelo`'s `DEFAULT_FUNDING_NOTIFY_TEMPLATE`). `mention*` overrides the sink's
+ * `defaultMention*` and is written only by `attachDiscordFundingTarget`.
+ */
+export const discord_funding_notify_target = table(
+    {name: 'discord_funding_notify_target'},
+    {
+        id: t.string().primaryKey(), // client- or bot-generated uuid
+        accountIdentity: t.identity().index('btree'),
+        sinkId: t.string(), // discord_notify_sink.id
+        fundingFailedTemplate: t.option(t.string()),
+        payoutShortfallTemplate: t.option(t.string()),
+        unclaimedTemplate: t.option(t.string()),
+        mentionType: t.option(t.string()), // 'user' | 'role'
+        mentionId: t.option(t.string()),
+        mentionName: t.option(t.string()),
+        updatedAt: t.timestamp(),
+        deletedAt: t.option(t.timestamp()),
+    }
+);

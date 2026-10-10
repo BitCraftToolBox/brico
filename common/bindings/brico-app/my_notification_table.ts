@@ -3,16 +3,17 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {t as __t,} from "spacetimedb";
-import {NotificationPayload,} from "./types";
-
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
 export default __t.row({
   id: __t.u64().primaryKey(),
   accountIdentity: __t.identity().name("account_identity"),
-  get payload() {
-    return NotificationPayload;
-  },
+  payloadJson: __t.string().name("payload_json"),
   createdAt: __t.timestamp().name("created_at"),
   readAt: __t.option(__t.timestamp()).name("read_at"),
 });

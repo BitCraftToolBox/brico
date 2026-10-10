@@ -22,6 +22,7 @@ import {Trans} from "@lingui/solid/macro";
 import type {IconTypes} from "solid-icons";
 import {TbOutlineCoin as IconCurrency, TbOutlineHammer as IconEffort, TbOutlineRestore as IconRestore, TbOutlineSettings as IconSettings} from "solid-icons/tb";
 import {createMemo, createSignal, For, Show} from "solid-js";
+import {FundingAlertsCard} from "~/components/crafts/FundingAlertsCard";
 import {LocalGroupingsManager} from "~/components/crafts/LocalGroupingsManager";
 import {PlayerOption} from "~/components/crafts/PlayerPicker.tsx";
 import MainLayout from "~/components/MainLayout";
@@ -46,6 +47,7 @@ import {compareText} from "~/lib/i18n.ts";
 import {type CraftWatchTriggers, type PayoutDisplayMode, type SavedCraftFilter, useSettings} from "~/lib/settings";
 import {useConnection} from "~/lib/spacetime/manager";
 import {PRISM_SERVER} from "~/lib/spacetime/prism";
+import {CurrencyVisibilitySelect} from "~/components/crafts/CurrencyVisibilitySelect";
 import {cn} from "~/lib/utils";
 
 const NO_TRIGGERS: CraftWatchTriggers = {added: false, finished: false, removed: false};
@@ -274,6 +276,18 @@ export default function AccountSettingsPage() {
                     </CardContent>
                 </Card>
 
+                <Card>
+                    <CardHeader>
+                        <CardTitle class="text-base"><Trans>Currencies</Trans></CardTitle>
+                        <CardDescription>
+                            <Trans>Which bounty currencies are offered. Currencies already in use stay visible.</Trans>
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent class="flex justify-center">
+                        <CurrencyVisibilitySelect/>
+                    </CardContent>
+                </Card>
+
                 <Show when={settings.savedCraftFilters().length > 0}>
                     <Card>
                         <CardHeader>
@@ -327,6 +341,10 @@ export default function AccountSettingsPage() {
                         </div>
                     </CardContent>
                 </Card>
+
+                <Show when={isLoggedIn()}>
+                    <FundingAlertsCard/>
+                </Show>
 
                 <LocalGroupingsManager
                     playerOptions={playerOptions()}

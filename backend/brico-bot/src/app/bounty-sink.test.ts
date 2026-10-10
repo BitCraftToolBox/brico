@@ -3,7 +3,7 @@ import type {ClaimMember} from "@brico/bindings/prism/types";
 import assert from "node:assert/strict";
 import {describe, it} from "node:test";
 import {Identity, Timestamp} from "spacetimedb";
-import {assignmentBaselines, FRESH_CRAFT_WINDOW_MS, resolveAutomaticBonus} from "./bounty-sink.ts";
+import {assignmentBaselines, currencySwitchBaselines, FRESH_CRAFT_WINDOW_MS, resolveAutomaticBonus} from "./bounty-sink.ts";
 
 const PAYER = new Identity(1n);
 const PLAYER_ID = 500n;
@@ -175,5 +175,18 @@ describe("assignmentBaselines", () => {
 
     it("is empty for a craft nobody has contributed to", () => {
         assert.deepEqual(assignmentBaselines(undefined, firstSeen, firstSeen + 60_000n), []);
+    });
+});
+
+describe("currencySwitchBaselines", () => {
+    it("protects all existing effort, however recently the craft was first seen", () => {
+        assert.deepEqual(currencySwitchBaselines(new Map([[500n, 120n], [501n, 30n]])), [
+            {playerId: 500n, effort: 120n},
+            {playerId: 501n, effort: 30n},
+        ]);
+    });
+
+    it("is empty for a craft nobody has contributed to", () => {
+        assert.deepEqual(currencySwitchBaselines(undefined), []);
     });
 });

@@ -1,17 +1,23 @@
 // noinspection JSUnusedGlobalSymbols
 
 import {CraftError} from '@brico/crafts/errors';
+import {normalizeSteloAddress} from '@brico/crafts/stelo';
 import type {Identity} from 'spacetimedb';
 import {ScheduleAt} from 'spacetimedb';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount, requireServicePrincipal, requireTrustedJwt} from '../lib/auth';
+import {removeSteloWallet} from '../lib/escrow';
 import type {Ctx} from '../schema';
 import {spacetimedb} from '../schema';
 import {integration_link_request} from '../tables/integrations';
 
+/** Providers whose external id may be linked by several brico accounts at once (a Stelo wallet shared by a guild). */
+const SHARED_EXTERNAL_PROVIDERS: ReadonlySet<string> = new Set(['stelo']);
+
 /**
  * Shared body of `linkIntegration` and `tryFinalizeIntegrationLink` below. Enforces "at most one
- * active brico account per (provider, externalId)".
+ * active brico account per (provider, externalId)" except for `SHARED_EXTERNAL_PROVIDERS`, where
+ * only the same account linking twice is a no-op.
  */
 function linkIntegrationInternal(
     ctx: Ctx,
@@ -25,18 +31,25 @@ function linkIntegrationInternal(
         throw new SenderError(CraftError.UNKNOWN_BRICO_ACCOUNT);
     }
 
+    if (!externalHandle?.trim()) externalHandle = undefined;
+
     for (const row of ctx.db.linked_integration.by_provider_external_id.filter([
         provider,
         externalId,
     ])) {
         if (row.revokedAt !== undefined) continue;
-        // Re-linking the same account to its own already-active link is a no-op (keeps `linkedAt`);
-        // any other account holding an active link on this external id is the attribution hole above.
-        if (row.accountIdentity.isEqual(accountIdentity)) return;
+        // Re-linking the same account to its own already-active link keeps `linkedAt` and only
+        // refreshes a renamed handle; any other account holding an active link on this external id
+        // is the attribution hole above.
+        if (row.accountIdentity.isEqual(accountIdentity)) {
+            if (externalHandle !== undefined && externalHandle !== row.externalHandle) {
+                ctx.db.linked_integration.id.update({...row, externalHandle});
+            }
+            return;
+        }
+        if (SHARED_EXTERNAL_PROVIDERS.has(provider)) continue;
         throw new SenderError(CraftError.EXTERNAL_ACCOUNT_ALREADY_LINKED);
     }
-
-    if (!externalHandle?.trim()) externalHandle = undefined;
 
     ctx.db.linked_integration.insert({
         id: 0n,
@@ -83,6 +96,7 @@ export const unlinkIntegration = spacetimedb.reducer(
         if (!row.accountIdentity.isEqual(ctx.sender)) requireServicePrincipal(ctx);
         if (row.revokedAt !== undefined) return;
         ctx.db.linked_integration.id.update({...row, revokedAt: ctx.timestamp});
+        if (row.provider === 'stelo') removeSteloWallet(ctx, id);
     }
 );
 
@@ -153,6 +167,11 @@ export const beginIntegrationLink = spacetimedb.reducer(
             externalId: undefined,
             externalHandle: undefined,
             createdAt: ctx.timestamp,
+            candidateAddress: undefined,
+            pendingReason: undefined,
+            unverified: false,
+            matchedUsername: undefined,
+            confirmed: false,
         });
     }
 );
@@ -183,6 +202,11 @@ export const beginIntegrationLinkForExternal = spacetimedb.reducer(
             externalId,
             externalHandle,
             createdAt: ctx.timestamp,
+            candidateAddress: undefined,
+            pendingReason: undefined,
+            unverified: false,
+            matchedUsername: undefined,
+            confirmed: false,
         });
     }
 );
@@ -211,7 +235,85 @@ export const noteIntegrationLinkExternal = spacetimedb.reducer(
         if (request.externalId !== undefined) {
             throw new SenderError(CraftError.LINK_CODE_ALREADY_RESOLVED);
         }
+        // A `stelo` link only ever finalizes on the wallet the browser submitted, so the bot can't be
+        // steered (or a browser skip the bot's verification) onto a different account.
+        if (request.provider === 'stelo' && request.candidateAddress !== externalHandle) {
+            throw new SenderError(CraftError.LINK_CANDIDATE_MISMATCH);
+        }
+        // A match the bot is waiting on the browser to confirm cannot finalize before it does.
+        if (request.provider === 'stelo' && request.pendingReason === 'confirm-unverified' && !request.confirmed) {
+            throw new SenderError(CraftError.LINK_NOT_CONFIRMED);
+        }
         tryFinalizeIntegrationLink(ctx, {...request, externalId, externalHandle});
+    }
+);
+
+/**
+ * Browser side of a `stelo` link: names the Stelo account address (`#ABCD`, normalized here) the caller
+ * says they control. Writes only `candidateAddress`, never `externalId`, so nothing finalizes until
+ * `brico-bot` resolves and verifies it and calls `noteIntegrationLinkExternal`. `unverified` lets the
+ * bot link an account it cannot verify ownership of, after the caller confirms the match it found;
+ * such a wallet can receive payouts but never fund bounties.
+ */
+export const submitIntegrationLinkCandidate = spacetimedb.reducer(
+    {code: t.string(), candidate: t.string(), unverified: t.bool()},
+    (ctx, {code, candidate, unverified}) => {
+        requireAccount(ctx);
+        const request = ctx.db.integration_link_request.code.find(code);
+        if (request === null) throw new SenderError(CraftError.LINK_CODE_UNKNOWN_OR_EXPIRED);
+        const address = normalizeSteloAddress(candidate);
+        if (request.provider !== 'stelo' || request.accountIdentity === undefined || !request.accountIdentity.isEqual(ctx.sender)
+            || request.externalId !== undefined || address === null) {
+            throw new SenderError(CraftError.INVALID_LINK_CANDIDATE);
+        }
+        ctx.db.integration_link_request.id.update({
+            ...request, candidateAddress: address, pendingReason: undefined, unverified, matchedUsername: undefined, confirmed: false,
+        });
+    }
+);
+
+/** Browser side of an unverified `stelo` link: accepts the account the bot matched, which lets the bot finalize. */
+export const confirmIntegrationLinkCandidate = spacetimedb.reducer(
+    {code: t.string()},
+    (ctx, {code}) => {
+        requireAccount(ctx);
+        const request = ctx.db.integration_link_request.code.find(code);
+        if (request === null) throw new SenderError(CraftError.LINK_CODE_UNKNOWN_OR_EXPIRED);
+        if (request.provider !== 'stelo' || request.accountIdentity === undefined || !request.accountIdentity.isEqual(ctx.sender)
+            || request.externalId !== undefined || !request.unverified || request.pendingReason !== 'confirm-unverified') {
+            throw new SenderError(CraftError.INVALID_LINK_CANDIDATE);
+        }
+        ctx.db.integration_link_request.id.update({...request, confirmed: true});
+    }
+);
+
+/** Deletes the caller's own unresolved link request so the browser can abandon a waiting one. No-op if it is gone or already resolved. */
+export const cancelIntegrationLinkRequest = spacetimedb.reducer(
+    {code: t.string()},
+    (ctx, {code}) => {
+        requireAccount(ctx);
+        const request = ctx.db.integration_link_request.code.find(code);
+        if (request === null) return;
+        if (request.accountIdentity === undefined || !request.accountIdentity.isEqual(ctx.sender)) {
+            throw new SenderError(CraftError.LINK_CODE_UNKNOWN_OR_EXPIRED);
+        }
+        if (request.externalId !== undefined) return;
+        ctx.db.integration_link_request.id.delete(request.id);
+    }
+);
+
+/**
+ * Service-principal-only: records why a `stelo` request isn't verified yet, and for an unverified
+ * link the matched account's username. Writes only when something changes.
+ */
+export const noteIntegrationLinkStatus = spacetimedb.reducer(
+    {code: t.string(), reason: t.string(), matchedUsername: t.option(t.string())},
+    (ctx, {code, reason, matchedUsername}) => {
+        requireServicePrincipal(ctx);
+        const request = ctx.db.integration_link_request.code.find(code);
+        if (request === null) throw new SenderError(CraftError.LINK_CODE_UNKNOWN_OR_EXPIRED);
+        if (request.pendingReason === reason && request.matchedUsername === matchedUsername) return;
+        ctx.db.integration_link_request.id.update({...request, pendingReason: reason, matchedUsername});
     }
 );
 

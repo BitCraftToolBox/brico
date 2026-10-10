@@ -18,6 +18,7 @@ import {TbOutlineArrowsExchange as IconSwap, TbOutlineTrash as IconRemove} from 
 import {createEffect, createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
 import {CurrencySelect} from "~/components/crafts/CurrencySelect";
 import {type FieldOption, type FieldOptions, FilterBuilder} from "~/components/crafts/FilterBuilder";
+import {FundingWalletSelect} from "~/components/crafts/FundingWalletSelect";
 import {FontIcon} from "~/components/icons/font-icons.tsx";
 import MainLayout from "~/components/MainLayout";
 import {ConnectionStatusBadge} from "~/components/shared/ConnectionStatusBadge";
@@ -39,9 +40,11 @@ import {Tiers} from "~/lib/bitcraft-utils.ts";
 import {createBountyRules} from "~/lib/crafts/bounty-rules";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {claimAccessFlagLabel, currencyData} from "~/lib/crafts/filter-vocab";
+import {fundingWalletState, walletForCurrency} from "~/lib/crafts/funding-wallet";
 import {byLabel, craftStaticOptions, SKILL_ORDER} from "~/lib/crafts/options";
 import {parseRateInput, type Ratio, useAmountField} from "~/lib/crafts/payout";
 import {createCraftReferenceSelf} from "~/lib/crafts/relay";
+import {useShownCurrencies} from "~/lib/crafts/shown-currencies";
 import {breadcrumb} from "~/lib/game-links";
 import {compareText} from "~/lib/i18n";
 import {useLabel} from "~/lib/labels";
@@ -71,23 +74,25 @@ interface RuleDraft {
     gridCells: Map<string, CellAmount>;
     /** When true, any assignment this rule produces is only visible to the owner — see `myPrivateCraftBountyAssignment`. */
     private: boolean;
+    /** The Stelo wallet funding an escrowed currency's rate; `null` for a trust currency or none chosen yet. */
+    fundingLinkId: bigint | null;
 }
 
 function draftFrom(rule: BountyRule): RuleDraft {
     const filter = JSON.parse(rule.filterJson) as FilterNode;
     if (rule.value.tag === "Flat") {
         const flatAmount = {numerator: rule.value.value.ratioNumerator, denominator: rule.value.value.ratioDenominator};
-        return {filter, mode: "flat", flatAmount, flatCurrency: rule.value.value.currency, gridCurrency: BOUNTY_CURRENCIES[0], gridCells: new Map(), private: rule.private};
+        return {filter, mode: "flat", flatAmount, flatCurrency: rule.value.value.currency, gridCurrency: BOUNTY_CURRENCIES[0], gridCells: new Map(), private: rule.private, fundingLinkId: rule.fundingLinkId ?? null};
     }
     const gridCells = new Map<string, CellAmount>();
     for (const cell of rule.value.value.cells) {
         gridCells.set(`${cell.skillId}:${cell.tier}`, {numerator: cell.ratioNumerator, denominator: cell.ratioDenominator});
     }
-    return {filter, mode: "grid", flatAmount: null, flatCurrency: BOUNTY_CURRENCIES[0], gridCurrency: rule.value.value.currency, gridCells, private: rule.private};
+    return {filter, mode: "grid", flatAmount: null, flatCurrency: BOUNTY_CURRENCIES[0], gridCurrency: rule.value.value.currency, gridCells, private: rule.private, fundingLinkId: rule.fundingLinkId ?? null};
 }
 
 function emptyDraft(): RuleDraft {
-    return {filter: matchAll(), mode: "flat", flatAmount: null, flatCurrency: BOUNTY_CURRENCIES[0], gridCurrency: BOUNTY_CURRENCIES[0], gridCells: new Map(), private: false};
+    return {filter: matchAll(), mode: "flat", flatAmount: null, flatCurrency: BOUNTY_CURRENCIES[0], gridCurrency: BOUNTY_CURRENCIES[0], gridCells: new Map(), private: false, fundingLinkId: null};
 }
 
 /** Canonical string for comparing drafts: grid cells sorted by key, bigints stringified. */
@@ -209,7 +214,7 @@ function RuleCard(props: {
     isFirst: boolean;
     isLast: boolean;
     options: FieldOptions;
-    onSave: (id: string, filterJson: string, value: BountyRuleValue, priority: number, isPrivate: boolean) => Promise<void>;
+    onSave: (id: string, filterJson: string, value: BountyRuleValue, priority: number, isPrivate: boolean, fundingLinkId: bigint | null) => Promise<void>;
     onDelete: (id: string) => Promise<void>;
     onMoveUp: () => void;
     onMoveDown: () => void;
@@ -223,8 +228,10 @@ function RuleCard(props: {
     const [busy, setBusy] = createSignal(false);
     const [deleteOpen, setDeleteOpen] = createSignal(false);
     const dirty = createMemo(() => draftSignature(draft()) !== draftSignature(props.rule ? draftFrom(props.rule) : emptyDraft()));
-    createEffect(() => props.onDirtyChange(dirty() ? save : null));
-    onCleanup(() => props.onDirtyChange(null));
+    // `onDirtyChange` is a getter that mints a fresh token per read, so read it once.
+    const notifyDirty = props.onDirtyChange;
+    createEffect(() => notifyDirty(dirty() ? save : null));
+    onCleanup(() => notifyDirty(null));
     const skillOrder = new Map(SKILL_ORDER.map((id, index) => [id, index]));
     const skills = () => (BitCraftTables.SkillDesc.get() ?? [])
         .filter(s => skillOrder.has(s.id))
@@ -237,6 +244,16 @@ function RuleCard(props: {
     });
     const settings = useSettings();
     const rateMode = settings.payoutDisplayMode;
+    const links = useLinkedIntegrations();
+    const walletChoices = () => links.steloWallets().map(wallet => ({linkId: wallet.link.id, currency: wallet.currency}));
+    const activeCurrency = () => draft().mode === "flat" ? draft().flatCurrency : draft().gridCurrency;
+    // A rule has one wallet, but the flat and grid drafts each carry a currency, so the wallet is revalidated against whichever is active.
+    const setMode = (mode: "flat" | "grid") => {
+        const currency = mode === "flat" ? draft().flatCurrency : draft().gridCurrency;
+        setDraft({...draft(), mode, fundingLinkId: walletForCurrency(currency, draft().fundingLinkId, walletChoices())});
+    };
+    const setCurrency = (key: "flatCurrency" | "gridCurrency", currency: string) =>
+        setDraft({...draft(), [key]: currency, fundingLinkId: walletForCurrency(currency, draft().fundingLinkId, walletChoices())});
 
     const setFlatAmount = (ratio: Ratio | null) => setDraft({...draft(), flatAmount: ratio});
     const setGridAmount = (key: string, value: CellAmount | null) => {
@@ -286,9 +303,14 @@ function RuleCard(props: {
             reportError(_(msg`Could not save rule`), new Error(filterProblems()[0]));
             return false;
         }
+        const walletState = fundingWalletState(activeCurrency(), draft().fundingLinkId, walletChoices());
+        if (walletState === "missing" || walletState === "invalid") {
+            reportError(_(msg`Could not save rule`), new Error(_(msg`Choose a linked Stelo wallet to fund this bounty.`)));
+            return false;
+        }
         setBusy(true);
         try {
-            await props.onSave(id(), JSON.stringify(draft().filter), value, props.priority, draft().private);
+            await props.onSave(id(), JSON.stringify(draft().filter), value, props.priority, draft().private, draft().fundingLinkId);
             return true;
         } catch (cause) {
             reportError(_(msg`Could not save rule`), cause);
@@ -316,10 +338,10 @@ function RuleCard(props: {
                     <Button variant="ghost" size="icon" class="size-8" aria-label={_(msg`Move up`)} disabled={props.isFirst} onClick={props.onMoveUp}>↑</Button>
                     <Button variant="ghost" size="icon" class="size-8" aria-label={_(msg`Move down`)} disabled={props.isLast} onClick={props.onMoveDown}>↓</Button>
                     <div class="ml-auto flex gap-1">
-                        <Button variant={draft().mode === "flat" ? "secondary" : "outline"} size="sm" onClick={() => setDraft({...draft(), mode: "flat"})}>
+                        <Button variant={draft().mode === "flat" ? "secondary" : "outline"} size="sm" onClick={() => setMode("flat")}>
                             <Trans>Flat rate</Trans>
                         </Button>
-                        <Button variant={draft().mode === "grid" ? "secondary" : "outline"} size="sm" onClick={() => setDraft({...draft(), mode: "grid"})}>
+                        <Button variant={draft().mode === "grid" ? "secondary" : "outline"} size="sm" onClick={() => setMode("grid")}>
                             <Trans>Skill/tier grid</Trans>
                         </Button>
                     </div>
@@ -335,7 +357,8 @@ function RuleCard(props: {
                 <Show when={draft().mode === "flat"}>
                     <div class="flex items-end gap-2">
                         <FlatAmountField amount={draft().flatAmount} mode={rateMode} onCommit={setFlatAmount}/>
-                        <RateDirectionRow currency={draft().flatCurrency} onCurrencyChange={value => setDraft({...draft(), flatCurrency: value})}/>
+                        <RateDirectionRow currency={draft().flatCurrency} onCurrencyChange={value => setCurrency("flatCurrency", value)}/>
+                        <FundingWalletSelect currency={draft().flatCurrency} value={draft().fundingLinkId} onChange={fundingLinkId => setDraft({...draft(), fundingLinkId})}/>
                     </div>
                     <div class="flex items-center gap-2">
                         <Checkbox checked={draft().private} onChange={value => setDraft({...draft(), private: value})}/>
@@ -353,7 +376,8 @@ function RuleCard(props: {
                 <Show when={draft().mode === "grid"}>
                     <div class="space-y-2">
                         <div class="flex flex-row justify-between w-full">
-                            <RateDirectionRow currency={draft().gridCurrency} onCurrencyChange={value => setDraft({...draft(), gridCurrency: value})}/>
+                            <RateDirectionRow currency={draft().gridCurrency} onCurrencyChange={value => setCurrency("gridCurrency", value)}/>
+                            <FundingWalletSelect currency={draft().gridCurrency} value={draft().fundingLinkId} onChange={fundingLinkId => setDraft({...draft(), fundingLinkId})}/>
                             <Button
                                 variant="ghost" size="icon" class="size-9" aria-label={_(msg`Clear grid`)}
                                 onClick={() => setDraft({...draft(), gridCells: new Map()})}
@@ -531,6 +555,7 @@ export default function BountyRulesPage() {
     // this to redo the recipe scan/sort — it only needs to change on a data-locale switch.
     const staticOptions = createMemo(() => craftStaticOptions());
 
+    const shownCurrencies = useShownCurrencies();
     const options = createMemo(() => {
         const snap = reference.snapshot();
         const ownClaims = new Set(snap.claimMembers.map(cm => cm.claimEntityId));
@@ -557,7 +582,7 @@ export default function BountyRulesPage() {
             tier: staticOptions().tier,
             buildingType: staticOptions().buildingType,
             ownerAccess: CLAIM_ACCESS_FLAGS.map(flag => ({value: flag, label: label(claimAccessFlagLabel(flag))})),
-            currency: BOUNTY_CURRENCIES.map(currencyId => ({value: currencyId, label: currencyData(currencyId) ? label(currencyData(currencyId)!.label) : currencyId})),
+            currency: shownCurrencies().map(currencyId => ({value: currencyId, label: currencyData(currencyId) ? label(currencyData(currencyId)!.label) : currencyId})),
         };
         return byField;
     });
@@ -581,7 +606,7 @@ export default function BountyRulesPage() {
         >
             <div class="mx-auto flex max-w-4xl flex-col gap-4 px-4 pb-6">
                 <RouteTabHeader
-                    title={<Trans>Bounty payouts</Trans>}
+                    title={<Trans>Craft Bounties</Trans>}
                     tabs={bountyTabs()}
                     status={<ConnectionStatusBadge connections={[prismConn, bricoConn]}/>}
                 />
@@ -600,6 +625,9 @@ export default function BountyRulesPage() {
                         </Card>
                     }
                 >
+                    <p class="text-sm text-muted-foreground">
+                        <Trans>Changes to rules only affect crafts that don't have a bounty yet. To change a craft that already has one, set a bounty on that craft directly.</Trans>
+                    </p>
                     <div class="flex items-center gap-3">
                         <Button class="ml-auto shrink-0" size="sm" onClick={() => setDrafting(true)} disabled={drafting()}>
                             <Trans>New rule</Trans>
@@ -613,7 +641,7 @@ export default function BountyRulesPage() {
                                 isFirst={index() === 0}
                                 isLast={index() === rules().length - 1}
                                 options={optionsFor}
-                                onSave={(id, filterJson, value, priority, isPrivate) => upsert({id, filterJson, value, priority, private: isPrivate})}
+                                onSave={(id, filterJson, value, priority, isPrivate, fundingLinkId) => upsert({id, filterJson, value, priority, private: isPrivate, fundingLinkId: fundingLinkId ?? undefined})}
                                 onDelete={remove}
                                 onMoveUp={() => move(index(), -1)}
                                 onMoveDown={() => move(index(), 1)}
@@ -629,7 +657,7 @@ export default function BountyRulesPage() {
                             isFirst
                             isLast
                             options={optionsFor}
-                            onSave={(id, filterJson, value, priority, isPrivate) => upsert({id, filterJson, value, priority, private: isPrivate}).then(() => { setDrafting(false); })}
+                            onSave={(id, filterJson, value, priority, isPrivate, fundingLinkId) => upsert({id, filterJson, value, priority, private: isPrivate, fundingLinkId: fundingLinkId ?? undefined}).then(() => { setDrafting(false); })}
                             onDelete={async () => { setDrafting(false); }}
                             onMoveUp={() => {}}
                             onMoveDown={() => {}}

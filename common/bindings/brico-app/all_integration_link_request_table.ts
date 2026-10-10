@@ -14,4 +14,9 @@ export default __t.row({
   externalId: __t.option(__t.string()).name("external_id"),
   externalHandle: __t.option(__t.string()).name("external_handle"),
   createdAt: __t.timestamp().name("created_at"),
+  candidateAddress: __t.option(__t.string()).name("candidate_address"),
+  pendingReason: __t.option(__t.string()).name("pending_reason"),
+  unverified: __t.bool(),
+  matchedUsername: __t.option(__t.string()).name("matched_username"),
+  confirmed: __t.bool(),
 });

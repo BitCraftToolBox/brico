@@ -1,12 +1,13 @@
 // noinspection JSUnusedGlobalSymbols
 
-import {advancePool, reduceRatio} from '@brico/crafts/entitlement';
+import {addRatio, advancePool, assertFitsI64, fitFraction, type Fraction, reduceRatio} from '@brico/crafts/entitlement';
 import {CraftError} from '@brico/crafts/errors';
 import {CLAIM_ACCESS_FLAGS} from '@brico/crafts/filter';
 import type {Identity, Timestamp} from 'spacetimedb';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount, requireServicePrincipal} from '../lib/auth';
 import {validateBountyCurrency, validateManualBountyCurrency, validateRatio} from '../lib/bounty';
+import {addSurfacedTotal, escrowAccrued, escrowRatio, findOpenEscrow, findPool, isEscrowedCurrency, poolFractions, ratioAtLeast} from '../lib/escrow';
 import {clampClientTimestamp, isAtLeastAsNew} from '../lib/sync';
 import type {Ctx} from '../schema';
 import {spacetimedb} from '../schema';
@@ -199,7 +200,8 @@ export const deleteLoyaltyBonusTotal = spacetimedb.reducer(
  * fraction forward — so a fractional remainder is pooled across every craft, not stranded in
  * whichever craft happened to produce it. Looked up via `by_payer_payee` and filtered to `currency`
  * in JS rather than a dedicated 3-column index, since uniqueness on the triple is enforced here,
- * not by the database (see the table's doc comment).
+ * not by the database (see the table's doc comment). Used for non-escrowed currencies; an escrowed
+ * currency's carry lives in per-wallet `bounty_escrow_pool` rows instead (`addToEscrowPools`).
  */
 function addToEntitlementTotal(
     ctx: Ctx,
@@ -232,6 +234,49 @@ function addToEntitlementTotal(
             updatedAt,
         });
     }
+}
+
+/**
+ * Folds one delta into the escrow pool backing `escrow` for (payer, payee, currency): `deltaFull`
+ * into the full sum and `deltaGuaranteed` into the guaranteed sum, each floored with its own pooled
+ * carry. The surfaced `bounty_entitlement_total.total` grows by the full sum's newly floored units.
+ */
+function addToEscrowPools(
+    ctx: Ctx,
+    escrow: NonNullable<ReturnType<typeof findOpenEscrow>>,
+    payeePlayerId: bigint,
+    deltaFull: Fraction,
+    deltaGuaranteed: Fraction,
+    deltaEffort: bigint,
+    updatedAt: Timestamp,
+): void {
+    const payer = escrow.payerAccountIdentity;
+    const pool = findPool(ctx, payer, payeePlayerId, escrow.currency, escrow.fundingAccountId);
+    const carry = pool === null
+        ? {full: {numerator: 0n, denominator: 1n}, guaranteed: {numerator: 0n, denominator: 1n}}
+        : poolFractions(pool);
+    const full = advancePool(carry.full, deltaFull);
+    const guaranteed = advancePool(carry.guaranteed, deltaGuaranteed);
+
+    if (pool === null) {
+        ctx.db.bounty_escrow_pool.insert({
+            id: 0n, payerAccountIdentity: payer, payeePlayerId, currency: escrow.currency, fundingAccountId: escrow.fundingAccountId,
+            total: full.earned, remainderNumerator: full.remainder.numerator, remainderDenominator: full.remainder.denominator,
+            guaranteedTotal: guaranteed.earned,
+            guaranteedRemainderNumerator: guaranteed.remainder.numerator, guaranteedRemainderDenominator: guaranteed.remainder.denominator,
+            paidEscrow: 0n, paidDirect: 0n, pulledExtras: 0n, unclaimedSince: undefined, updatedAt,
+        });
+    } else {
+        ctx.db.bounty_escrow_pool.id.update({
+            ...pool,
+            total: pool.total + full.earned,
+            remainderNumerator: full.remainder.numerator, remainderDenominator: full.remainder.denominator,
+            guaranteedTotal: pool.guaranteedTotal + guaranteed.earned,
+            guaranteedRemainderNumerator: guaranteed.remainder.numerator, guaranteedRemainderDenominator: guaranteed.remainder.denominator,
+            updatedAt,
+        });
+    }
+    addSurfacedTotal(ctx, payer, payeePlayerId, escrow.currency, full.earned, deltaEffort, updatedAt);
 }
 
 /**
@@ -274,6 +319,13 @@ function findCraftBountyAssignment(ctx: Ctx, craftId: bigint) {
  * a different payer mid-craft, effort already recorded under the old payer stays theirs, and only new
  * effort from here on accrues to whoever pays now. That craft must have an assignment, since the bot
  * only ever calls this for a craft that has one.
+ *
+ * `ratioNumerator`/`ratioDenominator` is the *effective* ratio (base plus loyalty) and
+ * `baseRatio*` the base alone, both from the bot's same snapshot; the effective ratio must be at
+ * least the base. For an escrowed currency the call prices the delta twice into the pool of the
+ * craft's funding wallet: in full at the effective ratio, and as the guaranteed part at
+ * `min(base, escrow ratio)`, clamped so the craft's accrual never exceeds what its hold still holds.
+ * A craft with no open hold prices nothing.
  */
 export const upsertCraftBountyEntitlement = spacetimedb.reducer(
     {
@@ -283,14 +335,23 @@ export const upsertCraftBountyEntitlement = spacetimedb.reducer(
         effort: t.i64(),
         ratioNumerator: t.i64(),
         ratioDenominator: t.i64(),
+        baseRatioNumerator: t.i64(),
+        baseRatioDenominator: t.i64(),
         updatedAt: t.timestamp(),
     },
-    (ctx, {craftId, playerId, currency, effort, ratioNumerator, ratioDenominator, updatedAt}) => {
+    (ctx, {craftId, playerId, currency, effort, ratioNumerator, ratioDenominator, baseRatioNumerator, baseRatioDenominator, updatedAt}) => {
         requireServicePrincipal(ctx);
         validateRatio(ratioNumerator, ratioDenominator);
+        validateRatio(baseRatioNumerator, baseRatioDenominator);
+        const effective = {numerator: ratioNumerator, denominator: ratioDenominator};
+        const base = {numerator: baseRatioNumerator, denominator: baseRatioDenominator};
+        if (!ratioAtLeast(effective, base)) throw new SenderError(CraftError.EFFECTIVE_RATIO_BELOW_BASE);
 
         const assignment = findCraftBountyAssignment(ctx, craftId);
         if (assignment === null) throw new SenderError(CraftError.NO_BOUNTY_ASSIGNMENT);
+
+        const escrow = isEscrowedCurrency(currency) ? findOpenEscrow(ctx, craftId) : null;
+        if (isEscrowedCurrency(currency) && escrow === null) return;
 
         const existing = [...ctx.db.craft_bounty_entitlement.by_craft_player_currency.filter([craftId, playerId, currency])][0] ?? null;
         // A gap: this row hasn't been priced since the *current* (continuous) assignment began, so
@@ -311,7 +372,27 @@ export const upsertCraftBountyEntitlement = spacetimedb.reducer(
             // `addToEntitlementTotal` combines it with whatever fraction is still owed from any craft
             // and floors once, pooled.
             const deltaFraction = reduceRatio(deltaEffort * ratioNumerator, ratioDenominator);
-            addToEntitlementTotal(ctx, assignment.assignedByAccountIdentity, playerId, currency, deltaFraction, deltaEffort, updatedAt);
+            if (escrow === null) {
+                addToEntitlementTotal(ctx, assignment.assignedByAccountIdentity, playerId, currency, deltaFraction, deltaEffort, updatedAt);
+            } else {
+                const secured = ratioAtLeast(base, escrowRatio(escrow)) ? escrowRatio(escrow) : base;
+                const wanted = reduceRatio(deltaEffort * secured.numerator, secured.denominator);
+                const accrued = escrowAccrued(escrow);
+                const headroom = reduceRatio(
+                    (escrow.heldAmount - escrow.releasedAmount) * accrued.denominator - accrued.numerator, accrued.denominator,
+                );
+                const deltaGuaranteed = headroom.numerator <= 0n ? {numerator: 0n, denominator: 1n}
+                    : ratioAtLeast(wanted, headroom) ? headroom : wanted;
+                const newAccrued = fitFraction(addRatio(accrued, deltaGuaranteed), true);
+                ctx.db.craft_bounty_escrow.id.update({
+                    ...escrow,
+                    accruedNumerator: assertFitsI64(newAccrued.numerator),
+                    accruedDenominator: assertFitsI64(newAccrued.denominator),
+                    effortPriced: escrow.effortPriced + deltaEffort,
+                    updatedAt,
+                });
+                addToEscrowPools(ctx, escrow, playerId, deltaFraction, deltaGuaranteed, deltaEffort, updatedAt);
+            }
         }
     }
 );
@@ -351,6 +432,7 @@ export const recordBountyPayment = spacetimedb.reducer(
             currency,
             amount: delta,
             createdAt: ctx.timestamp,
+            source: 'recorded',
         });
     }
 );
