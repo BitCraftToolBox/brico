@@ -7,6 +7,7 @@
  */
 import {msg} from "@lingui/core/macro";
 import {type IconTypes} from "solid-icons";
+import {TbOutlineUserCircle as IconProfile, TbOutlineWallet as IconPayouts} from "solid-icons/tb";
 import {makeFontIcon} from "~/components/icons/font-icons";
 import {gameText, type Label} from "~/lib/labels";
 
@@ -86,7 +87,6 @@ const sidebarGroups = [
         name: "World", nameLabel: gameText(msg`World`),
         items: [
             {href: '/database/traveler-task', title: 'Traveler Tasks', titleLabel: gameText(msg`Traveler Tasks`), codepoint: "FFFF"},
-            // TODO game has strings like "{0} Traveler Trades {1}" and "{0}\nTraveler Trades {1}", but post-processing seems silly
             {href: '/database/traveler-trade', title: 'Traveler Trades', titleLabel: gameText(msg`Traveler Trades`), codepoint: "008E"},
             {href: '/database/prospecting', title: 'Prospecting', titleLabel: gameText(msg`Prospecting`), codepoint: "FFB0"},
             {href: '/database/biome', title: 'Biomes', titleLabel: gameText(msg`Biomes`), codepoint: "FFF1"},
@@ -98,11 +98,19 @@ const sidebarGroups = [
     {
         name: "Toolbox", nameLabel: msg`Toolbox`,
         items: [
+            {href: '/tools/crafts/browse', title: 'Craft Browser', titleLabel: msg`Craft Browser`, codepoint: "0086"},
             {href: '/tools/emblem', title: 'Emblem Editor', titleLabel: msg`Emblem Editor`, codepoint: "FFB7"},
             {href: '/tools/placeable-graph', title: 'Placeable Graph', titleLabel: msg`Placeable Graph`, codepoint: "0072"},
             {href: '/tools/quest-graph', title: 'Quest Graph', titleLabel: msg`Quest Graph`, codepoint: "0107"},
         ] as const
     },
+    {
+        name: "Account", nameLabel: msg`Account`,
+        items: [
+            {href: '/account/profile', title: 'Account', titleLabel: msg`Account`, icon: IconProfile},
+            {href: '/account/bounties', title: 'Bounties', titleLabel: msg`Bounties`, icon: IconPayouts},
+        ] as const
+    }
 ] as const;
 
 export type SidebarPages = typeof sidebarGroups[number]["items"][number]["title"];
@@ -111,7 +119,7 @@ export type SidebarHrefs = typeof sidebarGroups[number]["items"][number]["href"]
 export const SIDEBAR_GROUPS: SidebarGroupDef[] = sidebarGroups.map(g => ({
     name: g.name,
     nameLabel: g.nameLabel,
-    items: g.items.map(i => ({title: i.title, titleLabel: i.titleLabel, href: i.href, icon: makeFontIcon(i.codepoint)})),
+    items: g.items.map(i => ({title: i.title, titleLabel: i.titleLabel, href: i.href, icon: i.icon ?? makeFontIcon(i.codepoint)})),
 }));
 
 /** Flat list of all sidebar hrefs — used by settings to derive favorites. */
@@ -123,7 +131,7 @@ export const PAGE_ICON_CODEPOINTS: Record<SidebarPages, string> = Object.fromEnt
 ) as Record<SidebarPages, string>;
 
 export const PAGE_ICONS: Record<string, IconTypes> = Object.fromEntries(
-    sidebarGroups.flatMap(g => g.items.map(i => [i.title, makeFontIcon(i.codepoint)]))
+    sidebarGroups.flatMap(g => g.items.map(i => [i.title, i.icon ?? makeFontIcon(i.codepoint)]))
 );
 
 /** Sidebar `titleLabel`, keyed by `href` — lets a detail page's breadcrumb reuse the same label

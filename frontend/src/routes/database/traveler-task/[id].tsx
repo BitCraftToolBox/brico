@@ -3,10 +3,10 @@ import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {RecipeSelect, TravelerTaskPanel} from "~/components/shared/RecipeDisplay";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {SkillLinkById} from "~/lib/game-links";
 import {ogImageForPage} from "~/lib/og-meta";
 import {getTravelerTaskName} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
 export default function TravelerTaskDetail() {

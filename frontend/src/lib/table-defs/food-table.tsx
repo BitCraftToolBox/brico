@@ -1,9 +1,8 @@
+import {FoodDesc, Rarity} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {FoodDesc} from "~/bindings/src/food_desc_type";
-import {Rarity} from "~/bindings/src/rarity_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {gameText} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {
     boolColumn,

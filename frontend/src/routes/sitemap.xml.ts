@@ -1,6 +1,6 @@
 import type {APIEvent} from "@solidjs/start/server";
+import {BitCraftTables, preloadAllTablesServer} from "~/lib/bitcraft-data";
 import {getItemListSource} from "~/lib/relations";
-import {BitCraftTables, preloadAllTablesServer} from "~/lib/spacetime";
 
 /**
  * Every crawlable detail-page family: URL slug, the table it reads, the field whose value appears in

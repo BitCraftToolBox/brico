@@ -1,7 +1,7 @@
-import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
+import {TerraformRecipeDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {TerraformingDefs} from "~/lib/table-defs/terraforming-table";
 
 export default function Terraforming() {

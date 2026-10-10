@@ -1,10 +1,9 @@
+import {Rarity, ToolDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {Rarity} from "~/bindings/src/rarity_type";
-import {ToolDesc} from "~/bindings/src/tool_desc_type";
 import {ItemIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {gameText} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rarityColumn, rarityFilter, rowActions, tierColumn, tierFilter, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {includedIn} from "~/lib/utils";

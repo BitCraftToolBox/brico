@@ -26,13 +26,8 @@
  * full tag list when filling one in.
  */
 
-import type CharacterStatType from "~/bindings/src/character_stat_type_type";
-import type CollectibleType from "~/bindings/src/collectible_type_type";
-import DeployableType from "~/bindings/src/deployable_type_type";
-import type EquipmentSlotType from "~/bindings/src/equipment_slot_type_type";
-import type Rarity from "~/bindings/src/rarity_type";
-import type SkillCategory from "~/bindings/src/skill_category_type";
-import type SurfaceType from "~/bindings/src/surface_type_type";
+import type {CharacterStatType, CollectibleType, EquipmentSlotType, Rarity, SkillCategory, SurfaceType} from "@brico/bitcraft-bindings/types";
+import {DeployableType} from "@brico/bitcraft-bindings/types";
 import {translateGameText} from "~/lib/data-translation";
 import {splitCamelCase} from "~/lib/utils";
 

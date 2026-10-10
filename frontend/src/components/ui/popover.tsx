@@ -6,6 +6,7 @@ import {splitProps} from "solid-js"
 import {cn} from "~/lib/utils"
 
 const PopoverTrigger = PopoverPrimitive.Trigger
+const PopoverAnchor = PopoverPrimitive.Anchor
 
 const Popover: Component<PopoverPrimitive.PopoverRootProps> = (props) => {
     return <PopoverPrimitive.Root gutter={4} {...props} />
@@ -31,4 +32,4 @@ const PopoverContent = <T extends ValidComponent = "div">(
     )
 }
 
-export {Popover, PopoverTrigger, PopoverContent}
+export {Popover, PopoverTrigger, PopoverAnchor, PopoverContent}

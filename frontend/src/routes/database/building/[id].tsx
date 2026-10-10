@@ -1,22 +1,21 @@
+import {ItemType, ResourceDesc} from "@brico/bitcraft-bindings/types";
 import {msg, t} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
 
 import {DetailGroup, DetailPageLayout, DetailProperty, RelTable} from "~/components/shared/DetailPageLayout";
 import {BuildingIcon} from "~/components/shared/GameIcon";
 import {ItemStackIcon} from "~/components/shared/ItemStacks";
 import {RecipeSelect, ResourceDepletionPanel} from "~/components/shared/RecipeDisplay";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
 import {sourceRow} from "~/lib/data-translation";
 import {BuffLinkById, LinkedList} from "~/lib/game-links";
 import {trackUILocale} from "~/lib/i18n";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {constructionRecipeForBuilding, deconstructionRecipeForBuilding, resourcesSpawningBuilding} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {constructionCombinedSingleTab} from "~/lib/table-utils/detail-tab-builders";
 import {fixFloat} from "~/lib/utils";
 

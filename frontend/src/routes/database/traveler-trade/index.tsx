@@ -1,7 +1,7 @@
-import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
+import {TravelerTradeOrderDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {TravelerTradeDefs} from "~/lib/table-defs/traveler-trades-table";
 
 export default function TravelerTrades() {

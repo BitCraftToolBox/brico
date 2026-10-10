@@ -1,7 +1,7 @@
-import {BiomeDesc} from "~/bindings/src/biome_desc_type";
+import {BiomeDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BiomeDefs} from "~/lib/table-defs/biome-table";
 
 export default function Biomes() {

@@ -3,8 +3,8 @@
  */
 
 import Fuse, {FuseResult, IFuseOptions} from "fuse.js";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {getTravelerTaskName, getTravelerTradeName} from "~/lib/relations";
-import {BitCraftTables} from "~/lib/spacetime";
 
 // ─── Types ──────────────────────────────────────────────────────
 

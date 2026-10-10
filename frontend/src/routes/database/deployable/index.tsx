@@ -1,7 +1,7 @@
-import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
+import {DeployableDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {DeployableDescDefs} from "~/lib/table-defs/deployables-table";
 
 

@@ -1,13 +1,14 @@
+import {QuestRequirement} from "@brico/bitcraft-bindings/types";
 import * as d3Selection from "d3-selection";
 import "d3-transition";
 import * as d3Zoom from "d3-zoom";
 import {TbOutlineCheck as IconCheck, TbOutlineSearch as IconSearch, TbOutlineX as IconX,} from "solid-icons/tb";
 import {Accessor, createEffect, createMemo, createSignal, DEV, For, onCleanup, onMount, Show} from "solid-js";
-import {QuestRequirement} from "~/bindings/src/quest_requirement_type";
 import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {LinkedList, QuestChainLink} from "~/lib/game-links";
 import {computeQuestTree, getQuestTreeIds, questChainCompleter, stagesByChain} from "~/lib/quests";
-import {BitCraftTables} from "~/lib/spacetime";
+import {useSettings} from "~/lib/settings.tsx";
 import {ReqOrRewardLink} from "~/lib/table-defs/quests-table";
 import {cn} from "~/lib/utils";
 
@@ -961,6 +962,7 @@ export function QuestGraph(props: QuestGraphProps) {
     let searchWrapperRef: HTMLDivElement | undefined;
     let searchInputRef: HTMLInputElement | undefined;
 
+    const {devMenusEnabled} = useSettings();
     const [dims, setDims] = createSignal({w: 900, h: 600});
     const [transformStr, setTransformStr] = createSignal("translate(0,0) scale(1)");
     const [searchQuery, setSearchQuery] = createSignal("");
@@ -1218,8 +1220,7 @@ export function QuestGraph(props: QuestGraphProps) {
     return (
         <div
             ref={containerRef!}
-            class="relative flex flex-col flex-1 min-h-0 rounded-lg border bg-background overflow-hidden"
-            style="min-height: 500px"
+            class="relative flex flex-col flex-1 rounded-lg border bg-background overflow-hidden h-full min-h-[80svh]"
         >
             {/* Search bar + debug toggle */}
             <div class="absolute top-3 left-3 z-10 flex items-center gap-2">
@@ -1286,7 +1287,7 @@ export function QuestGraph(props: QuestGraphProps) {
                         </div>
                     </Show>
                 </div>
-                <Show when={DEV}>
+                <Show when={devMenusEnabled()}>
                     <button
                         class={`px-2 py-1.5 text-xs rounded-md border bg-background/95 transition-colors ${showDebugRanges() ? "border-blue-500 text-blue-500" : "text-muted-foreground hover:text-foreground"}`}
                         onClick={() => setShowDebugRanges(v => !v)}
@@ -1459,7 +1460,7 @@ export function QuestGraph(props: QuestGraphProps) {
                             const questReqs = () => {
                                 const q = quest();
                                 if (!q) return [];
-                                return (q.requirements ?? []).filter(r => r.tag === "QuestChain") as QuestRequirement.QuestChain[];
+                                return (q.requirements ?? []).filter(r => r.tag === "QuestChain") as Extract<QuestRequirement, {tag: "QuestChain"}>[];
                             };
 
                             const allRewards = () => {

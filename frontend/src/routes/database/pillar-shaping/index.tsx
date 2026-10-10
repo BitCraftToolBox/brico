@@ -1,7 +1,7 @@
-import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
+import {PillarShapingDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {PillarShapingDefs} from "~/lib/table-defs/pillar-shaping-table";
 
 export default function PillarShaping() {

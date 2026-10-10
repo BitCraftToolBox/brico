@@ -1,8 +1,7 @@
+import {SkillCategory, SkillDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {CellContext} from "@tanstack/solid-table";
 import {JSX} from "solid-js";
-import {SkillCategory} from "~/bindings/src/skill_category_type";
-import {SkillDesc} from "~/bindings/src/skill_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {skillCategoryLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";

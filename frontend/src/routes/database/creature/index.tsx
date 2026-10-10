@@ -1,7 +1,7 @@
-import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
+import {EnemyDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {CreatureDefs} from "~/lib/table-defs/creature-table";
 
 export default function Creatures() {

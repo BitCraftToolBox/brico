@@ -1,13 +1,12 @@
+import {ItemStack, TravelerTaskDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {CellContext} from "@tanstack/solid-table";
 import {Show} from "solid-js";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
 import {ItemStackArray} from "~/components/shared/ItemStacks";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {sourceRow} from "~/lib/data-translation";
 import {SkillLinkById} from "~/lib/game-links";
 import {gameText} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {compareBasic} from "~/lib/utils";

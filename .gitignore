@@ -1,2 +1,15 @@
-# Dependencies. npm workspaces hoist to the repo root.
+# Dependencies. npm workspaces hoist to the repo root; backend/brico-module keeps its own
+# nested install because it is deliberately outside the workspace (see common/README.md).
 node_modules/
+
+# IDEs and editors
+/.idea
+
+# System files
+.DS_Store
+Thumbs.db
+
+# used by main branch until craft manager lands
+frontend/src/bindings
+# used only for local ssr testing - CF has this set on the project settings
+frontend/wrangler.toml

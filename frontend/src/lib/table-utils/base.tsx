@@ -8,6 +8,8 @@ import {Label} from "~/lib/labels";
 declare module "@tanstack/table-core" {
     interface ColumnMeta<TData extends RowData, TValue> {
         label?: Label | string;
+        /** `"right"` right-aligns the header and cells of a numeric column (honored by `LiveTable`). */
+        align?: "right";
     }
 }
 
