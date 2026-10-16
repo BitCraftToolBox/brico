@@ -131,6 +131,7 @@ import PostCraftNotificationReducer from "./post_craft_notification_reducer";
 import PostFundingNotificationReducer from "./post_funding_notification_reducer";
 import RaiseCraftEscrowFromRefundDueReducer from "./raise_craft_escrow_from_refund_due_reducer";
 import * as ReadSharedFiltersProcedure from "./read_shared_filters_procedure";
+import RecordBountyPaymentForReducer from "./record_bounty_payment_for_reducer";
 import RecordBountyPaymentReducer from "./record_bounty_payment_reducer";
 import RecordSteloTransferIntentReducer from "./record_stelo_transfer_intent_reducer";
 import RegisterServicePrincipalReducer from "./register_service_principal_reducer";
@@ -641,6 +642,7 @@ const reducersSchema = __reducers(
   __reducerSchema("post_funding_notification", PostFundingNotificationReducer),
   __reducerSchema("raise_craft_escrow_from_refund_due", RaiseCraftEscrowFromRefundDueReducer),
   __reducerSchema("record_bounty_payment", RecordBountyPaymentReducer),
+  __reducerSchema("record_bounty_payment_for", RecordBountyPaymentForReducer),
   __reducerSchema("record_stelo_transfer_intent", RecordSteloTransferIntentReducer),
   __reducerSchema("register_service_principal", RegisterServicePrincipalReducer),
   __reducerSchema("register_stelo_wallet", RegisterSteloWalletReducer),

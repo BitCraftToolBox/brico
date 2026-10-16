@@ -22,6 +22,7 @@ import {
     releaseSurplusExtras,
     requireActiveSteloWallet,
     requireEscrowedCurrency,
+    requireOwnSteloAccount,
     reservableRefundDue,
     routePayeeWallet,
 } from '../lib/escrow';
@@ -140,6 +141,11 @@ export const recordSteloTransferIntent = spacetimedb.reducer(
                 }
                 break;
             }
+            case 'direct': {
+                if (fromAccountId === toAccountId) throw invalidTransfer('same-wallet');
+                requireOwnSteloAccount(ctx, payerAccountIdentity, fromAccountId, currency);
+                break;
+            }
         }
 
         const row = ctx.db.stelo_transfer.insert({
@@ -242,6 +248,8 @@ export const settleSteloTransfer = spacetimedb.reducer(
                 journal(ctx, {payer, currency, kind: 'refund', amount: -amount, fundingAccountId, transferId: id});
                 break;
             }
+            case 'direct':
+                break;
         }
 
         ctx.db.stelo_transfer.id.update({

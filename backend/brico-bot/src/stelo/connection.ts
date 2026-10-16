@@ -25,6 +25,8 @@ export interface SteloConnection {
     createTransfer(args: {fromAccountId: bigint; toAccountId: bigint; steloAmount: bigint; ref: string}): Promise<void>;
     /** Accounts on one ledger whose address starts with `address`, from Stelo's public directory (no membership needed). */
     searchAddress(address: string, ledgerId: bigint): Promise<SteloDirectoryHit[]>;
+    /** Up to 10 accounts on one ledger whose address or primary-user name starts with `term`; `scope` limits it to usernames or addresses. */
+    searchAccounts(term: string, ledgerId: bigint, scope?: "Username" | "Address"): Promise<SteloDirectoryHit[]>;
     /** One account's public directory entry, or `undefined` if it does not exist. */
     lookupAccount(accountId: bigint): Promise<SteloDirectoryHit | undefined>;
     stop(): void;
@@ -116,6 +118,14 @@ export function startSteloConnection(options: SteloConnectionOptions): SteloConn
 
     connection.start();
 
+    async function searchAccounts(term: string, ledgerId: bigint, scope?: "Username" | "Address"): Promise<SteloDirectoryHit[]> {
+        const conn = connection.connection;
+        if (!conn?.isActive || !connection.isLive) throw new Error("unavailable: stelo connection is not live");
+        const result = unwrapResult<SteloDirectoryHit[]>(await conn.procedures.accountSearch({term, ledgerId, scope: scope && {tag: scope}}));
+        if (result.err !== undefined) throw new Error(result.err);
+        return result.ok;
+    }
+
     return {
         connection,
         get isLive() {
@@ -136,13 +146,8 @@ export function startSteloConnection(options: SteloConnectionOptions): SteloConn
                 pending: false,
             });
         },
-        async searchAddress(address, ledgerId) {
-            const conn = connection.connection;
-            if (!conn?.isActive || !connection.isLive) throw new Error("unavailable: stelo connection is not live");
-            const result = unwrapResult<SteloDirectoryHit[]>(await conn.procedures.accountSearch({term: address, ledgerId, scope: {tag: "Address"}}));
-            if (result.err !== undefined) throw new Error(result.err);
-            return result.ok;
-        },
+        searchAddress: (address, ledgerId) => searchAccounts(address, ledgerId, "Address"),
+        searchAccounts,
         async lookupAccount(accountId) {
             const conn = connection.connection;
             if (!conn?.isActive || !connection.isLive) throw new Error("unavailable: stelo connection is not live");

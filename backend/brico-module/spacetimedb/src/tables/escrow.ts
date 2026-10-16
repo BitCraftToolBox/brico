@@ -140,6 +140,8 @@ export const SteloTransferPurpose = t.enum('SteloTransferPurpose', {
         payeePlayerId: t.u64(),
         fundingAccountId: t.u64(),
     }),
+    /** One of the payer's own wallets to any wallet, outside the escrow books (the Discord `/pay stelo` command). */
+    direct: t.object('SteloDirect', {}),
 });
 
 /**

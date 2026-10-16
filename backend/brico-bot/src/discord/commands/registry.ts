@@ -7,18 +7,23 @@
 import type {DiscordCommandMode} from "@brico/crafts/discord-guild";
 import type {REST} from "@discordjs/rest";
 import type {
+    APIActionRowComponent,
     APIApplicationCommandAutocompleteInteraction,
     APIApplicationCommandOption,
     APIApplicationCommandSubcommandGroupOption,
     APIApplicationCommandSubcommandOption,
+    APIButtonComponent,
     APIChatInputApplicationCommandInteraction,
+    APIMessageComponentInteraction,
     APIModalInteractionResponseCallbackData,
     APIModalSubmitInteraction,
     RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from "discord-api-types/v10";
 import {ApplicationCommandOptionType, ApplicationCommandType} from "discord-api-types/v10";
+import type {AppCache} from "../../app/app-cache.ts";
 import type {BricoAppConnection} from "../../app/connection.ts";
 import type {Logger} from "../../log.ts";
+import type {DirectTransfers} from "../../stelo/direct.ts";
 
 /** Everything a command handler needs beyond the interaction payload itself. */
 export interface CommandDeps {
@@ -29,12 +34,20 @@ export interface CommandDeps {
     /** The shared `@discordjs/rest` client. */
     rest: REST;
     applicationId: string;
+    /** BitCraft players mirrored from prism, by entity id. */
+    players(): ReadonlyMap<bigint, {name: string}>;
+    /** Mirror of brico-app's bounty tables. */
+    appCache: AppCache;
+    /** Absent when Stelo is not configured. */
+    directTransfers?: DirectTransfers;
 }
 
 export interface CommandReply {
     content: string;
     /** Defaults to `true` — almost every reply here carries something personal (a link code, an account state). */
     ephemeral?: boolean;
+    /** Button rows shown under the message; clicks are routed by `LeafCommand.componentPrefix`. */
+    components?: APIActionRowComponent<APIButtonComponent>[];
 }
 
 /** Shows a modal as the interaction response instead of a reply (the two are mutually exclusive). */
@@ -59,6 +72,12 @@ export type ModalSubmitHandler = (
     deps: CommandDeps,
 ) => Promise<CommandReply>;
 
+/** Handles a click on a button of a message this leaf sent; the reply replaces that message and its buttons. */
+export type ComponentHandler = (
+    interaction: APIMessageComponentInteraction,
+    deps: CommandDeps,
+) => Promise<CommandReply>;
+
 export type CommandScope = "guild" | "dm";
 
 /** The leaves that belong in `scope`'s registration — those with no `scope` of their own, or a matching one. */
@@ -80,6 +99,9 @@ export interface LeafCommand {
     /** The `custom_id` of the modal `handler` shows; submissions are routed by it (`resolveModalLeaf`), so it must be unique across leaves. */
     modalCustomId?: string;
     modalSubmit?: ModalSubmitHandler;
+    /** Button `custom_id`s of this leaf's messages start with `` `${componentPrefix}:` ``; clicks are routed by it (`resolveComponentLeaf`), so it must be unique across leaves. */
+    componentPrefix?: string;
+    componentHandler?: ComponentHandler;
 }
 
 /** Chat-input and autocomplete interactions share the same `data.name`/`data.options` shape. */
@@ -245,6 +267,11 @@ export function resolveCommand(
         if (stripped) return stripped;
     }
     return null;
+}
+
+/** Finds the leaf whose `componentPrefix` starts a button's `custom_id`. */
+export function resolveComponentLeaf(leaves: LeafCommand[], customId: string): LeafCommand | null {
+    return leaves.find(leaf => leaf.componentPrefix !== undefined && customId.startsWith(`${leaf.componentPrefix}:`)) ?? null;
 }
 
 /**

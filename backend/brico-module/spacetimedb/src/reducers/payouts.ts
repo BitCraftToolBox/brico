@@ -397,6 +397,37 @@ export const upsertCraftBountyEntitlement = spacetimedb.reducer(
     }
 );
 
+/** Adjusts `payer`'s running (`payeePlayerId`, `currency`) ledger by `delta` and logs it as a recorded payment. */
+function applyBountyPayment(ctx: Ctx, payer: Identity, payeePlayerId: bigint, currency: string, delta: bigint): void {
+    const existing = [...ctx.db.bounty_payout_record.by_payer_payee.filter([payer, payeePlayerId])]
+        .find(row => row.currency === currency);
+    if (existing === undefined) {
+        ctx.db.bounty_payout_record.insert({
+            id: 0n,
+            payerAccountIdentity: payer,
+            payeePlayerId,
+            currency,
+            paidTotal: delta,
+            updatedAt: ctx.timestamp,
+        });
+    } else {
+        ctx.db.bounty_payout_record.id.update({
+            ...existing,
+            paidTotal: existing.paidTotal + delta,
+            updatedAt: ctx.timestamp,
+        });
+    }
+    ctx.db.bounty_payout_record_log.insert({
+        id: 0n,
+        payerAccountIdentity: payer,
+        payeePlayerId,
+        currency,
+        amount: delta,
+        createdAt: ctx.timestamp,
+        source: 'recorded',
+    });
+}
+
 /**
  * Adjusts the caller's own (`ctx.sender`, `payeePlayerId`, `currency`) running ledger by `delta`
  * (positive or negative). This is independent of any particular craft. The only validation is the
@@ -407,33 +438,21 @@ export const recordBountyPayment = spacetimedb.reducer(
     (ctx, {payeePlayerId, currency, delta}) => {
         requireAccount(ctx);
         validateManualBountyCurrency(currency);
-        const existing = [...ctx.db.bounty_payout_record.by_payer_payee.filter([ctx.sender, payeePlayerId])]
-            .find(row => row.currency === currency);
-        if (existing === undefined) {
-            ctx.db.bounty_payout_record.insert({
-                id: 0n,
-                payerAccountIdentity: ctx.sender,
-                payeePlayerId,
-                currency,
-                paidTotal: delta,
-                updatedAt: ctx.timestamp,
-            });
-        } else {
-            ctx.db.bounty_payout_record.id.update({
-                ...existing,
-                paidTotal: existing.paidTotal + delta,
-                updatedAt: ctx.timestamp,
-            });
-        }
-        ctx.db.bounty_payout_record_log.insert({
-            id: 0n,
-            payerAccountIdentity: ctx.sender,
-            payeePlayerId,
-            currency,
-            amount: delta,
-            createdAt: ctx.timestamp,
-            source: 'recorded',
-        });
+        applyBountyPayment(ctx, ctx.sender, payeePlayerId, currency, delta);
+    }
+);
+
+/**
+ * Service-principal-only `recordBountyPayment` on behalf of `payerAccountIdentity`, which must
+ * have an account.
+ */
+export const recordBountyPaymentFor = spacetimedb.reducer(
+    {payerAccountIdentity: t.identity(), payeePlayerId: t.u64(), currency: t.string(), delta: t.i64()},
+    (ctx, {payerAccountIdentity, payeePlayerId, currency, delta}) => {
+        requireServicePrincipal(ctx);
+        if (ctx.db.account.identity.find(payerAccountIdentity) === null) throw new SenderError(CraftError.UNKNOWN_BRICO_ACCOUNT);
+        validateManualBountyCurrency(currency);
+        applyBountyPayment(ctx, payerAccountIdentity, payeePlayerId, currency, delta);
     }
 );
 

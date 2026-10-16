@@ -13,6 +13,7 @@ import {steloEscrowDrift, steloUnknownTransfersTotal} from "../metrics.ts";
 
 import {isPending} from "./books.ts";
 import type {SteloConnection} from "./connection.ts";
+import {createDirectTransfers, type DirectTransfers} from "./direct.ts";
 import {createTransferExecutor} from "./executor.ts";
 import {createFundingStatusSync, type FundingStatusSync} from "./funding-status.ts";
 import {createFundingGate, type FundingGate} from "./funding.ts";
@@ -43,6 +44,8 @@ export interface SteloManager {
     readonly funding: FundingGate;
     /** Keeps each escrowed-currency craft's funding-status row current. */
     readonly fundingStatus: FundingStatusSync;
+    /** Wallet-to-wallet transfers for `/pay stelo`; sent by this step's executor. */
+    readonly direct: DirectTransfers;
     /**
      * Runs the step. `hasEnded(craftId)` is true for a craft prism still knows but that is no longer
      * open (completed or removed); its escrow is closed so the unspent headroom is refunded.
@@ -68,6 +71,7 @@ export function createSteloManager(options: SteloManagerOptions): SteloManager {
         ledger: steloCache.ledger,
         ledgerByName: steloCache.ledgerByName,
         searchAddress: options.stelo.searchAddress,
+        searchAccounts: options.stelo.searchAccounts,
         lookupAccount: options.stelo.lookupAccount,
         transfers: steloCache.transfers,
         findPostedTransfer: steloCache.findPostedTransfer,
@@ -136,6 +140,7 @@ export function createSteloManager(options: SteloManagerOptions): SteloManager {
     return {
         funding,
         fundingStatus,
+        direct: createDirectTransfers({config, escrow, playerAccounts: options.playerAccounts, stelo, writes}),
 
         step(hasEnded) {
             if (!app.isLive) return;

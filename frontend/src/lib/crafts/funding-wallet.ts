@@ -2,7 +2,7 @@
  * funding-wallet.ts — pure rules for the wallet a bounty rule or override names as its funding source.
  * Imports only package specifiers so `funding-wallet.test.ts` runs under plain `node --test`.
  */
-import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/filter";
+import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 
 export interface WalletChoice {
     linkId: bigint;

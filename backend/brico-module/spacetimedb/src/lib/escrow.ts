@@ -1,6 +1,6 @@
+import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {ceilRatio, escrowRequired, type Fraction, splitPayout} from '@brico/crafts/entitlement';
 import {CraftError} from '@brico/crafts/errors';
-import {ESCROWED_BOUNTY_CURRENCIES} from '@brico/crafts/filter';
 import type {Identity, Timestamp} from 'spacetimedb';
 import {SenderError} from 'spacetimedb/server';
 import type {Ctx} from '../schema';
@@ -65,6 +65,17 @@ export function requireActiveSteloWallet(ctx: Ctx, accountIdentity: Identity, li
         throw new SenderError(CraftError.FUNDING_WALLET_UNVERIFIED);
     }
     return accountId;
+}
+
+/** Throws `INVALID_FUNDING_WALLET` unless `accountId` is one of `accountIdentity`'s active, verified wallets on `currency`. */
+export function requireOwnSteloAccount(ctx: Ctx, accountIdentity: Identity, accountId: bigint, currency: string): void {
+    for (const wallet of ctx.db.stelo_wallet.accountIdentity.filter(accountIdentity)) {
+        if (wallet.currency !== currency) continue;
+        const link = ctx.db.linked_integration.id.find(wallet.linkId);
+        if (link === null || link.provider !== 'stelo' || link.revokedAt !== undefined || steloAccountId(link) !== accountId) continue;
+        if (ctx.db.stelo_wallet_status.linkId.find(wallet.linkId)?.verified === true) return;
+    }
+    throw new SenderError(CraftError.INVALID_FUNDING_WALLET);
 }
 
 /** The Stelo account that should receive `payeePlayerId`'s payouts in `currency`, or null if they are unroutable. */

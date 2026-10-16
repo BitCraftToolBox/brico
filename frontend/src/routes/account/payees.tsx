@@ -11,8 +11,8 @@
  * down and reset mid-keystroke as the report updates underneath it.
  */
 import type {LoyaltyBonusTotal, LoyaltyReward} from "@brico/bindings/brico-app/types";
+import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {addRatio, bonusFromMultiplier} from "@brico/crafts/entitlement";
-import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/filter";
 import {msg, t} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";

@@ -7,7 +7,7 @@
  * across currencies and leaves the currency column blank if they differ. Player names here come
  * from `useLinkedIntegrations()` (the caller's own links, already carrying an `externalHandle`)
  */
-import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/filter";
+import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {msg, t} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Plural, Trans} from "@lingui/solid/macro";

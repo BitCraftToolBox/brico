@@ -1,8 +1,8 @@
-import {BOUNTY_CURRENCIES} from "@brico/crafts/filter";
+import {BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
+import {Trans} from "@lingui/solid/macro";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select.tsx";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition.tsx";
 import {useSettings} from "~/lib/settings";
-import {Trans} from "@lingui/solid/macro";
 
 /** Multi-select for which bounty currencies the site offers; unchecking the last one is ignored. */
 export function CurrencyVisibilitySelect() {

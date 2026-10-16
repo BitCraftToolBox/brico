@@ -45,6 +45,7 @@ import NoteIntegrationLinkStatusReducer from "../note_integration_link_status_re
 import PostCraftNotificationReducer from "../post_craft_notification_reducer";
 import PostFundingNotificationReducer from "../post_funding_notification_reducer";
 import RaiseCraftEscrowFromRefundDueReducer from "../raise_craft_escrow_from_refund_due_reducer";
+import RecordBountyPaymentForReducer from "../record_bounty_payment_for_reducer";
 import RecordBountyPaymentReducer from "../record_bounty_payment_reducer";
 import RecordSteloTransferIntentReducer from "../record_stelo_transfer_intent_reducer";
 import RegisterServicePrincipalReducer from "../register_service_principal_reducer";
@@ -117,6 +118,7 @@ export type PostCraftNotificationParams = __Infer<typeof PostCraftNotificationRe
 export type PostFundingNotificationParams = __Infer<typeof PostFundingNotificationReducer>;
 export type RaiseCraftEscrowFromRefundDueParams = __Infer<typeof RaiseCraftEscrowFromRefundDueReducer>;
 export type RecordBountyPaymentParams = __Infer<typeof RecordBountyPaymentReducer>;
+export type RecordBountyPaymentForParams = __Infer<typeof RecordBountyPaymentForReducer>;
 export type RecordSteloTransferIntentParams = __Infer<typeof RecordSteloTransferIntentReducer>;
 export type RegisterServicePrincipalParams = __Infer<typeof RegisterServicePrincipalReducer>;
 export type RegisterSteloWalletParams = __Infer<typeof RegisterSteloWalletReducer>;

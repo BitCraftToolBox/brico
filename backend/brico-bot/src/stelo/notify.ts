@@ -3,7 +3,7 @@
  * a payer or payee can act on (a funding failure, a payout shortfall, unclaimed money moved).
  */
 import type {DiscordNotifySink, FundingNotifyTrigger} from "@brico/bindings/brico-app/types";
-import {CURRENCY_LABELS} from "@brico/crafts/filter";
+import {CURRENCY_LABELS} from "@brico/crafts/currencies";
 import {
     DEFAULT_FUNDING_NOTIFY_TEMPLATE,
     fundingEventOf,

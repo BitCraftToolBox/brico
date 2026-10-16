@@ -5,8 +5,9 @@
  * never as a separate "estimated" number anywhere.
  */
 import type {LoyaltyBonusTotal, LoyaltyReward, LoyaltyRule, LoyaltyRuleSpec} from "@brico/bindings/brico-app/types";
+import {BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {bonusFromMultiplier, multiplierFromBonus, parseDecimalRatio} from "@brico/crafts/entitlement";
-import {BOUNTY_CURRENCIES, CLAIM_ACCESS_FLAGS, type ClaimAccessFlag} from "@brico/crafts/filter";
+import {CLAIM_ACCESS_FLAGS, type ClaimAccessFlag} from "@brico/crafts/filter";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";

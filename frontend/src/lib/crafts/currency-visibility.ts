@@ -2,7 +2,7 @@
  * currency-visibility.ts — pure rules for which bounty currencies a user sees. Imports only package
  * specifiers so `currency-visibility.test.ts` runs under plain `node --test`.
  */
-import {BOUNTY_CURRENCIES} from "@brico/crafts/filter";
+import {BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 
 export const DEFAULT_VISIBLE_CURRENCIES: readonly string[] = ["hex-coin", "stelo-hex-coin"];
 

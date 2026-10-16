@@ -10,9 +10,9 @@
 import type {DbConnection} from "@brico/bindings/brico-app";
 import type {BountyEntitlementTotal, BountyRuleValue, CraftBountyOverride, LoyaltyRule} from "@brico/bindings/brico-app/types";
 import type {ClaimMember} from "@brico/bindings/prism/types";
+import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {addRatio, bonusFromMultiplier, reduceRatio} from "@brico/crafts/entitlement";
 import type {ClaimAccessFlag, CraftSubject} from "@brico/crafts/filter";
-import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/filter";
 import {claimAccessFlags} from "@brico/crafts/subject";
 import {Identity, Timestamp} from "spacetimedb";
 

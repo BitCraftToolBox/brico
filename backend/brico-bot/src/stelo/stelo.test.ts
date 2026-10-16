@@ -16,6 +16,7 @@ import {Identity, Timestamp} from "spacetimedb";
 import {createEscrowCache} from "../app/escrow-cache.ts";
 import type {SteloConfig} from "../config.ts";
 import type {Logger} from "../log.ts";
+import {createDirectTransfers, walletLabel} from "./direct.ts";
 import {classifyTransferError, createTransferExecutor} from "./executor.ts";
 import {createFundingStatusSync} from "./funding-status.ts";
 import {createFundingGate, type FundingRequest} from "./funding.ts";
@@ -629,5 +630,98 @@ describe("link processor", () => {
         processor.run();
         await settle();
         assert.deepEqual(calls, ["note-status c1 bot-not-member -"]);
+    });
+});
+
+describe("direct transfers", () => {
+    const TARGET = 303n;
+
+    function setup(options: {walletRole?: string; walletBalance?: bigint; targetLedger?: bigint} = {}) {
+        const {stelo: base} = steloWorld(options);
+        const stelo = Object.assign(Object.create(base), {
+            lookupAccount: async (id: bigint) => id === WALLET || id === TARGET
+                ? {accountId: id, address: `A${id}`, ledgerId: id === TARGET ? options.targetLedger ?? 1n : 1n, kind: {tag: "Debit"}, primaryUsername: `user${id}`}
+                : undefined,
+        });
+        const {writes, intents} = fakeWrites();
+        const direct = createDirectTransfers({config, escrow: escrowWorld(), playerAccounts: payerPlayers, stelo, writes});
+        return {direct, intents};
+    }
+
+    const args = (overrides: Partial<Parameters<ReturnType<typeof setup>["direct"]["prepare"]>[0]> = {}) =>
+        ({payer: PAYER, currency: "stelo-hex-coin", fromAccountId: WALLET, toAccountId: TARGET, amount: 5n, ...overrides});
+
+    it("lists only wallets the bot can send from", () => {
+        assert.deepEqual(setup().direct.sendableWallets(PAYER, "stelo-hex-coin"), [{accountId: WALLET, address: `A${WALLET}`}]);
+        assert.deepEqual(setup({walletRole: "Read"}).direct.sendableWallets(PAYER, "stelo-hex-coin"), []);
+        assert.deepEqual(setup().direct.sendableWallets(PAYER, "hex-coin"), []);
+    });
+
+    it("prepares a transfer with both wallets' primary usernames and records it as a Direct intent", async () => {
+        const {direct, intents} = setup();
+        const result = await direct.prepare(args());
+        assert.ok(result.ok);
+        assert.equal(result.plan.from.primaryUsername, `user${WALLET}`);
+        assert.equal(result.plan.to.primaryUsername, `user${TARGET}`);
+        assert.equal(result.plan.steloAmount, 5_000n);
+
+        await direct.submit(result.plan);
+        assert.equal(intents.length, 1);
+        assert.equal(intents[0].purpose.tag, "Direct");
+        assert.deepEqual([intents[0].fromAccountId, intents[0].toAccountId, intents[0].amount, intents[0].steloAmount], [WALLET, TARGET, 5n, 5_000n]);
+    });
+
+    it("rejects a source wallet that is not the payer's, a missing or foreign-ledger destination and an overdraft", async () => {
+        const {direct} = setup();
+        assert.equal((await direct.prepare(args({fromAccountId: RECEIVING}))).ok, false);
+        assert.equal((await direct.prepare(args({toAccountId: 999n}))).ok, false);
+        assert.equal((await direct.prepare(args({toAccountId: WALLET}))).ok, false);
+        assert.equal((await direct.prepare(args({amount: 1_001n}))).ok, false);
+        assert.equal((await setup({targetLedger: 2n}).direct.prepare(args())).ok, false);
+    });
+
+    describe("destination search", () => {
+        const hit = (accountId: bigint, address: string, primaryUsername?: string) =>
+            ({accountId, address, ledgerId: 1n, kind: {tag: "Debit"}, primaryUsername});
+        const HITS = [hit(1n, "ALPHA", "alice"), hit(2n, "ALICE2"), hit(3n, "BETA", "bob")];
+
+        function searchSetup() {
+            const {cache, stelo: base} = steloWorld();
+            cache.ledgers.insert({id: 1n, name: "Hex Coin", scale: 3});
+            const calls: [string, string | undefined][] = [];
+            const stelo = Object.assign(Object.create(base), {
+                searchAccounts: async (term: string, _ledger: bigint, scope?: string) => {
+                    calls.push([term, scope]);
+                    return HITS.filter(h => scope === "Username" ? h.primaryUsername?.startsWith(term.toLowerCase()) : scope === "Address"
+                        ? h.address.toLowerCase().startsWith(term.toLowerCase())
+                        : h.address.toLowerCase().startsWith(term.toLowerCase()) || h.primaryUsername?.startsWith(term.toLowerCase()));
+                },
+            });
+            const direct = createDirectTransfers({config, escrow: escrowWorld(), playerAccounts: payerPlayers, stelo, writes: fakeWrites().writes});
+            return {direct, calls};
+        }
+
+        it("passes the @ and # scope through to the search", async () => {
+            const {direct, calls} = searchSetup();
+            assert.deepEqual((await direct.searchWallets("stelo-hex-coin", "@ali")).map(h => h.accountId), [1n]);
+            assert.deepEqual(calls, [["ali", "Username"]]);
+            await direct.searchWallets("stelo-hex-coin", "#al");
+            await direct.searchWallets("stelo-hex-coin", "al");
+            assert.deepEqual(calls.slice(1), [["al", "Address"], ["al", undefined]]);
+        });
+
+        it("resolves only an exact, unambiguous match", async () => {
+            const {direct} = searchSetup();
+            assert.deepEqual(await direct.resolveWallet("stelo-hex-coin", "@alice"), {ok: true, accountId: 1n});
+            assert.equal((await direct.resolveWallet("stelo-hex-coin", "@ali")).ok, false);
+            assert.deepEqual(await direct.resolveWallet("stelo-hex-coin", "#alice2"), {ok: true, accountId: 2n});
+            assert.deepEqual(await direct.resolveWallet("stelo-hex-coin", "beta"), {ok: true, accountId: 3n});
+            assert.equal((await direct.resolveWallet("stelo-hex-coin", "")).ok, false);
+        });
+
+        it("labels a primary account by user and address, any other by address", () => {
+            assert.equal(walletLabel({address: "ALPHA", primaryUsername: "alice"}), "@alice (#ALPHA)");
+            assert.equal(walletLabel({address: "ALICE2", primaryUsername: undefined}), "#ALICE2");
+        });
     });
 });

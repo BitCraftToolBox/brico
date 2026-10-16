@@ -3,12 +3,7 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {
-  TypeBuilder as __TypeBuilder,
-  t as __t,
-  type AlgebraicTypeType as __AlgebraicTypeType,
-  type Infer as __Infer,
-} from "spacetimedb";
+import {type Infer as __Infer, t as __t,} from "spacetimedb";
 
 export const Account = __t.object("Account", {
   identity: __t.identity(),
@@ -716,9 +711,6 @@ export const NotificationPayload = __t.enum("NotificationPayload", {
   get Craft() {
     return CraftNotificationPayload;
   },
-  get Funding() {
-    return FundingNotificationPayload;
-  },
 });
 export type NotificationPayload = __Infer<typeof NotificationPayload>;
 
@@ -801,6 +793,9 @@ export const SteloCurrencyPolicy = __t.object("SteloCurrencyPolicy", {
   afterDays: __t.u32(),
 });
 export type SteloCurrencyPolicy = __Infer<typeof SteloCurrencyPolicy>;
+
+export const SteloDirect = __t.object("SteloDirect", {});
+export type SteloDirect = __Infer<typeof SteloDirect>;
 
 export const SteloExtras = __t.object("SteloExtras", {
   payeePlayerId: __t.u64(),
@@ -890,6 +885,9 @@ export const SteloTransferPurpose = __t.enum("SteloTransferPurpose", {
   },
   get Extras() {
     return SteloExtras;
+  },
+  get Direct() {
+    return SteloDirect;
   },
 });
 export type SteloTransferPurpose = __Infer<typeof SteloTransferPurpose>;

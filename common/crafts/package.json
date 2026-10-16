@@ -11,6 +11,7 @@
     "./names": "./names.ts",
     "./entitlement": "./entitlement.ts",
     "./errors": "./errors.ts",
+    "./currencies": "./currencies.ts",
     "./discord-display": "./discord-display.ts",
     "./discord-guild": "./discord-guild.ts",
     "./discord-template": "./discord-template.ts",

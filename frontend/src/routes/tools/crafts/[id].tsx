@@ -5,9 +5,9 @@
  * so history is queryable), so this page deliberately does *not* apply the browser's `Active`
  * filter — a link to a finished craft still renders, with a badge saying what became of it.
  */
-import {computeEntitlement, parseDecimalRatio, reduceRatio} from "@brico/crafts/entitlement";
 import type {CraftBountyOverride} from "@brico/bindings/brico-app/types";
-import {BOUNTY_CURRENCIES} from "@brico/crafts/filter";
+import {BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
+import {computeEntitlement, parseDecimalRatio, reduceRatio} from "@brico/crafts/entitlement";
 import type {CraftBountyFacts} from "@brico/crafts/subject";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
@@ -40,10 +40,10 @@ import {useLinkedIntegrations} from "~/lib/account/links";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {createBountyAssignments} from "~/lib/crafts/bounty";
 import {type CraftBountyFundingHandle, createCraftBountyFunding, createCraftBountyOverrides} from "~/lib/crafts/bounty-funding";
-import {fundingWalletState, walletForCurrency} from "~/lib/crafts/funding-wallet";
 import {type CraftContributor, craftContributorsFrom, craftEntriesFrom} from "~/lib/crafts/entries";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
+import {fundingWalletState, walletForCurrency} from "~/lib/crafts/funding-wallet";
 import {type Ratio, useAmountField} from "~/lib/crafts/payout";
 import {createCraftDetailRelay} from "~/lib/crafts/relay";
 import {breadcrumb} from "~/lib/game-links";

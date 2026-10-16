@@ -1,4 +1,4 @@
-import {BOUNTY_CURRENCIES} from "@brico/crafts/filter";
+import {BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import assert from "node:assert/strict";
 import {test} from "node:test";
 import {CURRENCY_IDS} from "./currency-ids.ts";

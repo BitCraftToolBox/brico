@@ -8,7 +8,8 @@
  * grid, matching `BountyRuleValue`'s shape.
  */
 import type {BountyRule, BountyRuleValue, GridCell} from "@brico/bindings/brico-app/types";
-import {BOUNTY_CURRENCIES, CLAIM_ACCESS_FLAGS, type FilterField, type FilterNode, matchAll, validateFilter,} from "@brico/crafts/filter";
+import {BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
+import {CLAIM_ACCESS_FLAGS, type FilterField, type FilterNode, matchAll, validateFilter,} from "@brico/crafts/filter";
 import {claimDisplayName, regionDisplayName} from "@brico/crafts/names";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";

@@ -5,7 +5,7 @@
  * inlined at build time by a bundler this process never runs, and reusing them would imply the
  * frontend's `.env.local` configures the bot (it doesn't).
  */
-import {ESCROWED_BOUNTY_CURRENCIES, MANUALLY_RECORDED_BOUNTY_CURRENCIES} from "@brico/crafts/filter";
+import {ESCROWED_BOUNTY_CURRENCIES, MANUALLY_RECORDED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {existsSync} from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";

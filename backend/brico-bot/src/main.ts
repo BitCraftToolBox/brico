@@ -182,6 +182,9 @@ async function main(): Promise<void> {
                 linkReturnUrl: config.linkReturnUrl,
                 rest: discordRest,
                 applicationId: discordBot.applicationId,
+                players: () => cache.snapshot.players,
+                appCache,
+                directTransfers: steloManager?.direct,
             },
             log: log.child("discord"),
         })
