@@ -476,6 +476,11 @@ msgstr ""
 msgid "Discard changes"
 msgstr ""
 
+#. placeholder {0}: name()
+#: src/lib/notifications/funding.tsx
+msgid "to {0}"
+msgstr ""
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "Set bounty"
 msgstr ""
@@ -4708,6 +4713,11 @@ msgstr ""
 #: src/routes/tools/emblem.tsx
 msgid "Icon"
 msgstr "Icône"
+
+#. placeholder {0}: name()
+#: src/lib/notifications/funding.tsx
+msgid "from {0}"
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Stamina Use"

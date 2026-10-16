@@ -27,6 +27,9 @@ export const FundingNotificationPayload = t.object('FundingNotificationPayload',
     craftId: t.option(t.u64()),
     amount: t.option(t.i64()),
     reason: t.option(t.string()),
+    /** Unclaimed-money events: who the money was owed by and to. */
+    payerName: t.option(t.string()),
+    payeeName: t.option(t.string()),
 });
 
 /**

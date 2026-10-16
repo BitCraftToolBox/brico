@@ -44,6 +44,8 @@ export interface FundingAlert {
     craftId: bigint | undefined;
     amount: bigint | undefined;
     reason: string | undefined;
+    payerName: string | undefined;
+    payeeName: string | undefined;
 }
 
 export interface SteloWrites {

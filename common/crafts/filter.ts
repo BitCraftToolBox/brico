@@ -15,7 +15,7 @@
 
 // ── Fields ────────────────────────────────────────────────────
 
-import {BOUNTY_CURRENCIES, CURRENCY_LABELS} from "./currencies.ts";
+import {BOUNTY_CURRENCIES, CURRENCY_LABELS} from "./currencies";
 
 /** Every property of a craft a filter can test. */
 export type FilterField =

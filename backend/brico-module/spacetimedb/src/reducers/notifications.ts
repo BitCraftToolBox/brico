@@ -106,10 +106,12 @@ export const migrateNotificationsToV2 = spacetimedb.reducer(ctx => {
 const FUNDING_KIND_SET: ReadonlySet<string> = new Set(FUNDING_NOTIFICATION_KINDS);
 const FUNDING_ROLE_SET: ReadonlySet<string> = new Set(FUNDING_NOTIFICATION_ROLES);
 const FUNDING_REASON_SET: ReadonlySet<string> = new Set(FUNDING_REASONS);
+const MAX_PARTY_NAME_LENGTH = 100;
 
 /**
  * Written by `brico-bot` for a funding alert (`stelo/notify.ts`). `kind`, `role`, `currency` and
- * `reason` are checked against their allow-lists, so a payload never carries display text.
+ * `reason` are checked against their allow-lists, so a payload carries no wording; the only display
+ * text is the two party names, length-capped.
  */
 export const postFundingNotification = spacetimedb.reducer(
     {accountIdentity: t.identity(), payload: FundingNotificationPayload},
@@ -117,7 +119,8 @@ export const postFundingNotification = spacetimedb.reducer(
         requireServicePrincipal(ctx);
         if (!FUNDING_KIND_SET.has(payload.kind)) throw new SenderError(`${CraftError.UNKNOWN_EVENT_KIND}:${payload.kind}`);
         if (!FUNDING_ROLE_SET.has(payload.role) || !isEscrowedCurrency(payload.currency)
-            || (payload.reason !== undefined && !FUNDING_REASON_SET.has(payload.reason))) {
+            || (payload.reason !== undefined && !FUNDING_REASON_SET.has(payload.reason))
+            || (payload.payerName ?? '').length > MAX_PARTY_NAME_LENGTH || (payload.payeeName ?? '').length > MAX_PARTY_NAME_LENGTH) {
             throw new SenderError(`${CraftError.INVALID_FUNDING_STATUS}:payload`);
         }
         if (ctx.db.account.identity.find(accountIdentity) === null) throw new SenderError(CraftError.UNKNOWN_BRICO_ACCOUNT);

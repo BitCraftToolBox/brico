@@ -42,13 +42,16 @@ export function fundingHeadline(value: Pick<FundingNotificationPayload, "kind" |
     }
 }
 
-/** The currency (linked to the action page), the amount when there is one, and the reason. */
+/** The currency (linked to the action page), the amount when there is one, the other party, and the reason. */
 export function FundingNotificationDetail(props: {value: FundingNotificationPayload}) {
     const label = useLabel();
     return (
         <>
             <CurrencyLabel currency={props.value.currency}/>
             <Show when={props.value.amount}>{amount => <>{" · "}{BigInt(amount()).toLocaleString(uiLocale())}</>}</Show>
+            <Show when={props.value.role === "payee" ? props.value.payerName : props.value.payeeName}>
+                {name => <>{" · "}{props.value.role === "payee" ? <Trans>from {name()}</Trans> : <Trans>to {name()}</Trans>}</>}
+            </Show>
             <Show when={props.value.reason}>{reason => <>{" · "}{fundingReasonText(reason(), label)}</>}</Show>
             <br/>
             <A href={fundingActionHref(props.value)} class="text-muted-foreground underline hover:text-foreground"><Trans>View details</Trans></A>

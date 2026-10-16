@@ -471,6 +471,11 @@ msgstr "Interface language"
 msgid "Discard changes"
 msgstr "Discard changes"
 
+#. placeholder {0}: name()
+#: src/lib/notifications/funding.tsx
+msgid "to {0}"
+msgstr "to {0}"
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "Set bounty"
 msgstr "Set bounty"
@@ -4703,6 +4708,11 @@ msgstr "{0} of {1, plural, one {# craft} other {# crafts}} {2, plural, one {matc
 #: src/routes/tools/emblem.tsx
 msgid "Icon"
 msgstr "Icon"
+
+#. placeholder {0}: name()
+#: src/lib/notifications/funding.tsx
+msgid "from {0}"
+msgstr "from {0}"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Stamina Use"

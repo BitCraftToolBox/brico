@@ -68,12 +68,13 @@ export function fundingEventOf(kind: FundingNotificationKind): FundingNotifyEven
 
 /**
  * Default Discord wording per event. Tokens: `{currency}`, `{amount}`, `{craft}` (link, empty without
- * a craft), `{bounties}` (link to the payer's bounties page), `{wallet}`, `{reason}` and `{mention}`.
+ * a craft), `{bounties}` (link to the payer's bounties page), `{wallet}`, `{reason}`, `{payer}` and
+ * `{payee}` (empty when the event has none) and `{mention}`.
  */
 export const DEFAULT_FUNDING_NOTIFY_TEMPLATE: Record<FundingNotifyEvent, string> = {
     fundingFailed: "{mention} Couldn't fund your bounties in {currency} from {wallet}: {reason}. {bounties}",
     payoutShortfall: "{mention} Couldn't pull {amount} {currency} of payouts from {wallet}: {reason}.",
-    unclaimed: "{mention} {amount} {currency} went unclaimed and was moved: {reason}.",
+    unclaimed: "{mention} {amount} {currency} owed by {payer} to {payee} went unclaimed and was moved: {reason}.",
 };
 
 /**
@@ -113,6 +114,9 @@ export interface FundingTemplateContext {
     bounties: string | null;
     wallet: string | null;
     reason: string | null;
+    /** Display names of the two parties of unclaimed money. */
+    payer: string | null;
+    payee: string | null;
     mentionText: string | null;
 }
 
@@ -132,6 +136,10 @@ export function renderFundingTemplate(template: string, ctx: FundingTemplateCont
                 return ctx.wallet ?? "";
             case "reason":
                 return ctx.reason ? describeFundingReason(ctx.reason) : "";
+            case "payer":
+                return ctx.payer ?? "";
+            case "payee":
+                return ctx.payee ?? "";
             case "mention":
                 return ctx.mentionText ?? "";
             default:

@@ -35,6 +35,9 @@ export interface FundingEvent {
     reason?: string;
     /** The Stelo account of the wallet the event concerns, shown as its `#ADDRESS`. */
     walletAccountId?: bigint;
+    /** Unclaimed-money events: who owed the money and who it was owed to. */
+    payer?: Identity;
+    payeePlayerId?: bigint;
 }
 
 /** Kinds that report an ongoing problem; they post once per (account, currency, wallet) until the reason changes or `resolve` runs. */
@@ -54,6 +57,11 @@ export interface FundingNotifierDeps {
     writes: SteloWrites;
     /** Absent when the Discord bot is not configured; only the toast sink is served then. */
     discord?: {rest: REST; frontendOrigin: string};
+    /** Resolves party names; without it alerts carry none. */
+    names?: {
+        player(playerId: bigint): string | undefined;
+        playerAccounts(): ReadonlyMap<bigint, Identity>;
+    };
     log: Logger;
 }
 
@@ -78,10 +86,33 @@ export function createFundingNotifier(deps: FundingNotifierDeps): FundingNotifie
         return explicit ? explicit[event] : true;
     }
 
+    /** The account's display name, else the name of its first linked player. */
+    function accountName(account: Identity): string | undefined {
+        const conn = app.connection?.connection;
+        if (conn?.isActive) {
+            const acc = conn.db.allAccount.identity.find(account);
+            if (acc && acc.displayName) return acc.displayName;
+        }
+        if (!deps.names) return undefined;
+        for (const [playerId, owner] of deps.names.playerAccounts()) {
+            const name = owner.isEqual(account) ? deps.names.player(playerId) : undefined;
+            if (name) return name;
+        }
+        return undefined;
+    }
+
+    function partiesOf(event: FundingEvent): {payerName?: string; payeeName?: string} {
+        return {
+            payerName: event.payer ? accountName(event.payer) : undefined,
+            payeeName: event.payeePlayerId === undefined ? undefined : deps.names?.player(event.payeePlayerId),
+        };
+    }
+
     function toast(event: FundingEvent): void {
         const payload: FundingAlert = {
             kind: event.kind, role: event.role, currency: event.currency,
             craftId: event.craftId, amount: event.amount, reason: event.reason,
+            payerName: undefined, payeeName: undefined, ...partiesOf(event),
         };
         writes.postFundingNotification(event.account, payload)
             .then(() => notificationsTotal.inc({sink: "toast", kind: event.kind, outcome: "ok"}))
@@ -115,7 +146,10 @@ export function createFundingNotifier(deps: FundingNotifierDeps): FundingNotifie
         const mentionText = mentionType && mentionId ? (mentionType === "user" ? `<@${mentionId}>` : `<@&${mentionId}>`) : null;
         const wallet = event.walletAccountId === undefined ? null : `#${stelo.account(event.walletAccountId)?.address ?? event.walletAccountId}`;
         const reason = event.kind === "unclaimed-rolled-over" ? "rolled-over" : event.kind === "unclaimed-returned" ? "returned" : (event.reason ?? null);
+        const parties = partiesOf(event);
         const content = renderFundingTemplate(stored ?? DEFAULT_FUNDING_NOTIFY_TEMPLATE[key], {
+            payer: parties.payerName ?? null,
+            payee: parties.payeeName ?? null,
             currency: CURRENCY_LABELS[event.currency] ?? event.currency,
             amount: event.amount === undefined ? null : event.amount.toString(),
             craft: event.craftId === undefined ? null : `[Craft #${event.craftId}](<${discord.frontendOrigin}/tools/crafts/${event.craftId}>)`,

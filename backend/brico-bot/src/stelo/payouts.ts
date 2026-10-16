@@ -168,7 +168,10 @@ export function createPayoutPlanner(deps: PayoutDeps): PayoutPlanner {
         inFlight.track(key, settled, "settle unclaimed payee", fields);
         settled.then(() => {
             const kind = policy.action === "rollover" ? "unclaimed-rolled-over" : "unclaimed-returned";
-            const base = {kind, currency: pool.currency, amount: owed, walletAccountId: pool.fundingAccountId} as const;
+            const base = {
+                kind, currency: pool.currency, amount: owed, walletAccountId: pool.fundingAccountId,
+                payer: pool.payerAccountIdentity, payeePlayerId: pool.payeePlayerId,
+            } as const;
             deps.notifier?.notify({...base, role: "payer", account: pool.payerAccountIdentity});
             const payee = deps.playerAccounts().get(pool.payeePlayerId);
             if (payee) deps.notifier?.notify({...base, role: "payee", account: payee});

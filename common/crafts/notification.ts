@@ -27,6 +27,9 @@ export interface FundingNotificationPayload {
     craftId?: string;
     amount?: string;
     reason?: string;
+    /** Display names of the parties of unclaimed money, as of when it was moved. */
+    payerName?: string;
+    payeeName?: string;
 }
 
 export type NotificationPayload =
@@ -70,7 +73,8 @@ export function parseNotificationPayload(json: string): NotificationPayload | nu
             }
             return null;
         case "funding":
-            if (str(v.kind) && str(v.role) && str(v.currency) && optStr(v.craftId) && optStr(v.amount) && optStr(v.reason)) {
+            if (str(v.kind) && str(v.role) && str(v.currency) && optStr(v.craftId) && optStr(v.amount) && optStr(v.reason)
+                && optStr(v.payerName) && optStr(v.payeeName)) {
                 return {tag: "funding", value: v as unknown as FundingNotificationPayload};
             }
             return null;

@@ -23,10 +23,11 @@ describe("normalizeSteloAddress", () => {
 
 describe("renderFundingTemplate", () => {
     it("fills known tokens, renders the reason in English and keeps unknown tokens", () => {
-        const text = renderFundingTemplate("{mention}{craft} {reason} {bounties} {nope}", {
-            currency: "X", amount: null, craft: "[c](<u>)", bounties: "[b](<u>)", wallet: "#A", reason: "cannot-pull", mentionText: null,
+        const text = renderFundingTemplate("{mention}{craft} {reason} {bounties} {payer}>{payee} {nope}", {
+            currency: "X", amount: null, craft: "[c](<u>)", bounties: "[b](<u>)", wallet: "#A", reason: "cannot-pull",
+            payer: "Ann", payee: "Bob", mentionText: null,
         });
-        assert.equal(text, "[c](<u>) Brico.app needs Write access on the funding wallet [b](<u>) {nope}");
+        assert.equal(text, "[c](<u>) Brico.app needs Write access on the funding wallet [b](<u>) Ann>Bob {nope}");
     });
 
     it("has clause-style English for every reason code and the unclaimed outcomes", () => {

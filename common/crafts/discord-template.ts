@@ -2,7 +2,7 @@
  * Substitutes `{token}`/`{token:format}` placeholders in a Discord display or notification template
  * against one craft's facts. Unrecognized tokens are left as literal text rather than throwing.
  */
-import {CURRENCY_EMOJI, CURRENCY_LABELS} from "./currencies.ts";
+import {CURRENCY_EMOJI, CURRENCY_LABELS} from "./currencies";
 
 /** Everything one craft's rendered template line might reference. */
 export interface DiscordTemplateContext {

@@ -32,6 +32,8 @@ export interface SteloManagerOptions {
     escrow: EscrowCache;
     steloCache: SteloCache;
     playerAccounts(): ReadonlyMap<bigint, Identity>;
+    /** A player's current name; used to say who unclaimed money was owed to. */
+    playerName?(playerId: bigint): string | undefined;
     /** Where funding alerts are posted besides the in-site toast; absent when the Discord bot is not configured. */
     discord?: {rest: REST; frontendOrigin: string};
     log: Logger;
@@ -79,7 +81,11 @@ export function createSteloManager(options: SteloManagerOptions): SteloManager {
         createTransfer: options.stelo.createTransfer,
     };
 
-    const notifier = createFundingNotifier({app, escrow, stelo, writes, discord: options.discord, log});
+    const {playerName} = options;
+    const notifier = createFundingNotifier({
+        app, escrow, stelo, writes, discord: options.discord, log,
+        names: playerName && {player: playerName, playerAccounts: options.playerAccounts},
+    });
     const funding = createFundingGate({config, escrow, stelo, playerAccounts: options.playerAccounts, writes, log, now});
     const fundingStatus = createFundingStatusSync({escrow, writes, notifier, log});
     const executor = createTransferExecutor({log, stelo, writes, now});

@@ -492,6 +492,8 @@ export const FundingNotificationPayload = __t.object("FundingNotificationPayload
   craftId: __t.option(__t.u64()),
   amount: __t.option(__t.i64()),
   reason: __t.option(__t.string()),
+  payerName: __t.option(__t.string()),
+  payeeName: __t.option(__t.string()),
 });
 export type FundingNotificationPayload = __Infer<typeof FundingNotificationPayload>;
 

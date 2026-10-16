@@ -148,6 +148,7 @@ async function main(): Promise<void> {
             escrow: escrowCache,
             steloCache,
             playerAccounts: () => appCache.state.playerAccounts,
+            playerName: playerId => cache.snapshot.players.get(playerId)?.name,
             discord: discordRest ? {rest: discordRest, frontendOrigin: new URL(config.linkReturnUrl).origin} : undefined,
             log,
         });
