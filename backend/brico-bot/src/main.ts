@@ -215,7 +215,7 @@ async function main(): Promise<void> {
         log.warn("Discord self-serve install is disabled — set DISCORD_BOT_CLIENT_SECRET to enable /discord/install (the manual invite flow still works without it)");
     }
 
-    // Periodically refreshes `/watch display` messages from the bridge's per-snapshot rows (`onRowsComputed`).
+    // Periodically refreshes `/crafts display` messages from the bridge's per-snapshot rows (`onRowsComputed`).
     const displayManager = config.discordBot && discordRest
         ? createDisplayManager({
             app,

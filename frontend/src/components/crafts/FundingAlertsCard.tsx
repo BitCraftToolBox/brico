@@ -42,7 +42,7 @@ export function FundingAlertsCard() {
                 <CardDescription>
                     <Trans>
                         Get told when a bounty can't be funded from your Stelo wallet, a payout can't be pulled, or unclaimed money is moved.
-                        Discord channels appear once linked via <code>/watch notify-link</code>.
+                        Discord channels appear once linked via <code>/notify link</code>.
                     </Trans>
                 </CardDescription>
             </CardHeader>
@@ -98,7 +98,7 @@ export function FundingAlertsCard() {
                                 <p class="text-xs text-muted-foreground">
                                     <Trans>Mention: {settings.mentionFor(sink.id)?.name ?? _(msg`(none)`)}</Trans>
                                     {" — "}
-                                    <Trans>set via <code>/watch funding-setup</code> in Discord.</Trans>
+                                    <Trans>set via <code>/funding notify-setup</code> in Discord.</Trans>
                                 </p>
                                 <For each={FUNDING_NOTIFY_EVENTS}>
                                     {event => (

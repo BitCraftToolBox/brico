@@ -22,6 +22,7 @@ import {Trans} from "@lingui/solid/macro";
 import type {IconTypes} from "solid-icons";
 import {TbOutlineCoin as IconCurrency, TbOutlineHammer as IconEffort, TbOutlineRestore as IconRestore, TbOutlineSettings as IconSettings} from "solid-icons/tb";
 import {createMemo, createSignal, For, Show} from "solid-js";
+import {CurrencyVisibilitySelect} from "~/components/crafts/CurrencyVisibilitySelect";
 import {FundingAlertsCard} from "~/components/crafts/FundingAlertsCard";
 import {LocalGroupingsManager} from "~/components/crafts/LocalGroupingsManager";
 import {PlayerOption} from "~/components/crafts/PlayerPicker.tsx";
@@ -47,7 +48,6 @@ import {compareText} from "~/lib/i18n.ts";
 import {type CraftWatchTriggers, type PayoutDisplayMode, type SavedCraftFilter, useSettings} from "~/lib/settings";
 import {useConnection} from "~/lib/spacetime/manager";
 import {PRISM_SERVER} from "~/lib/spacetime/prism";
-import {CurrencyVisibilitySelect} from "~/components/crafts/CurrencyVisibilitySelect";
 import {cn} from "~/lib/utils";
 
 const NO_TRIGGERS: CraftWatchTriggers = {added: false, finished: false, removed: false};
@@ -143,7 +143,7 @@ function NotifySettingsFilterCard(props: {filter: SavedCraftFilter; discord: Dis
                             <p class="text-xs text-muted-foreground">
                                 <Trans>Mention: {discordMentionFor(props.filter.id, sink.id)?.name ?? _(msg`(none)`)}</Trans>
                                 {" — "}
-                                <Trans>set via <code>/watch notify-setup</code> in Discord.</Trans>
+                                <Trans>set via <code>/crafts notify-setup</code> in Discord.</Trans>
                             </p>
                             <For each={EVENTS}>
                                 {event => (
@@ -296,7 +296,7 @@ export default function AccountSettingsPage() {
                                 <Trans>Per saved filter, which targets notify on which events.</Trans>{" "}
                                 <Show when={!isLoggedIn()}
                                     fallback={
-                                        <Trans>Discord columns appear once a channel or DM is linked via <code>/watch notify-link</code>.</Trans>
+                                        <Trans>Discord columns appear once a channel or DM is linked via <code>/notify link</code>.</Trans>
                                     }
                                 >
                                     <Trans>Log in for additional options such as Discord notifications.</Trans>
@@ -358,7 +358,7 @@ export default function AccountSettingsPage() {
                     <DialogHeader>
                         <DialogTitle><Trans>Unlink this channel?</Trans></DialogTitle>
                         <DialogDescription>
-                            <Trans>Notifications for every saved filter configured here will stop. You can link it again later with <code>/watch notify-link</code>.</Trans>
+                            <Trans>Notifications for every saved filter configured here will stop. You can link it again later with <code>/notify link</code>.</Trans>
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>

@@ -89,8 +89,8 @@ export function progressionUnlocksForSkill(skillId: number): ProgressionUnlock[]
     }
 
     const knowledgeStats = BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")();
-    for (const skillKnowledge of BitCraftTables.SkillLevelKnowledgeDesc.get() ?? []) {
-        if (skillKnowledge.skillId !== skillId) continue;
+    const gains = BitCraftTables.SkillLevelKnowledgeDesc.indexedByMulti("skillId");
+    for (const skillKnowledge of gains().get(skillId) ?? []) {
         const stats = knowledgeStats.get(skillKnowledge.secondaryKnowledgeId)?.stats ?? [];
         for (const stat of stats) {
             unlocks.push({kind: "stat", level: skillKnowledge.level, stat});

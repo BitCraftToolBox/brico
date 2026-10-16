@@ -26,8 +26,9 @@ export function PayoutScheduleLine(props: {show: boolean}) {
                     <Show
                         when={time().kind === "upcoming" ? (time() as {atMs: number}).atMs : undefined}
                         fallback={<Trans>Payout due since {dateText((time() as {sinceMs: number}).sinceMs)}</Trans>}
+                        keyed
                     >
-                        {atMs => <Trans>Next Stelo payout: {relativeTime(atMs())} ({dateText(atMs())})</Trans>}
+                        {atMs => <Trans>Next Stelo payout: {relativeTime(atMs)} ({dateText(atMs)})</Trans>}
                     </Show>
                 </p>
             )}

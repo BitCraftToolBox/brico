@@ -327,6 +327,10 @@ msgstr "EXP"
 msgid "Paving Tier:"
 msgstr "Paving Tier:"
 
+#: src/routes/account/settings.tsx
+msgid "set via <0>/crafts notify-setup</0> in Discord."
+msgstr "set via <0>/crafts notify-setup</0> in Discord."
+
 #: src/routes/database/paving/[id].tsx
 #: src/routes/database/pillar-shaping/[id].tsx
 msgid "Build Time"
@@ -849,6 +853,10 @@ msgstr "Used in Pillar Shaping"
 msgid "Wiggle wiggle. Shake shake."
 msgstr "Wiggle wiggle. Shake shake."
 
+#: src/routes/discord/installed.tsx
+msgid "Set up a live craft display with <0>/crafts display</0>."
+msgstr "Set up a live craft display with <0>/crafts display</0>."
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Breadcrumb Radius"
 msgstr "Breadcrumb Radius"
@@ -893,6 +901,10 @@ msgstr "Developer-locked / inaccessible"
 #: src/lib/crafts/error-vocab.ts
 msgid "This craft has no bounty assigned yet."
 msgstr "This craft has no bounty assigned yet."
+
+#: src/components/crafts/FundingAlertsCard.tsx
+msgid "Get told when a bounty can't be funded from your Stelo wallet, a payout can't be pulled, or unclaimed money is moved. Discord channels appear once linked via <0>/notify link</0>."
+msgstr "Get told when a bounty can't be funded from your Stelo wallet, a payout can't be pulled, or unclaimed money is moved. Discord channels appear once linked via <0>/notify link</0>."
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "Brico.app needs Write access on the funding wallet."
@@ -1469,10 +1481,6 @@ msgstr "Decay"
 msgid "Brico's Toolbox Discord"
 msgstr "Brico's Toolbox Discord"
 
-#: src/routes/account/settings.tsx
-msgid "Discord columns appear once a channel or DM is linked via <0>/watch notify-link</0>."
-msgstr "Discord columns appear once a channel or DM is linked via <0>/watch notify-link</0>."
-
 #: src/routes/database/deployable/[id].tsx
 msgid "Show After Logout"
 msgstr "Show After Logout"
@@ -1785,10 +1793,6 @@ msgstr "Enter a Stelo account address, like #ABCDEF."
 msgid "Stat Bonuses"
 msgstr "Stat Bonuses"
 
-#: src/routes/discord/installed.tsx
-msgid "Get notified about matches with <0>/watch notify-link</0> then <1>/watch notify-setup</1>."
-msgstr "Get notified about matches with <0>/watch notify-link</0> then <1>/watch notify-setup</1>."
-
 #: src/routes/settings.tsx
 msgid "Theme"
 msgstr "Theme"
@@ -2075,10 +2079,6 @@ msgstr "That isn't a known command layout."
 msgid "Brico.app is not on that account (or the address is wrong). Add it under Permissions and this retries by itself."
 msgstr "Brico.app is not on that account (or the address is wrong). Add it under Permissions and this retries by itself."
 
-#: src/components/crafts/FundingAlertsCard.tsx
-msgid "set via <0>/watch funding-setup</0> in Discord."
-msgstr "set via <0>/watch funding-setup</0> in Discord."
-
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "not in"
 msgid "{quantifier} {field} {cmpEl} {value}"
@@ -2317,8 +2317,8 @@ msgstr "Loading your bounties…"
 msgid "Unverified: can receive, not fund"
 msgstr "Unverified: can receive, not fund"
 
-#. placeholder {0}: relativeTime(atMs())
-#. placeholder {1}: dateText(atMs())
+#. placeholder {0}: relativeTime(atMs)
+#. placeholder {1}: dateText(atMs)
 #: src/components/crafts/PayoutScheduleLine.tsx
 msgid "Next Stelo payout: {0} ({1})"
 msgstr "Next Stelo payout: {0} ({1})"
@@ -3107,10 +3107,6 @@ msgstr "Search items, buildings, creatures, recipes..."
 msgid "Hazard"
 msgstr "Hazard"
 
-#: src/routes/account/settings.tsx
-msgid "set via <0>/watch notify-setup</0> in Discord."
-msgstr "set via <0>/watch notify-setup</0> in Discord."
-
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -3134,10 +3130,6 @@ msgstr "My payouts"
 msgid "Interior Tier:"
 msgstr "Interior Tier:"
 
-#: src/routes/account/settings.tsx
-msgid "Notifications for every saved filter configured here will stop. You can link it again later with <0>/watch notify-link</0>."
-msgstr "Notifications for every saved filter configured here will stop. You can link it again later with <0>/watch notify-link</0>."
-
 #: src/lib/sidebar-items.ts
 msgid "Emblem Editor"
 msgstr "Emblem Editor"
@@ -3157,10 +3149,6 @@ msgstr "hex coin per day per occupied slot"
 #: src/components/crafts/FundingStatus.tsx
 msgid "Last failure:"
 msgstr "Last failure:"
-
-#: src/routes/discord/installed.tsx
-msgid "Set up a live craft display with <0>/watch display</0>."
-msgstr "Set up a live craft display with <0>/watch display</0>."
 
 #: src/lib/recipe-sources.tsx
 msgid "Minimum distance to Claims:"
@@ -3707,6 +3695,10 @@ msgstr "Move up"
 #: src/routes/tools/crafts/[id].tsx
 msgid "Effort"
 msgstr "Effort"
+
+#: src/components/crafts/FundingAlertsCard.tsx
+msgid "set via <0>/funding notify-setup</0> in Discord."
+msgstr "set via <0>/funding notify-setup</0> in Discord."
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "The funding wallet is no longer linked."
@@ -4318,6 +4310,10 @@ msgstr "\"{currency}\" isn't a supported currency."
 msgid "Details"
 msgstr "Details"
 
+#: src/routes/discord/installed.tsx
+msgid "Get notified about matches with <0>/notify link</0> then <1>/crafts notify-setup</1>."
+msgstr "Get notified about matches with <0>/notify link</0> then <1>/crafts notify-setup</1>."
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/account/my-bounties.tsx
 #: src/routes/tools/crafts/browse.tsx
@@ -4376,10 +4372,6 @@ msgstr "Crafted From"
 #: src/components/crafts/FilterBuilder.tsx
 msgid "No conditions — nothing matches."
 msgstr "No conditions — nothing matches."
-
-#: src/components/crafts/FundingAlertsCard.tsx
-msgid "Get told when a bounty can't be funded from your Stelo wallet, a payout can't be pulled, or unclaimed money is moved. Discord channels appear once linked via <0>/watch notify-link</0>."
-msgstr "Get told when a bounty can't be funded from your Stelo wallet, a payout can't be pulled, or unclaimed money is moved. Discord channels appear once linked via <0>/watch notify-link</0>."
 
 #: src/lib/sidebar-items.ts
 msgid "World"
@@ -4688,6 +4680,10 @@ msgstr "That account doesn't exist."
 msgid "Condition"
 msgstr "Condition"
 
+#: src/routes/account/settings.tsx
+msgid "Discord columns appear once a channel or DM is linked via <0>/notify link</0>."
+msgstr "Discord columns appear once a channel or DM is linked via <0>/notify link</0>."
+
 #: src/routes/database/traveler-task/[id].tsx
 msgid "XP Reward"
 msgstr "XP Reward"
@@ -4715,6 +4711,10 @@ msgstr "Stamina Use"
 #: src/lib/crafts/filter-vocab.ts
 msgid "Input item tag"
 msgstr "Input item tag"
+
+#: src/routes/account/settings.tsx
+msgid "Notifications for every saved filter configured here will stop. You can link it again later with <0>/notify link</0>."
+msgstr "Notifications for every saved filter configured here will stop. You can link it again later with <0>/notify link</0>."
 
 #: src/lib/crafts/error-vocab.ts
 msgid "This craft's bounty is already funded."

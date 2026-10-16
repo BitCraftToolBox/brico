@@ -324,7 +324,7 @@ export const detachDiscordNotifyTarget = spacetimedb.reducer(
 );
 
 /**
- * Service-principal writer for `/watch notify-setup`: upserts the `discord_notify_target` row
+ * Service-principal writer for `/crafts notify-setup`: upserts the `discord_notify_target` row
  * (including `mention*`) and the matching `craft_filter_notify_trigger` row by
  * `(accountIdentity, filterId, discordSinkId)`. Each trigger bool is on iff its template is
  * non-empty. `id` is used for whichever row(s) get inserted.
@@ -517,7 +517,7 @@ export const detachDiscordFundingTarget = spacetimedb.reducer(
 );
 
 /**
- * Service-principal writer for `/watch funding-setup`: upserts the `discord_funding_notify_target` row
+ * Service-principal writer for `/funding notify-setup`: upserts the `discord_funding_notify_target` row
  * (including `mention*`) and the matching `funding_notify_trigger` row for one Discord sink. Each
  * event is on iff its template is non-empty.
  */

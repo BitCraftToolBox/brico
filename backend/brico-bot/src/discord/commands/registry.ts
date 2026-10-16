@@ -167,8 +167,8 @@ export type CommandTreeMode = DiscordCommandMode;
 
 /**
  * Serializes `leaves` into the body for a `PUT /applications/{id}/guilds/{guildId}/commands` call.
- * `"flat"` gives each first path segment its own top-level command (`/link`, `/watch display`);
- * `"grouped"` nests everything under `groupName` (`/brico link`, `/brico watch display`).
+ * `"flat"` gives each first path segment its own top-level command (`/link`, `/crafts display`);
+ * `"grouped"` nests everything under `groupName` (`/brico link`, `/brico crafts display`).
  */
 export function buildCommandTree(
     leaves: LeafCommand[],

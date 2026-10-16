@@ -116,7 +116,7 @@ export const notificationsTotal = new Counter({
     registers: [registry],
 });
 
-/** `/watch display` messages currently being kept in sync. */
+/** `/crafts display` messages currently being kept in sync. */
 export const activeDisplays = new Gauge({
     name: "brico_bot_active_displays",
     help: "Live Discord watch displays",

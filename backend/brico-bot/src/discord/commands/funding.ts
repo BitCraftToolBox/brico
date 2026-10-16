@@ -1,6 +1,6 @@
 /**
- * funding.ts — `/watch funding-setup`: sets the mention and wording of Stelo funding alerts for the
- * Discord channel it is run in. The channel must already be linked with `/watch notify-link`.
+ * funding.ts — `/funding notify-setup`: sets the mention and wording of Stelo funding alerts for the
+ * Discord channel it is run in. The channel must already be linked with `/notify link`.
  *
  * Per-event on/off is derived server-side by `attachDiscordFundingTarget` from whether each template
  * field was left empty.
@@ -75,7 +75,7 @@ const handleFundingSetup = async (interaction: APIChatInputApplicationCommandInt
     if (isCommandReply(accountIdentity)) return accountIdentity;
 
     const sink = findOwnDiscordNotifySink(ctx.conn, accountIdentity, ctx.channelId);
-    if (!sink) return {content: "This channel isn't linked yet — run `/watch notify-link` first."};
+    if (!sink) return {content: "This channel isn't linked yet — run `/notify link` first."};
 
     const existing = ctx.conn.db.allDiscordFundingNotifyTarget.iter()
         .find(target => target.deletedAt === undefined && target.sinkId === sink.id && target.accountIdentity.isEqual(accountIdentity));
@@ -91,7 +91,7 @@ const handleFundingSetupSubmit: ModalSubmitHandler = async (interaction: APIModa
     if (isCommandReply(accountIdentity)) return accountIdentity;
 
     const sink = findOwnDiscordNotifySink(ctx.conn, accountIdentity, ctx.channelId);
-    if (!sink) return {content: "This channel isn't linked yet — run `/watch notify-link` first."};
+    if (!sink) return {content: "This channel isn't linked yet — run `/notify link` first."};
 
     const submission: APIModalSubmission = interaction.data;
     const mentionable: ModalMentionable | undefined = modalMentionableSelectValue(submission, MENTIONABLE_FIELD_ID);
@@ -117,8 +117,8 @@ const handleFundingSetupSubmit: ModalSubmitHandler = async (interaction: APIModa
     return {content: "Stelo funding alerts are set up in this channel."};
 };
 
-export const watchFundingSetupCommand: LeafCommand = {
-    path: ["watch", "funding-setup"],
+export const fundingNotifySetupCommand: LeafCommand = {
+    path: ["funding", "notify-setup"],
     description: "Configure Discord alerts for Stelo funding problems in this channel.",
     handler: handleFundingSetup,
     modalCustomId: FUNDING_SETUP_MODAL_ID,

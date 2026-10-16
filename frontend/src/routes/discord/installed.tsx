@@ -52,12 +52,12 @@ export default function DiscordInstalledPage() {
                                 </Trans>
                             </p>
                             <p>
-                                <Trans>Set up a live craft display with <code>/watch display</code>.</Trans>
+                                <Trans>Set up a live craft display with <code>/crafts display</code>.</Trans>
                             </p>
                             <p>
                                 <Trans>
-                                    Get notified about matches with <code>/watch notify-link</code> then{" "}
-                                    <code>/watch notify-setup</code>.
+                                    Get notified about matches with <code>/notify link</code> then{" "}
+                                    <code>/crafts notify-setup</code>.
                                 </Trans>
                             </p>
                         </CardContent>

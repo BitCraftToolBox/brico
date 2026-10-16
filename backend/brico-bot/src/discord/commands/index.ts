@@ -4,23 +4,23 @@
  */
 import {commandModeCommand} from "./admin.ts";
 import {clearCommand} from "./clear.ts";
-import {watchFundingSetupCommand} from "./funding.ts";
+import {fundingNotifySetupCommand} from "./funding.ts";
 import {linkCommand} from "./link.ts";
-import {watchNotifyLinkCommand, watchNotifySetupCommand, watchNotifyUnlinkCommand} from "./notify.ts";
+import {craftsNotifySetupCommand, notifyLinkCommand, notifyUnlinkCommand} from "./notify.ts";
 import type {LeafCommand} from "./registry.ts";
-import {watchDisplayLimitCommand, watchDisplayStickyCommand} from "./watch-display-options.ts";
-import {watchDisplayCommand, watchDisplayRemoveCommand} from "./watch.ts";
+import {craftsDisplayLimitCommand, craftsDisplayStickyCommand} from "./watch-display-options.ts";
+import {craftsDisplayCommand, craftsDisplayRemoveCommand} from "./watch.ts";
 
 export const commands: LeafCommand[] = [
     linkCommand,
     commandModeCommand,
     clearCommand,
-    watchDisplayCommand,
-    watchDisplayLimitCommand,
-    watchDisplayStickyCommand,
-    watchDisplayRemoveCommand,
-    watchNotifyLinkCommand,
-    watchNotifyUnlinkCommand,
-    watchNotifySetupCommand,
-    watchFundingSetupCommand,
+    notifyLinkCommand,
+    notifyUnlinkCommand,
+    craftsDisplayCommand,
+    craftsDisplayLimitCommand,
+    craftsDisplayStickyCommand,
+    craftsDisplayRemoveCommand,
+    craftsNotifySetupCommand,
+    fundingNotifySetupCommand,
 ];

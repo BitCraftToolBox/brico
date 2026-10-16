@@ -10,7 +10,8 @@
     "dev": "tsx watch src/main.ts",
     "test": "node --import tsx --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
-    "discord:register-commands": "tsx src/discord/register-commands.ts"
+    "discord:register-commands": "tsx src/discord/register-commands.ts",
+    "discord:list-commands": "tsx scripts/list-commands.ts"
   },
   "dependencies": {
     "@brico/bindings": "*",
