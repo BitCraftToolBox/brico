@@ -3,12 +3,13 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - "**"
     paths:
       - "backend/brico-bot/**"
       - "common/bindings/**"
       - "common/crafts/**"
       - "common/bitcraft-bindings/**"
+      - "common/stelo/**"
       - "package.json"
       - "package-lock.json"
 
@@ -38,6 +39,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Compute image tags
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
       - name: Build and push image
         id: push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
@@ -45,7 +54,7 @@ jobs:
           context: .
           file: backend/brico-bot/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           github-token: "${{ secrets.GITHUB_TOKEN }}"

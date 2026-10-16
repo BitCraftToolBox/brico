@@ -4,7 +4,7 @@
  * their arguments, ask for confirmation with Confirm/Cancel buttons, and act only on Confirm.
  * The button `custom_id` carries the resolved arguments, which the click re-validates.
  */
-import {CURRENCY_LABELS, ESCROWED_BOUNTY_CURRENCIES, MANUALLY_RECORDED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
+import {CURRENCY_EMOJI, CURRENCY_LABELS, ESCROWED_BOUNTY_CURRENCIES, MANUALLY_RECORDED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {
     type APIActionRowComponent,
     type APIApplicationCommandAutocompleteInteraction,
@@ -47,6 +47,7 @@ export function warnOnCurrencyChoiceOverflow(log: Logger): void {
 }
 
 const currencyLabel = (currency: string) => CURRENCY_LABELS[currency] ?? currency;
+const currencyEmojiLabel = (currency: string) => CURRENCY_EMOJI[currency] ? CURRENCY_EMOJI[currency] + currencyLabel(currency) : currencyLabel(currency);
 const formatAmount = (amount: bigint) => amount.toLocaleString("en-US");
 
 function confirmRow(prefix: string, payload: string): APIActionRowComponent<APIButtonComponent>[] {
@@ -289,7 +290,7 @@ const handleSteloPay: CommandHandler = async (interaction, deps): Promise<Comman
     if (!prepared.ok) return {content: prepared.reason};
     const {plan} = prepared;
     return {
-        content: `Transfer ${formatAmount(amount)} ${currencyLabel(currency)} from ${walletLabel(plan.from)} to ${walletLabel(plan.to)}?`,
+        content: `Transfer ${formatAmount(amount)} ${currencyEmojiLabel(currency)} from ${walletLabel(plan.from)} to ${walletLabel(plan.to)}?`,
         components: confirmRow(STELO_PREFIX, `${currency}:${from}:${to}:${amount}`),
     };
 };

@@ -48,7 +48,7 @@ function parseSearch(raw: string): {term: string; scope: "Username" | "Address" 
 export type ResolveResult = {ok: true; accountId: bigint} | {ok: false; reason: string};
 
 export interface DirectTransfers {
-    /** Wallets on `currency`'s ledger matching the search text (see `parseSearch`). */
+    /** Wallets on `currency`'s ledger matching the search text (see `parseSearch`), excluding the bot's escrow wallets. */
     searchWallets(currency: string, text: string): Promise<DirectoryAccount[]>;
     /** The one wallet whose address or primary username equals the search text; `reason` is user-facing. */
     resolveWallet(currency: string, text: string): Promise<ResolveResult>;
@@ -75,6 +75,7 @@ export interface DirectTransferDeps {
 
 export function createDirectTransfers(deps: DirectTransferDeps): DirectTransfers {
     const {config, escrow, stelo, writes} = deps;
+    const escrowAccountIds = new Set(Object.values(config.currencies).map(currency => currency.escrowAccountId));
 
     function sendableWallets(payer: Identity, currency: string): {accountId: bigint; address: string}[] {
         const players = new Set<bigint>();
@@ -95,7 +96,7 @@ export function createDirectTransfers(deps: DirectTransferDeps): DirectTransfers
         const ledgerId = stelo.ledgerByName(config.currencies[currency]?.ledger ?? "")?.id;
         const {term, scope} = parseSearch(text);
         if (ledgerId === undefined || term === "" || !stelo.isLive) return [];
-        return stelo.searchAccounts(term, ledgerId, scope);
+        return (await stelo.searchAccounts(term, ledgerId, scope)).filter(hit => !escrowAccountIds.has(hit.accountId));
     }
 
     return {
@@ -129,6 +130,9 @@ export function createDirectTransfers(deps: DirectTransferDeps): DirectTransfers
             if (!stelo.isLive) return {ok: false, reason: "Stelo is temporarily unavailable — try again in a moment."};
             if (amount <= 0n) return {ok: false, reason: "The amount must be positive."};
             if (fromAccountId === toAccountId) return {ok: false, reason: "The two wallets are the same."};
+            if (escrowAccountIds.has(fromAccountId) || escrowAccountIds.has(toAccountId)) {
+                return {ok: false, reason: "The bot's escrow wallets can't be used for direct transfers."};
+            }
             if (!sendableWallets(payer, currency).some(wallet => wallet.accountId === fromAccountId)) {
                 return {ok: false, reason: "That isn't one of your linked wallets the bot can send from."};
             }
