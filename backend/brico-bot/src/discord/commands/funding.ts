@@ -29,7 +29,7 @@ const FUNDING_SETUP_MODAL_ID = "watch_funding_setup";
 
 const FIELD_LABELS: Record<FundingNotifyEvent, string> = {
     fundingFailed: "When funding a craft's bounty fails",
-    payoutShortfall: "When a payout can't be pulled from your wallet",
+    payoutShortfall: "When a payout can't be pulled from a wallet",
     unclaimed: "When unclaimed money is moved",
 };
 

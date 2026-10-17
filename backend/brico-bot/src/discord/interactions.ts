@@ -5,9 +5,10 @@ import type {
     APIInteraction,
     APIInteractionResponse,
     APIMessageComponentInteraction,
+    APIModalInteractionResponseCallbackData,
     APIModalSubmitInteraction
 } from "discord-api-types/v10";
-import {InteractionResponseType, InteractionType, MessageFlags} from "discord-api-types/v10";
+import {ComponentType, InteractionResponseType, InteractionType, MessageFlags} from "discord-api-types/v10";
 import {verifyKey} from "discord-interactions";
 import type {IncomingMessage, ServerResponse} from "node:http";
 
@@ -56,12 +57,52 @@ function updateResponse(reply: CommandReply): APIInteractionResponse {
     };
 }
 
+const MODAL_LABEL_MAX = 45;
+const MODAL_DESCRIPTION_MAX = 100;
+const MODAL_TOP_LEVEL_MAX = 4;
+const SLOW_RESPONSE_MS = 2000;
+
+/** Discord answers an invalid modal with a silent "didn't respond" rather than an error, so check the limits before sending. */
+function modalProblems(modal: APIModalInteractionResponseCallbackData): string[] {
+    const problems: string[] = [];
+    if (modal.components.length > MODAL_TOP_LEVEL_MAX) {
+        problems.push(`${modal.components.length} top-level components (max ${MODAL_TOP_LEVEL_MAX})`);
+    }
+    modal.components.forEach((component, index) => {
+        if (component.type !== ComponentType.Label) return;
+        const where = `components[${index}]`;
+        if (component.label.length > MODAL_LABEL_MAX) {
+            problems.push(`${where}.label is ${component.label.length} chars (max ${MODAL_LABEL_MAX}): "${component.label}"`);
+        }
+        if (component.description && component.description.length > MODAL_DESCRIPTION_MAX) {
+            problems.push(`${where}.description is ${component.description.length} chars (max ${MODAL_DESCRIPTION_MAX})`);
+        }
+        const inner = component.component;
+        if (inner.type === ComponentType.TextInput && inner.value && inner.max_length && inner.value.length > inner.max_length) {
+            problems.push(`${where}.value is ${inner.value.length} chars, over its max_length ${inner.max_length}`);
+        }
+    });
+    return problems;
+}
+
 /**
  * Verifies the Ed25519 signature over the raw body (before JSON parsing), answers Discord's `PING`
  * (required to save the endpoint URL), and otherwise dispatches to the matching command leaf.
  */
 export function createInteractionsHandler(options: InteractionsHandlerOptions) {
     return async function handleInteractions(req: IncomingMessage, res: ServerResponse): Promise<void> {
+        const startedAt = Date.now();
+        // Discord's 3s deadline is enforced on its side; the only server-visible symptoms are a slow
+        // handler or a connection closed before our response finished.
+        res.on("close", () => {
+            const elapsedMs = Date.now() - startedAt;
+            if (!res.writableFinished) {
+                options.log.warn("interaction response not delivered", {elapsedMs, status: res.statusCode});
+            } else if (elapsedMs > SLOW_RESPONSE_MS) {
+                options.log.warn("slow interaction response", {elapsedMs});
+            }
+        });
+
         const signature = req.headers["x-signature-ed25519"];
         const timestamp = req.headers["x-signature-timestamp"];
         if (typeof signature !== "string" || typeof timestamp !== "string") {
@@ -171,6 +212,14 @@ export function createInteractionsHandler(options: InteractionsHandlerOptions) {
         try {
             const result = await command.handler(commandInteraction, options.deps);
             if ("modal" in result) {
+                const problems = modalProblems(result.modal);
+                if (problems.length > 0) {
+                    options.log.error("modal rejected before send", {command: command.path.join("."), problems});
+                    sendJson(res, 200, messageResponse("Couldn't open that form.", true));
+                    status = "error";
+                    return;
+                }
+                options.log.debug("sending modal", {command: command.path.join("."), modal: result.modal});
                 sendJson(res, 200, {type: InteractionResponseType.Modal, data: result.modal});
             } else {
                 sendJson(res, 200, messageResponse(result.content, result.ephemeral ?? true, result.components));
