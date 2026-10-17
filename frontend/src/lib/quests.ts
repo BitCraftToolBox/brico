@@ -1,13 +1,15 @@
+import {
+    CompletionCondition,
+    ItemStack,
+    ItemStackCompletionCondition,
+    ItemType,
+    QuestChainDesc,
+    QuestRequirement,
+    QuestReward,
+    QuestStageDesc
+} from "@brico/bitcraft-bindings/types";
 import {Accessor, createMemo} from "solid-js";
-import {CompletionCondition} from "~/bindings/src/completion_condition_type";
-import {ItemStackCompletionCondition} from "~/bindings/src/item_stack_completion_condition_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
-import {QuestRequirement} from "~/bindings/src/quest_requirement_type";
-import {QuestReward} from "~/bindings/src/quest_reward_type";
-import {QuestStageDesc} from "~/bindings/src/quest_stage_desc_type";
-import {BitCraftTables} from "~/lib/spacetime";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 
 // ─── Quest Completion Helpers ───────────────────────────────────
 

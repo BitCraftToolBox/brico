@@ -9,25 +9,17 @@
  *   expandStack()       — Smart dispatcher: resolves item lists, renders the right component
  */
 
+import {CargoDesc, InputItemStack, ItemDesc, ItemListDesc, ItemListPossibility, ItemStack, ItemType, ProbabilisticItemStack, QuestDropDesc} from "@brico/bitcraft-bindings/types";
 import {Trans} from "@lingui/solid/macro";
 import {A} from "@solidjs/router";
-import {Component, createMemo, For, JSX, Show} from "solid-js";
-import {CargoDesc} from "~/bindings/src/cargo_desc_type";
-import {InputItemStack} from "~/bindings/src/input_item_stack_type";
-import {ItemDesc} from "~/bindings/src/item_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {ItemListPossibility} from "~/bindings/src/item_list_possibility_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
-import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
+import {Accessor, Component, createMemo, For, JSX, Show} from "solid-js";
 import {CargoIcon, ItemIcon, SHAPE_SIZES} from "~/components/shared/GameIcon";
 import {Button} from "~/components/ui/button";
 import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {QuestChainLinkById} from "~/lib/game-links";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables} from "~/lib/spacetime";
 import {cn, fixFloat} from "~/lib/utils";
 
 // ─── Utility ────────────────────────────────────────────────────
@@ -155,6 +147,8 @@ export const ProbItemStackIcon: Component<{
     small?: boolean;
     noInteract?: boolean;
     showItemListsIfEmpty?: boolean;
+    /** See `ItemListDisplay.quantity` — scales the inner stack's (or list's average) quantity. */
+    multiplier?: Accessor<number>;
 }> = (props) => {
     const inner = () => props.probStack.itemStack;
 
@@ -185,6 +179,7 @@ export const ProbItemStackIcon: Component<{
                             stack={stack()}
                             small={props.small ?? true}
                             noInteract={props.noInteract}
+                            displayQty={props.multiplier ? stack().quantity * props.multiplier() : undefined}
                         />
                     </div>
                 }>
@@ -194,7 +189,8 @@ export const ProbItemStackIcon: Component<{
                             itemList={list()}
                             probability={props.probStack.probability}
                             chances={props.chances}
-                            originalIcon={() => <ItemStackIcon stack={stack()} noInteract hideSingle/>}
+                            quantity={props.multiplier ? () => stack().quantity * props.multiplier!() : undefined}
+                            originalIcon={() => <ItemStackIcon stack={stack()} noInteract hideSingle displayQty={props.multiplier ? stack().quantity * props.multiplier() : undefined}/>}
                             small={props.small}
                             noInteract={props.noInteract}
                             showIfEmpty={props.showItemListsIfEmpty}
@@ -306,11 +302,25 @@ export const ItemListDisplay: Component<{
     small?: boolean;
     noInteract?: boolean;
     showIfEmpty?: boolean;
+    /**
+     * How many independent picks from this list the resolved stack represents — e.g. a recipe
+     * output of 5×(item list) on an order of 3 is 15 picks. Unlike the probability/chances average
+     * toggle below (a user preference for how to *view* a percentage), this is always applied: it
+     * is not optional information, it is the actual quantity being produced.
+     */
+    quantity?: Accessor<number>;
 }> = (props) => {
     const { displayProbabilityAsAverage, flattenItemListOutputs } = useSettings();
     const sorted = createMemo(() =>
         [...props.itemList.possibilities].sort((a, b) => b.probability - a.probability)
     );
+    const quantityMultiplier = () => props.quantity?.() ?? 1;
+    const probabilityMultiplier = () =>
+        displayProbabilityAsAverage() && props.chances && props.probability ? props.chances * props.probability : 1;
+    const displayQtyFor = (avg: AveragedStack): number | undefined => {
+        const multiplier = quantityMultiplier() * probabilityMultiplier();
+        return multiplier === 1 ? undefined : fixFloat(avg.avgQty * multiplier);
+    };
 
     /** True if any possibility contains an item that resolves to an inner item list */
     const hasInnerLists = createMemo(() => {
@@ -339,6 +349,13 @@ export const ItemListDisplay: Component<{
                 <Show when={props.probability != null}>
                     <ProbBadge probability={props.probability!} chances={props.chances}/>
                 </Show>
+                {/* Deterministic quantity badge — independent of the probability badge above, since
+                    a list can be both probabilistic (badge above) and multi-picked (badge here). */}
+                <Show when={quantityMultiplier() !== 1}>
+                    <span class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
+                        ×{fixFloat(quantityMultiplier())}
+                    </span>
+                </Show>
                 <PopoverTrigger class="cursor-pointer">
                     {/* Averaged items in a styled group */}
                     <div class="flex flex-row flex-wrap justify-center items-end gap-0.5 rounded-md px-1 py-0.5 bg-muted/40 border border-dashed border-muted-foreground">
@@ -346,7 +363,7 @@ export const ItemListDisplay: Component<{
                             {(avg) => (
                                 <ItemStackIcon
                                     stack={{itemId: avg.itemId, itemType: avg.itemType, quantity: avg.avgQty} as ItemStack}
-                                    displayQty={displayProbabilityAsAverage() && props.chances && props.probability ? fixFloat(props.chances * avg.avgQty * props.probability) : undefined}
+                                    displayQty={displayQtyFor(avg)}
                                     small={props.small ?? true}
                                     noInteract
                                 />
@@ -377,6 +394,7 @@ export const ItemListDisplay: Component<{
                     possibilities={sorted()}
                     originalIcon={props.originalIcon}
                     hasInnerLists={hasInnerLists()}
+                    quantity={props.quantity}
                 />
             </PopoverContent>
         </Popover>
@@ -390,6 +408,7 @@ const ItemListPopover: Component<{
     possibilities: ItemListPossibility[];
     originalIcon?: () => JSX.Element;
     hasInnerLists: boolean;
+    quantity?: Accessor<number>;
 }> = (props) => {
     const { flattenItemListOutputs, setFlattenItemListOutputs } = useSettings();
     const totalWeight = createMemo(() =>
@@ -398,9 +417,14 @@ const ItemListPopover: Component<{
 
     return (
         <div class="flex flex-col gap-2">
-            <A class="font-medium text-sm text-center" href={`/database/item-list/${props.itemList.id}`}>
-                {props.itemList.name}
-            </A>
+            <div class="flex items-center justify-center gap-1.5">
+                <A class="font-medium text-sm" href={`/database/item-list/${props.itemList.id}`}>
+                    {props.itemList.name}
+                </A>
+                <Show when={props.quantity && props.quantity() !== 1}>
+                    <span class="text-xs text-muted-foreground">×{fixFloat(props.quantity!())}</span>
+                </Show>
+            </div>
 
             {/* Show original item that resolves to this list */}
             <Show when={props.originalIcon}>
@@ -482,6 +506,10 @@ export const InputItemStackArray: Component<{
     stacks: InputItemStack[];
     small?: boolean;
     class?: string;
+    /** Scales each stack's displayed quantity (e.g. a craft order's count) without touching `stacks`
+     * itself — keeping `stacks` unscaled lets callers pass a stable array reference across live
+     * updates, so `<For>` doesn't tear down and rebuild every item (and its tooltip) on every tick. */
+    multiplier?: Accessor<number>;
 }> = (props) => (
     <div class={cn("flex flex-row flex-wrap items-end justify-center gap-0.5", props.class)}>
         <For each={props.stacks}>
@@ -497,7 +525,7 @@ export const InputItemStackArray: Component<{
                             </TooltipContent>
                         </Tooltip>
                     </Show>
-                    <ItemStackIcon stack={stack} small={props.small ?? true}/>
+                    <ItemStackIcon stack={stack} small={props.small ?? true} displayQty={props.multiplier ? stack.quantity * props.multiplier() : undefined}/>
                 </div>
             )}
         </For>
@@ -574,18 +602,24 @@ export const QuestDropDisplay: Component<{
 export function expandStack(
     input: ItemStack | ProbabilisticItemStack | ItemListDesc,
     chances?: number,
-    showEmptyItemList?: boolean
+    showEmptyItemList?: boolean,
+    /** See `ItemListDisplay.quantity` — an extra scale factor (e.g. a craft order's count) applied
+     * on top of the stack's own quantity. Passed as an accessor, not a number, so a live-updating
+     * caller doesn't have to bake the multiplied value into a new stack object just to display it —
+     * doing that defeats `<For>`'s item identity and tears down/rebuilds this component (and any
+     * open tooltip in it) on every unrelated tick. */
+    multiplier?: Accessor<number>
 ): JSX.Element {
     // ProbabilisticItemStack
     if ("probability" in input && "itemStack" in input) {
         const probStack = input as ProbabilisticItemStack;
         if (!probStack.itemStack) return <></>;
-        return <ProbItemStackIcon probStack={probStack} chances={chances} showItemListsIfEmpty={showEmptyItemList}/>;
+        return <ProbItemStackIcon probStack={probStack} chances={chances} showItemListsIfEmpty={showEmptyItemList} multiplier={multiplier}/>;
     }
 
     // ItemListDesc
     if ("possibilities" in input) {
-        return <ItemListDisplay itemList={input as ItemListDesc} chances={chances} showIfEmpty={showEmptyItemList}/>;
+        return <ItemListDisplay itemList={input as ItemListDesc} chances={chances} showIfEmpty={showEmptyItemList} quantity={multiplier}/>;
     }
 
     // Plain ItemStack — check if it resolves to an item list
@@ -595,13 +629,14 @@ export function expandStack(
         if (item?.itemListId) {
             const list = BitCraftTables.ItemListDesc.indexedBy("id")().get(item.itemListId);
             if (list) {
+                const quantity = () => stack.quantity * (multiplier?.() ?? 1);
                 return <ItemListDisplay
-                    itemList={list} chances={input.quantity} showIfEmpty={showEmptyItemList}
-                    originalIcon={() => <ItemStackIcon stack={stack} hideSingle/>}
+                    itemList={list} quantity={quantity} showIfEmpty={showEmptyItemList}
+                    originalIcon={() => <ItemStackIcon stack={stack} hideSingle displayQty={quantity()}/>}
                 />;
             }
         }
     }
 
-    return <ItemStackIcon stack={stack}/>;
+    return <ItemStackIcon stack={stack} displayQty={multiplier ? stack.quantity * multiplier() : undefined}/>;
 }

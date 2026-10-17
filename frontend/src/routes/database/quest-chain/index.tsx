@@ -1,7 +1,7 @@
-import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
+import {QuestChainDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {QuestChainDefs} from "~/lib/table-defs/quests-table";
 
 export default function QuestChains() {

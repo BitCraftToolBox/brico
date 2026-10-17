@@ -1,4 +1,5 @@
 // @refresh reload
+import {ColorModeScript} from "@kobalte/core";
 import {createHandler, StartServer} from "@solidjs/start/server";
 import {PSEUDOLOCALE_ENABLED} from "~/lib/i18n";
 import {KEYS} from "~/lib/settings";
@@ -20,6 +21,7 @@ export default createHandler(() => (
                 <meta property="twitter:domain" content="brico.app"/>
                 <link rel="search" type="application/opensearchdescription+xml" title="Brico.app" href="/opensearch.xml"/>
                 <script id="pre-hydration-script" innerHTML={preHydrationScript}/>
+                <ColorModeScript storageType="localStorage" storageKey={KEYS.theme}/>
                 {PSEUDOLOCALE_ENABLED && (
                     <>
                         <script type="text/javascript">{`

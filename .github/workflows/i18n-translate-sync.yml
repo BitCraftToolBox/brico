@@ -61,7 +61,7 @@ jobs:
           git diff --cached --quiet || git commit -m "chore: refresh i18n catalog (translate-sync backstop)"
 
       - name: Upload sources to Crowdin
-        uses: crowdin/github-action@v3.0.0-next.2
+        uses: crowdin/github-action@v3.2.0
         with:
           upload_sources: true
           upload_translations: false
@@ -92,7 +92,7 @@ jobs:
         run: npm ci
 
       - name: Download translations from Crowdin
-        uses: crowdin/github-action@v3.0.0-next.2
+        uses: crowdin/github-action@v3.2.0
         with:
           upload_sources: false
           upload_translations: false
@@ -114,7 +114,7 @@ jobs:
       # after the download above: anything still empty locally was just confirmed empty on
       # Crowdin, so this can't clobber a translator's more recent edit.
       - name: Upload backfilled translations to Crowdin
-        uses: crowdin/github-action@v3.0.0-next.2
+        uses: crowdin/github-action@v3.2.0
         with:
           upload_sources: false
           upload_translations: true

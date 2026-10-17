@@ -1,20 +1,19 @@
+import {EnemyDesc, ProspectingDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
-import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {lootTab} from "~/components/fun/BricoLootBox";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ResourceIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGrowthPanel} from "~/components/shared/RecipeDisplay";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {IconLink, pageIcon} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {prospectingForResource} from "~/lib/recipe-sources";
 import {enemiesForResource, extractionRecipeForResource, resourceGrowthFrom, resourceGrowthInto, resourcesYieldingResource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {fixFloat} from "~/lib/utils";
 
 export default function ResourceDetail() {

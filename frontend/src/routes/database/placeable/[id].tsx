@@ -4,6 +4,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/shared/DetailPageLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, GrowthPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {
     extractionsByPlaceable,
@@ -18,7 +19,6 @@ import {
     placementsByPlaceable,
 } from "~/lib/placeables";
 import {getExtractionRecipeName} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {placeableGraphTab, placeableInteractionsCombinedTab} from "~/lib/table-utils/detail-tab-builders";
 
 export default function PlaceableDetail() {

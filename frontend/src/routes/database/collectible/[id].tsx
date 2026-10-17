@@ -1,19 +1,16 @@
+import {CollectibleDesc, CollectibleType, DeployableDesc, SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
-import {CollectibleType} from "~/bindings/src/collectible_type_type";
-import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
-import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {IconLink, ItemLink, pageIcon} from "~/lib/game-links";
 import {collectibleTypeLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
 
 export default function CollectibleDetail() {

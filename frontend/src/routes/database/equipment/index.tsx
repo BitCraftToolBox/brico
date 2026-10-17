@@ -1,7 +1,7 @@
-import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
+import {EquipmentDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {EquipmentDefs} from "~/lib/table-defs/equipment-table";
 
 export default function Equipment() {

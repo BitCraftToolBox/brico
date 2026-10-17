@@ -47,18 +47,20 @@ export function TableColumnHeader<TData>(props: TableColumnHeaderProps<TData>) {
         });
     };
 
+    const right = () => props.column.columnDef.meta?.align === "right";
+
     return (
         <Show
             when={props.column.getCanSort()}
-            fallback={<div class={cn(props.class)}>{props.title}</div>}
+            fallback={<div class={cn(right() && "text-right", props.class)}>{props.title}</div>}
         >
-            <div class={cn("flex items-center space-x-2", props.class)}>
+            <div class={cn("flex items-center space-x-2", right() && "justify-end", props.class)}>
                 <DropdownMenu placement="bottom-start">
                     <DropdownMenuTrigger
                         as={Button<"button">}
                         variant="ghost"
                         size="sm"
-                        class="-ml-3 h-8 data-[expanded]:bg-accent"
+                        class={cn("h-8 data-[expanded]:bg-accent", right() ? "-mr-3" : "-ml-3")}
                     >
                         <Show when={props.children} fallback={<span>{props.title}</span>}>
                             {props.children}

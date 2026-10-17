@@ -1,18 +1,17 @@
+import {CompletionCondition, ItemStack} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {A, useParams} from "@solidjs/router";
 import {TbOutlineExternalLink as IconExternal} from "solid-icons/tb";
 import {createMemo, For, Show} from "solid-js";
-import {CompletionCondition} from "~/bindings/src/completion_condition_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {QuestGraph} from "~/components/shared/QuestGraph";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ItemStackLink, pageIcon} from "~/lib/game-links";
 import {useLabel} from "~/lib/labels";
 import {ogImageForPage} from "~/lib/og-meta";
 import {getQuestSubtreeIds, questChainCompleter} from "~/lib/quests";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {ReqOrRewardLink, reqOrRewardTagLabel} from "~/lib/table-defs/quests-table";
 
 type StageConditionRow = { condition: CompletionCondition; stageName: string; chainId: number };

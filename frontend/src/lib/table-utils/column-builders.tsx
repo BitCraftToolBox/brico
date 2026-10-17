@@ -5,6 +5,7 @@
  * shared across multiple table definitions.
  */
 
+import {BuffDesc, BuffEffect, CsvStatEntry, Rarity} from "@brico/bitcraft-bindings/types";
 import type {MessageDescriptor} from "@lingui/core";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
@@ -12,23 +13,19 @@ import {A} from "@solidjs/router";
 import {CellContext, Column, ColumnDef} from "@tanstack/solid-table";
 import {TbOutlineClipboardCopy as IconClipboardCopy, TbOutlineExternalLink as IconExternal, TbOutlineLink as IconLink} from "solid-icons/tb";
 import {For, JSX, Show} from "solid-js";
-import {BuffDesc} from "~/bindings/src/buff_desc_type";
-import {BuffEffect} from "~/bindings/src/buff_effect_type";
-import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
-import {Rarity} from "~/bindings/src/rarity_type";
 import {FilterSetupProps} from "~/components/data-table/data-table";
 import {RangedBasedOption, ValueBasedOption} from "~/components/data-table/table-faceted-filter";
 import {TableRowActions} from "~/components/data-table/table-row-actions";
 import {TierIcon} from "~/components/shared/GameIcon";
 import {Button} from "~/components/ui/button";
 import {DropdownMenuItem} from "~/components/ui/dropdown-menu";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {BuffLink, KnowledgeLinkById, LinkedList} from "~/lib/game-links";
 import {rarityLabel} from "~/lib/game-strings";
 import {compareText, i18n, trackUILocale} from "~/lib/i18n";
-import {gameText, Label} from "~/lib/labels";
-import {BitCraftTables} from "~/lib/spacetime";
+import {gameText, Label, useLabel} from "~/lib/labels";
 import {AccessorKey, AccessorProp, resolveAccessor} from "~/lib/table-utils/base";
 import {consolidateStats, statsColumn} from "~/lib/table-utils/stats-column-builder";
 import {cn, compareBasic, includedIn, readableSeconds} from "~/lib/utils";
@@ -425,11 +422,14 @@ export function tierFilter<T>(): FilterSetupProps<T, ValueBasedOption<number>[]>
         column: "Tier",
         title: gameText(msg`Tier`),
         type: "value",
-        options: Tiers.tiers.map(t => ({
-            label: String(t.value),
-            value: t.value,
-            icon: (props: any) => <TierIcon tier={t.value} class={cn("mr-1", props.class)}/>
-        })),
+        options: (_) => {
+            const label = useLabel();
+            return Tiers.tiers.map(t => ({
+                label: label(gameText(t.value === -1 ? msg`Untiered` : msg`Tier ${t.value}`)),
+                value: t.value,
+                icon: (props: any) => <TierIcon tier={t.value} class={cn("mr-1", props.class)}/>
+            }))
+        },
     };
 }
 

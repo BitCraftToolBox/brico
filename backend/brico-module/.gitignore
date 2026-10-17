@@ -1,0 +1,8 @@
+# `spacetime build`/`publish` bundle the module here. Build output, not source.
+spacetimedb/dist/
+
+spacetime.local.json
+
+# import-payouts.ts's own SpacetimeDB connection identity/token. only a localhost-signed, but no reason to commit.
+scripts/*.token
+scripts/*.csv

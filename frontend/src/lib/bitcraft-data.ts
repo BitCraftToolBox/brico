@@ -1,66 +1,68 @@
-import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
+import {
+    AbilityCustomDesc,
+    AbilityUnlockDesc,
+    AchievementDesc,
+    BiomeDesc,
+    BuffDesc,
+    BuffTypeDesc,
+    BuildingBuffDesc,
+    BuildingDesc,
+    BuildingRepairsDesc,
+    BuildingTypeDesc,
+    CargoDesc,
+    ClaimTechDesc,
+    CollectibleDesc,
+    CombatActionDesc,
+    ConstructionRecipeDesc,
+    ContributionLootDesc,
+    CraftingRecipeDesc,
+    DeconstructionRecipeDesc,
+    DeployableAppearanceOverrideDesc,
+    DeployableDesc,
+    EnemyAiParamsDesc,
+    EnemyDesc,
+    EnemyScalingDesc,
+    EquipmentDesc,
+    ExtractionRecipeDesc,
+    FoodDesc,
+    ItemConversionRecipeDesc,
+    ItemDesc,
+    ItemListDesc,
+    KnowledgeScrollDesc,
+    KnowledgeStatModifierDesc,
+    NpcDesc,
+    PathfindingDesc,
+    PavingTileDesc,
+    PillarShapingDesc,
+    PlaceableDesc,
+    PlaceableGroupDesc,
+    PlaceableGrowthDesc,
+    PlaceableInteractionDesc,
+    PlaceablePlacementDesc,
+    ProspectingDesc,
+    QuestChainDesc,
+    QuestDropDesc,
+    QuestStageDesc,
+    ResourceClumpDesc,
+    ResourceDesc,
+    ResourceGrowthRecipeDesc,
+    ResourcePlacementRecipeDesc,
+    SecondaryKnowledgeDesc,
+    SkillDesc,
+    SkillLevelKnowledgeDesc,
+    StageRewardsDesc,
+    TerraformRecipeDesc,
+    ToolDesc,
+    ToolTypeDesc,
+    TravelerTaskDesc,
+    TravelerTaskKnowledgeRequirementDesc,
+    TravelerTradeOrderDesc,
+    WeaponDesc,
+    WeaponTypeDesc,
+} from "@brico/bitcraft-bindings/types";
 import {Accessor, createMemo, createRoot, createSignal} from "solid-js";
 import {isServer} from "solid-js/web";
-import {AbilityCustomDesc} from "~/bindings/src/ability_custom_desc_type";
-import {AbilityUnlockDesc} from "~/bindings/src/ability_unlock_desc_type";
-import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
-import {BiomeDesc} from "~/bindings/src/biome_desc_type";
-import {BuffDesc} from "~/bindings/src/buff_desc_type";
-import {BuffTypeDesc} from "~/bindings/src/buff_type_desc_type";
-import {BuildingBuffDesc} from "~/bindings/src/building_buff_desc_type";
-import {BuildingDesc} from "~/bindings/src/building_desc_type";
-import {BuildingRepairsDesc} from "~/bindings/src/building_repairs_desc_type";
-import {BuildingTypeDesc} from "~/bindings/src/building_type_desc_type";
-import {CargoDesc} from "~/bindings/src/cargo_desc_type";
-import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
-import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
-import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
-import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
-import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
-import {DeployableAppearanceOverrideDesc} from "~/bindings/src/deployable_appearance_override_desc_type";
-import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
-import {EnemyAiParamsDesc} from "~/bindings/src/enemy_ai_params_desc_type";
-import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
-import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
-import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
-import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {FoodDesc} from "~/bindings/src/food_desc_type";
-import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
-import {ItemDesc} from "~/bindings/src/item_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {KnowledgeScrollDesc} from "~/bindings/src/knowledge_scroll_desc_type";
-import {KnowledgeStatModifierDesc} from "~/bindings/src/knowledge_stat_modifier_desc_type";
-import {NpcDesc} from "~/bindings/src/npc_desc_type";
-import {PathfindingDesc} from "~/bindings/src/pathfinding_desc_type";
-import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
-import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
-import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
-import {PlaceableGroupDesc} from "~/bindings/src/placeable_group_desc_type";
-import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
-import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
-import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
-import {QuestStageDesc} from "~/bindings/src/quest_stage_desc_type";
-import {ResourceClumpDesc} from "~/bindings/src/resource_clump_desc_type";
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
-import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
-import {ResourcePlacementRecipeDesc} from "~/bindings/src/resource_placement_recipe_desc_type";
-import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
-import {SkillDesc} from "~/bindings/src/skill_desc_type";
-import {SkillLevelKnowledgeDesc} from "~/bindings/src/skill_level_knowledge_desc_type";
-import {StageRewardsDesc} from "~/bindings/src/stage_rewards_desc_type";
-import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
-import {ToolDesc} from "~/bindings/src/tool_desc_type";
-import {ToolTypeDesc} from "~/bindings/src/tool_type_desc_type";
-import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
-import {TravelerTaskKnowledgeRequirementDesc} from "~/bindings/src/traveler_task_knowledge_requirement_desc_type";
-import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
-import {WeaponDesc} from "~/bindings/src/weapon_desc_type";
-import {WeaponTypeDesc} from "~/bindings/src/weapon_type_desc_type";
+import {AlgebraicType, BinaryReader} from "spacetimedb";
 import {activeDataLocale, TranslatableField, translatableFieldsOf, translateRow, translationsFor} from "~/lib/data-translation";
 import {CURRENT_VERSION} from "~/lib/version";
 
@@ -83,7 +85,7 @@ async function fetchBSATNFrom<T>(baseUrl: string, params: FetchParams): Promise<
         throw Error("Couldn't fetch BSATN data." + await data.text());
     }
     const reader = new BinaryReader(new Uint8Array(await data.arrayBuffer()));
-    return AlgebraicType.createArrayType(params.itemType).deserialize(reader) as T[];
+    return AlgebraicType.makeDeserializer(AlgebraicType.Array(params.itemType))(reader) as T[];
 }
 
 // ── Dual-mode table store ─────────────────────────────────────
@@ -96,8 +98,8 @@ const allTables: BitCraftTable<any>[] = [];
 const serverCache = new Map<string, any[]>();
 
 
-function cache<T>(n: string, b: { getTypeScriptAlgebraicType: () => AlgebraicType }) {
-    return new BitCraftTable<T>(n, b.getTypeScriptAlgebraicType());
+function cache<T>(n: string, b: { algebraicType: AlgebraicType }) {
+    return new BitCraftTable<T>(n, b.algebraicType);
 }
 
 
@@ -194,7 +196,7 @@ function createIndexMulti<TData, TIdx extends keyof TData & string, TValue exten
     });
 }
 
-export function loadTableAdHoc<T>(n: string, b: { getTypeScriptAlgebraicType: () => AlgebraicType }) {
+export function loadTableAdHoc<T>(n: string, b: { algebraicType: AlgebraicType }) {
     const table = cache<T>(n, b);
     // Ad-hoc tables are typically created after the bulk preload (e.g. inside a lazily
     // imported route module), so kick off their own client load immediately.
@@ -329,13 +331,13 @@ export class BitCraftTable<TData> {
         const cached = this.#tagOrdinalCache.get(field);
         if (cached) return cached;
 
-        const elements: any[] = (this.spacetimeType as any).product?.elements ?? [];
+        const elements: any[] = (this.spacetimeType as any).value?.elements ?? [];
         const elem = elements.find((e: any) => e.name === field);
         if (!elem) {
             throw new Error(`[BitCraftTable] Field '${field}' not found in type '${this.spacetimeName}'`);
         }
         const rootType: AlgebraicType = elem.algebraicType;
-        const variants: any[] = rootType.type == "ArrayType" ? rootType.array.sum.variants : rootType.sum.variants;
+        const variants: any[] = rootType.tag === "Array" ? (rootType as any).value.value.variants : (rootType as any).value.variants;
         const map = new Map<string, number>();
         variants.forEach((v: any, i: number) => map.set(v.name, i));
         this.#tagOrdinalCache.set(field, map);

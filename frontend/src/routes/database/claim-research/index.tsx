@@ -1,7 +1,7 @@
-import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
+import {ClaimTechDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {ClaimResearchDefs} from "~/lib/table-defs/claim-research-table";
 
 export default function ClaimResearch() {

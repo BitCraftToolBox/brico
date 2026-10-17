@@ -1,0 +1,4 @@
+# Connection tokens — credentials, one file per (uri, database). See src/spacetime/token-store.ts.
+.state/
+# Local configuration
+.env

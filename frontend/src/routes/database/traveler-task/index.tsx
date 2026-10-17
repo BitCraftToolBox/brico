@@ -1,7 +1,7 @@
-import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
+import {TravelerTaskDesc} from "@brico/bitcraft-bindings/types";
 import TableLayout from "~/components/TableLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {BitCraftTables} from "~/lib/spacetime";
 import {TravelerTaskDefs} from "~/lib/table-defs/traveler-tasks-table";
 
 

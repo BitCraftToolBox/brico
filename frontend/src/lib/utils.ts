@@ -135,6 +135,16 @@ export function readableSeconds(seconds: number | undefined, shorten: boolean = 
     return fmt.format(duration);
 }
 
+/** Triggers a browser download of `content` as a file named `filename`, with no visible UI of its own. */
+export function downloadTextFile(filename: string, content: string, mime: string = "application/json") {
+    const url = URL.createObjectURL(new Blob([content], {type: mime}));
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);
+}
+
 export function useCopy(content: string | Accessor<string>, delay: number = 1500): [() => void, Accessor<boolean>] {
     const [contentCopied, setContentCopied] = createSignal(false);
     const copyContent = () => {
