@@ -274,9 +274,12 @@ export function SteloWalletsCard(props: {onUnlink: (link: LinkedIntegration) => 
                                 >
                                     <div class="flex flex-col gap-2 rounded-md border p-3 text-sm">
                                         <p>
+                                            <Show when={request().matchedUsername}
+                                                  fallback={<Trans>Found <span class="font-mono">#{request().candidateAddress}.</span></Trans>}
+                                            >
+                                                {name => <Trans>Found <span class="font-mono">#{request().candidateAddress}</span> owned by <b>@{name()}</b>.</Trans>}
+                                            </Show>
                                             <Trans>
-                                                Found <span class="font-mono">#{request().candidateAddress}</span>
-                                                <Show when={request().matchedUsername}>{name => <> owned by <b>{name()}</b></>}</Show>.
                                                 Payouts will be sent to this account without verifying you own it.
                                             </Trans>
                                         </p>

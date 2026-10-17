@@ -973,12 +973,6 @@ msgstr "Quests"
 msgid "Yields when eaten"
 msgstr "Yields when eaten"
 
-#. placeholder {0}: request().candidateAddress
-#. placeholder {1}: name => <> owned by <b>{name()}</b></>
-#: src/components/account/SteloWalletsCard.tsx
-msgid "Found <0>#{0}</0><1>{1}</1>. Payouts will be sent to this account without verifying you own it."
-msgstr "Found <0>#{0}</0><1>{1}</1>. Payouts will be sent to this account without verifying you own it."
-
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
 msgstr "Item Details"
@@ -1183,6 +1177,12 @@ msgstr "Mention: {0}"
 #: src/lib/crafts/filter-vocab.ts
 msgid "Complete"
 msgstr "Complete"
+
+#. placeholder {0}: request().candidateAddress
+#. placeholder {1}: name()
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Found <0>#{0}</0> owned by <1>@{1}</1>."
+msgstr "Found <0>#{0}</0> owned by <1>@{1}</1>."
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/routes/database/building/[id].tsx
@@ -4201,6 +4201,11 @@ msgstr "A–Z"
 msgid "remaining"
 msgstr "remaining"
 
+#. placeholder {0}: request().candidateAddress
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Found <0>#{0}.</0>"
+msgstr "Found <0>#{0}.</0>"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Item"
 msgstr "Discover Item"
@@ -4490,6 +4495,10 @@ msgstr "Funding alerts"
 #: src/routes/database/item/[id].tsx
 msgid "Slots"
 msgstr "Slots"
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Payouts will be sent to this account without verifying you own it."
+msgstr "Payouts will be sent to this account without verifying you own it."
 
 #: src/routes/database/combat/[id].tsx
 msgid "Is Taunt"

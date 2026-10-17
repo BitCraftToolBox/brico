@@ -978,12 +978,6 @@ msgstr "crwdns4532:0crwdne4532:0"
 msgid "Yields when eaten"
 msgstr "crwdns5550:0crwdne5550:0"
 
-#. placeholder {0}: request().candidateAddress
-#. placeholder {1}: name => <> owned by <b>{name()}</b></>
-#: src/components/account/SteloWalletsCard.tsx
-msgid "Found <0>#{0}</0><1>{1}</1>. Payouts will be sent to this account without verifying you own it."
-msgstr ""
-
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
 msgstr "crwdns4534:0crwdne4534:0"
@@ -1187,6 +1181,12 @@ msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Complete"
+msgstr ""
+
+#. placeholder {0}: request().candidateAddress
+#. placeholder {1}: name()
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Found <0>#{0}</0> owned by <1>@{1}</1>."
 msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
@@ -4206,6 +4206,11 @@ msgstr "crwdns5278:0crwdne5278:0"
 msgid "remaining"
 msgstr ""
 
+#. placeholder {0}: request().candidateAddress
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Found <0>#{0}.</0>"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Item"
 msgstr "crwdns5524:0crwdne5524:0"
@@ -4495,6 +4500,10 @@ msgstr ""
 #: src/routes/database/item/[id].tsx
 msgid "Slots"
 msgstr "crwdns5338:0crwdne5338:0"
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Payouts will be sent to this account without verifying you own it."
+msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Is Taunt"
