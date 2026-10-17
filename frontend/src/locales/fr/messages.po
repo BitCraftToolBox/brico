@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-02 10:18\n"
+"PO-Revision-Date: 2026-10-17 16:28\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -1880,7 +1880,7 @@ msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Hex Coin"
-msgstr ""
+msgstr "Pièce hexagonale"
 
 #. placeholder {0}: props.selected.length
 #. placeholder {0}: selectedValues().length
