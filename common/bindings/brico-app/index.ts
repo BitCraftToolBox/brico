@@ -6,39 +6,46 @@
 /* eslint-disable */
 /* tslint:disable */
 import {
-    convertToAccessorMap as __convertToAccessorMap,
-    DbConnectionBuilder as __DbConnectionBuilder,
-    type DbConnectionConfig as __DbConnectionConfig,
-    DbConnectionImpl as __DbConnectionImpl,
-    type ErrorContextInterface as __ErrorContextInterface,
-    type EventContextInterface as __EventContextInterface,
-    makeQueryBuilder as __makeQueryBuilder,
-    procedures as __procedures,
-    procedureSchema as __procedureSchema,
-    type QueryBuilder as __QueryBuilder,
-    type ReducerEventContextInterface as __ReducerEventContextInterface,
-    reducers as __reducers,
-    reducerSchema as __reducerSchema,
-    type RemoteModule as __RemoteModule,
-    schema as __schema,
-    SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
-    type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
-    type SubscriptionHandleImpl as __SubscriptionHandleImpl,
-    table as __table,
+  convertToAccessorMap as __convertToAccessorMap,
+  DbConnectionBuilder as __DbConnectionBuilder,
+  type DbConnectionConfig as __DbConnectionConfig,
+  DbConnectionImpl as __DbConnectionImpl,
+  type ErrorContextInterface as __ErrorContextInterface,
+  type EventContextInterface as __EventContextInterface,
+  makeQueryBuilder as __makeQueryBuilder,
+  procedures as __procedures,
+  procedureSchema as __procedureSchema,
+  type QueryBuilder as __QueryBuilder,
+  type ReducerEventContextInterface as __ReducerEventContextInterface,
+  reducers as __reducers,
+  reducerSchema as __reducerSchema,
+  type RemoteModule as __RemoteModule,
+  schema as __schema,
+  SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
+  type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
+  type SubscriptionHandleImpl as __SubscriptionHandleImpl,
+  table as __table,
 } from "spacetimedb";
 
 // Import all table schema definitions
 import AllAccountRow from "./all_account_table";
 import AllBountyEntitlementTotalRow from "./all_bounty_entitlement_total_table";
+import AllBountyEscrowJournalRow from "./all_bounty_escrow_journal_table";
+import AllBountyEscrowPoolRow from "./all_bounty_escrow_pool_table";
+import AllBountyEscrowWalletRow from "./all_bounty_escrow_wallet_table";
 import AllBountyRuleRow from "./all_bounty_rule_table";
 import AllCraftBountyAssignmentRow from "./all_craft_bounty_assignment_table";
 import AllCraftBountyEntitlementRow from "./all_craft_bounty_entitlement_table";
+import AllCraftBountyEscrowRow from "./all_craft_bounty_escrow_table";
+import AllCraftBountyFundingRow from "./all_craft_bounty_funding_table";
 import AllCraftBountyOverrideRow from "./all_craft_bounty_override_table";
 import AllCraftFilterNotifyTriggerRow from "./all_craft_filter_notify_trigger_table";
+import AllDiscordFundingNotifyTargetRow from "./all_discord_funding_notify_target_table";
 import AllDiscordGuildInstallRow from "./all_discord_guild_install_table";
 import AllDiscordNotifySinkRow from "./all_discord_notify_sink_table";
 import AllDiscordNotifyTargetRow from "./all_discord_notify_target_table";
 import AllDiscordWatchDisplayRow from "./all_discord_watch_display_table";
+import AllFundingNotifyTriggerRow from "./all_funding_notify_trigger_table";
 import AllIntegrationLinkRequestRow from "./all_integration_link_request_table";
 import AllLinkedIntegrationRow from "./all_linked_integration_table";
 import AllLoyaltyBonusTotalRow from "./all_loyalty_bonus_total_table";
@@ -46,16 +53,25 @@ import AllLoyaltyRewardRow from "./all_loyalty_reward_table";
 import AllLoyaltyRuleRow from "./all_loyalty_rule_table";
 import AllPrivateCraftBountyAssignmentRow from "./all_private_craft_bounty_assignment_table";
 import AllSavedCraftFilterRow from "./all_saved_craft_filter_table";
+import AllSteloReceivingWalletRow from "./all_stelo_receiving_wallet_table";
+import AllSteloTransferRow from "./all_stelo_transfer_table";
+import AllSteloWalletStatusRow from "./all_stelo_wallet_status_table";
+import AllSteloWalletRow from "./all_stelo_wallet_table";
 
 // Import all reducer arg schemas
 import AssignCraftBountyReducer from "./assign_craft_bounty_reducer";
+import AttachDiscordFundingTargetReducer from "./attach_discord_funding_target_reducer";
 import AttachDiscordNotifySinkReducer from "./attach_discord_notify_sink_reducer";
 import AttachDiscordNotifyTargetReducer from "./attach_discord_notify_target_reducer";
 import AttachDiscordWatchDisplayReducer from "./attach_discord_watch_display_reducer";
 import BeginIntegrationLinkForExternalReducer from "./begin_integration_link_for_external_reducer";
 import BeginIntegrationLinkReducer from "./begin_integration_link_reducer";
+import CancelIntegrationLinkRequestReducer from "./cancel_integration_link_request_reducer";
 import ClaimIntegrationLinkReducer from "./claim_integration_link_reducer";
+import ClearCraftBountyFundingReducer from "./clear_craft_bounty_funding_reducer";
 import ClearCraftBountyReducer from "./clear_craft_bounty_reducer";
+import CloseCraftEscrowReducer from "./close_craft_escrow_reducer";
+import ConfirmIntegrationLinkCandidateReducer from "./confirm_integration_link_candidate_reducer";
 
 // Import all procedure arg schemas
 import * as CreateSharedFiltersProcedure from "./create_shared_filters_procedure";
@@ -67,27 +83,36 @@ import DeleteLoyaltyRuleReducer from "./delete_loyalty_rule_reducer";
 import DeleteNotificationReducer from "./delete_notification_reducer";
 import DeleteSavedCraftFilterReducer from "./delete_saved_craft_filter_reducer";
 import DetachCraftFilterNotifyTriggerReducer from "./detach_craft_filter_notify_trigger_reducer";
+import DetachDiscordFundingTargetReducer from "./detach_discord_funding_target_reducer";
 import DetachDiscordNotifySinkReducer from "./detach_discord_notify_sink_reducer";
 import DetachDiscordNotifyTargetReducer from "./detach_discord_notify_target_reducer";
 import DetachDiscordWatchDisplayReducer from "./detach_discord_watch_display_reducer";
+import DetachFundingNotifyTriggerReducer from "./detach_funding_notify_trigger_reducer";
 import EnsureAccountReducer from "./ensure_account_reducer";
+import FailSteloTransferReducer from "./fail_stelo_transfer_reducer";
 import ImportHistoricalBountyLedgerReducer from "./import_historical_bounty_ledger_reducer";
 import LinkDiscordViaSpacetimeAuthReducer from "./link_discord_via_spacetime_auth_reducer";
 import LinkIntegrationReducer from "./link_integration_reducer";
 import MarkAllNotificationsReadReducer from "./mark_all_notifications_read_reducer";
 import MarkNotificationReadReducer from "./mark_notification_read_reducer";
+import MigrateNotificationsToV2Reducer from "./migrate_notifications_to_v_2_reducer";
 import MyAccountRow from "./my_account_table";
+import MyBountyEscrowWalletRow from "./my_bounty_escrow_wallet_table";
 import MyBountyPayoutRecordAsPayerRow from "./my_bounty_payout_record_as_payer_table";
 import MyBountyPayoutRecordLogAsContributorRow from "./my_bounty_payout_record_log_as_contributor_table";
 import MyBountyPayoutRecordLogAsPayerRow from "./my_bounty_payout_record_log_as_payer_table";
 import MyBountyRuleRow from "./my_bounty_rule_table";
+import MyCraftBountyEscrowRow from "./my_craft_bounty_escrow_table";
+import MyCraftBountyFundingRow from "./my_craft_bounty_funding_table";
 import MyCraftBountyOverrideRow from "./my_craft_bounty_override_table";
 import MyCraftFilterNotifyTriggerRow from "./my_craft_filter_notify_trigger_table";
+import MyDiscordFundingNotifyTargetRow from "./my_discord_funding_notify_target_table";
 import MyDiscordNotifySinkRow from "./my_discord_notify_sink_table";
 import MyDiscordNotifyTargetRow from "./my_discord_notify_target_table";
 import MyDiscordWatchDisplayRow from "./my_discord_watch_display_table";
 import MyEntitlementsAsContributorRow from "./my_entitlements_as_contributor_table";
 import MyEntitlementsAsPayerRow from "./my_entitlements_as_payer_table";
+import MyFundingNotifyTriggerRow from "./my_funding_notify_trigger_table";
 import MyIntegrationLinkRequestRow from "./my_integration_link_request_table";
 import MyLinkedIntegrationRow from "./my_linked_integration_table";
 import MyLoyaltyBonusTotalRow from "./my_loyalty_bonus_total_table";
@@ -96,22 +121,46 @@ import MyLoyaltyRuleRow from "./my_loyalty_rule_table";
 import MyNotificationRow from "./my_notification_table";
 import MyPrivateCraftBountyAssignmentRow from "./my_private_craft_bounty_assignment_table";
 import MySavedCraftFilterRow from "./my_saved_craft_filter_table";
+import MySteloReceivingWalletRow from "./my_stelo_receiving_wallet_table";
+import MySteloTransferRow from "./my_stelo_transfer_table";
+import MySteloWalletStatusRow from "./my_stelo_wallet_status_table";
+import MySteloWalletRow from "./my_stelo_wallet_table";
 import NoteIntegrationLinkExternalReducer from "./note_integration_link_external_reducer";
+import NoteIntegrationLinkStatusReducer from "./note_integration_link_status_reducer";
 import PostCraftNotificationReducer from "./post_craft_notification_reducer";
+import PostFundingNotificationReducer from "./post_funding_notification_reducer";
+import RaiseCraftEscrowFromRefundDueReducer from "./raise_craft_escrow_from_refund_due_reducer";
 import * as ReadSharedFiltersProcedure from "./read_shared_filters_procedure";
+import RecordBountyPaymentForReducer from "./record_bounty_payment_for_reducer";
 import RecordBountyPaymentReducer from "./record_bounty_payment_reducer";
+import RecordSteloTransferIntentReducer from "./record_stelo_transfer_intent_reducer";
 import RegisterServicePrincipalReducer from "./register_service_principal_reducer";
+import RegisterSteloWalletReducer from "./register_stelo_wallet_reducer";
+import ReleaseEscrowOverlapReducer from "./release_escrow_overlap_reducer";
 import ReorderBountyRulesReducer from "./reorder_bounty_rules_reducer";
 import RevokeServicePrincipalReducer from "./revoke_service_principal_reducer";
+import SetCraftBountyFundingReducer from "./set_craft_bounty_funding_reducer";
 import SetDiscordWatchDisplayMessageReducer from "./set_discord_watch_display_message_reducer";
 import SetDisplayNameReducer from "./set_display_name_reducer";
+import SetSteloCurrencyPolicyReducer from "./set_stelo_currency_policy_reducer";
+import SetSteloPayoutScheduleReducer from "./set_stelo_payout_schedule_reducer";
+import SetSteloReceivingWalletReducer from "./set_stelo_receiving_wallet_reducer";
+import SetSteloWalletStatusReducer from "./set_stelo_wallet_status_reducer";
+import SettleSteloTransferReducer from "./settle_stelo_transfer_reducer";
+import SettleUnclaimedPayeeReducer from "./settle_unclaimed_payee_reducer";
+import SteloCurrencyPolicyRow from "./stelo_currency_policy_table";
+import SteloPayoutScheduleRow from "./stelo_payout_schedule_table";
+import SubmitIntegrationLinkCandidateReducer from "./submit_integration_link_candidate_reducer";
+import SyncEscrowPoolUnclaimedReducer from "./sync_escrow_pool_unclaimed_reducer";
 import UnlinkIntegrationReducer from "./unlink_integration_reducer";
 import UpsertBountyRuleReducer from "./upsert_bounty_rule_reducer";
 import UpsertCraftBountyEntitlementReducer from "./upsert_craft_bounty_entitlement_reducer";
 import UpsertCraftBountyOverrideReducer from "./upsert_craft_bounty_override_reducer";
 import UpsertCraftFilterNotifyTriggerReducer from "./upsert_craft_filter_notify_trigger_reducer";
+import UpsertDiscordFundingTargetTemplateReducer from "./upsert_discord_funding_target_template_reducer";
 import UpsertDiscordGuildInstallReducer from "./upsert_discord_guild_install_reducer";
 import UpsertDiscordNotifyTargetTemplateReducer from "./upsert_discord_notify_target_template_reducer";
+import UpsertFundingNotifyTriggerReducer from "./upsert_funding_notify_trigger_reducer";
 import UpsertLoyaltyBonusTotalReducer from "./upsert_loyalty_bonus_total_reducer";
 import UpsertLoyaltyRewardReducer from "./upsert_loyalty_reward_reducer";
 import UpsertLoyaltyRuleReducer from "./upsert_loyalty_rule_reducer";
@@ -121,6 +170,28 @@ import UpsertSavedCraftFilterReducer from "./upsert_saved_craft_filter_reducer";
 
 /** The schema information for all tables in this module. This is defined the same was as the tables would have been defined in the server. */
 const tablesSchema = __schema({
+  steloCurrencyPolicy: __table({
+    name: 'stelo_currency_policy',
+    indexes: [
+      { accessor: 'currency', name: 'stelo_currency_policy_currency_idx_btree', algorithm: 'btree', columns: [
+        'currency',
+      ] },
+    ],
+    constraints: [
+      { name: 'stelo_currency_policy_currency_key', constraint: 'unique', columns: ['currency'] },
+    ],
+  }, SteloCurrencyPolicyRow),
+  steloPayoutSchedule: __table({
+    name: 'stelo_payout_schedule',
+    indexes: [
+      { accessor: 'id', name: 'stelo_payout_schedule_id_idx_btree', algorithm: 'btree', columns: [
+        'id',
+      ] },
+    ],
+    constraints: [
+      { name: 'stelo_payout_schedule_id_key', constraint: 'unique', columns: ['id'] },
+    ],
+  }, SteloPayoutScheduleRow),
   allAccount: __table({
     name: 'all_account',
     indexes: [
@@ -135,6 +206,27 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllBountyEntitlementTotalRow),
+  allBountyEscrowJournal: __table({
+    name: 'all_bounty_escrow_journal',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllBountyEscrowJournalRow),
+  allBountyEscrowPool: __table({
+    name: 'all_bounty_escrow_pool',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllBountyEscrowPoolRow),
+  allBountyEscrowWallet: __table({
+    name: 'all_bounty_escrow_wallet',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllBountyEscrowWalletRow),
   allBountyRule: __table({
     name: 'all_bounty_rule',
     indexes: [
@@ -156,6 +248,20 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllCraftBountyEntitlementRow),
+  allCraftBountyEscrow: __table({
+    name: 'all_craft_bounty_escrow',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllCraftBountyEscrowRow),
+  allCraftBountyFunding: __table({
+    name: 'all_craft_bounty_funding',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllCraftBountyFundingRow),
   allCraftBountyOverride: __table({
     name: 'all_craft_bounty_override',
     indexes: [
@@ -170,6 +276,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllCraftFilterNotifyTriggerRow),
+  allDiscordFundingNotifyTarget: __table({
+    name: 'all_discord_funding_notify_target',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllDiscordFundingNotifyTargetRow),
   allDiscordGuildInstall: __table({
     name: 'all_discord_guild_install',
     indexes: [
@@ -198,6 +311,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllDiscordWatchDisplayRow),
+  allFundingNotifyTrigger: __table({
+    name: 'all_funding_notify_trigger',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllFundingNotifyTriggerRow),
   allIntegrationLinkRequest: __table({
     name: 'all_integration_link_request',
     indexes: [
@@ -247,6 +367,34 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllSavedCraftFilterRow),
+  allSteloReceivingWallet: __table({
+    name: 'all_stelo_receiving_wallet',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllSteloReceivingWalletRow),
+  allSteloTransfer: __table({
+    name: 'all_stelo_transfer',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllSteloTransferRow),
+  allSteloWallet: __table({
+    name: 'all_stelo_wallet',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllSteloWalletRow),
+  allSteloWalletStatus: __table({
+    name: 'all_stelo_wallet_status',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, AllSteloWalletStatusRow),
   myAccount: __table({
     name: 'my_account',
     indexes: [
@@ -254,6 +402,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MyAccountRow),
+  myBountyEscrowWallet: __table({
+    name: 'my_bounty_escrow_wallet',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyBountyEscrowWalletRow),
   myBountyPayoutRecordAsPayer: __table({
     name: 'my_bounty_payout_record_as_payer',
     indexes: [
@@ -282,6 +437,20 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MyBountyRuleRow),
+  myCraftBountyEscrow: __table({
+    name: 'my_craft_bounty_escrow',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyCraftBountyEscrowRow),
+  myCraftBountyFunding: __table({
+    name: 'my_craft_bounty_funding',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyCraftBountyFundingRow),
   myCraftBountyOverride: __table({
     name: 'my_craft_bounty_override',
     indexes: [
@@ -296,6 +465,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MyCraftFilterNotifyTriggerRow),
+  myDiscordFundingNotifyTarget: __table({
+    name: 'my_discord_funding_notify_target',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyDiscordFundingNotifyTargetRow),
   myDiscordNotifySink: __table({
     name: 'my_discord_notify_sink',
     indexes: [
@@ -331,6 +507,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MyEntitlementsAsPayerRow),
+  myFundingNotifyTrigger: __table({
+    name: 'my_funding_notify_trigger',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyFundingNotifyTriggerRow),
   myIntegrationLinkRequest: __table({
     name: 'my_integration_link_request',
     indexes: [
@@ -387,18 +570,51 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MySavedCraftFilterRow),
+  mySteloReceivingWallet: __table({
+    name: 'my_stelo_receiving_wallet',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MySteloReceivingWalletRow),
+  mySteloTransfer: __table({
+    name: 'my_stelo_transfer',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MySteloTransferRow),
+  mySteloWallet: __table({
+    name: 'my_stelo_wallet',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MySteloWalletRow),
+  mySteloWalletStatus: __table({
+    name: 'my_stelo_wallet_status',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MySteloWalletStatusRow),
 });
 
 /** The schema information for all reducers in this module. This is defined the same way as the reducers would have been defined in the server, except the body of the reducer is omitted in code generation. */
 const reducersSchema = __reducers(
   __reducerSchema("assign_craft_bounty", AssignCraftBountyReducer),
+  __reducerSchema("attach_discord_funding_target", AttachDiscordFundingTargetReducer),
   __reducerSchema("attach_discord_notify_sink", AttachDiscordNotifySinkReducer),
   __reducerSchema("attach_discord_notify_target", AttachDiscordNotifyTargetReducer),
   __reducerSchema("attach_discord_watch_display", AttachDiscordWatchDisplayReducer),
   __reducerSchema("begin_integration_link", BeginIntegrationLinkReducer),
   __reducerSchema("begin_integration_link_for_external", BeginIntegrationLinkForExternalReducer),
+  __reducerSchema("cancel_integration_link_request", CancelIntegrationLinkRequestReducer),
   __reducerSchema("claim_integration_link", ClaimIntegrationLinkReducer),
   __reducerSchema("clear_craft_bounty", ClearCraftBountyReducer),
+  __reducerSchema("clear_craft_bounty_funding", ClearCraftBountyFundingReducer),
+  __reducerSchema("close_craft_escrow", CloseCraftEscrowReducer),
+  __reducerSchema("confirm_integration_link_candidate", ConfirmIntegrationLinkCandidateReducer),
   __reducerSchema("delete_bounty_rule", DeleteBountyRuleReducer),
   __reducerSchema("delete_craft_bounty_override", DeleteCraftBountyOverrideReducer),
   __reducerSchema("delete_loyalty_bonus_total", DeleteLoyaltyBonusTotalReducer),
@@ -407,30 +623,52 @@ const reducersSchema = __reducers(
   __reducerSchema("delete_notification", DeleteNotificationReducer),
   __reducerSchema("delete_saved_craft_filter", DeleteSavedCraftFilterReducer),
   __reducerSchema("detach_craft_filter_notify_trigger", DetachCraftFilterNotifyTriggerReducer),
+  __reducerSchema("detach_discord_funding_target", DetachDiscordFundingTargetReducer),
   __reducerSchema("detach_discord_notify_sink", DetachDiscordNotifySinkReducer),
   __reducerSchema("detach_discord_notify_target", DetachDiscordNotifyTargetReducer),
   __reducerSchema("detach_discord_watch_display", DetachDiscordWatchDisplayReducer),
+  __reducerSchema("detach_funding_notify_trigger", DetachFundingNotifyTriggerReducer),
   __reducerSchema("ensure_account", EnsureAccountReducer),
+  __reducerSchema("fail_stelo_transfer", FailSteloTransferReducer),
   __reducerSchema("import_historical_bounty_ledger", ImportHistoricalBountyLedgerReducer),
   __reducerSchema("link_discord_via_spacetime_auth", LinkDiscordViaSpacetimeAuthReducer),
   __reducerSchema("link_integration", LinkIntegrationReducer),
   __reducerSchema("mark_all_notifications_read", MarkAllNotificationsReadReducer),
   __reducerSchema("mark_notification_read", MarkNotificationReadReducer),
+  __reducerSchema("migrate_notifications_to_v_2", MigrateNotificationsToV2Reducer),
   __reducerSchema("note_integration_link_external", NoteIntegrationLinkExternalReducer),
+  __reducerSchema("note_integration_link_status", NoteIntegrationLinkStatusReducer),
   __reducerSchema("post_craft_notification", PostCraftNotificationReducer),
+  __reducerSchema("post_funding_notification", PostFundingNotificationReducer),
+  __reducerSchema("raise_craft_escrow_from_refund_due", RaiseCraftEscrowFromRefundDueReducer),
   __reducerSchema("record_bounty_payment", RecordBountyPaymentReducer),
+  __reducerSchema("record_bounty_payment_for", RecordBountyPaymentForReducer),
+  __reducerSchema("record_stelo_transfer_intent", RecordSteloTransferIntentReducer),
   __reducerSchema("register_service_principal", RegisterServicePrincipalReducer),
+  __reducerSchema("register_stelo_wallet", RegisterSteloWalletReducer),
+  __reducerSchema("release_escrow_overlap", ReleaseEscrowOverlapReducer),
   __reducerSchema("reorder_bounty_rules", ReorderBountyRulesReducer),
   __reducerSchema("revoke_service_principal", RevokeServicePrincipalReducer),
+  __reducerSchema("set_craft_bounty_funding", SetCraftBountyFundingReducer),
   __reducerSchema("set_discord_watch_display_message", SetDiscordWatchDisplayMessageReducer),
   __reducerSchema("set_display_name", SetDisplayNameReducer),
+  __reducerSchema("set_stelo_currency_policy", SetSteloCurrencyPolicyReducer),
+  __reducerSchema("set_stelo_payout_schedule", SetSteloPayoutScheduleReducer),
+  __reducerSchema("set_stelo_receiving_wallet", SetSteloReceivingWalletReducer),
+  __reducerSchema("set_stelo_wallet_status", SetSteloWalletStatusReducer),
+  __reducerSchema("settle_stelo_transfer", SettleSteloTransferReducer),
+  __reducerSchema("settle_unclaimed_payee", SettleUnclaimedPayeeReducer),
+  __reducerSchema("submit_integration_link_candidate", SubmitIntegrationLinkCandidateReducer),
+  __reducerSchema("sync_escrow_pool_unclaimed", SyncEscrowPoolUnclaimedReducer),
   __reducerSchema("unlink_integration", UnlinkIntegrationReducer),
   __reducerSchema("upsert_bounty_rule", UpsertBountyRuleReducer),
   __reducerSchema("upsert_craft_bounty_entitlement", UpsertCraftBountyEntitlementReducer),
   __reducerSchema("upsert_craft_bounty_override", UpsertCraftBountyOverrideReducer),
   __reducerSchema("upsert_craft_filter_notify_trigger", UpsertCraftFilterNotifyTriggerReducer),
+  __reducerSchema("upsert_discord_funding_target_template", UpsertDiscordFundingTargetTemplateReducer),
   __reducerSchema("upsert_discord_guild_install", UpsertDiscordGuildInstallReducer),
   __reducerSchema("upsert_discord_notify_target_template", UpsertDiscordNotifyTargetTemplateReducer),
+  __reducerSchema("upsert_funding_notify_trigger", UpsertFundingNotifyTriggerReducer),
   __reducerSchema("upsert_loyalty_bonus_total", UpsertLoyaltyBonusTotalReducer),
   __reducerSchema("upsert_loyalty_reward", UpsertLoyaltyRewardReducer),
   __reducerSchema("upsert_loyalty_rule", UpsertLoyaltyRuleReducer),
@@ -443,22 +681,69 @@ const proceduresSchema = __procedures(
   __procedureSchema("read_shared_filters", ReadSharedFiltersProcedure.params, ReadSharedFiltersProcedure.returnType),
 );
 
+type __SchemaWithTableAccessorAliases = Omit<typeof tablesSchema.schemaType, "tables"> & {
+  tables: typeof tablesSchema.schemaType.tables & {
+    /** @deprecated Use `steloCurrencyPolicy` instead. This alias will be removed in the next major version. */
+    readonly "stelo_currency_policy": Omit<typeof tablesSchema.schemaType.tables["steloCurrencyPolicy"], "accessorName"> & { readonly accessorName: "stelo_currency_policy" };
+    /** @deprecated Use `steloPayoutSchedule` instead. This alias will be removed in the next major version. */
+    readonly "stelo_payout_schedule": Omit<typeof tablesSchema.schemaType.tables["steloPayoutSchedule"], "accessorName"> & { readonly accessorName: "stelo_payout_schedule" };
+  };
+};
+
 /** The remote SpacetimeDB module schema, both runtime and type information. */
 const REMOTE_MODULE = {
   versionInfo: {
     cliVersion: "2.10.0" as const,
   },
-  tables: tablesSchema.schemaType.tables,
+  tables: tablesSchema.schemaType.tables as __SchemaWithTableAccessorAliases["tables"],
   reducers: reducersSchema.reducersType.reducers,
   ...proceduresSchema,
 } satisfies __RemoteModule<
-  typeof tablesSchema.schemaType,
+  __SchemaWithTableAccessorAliases,
   typeof reducersSchema.reducersType,
   typeof proceduresSchema
 >;
 
+const tableAccessorAliases = {
+  "stelo_currency_policy": "steloCurrencyPolicy",
+  "stelo_payout_schedule": "steloPayoutSchedule",
+} as const;
+
+function __withTableAccessorAliases<T extends object>(target: T, freeze = false): T {
+  const out = Object.create(Object.getPrototypeOf(target)) as T & Record<string, unknown>;
+  Object.defineProperties(out, Object.getOwnPropertyDescriptors(target));
+  for (const [deprecatedAccessor, targetAccessor] of Object.entries(tableAccessorAliases)) {
+    if (deprecatedAccessor in out) {
+      continue;
+    }
+    Object.defineProperty(out, deprecatedAccessor, {
+      enumerable: true,
+      configurable: false,
+      get: () => out[targetAccessor],
+    });
+  }
+  return freeze ? Object.freeze(out) : out;
+}
+
+type __DbViewBase = __DbConnectionImpl<typeof REMOTE_MODULE>["db"];
+export type DbView = __DbViewBase & {
+  /** @deprecated Use `steloCurrencyPolicy` instead. This alias will be removed in the next major version. */
+  readonly "stelo_currency_policy": __DbViewBase["steloCurrencyPolicy"];
+  /** @deprecated Use `steloPayoutSchedule` instead. This alias will be removed in the next major version. */
+  readonly "stelo_payout_schedule": __DbViewBase["steloPayoutSchedule"];
+};
+
+type __TablesBase = __QueryBuilder<typeof tablesSchema.schemaType>;
+export type Tables = __TablesBase & {
+  /** @deprecated Use `steloCurrencyPolicy` instead. This alias will be removed in the next major version. */
+  readonly "stelo_currency_policy": __TablesBase["steloCurrencyPolicy"];
+  /** @deprecated Use `steloPayoutSchedule` instead. This alias will be removed in the next major version. */
+  readonly "stelo_payout_schedule": __TablesBase["steloPayoutSchedule"];
+};
+
 /** The tables available in this remote SpacetimeDB module. Each table reference doubles as a query builder. */
-export const tables: __QueryBuilder<typeof tablesSchema.schemaType> = __makeQueryBuilder(tablesSchema.schemaType);
+const tablesBase: __TablesBase = __makeQueryBuilder(tablesSchema.schemaType);
+export const tables: Tables = __withTableAccessorAliases(tablesBase, true) as Tables;
 
 /** The reducers available in this remote SpacetimeDB module. */
 export const reducers = __convertToAccessorMap(reducersSchema.reducersType.reducers);
@@ -467,13 +752,13 @@ export const reducers = __convertToAccessorMap(reducersSchema.reducersType.reduc
 export const procedures = __convertToAccessorMap(proceduresSchema.procedures);
 
 /** The context type returned in callbacks for all possible events. */
-export type EventContext = __EventContextInterface<typeof REMOTE_MODULE>;
+export type EventContext = Omit<__EventContextInterface<typeof REMOTE_MODULE>, "db"> & { db: DbView };
 /** The context type returned in callbacks for reducer events. */
-export type ReducerEventContext = __ReducerEventContextInterface<typeof REMOTE_MODULE>;
+export type ReducerEventContext = Omit<__ReducerEventContextInterface<typeof REMOTE_MODULE>, "db"> & { db: DbView };
 /** The context type returned in callbacks for subscription events. */
-export type SubscriptionEventContext = __SubscriptionEventContextInterface<typeof REMOTE_MODULE>;
+export type SubscriptionEventContext = Omit<__SubscriptionEventContextInterface<typeof REMOTE_MODULE>, "db"> & { db: DbView };
 /** The context type returned in callbacks for error events. */
-export type ErrorContext = __ErrorContextInterface<typeof REMOTE_MODULE>;
+export type ErrorContext = Omit<__ErrorContextInterface<typeof REMOTE_MODULE>, "db"> & { db: DbView };
 /** The subscription handle type to manage active subscriptions created from a {@link SubscriptionBuilder}. */
 export type SubscriptionHandle = __SubscriptionHandleImpl<typeof REMOTE_MODULE>;
 
@@ -485,6 +770,13 @@ export class DbConnectionBuilder extends __DbConnectionBuilder<DbConnection> {}
 
 /** The typed database connection to manage connections to the remote SpacetimeDB instance. This class has type information specific to the generated module. */
 export class DbConnection extends __DbConnectionImpl<typeof REMOTE_MODULE> {
+  declare db: DbView;
+
+  constructor(config: __DbConnectionConfig<typeof REMOTE_MODULE>) {
+    super(config);
+    this.db = __withTableAccessorAliases(this.db) as DbView;
+  }
+
   /** Creates a new {@link DbConnectionBuilder} to configure and connect to the remote SpacetimeDB instance. */
   static builder = (): DbConnectionBuilder => {
     return new DbConnectionBuilder(REMOTE_MODULE, (config: __DbConnectionConfig<typeof REMOTE_MODULE>) => new DbConnection(config));

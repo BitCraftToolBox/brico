@@ -19,4 +19,5 @@ export default {
   get baselines() {
     return __t.array(AssignmentBaseline);
   },
+  sticky: __t.bool(),
 };

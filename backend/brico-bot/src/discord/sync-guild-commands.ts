@@ -10,6 +10,7 @@ import type {REST} from "@discordjs/rest";
 import {Routes} from "discord-api-types/v10";
 
 import type {Logger} from "../log.ts";
+import {warnOnCurrencyChoiceOverflow} from "./commands/pay.ts";
 import {registerGlobalCommands, registerGuildCommands} from "./register-guild-commands.ts";
 
 /** Max page size for `GET /users/@me/guilds`. */
@@ -31,6 +32,7 @@ async function listCurrentGuildIds(rest: REST): Promise<string[]> {
 
 export async function syncAllGuildCommands(options: {rest: REST; applicationId: string; conn: DbConnection; log: Logger}): Promise<void> {
     const {rest, applicationId, conn, log} = options;
+    warnOnCurrencyChoiceOverflow(log);
 
     const modeByGuildId = new Map<string, string>();
     for (const row of conn.db.allDiscordGuildInstall.iter()) modeByGuildId.set(row.guildId, row.commandMode);

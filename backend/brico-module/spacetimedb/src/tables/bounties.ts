@@ -48,6 +48,8 @@ export const bounty_rule = table(
         createdAt: t.timestamp(),
         updatedAt: t.timestamp(),
         deletedAt: t.option(t.timestamp()),
+        /** The caller's Stelo wallet (`linked_integration.id`) that funds this rule's bounties; required for an escrowed currency, absent otherwise. */
+        fundingLinkId: t.option(t.u64()).default(undefined),
     }
 );
 
@@ -67,6 +69,8 @@ export const craft_bounty_override = table(
         /** When true, this override's assignment goes to `craft_private_bounty_assignment` instead of the public `craft_bounty_assignment`. */
         private: t.bool(),
         updatedAt: t.timestamp(),
+        /** Same meaning as `bounty_rule.fundingLinkId`. */
+        fundingLinkId: t.option(t.u64()).default(undefined),
     }
 );
 
@@ -87,6 +91,8 @@ export const craft_bounty_assignment = table(
         assignedByAccountIdentity: t.identity(),
         assignedAt: t.timestamp(),
         updatedAt: t.timestamp(),
+        /** False when the assignment came from the craft's override: removing the override sends the craft back to its rules. True (the default) keeps the assignment against rule edits and deletions. */
+        sticky: t.bool().default(true),
     }
 );
 
@@ -106,5 +112,7 @@ export const craft_private_bounty_assignment = table(
         assignedByAccountIdentity: t.identity().index('btree'),
         assignedAt: t.timestamp(),
         updatedAt: t.timestamp(),
+        /** False when the assignment came from the craft's override: removing the override sends the craft back to its rules. True (the default) keeps the assignment against rule edits and deletions. */
+        sticky: t.bool().default(true),
     }
 );

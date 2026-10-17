@@ -17,6 +17,7 @@ import {AccountProvider} from "~/lib/account/state";
 import {useGameDataReady, useLoadingProgress} from "~/lib/bitcraft-data";
 import {isBotUserAgent} from "~/lib/bot-detect";
 import {FilterSyncProvider} from "~/lib/crafts/filter-sync";
+import {useWalletCurrencyAutoAdd} from "~/lib/crafts/shown-currencies";
 import {setActiveDataLocale} from "~/lib/data-translation";
 import {GlobalSearchProvider} from "~/lib/global-search-context";
 import {activateUILocale, i18n} from "~/lib/i18n";
@@ -30,6 +31,7 @@ function AppRoot(props: { children: any }) {
         sidebarStartsCollapsed, colorStorageManager, midnightDark,
         resolvedUILocale, resolvedDataLocale,
     } = useSettings();
+    useWalletCurrencyAutoAdd();
 
     // `allReady` gates the app UI behind a loading screen until every table has settled, and
     // also triggers the client-side search index build. For bots the data is already loaded at

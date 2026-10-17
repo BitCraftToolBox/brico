@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {describe, it} from "node:test";
-import {addRatio, advancePool, bonusFromMultiplier, computeEntitlement, fitFraction, multiplierFromBonus, parseDecimalRatio, reduceRatio} from "./entitlement.ts";
+import {addRatio, advancePool, bonusFromMultiplier, ceilRatio, computeEntitlement, escrowRequired, fitFraction, multiplierFromBonus, overlapRelease, parseDecimalRatio, reduceRatio, splitPayout} from "./entitlement.ts";
 
 describe("computeEntitlement", () => {
     it("matches the worked example: ratio 1 Hex Coin per 20 effort", () => {
@@ -153,10 +153,10 @@ describe("addRatio", () => {
     });
 });
 
-describe("advancePool", () => {
+describe("escrow pools", () => {
     const f = (numerator: bigint, denominator: bigint) => ({numerator, denominator});
 
-    it("floors and carries like the single-pool rule", () => {
+    it("advancePool matches the single-pool floor/carry rule", () => {
         let carry = f(0n, 1n);
         let total = 0n;
         for (const delta of [f(3n, 5n), f(3n, 5n), f(1n, 2n)]) {
@@ -168,20 +168,59 @@ describe("advancePool", () => {
         assert.deepEqual(carry, f(7n, 10n));
     });
 
-    it("rounds a carry that does not fit i64 down instead of overflowing", () => {
+    it("advancePool rounds a carry that does not fit i64 down instead of overflowing", () => {
         const {earned, remainder} = advancePool(f(1n, 2n ** 62n + 1n), f(1n, 2n ** 62n - 1n));
         assert.equal(earned, 0n);
         assert.ok(remainder.denominator <= 2n ** 63n - 1n);
         assert.ok(remainder.numerator * (2n ** 62n + 1n) * (2n ** 62n - 1n) <= (2n ** 62n - 1n + 2n ** 62n + 1n) * remainder.denominator);
     });
 
-    it("floors a negative delta so the carry stays in [0, 1)", () => {
+    it("advancePool floors a negative delta so the carry stays in [0, 1)", () => {
         const {earned, remainder} = advancePool(f(1n, 4n), f(-1n, 2n));
         assert.equal(earned, -1n);
         assert.deepEqual(remainder, f(3n, 4n));
     });
 
-    it("fitFraction leaves a fitting fraction exact", () => {
+    it("fitFraction rounds up when asked", () => {
+        const big = f(1n, 2n ** 64n + 1n);
+        assert.ok(fitFraction(big, true).numerator >= fitFraction(big).numerator);
         assert.deepEqual(fitFraction(f(3n, 7n)), f(3n, 7n));
+    });
+
+    it("Alice/Bob/Carol: base sums stay within the hold, effective sums would not", () => {
+        // base 1/20, effective 11/200; efforts 130/130/140 against a 400-effort craft.
+        assert.equal(ceilRatio(f(400n, 20n)), 20n);
+        const rows = [130n, 130n, 140n].map(effort => ({
+            G: advancePool(f(0n, 1n), reduceRatio(effort, 20n)),
+            F: advancePool(f(0n, 1n), reduceRatio(effort * 11n, 200n)),
+        }));
+        assert.deepEqual(rows.map(r => r.G.earned), [6n, 6n, 7n]);
+        assert.deepEqual(rows.map(r => r.F.earned), [7n, 7n, 7n]);
+        assert.deepEqual(rows.map(r => r.F.remainder), [f(3n, 20n), f(3n, 20n), f(7n, 10n)]);
+        assert.equal(rows.reduce((s, r) => s + r.G.earned, 0n), 19n);
+    });
+
+    it("escrowRequired: hold sizing, rate raise and cut", () => {
+        const zero = f(0n, 1n);
+        assert.equal(escrowRequired(zero, f(1n, 20n), 400n, 0n), 20n);
+        // 100 effort priced at 1/20 -> accrued 5; 300 remain. Raise to 1/15 needs 5 + 20 = 25.
+        assert.equal(escrowRequired(f(5n, 1n), f(1n, 15n), 400n, 100n), 25n);
+        // Cut to 1/30 needs 5 + 10 = 15.
+        assert.equal(escrowRequired(f(5n, 1n), f(1n, 30n), 400n, 100n), 15n);
+        // Over-priced effort adds nothing beyond accrued.
+        assert.equal(escrowRequired(f(21n, 2n), f(1n, 20n), 400n, 500n), 11n);
+    });
+
+    it("splitPayout pays the guaranteed part from escrow and the extras from the wallet", () => {
+        assert.deepEqual(splitPayout({total: 7n, guaranteedTotal: 6n, paidEscrow: 0n, paidDirect: 0n}), {owed: 7n, fromEscrow: 6n, fromWallet: 1n});
+        assert.deepEqual(splitPayout({total: 7n, guaranteedTotal: 7n, paidEscrow: 0n, paidDirect: 0n}), {owed: 7n, fromEscrow: 7n, fromWallet: 0n});
+        assert.deepEqual(splitPayout({total: 7n, guaranteedTotal: 7n, paidEscrow: 7n, paidDirect: 0n}), {owed: 0n, fromEscrow: 0n, fromWallet: 0n});
+    });
+
+    it("overlapRelease reclassifies a direct payment that became guaranteed (r = 1)", () => {
+        assert.equal(overlapRelease({total: 7n, guaranteedTotal: 6n, paidEscrow: 6n, paidDirect: 1n}), 0n);
+        assert.equal(overlapRelease({total: 7n, guaranteedTotal: 7n, paidEscrow: 6n, paidDirect: 1n}), 1n);
+        // Never more than was actually paid directly.
+        assert.equal(overlapRelease({total: 7n, guaranteedTotal: 7n, paidEscrow: 0n, paidDirect: 0n}), 0n);
     });
 });

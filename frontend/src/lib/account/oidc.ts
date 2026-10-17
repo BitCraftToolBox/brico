@@ -1,22 +1,19 @@
 /**
  * oidc.ts — SpacetimeAuth as an OIDC identity provider for the browser.
  *
- * `oidc-client-ts` is the library `react-oidc-context` wraps for React; it's framework-agnostic
- * (a plain `UserManager` class), so it works directly in Solid without a dedicated wrapper.
- *
- * This is deliberately just the OIDC dance — obtaining/refreshing/forgetting a `User` (which
+ * This is deliberately just the OIDC dance: obtaining/refreshing/forgetting a `User` (which
  * carries the `id_token` SpacetimeDB derives an `Identity` from). Turning that into a live
  * `brico-app` connection and a brico `account` row is `lib/account/state.tsx`'s job.
  *
- * `UserManager` touches `window`/`localStorage` in its constructor, so — mirroring the SSR
- * discipline in `lib/spacetime/connection.ts` — it is never constructed at module scope, only
- * lazily on first use from a browser-only call site (a click handler or an `onMount`).
+ * `UserManager` touches `window`/`localStorage` in its constructor, so it is never constructed
+ * at module scope, only lazily on first use from a browser-only call site.
  */
 import {type User, UserManager, WebStorageStateStore} from "oidc-client-ts";
 
 /** SpacetimeDB's own beta OIDC provider. Not configurable — there is only one. */
 const AUTHORITY = "https://auth.spacetimedb.com/oidc";
 
+/** Must match `backend/brico-module/spacetimedb/src/lib/auth.ts` */
 const CLIENT_ID = import.meta.env.VITE_SPACETIMEAUTH_CLIENT_ID as string ?? "client_034GOTUp60ggtFOXkImWEk";
 
 /** `openid` for the `sub` claim SpacetimeDB keys `Identity` on, `profile` for a display name. No `email` — no PII needed. */

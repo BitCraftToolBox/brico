@@ -8,9 +8,14 @@
     "./prism": "./prism/index.ts",
     "./prism/*": "./prism/*.ts",
     "./brico-app": "./brico-app/index.ts",
-    "./brico-app/*": "./brico-app/*.ts"
+    "./brico-app/*": "./brico-app/*.ts",
+    "./stelo": "./stelo/index.ts",
+    "./stelo/*": "./stelo/*.ts"
   },
   "dependencies": {
     "spacetimedb": "2.10.2"
+  },
+  "scripts": {
+    "generate:stelo": "node scripts/generate-stelo.mjs"
   }
 }

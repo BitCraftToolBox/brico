@@ -8,7 +8,7 @@ import {test} from "node:test";
 
 import {commands} from "./index.ts";
 import type {LeafCommand} from "./registry.ts";
-import {buildCommandTree, leavesForScope, resolveCommand, resolveModalLeaf} from "./registry.ts";
+import {buildCommandTree, leavesForScope, resolveCommand, resolveComponentLeaf, resolveModalLeaf} from "./registry.ts";
 
 const noop: LeafCommand["handler"] = async () => ({content: "ok"});
 
@@ -122,4 +122,16 @@ test("the real registered command set builds cleanly in both modes for each scop
         assert.doesNotThrow(() => buildCommandTree(scoped, "flat"));
         assert.doesNotThrow(() => buildCommandTree(scoped, "grouped"));
     }
+});
+
+test("resolveComponentLeaf matches a `componentPrefix:` custom_id and nothing sharing only the prefix text", () => {
+    const leaves: LeafCommand[] = [{path: ["pay", "record"], description: "x", handler: noop, componentPrefix: "pay_record"}];
+    assert.equal(resolveComponentLeaf(leaves, "pay_record:ok:hex-coin:1:5"), leaves[0]);
+    assert.equal(resolveComponentLeaf(leaves, "pay_record_other:ok"), null);
+});
+
+test("the pay commands register under one `pay` command with record and stelo subcommands", () => {
+    const [pay] = buildCommandTree(leavesForScope(commands, "guild").filter(leaf => leaf.path[0] === "pay"), "flat");
+    assert.equal(pay.name, "pay");
+    assert.deepEqual(pay.options?.map(option => option.name), ["record", "stelo"]);
 });

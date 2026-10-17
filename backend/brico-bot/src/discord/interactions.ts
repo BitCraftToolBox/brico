@@ -4,6 +4,7 @@ import type {
     APIChatInputApplicationCommandInteraction,
     APIInteraction,
     APIInteractionResponse,
+    APIMessageComponentInteraction,
     APIModalSubmitInteraction
 } from "discord-api-types/v10";
 import {InteractionResponseType, InteractionType, MessageFlags} from "discord-api-types/v10";
@@ -12,8 +13,8 @@ import type {IncomingMessage, ServerResponse} from "node:http";
 
 import type {Logger} from "../log.ts";
 import {commandInvocationsTotal} from "../metrics.ts";
-import type {CommandDeps, LeafCommand} from "./commands/registry.ts";
-import {resolveCommand, resolveModalLeaf} from "./commands/registry.ts";
+import type {CommandDeps, CommandReply, LeafCommand} from "./commands/registry.ts";
+import {resolveCommand, resolveComponentLeaf, resolveModalLeaf} from "./commands/registry.ts";
 
 export interface InteractionsHandlerOptions {
     /** Ed25519 public key from the Discord Developer Portal — every request is signed against this. */
@@ -40,10 +41,18 @@ function sendJson(res: ServerResponse, status: number, body: APIInteractionRespo
     res.end(json);
 }
 
-function messageResponse(content: string, ephemeral: boolean): APIInteractionResponse {
+function messageResponse(content: string, ephemeral: boolean, components?: CommandReply["components"]): APIInteractionResponse {
     return {
         type: InteractionResponseType.ChannelMessageWithSource,
-        data: {content, flags: ephemeral ? MessageFlags.Ephemeral : undefined},
+        data: {content, flags: ephemeral ? MessageFlags.Ephemeral : undefined, components},
+    };
+}
+
+/** Replaces the clicked message; `components: []` removes its buttons. */
+function updateResponse(reply: CommandReply): APIInteractionResponse {
+    return {
+        type: InteractionResponseType.UpdateMessage,
+        data: {content: reply.content, components: reply.components ?? []},
     };
 }
 
@@ -124,9 +133,28 @@ export function createInteractionsHandler(options: InteractionsHandlerOptions) {
             return;
         }
 
+        if (interaction.type === InteractionType.MessageComponent) {
+            const componentInteraction = interaction as APIMessageComponentInteraction;
+            const command = resolveComponentLeaf(options.leaves, componentInteraction.data.custom_id);
+            if (!command?.componentHandler) {
+                options.log.warn("unrecognized component interaction", {customId: componentInteraction.data.custom_id});
+                sendJson(res, 200, messageResponse("This button isn't recognized.", true));
+                return;
+            }
+            try {
+                sendJson(res, 200, updateResponse(await command.componentHandler(componentInteraction, options.deps)));
+            } catch (cause) {
+                options.log.error("component handler threw", {
+                    command: command.path.join("."),
+                    error: cause instanceof Error ? cause.message : String(cause),
+                });
+                sendJson(res, 200, updateResponse({content: "Something went wrong handling that button."}));
+            }
+            return;
+        }
+
         if (interaction.type !== InteractionType.ApplicationCommand) {
-            // No component handlers are registered.
-            options.log.warn("unhandled interaction type", {type: interaction.type});
+            options.log.warn("unhandled interaction type", {type: (interaction as {type: number}).type});
             sendJson(res, 200, messageResponse("This interaction type isn't supported yet.", true));
             return;
         }
@@ -145,7 +173,7 @@ export function createInteractionsHandler(options: InteractionsHandlerOptions) {
             if ("modal" in result) {
                 sendJson(res, 200, {type: InteractionResponseType.Modal, data: result.modal});
             } else {
-                sendJson(res, 200, messageResponse(result.content, result.ephemeral ?? true));
+                sendJson(res, 200, messageResponse(result.content, result.ephemeral ?? true, result.components));
             }
             status = "ok";
         } catch (cause) {

@@ -103,35 +103,35 @@ export function createPayoutLogAsContributor(): LiveReport<BountyPayoutLogRow> {
     );
 }
 
-/** One payer's earnings, broken down by one of the caller's own linked BitCraft player ids. */
+/** One payer's earnings in one currency, by one of the caller's own linked BitCraft player ids. */
 export interface ContributorPlayerLedger {
     playerId: string;
+    currency: string;
     effortTotal: bigint;
     earnedTotal: bigint;
     paidTotal: bigint;
 }
 
-/** One (payer, currency) group for the payee view — `/account/payouts`. */
+/** One payer group for the payee view — `/account/payouts`. Totals sum across currencies. */
 export interface ContributorPayerGroup {
     payerAccountIdentity: string;
     /** Always resolved server-side (see `ContributorEntitlementRow`'s doc comment) — never needs
      * client-side name resolution. */
     payerName: string;
-    currency: string;
     effortTotal: bigint;
     earnedTotal: bigint;
     paidTotal: bigint;
-    players: ContributorPlayerLedger[];
+    lines: ContributorPlayerLedger[];
 }
 
-/** Groups `myEntitlementsAsContributor` rows by `(payerAccountIdentity, currency)`, summing across
- * every one of the caller's own linked player ids that earned from that payer. */
+/** Groups `myEntitlementsAsContributor` rows by payer, one line per (player, currency). */
 export function groupContributorRows(rows: readonly ContributorEntitlementRow[]): ContributorPayerGroup[] {
     const groups = new Map<string, ContributorPayerGroup>();
     for (const row of rows) {
-        const key = `${row.payerAccountIdentity.toHexString()}:${row.currency}`;
-        const player: ContributorPlayerLedger = {
+        const key = row.payerAccountIdentity.toHexString();
+        const line: ContributorPlayerLedger = {
             playerId: row.payeePlayerId.toString(),
+            currency: row.currency,
             effortTotal: row.effortTotal,
             earnedTotal: row.earnedTotal,
             paidTotal: row.paidTotal,
@@ -141,109 +141,97 @@ export function groupContributorRows(rows: readonly ContributorEntitlementRow[])
             existing.effortTotal += row.effortTotal;
             existing.earnedTotal += row.earnedTotal;
             existing.paidTotal += row.paidTotal;
-            existing.players.push(player);
+            existing.lines.push(line);
         } else {
             groups.set(key, {
-                payerAccountIdentity: row.payerAccountIdentity.toHexString(),
+                payerAccountIdentity: key,
                 payerName: row.payerName,
-                currency: row.currency,
                 effortTotal: row.effortTotal,
                 earnedTotal: row.earnedTotal,
                 paidTotal: row.paidTotal,
-                players: [player],
+                lines: [line],
             });
         }
     }
     return [...groups.values()];
 }
 
-/** One payee player's ledger line under a payer-view group. */
+/** One (payee player, currency) ledger line under a payer-view group. */
 export interface PayeePlayerLedger {
     playerId: string;
-    effortTotal: bigint;
-    earnedTotal: bigint;
-    paidTotal: bigint;
-}
-
-/** One payee group for the payer view — `/account/payees`. Grouped under the payee's brico account
- * when the backend resolved one (`payeeName` set); otherwise this is a single ungrouped player. */
-export interface PayeeGroup {
-    /** `payeeAccountIdentity` hex when grouped, else `player:<id>` */
-    groupKey: string;
-    payeeName: string | null;
     currency: string;
+    /** The payee's brico account display name, when the backend resolved one. */
+    accountName: string | null;
     effortTotal: bigint;
     earnedTotal: bigint;
+    /** The part of `earnedTotal` an escrow hold covers (0 without escrow); the rest is unsecured. Payer view only. */
+    guaranteedTotal: bigint;
     paidTotal: bigint;
-    players: PayeePlayerLedger[];
 }
 
-export function groupPayerRows(rows: readonly PayerEntitlementRow[]): PayeeGroup[] {
+/** One payee group for the payer view — `/account/payees`. Totals sum across currencies. */
+export interface PayeeGroup {
+    /** `local:<name>`, the payee account identity hex, or `player:<id>` */
+    groupKey: string;
+    /** Local grouping name or account display name; null for an ungrouped player. */
+    payeeName: string | null;
+    /** True for a group built from one of the payer's local groupings. */
+    isLocal: boolean;
+    effortTotal: bigint;
+    earnedTotal: bigint;
+    guaranteedTotal: bigint;
+    paidTotal: bigint;
+    lines: PayeePlayerLedger[];
+}
+
+/**
+ * Groups `myEntitlementsAsPayer` rows by payee, one line per (player, currency). A player in one
+ * of the payer's own local groupings (`LocalPayeeGrouping`, `~/lib/settings`; first match wins)
+ * goes under that grouping, taking precedence over the player's brico account, so an account can
+ * be split across groups; remaining players group by account, else stand alone.
+ */
+export function groupPayerRows(rows: readonly PayerEntitlementRow[], groupings: readonly LocalPayeeGrouping[]): PayeeGroup[] {
+    const localName = new Map<string, string>();
+    for (const grouping of groupings) {
+        for (const playerId of grouping.playerIds) {
+            if (!localName.has(playerId)) localName.set(playerId, grouping.name);
+        }
+    }
     const groups = new Map<string, PayeeGroup>();
     for (const row of rows) {
-        const groupKey = row.payeeAccountIdentity ? `${row.payeeAccountIdentity.toHexString()}:${row.currency}` : `player:${row.payeePlayerId}:${row.currency}`;
-        const player: PayeePlayerLedger = {
-            playerId: row.payeePlayerId.toString(),
+        const playerId = row.payeePlayerId.toString();
+        const local = localName.get(playerId);
+        const groupKey = local !== undefined
+            ? `local:${local}`
+            : row.payeeAccountIdentity ? row.payeeAccountIdentity.toHexString() : `player:${playerId}`;
+        const line: PayeePlayerLedger = {
+            playerId,
+            currency: row.currency,
+            accountName: row.payeeName ?? null,
             effortTotal: row.effortTotal,
             earnedTotal: row.earnedTotal,
+            guaranteedTotal: row.guaranteedTotal,
             paidTotal: row.paidTotal,
         };
         const existing = groups.get(groupKey);
         if (existing) {
             existing.effortTotal += row.effortTotal;
             existing.earnedTotal += row.earnedTotal;
+            existing.guaranteedTotal += row.guaranteedTotal;
             existing.paidTotal += row.paidTotal;
-            existing.players.push(player);
+            existing.lines.push(line);
         } else {
             groups.set(groupKey, {
                 groupKey,
-                payeeName: row.payeeName ?? null,
-                currency: row.currency,
+                payeeName: local ?? row.payeeName ?? null,
+                isLocal: local !== undefined,
                 effortTotal: row.effortTotal,
                 earnedTotal: row.earnedTotal,
+                guaranteedTotal: row.guaranteedTotal,
                 paidTotal: row.paidTotal,
-                players: [player],
+                lines: [line],
             });
         }
     }
     return [...groups.values()];
-}
-
-/**
- * Merges `groupPayerRows`' otherwise-ungrouped single-player entries under the payer's own local
- * groupings (`LocalPayeeGrouping`, `~/lib/settings`) — a secondary, client-only lookup for payees
- * who haven't linked (or don't share) a brico account, so a payer can still aggregate them.
- */
-export function applyLocalGroupings(groups: readonly PayeeGroup[], groupings: readonly LocalPayeeGrouping[]): PayeeGroup[] {
-    const nameForPlayer = new Map<string, string>();
-    for (const grouping of groupings) {
-        for (const playerId of grouping.playerIds) {
-            if (!nameForPlayer.has(playerId)) nameForPlayer.set(playerId, grouping.name);
-        }
-    }
-    if (nameForPlayer.size === 0) return [...groups];
-
-    const merged = new Map<string, PayeeGroup>();
-    const result: PayeeGroup[] = [];
-    for (const group of groups) {
-        const soloId = group.payeeName === null && group.players.length === 1 ? group.players[0].playerId : null;
-        const localName = soloId ? nameForPlayer.get(soloId) : undefined;
-        if (!localName) {
-            result.push(group);
-            continue;
-        }
-        const key = `local:${localName}:${group.currency}`;
-        const existing = merged.get(key);
-        if (existing) {
-            existing.effortTotal += group.effortTotal;
-            existing.earnedTotal += group.earnedTotal;
-            existing.paidTotal += group.paidTotal;
-            existing.players.push(...group.players);
-        } else {
-            const combined: PayeeGroup = {...group, groupKey: key, payeeName: localName, players: [...group.players]};
-            merged.set(key, combined);
-            result.push(combined);
-        }
-    }
-    return result;
 }

@@ -1,7 +1,7 @@
 /**
- * watch-display-options.ts — `/watch display-limit` and `/watch display-sticky`: change `limit` /
+ * watch-display-options.ts — `/crafts display-limit` and `/crafts display-sticky`: change `limit` /
  * `stickyMinutes` on an existing display (the setup modal has no fields for them). Siblings of
- * `/watch display` rather than children, since a name can't be both a bare subcommand and a group.
+ * `/crafts display` rather than children, since a name can't be both a bare subcommand and a group.
  * Only edits an existing `discord_watch_display` row; it never creates one.
  */
 import {MAX_DISPLAY_ROWS_HARD_CAP, MAX_STICKY_MINUTES, MIN_STICKY_MINUTES} from "@brico/crafts/discord-display";
@@ -46,7 +46,7 @@ function makeWatchDisplayOptionCommand(spec: WatchDisplayOptionSpec): LeafComman
         if (!filter) return {content: "That filter is no longer available — pick it again."};
 
         const existing = findExistingDisplay(conn, accountIdentity, filterId, channelId);
-        if (!existing) return {content: `There's no watch display for "${filter.name}" in this channel yet — run \`/watch display\` first.`};
+        if (!existing) return {content: `There's no watch display for "${filter.name}" in this channel yet — run \`/crafts display\` first.`};
 
         try {
             await timeReducerCall("attach_discord_watch_display", conn.reducers.attachDiscordWatchDisplay({
@@ -97,8 +97,8 @@ function makeWatchDisplayOptionCommand(spec: WatchDisplayOptionSpec): LeafComman
     };
 }
 
-export const watchDisplayLimitCommand: LeafCommand = makeWatchDisplayOptionCommand({
-    path: ["watch", "display-limit"],
+export const craftsDisplayLimitCommand: LeafCommand = makeWatchDisplayOptionCommand({
+    path: ["crafts", "display-limit"],
     commandDescription: "Change how many crafts a watch display shows at once.",
     optionName: "cap",
     optionDescription: "Maximum number of crafts to show.",
@@ -108,8 +108,8 @@ export const watchDisplayLimitCommand: LeafCommand = makeWatchDisplayOptionComma
     formatSuccess: (filterName, value) => `Watch display for "${filterName}" now shows up to ${value} craft${value === 1 ? "" : "s"}.`,
 });
 
-export const watchDisplayStickyCommand: LeafCommand = makeWatchDisplayOptionCommand({
-    path: ["watch", "display-sticky"],
+export const craftsDisplayStickyCommand: LeafCommand = makeWatchDisplayOptionCommand({
+    path: ["crafts", "display-sticky"],
     commandDescription: "Change how often a watch display reposts itself to stay at the bottom of the channel.",
     optionName: "minutes",
     optionDescription: "Minutes between reposts (0 disables reposting).",

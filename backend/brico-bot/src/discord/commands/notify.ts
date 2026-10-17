@@ -1,8 +1,6 @@
 /**
- * notify.ts — `/watch notify-link`, `/watch notify-unlink` and `/watch notify-setup`, which manage
- * Discord notification sinks (one per channel) and per-filter targets. They are hyphenated
- * siblings rather than a `/watch notify` group because `LeafCommand.path` allows at most two
- * segments.
+ * notify.ts — `/notify link`, `/notify unlink` and `/crafts notify-setup`, which manage
+ * Discord notification sinks (one per channel) and per-filter targets.
  *
  * `notify-setup`'s modal has no room for a filter picker (4-component cap, see `watch.ts`), so the
  * filter id travels in the modal `custom_id` as `` `${WATCH_NOTIFY_SETUP_MODAL_ID}:${filterId}` ``
@@ -38,11 +36,11 @@ import {findOwnSavedFilter, labelField, watchDisplayFilterAutocomplete} from "./
 const FILTER_OPTION_NAME = "filter";
 const MENTIONABLE_OPTION_NAME = "mentionable";
 const WATCH_NOTIFY_SETUP_MODAL_ID = "watch_notify_setup";
-const MENTIONABLE_FIELD_ID = "mentionable";
+export const MENTIONABLE_FIELD_ID = "mentionable";
 const TEMPLATE_FIELD_IDS: Record<TriggerKind, string> = {added: "added", finished: "finished", removed: "removed"};
 
-/** The caller's own, non-tombstoned sink for this channel; `null` if `/watch notify-link` hasn't been run here. */
-function findOwnDiscordNotifySink(conn: DbConnection, accountIdentity: Identity, channelId: string): DiscordNotifySink | null {
+/** The caller's own, non-tombstoned sink for this channel; `null` if `/notify link` hasn't been run here. */
+export function findOwnDiscordNotifySink(conn: DbConnection, accountIdentity: Identity, channelId: string): DiscordNotifySink | null {
     return conn.db.allDiscordNotifySink.iter()
         .find(sink => sink.deletedAt === undefined && sink.accountIdentity.isEqual(accountIdentity) && sink.channelId === channelId) ?? null;
 }
@@ -91,13 +89,13 @@ const handleNotifyLink: CommandHandler = async (interaction: APIChatInputApplica
 
     return {
         content: existing
-            ? "This channel's notification settings are updated. Run `/watch notify-setup` to configure it for a saved filter."
-            : "This channel is now linked for notifications. Run `/watch notify-setup` to configure it for a saved filter.",
+            ? "This channel's notification settings are updated. Run `/crafts notify-setup` to configure it for a saved filter."
+            : "This channel is now linked for notifications. Run `/crafts notify-setup` to configure it for a saved filter.",
     };
 };
 
-export const watchNotifyLinkCommand: LeafCommand = {
-    path: ["watch", "notify-link"],
+export const notifyLinkCommand: LeafCommand = {
+    path: ["notify", "link"],
     description: "Link this channel as a Discord notification destination for your saved filters.",
     options: [
         {
@@ -133,13 +131,13 @@ const handleNotifyUnlink: CommandHandler = async (interaction: APIChatInputAppli
     return {content: "This channel is no longer linked for notifications."};
 };
 
-export const watchNotifyUnlinkCommand: LeafCommand = {
-    path: ["watch", "notify-unlink"],
+export const notifyUnlinkCommand: LeafCommand = {
+    path: ["notify", "unlink"],
     description: "Unlink this channel as a Discord notification destination.",
     handler: handleNotifyUnlink,
 };
 
-function mentionableField(mentionType: string | undefined, mentionId: string | undefined): APILabelComponent {
+export function mentionableField(mentionType: string | undefined, mentionId: string | undefined): APILabelComponent {
     return labelField(
         "Mentionable",
         {
@@ -202,7 +200,7 @@ const handleNotifySetup: CommandHandler = async (interaction: APIChatInputApplic
     const {conn, channelId} = ctx;
 
     const sink = findOwnDiscordNotifySink(conn, accountIdentity, channelId);
-    if (!sink) return {content: "This channel isn't linked yet — run `/watch notify-link` first."};
+    if (!sink) return {content: "This channel isn't linked yet — run `/notify link` first."};
 
     const filterId = stringOption(leafOptions(interaction), FILTER_OPTION_NAME);
     const filter = filterId ? findOwnSavedFilter(conn, accountIdentity, filterId) : undefined;
@@ -222,11 +220,11 @@ const handleNotifySetupSubmit: ModalSubmitHandler = async (interaction: APIModal
     const {conn, channelId} = ctx;
 
     const sink = findOwnDiscordNotifySink(conn, accountIdentity, channelId);
-    if (!sink) return {content: "This channel isn't linked yet — run `/watch notify-link` first."};
+    if (!sink) return {content: "This channel isn't linked yet — run `/notify link` first."};
 
     const filterId = interaction.data.custom_id.slice(`${WATCH_NOTIFY_SETUP_MODAL_ID}:`.length);
     const filter = findOwnSavedFilter(conn, accountIdentity, filterId);
-    if (!filter) return {content: "That filter is no longer available — run `/watch notify-setup` again."};
+    if (!filter) return {content: "That filter is no longer available — run `/crafts notify-setup` again."};
 
     const submission: APIModalSubmission = interaction.data;
     const mentionable: ModalMentionable | undefined = modalMentionableSelectValue(submission, MENTIONABLE_FIELD_ID);
@@ -256,8 +254,8 @@ const handleNotifySetupSubmit: ModalSubmitHandler = async (interaction: APIModal
     return {content: `Discord notifications for "${filter.name}" are set up in this channel.`};
 };
 
-export const watchNotifySetupCommand: LeafCommand = {
-    path: ["watch", "notify-setup"],
+export const craftsNotifySetupCommand: LeafCommand = {
+    path: ["crafts", "notify-setup"],
     description: "Configure Discord notifications for a saved filter in this channel.",
     options: [
         {

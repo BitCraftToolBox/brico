@@ -3,7 +3,12 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {t as __t,} from "spacetimedb";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
 export default __t.row({
   id: __t.u64().primaryKey(),
@@ -14,4 +19,9 @@ export default __t.row({
   externalId: __t.option(__t.string()).name("external_id"),
   externalHandle: __t.option(__t.string()).name("external_handle"),
   createdAt: __t.timestamp().name("created_at"),
+  candidateAddress: __t.option(__t.string()).name("candidate_address"),
+  pendingReason: __t.option(__t.string()).name("pending_reason"),
+  unverified: __t.bool(),
+  matchedUsername: __t.option(__t.string()).name("matched_username"),
+  confirmed: __t.bool(),
 });

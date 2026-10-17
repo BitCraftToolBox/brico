@@ -1,6 +1,6 @@
 /**
  * links.tsx — the `brico-app`-specific consumer of the generic connection layer, for linked
- * integrations (BitCraft via BitAuth, Discord). Same relationship to `lib/spacetime/brico-app.ts`
+ * integrations (BitCraft via BitAuth, Discord, Stelo wallets). Same relationship to `lib/spacetime/brico-app.ts`
  * that `lib/account/state.tsx` and `lib/notifications/state.tsx` have; mounted as a child of
  * `AccountProvider` (needs `useAccount()`) — see `app.tsx`.
  *
@@ -11,12 +11,22 @@
  *    `lib/account/brico-bot.ts`) to `brico-bot`, which finalizes server-side and redirects back to
  *    `/account?linked=<provider>` or `?linkError=...`.
  *
+ *  **Stelo wallets**: `beginLink("stelo")` then `submitSteloCandidate(code, address)`; `brico-bot`
+ *    verifies the address and finalizes. `steloWallets()` joins each active `stelo` link to its
+ *    registered wallet row and the bot's `canPull` mirror.
+ *
  * `linkDiscordShortcut` skips the ticket dance entirely for a connection whose own SpacetimeAuth
  * login was via Discord (`linkDiscordViaSpacetimeAuth`, gated module-side on that same claim).
  */
 import {tables} from "@brico/bindings/brico-app";
-import type {IntegrationLinkRequest, LinkedIntegration} from "@brico/bindings/brico-app/types";
-import {createContext, createEffect, createSignal, type JSX, untrack, useContext} from "solid-js";
+import type {
+    IntegrationLinkRequest,
+    LinkedIntegration,
+    SteloReceivingWallet,
+    SteloWallet,
+    SteloWalletStatus,
+} from "@brico/bindings/brico-app/types";
+import {createContext, createEffect, createMemo, createSignal, type JSX, untrack, useContext} from "solid-js";
 import {useAccount} from "~/lib/account/state";
 import {BRICO_APP_SERVER, bricoAppTable} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
@@ -29,12 +39,34 @@ import {useConnection} from "~/lib/spacetime/manager";
  */
 export const PENDING_LINK_CODE_KEY = "brico:pendingLinkCode";
 
+/** One of the caller's active Stelo wallet links, joined to its registered wallet row. */
+export interface SteloWalletView {
+    link: LinkedIntegration;
+    currency: string;
+    /** The wallet's `#ADDRESS` as recorded at link time (without the `#`). */
+    address: string;
+    /** This wallet receives payouts and refunds in its currency. */
+    isReceiving: boolean;
+    /** Whether `brico-bot` can pull from it; `undefined` until the bot has checked. */
+    canPull: boolean | undefined;
+    /** Whether the bot verified that the linker administers the wallet; `undefined` until it has checked. Only a verified wallet can fund bounties. */
+    verified: boolean | undefined;
+}
+
 export interface LinkedIntegrationsContextValue {
     /** The caller's own integration links, active ones only — revoked rows are kept module-side
      * for history, but nothing here needs to show them. */
     links: () => LinkedIntegration[];
     /** Pending out-of-band requests for this account, not yet finalized (e.g. "waiting on BitAuth"). */
     pendingRequests: () => IntegrationLinkRequest[];
+    /** The caller's registered Stelo wallets; an active `stelo` link whose wallet row hasn't been written yet is left out. */
+    steloWallets: () => SteloWalletView[];
+    /** `steloWallets()` on one currency's ledger. */
+    steloWalletsFor: (currency: string) => SteloWalletView[];
+    /** The `stelo` links the bot has not registered as wallets yet. */
+    unregisteredSteloLinks: () => LinkedIntegration[];
+    /** True once the first read of the link and wallet tables has applied. */
+    walletsReady: () => boolean;
     /** Starts a browser-initiated link and returns the correlation code to redirect `brico-bot`
      * with. Rejects if not connected. */
     beginLink: (provider: string) => Promise<string>;
@@ -44,6 +76,18 @@ export interface LinkedIntegrationsContextValue {
      * `useAccount().loginMethod() === "discord"`. */
     linkDiscordShortcut: () => Promise<void>;
     unlink: (id: bigint) => Promise<void>;
+    /**
+     * Names the Stelo account address (`#ABCDEF`, with or without the `#`) a pending `stelo` link request
+     * should verify. `unverified` lets the bot link an account it cannot verify ownership of, after
+     * `confirmLinkCandidate`; such a wallet can only receive payouts.
+     */
+    submitSteloCandidate: (code: string, address: string, unverified: boolean) => Promise<void>;
+    /** Accepts the account the bot matched for an unverified request (`pendingReason` `confirm-unverified`). */
+    confirmLinkCandidate: (code: string) => Promise<void>;
+    /** Abandons the caller's own unresolved link request. */
+    cancelLinkRequest: (code: string) => Promise<void>;
+    /** Makes one of the caller's wallets receive payouts and refunds in `currency`. */
+    setReceivingWallet: (currency: string, linkId: bigint) => Promise<void>;
 }
 
 /**
@@ -66,6 +110,17 @@ function sameLinkedIntegrations(a: LinkedIntegration[], b: LinkedIntegration[]):
     });
 }
 
+function sameRows<T>(a: T[], b: T[], same: (x: T, y: T) => boolean): boolean {
+    return a.length === b.length && a.every((row, i) => same(row, b[i]));
+}
+
+const sameWallets = (a: SteloWallet[], b: SteloWallet[]) =>
+    sameRows(a, b, (x, y) => x.linkId === y.linkId && x.currency === y.currency);
+const sameReceiving = (a: SteloReceivingWallet[], b: SteloReceivingWallet[]) =>
+    sameRows(a, b, (x, y) => x.linkId === y.linkId && x.currency === y.currency);
+const sameStatuses = (a: SteloWalletStatus[], b: SteloWalletStatus[]) =>
+    sameRows(a, b, (x, y) => x.linkId === y.linkId && x.canPull === y.canPull && x.verified === y.verified);
+
 const LinkedIntegrationsContext = createContext<LinkedIntegrationsContextValue>();
 
 export function LinkedIntegrationsProvider(props: {children: JSX.Element}) {
@@ -74,16 +129,28 @@ export function LinkedIntegrationsProvider(props: {children: JSX.Element}) {
 
     const [links, setLinks] = createSignal<LinkedIntegration[]>([], {equals: sameLinkedIntegrations});
     const [pendingRequests, setPendingRequests] = createSignal<IntegrationLinkRequest[]>([]);
+    const [wallets, setWallets] = createSignal<SteloWallet[]>([], {equals: sameWallets});
+    const [receiving, setReceiving] = createSignal<SteloReceivingWallet[]>([], {equals: sameReceiving});
+    const [statuses, setStatuses] = createSignal<SteloWalletStatus[]>([], {equals: sameStatuses});
+    const [walletsReady, setWalletsReady] = createSignal(false);
 
     function readRows() {
         const active = conn.active();
         if (!active) {
             setLinks([]);
             setPendingRequests([]);
+            setWallets([]);
+            setReceiving([]);
+            setStatuses([]);
+            setWalletsReady(false);
             return;
         }
         setLinks(active.db.myLinkedIntegration.iter().filter(l => l.revokedAt === undefined).toArray() as LinkedIntegration[]);
         setPendingRequests([...active.db.myIntegrationLinkRequest.iter()] as IntegrationLinkRequest[]);
+        setWallets([...active.db.mySteloWallet.iter()] as SteloWallet[]);
+        setReceiving([...active.db.mySteloReceivingWallet.iter()] as SteloReceivingWallet[]);
+        setStatuses([...active.db.mySteloWalletStatus.iter()] as SteloWalletStatus[]);
+        setWalletsReady(true);
     }
 
     let release: (() => void) | null = null;
@@ -95,7 +162,13 @@ export function LinkedIntegrationsProvider(props: {children: JSX.Element}) {
             conn.requestResource(
                 {
                     key: "links:self",
-                    tables: [bricoAppTable(tables.myLinkedIntegration), bricoAppTable(tables.myIntegrationLinkRequest)],
+                    tables: [
+                        bricoAppTable(tables.myLinkedIntegration),
+                        bricoAppTable(tables.myIntegrationLinkRequest),
+                        bricoAppTable(tables.mySteloWallet),
+                        bricoAppTable(tables.mySteloReceivingWallet),
+                        bricoAppTable(tables.mySteloWalletStatus),
+                    ],
                 },
                 readRows,
             )
@@ -107,7 +180,35 @@ export function LinkedIntegrationsProvider(props: {children: JSX.Element}) {
         release = null;
         setLinks([]);
         setPendingRequests([]);
+        setWallets([]);
+        setReceiving([]);
+        setStatuses([]);
+        setWalletsReady(false);
     }
+
+    const steloWallets = createMemo((): SteloWalletView[] => {
+        const registered = new Map(wallets().map(wallet => [wallet.linkId, wallet]));
+        const receivingLinks = new Set(receiving().map(row => row.linkId));
+        const status = new Map(statuses().map(row => [row.linkId, row]));
+        const views: SteloWalletView[] = [];
+        for (const link of links()) {
+            const wallet = link.provider === "stelo" ? registered.get(link.id) : undefined;
+            if (!wallet) continue;
+            views.push({
+                link,
+                currency: wallet.currency,
+                address: link.externalHandle ?? link.externalId,
+                isReceiving: receivingLinks.has(link.id),
+                canPull: status.get(link.id)?.canPull,
+                verified: status.get(link.id)?.verified,
+            });
+        }
+        return views;
+    });
+    const unregisteredSteloLinks = createMemo(() => {
+        const registered = new Set(wallets().map(wallet => wallet.linkId));
+        return links().filter(link => link.provider === "stelo" && !registered.has(link.id));
+    });
 
     // `acc.isLoggedIn()` is a `createMemo` at the source, so this only re-runs on the actual
     // boolean flip — see `account/state.tsx`'s doc comment on `account`.
@@ -141,9 +242,41 @@ export function LinkedIntegrationsProvider(props: {children: JSX.Element}) {
         await active.reducers.unlinkIntegration({id});
     }
 
+    async function submitSteloCandidate(code: string, address: string, unverified: boolean): Promise<void> {
+        const active = conn.active();
+        if (!active) throw new Error("Not connected");
+        await active.reducers.submitIntegrationLinkCandidate({code, candidate: address, unverified});
+    }
+
+    async function confirmLinkCandidate(code: string): Promise<void> {
+        const active = conn.active();
+        if (!active) throw new Error("Not connected");
+        await active.reducers.confirmIntegrationLinkCandidate({code});
+    }
+
+    async function cancelLinkRequest(code: string): Promise<void> {
+        const active = conn.active();
+        if (!active) throw new Error("Not connected");
+        await active.reducers.cancelIntegrationLinkRequest({code});
+    }
+
+    async function setReceivingWallet(currency: string, linkId: bigint): Promise<void> {
+        const active = conn.active();
+        if (!active) throw new Error("Not connected");
+        await active.reducers.setSteloReceivingWallet({currency, linkId});
+    }
+
     const value: LinkedIntegrationsContextValue = {
         links,
         pendingRequests,
+        steloWallets,
+        steloWalletsFor: currency => steloWallets().filter(wallet => wallet.currency === currency),
+        unregisteredSteloLinks,
+        walletsReady,
+        submitSteloCandidate,
+        confirmLinkCandidate,
+        cancelLinkRequest,
+        setReceivingWallet,
         beginLink,
         claimLink,
         linkDiscordShortcut,

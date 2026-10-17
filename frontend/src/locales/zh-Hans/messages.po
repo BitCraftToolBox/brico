@@ -19,11 +19,19 @@ msgstr ""
 "X-Crowdin-File-ID: 48\n"
 
 #: src/lib/crafts/error-vocab.ts
+msgid "A payout to that payee is already in progress."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
 msgid "That share code doesn't exist."
 msgstr ""
 
 #: src/routes/settings.tsx
 msgid "You are now a developer!"
+msgstr ""
+
+#: src/lib/notifications/funding.tsx
+msgid "Funding needs attention"
 msgstr ""
 
 #: src/routes/account/settings.tsx
@@ -57,6 +65,14 @@ msgstr "百科全书"
 msgid "Total Passive Slots"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Go to your <0>Stelo</0> account."
+msgstr ""
+
+#: src/components/crafts/FundingStatus.tsx
+msgid "Retries automatically."
+msgstr ""
+
 #: src/lib/table-defs/food-table.tsx
 msgid "Max Stamina"
 msgstr "最大耐力"
@@ -75,6 +91,10 @@ msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Edit bounty"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "For Stelo Hex Coin, link a wallet on your <0/> to receive payouts. They are sent in batches about once a day. <1>If you have no wallet linked, payouts are converted to the trust-backed Hex Coin ledger after a few days.</1> Brico.app no longer guarantees payouts after this rollover. Link a wallet before work on escrow-backed crafts pays out to avoid this."
 msgstr ""
 
 #. placeholder {0}: esp.radiusMin
@@ -115,6 +135,10 @@ msgstr ""
 msgid "Prospect for {target}"
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "Find crafts with a bounty in the <0/> and contribute as usual. There's nothing to sign up for; your share is tracked automatically."
+msgstr ""
+
 #. placeholder {0}: fixFloat(expStack.quantity)
 #: src/lib/table-defs/quests-table.tsx
 msgid "EXP: {0}"
@@ -142,6 +166,10 @@ msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "Warn Time"
+msgstr ""
+
+#: src/components/crafts/FundingStatus.tsx
+msgid "Intended rate"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -176,6 +204,10 @@ msgstr ""
 msgid "History"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That wallet can't fund bounties: Brico.app hasn't verified that you administer it."
+msgstr ""
+
 #. placeholder {0}: props.loaded
 #. placeholder {1}: props.total
 #: src/components/AppLoadingScreen.tsx
@@ -193,10 +225,6 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That isn't a known display style."
-msgstr ""
-
-#: src/routes/account/bounties.tsx
-msgid "The <0>Payouts I owe</0> tab shows a running total of what you owe each contributor. Once you've paid someone in-game, record it there so the ledger stays accurate."
 msgstr ""
 
 #. placeholder {0}: entries.length
@@ -232,6 +260,10 @@ msgstr ""
 msgid "Bounties"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "None of your linked characters is an Owner or Admin of that account on Stelo."
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/tools/placeable-graph.tsx
@@ -243,10 +275,6 @@ msgstr ""
 msgid "Terraform Elevation Difference {0}"
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-msgid "Remember that today's bounties are an honor system: the ledger tracks what you're owed, but the owner still has to trade you Hex Coin in-game. Only put in real effort on bounties from owners you trust to follow through."
-msgstr ""
-
 #: src/components/data-table/live-table.tsx
 msgid "No results."
 msgstr ""
@@ -254,10 +282,6 @@ msgstr ""
 #. placeholder {0}: props.row.name
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Copy {0} as JSON"
-msgstr ""
-
-#: src/routes/account/bounties.tsx
-msgid "<0>Automatically, with rules:</0> on the <1>Bounty rules</1> tab, set up filters (by claim, item, skill/tier, and more) and every new craft that matches gets a bounty assigned the moment it appears, with no manual work on your part. If more than one rule matches a craft, the highest-priority rule wins. You can reorder your rules to control which one takes precedence."
 msgstr ""
 
 #: src/routes/database/progression/index.tsx
@@ -308,6 +332,10 @@ msgstr "经验"
 msgid "Paving Tier:"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "set via <0>/crafts notify-setup</0> in Discord."
+msgstr ""
+
 #: src/routes/database/paving/[id].tsx
 #: src/routes/database/pillar-shaping/[id].tsx
 msgid "Build Time"
@@ -337,6 +365,14 @@ msgstr ""
 
 #: src/components/shared/PlaceableGraph.tsx
 msgid "→ {outputQty}× {outputName}"
+msgstr ""
+
+#: src/lib/notifications/funding.tsx
+msgid "View details"
+msgstr ""
+
+#: src/lib/crafts/funding-vocab.ts
+msgid "The account that linked the funding wallet is no longer an Admin or Owner of it."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -390,6 +426,10 @@ msgstr ""
 msgid "removed"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Link new wallet"
+msgstr ""
+
 #: src/routes/database/item/[id].tsx
 msgid "Knowledge Scroll"
 msgstr "知识卷轴"
@@ -436,6 +476,11 @@ msgstr ""
 msgid "Discard changes"
 msgstr ""
 
+#. placeholder {0}: name()
+#: src/lib/notifications/funding.tsx
+msgid "to {0}"
+msgstr ""
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "Set bounty"
 msgstr ""
@@ -455,6 +500,14 @@ msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Contributor"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Nothing is owed to that payee."
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "Not assigned yet"
 msgstr ""
 
 #: src/routes/account/bounty-rules.tsx
@@ -477,12 +530,21 @@ msgstr ""
 msgid "\"{flag}\" isn't a valid claim permission."
 msgstr ""
 
+#: src/components/crafts/FundingAlertsCard.tsx
+#: src/lib/crafts/funding-vocab.ts
+msgid "Funding failed"
+msgstr ""
+
 #: src/lib/crafts/error-vocab.ts
 msgid "Choose a sticky interval between {MIN_STICKY_MINUTES} and {MAX_STICKY_MINUTES} minutes."
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Output item tag"
+msgstr ""
+
+#: src/lib/notifications/funding.tsx
+msgid "A payout could not be pulled from your wallet"
 msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
@@ -504,6 +566,10 @@ msgstr ""
 msgid "Could not remove bounty"
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "You can add bounties to crafts you started or that sit in a claim you own:"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Show items grouped by category (tree) or sorted alphabetically."
 msgstr ""
@@ -520,6 +586,10 @@ msgstr ""
 
 #: src/routes/account/loyalty.tsx
 msgid "Could not delete loyalty reward"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "This craft has no funded bounty."
 msgstr ""
 
 #: src/routes/account/loyalty.tsx
@@ -589,6 +659,10 @@ msgstr ""
 msgid "Entitled"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Receiving wallet"
+msgstr ""
+
 #: src/lib/table-defs/collectible-table.tsx
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/collectible/[id].tsx
@@ -633,6 +707,7 @@ msgstr ""
 msgid "Default rows per page"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
 msgid "Unlink"
@@ -687,6 +762,10 @@ msgstr ""
 msgid "Name"
 msgstr "名称"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "This bounty's funding doesn't cover that rate yet."
+msgstr ""
+
 #: src/routes/database/skill/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Total"
@@ -706,6 +785,11 @@ msgstr ""
 
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Always Offered"
+msgstr ""
+
+#. placeholder {0}: selected.length
+#: src/components/crafts/CurrencyVisibilitySelect.tsx
+msgid "{0} currencies"
 msgstr ""
 
 #: src/routes/database/resource/[id].tsx
@@ -759,6 +843,14 @@ msgstr ""
 msgid "Search items, buildings, creatures..."
 msgstr ""
 
+#: src/lib/crafts/funding-vocab.ts
+msgid "Brico.app lost permission on the funding wallet."
+msgstr ""
+
+#: src/routes/account/payees.tsx
+msgid "Secured"
+msgstr ""
+
 #: src/routes/account/loyalty.tsx
 msgid "Log in to assign loyalty rewards."
 msgstr ""
@@ -769,6 +861,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Wiggle wiggle. Shake shake."
+msgstr ""
+
+#: src/routes/discord/installed.tsx
+msgid "Set up a live craft display with <0>/crafts display</0>."
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
@@ -816,6 +912,14 @@ msgstr ""
 msgid "This craft has no bounty assigned yet."
 msgstr ""
 
+#: src/components/crafts/FundingAlertsCard.tsx
+msgid "Get told when a bounty can't be funded from your Stelo wallet, a payout can't be pulled, or unclaimed money is moved. Discord channels appear once linked via <0>/notify link</0>."
+msgstr ""
+
+#: src/lib/crafts/funding-vocab.ts
+msgid "Brico.app needs Write access on the funding wallet."
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/item/[id].tsx
@@ -835,8 +939,16 @@ msgstr ""
 msgid "Placeable Placement"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Link your BitCraft account above first."
+msgstr ""
+
 #: src/components/crafts/FilterBuilder.tsx
 msgid "Copy group as JSON"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That Stelo transfer no longer exists."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -845,6 +957,10 @@ msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "If No, buff ticks down while offline."
+msgstr ""
+
+#: src/lib/crafts/payout-source.ts
+msgid "Unclaimed: returned to payer"
 msgstr ""
 
 #: src/components/Nav.tsx
@@ -862,8 +978,18 @@ msgstr "任务"
 msgid "Yields when eaten"
 msgstr ""
 
+#. placeholder {0}: request().candidateAddress
+#. placeholder {1}: name => <> owned by <b>{name()}</b></>
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Found <0>#{0}</0><1>{1}</1>. Payouts will be sent to this account without verifying you own it."
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
+msgstr ""
+
+#: src/lib/crafts/funding-vocab.ts
+msgid "Funded"
 msgstr ""
 
 #: src/lib/crafts/filter-condition.tsx
@@ -872,6 +998,10 @@ msgstr ""
 
 #: src/components/app-sidebar.tsx
 msgid "Showing favorites"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "Bounties can be paid in two main ways:"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -940,6 +1070,7 @@ msgstr ""
 msgid "Weapon"
 msgstr "武器"
 
+#: src/components/crafts/FundingAlertsCard.tsx
 #: src/routes/account/settings.tsx
 msgid "Toast"
 msgstr ""
@@ -959,6 +1090,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Jamba Be Praised"
+msgstr ""
+
+#: src/components/crafts/FundingStatus.tsx
+msgid "Released"
 msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
@@ -997,6 +1132,10 @@ msgstr ""
 msgid "A notification message can be at most {MAX_NOTIFY_TEMPLATE_LENGTH} characters."
 msgstr ""
 
+#: src/lib/notifications/funding.tsx
+msgid "Bounties could not be funded"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Strength Multiplier"
 msgstr ""
@@ -1005,6 +1144,7 @@ msgstr ""
 msgid "Self Buffs"
 msgstr ""
 
+#: src/components/crafts/FundingAlertsCard.tsx
 #: src/routes/account/settings.tsx
 msgid "(none)"
 msgstr ""
@@ -1034,7 +1174,13 @@ msgstr ""
 msgid "This action is restricted."
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "profile"
+msgstr ""
+
 #. placeholder {0}: discordMentionFor(props.filter.id, sink.id)?.name ?? _(msg`(none)`)
+#. placeholder {0}: settings.mentionFor(sink.id)?.name ?? _(msg`(none)`)
+#: src/components/crafts/FundingAlertsCard.tsx
 #: src/routes/account/settings.tsx
 msgid "Mention: {0}"
 msgstr ""
@@ -1086,6 +1232,10 @@ msgstr ""
 msgid "Used in"
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "A bounty rewards players for contributing to crafts. Everyone who helps earns a share in proportion to their effort."
+msgstr ""
+
 #. placeholder {0}: props.row.name
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Download {0}"
@@ -1100,6 +1250,10 @@ msgstr ""
 #: src/routes/database/pillar-shaping/[id].tsx
 msgid "Experience"
 msgstr "经验"
+
+#: src/components/crafts/FundingStatus.tsx
+msgid "No funds are held for this craft yet."
+msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/resource/[id].tsx
@@ -1131,6 +1285,14 @@ msgstr ""
 msgid "No valid filters found."
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Link Stelo wallets to fund craft bounties and to receive payouts and refunds."
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "This craft stays funded from its current wallet until the bounty is removed and added again."
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "Co-owner"
 msgstr ""
@@ -1147,6 +1309,10 @@ msgstr ""
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Verified. Linking…"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -1212,6 +1378,14 @@ msgstr "契据"
 msgid "Effort Required:"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Registering…"
+msgstr ""
+
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "None of your wallets are verified to fund bounties yet. Link one with Brico.app on it, on the <0>profile page</0>."
+msgstr ""
+
 #: src/routes/account/bounty-rules.tsx
 msgid "This can't be undone."
 msgstr ""
@@ -1264,6 +1438,14 @@ msgstr ""
 msgid "Light Radius"
 msgstr ""
 
+#: src/lib/crafts/funding-vocab.ts
+msgid "Stelo is unavailable right now."
+msgstr ""
+
+#: src/lib/crafts/funding-vocab.ts
+msgid "No funding wallet is chosen."
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "Every"
 msgstr ""
@@ -1272,8 +1454,16 @@ msgstr ""
 msgid "Options for the craft browser, a craft's detail page, and bounty rules."
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That Stelo transfer isn't valid: {reason}"
+msgstr ""
+
 #: src/routes/tools/crafts/browse.tsx
 msgid "Filters"
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "Assigned: <0/>"
 msgstr ""
 
 #: src/components/crafts/PayoutHistoryDialog.tsx
@@ -1301,10 +1491,6 @@ msgstr ""
 msgid "Brico's Toolbox Discord"
 msgstr ""
 
-#: src/routes/account/settings.tsx
-msgid "Discord columns appear once a channel or DM is linked via <0>/watch notify-link</0>."
-msgstr ""
-
 #: src/routes/database/deployable/[id].tsx
 msgid "Show After Logout"
 msgstr ""
@@ -1322,6 +1508,10 @@ msgstr ""
 msgid "Required Knowledge (Convert)"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "This bounty has not been funded yet."
+msgstr ""
+
 #: src/routes/database/paving/[id].tsx
 #: src/routes/database/pillar-shaping/[id].tsx
 msgid "Consumed Items"
@@ -1329,6 +1519,10 @@ msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Spawns"
+msgstr ""
+
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "<0>Link a Stelo wallet</0> first."
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -1352,6 +1546,7 @@ msgstr ""
 msgid "Durability"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/profile.tsx
@@ -1378,6 +1573,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Same as interface"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That funding alert setting belongs to a different account."
 msgstr ""
 
 #: src/components/Nav.tsx
@@ -1413,6 +1612,10 @@ msgstr ""
 msgid "Link via Discord"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Linking timed out, try again"
+msgstr ""
+
 #. placeholder {0}: props.table.getFilteredRowModel().rows.length
 #. placeholder {1}: props.table.getCoreRowModel().rows.length
 #: src/components/data-table/table-pagination.tsx
@@ -1430,10 +1633,6 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 msgid "Terraforming"
 msgstr "地形改造"
-
-#: src/routes/account/bounties.tsx
-msgid "You can also mark bounties as private. These won't be visible to anyone else browsing crafts, but they'll still be calculated and the payouts will show in the totals for both you and the crafter."
-msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Collapse sidebar by default"
@@ -1467,6 +1666,10 @@ msgstr ""
 msgid "Show row actions first"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "There is no escrowed balance for that payee."
+msgstr ""
+
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Ranges"
 msgstr ""
@@ -1493,6 +1696,10 @@ msgstr ""
 msgid "Ignores Damage"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Wallet linked"
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Click to toggle between percentage and weight"
 msgstr ""
@@ -1501,8 +1708,12 @@ msgstr ""
 msgid "Contribution"
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-msgid "Today, bounties are paid in Hex Coin. This is a <0>trust-based ledger</0>, not an automatic in-game transfer: the site keeps track of what's earned, but the actual Hex Coin still has to change hands in-game. Only work on bounties from owners you trust to pay you, and only mark a bounty as paid once you've actually sent the currency."
+#: src/components/crafts/FundingStatus.tsx
+msgid "Held for crafters:"
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "From"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -1520,6 +1731,10 @@ msgstr ""
 
 #: src/routes/account/settings.tsx
 msgid "Removed"
+msgstr ""
+
+#: src/lib/crafts/funding-vocab.ts
+msgid "The funding wallet account is invalid."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -1559,12 +1774,12 @@ msgstr ""
 msgid "Drops"
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-msgid "Trust-less bounties, where payment is held in escrow and paid out automatically, are coming soon via <0>Stelo <1/></0>."
-msgstr ""
-
 #: src/components/crafts/PayoutHistoryDialog.tsx
 msgid "No transactions yet."
+msgstr ""
+
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "This wallet is no longer linked. Choose another."
 msgstr ""
 
 #: src/components/app-sidebar.tsx
@@ -1580,12 +1795,12 @@ msgstr ""
 msgid "Craft Order"
 msgstr ""
 
-#: src/routes/database/creature/[id].tsx
-msgid "Stat Bonuses"
+#: src/lib/crafts/error-vocab.ts
+msgid "Enter a Stelo account address, like #ABCDEF."
 msgstr ""
 
-#: src/routes/discord/installed.tsx
-msgid "Get notified about matches with <0>/watch notify-link</0> then <1>/watch notify-setup</1>."
+#: src/routes/database/creature/[id].tsx
+msgid "Stat Bonuses"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -1613,6 +1828,11 @@ msgstr ""
 msgid "Recipe option"
 msgstr ""
 
+#. placeholder {0}: policy().afterDays
+#: src/routes/account/payouts.tsx
+msgid "Otherwise it is rolled over to <0/> {0, plural, one {# day} other {# days}} from its payout."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Item List Output"
 msgstr ""
@@ -1625,6 +1845,7 @@ msgstr ""
 msgid "Select at least one filter."
 msgstr ""
 
+#: src/routes/account/my-bounties.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Rate"
 msgstr ""
@@ -1652,8 +1873,10 @@ msgstr ""
 msgid "Hex Coin"
 msgstr ""
 
+#. placeholder {0}: props.selected.length
 #. placeholder {0}: selectedValues().length
 #: src/components/data-table/table-faceted-filter.tsx
+#: src/components/data-table/value-filter-popover.tsx
 msgid "{0} selected"
 msgstr ""
 
@@ -1668,6 +1891,12 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Item Lists"
+msgstr ""
+
+#: src/lib/account/route-tabs.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/my-bounties.tsx
+msgid "My bounties"
 msgstr ""
 
 #: src/routes/account/profile.tsx
@@ -1687,12 +1916,21 @@ msgstr ""
 msgid "Locked"
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "<0>Paying with Stelo:</0> link a wallet on your <1/> and pick it as the funding wallet on each rule or craft. The funds for the craft's remaining effort are held in escrow before the bounty starts. If you lower or remove the bounty, or the craft ends, whatever is unspent is refunded to that wallet. The <2>My bounties</2> tab shows each craft's funding status, and you can enable alerts for funding problems in your account settings."
+msgstr ""
+
 #: src/routes/account/bounty-rules.tsx
 msgid "Delete this rule?"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Paving Tile"
+msgstr ""
+
+#. placeholder {0}: dependents().naming
+#: src/routes/account/profile.tsx
+msgid "{0} bounty rules or overrides name it as the funding wallet; they stop being fundable."
 msgstr ""
 
 #. placeholder {0}: notification.event.craftId
@@ -1751,16 +1989,32 @@ msgstr ""
 msgid "Want to help translate Brico.app?"
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "Browse crafts with bounties, compare rates and set up notifications in the <0/>."
+msgstr ""
+
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Is Secret"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "<0>Automatically:</0> create filters on the <1>Bounty rules</1> tab. New matching crafts get a bounty as soon as they appear, and the highest-priority matching rule wins. Rules only apply to crafts without a bounty; edit a single craft directly to change it."
+msgstr ""
+
+#: src/lib/notifications/funding.tsx
+msgid "Money owed to you went unclaimed and was returned to the payer"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
 msgid "Minimum distance to Group:"
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-msgid "Bounties let craft owners reward other players for helping finish their crafts. An owner attaches a bounty to a craft and every player who contributes to that craft earns a share automatically, in proportion to how much effort they actually put in. Someone who does twice the work earns twice the payout."
+#: src/lib/crafts/funding-vocab.ts
+msgid "Funding…"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Enter the account address, like #ABCDEF."
 msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
@@ -1814,6 +2068,10 @@ msgstr ""
 msgid "is any of"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Read only: can receive, not fund"
+msgstr ""
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "That is not a craft id."
 msgstr ""
@@ -1825,6 +2083,10 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That isn't a known command layout."
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Brico.app is not on that account (or the address is wrong). Add it under Permissions and this retries by itself."
 msgstr ""
 
 #: src/lib/crafts/filter-condition.tsx
@@ -1863,6 +2125,15 @@ msgstr ""
 msgid "Dismiss all"
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "<0><1/></0> is a trust-based ledger. The site tracks what's owed, but the owner pays in-game and records it. Only work for owners you trust."
+msgstr ""
+
+#. placeholder {0}: policy().afterDays
+#: src/routes/account/payouts.tsx
+msgid "Otherwise it is returned to the payer {0, plural, one {# day} other {# days}} from its payout."
+msgstr ""
+
 #. placeholder {0}: describeFilterLocalized(node.child, label, labelFor)
 #: src/lib/crafts/filter-condition.tsx
 msgid "not ({0})"
@@ -1885,6 +2156,10 @@ msgstr ""
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Item"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Paste"
 msgstr ""
 
 #: src/routes/database/building/[id].tsx
@@ -1915,6 +2190,10 @@ msgstr ""
 #: src/lib/table-defs/abilities-table.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Stamina Cost"
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "Override"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -1975,6 +2254,10 @@ msgstr "生命值"
 msgid "Despawns"
 msgstr ""
 
+#: src/components/crafts/FundingStatus.tsx
+msgid "from override"
+msgstr ""
+
 #: src/lib/utils.ts
 msgid "Infinite"
 msgstr ""
@@ -2019,6 +2302,11 @@ msgstr ""
 msgid "Your Discord account is now linked."
 msgstr ""
 
+#. placeholder {0}: dependents().funded
+#: src/routes/account/profile.tsx
+msgid "{0} crafts are still funded from it; they keep accruing and refunds still reach it."
+msgstr ""
+
 #: src/routes/database/skill/[id].tsx
 msgid "Sell <0/> to {npcName}"
 msgstr ""
@@ -2029,6 +2317,20 @@ msgstr ""
 
 #: src/routes/tools/placeable-graph.tsx
 msgid "No placements found"
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "Loading your bounties…"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Unverified: can receive, not fund"
+msgstr ""
+
+#. placeholder {0}: relativeTime(atMs)
+#. placeholder {1}: dateText(atMs)
+#: src/components/crafts/PayoutScheduleLine.tsx
+msgid "Next Stelo payout: {0} ({1})"
 msgstr ""
 
 #: src/components/version-checker.tsx
@@ -2055,10 +2357,6 @@ msgstr ""
 msgid "That watch display no longer exists."
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-msgid "Browse the <0/> and look for crafts with a bounty attached. Just contribute effort to the craft as normal — there's nothing extra to sign up for. Your share of the bounty is tracked automatically as you go, based on how much effort you've put in relative to the craft's total."
-msgstr ""
-
 #. placeholder {0}: formatStatLabel(stat)
 #. placeholder {1}: formatStatValue(stat)
 #: src/routes/database/skill/[id].tsx
@@ -2073,6 +2371,10 @@ msgstr ""
 msgid "Choose the languages used for Brico's own text and for in-game text."
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Only Stelo currencies use a funding wallet."
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Experience Per Node"
 msgstr ""
@@ -2085,6 +2387,7 @@ msgstr ""
 msgid "Asc Multi"
 msgstr ""
 
+#: src/routes/account/my-bounties.tsx
 #: src/routes/tools/crafts/[id].tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "ready"
@@ -2115,11 +2418,19 @@ msgstr ""
 msgid "Required for Quests"
 msgstr ""
 
+#: src/routes/account/my-bounties.tsx
+msgid "You don't have any bounties yet. Set one on a craft or add a rule under Bounty rules."
+msgstr ""
+
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Strength"
 msgstr "力量"
+
+#: src/routes/account/profile.tsx
+msgid "It is your receiving wallet: payouts stop until you pick another."
+msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No drops"
@@ -2158,6 +2469,10 @@ msgstr ""
 msgid "Chance"
 msgstr ""
 
+#: src/routes/account/profile.tsx
+msgid "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "Claim Tier:"
 msgstr ""
@@ -2174,6 +2489,20 @@ msgstr ""
 msgid "Sell {itemName} to {npcName}"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Can fund bounties"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/account/index.tsx
+#: src/routes/account/loyalty.tsx
+#: src/routes/account/my-bounties.tsx
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Craft Bounties"
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "This prospecting is fixed at one contribution, regardless of bread crumb count."
 msgstr ""
@@ -2182,8 +2511,20 @@ msgstr ""
 msgid "Loading this craft…"
 msgstr ""
 
+#: src/lib/crafts/funding-vocab.ts
+msgid "Awaiting funding"
+msgstr ""
+
+#: src/components/crafts/FundingStatus.tsx
+msgid "Refund due"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Used By"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "\"{currency}\" isn't an escrowed currency."
 msgstr ""
 
 #: src/routes/account/loyalty.tsx
@@ -2250,6 +2591,10 @@ msgstr ""
 msgid "Note: overkill damage also grants XP. This is the minimum."
 msgstr ""
 
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "receiving"
+msgstr ""
+
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Occupants"
@@ -2270,6 +2615,10 @@ msgstr ""
 msgid "No stats found."
 msgstr ""
 
+#: src/components/crafts/FundingAlertsCard.tsx
+msgid "Payout shortfall"
+msgstr ""
+
 #: src/lib/table-defs/achievement-table.tsx
 #: src/routes/database/achievement/[id].tsx
 msgid "Achievement Points"
@@ -2277,10 +2626,6 @@ msgstr "成就点数"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Import"
-msgstr ""
-
-#: src/routes/account/bounties.tsx
-msgid "<0>One at a time:</0> find the craft in the <1/>, open it, and add a bounty directly from the craft's page."
 msgstr ""
 
 #: src/routes/database/skill/[id].tsx
@@ -2371,6 +2716,10 @@ msgstr ""
 msgid "No items visible <0>You know you can just collapse the sidebar, right? Did you just uncheck every single item to see what would happen?</0>"
 msgstr ""
 
+#: src/lib/notifications/funding.tsx
+msgid "Money owed to you went unclaimed and was rolled over"
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "is none of"
 msgstr ""
@@ -2383,6 +2732,14 @@ msgstr ""
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Duration"
+msgstr ""
+
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "Unlinked wallet"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "<0>Payouts I owe</0> shows what you owe each contributor. For Hex Coin, record each payment there once you've paid in-game. Stelo payments are made and recorded automatically."
 msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
@@ -2416,6 +2773,10 @@ msgstr ""
 msgid "No conditions — every craft matches."
 msgstr ""
 
+#: src/lib/crafts/funding-vocab.ts
+msgid "The funding wallet doesn't have enough funds."
+msgstr ""
+
 #: src/components/version-checker.tsx
 msgid "Latest available <0>(check preview <1/>)</0>"
 msgstr ""
@@ -2437,12 +2798,17 @@ msgstr "成长进度"
 msgid "Any"
 msgstr ""
 
+#: src/components/crafts/FundingAlertsCard.tsx
 #: src/routes/account/settings.tsx
 msgid "Reset to default wording"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That filter is too large (maximum {MAX_FILTER_JSON_LENGTH} bytes)."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Unclaimed money can only roll over to a manually recorded currency."
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
@@ -2458,6 +2824,10 @@ msgstr ""
 #: src/lib/table-defs/item-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Inventory stack: {0}"
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "Assigned"
 msgstr ""
 
 #: src/routes/database/item/[id].tsx
@@ -2492,10 +2862,6 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "When enabled, only your favorite items are shown in the sidebar."
-msgstr ""
-
-#: src/routes/account/bounties.tsx
-msgid "The <0>My payouts</0> tab shows what you've earned from every owner you've contributed to, and how much of that has actually been paid out."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -2564,6 +2930,10 @@ msgstr ""
 msgid "Crafting Slots"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Confirm and link"
+msgstr ""
+
 #: src/routes/account/profile.tsx
 msgid "BitCraft characters"
 msgstr ""
@@ -2575,6 +2945,10 @@ msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Copy share code"
+msgstr ""
+
+#: src/routes/account/profile.tsx
+msgid "Unlink this wallet?"
 msgstr ""
 
 #: src/routes/account/profile.tsx
@@ -2592,6 +2966,10 @@ msgstr ""
 
 #: src/routes/database/skill/[id].tsx
 msgid "Trade <0/> for <1/> to {npcName}"
+msgstr ""
+
+#: src/lib/crafts/filter-vocab.ts
+msgid "Stelo Hex Coin"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -2617,12 +2995,20 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: src/components/data-table/table-faceted-filter.tsx
+#: src/routes/account/payouts.tsx
+msgid "You are owed money in this currency but have no wallet to receive it. Link a wallet on your <0>profile</0>."
+msgstr ""
+
+#: src/components/data-table/value-filter-popover.tsx
 msgid "No results found."
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Deaggro Health"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Press Link."
 msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
@@ -2651,6 +3037,10 @@ msgstr ""
 msgid "Language for Brico's own labels, menus, and settings."
 msgstr ""
 
+#: src/routes/account/payees.tsx
+msgid "Backed by escrow. The rest is paid from your wallet at payout."
+msgstr ""
+
 #. placeholder {0}: group.total - group.matches.length
 #: src/routes/search.tsx
 msgid "+{0} more results (refine your query)"
@@ -2676,13 +3066,14 @@ msgstr ""
 msgid "Nobody has worked on this craft yet."
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-msgid "You can browse every craft that currently has a bounty attached, see the offered rates, and even get notifications in the <0/>."
-msgstr ""
-
 #. placeholder {0}: keys.length
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "{0, plural, one {# stat} other {# stats}}"
+msgstr ""
+
+#. placeholder {0}: (counts().get("failed") ?? 0) + (counts().get("waiting") ?? 0)
+#: src/routes/account/my-bounties.tsx
+msgid "{0, plural, one {# bounty is not funded. It keeps retrying; fix the reason shown below.} other {# bounties are not funded. They keep retrying; fix the reasons shown below.}}"
 msgstr ""
 
 #. placeholder {0}: fixFloat(props.probability * 100)
@@ -2726,10 +3117,6 @@ msgstr ""
 msgid "Hazard"
 msgstr ""
 
-#: src/routes/account/settings.tsx
-msgid "set via <0>/watch notify-setup</0> in Discord."
-msgstr ""
-
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -2753,12 +3140,12 @@ msgstr ""
 msgid "Interior Tier:"
 msgstr ""
 
-#: src/routes/account/settings.tsx
-msgid "Notifications for every saved filter configured here will stop. You can link it again later with <0>/watch notify-link</0>."
-msgstr ""
-
 #: src/lib/sidebar-items.ts
 msgid "Emblem Editor"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "The selected wallet receives payouts and refunds."
 msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
@@ -2769,8 +3156,8 @@ msgstr ""
 msgid "hex coin per day per occupied slot"
 msgstr ""
 
-#: src/routes/discord/installed.tsx
-msgid "Set up a live craft display with <0>/watch display</0>."
+#: src/components/crafts/FundingStatus.tsx
+msgid "Last failure:"
 msgstr ""
 
 #: src/lib/recipe-sources.tsx
@@ -2808,6 +3195,7 @@ msgstr ""
 msgid "Unlock achievement <0/>"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
 msgid "Something went wrong"
@@ -2827,6 +3215,10 @@ msgstr ""
 msgid "Movement"
 msgstr "移动"
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Pick a receiving wallet: payouts and refunds can't be sent until you do."
+msgstr ""
+
 #: src/routes/account/notifications.tsx
 msgid "No notifications yet."
 msgstr ""
@@ -2835,8 +3227,16 @@ msgstr ""
 msgid "A display's template can be at most {MAX_DISPLAY_TEMPLATE_LENGTH} characters."
 msgstr ""
 
+#: src/components/crafts/FundingStatus.tsx
+msgid "from rule"
+msgstr ""
+
 #: src/lib/table-utils/column-builders.tsx
 msgid "View Map"
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "Rule"
 msgstr ""
 
 #: src/lib/table-defs/equipment-table.tsx
@@ -2854,6 +3254,14 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "Your Discord login is missing required information — try logging in again."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That funding status isn't valid."
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "That account can't be linked as a wallet: it isn't on a supported ledger."
 msgstr ""
 
 #: src/lib/table-defs/deployables-table.tsx
@@ -2884,8 +3292,16 @@ msgctxt "not equals"
 msgid "{quantifier} {field} {cmpEl} {value}"
 msgstr ""
 
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "Brico.app needs Write access on this wallet before it can fund the bounty."
+msgstr ""
+
 #: src/routes/database/building/[id].tsx
 msgid "Terraform"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Stelo wallets"
 msgstr ""
 
 #: src/routes/account/settings.tsx
@@ -2925,8 +3341,16 @@ msgstr ""
 msgid "Payout display"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That payee can still be paid."
+msgstr ""
+
 #: src/routes/database/creature/[id].tsx
 msgid "Night Aggro Range"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "<0>One at a time:</0> open the craft in the <1/> and set a bounty on its page."
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -2990,6 +3414,10 @@ msgstr ""
 msgid "Skill"
 msgstr "技能"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That isn't one of your linked Stelo wallets."
+msgstr ""
+
 #: src/routes/database/creature/[id].tsx
 msgid "Scaled Armor"
 msgstr ""
@@ -3000,6 +3428,10 @@ msgstr ""
 
 #: src/routes/account/bounties.tsx
 msgid "For craft owners"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "(Optional) As a payer, create a separate account just for crafts to limit funds and permissions."
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -3014,6 +3446,14 @@ msgstr "技能"
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-utils/column-builders.tsx
 msgid "Buff Stats"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "That address exists on more than one ledger. Use the account's address on the Hex Coin ledger."
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Stelo account address"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -3047,6 +3487,10 @@ msgstr ""
 #: src/components/shared/DetailPageLayout.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
+msgstr ""
+
+#: src/routes/tools/crafts/browse.tsx
+msgid "Hidden currency"
 msgstr ""
 
 #. placeholder {0}: effort()
@@ -3149,6 +3593,7 @@ msgstr "收集"
 msgid "Attack Level"
 msgstr ""
 
+#: src/components/crafts/CurrencyFilterButton.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
@@ -3191,6 +3636,10 @@ msgstr ""
 msgid "Desc"
 msgstr ""
 
+#: src/routes/account/bounty-rules.tsx
+msgid "Changes to rules only affect crafts that don't have a bounty yet. To change a craft that already has one, set a bounty on that craft directly."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Collectibles"
 msgstr ""
@@ -3210,6 +3659,10 @@ msgstr ""
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirements"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Open the account, then Add Permission, App, and add the app <0>Brico.app <1>· wiz</1></0>. Payers must grant <2>Write</2> permissions to the app. Receiving payouts only needs <3>Read</3>, or use the option below to skip verification."
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -3237,6 +3690,10 @@ msgstr ""
 msgid "Near Building:"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Copy the account address (starts with #) and paste it here."
+msgstr ""
+
 #: src/routes/account/bounty-rules.tsx
 msgid "Move up"
 msgstr ""
@@ -3247,6 +3704,14 @@ msgstr ""
 #: src/routes/database/terraforming/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Effort"
+msgstr ""
+
+#: src/components/crafts/FundingAlertsCard.tsx
+msgid "set via <0>/funding notify-setup</0> in Discord."
+msgstr ""
+
+#: src/lib/crafts/funding-vocab.ts
+msgid "The funding wallet is no longer linked."
 msgstr ""
 
 #: src/components/data-table/table-column-header.tsx
@@ -3278,12 +3743,25 @@ msgstr ""
 msgid "Enemy Drops"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+#: src/routes/settings.tsx
+msgid "Which bounty currencies are offered. Currencies already in use stay visible."
+msgstr ""
+
 #: src/routes/account/bounty-rules.tsx
 msgid "Save and leave"
 msgstr ""
 
 #: src/routes/tools/crafts/browse.tsx
 msgid "Save Copy"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Confirm the account that was found before linking it."
+msgstr ""
+
+#: src/lib/crafts/funding-vocab.ts
+msgid "Funding is not complete."
 msgstr ""
 
 #: src/routes/account/link.tsx
@@ -3307,6 +3785,10 @@ msgstr ""
 msgid "Min Health"
 msgstr ""
 
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "read only"
+msgstr ""
+
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
@@ -3315,6 +3797,15 @@ msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "That share code has no importable filters."
+msgstr ""
+
+#: src/routes/account/bounty-rules.tsx
+#: src/routes/tools/crafts/[id].tsx
+msgid "Choose a linked Stelo wallet to fund this bounty."
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Checking…"
 msgstr ""
 
 #: src/routes/account/link.tsx
@@ -3414,6 +3905,14 @@ msgstr "研究"
 msgid "Huntable"
 msgstr ""
 
+#: src/routes/account/my-bounties.tsx
+msgid "Wallet"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "No account with that address exists on a supported ledger."
+msgstr ""
+
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Min Stamina"
@@ -3446,6 +3945,10 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Traveler Trade"
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "Log in to see the bounties you pay."
 msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
@@ -3484,6 +3987,7 @@ msgstr ""
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/link.tsx
 #: src/routes/account/loyalty.tsx
+#: src/routes/account/my-bounties.tsx
 #: src/routes/account/notifications.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
@@ -3549,6 +4053,14 @@ msgstr ""
 msgid "e.g. 1.05"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That Stelo wallet isn't linked to your account for this currency."
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "That account can't be linked yet."
+msgstr ""
+
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "equals"
 msgid "{quantifier} {field} {cmpEl} {value}"
@@ -3571,6 +4083,18 @@ msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Grows into"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "Bounties can be private: rates hidden from other players but totals still shown in payouts. The <0>Loyalty rewards</0> tab allows adding a bonus for specific players. For Stelo currencies, the bonus isn't placed in escrow, but pulled from your wallet when paying out. If that fails you'll be alerted and it's retried at the next payout."
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "That account can't be linked as a wallet: it is Brico's own escrow account."
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "Hex Coin bounties are an honor system: the owner still has to pay you in-game, so only work for owners you trust."
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -3644,13 +4168,8 @@ msgstr ""
 msgid "Wind Multiplier"
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-#: src/routes/account/bounty-rules.tsx
-#: src/routes/account/index.tsx
-#: src/routes/account/loyalty.tsx
-#: src/routes/account/payees.tsx
-#: src/routes/account/payouts.tsx
-msgid "Bounty payouts"
+#: src/components/account/SteloWalletsCard.tsx
+msgid "No wallets linked."
 msgstr ""
 
 #: src/routes/database/skill/[id].tsx
@@ -3670,6 +4189,7 @@ msgstr ""
 msgid "Search stats..."
 msgstr ""
 
+#: src/components/crafts/FundingAlertsCard.tsx
 #: src/components/Nav.tsx
 #: src/lib/account/route-tabs.tsx
 #: src/routes/account/index.tsx
@@ -3700,12 +4220,20 @@ msgstr "稀有度"
 msgid "Defense Level"
 msgstr ""
 
-#: src/components/data-table/table-faceted-filter.tsx
+#: src/components/data-table/value-filter-popover.tsx
 msgid "Clear filters"
 msgstr ""
 
 #: src/routes/account/settings.tsx
 msgid "The following settings require you to be logged in to function."
+msgstr ""
+
+#: src/lib/crafts/payout-source.ts
+msgid "Unclaimed: rolled over"
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "Status"
 msgstr ""
 
 #: src/routes/account/loyalty.tsx
@@ -3718,12 +4246,12 @@ msgstr ""
 msgid "Water Depth"
 msgstr ""
 
-#: src/lib/table-utils/detail-tab-builders.tsx
-msgid "Placeable Interaction"
+#: src/lib/crafts/error-vocab.ts
+msgid "That Discord funding alert setting belongs to a different account."
 msgstr ""
 
-#: src/routes/account/bounties.tsx
-msgid "Want to reward a specific player a bit extra — a trusted regular, a claim officer, and so on? The <0>Loyalty rewards</0> tab lets you set a payout multiplier for individual payees, on top of whatever their bounty already pays."
+#: src/lib/table-utils/detail-tab-builders.tsx
+msgid "Placeable Interaction"
 msgstr ""
 
 #: src/routes/database/item/[id].tsx
@@ -3745,6 +4273,14 @@ msgstr ""
 msgid "Region"
 msgstr ""
 
+#: src/lib/notifications/funding.tsx
+msgid "Unclaimed money was rolled over"
+msgstr ""
+
+#: src/components/crafts/FundingAlertsCard.tsx
+msgid "Unclaimed money moved"
+msgstr ""
+
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
@@ -3753,6 +4289,10 @@ msgstr ""
 
 #: src/routes/account/callback.tsx
 msgid "Signing you in…"
+msgstr ""
+
+#: src/components/crafts/FundingStatus.tsx
+msgid "Held"
 msgstr ""
 
 #: src/routes/database/item/[id].tsx
@@ -3775,11 +4315,17 @@ msgstr ""
 msgid "\"{currency}\" isn't a supported currency."
 msgstr ""
 
+#: src/components/crafts/FundingStatus.tsx
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Details"
 msgstr ""
 
+#: src/routes/discord/installed.tsx
+msgid "Get notified about matches with <0>/notify link</0> then <1>/crafts notify-setup</1>."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/account/my-bounties.tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "Craft"
 msgstr ""
@@ -3793,6 +4339,10 @@ msgstr ""
 msgid "Chance to spawn on last hit of resource extraction."
 msgstr ""
 
+#: src/routes/account/bounties.tsx
+msgid "<0>My payouts</0> shows what you've earned and what has been paid."
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Sidebar"
 msgstr ""
@@ -3803,10 +4353,6 @@ msgstr ""
 
 #: src/routes/account/profile.tsx
 msgid "Link another"
-msgstr ""
-
-#: src/routes/account/bounties.tsx
-msgid "You can only attach bounties to crafts you started yourself, or crafts sitting in a claim you own. There are two ways to do it:"
 msgstr ""
 
 #: src/routes/account/settings.tsx
@@ -3916,6 +4462,10 @@ msgstr ""
 msgid "Total for this craft's {0} effort."
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Choose which Stelo wallet funds this bounty."
+msgstr ""
+
 #: src/lib/recipe-sources.tsx
 msgid "Biomes:"
 msgstr ""
@@ -3937,6 +4487,10 @@ msgstr ""
 msgid "Hide"
 msgstr ""
 
+#: src/components/crafts/FundingAlertsCard.tsx
+msgid "Funding alerts"
+msgstr ""
+
 #: src/lib/table-defs/equipment-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Slots"
@@ -3955,6 +4509,11 @@ msgstr ""
 msgid "Structure"
 msgstr ""
 
+#. placeholder {0}: dateText((time() as {sinceMs: number}).sinceMs)
+#: src/components/crafts/PayoutScheduleLine.tsx
+msgid "Payout due since {0}"
+msgstr ""
+
 #: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/components/crafts/QuickFilterGrid.tsx
 msgid "Player"
@@ -3970,6 +4529,7 @@ msgstr ""
 
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/loyalty.tsx
+#: src/routes/account/my-bounties.tsx
 #: src/routes/account/notifications.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
@@ -4010,9 +4570,18 @@ msgstr ""
 msgid "Unstartable"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+#: src/routes/settings.tsx
+msgid "Currencies"
+msgstr ""
+
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 msgid "Extracted from"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Link without verifying. Skips read access and ownership checks from the app, but can only be used for receiving payouts."
 msgstr ""
 
 #: src/routes/account/profile.tsx
@@ -4041,6 +4610,12 @@ msgstr ""
 
 #: src/routes/database/buff/[id].tsx
 msgid "Source"
+msgstr ""
+
+#. placeholder {0}: totals.held.toLocaleString(uiLocale())
+#. placeholder {1}: totals.refundDue.toLocaleString(uiLocale())
+#: src/routes/account/payees.tsx
+msgid "held in escrow: {0}, refund due: {1}"
 msgstr ""
 
 #: src/components/crafts/LocalGroupingsManager.tsx
@@ -4092,6 +4667,10 @@ msgstr ""
 msgid "Show Time Left"
 msgstr ""
 
+#: src/components/crafts/FundingStatus.tsx
+msgid "Raising to"
+msgstr ""
+
 #: src/routes/database/cargo/[id].tsx
 msgid "Blocks Path"
 msgstr ""
@@ -4109,6 +4688,10 @@ msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
 msgid "Condition"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "Discord columns appear once a channel or DM is linked via <0>/notify link</0>."
 msgstr ""
 
 #: src/routes/database/traveler-task/[id].tsx
@@ -4131,12 +4714,25 @@ msgstr ""
 msgid "Icon"
 msgstr "图标"
 
+#. placeholder {0}: name()
+#: src/lib/notifications/funding.tsx
+msgid "from {0}"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Stamina Use"
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Input item tag"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "Notifications for every saved filter configured here will stop. You can link it again later with <0>/notify link</0>."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "This craft's bounty is already funded."
 msgstr ""
 
 #: src/components/shared/PlaceableGraph.tsx
@@ -4164,6 +4760,10 @@ msgstr ""
 msgid "Delete filter {0}"
 msgstr ""
 
+#: src/lib/notifications/funding.tsx
+msgid "Unclaimed money was returned to you"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/routes/database/biome/[id].tsx
 #: src/routes/database/skill/[id].tsx
@@ -4172,6 +4772,10 @@ msgstr "勘探"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Combat Stats"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Wallet already linked"
 msgstr ""
 
 #: src/lib/game-links.tsx
@@ -4236,6 +4840,14 @@ msgstr ""
 msgid "just now"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That wallet doesn't match the one you submitted."
+msgstr ""
+
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "This wallet is no longer verified: the account that linked it must be an Admin or Owner of it on Stelo."
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Lead In Time"
 msgstr ""
@@ -4261,8 +4873,20 @@ msgstr ""
 msgid "Mounting Radius"
 msgstr ""
 
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "Funding wallet"
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "Input item"
+msgstr ""
+
+#: src/routes/account/bounties.tsx
+msgid "<0><1/></0> is placed into escrow via <2/>. The owner's funds are locked up front and paid out automatically, so you don't need to trust them."
+msgstr ""
+
+#: src/lib/crafts/payout-source.ts
+msgid "Stelo payout"
 msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
@@ -4290,6 +4914,10 @@ msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Item Deed"
+msgstr ""
+
+#: src/routes/account/my-bounties.tsx
+msgid "Held:"
 msgstr ""
 
 #: src/lib/table-defs/deployables-table.tsx
@@ -4422,12 +5050,28 @@ msgstr ""
 msgid "Range:"
 msgstr ""
 
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Close"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Link"
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "Found an account. Confirm it below to link it."
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "How many rows are shown per page when a table first loads."
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "A loyalty reward's multiplier must be 1 or higher."
+msgstr ""
+
+#: src/components/account/SteloWalletsCard.tsx
+msgid "That account can't be linked as a wallet: it isn't a debit account."
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -4486,6 +5130,11 @@ msgstr ""
 msgid "Construct {buildingName}"
 msgstr ""
 
+#. placeholder {0}: sink.channelName ?? sink.channelId
+#: src/components/crafts/FundingAlertsCard.tsx
+msgid "Customize funding alerts for {0}"
+msgstr ""
+
 #: src/routes/tools/crafts/browse.tsx
 msgid "Advanced Filters"
 msgstr ""
@@ -4541,6 +5190,7 @@ msgid "everything"
 msgstr ""
 
 #: src/routes/account/bounty-rules.tsx
+#: src/routes/account/my-bounties.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Private"
 msgstr ""

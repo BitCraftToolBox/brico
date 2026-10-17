@@ -8,17 +8,19 @@ import type {DbConnection} from "@brico/bindings/brico-app";
 import type {CraftMeta} from "@brico/bindings/prism/types";
 import {matchAll} from "@brico/crafts/filter";
 import assert from "node:assert/strict";
-import {test} from "node:test";
+import {describe, test} from "node:test";
 import {Identity, Timestamp} from "spacetimedb";
 
 import type {RecipeIndex, RecipeStatic} from "../game-data/recipes.ts";
 import type {Logger} from "../log.ts";
 import {readSnapshot} from "../relay/prism.ts";
 import {createRowCache} from "../relay/row-cache.ts";
+import type {FundingDecision} from "../stelo/funding.ts";
 import {fakeTable} from "../testing/fake-table.ts";
 import {createAppCache} from "./app-cache.ts";
-import {bountyScope, createBountyEngine} from "./bounty-sink.ts";
+import {bountyScope, createBountyEngine, type EscrowFunding} from "./bounty-sink.ts";
 import type {BricoAppConnection} from "./connection.ts";
+import {createEscrowCache} from "./escrow-cache.ts";
 
 const quiet: Logger = {debug() {}, info() {}, warn() {}, error() {}, child: () => quiet};
 
@@ -104,7 +106,7 @@ function fakeModule(feeds: ReturnType<typeof createAppCache>, seed: number) {
                 const [into, other] = args.private
                     ? [tables.allPrivateCraftBountyAssignment, tables.allCraftBountyAssignment]
                     : [tables.allCraftBountyAssignment, tables.allPrivateCraftBountyAssignment];
-                into.upsert({craftId: args.craftId, ratioNumerator: args.ratioNumerator, ratioDenominator: args.ratioDenominator, currency: args.currency, assignedByAccountIdentity: args.assignedByAccountIdentity, assignedAt: args.assignedAt, updatedAt: args.updatedAt});
+                into.upsert({craftId: args.craftId, ratioNumerator: args.ratioNumerator, ratioDenominator: args.ratioDenominator, currency: args.currency, assignedByAccountIdentity: args.assignedByAccountIdentity, assignedAt: args.assignedAt, updatedAt: args.updatedAt, sticky: args.sticky});
                 other.remove(String(args.craftId));
                 for (const baseline of args.baselines) {
                     if (!find(tables.allCraftBountyEntitlement, r => r.craftId === args.craftId && r.playerId === baseline.playerId && r.currency === args.currency)) {
@@ -162,7 +164,7 @@ function fakeModule(feeds: ReturnType<typeof createAppCache>, seed: number) {
     };
 }
 
-function createSide(options: {forceFull: boolean; seed: number}) {
+function createSide(options: {forceFull: boolean; seed: number; funding?: EscrowFunding}) {
     const rowCache = createRowCache(RECIPES);
     const prism = {
         craftMeta: fakeTable<CraftMeta>(r => String(r.entityId), rowCache.craftMeta),
@@ -176,7 +178,7 @@ function createSide(options: {forceFull: boolean; seed: number}) {
     const appCache = createAppCache(quiet);
     const module = fakeModule(appCache, options.seed);
     const app = {connection: {connection: module.conn}, isLive: true} as unknown as BricoAppConnection;
-    const engine = createBountyEngine(app, appCache, quiet);
+    const engine = createBountyEngine(app, appCache, quiet, options.funding);
     let started = false;
 
     return {
@@ -273,8 +275,9 @@ function generator(seed: number) {
         },
         () => {
             const id = linkId++ % 5n, player = pick(PLAYERS), account = pick(ACCOUNTS), revoked = chance(0.2);
+            const revokedAt = revoked ? Timestamp.now() : undefined;
             return side => side.module.tables.allLinkedIntegration.upsert({
-                id, accountIdentity: account, provider: "bitcraft-ea2", externalId: player.toString(), revokedAt: revoked ? Timestamp.now() : undefined,
+                id, accountIdentity: account, provider: "bitcraft-ea2", externalId: player.toString(), revokedAt,
             });
         },
         () => {
@@ -306,9 +309,9 @@ function generator(seed: number) {
             const spec = chance(0.4)
                 ? {tag: "ClaimMembership", value: {claimEntityId: pick(CLAIMS.slice(1)), requiredAccess: pick(["member", "build", "officer", "owner"])}}
                 : {tag: "EffortThreshold", value: {allCurrencies: chance(0.5), threshold: BigInt(20 + int(300))}};
-            const numerator = BigInt(1 + int(3)), denominator = BigInt(pick([20, 40, 50]));
+            const numerator = BigInt(1 + int(3)), denominator = BigInt(pick([20, 40, 50])), updatedAt = Timestamp.now();
             return (side: Side) => side.module.tables.allLoyaltyRule.upsert({
-                id, payerAccountIdentity: payer, currency, spec, bonusRatioNumerator: numerator, bonusRatioDenominator: denominator, updatedAt: Timestamp.now(),
+                id, payerAccountIdentity: payer, currency, spec, bonusRatioNumerator: numerator, bonusRatioDenominator: denominator, updatedAt,
             });
         }),
         () => {
@@ -316,8 +319,8 @@ function generator(seed: number) {
             return side => side.module.tables.allLoyaltyRule.remove(id);
         },
         () => {
-            const id = loyaltyId++ % 4n, payer = pick(ACCOUNTS), player = pick(PLAYERS), currency = pick(CURRENCIES);
-            return side => side.module.tables.allLoyaltyReward.upsert({id, payerAccountIdentity: payer, payeePlayerId: player, currency, ratioNumerator: 21n, ratioDenominator: 20n, updatedAt: Timestamp.now()});
+            const id = loyaltyId++ % 4n, payer = pick(ACCOUNTS), player = pick(PLAYERS), currency = pick(CURRENCIES), updatedAt = Timestamp.now();
+            return side => side.module.tables.allLoyaltyReward.upsert({id, payerAccountIdentity: payer, payeePlayerId: player, currency, ratioNumerator: 21n, ratioDenominator: 20n, updatedAt});
         },
         () => {
             const id = String(pick([0n, 1n, 2n, 3n]));
@@ -443,4 +446,85 @@ test("a closed craft keeps its stored assignment until prism deletes the craft o
 
     side.prism.craftMeta.remove("1");
     assert.deepEqual(await side.tick(), ["clear 1"]);
+});
+
+test("editing or deleting a rule leaves crafts that already have an assignment alone, and only new crafts follow it", async () => {
+    const side = createSide({forceFull: false, seed: 1});
+    bountiedCraft(side);
+    assert.ok((await side.tick()).some(write => write.startsWith("assign 1 1/4 hex-coin")));
+
+    const rule = side.module.tables.allBountyRule.rows.get("rule")!;
+    side.module.tables.allBountyRule.upsert({...rule, value: {tag: "Flat", value: {ratioNumerator: 1n, ratioDenominator: 2n, currency: "hex-coin"}}});
+    assert.deepEqual(await side.tick(), [], "a rate edit does not reach the assigned craft");
+
+    side.prism.craftMeta.upsert(craftMeta(2n, 200n, 0n, 1, 1, "Active", FRESH));
+    assert.ok((await side.tick()).some(write => write.startsWith("assign 2 1/2 hex-coin")), "a new craft gets the edited rate");
+
+    side.module.tables.allBountyRule.upsert({...rule, deletedAt: Timestamp.now()});
+    assert.deepEqual(await side.tick(), [], "deleting the rule clears nothing that is already assigned");
+});
+
+test("removing an override sends its craft back to its rules", async () => {
+    const side = createSide({forceFull: false, seed: 1});
+    bountiedCraft(side);
+    await side.tick();
+    side.module.tables.allCraftBountyOverride.upsert({craftId: 1n, accountIdentity: ACCOUNTS[0], ratioNumerator: 1n, ratioDenominator: 2n, currency: "hex-coin", private: false});
+    assert.ok((await side.tick()).some(write => write.startsWith("assign 1 1/2 hex-coin")));
+
+    side.module.tables.allCraftBountyOverride.remove("1");
+    assert.ok((await side.tick()).some(write => write.startsWith("assign 1 1/4 hex-coin")), "the rule's rate applies again");
+});
+
+describe("escrowed bounties", () => {
+    function escrowedCraft(decide: () => FundingDecision) {
+        const gateCalls: string[] = [];
+        const funding: EscrowFunding = {
+            escrow: createEscrowCache(),
+            status: {report() {}, clear() {}, flush() {}},
+            gate: {
+                status: () => ({state: "waiting"}),
+                prepare(craftId, request, effortCovered) {
+                    gateCalls.push(`${craftId} ${request.ratioNumerator}/${request.ratioDenominator} ${request.fundingLinkId} ${effortCovered}`);
+                    return decide();
+                },
+            },
+        };
+        const side = createSide({forceFull: false, seed: 1, funding});
+        side.module.tables.allLinkedIntegration.upsert({id: 1n, accountIdentity: ACCOUNTS[0], provider: "bitcraft-ea2", externalId: "200", revokedAt: undefined});
+        side.module.tables.allBountyRule.upsert({
+            id: "rule", accountIdentity: ACCOUNTS[0], priority: 0, filterJson: JSON.stringify(matchAll()), private: false, fundingLinkId: 9n,
+            value: {tag: "Flat", value: {ratioNumerator: 1n, ratioDenominator: 4n, currency: "stelo-hex-coin"}}, deletedAt: undefined,
+        });
+        side.prism.craftMeta.upsert(craftMeta(1n, 200n, 0n, 1, 1, "Active", FRESH));
+        side.prism.craftContribution.upsert({craftId: 1n, playerId: 201n, contribution: 30});
+        return {side, gateCalls};
+    }
+
+    test("an unfunded bounty is neither assigned, priced nor shown until the gate says it is ready", async () => {
+        let decision: FundingDecision = "wait";
+        const {side, gateCalls} = escrowedCraft(() => decision);
+
+        assert.deepEqual(await side.tick(), []);
+        assert.deepEqual(await side.tick(), [], "still waiting");
+        assert.equal(side.rowCache.rows.get("1")?.subject.payout, null);
+        assert.ok(gateCalls.length >= 2, "the gate is asked again every tick");
+        assert.match(gateCalls[0]!, /^1 1\/4 9 /, "with the rule's rate and funding wallet");
+
+        decision = "ready";
+        const funded = await side.tick();
+        assert.ok(funded.some(write => write.startsWith("assign 1 1/4 stelo-hex-coin")), "assigned once funded");
+        await side.tick();
+        assert.notEqual(side.rowCache.rows.get("1")?.subject.payout, null);
+    });
+
+    test("a craft held for another payer keeps its assignment and nothing is rewritten", async () => {
+        let decision: FundingDecision = "ready";
+        const {side} = escrowedCraft(() => decision);
+        assert.ok((await side.tick()).some(write => write.startsWith("assign 1 ")));
+
+        decision = "keep";
+        const rule = side.module.tables.allBountyRule.rows.get("rule")!;
+        side.module.tables.allBountyRule.upsert({...rule, value: {tag: "Flat", value: {ratioNumerator: 1n, ratioDenominator: 2n, currency: "stelo-hex-coin"}}});
+        assert.deepEqual((await side.tick()).filter(write => write.startsWith("assign")), []);
+    });
 });

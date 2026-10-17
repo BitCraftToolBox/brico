@@ -85,6 +85,8 @@ export interface BridgeOptions {
      * evaluated in the same tick — see the ordering note in `tick`.
      */
     bounty?: BountyEngine;
+    /** The Stelo escrow step, run after the bounty steps each tick (see `createSteloManager`). */
+    stelo?: {step(hasEnded: (craftId: bigint) => boolean): void};
     /** The `brico-app` mirror `bounty` reads; its changes are drained each tick. Without one, `bounty` sees no `brico-app` changes. */
     appCache?: AppCache;
     /** Called once per tick with every open craft's resolved row (post-bounty-assignment), before watch matching. */
@@ -157,6 +159,7 @@ export function createBridge(options: BridgeOptions): Bridge {
             entitlementTimer();
 
             options.bounty.updateLoyaltyBonuses(cache.snapshot, scope);
+            options.stelo?.step(craftId => cache.snapshot.allCraftIds.has(craftId) && !cache.baseRows.has(craftId.toString()));
 
             stop = startStep("cache_assignments");
             cache.setAssignments(assigned.bounties, assigned.changed);

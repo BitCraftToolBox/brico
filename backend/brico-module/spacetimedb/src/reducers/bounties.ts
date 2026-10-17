@@ -5,6 +5,7 @@ import type {FilterField} from '@brico/crafts/filter';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount, requireServicePrincipal} from '../lib/auth';
 import {validateBountyCurrency, validateRatio} from '../lib/bounty';
+import {closeOpenEscrow, cutEscrowRatio, escrowRatio, findOpenEscrow, isEscrowedCurrency, ratioAtLeast, validateFundingWallet} from '../lib/escrow';
 import {requireValidFilterJson} from '../lib/filters';
 import {clampClientTimestamp, isAtLeastAsNew} from '../lib/sync';
 import {spacetimedb} from '../schema';
@@ -32,8 +33,16 @@ const AssignmentBaseline = t.object('AssignmentBaseline', {
  * `upsertSavedCraftFilter`.
  */
 export const upsertBountyRule = spacetimedb.reducer(
-    {id: t.string(), filterJson: t.string(), value: BountyRuleValue, priority: t.i32(), private: t.bool(), updatedAt: t.timestamp()},
-    (ctx, {id, filterJson, value, priority, private: isPrivate, updatedAt}) => {
+    {
+        id: t.string(),
+        filterJson: t.string(),
+        value: BountyRuleValue,
+        priority: t.i32(),
+        private: t.bool(),
+        updatedAt: t.timestamp(),
+        fundingLinkId: t.option(t.u64()),
+    },
+    (ctx, {id, filterJson, value, priority, private: isPrivate, updatedAt, fundingLinkId}) => {
         requireAccount(ctx);
         if (filterJson.length > MAX_FILTER_JSON_LENGTH) {
             throw new SenderError(CraftError.FILTER_TOO_LARGE);
@@ -45,6 +54,7 @@ export const upsertBountyRule = spacetimedb.reducer(
         } else {
             for (const cell of value.value.cells) validateRatio(cell.ratioNumerator, cell.ratioDenominator);
         }
+        validateFundingWallet(ctx, ctx.sender, value.value.currency, fundingLinkId);
 
         const existing = ctx.db.bounty_rule.id.find(id);
         if (existing !== null && !existing.accountIdentity.isEqual(ctx.sender)) {
@@ -65,6 +75,7 @@ export const upsertBountyRule = spacetimedb.reducer(
                 createdAt: ctx.timestamp,
                 updatedAt: clampedUpdatedAt,
                 deletedAt: undefined,
+                fundingLinkId,
             });
         } else {
             ctx.db.bounty_rule.id.update({
@@ -75,6 +86,7 @@ export const upsertBountyRule = spacetimedb.reducer(
                 private: isPrivate,
                 updatedAt: clampedUpdatedAt,
                 deletedAt: undefined,
+                fundingLinkId,
             });
         }
     }
@@ -148,11 +160,13 @@ export const upsertCraftBountyOverride = spacetimedb.reducer(
         currency: t.string(),
         private: t.bool(),
         updatedAt: t.timestamp(),
+        fundingLinkId: t.option(t.u64()),
     },
-    (ctx, {craftId, ratioNumerator, ratioDenominator, currency, private: isPrivate, updatedAt}) => {
+    (ctx, {craftId, ratioNumerator, ratioDenominator, currency, private: isPrivate, updatedAt, fundingLinkId}) => {
         requireAccount(ctx);
         validateBountyCurrency(currency);
         validateRatio(ratioNumerator, ratioDenominator);
+        validateFundingWallet(ctx, ctx.sender, currency, fundingLinkId);
 
         const existing = ctx.db.craft_bounty_override.craftId.find(craftId);
         if (existing !== null && !existing.accountIdentity.isEqual(ctx.sender)) {
@@ -171,6 +185,7 @@ export const upsertCraftBountyOverride = spacetimedb.reducer(
                 currency,
                 private: isPrivate,
                 updatedAt: clampedUpdatedAt,
+                fundingLinkId,
             });
         } else {
             ctx.db.craft_bounty_override.craftId.update({
@@ -180,6 +195,7 @@ export const upsertCraftBountyOverride = spacetimedb.reducer(
                 currency,
                 private: isPrivate,
                 updatedAt: clampedUpdatedAt,
+                fundingLinkId,
             });
         }
     }
@@ -215,15 +231,25 @@ export const deleteCraftBountyOverride = spacetimedb.reducer(
  * close.
  *
  * `baselines` (contributors' effort before this bounty) is applied only when this call creates the
- * assignment: each listed player without a `craft_bounty_entitlement` row gets one at that effort
- * (with `assignedAt` as `updatedAt`, so it is not seen as a gap), so `upsertCraftBountyEntitlement`
- * prices only later effort. Omit players whose existing effort should be paid in full.
+ * assignment or changes its currency: each listed player without a `craft_bounty_entitlement` row in
+ * the new currency gets one at that effort (with `assignedAt` as `updatedAt`, so it is not seen as a
+ * gap), so `upsertCraftBountyEntitlement` prices only later effort. Omit players whose existing effort
+ * should be paid in full. A currency change also moves forward such a row left from an earlier stint
+ * in that currency, and moving off an escrowed currency closes the craft's hold.
  *
  * `private` (sourced from whichever rule/override matched) selects which of the two mutually
  * exclusive assignment tables gets the row — the other table's row for this craft, if any, is
  * deleted, so a craft never has a resolved assignment in both at once (e.g. a rule that used to be
  * public and is now marked private). Switching tables is itself a delete-then-insert, so it resets
  * `assignedAt` in the table gaining the row — same as any other clear-then-reassign.
+ *
+ * For an escrowed currency the craft must already have an open hold of the same payer and currency
+ * (`craft_bounty_escrow`) securing at least `ratio`: a higher ratio is rejected, and a lower one
+ * cuts the hold in this same transaction, releasing the surplus. `ratio` is always the base ratio;
+ * loyalty never reaches this table.
+ *
+ * `sticky` is false for an assignment resolved from the craft's override and true for one from a
+ * rule; `brico-bot` keeps a sticky assignment against rule edits and deletions.
  */
 export const assignCraftBounty = spacetimedb.reducer(
     {
@@ -236,20 +262,43 @@ export const assignCraftBounty = spacetimedb.reducer(
         assignedAt: t.timestamp(),
         updatedAt: t.timestamp(),
         baselines: t.array(AssignmentBaseline),
+        sticky: t.bool(),
     },
-    (ctx, {craftId, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, private: isPrivate, assignedAt, updatedAt, baselines}) => {
+    (ctx, {craftId, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, private: isPrivate, assignedAt, updatedAt, baselines, sticky}) => {
         requireServicePrincipal(ctx);
         validateBountyCurrency(currency);
         if (ctx.db.account.identity.find(assignedByAccountIdentity) === null) {
             throw new SenderError(CraftError.UNKNOWN_BRICO_ACCOUNT);
         }
 
-        if (ctx.db.craft_bounty_assignment.craftId.find(craftId) === null
-            && ctx.db.craft_private_bounty_assignment.craftId.find(craftId) === null) {
+        if (isEscrowedCurrency(currency)) {
+            const escrow = findOpenEscrow(ctx, craftId);
+            if (escrow === null || escrow.currency !== currency || !escrow.payerAccountIdentity.isEqual(assignedByAccountIdentity)) {
+                throw new SenderError(CraftError.ESCROW_REQUIRED);
+            }
+            const ratio = {numerator: ratioNumerator, denominator: ratioDenominator};
+            if (!ratioAtLeast(escrowRatio(escrow), ratio)) throw new SenderError(CraftError.ESCROW_RATIO_EXCEEDED);
+            if (!ratioAtLeast(ratio, escrowRatio(escrow))) cutEscrowRatio(ctx, escrow, ratio);
+        }
+
+        const current = ctx.db.craft_bounty_assignment.craftId.find(craftId) ?? ctx.db.craft_private_bounty_assignment.craftId.find(craftId);
+        if (current === null) {
             for (const {playerId, effort} of baselines) {
                 if ([...ctx.db.craft_bounty_entitlement.by_craft_player_currency.filter([craftId, playerId, currency])].length > 0) continue;
                 ctx.db.craft_bounty_entitlement.insert({id: 0n, craftId, playerId, currency, lastAssignedEffort: effort, updatedAt: assignedAt});
             }
+        } else if (current.currency !== currency) {
+            // Switching currency: effort so far belongs to the old currency, so the new one starts from
+            // `baselines`, moving forward a row left over from an earlier stint in this currency.
+            for (const {playerId, effort} of baselines) {
+                const row = [...ctx.db.craft_bounty_entitlement.by_craft_player_currency.filter([craftId, playerId, currency])][0];
+                if (row === undefined) {
+                    ctx.db.craft_bounty_entitlement.insert({id: 0n, craftId, playerId, currency, lastAssignedEffort: effort, updatedAt: assignedAt});
+                } else if (effort > row.lastAssignedEffort) {
+                    ctx.db.craft_bounty_entitlement.id.update({...row, lastAssignedEffort: effort, updatedAt: assignedAt});
+                }
+            }
+            if (!isEscrowedCurrency(currency)) closeOpenEscrow(ctx, craftId);
         }
 
         if (isPrivate) {
@@ -259,11 +308,11 @@ export const assignCraftBounty = spacetimedb.reducer(
             const existing = ctx.db.craft_private_bounty_assignment.craftId.find(craftId);
             if (existing === null) {
                 ctx.db.craft_private_bounty_assignment.insert({
-                    craftId, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, assignedAt, updatedAt,
+                    craftId, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, assignedAt, updatedAt, sticky,
                 });
             } else {
                 ctx.db.craft_private_bounty_assignment.craftId.update({
-                    ...existing, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, updatedAt,
+                    ...existing, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, updatedAt, sticky,
                 });
             }
         } else {
@@ -273,18 +322,18 @@ export const assignCraftBounty = spacetimedb.reducer(
             const existing = ctx.db.craft_bounty_assignment.craftId.find(craftId);
             if (existing === null) {
                 ctx.db.craft_bounty_assignment.insert({
-                    craftId, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, assignedAt, updatedAt,
+                    craftId, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, assignedAt, updatedAt, sticky,
                 });
             } else {
                 ctx.db.craft_bounty_assignment.craftId.update({
-                    ...existing, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, updatedAt,
+                    ...existing, ratioNumerator, ratioDenominator, currency, assignedByAccountIdentity, updatedAt, sticky,
                 });
             }
         }
     }
 );
 
-/** Written by `brico-bot` when a craft no longer resolves to any override or matching rule, or the craft no longer exists in prism (post-24-hour-expiry). Clears both the public and private assignment tables — the bot doesn't need to know which one held the row. */
+/** Written by `brico-bot` when a craft no longer resolves to any override or matching rule, or the craft no longer exists in prism (post-24-hour-expiry). Clears both the public and private assignment tables — the bot doesn't need to know which one held the row. Also releases and closes the craft's escrow hold, if it has one. */
 export const clearCraftBounty = spacetimedb.reducer(
     {craftId: t.u64()},
     (ctx, {craftId}) => {
@@ -295,5 +344,6 @@ export const clearCraftBounty = spacetimedb.reducer(
         if (ctx.db.craft_private_bounty_assignment.craftId.find(craftId) !== null) {
             ctx.db.craft_private_bounty_assignment.craftId.delete(craftId);
         }
+        closeOpenEscrow(ctx, craftId);
     }
 );

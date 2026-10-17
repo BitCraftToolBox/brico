@@ -3,8 +3,15 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {t as __t,} from "spacetimedb";
-import {BountyRuleValue,} from "./types";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
+import {
+  BountyRuleValue,
+} from "./types";
 
 
 export default __t.row({
@@ -19,4 +26,5 @@ export default __t.row({
   createdAt: __t.timestamp().name("created_at"),
   updatedAt: __t.timestamp().name("updated_at"),
   deletedAt: __t.option(__t.timestamp()).name("deleted_at"),
+  fundingLinkId: __t.option(__t.u64()).name("funding_link_id"),
 });

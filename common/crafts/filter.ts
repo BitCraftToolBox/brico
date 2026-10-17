@@ -15,6 +15,8 @@
 
 // ── Fields ────────────────────────────────────────────────────
 
+import {BOUNTY_CURRENCIES, CURRENCY_LABELS} from "./currencies";
+
 /** Every property of a craft a filter can test. */
 export type FilterField =
     | "region"
@@ -87,25 +89,6 @@ export const CLAIM_ACCESS_FLAG_LABELS: Record<ClaimAccessFlag, string> = {
     officer: "Officer",
     coOwner: "Co-owner",
     owner: "Owner",
-};
-
-/**
- * The bounty currencies a craft's payout can be denominated in.
- */
-export const BOUNTY_CURRENCIES: readonly string[] = ["hex-coin"];
-
-/**
- * The currencies that are trust-based ledgers. Payers can make payouts to these without verification.
- */
-export const MANUALLY_RECORDED_BOUNTY_CURRENCIES: readonly string[] = ["hex-coin"];
-
-export const CURRENCY_LABELS: Record<string, string> = {
-    "hex-coin": "Hex Coin",
-};
-
-export const CURRENCY_EMOJI: Record<string, string> = {
-    "hex-coin": "<:HexCoin:1555600295235559514>",
-    "stelo-hex-coin": "<:Stelo:1555606560028368936>",
 };
 
 export type FilterValue = string | number | boolean;

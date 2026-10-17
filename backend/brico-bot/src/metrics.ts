@@ -116,7 +116,7 @@ export const notificationsTotal = new Counter({
     registers: [registry],
 });
 
-/** `/watch display` messages currently being kept in sync. */
+/** `/crafts display` messages currently being kept in sync. */
 export const activeDisplays = new Gauge({
     name: "brico_bot_active_displays",
     help: "Live Discord watch displays",
@@ -171,3 +171,18 @@ export function timeReducerCall<T>(reducer: string, call: Promise<T>): Promise<T
         },
     );
 }
+
+/** 1 while an escrow wallet's live balance disagrees with the books and outgoing Stelo transfers are paused. */
+export const steloEscrowDrift = new Gauge({
+    name: "brico_bot_stelo_escrow_drift",
+    help: "1 while an escrow wallet's balance disagrees with the escrow books (outgoing transfers paused)",
+    labelNames: ["currency"],
+    registers: [registry],
+});
+
+/** Transfers into or out of an escrow wallet that no intent explains (e.g. a manual deposit). */
+export const steloUnknownTransfersTotal = new Counter({
+    name: "brico_bot_stelo_unknown_transfers_total",
+    help: "Stelo transfers touching an escrow wallet with no matching transfer intent",
+    registers: [registry],
+});

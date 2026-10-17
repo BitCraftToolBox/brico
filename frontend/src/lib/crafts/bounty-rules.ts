@@ -15,6 +15,8 @@ export interface BountyRuleDraft {
     value: BountyRuleValue;
     priority: number;
     private: boolean;
+    /** The Stelo wallet that funds an escrowed currency; omitted for a trust currency. */
+    fundingLinkId?: bigint;
 }
 
 export interface BountyRulesHandle {

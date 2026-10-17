@@ -8,6 +8,7 @@
  *   - notifications: generic, craft-sourced notifications
  *   - bounties:      bounty rules, per-craft overrides and resolved assignments
  *   - payouts:       entitlement ledgers, payment records and manual loyalty rewards
+ *   - escrow:        Stelo escrow holds, transfer intents, per-wallet entitlement pools and wallets
  *   - discord:       Discord bot watch displays, notification sinks and guild installs
  *   - notify:        per-(filter, sink) notification triggers
  */
@@ -20,6 +21,7 @@ export * from './reducers/crafts';
 export * from './reducers/notifications';
 export * from './reducers/bounties';
 export * from './reducers/payouts';
+export * from './reducers/escrow';
 export * from './reducers/discord';
 export * from './reducers/notify';
 
@@ -29,5 +31,6 @@ export * from './views/crafts';
 export * from './views/notifications';
 export * from './views/bounties';
 export * from './views/payouts';
+export * from './views/escrow';
 export * from './views/discord';
 export * from './views/notify';

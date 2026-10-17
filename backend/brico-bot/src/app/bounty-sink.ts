@@ -10,6 +10,7 @@
 import type {DbConnection} from "@brico/bindings/brico-app";
 import type {BountyEntitlementTotal, BountyRuleValue, CraftBountyOverride, LoyaltyRule} from "@brico/bindings/brico-app/types";
 import type {ClaimMember} from "@brico/bindings/prism/types";
+import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {addRatio, bonusFromMultiplier, reduceRatio} from "@brico/crafts/entitlement";
 import type {ClaimAccessFlag, CraftSubject} from "@brico/crafts/filter";
 import {claimAccessFlags} from "@brico/crafts/subject";
@@ -21,8 +22,11 @@ import {startStep, timeReducerCall} from "../metrics.ts";
 import type {CraftSnapshot} from "../relay/prism.ts";
 import type {RowDelta} from "../relay/row-cache.ts";
 import type {AssignedBounty, CraftRow} from "../relay/subject.ts";
+import type {FundingStatusSync} from "../stelo/funding-status.ts";
+import type {FundingGate} from "../stelo/funding.ts";
 import {type AppCache, type AppDelta, type BountyRuleSpec, type Triple, tripleKey} from "./app-cache.ts";
 import type {BricoAppConnection} from "./connection.ts";
+import type {EscrowCache} from "./escrow-cache.ts";
 
 export interface ResolvedBounty {
     ratioNumerator: bigint;
@@ -31,6 +35,13 @@ export interface ResolvedBounty {
     assignedByAccountIdentity: Identity;
     /** Whether the matched rule/override was marked private — decides which of the two assignment tables `assign()` writes to. */
     private: boolean;
+    /** The paying Stelo wallet (`linked_integration.id`) named by the matched rule/override; only escrowed currencies use it. */
+    fundingLinkId: bigint | undefined;
+    /** False when it came from the craft's override: removing the override sends the craft back to its rules instead of keeping this. */
+    sticky: boolean;
+    source: "override" | "rule";
+    /** The matched `bounty_rule.id`; unknown for a stored (sticky) assignment. */
+    ruleId: string | undefined;
 }
 
 /**
@@ -50,6 +61,10 @@ function matchRules(subject: CraftSubject, specs: readonly BountyRuleSpec[], acc
                 currency: value.value.currency,
                 assignedByAccountIdentity: accountIdentity,
                 private: spec.private,
+                fundingLinkId: spec.fundingLinkId,
+                sticky: true,
+                source: "rule",
+                ruleId: spec.id,
             };
         }
 
@@ -62,6 +77,10 @@ function matchRules(subject: CraftSubject, specs: readonly BountyRuleSpec[], acc
             currency: value.value.currency,
             assignedByAccountIdentity: accountIdentity,
             private: spec.private,
+            fundingLinkId: spec.fundingLinkId,
+            sticky: true,
+            source: "rule",
+            ruleId: spec.id,
         };
     }
     return null;
@@ -70,8 +89,14 @@ function matchRules(subject: CraftSubject, specs: readonly BountyRuleSpec[], acc
 /**
  * Resolves one craft's bounty: override first (only if its account actually owns the craft or its
  * claim — an override belonging to neither is invalid intent and is skipped, falling through to
- * rule evaluation exactly as if it didn't exist), then the personal owner's rules, then the claim
- * owner's — **the personal owner wins outright** if they have any match at all.
+ * rule evaluation exactly as if it didn't exist), then the craft's `sticky` assignment, then the
+ * personal owner's rules, then the claim owner's — **the personal owner wins outright** if they
+ * have any match at all.
+ *
+ * A `sticky` assignment (the craft's stored one) keeps applying while its payer still owns the
+ * craft or its claim, so editing or deleting a rule only affects crafts that have no assignment yet.
+ * One that came from an override is not (`sticky: false`): without the override the craft is
+ * resolved by its rules again.
  */
 export function resolveCraftBounty(
     craftId: bigint,
@@ -82,6 +107,7 @@ export function resolveCraftBounty(
     claimOwners: ReadonlyMap<bigint, bigint[]>,
     rulesByAccount: ReadonlyMap<string, BountyRuleSpec[]>,
     overridesByCraft: ReadonlyMap<bigint, CraftBountyOverride>,
+    sticky?: ResolvedBounty,
 ): ResolvedBounty | null {
     const ownerAccount = ownerEntityId !== 0n ? playerAccounts.get(ownerEntityId) : undefined;
     const claimOwnerAccounts = (claimEntityId !== 0n ? claimOwners.get(claimEntityId) ?? [] : [])
@@ -99,8 +125,17 @@ export function resolveCraftBounty(
                 currency: override.currency,
                 assignedByAccountIdentity: override.accountIdentity,
                 private: override.private,
+                fundingLinkId: override.fundingLinkId,
+                sticky: false,
+                source: "override",
+                ruleId: undefined,
             };
         }
+    }
+
+    if (sticky?.sticky && ((ownerAccount?.isEqual(sticky.assignedByAccountIdentity) ?? false)
+        || claimOwnerAccounts.some(identity => identity.isEqual(sticky.assignedByAccountIdentity)))) {
+        return sticky;
     }
 
     if (ownerAccount) {
@@ -201,11 +236,18 @@ export function assignmentBaselines(
     return [...byPlayer].map(([playerId, effort]) => ({playerId, effort}));
 }
 
+/** Baselines for a craft whose bounty moves to another currency: all effort so far, already priced (or deliberately not) under the old one. */
+export function currencySwitchBaselines(byPlayer: ReadonlyMap<bigint, bigint> | undefined): {playerId: bigint; effort: bigint}[] {
+    return byPlayer === undefined ? [] : [...byPlayer].map(([playerId, effort]) => ({playerId, effort}));
+}
+
 function sameBounty(a: ResolvedBounty, b: ResolvedBounty): boolean {
     return a.ratioNumerator === b.ratioNumerator
         && a.ratioDenominator === b.ratioDenominator
         && a.currency === b.currency
         && a.private === b.private
+        && a.sticky === b.sticky
+        && a.fundingLinkId === b.fundingLinkId
         && a.assignedByAccountIdentity.isEqual(b.assignedByAccountIdentity);
 }
 
@@ -275,11 +317,22 @@ export interface BountyEngine {
     updateLoyaltyBonuses(snapshot: CraftSnapshot, scope: BountyScope): void;
 }
 
-export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log: Logger): BountyEngine {
+/** The Stelo escrow the engine consults before assigning an escrowed bounty; absent when Stelo isn't configured. */
+export interface EscrowFunding {
+    escrow: EscrowCache;
+    gate: FundingGate;
+    status: FundingStatusSync;
+}
+
+export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log: Logger, funding?: EscrowFunding): BountyEngine {
     const scoped = log.child("bounty");
-    // Every open craft's resolved bounty, patched by `assign()`. `updateEntitlements` reads it, so
-    // it always follows `assign()` in the same tick (see `bridge.ts`'s `tick`).
+    // Every open craft's resolved bounty, patched by `assign()`. It is what the bounty rules and
+    // overrides say, funded or not.
     let resolved = new Map<bigint, ResolvedBounty>();
+    // The subset actually assigned (or about to be): what the rest of the bot sees as a craft's
+    // bounty, and what `updateEntitlements` prices. An escrowed bounty whose hold hasn't settled is
+    // resolved but not published. Mutated in place, like `resolved`.
+    let published = new Map<bigint, ResolvedBounty>();
     // `resolved` reflects a pass over every open craft; false until the first one, and after the connection drops.
     let primed = false;
     // Crafts whose bounty changed in `assign()`, waiting for `updateEntitlements` to price them.
@@ -328,19 +381,37 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
         assign(snapshot, rows, scope) {
             const conn = liveConnection();
             if (!conn) {
-                const previous = resolved;
+                const previous = published;
                 resolved = new Map();
+                published = new Map();
                 primed = false;
                 needFullPricing = true;
                 needFullLoyalty = true;
-                return {bounties: resolved, changed: new Set(previous.keys())};
+                return {bounties: published, changed: new Set(previous.keys())};
             }
 
             const state = cache.state;
             const everything = !primed || scope.full || scope.app.resolveAll;
+            // The craft's stored assignment, which keeps applying (see `resolveCraftBounty`).
+            const stickyFor = (craftId: bigint): ResolvedBounty | undefined => {
+                const stored = state.assignments.get(craftId);
+                if (!stored) return undefined;
+                return {
+                    ratioNumerator: stored.ratioNumerator,
+                    ratioDenominator: stored.ratioDenominator,
+                    currency: stored.currency,
+                    assignedByAccountIdentity: stored.assignedByAccountIdentity,
+                    private: stored.private,
+                    fundingLinkId: funding?.escrow.state.openEscrows.get(craftId)?.fundingLinkId,
+                    sticky: stored.sticky,
+                    source: stored.sticky ? "rule" : "override",
+                    ruleId: undefined,
+                };
+            };
             const resolve = (row: CraftRow): ResolvedBounty | undefined => resolveCraftBounty(
                 row.entityId, row.subject, row.ownerEntityId, row.claimEntityId,
                 state.playerAccounts, snapshot.claimOwners, state.bountyRules, state.overrides,
+                stickyFor(row.entityId),
             ) ?? undefined;
 
             let stop = startStep("assign_resolve_loop");
@@ -360,6 +431,7 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
                 }
                 for (const craftId of previous.keys()) if (!resolved.has(craftId)) changed.add(craftId);
                 for (const craftId of state.assignments.keys()) candidates.add(craftId);
+                for (const craftId of published.keys()) candidates.add(craftId);
                 primed = true;
             } else {
                 const touched = new Set<bigint>();
@@ -370,8 +442,11 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
                     if (bounty) resolved.set(craftId, bounty);
                     else resolved.delete(craftId);
                 };
-                for (const row of scope.changed) update(row.entityId, resolve(row));
-                for (const craftId of scope.app.overrideCrafts) {
+                // A craft's stored assignment is part of what resolves its bounty (it is sticky), so a change to it re-resolves the craft.
+                const toResolve = new Set<bigint>(scope.app.overrideCrafts);
+                for (const row of scope.changed) toResolve.add(row.entityId);
+                for (const craftId of scope.app.assignmentCrafts) toResolve.add(craftId);
+                for (const craftId of toResolve) {
                     const row = scope.rowOf(craftId);
                     update(craftId, row ? resolve(row) : undefined);
                 }
@@ -389,20 +464,62 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
             for (const craftId of changed) unpriced.add(craftId);
             stop();
 
+            const publish = (craftId: bigint, bounty: ResolvedBounty | undefined): void => {
+                const before = published.get(craftId);
+                if (bounty) published.set(craftId, bounty);
+                else published.delete(craftId);
+                if (!!before !== !!bounty || (before && bounty && !sameBounty(before, bounty))) {
+                    changed.add(craftId);
+                    unpriced.add(craftId);
+                }
+            };
+
             stop = startStep("assign_write_loop");
             for (const craftId of candidates) {
                 const bounty = resolved.get(craftId);
                 const previous = state.assignments.get(craftId);
                 if (bounty) {
+                    const row = scope.rowOf(craftId);
+                    let baselines: {playerId: bigint; effort: bigint}[] = [];
+                    if (row && previous === undefined) {
+                        baselines = assignmentBaselines(snapshot.contributions.get(craftId), row.firstSeenMs, BigInt(Date.now()));
+                    } else if (row && previous !== undefined && previous.currency !== bounty.currency) {
+                        baselines = currencySwitchBaselines(snapshot.contributions.get(craftId));
+                    }
+
+                    if (funding && ESCROWED_BOUNTY_CURRENCIES.includes(bounty.currency)) {
+                        let effortCovered = 0n;
+                        if (row) {
+                            effortCovered = BigInt(row.subject.effortTotal) - baselines.reduce((sum, b) => sum + b.effort, 0n);
+                        }
+                        const request = {
+                            ratioNumerator: bounty.ratioNumerator,
+                            ratioDenominator: bounty.ratioDenominator,
+                            currency: bounty.currency,
+                            payer: bounty.assignedByAccountIdentity,
+                            fundingLinkId: bounty.fundingLinkId,
+                        };
+                        const decision = funding.gate.prepare(craftId, request, effortCovered > 0n ? effortCovered : 0n);
+                        funding.status.report(craftId, {...request, source: bounty.source, ruleId: bounty.ruleId}, funding.gate.status(craftId, request));
+                        if (decision !== "ready") {
+                            // Not (yet) fundable at this rate: the stored assignment, if any, stays as it is.
+                            publish(craftId, stickyFor(craftId));
+                            if (decision === "wait") retryAssign.add(craftId);
+                            continue;
+                        }
+                    }
+                    else funding?.status.clear(craftId);
+                    publish(craftId, bounty);
+
                     const unchanged = previous !== undefined
                         && previous.ratioNumerator === bounty.ratioNumerator
                         && previous.ratioDenominator === bounty.ratioDenominator
                         && previous.currency === bounty.currency
                         && previous.assignedByAccountIdentity.isEqual(bounty.assignedByAccountIdentity)
-                        && previous.private === bounty.private;
+                        && previous.private === bounty.private
+                        && previous.sticky === bounty.sticky;
                     if (unchanged) continue;
 
-                    const row = scope.rowOf(craftId);
                     timeReducerCall("assign_craft_bounty", conn.reducers.assignCraftBounty({
                         craftId,
                         ratioNumerator: bounty.ratioNumerator,
@@ -412,15 +529,18 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
                         private: bounty.private,
                         assignedAt: Timestamp.now(),
                         updatedAt: Timestamp.now(),
-                        // Only a craft with no assignment as of last tick needs baselines.
-                        baselines: previous === undefined && row
-                            ? assignmentBaselines(snapshot.contributions.get(craftId), row.firstSeenMs, BigInt(Date.now()))
-                            : [],
+                        // Only a craft with no assignment as of last tick, or one switching currency, needs baselines.
+                        baselines,
+                        sticky: bounty.sticky,
                     })).catch(cause => {
                         retryAssign.add(craftId);
                         scoped.error("assign_craft_bounty failed", {craftId: craftId.toString(), error: cause instanceof Error ? cause.message : String(cause)});
                     });
-                } else if (previous) {
+                } else {
+                    funding?.status.clear(craftId);
+                    publish(craftId, undefined);
+                }
+                if (!bounty && previous) {
                     // A stored assignment with no resolved bounty is cleared if its craft is open (the
                     // bounty went away) or gone from `craft_meta` entirely (past the 24-hour
                     // Claimed/Removed tail — see `isOpen` in prism.ts); one on a closed craft still in
@@ -434,7 +554,7 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
             }
             stop();
 
-            return {bounties: resolved, changed};
+            return {bounties: published, changed};
         },
 
         updateEntitlements(snapshot, scope) {
@@ -448,7 +568,7 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
 
             let crafts: Iterable<bigint>;
             if (full) {
-                crafts = [...resolved.keys()];
+                crafts = [...published.keys()];
             } else {
                 crafts = new Set([...scope.contributionCrafts, ...unpriced, ...retryEntitlement]);
             }
@@ -457,7 +577,7 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
 
             const stop = startStep("ent_loop");
             for (const craftId of crafts) {
-                const bounty = resolved.get(craftId);
+                const bounty = published.get(craftId);
                 const byPlayer = snapshot.contributions.get(craftId);
                 if (!bounty || !byPlayer) continue;
                 for (const [playerId, effort] of byPlayer) {
@@ -499,6 +619,8 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
                         effort,
                         ratioNumerator: effectiveRatio.numerator,
                         ratioDenominator: effectiveRatio.denominator,
+                        baseRatioNumerator: bounty.ratioNumerator,
+                        baseRatioDenominator: bounty.ratioDenominator,
                         updatedAt: Timestamp.now(),
                     })).catch(cause => {
                         retryEntitlement.add(craftId);

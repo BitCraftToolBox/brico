@@ -3,9 +3,16 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {t as __t,} from "spacetimedb";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
-import {LoyaltyRuleSpec,} from "./types";
+import {
+  LoyaltyRuleSpec,
+} from "./types";
 
 export default {
   id: __t.option(__t.u64()),

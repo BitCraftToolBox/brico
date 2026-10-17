@@ -36,8 +36,8 @@ async function handleCommandMode(interaction: APIChatInputApplicationCommandInte
 
     return {
         content: mode === "grouped"
-            ? "Commands are now grouped under `/brico` (e.g. `/brico link`, `/brico watch display`)."
-            : "Commands are now top-level (e.g. `/link`, `/watch display`).",
+            ? "Commands are now grouped under `/brico` (e.g. `/brico link`, `/brico crafts display`)."
+            : "Commands are now top-level (e.g. `/link`, `/crafts display`).",
     };
 }
 

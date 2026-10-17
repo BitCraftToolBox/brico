@@ -124,7 +124,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
         });
     }
 
-    /** The channel stopped accepting posts (403/404): tombstone the display (same reducer as `/watch display-remove`). */
+    /** The channel stopped accepting posts (403/404): tombstone the display (same reducer as `/crafts display-remove`). */
     async function markDeleted(conn: DbConnection, display: DiscordWatchDisplay): Promise<void> {
         if (!conn.isActive) return;
         displayUpdatesTotal.inc({outcome: "detached"});

@@ -3,7 +3,12 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {t as __t,} from "spacetimedb";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
 export default __t.row({
   craftId: __t.u64().primaryKey().name("craft_id"),
@@ -13,4 +18,5 @@ export default __t.row({
   assignedByAccountIdentity: __t.identity().name("assigned_by_account_identity"),
   assignedAt: __t.timestamp().name("assigned_at"),
   updatedAt: __t.timestamp().name("updated_at"),
+  sticky: __t.bool(),
 });

@@ -2,8 +2,8 @@
  * LocalGroupingsManager.tsx — lets a payer group BitCraft player ids under an arbitrary display
  * name of their own, purely for local aggregation on `/account/payees` (edited from
  * `/account/settings`, not from the payees page itself — see that page's doc comment). This is a
- * secondary lookup layered on top of the brico-account grouping the backend already resolves (see
- * `applyLocalGroupings` in `~/lib/crafts/entitlement-reports`): a payee who hasn't linked or shared
+ * lookup that takes precedence over the brico-account grouping the backend resolves (see
+ * `groupPayerRows` in `~/lib/crafts/entitlement-reports`): a payee who hasn't linked or shared
  * a brico account still shows up as its own row otherwise, and not every payer wants that.
  *
  * Entirely client-side — stored in `LocalPayeeGrouping[]` (`~/lib/settings`), never touches the

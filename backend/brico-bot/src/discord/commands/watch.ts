@@ -1,5 +1,5 @@
 /**
- * watch.ts — `/watch display` and `/watch display-remove`. `/watch display` opens a setup modal
+ * watch.ts — `/crafts display` and `/crafts display-remove`. `/crafts display` opens a setup modal
  * (filter, style, field presets, sort) whose submit writes `attachDiscordWatchDisplay`; the
  * optional `filter` argument only chooses which existing display prefills it. Posting and editing
  * the message is `discord/display-manager.ts`'s job.
@@ -119,7 +119,7 @@ function channelDisplays(conn: DbConnection, channelId: string) {
     return conn.db.allDiscordWatchDisplay.iter().filter(display => display.deletedAt === undefined && display.channelId === channelId);
 }
 
-/** Autocomplete for `/watch display-remove`: the channel's existing displays, labeled by their filter's name; the value is the display id. */
+/** Autocomplete for `/crafts display-remove`: the channel's existing displays, labeled by their filter's name; the value is the display id. */
 const watchDisplayRemoveAutocomplete: AutocompleteHandler = async (interaction: APIApplicationCommandAutocompleteInteraction, deps: CommandDeps) => {
     const ctx = requireInteractionContext(interaction, deps);
     if (isCommandReply(ctx)) return [{name: "brico is temporarily unavailable — try again in a moment.", value: "unavailable"}];
@@ -238,7 +238,7 @@ async function handleWatchDisplaySubmit(interaction: APIModalSubmitInteraction, 
 
     const filterId = modalStringSelectValue(submission, FILTER_FIELD_ID);
     const filter = filterId ? findOwnSavedFilter(conn, accountIdentity, filterId) : undefined;
-    if (!filter) return {content: "That filter is no longer available — run `/watch display` again."};
+    if (!filter) return {content: "That filter is no longer available — run `/crafts display` again."};
 
     const style = modalStringSelectValue(submission, STYLE_FIELD_ID);
     if (!style || !isDiscordDisplayStyle(style)) return {content: "Choose a style."};
@@ -297,8 +297,8 @@ async function handleWatchDisplaySubmit(interaction: APIModalSubmitInteraction, 
     return {content: `Watch display for "${filter.name}" is set up in this channel.`};
 }
 
-export const watchDisplayCommand: LeafCommand = {
-    path: ["watch", "display"],
+export const craftsDisplayCommand: LeafCommand = {
+    path: ["crafts", "display"],
     description: "Set up a live-updating message of a saved filter's current matches in this channel.",
     options: [
         {
@@ -315,7 +315,7 @@ export const watchDisplayCommand: LeafCommand = {
     modalSubmit: handleWatchDisplaySubmit,
 };
 
-/** `/watch display-remove` — tombstones the `(account, filter, channel)` display. `display-manager.ts` also does this when the channel returns 403/404. */
+/** `/crafts display-remove` — tombstones the `(account, filter, channel)` display. `display-manager.ts` also does this when the channel returns 403/404. */
 const handleWatchDisplayRemove: CommandHandler = async (interaction: APIChatInputApplicationCommandInteraction, deps: CommandDeps): Promise<CommandReply> => {
     const ctx = requireInteractionContext(interaction, deps);
     if (isCommandReply(ctx)) return ctx;
@@ -343,8 +343,8 @@ const handleWatchDisplayRemove: CommandHandler = async (interaction: APIChatInpu
     return {content: `Watch display for "${filterName}" disabled.`};
 };
 
-export const watchDisplayRemoveCommand: LeafCommand = {
-    path: ["watch", "display-remove"],
+export const craftsDisplayRemoveCommand: LeafCommand = {
+    path: ["crafts", "display-remove"],
     description: "Remove a watch display from this channel.",
     options: [
         {

@@ -9,7 +9,8 @@ import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
 import {A, useSearchParams} from "@solidjs/router";
 import type {JSX} from "solid-js";
-import {createEffect, createSignal, For, onMount, Show} from "solid-js";
+import {createEffect, createMemo, createSignal, For, onMount, Show} from "solid-js";
+import {SteloWalletsCard} from "~/components/account/SteloWalletsCard";
 import MainLayout from "~/components/MainLayout";
 import {ConnectionStatusBadge} from "~/components/shared/ConnectionStatusBadge";
 import RouteTabHeader from "~/components/shared/RouteTabHeader";
@@ -23,6 +24,9 @@ import {bitAuthLoginUrl, discordLoginUrl} from "~/lib/account/brico-bot";
 import {useLinkedIntegrations} from "~/lib/account/links";
 import {accountTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state";
+import {countNaming} from "~/lib/account/stelo-link-flow";
+import {createCraftBountyFunding, createCraftBountyOverrides} from "~/lib/crafts/bounty-funding";
+import {createBountyRules} from "~/lib/crafts/bounty-rules";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {breadcrumb} from "~/lib/game-links";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
@@ -30,11 +34,12 @@ import {useConnection} from "~/lib/spacetime/manager";
 
 const BITCRAFT_PROVIDER = "bitcraft-ea2";
 const DISCORD_PROVIDER = "discord";
+const STELO_PROVIDER = "stelo";
 
 /**
- * One row in the "Linked accounts" card — link/unlink for a single provider.
+ * One row in the "Linked accounts" card for the Discord account.
  */
-function IntegrationRow(props: {
+function DiscordLinkRow(props: {
     label: JSX.Element;
     link: LinkedIntegration | null;
     linkLabel: JSX.Element;
@@ -76,7 +81,7 @@ function IntegrationRow(props: {
 /**
  * BitCraft-specific: unlike Discord, alts are expected, so this lists every active link with its
  * own unlink action, plus an always-available "link another" button, rather than the single
- * link/unlink toggle `IntegrationRow` uses for providers meant to stay at one.
+ * link/unlink toggle `DiscordLinkRow` uses for providers meant to stay at one.
  */
 function BitCraftLinksRow(props: {
     links: LinkedIntegration[];
@@ -119,7 +124,7 @@ function BitCraftLinksRow(props: {
 export default function ProfilePage() {
     const {_} = useLingui();
     const {isLoggedIn, account, login, logout, setDisplayName, loginMethod} = useAccount();
-    const {links, beginLink, linkDiscordShortcut, unlink} = useLinkedIntegrations();
+    const {links, beginLink, linkDiscordShortcut, unlink, steloWallets} = useLinkedIntegrations();
     const [searchParams, setSearchParams] = useSearchParams();
     const conn = useConnection(BRICO_APP_SERVER);
 
@@ -129,7 +134,23 @@ export default function ProfilePage() {
     const [error, setError] = createSignal("");
 
     const [busyProvider, setBusyProvider] = createSignal<string | null>(null);
-    const [unlinkTarget, setUnlinkTarget] = createSignal<{id: bigint; label: string} | null>(null);
+    const [unlinkTarget, setUnlinkTarget] = createSignal<{id: bigint; provider: string} | null>(null);
+    const rules = createBountyRules();
+    const {overrides} = createCraftBountyOverrides();
+    const {openEscrows} = createCraftBountyFunding();
+
+    /** What still depends on the Stelo wallet about to be unlinked. */
+    const unlinkDependents = createMemo(() => {
+        const target = unlinkTarget();
+        if (!target || target.provider !== STELO_PROVIDER) return null;
+        const wallet = steloWallets().find(w => w.link.id === target.id);
+        return {
+            receiving: wallet?.isReceiving ?? false,
+            naming: countNaming(rules.rules().map(r => r.fundingLinkId), target.id)
+                + countNaming([...overrides().values()].map(o => o.fundingLinkId), target.id),
+            funded: countNaming([...openEscrows().values()].map(e => e.fundingLinkId), target.id),
+        };
+    });
 
     // `brico-bot` appends `?linked=<provider>`/`?linkError=<message>` to its redirect back here
     // once a browser-initiated link (BitAuth, Discord's OAuth handshake) resolves — see
@@ -142,7 +163,7 @@ export default function ProfilePage() {
             showToast({title: () => <Trans>Account linked</Trans>, variant: "success"});
             setSearchParams({linked: undefined, linkError: undefined}, {replace: true});
         } else if (typeof linkError === "string") {
-            showToast({title: () => <Trans>Linking failed</Trans>, description: () => linkError, variant: "error"});
+            showToast({title: () => <Trans>Linking failed</Trans>, description: () => describeServerError(linkError), variant: "error"});
             setSearchParams({linked: undefined, linkError: undefined}, {replace: true});
         }
     });
@@ -194,7 +215,7 @@ export default function ProfilePage() {
         const target = unlinkTarget();
         if (!target) return;
         setUnlinkTarget(null);
-        setBusyProvider(target.label);
+        setBusyProvider(target.provider);
         try {
             await unlink(target.id);
         } catch (e) {
@@ -277,9 +298,9 @@ export default function ProfilePage() {
                                 linkLabel={bitcraftLinks().length > 0 ? <Trans>Link another</Trans> : <Trans>Link via BitAuth</Trans>}
                                 busy={busyProvider() === BITCRAFT_PROVIDER}
                                 onLink={linkBitCraft}
-                                onUnlink={(id) => setUnlinkTarget({id, label: BITCRAFT_PROVIDER})}
+                                onUnlink={(id) => setUnlinkTarget({id, provider: BITCRAFT_PROVIDER})}
                             />
-                            <IntegrationRow
+                            <DiscordLinkRow
                                 label={
                                     <div class="flex flex-row gap-1.5 items-center">
                                         <img src="/discord.svg" alt="Discord" class="size-6"/>
@@ -290,10 +311,12 @@ export default function ProfilePage() {
                                 linkLabel={loginMethod() === "discord" ? <Trans>Link Discord</Trans> : <Trans>Link via Discord</Trans>}
                                 busy={busyProvider() === DISCORD_PROVIDER}
                                 onLink={linkDiscord}
-                                onUnlink={(id) => setUnlinkTarget({id, label: DISCORD_PROVIDER})}
+                                onUnlink={(id) => setUnlinkTarget({id, provider: DISCORD_PROVIDER})}
                             />
                         </CardContent>
                     </Card>
+
+                    <SteloWalletsCard onUnlink={link => setUnlinkTarget({id: link.id, provider: STELO_PROVIDER})}/>
 
                     <div class="flex flex-row justify-between">
                         <Button variant="outline" as={A} href={"/account/bounties"}>
@@ -309,10 +332,40 @@ export default function ProfilePage() {
             <Dialog open={unlinkTarget() !== null} onOpenChange={open => { if (!open) setUnlinkTarget(null); }}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle><Trans>Unlink this account?</Trans></DialogTitle>
-                        <DialogDescription>
-                            <Trans>You can link it again later.</Trans>
-                        </DialogDescription>
+                        <Show
+                            when={unlinkTarget()?.provider === STELO_PROVIDER}
+                            fallback={
+                                <>
+                                    <DialogTitle><Trans>Unlink this account?</Trans></DialogTitle>
+                                    <DialogDescription>
+                                        <Trans>You can link it again later.</Trans>
+                                    </DialogDescription>
+                                </>
+                            }
+                        >
+                            <DialogTitle><Trans>Unlink this wallet?</Trans></DialogTitle>
+                            <DialogDescription>
+                                <Trans>
+                                    Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the
+                                    account: also remove it under Permissions on Stelo.
+                                </Trans>
+                            </DialogDescription>
+                            <Show when={unlinkDependents()}>
+                                {dependents => (
+                                    <ul class="list-disc pl-5 text-sm flex flex-col gap-1">
+                                        <Show when={dependents().receiving}>
+                                            <li><Trans>It is your receiving wallet: payouts stop until you pick another.</Trans></li>
+                                        </Show>
+                                        <Show when={dependents().naming > 0}>
+                                            <li><Trans>{dependents().naming} bounty rules or overrides name it as the funding wallet; they stop being fundable.</Trans></li>
+                                        </Show>
+                                        <Show when={dependents().funded > 0}>
+                                            <li><Trans>{dependents().funded} crafts are still funded from it; they keep accruing and refunds still reach it.</Trans></li>
+                                        </Show>
+                                    </ul>
+                                )}
+                            </Show>
+                        </Show>
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setUnlinkTarget(null)}><Trans>Cancel</Trans></Button>

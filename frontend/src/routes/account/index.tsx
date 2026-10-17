@@ -11,6 +11,7 @@
  * The sidebar's own account icon skips this page, linking straight to `/account/profile` (or
  * `/account/notifications` when there's an unread badge) — see `app-sidebar.tsx`.
  */
+import {MY_BOUNTIES_PATH} from "@brico/crafts/stelo";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
@@ -18,6 +19,7 @@ import {A} from "@solidjs/router";
 import type {IconTypes} from "solid-icons";
 import {
     TbOutlineBell as IconNotifications,
+    TbOutlineChecklist as IconMyBounties,
     TbOutlineGift as IconLoyaltyRewards,
     TbOutlineInfoCircle as IconBountyOverview,
     TbOutlineReceipt2 as IconPayeesOwed,
@@ -51,9 +53,10 @@ function sections(): AccountSection[] {
             ],
         },
         {
-            title: <Trans>Bounty payouts</Trans>,
+            title: <Trans>Craft Bounties</Trans>,
             items: [
                 {label: <Trans>Overview</Trans>, href: "/account/bounties", icon: IconBountyOverview},
+                {label: <Trans>My bounties</Trans>, href: MY_BOUNTIES_PATH, icon: IconMyBounties},
                 {label: <Trans>Bounty rules</Trans>, href: "/account/bounty-rules", icon: IconBountyRules},
                 {label: <Trans>My payouts</Trans>, href: "/account/payouts", icon: IconPayouts},
                 {label: <Trans>Payouts I owe</Trans>, href: "/account/payees", icon: IconPayeesOwed},

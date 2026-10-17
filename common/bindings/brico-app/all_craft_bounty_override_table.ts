@@ -13,4 +13,5 @@ export default __t.row({
   currency: __t.string(),
   private: __t.bool(),
   updatedAt: __t.timestamp().name("updated_at"),
+  fundingLinkId: __t.option(__t.u64()).name("funding_link_id"),
 });

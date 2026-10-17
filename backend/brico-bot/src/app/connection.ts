@@ -10,6 +10,7 @@ import {appDriftTotal, startStep} from "../metrics.ts";
 import {createSupervisedConnection, type SupervisedConnection, type SupervisorOptions} from "../spacetime/connection.ts";
 import {attachFeed} from "../spacetime/feed.ts";
 import {type AppCache, findAppDrift} from "./app-cache.ts";
+import type {EscrowCache} from "./escrow-cache.ts";
 
 interface AppTable {
     /** Generated query builder for the subscription. */
@@ -182,6 +183,132 @@ const APP_TABLES: Record<string, AppTable> = {
         },
         count: conn => conn.db.allDiscordGuildInstall.count(),
     },
+    all_craft_bounty_escrow: {
+        query: tables.allCraftBountyEscrow,
+        listen: (conn, onChange) => {
+            conn.db.allCraftBountyEscrow.onInsert(onChange);
+            conn.db.allCraftBountyEscrow.onDelete(onChange);
+            conn.db.allCraftBountyEscrow.onUpdate(onChange);
+        },
+        count: conn => conn.db.allCraftBountyEscrow.count(),
+    },
+    all_bounty_escrow_wallet: {
+        query: tables.allBountyEscrowWallet,
+        listen: (conn, onChange) => {
+            conn.db.allBountyEscrowWallet.onInsert(onChange);
+            conn.db.allBountyEscrowWallet.onDelete(onChange);
+            conn.db.allBountyEscrowWallet.onUpdate(onChange);
+        },
+        count: conn => conn.db.allBountyEscrowWallet.count(),
+    },
+    all_bounty_escrow_pool: {
+        query: tables.allBountyEscrowPool,
+        listen: (conn, onChange) => {
+            conn.db.allBountyEscrowPool.onInsert(onChange);
+            conn.db.allBountyEscrowPool.onDelete(onChange);
+            conn.db.allBountyEscrowPool.onUpdate(onChange);
+        },
+        count: conn => conn.db.allBountyEscrowPool.count(),
+    },
+    all_bounty_escrow_journal: {
+        query: tables.allBountyEscrowJournal,
+        listen: (conn, onChange) => {
+            conn.db.allBountyEscrowJournal.onInsert(onChange);
+            conn.db.allBountyEscrowJournal.onDelete(onChange);
+            conn.db.allBountyEscrowJournal.onUpdate(onChange);
+        },
+        count: conn => conn.db.allBountyEscrowJournal.count(),
+    },
+    all_stelo_transfer: {
+        query: tables.allSteloTransfer,
+        listen: (conn, onChange) => {
+            conn.db.allSteloTransfer.onInsert(onChange);
+            conn.db.allSteloTransfer.onDelete(onChange);
+            conn.db.allSteloTransfer.onUpdate(onChange);
+        },
+        count: conn => conn.db.allSteloTransfer.count(),
+    },
+    all_stelo_wallet: {
+        query: tables.allSteloWallet,
+        listen: (conn, onChange) => {
+            conn.db.allSteloWallet.onInsert(onChange);
+            conn.db.allSteloWallet.onDelete(onChange);
+            conn.db.allSteloWallet.onUpdate(onChange);
+        },
+        count: conn => conn.db.allSteloWallet.count(),
+    },
+    all_stelo_receiving_wallet: {
+        query: tables.allSteloReceivingWallet,
+        listen: (conn, onChange) => {
+            conn.db.allSteloReceivingWallet.onInsert(onChange);
+            conn.db.allSteloReceivingWallet.onDelete(onChange);
+            conn.db.allSteloReceivingWallet.onUpdate(onChange);
+        },
+        count: conn => conn.db.allSteloReceivingWallet.count(),
+    },
+    all_integration_link_request: {
+        query: tables.allIntegrationLinkRequest,
+        listen: (conn, onChange) => {
+            conn.db.allIntegrationLinkRequest.onInsert(onChange);
+            conn.db.allIntegrationLinkRequest.onDelete(onChange);
+            conn.db.allIntegrationLinkRequest.onUpdate(onChange);
+        },
+        count: conn => conn.db.allIntegrationLinkRequest.count(),
+    },
+    all_craft_bounty_funding: {
+        query: tables.allCraftBountyFunding,
+        listen: (conn, onChange) => {
+            conn.db.allCraftBountyFunding.onInsert(onChange);
+            conn.db.allCraftBountyFunding.onDelete(onChange);
+            conn.db.allCraftBountyFunding.onUpdate(onChange);
+        },
+        count: conn => conn.db.allCraftBountyFunding.count(),
+    },
+    all_stelo_wallet_status: {
+        query: tables.allSteloWalletStatus,
+        listen: (conn, onChange) => {
+            conn.db.allSteloWalletStatus.onInsert(onChange);
+            conn.db.allSteloWalletStatus.onDelete(onChange);
+            conn.db.allSteloWalletStatus.onUpdate(onChange);
+        },
+        count: conn => conn.db.allSteloWalletStatus.count(),
+    },
+    all_funding_notify_trigger: {
+        query: tables.allFundingNotifyTrigger,
+        listen: (conn, onChange) => {
+            conn.db.allFundingNotifyTrigger.onInsert(onChange);
+            conn.db.allFundingNotifyTrigger.onDelete(onChange);
+            conn.db.allFundingNotifyTrigger.onUpdate(onChange);
+        },
+        count: conn => conn.db.allFundingNotifyTrigger.count(),
+    },
+    all_discord_funding_notify_target: {
+        query: tables.allDiscordFundingNotifyTarget,
+        listen: (conn, onChange) => {
+            conn.db.allDiscordFundingNotifyTarget.onInsert(onChange);
+            conn.db.allDiscordFundingNotifyTarget.onDelete(onChange);
+            conn.db.allDiscordFundingNotifyTarget.onUpdate(onChange);
+        },
+        count: conn => conn.db.allDiscordFundingNotifyTarget.count(),
+    },
+    stelo_currency_policy: {
+        query: tables.steloCurrencyPolicy,
+        listen: (conn, onChange) => {
+            conn.db.steloCurrencyPolicy.onInsert(onChange);
+            conn.db.steloCurrencyPolicy.onDelete(onChange);
+            conn.db.steloCurrencyPolicy.onUpdate(onChange);
+        },
+        count: conn => conn.db.steloCurrencyPolicy.count(),
+    },
+    stelo_payout_schedule: {
+        query: tables.steloPayoutSchedule,
+        listen: (conn, onChange) => {
+            conn.db.steloPayoutSchedule.onInsert(onChange);
+            conn.db.steloPayoutSchedule.onDelete(onChange);
+            conn.db.steloPayoutSchedule.onUpdate(onChange);
+        },
+        count: conn => conn.db.steloPayoutSchedule.count(),
+    },
 };
 
 export interface BricoAppConnection {
@@ -201,6 +328,8 @@ export interface BricoAppOptions extends SupervisorOptions {
     onRowsChanged(): void;
     /** Mirror of the bounty tables: fed from row callbacks, and replaced by a full read each time the initial subscription applies. */
     cache: AppCache;
+    /** Mirror of the escrow, transfer-intent and Stelo wallet tables, fed the same way as `cache`. */
+    escrow: EscrowCache;
     /** How often to compare the cache against a full table read, adopting the full read on drift. 0 disables. */
     reconcileIntervalMs: number;
     /** Called each time the initial subscription is applied (including after a reconnect), not on row changes. */
@@ -223,7 +352,7 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
 
     let identityHex: string | null = null;
     let current: DbConnection | null = null;
-    const {cache} = options;
+    const {cache, escrow} = options;
 
     const connection = createSupervisedConnection<DbConnection>(
         {
@@ -261,12 +390,28 @@ export function startBricoAppConnection(options: BricoAppOptions): BricoAppConne
                 attachFeed(conn.db.allLoyaltyRule, cache.loyaltyRule, accepts);
                 attachFeed(conn.db.allLoyaltyBonusTotal, cache.loyaltyBonusTotal, accepts);
                 attachFeed(conn.db.allBountyEntitlementTotal, cache.bountyEntitlementTotal, accepts);
+                attachFeed(conn.db.allCraftBountyEscrow, escrow.craftBountyEscrow, accepts);
+                attachFeed(conn.db.allBountyEscrowWallet, escrow.escrowWallet, accepts);
+                attachFeed(conn.db.allBountyEscrowPool, escrow.escrowPool, accepts);
+                attachFeed(conn.db.allBountyEscrowJournal, escrow.escrowJournal, accepts);
+                attachFeed(conn.db.allSteloTransfer, escrow.steloTransfer, accepts);
+                attachFeed(conn.db.allLinkedIntegration, escrow.linkedIntegration, accepts);
+                attachFeed(conn.db.allSteloWallet, escrow.steloWallet, accepts);
+                attachFeed(conn.db.allSteloReceivingWallet, escrow.steloReceivingWallet, accepts);
+                attachFeed(conn.db.allIntegrationLinkRequest, escrow.integrationLinkRequest, accepts);
+                attachFeed(conn.db.allCraftBountyFunding, escrow.craftBountyFunding, accepts);
+                attachFeed(conn.db.allSteloWalletStatus, escrow.steloWalletStatus, accepts);
+                attachFeed(conn.db.allFundingNotifyTrigger, escrow.fundingNotifyTrigger, accepts);
+                attachFeed(conn.db.allDiscordFundingNotifyTarget, escrow.discordFundingNotifyTarget, accepts);
+                attachFeed(conn.db.steloCurrencyPolicy, escrow.currencyPolicy, accepts);
+                attachFeed(conn.db.steloPayoutSchedule, escrow.payoutSchedule, accepts);
 
                 let subscription: SubscriptionHandle | null = conn
                     .subscriptionBuilder()
                     .onApplied(() => {
                         if (!ctx.isCurrent()) return;
                         cache.load(conn);
+                        escrow.load(conn);
                         loaded = true;
                         ctx.setLive();
                         options.onRowsChanged();

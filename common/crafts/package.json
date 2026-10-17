@@ -11,11 +11,14 @@
     "./names": "./names.ts",
     "./entitlement": "./entitlement.ts",
     "./errors": "./errors.ts",
+    "./currencies": "./currencies.ts",
     "./discord-display": "./discord-display.ts",
     "./discord-guild": "./discord-guild.ts",
     "./discord-template": "./discord-template.ts",
     "./discord-notify": "./discord-notify.ts",
-    "./icon-render": "./icon-render.ts"
+    "./icon-render": "./icon-render.ts",
+    "./stelo": "./stelo.ts",
+    "./notification": "./notification.ts"
   },
   "scripts": {
     "test": "node --test \"*.test.ts\"",

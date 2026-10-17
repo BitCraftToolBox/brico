@@ -3,6 +3,7 @@
 import {CraftError} from '@brico/crafts/errors';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount} from '../lib/auth';
+import {findFundingTrigger, requireOwnDiscordSink} from '../lib/notify';
 import {clampClientTimestamp, isAtLeastAsNew} from '../lib/sync';
 import {spacetimedb} from '../schema';
 import {NotifySinkRef} from '../tables/notify';
@@ -87,5 +88,55 @@ export const detachCraftFilterNotifyTrigger = spacetimedb.reducer(
         if (!isAtLeastAsNew(clampedDeletedAt, existing.updatedAt)) return;
 
         ctx.db.craft_filter_notify_trigger.id.update({...existing, updatedAt: clampedDeletedAt, deletedAt: clampedDeletedAt});
+    }
+);
+
+/**
+ * Creates or edits the caller's funding-alert trigger for one sink (toast or one of their Discord
+ * sinks). Existing rows are found by scanning the caller's rows, as for `upsertCraftFilterNotifyTrigger`.
+ */
+export const upsertFundingNotifyTrigger = spacetimedb.reducer(
+    {
+        id: t.string(),
+        sink: NotifySinkRef,
+        fundingFailed: t.bool(),
+        payoutShortfall: t.bool(),
+        unclaimed: t.bool(),
+        updatedAt: t.timestamp(),
+    },
+    (ctx, {id, sink, fundingFailed, payoutShortfall, unclaimed, updatedAt}) => {
+        requireAccount(ctx);
+        requireOwnDiscordSink(ctx, ctx.sender, sink);
+
+        const existing = findFundingTrigger(ctx, ctx.sender, sink);
+        const clampedUpdatedAt = clampClientTimestamp(ctx, updatedAt);
+        if (existing !== null && !isAtLeastAsNew(clampedUpdatedAt, existing.updatedAt)) return;
+
+        if (existing === null) {
+            ctx.db.funding_notify_trigger.insert({
+                id, accountIdentity: ctx.sender, sink, fundingFailed, payoutShortfall, unclaimed,
+                updatedAt: clampedUpdatedAt, deletedAt: undefined,
+            });
+        } else {
+            ctx.db.funding_notify_trigger.id.update({
+                ...existing, fundingFailed, payoutShortfall, unclaimed, updatedAt: clampedUpdatedAt, deletedAt: undefined,
+            });
+        }
+    }
+);
+
+/** Tombstones the caller's own funding-alert trigger (no hard delete). Silent no-op if already gone. */
+export const detachFundingNotifyTrigger = spacetimedb.reducer(
+    {id: t.string(), deletedAt: t.timestamp()},
+    (ctx, {id, deletedAt}) => {
+        requireAccount(ctx);
+        const existing = ctx.db.funding_notify_trigger.id.find(id);
+        if (existing === null) return;
+        if (!existing.accountIdentity.isEqual(ctx.sender)) {
+            throw new SenderError(CraftError.FUNDING_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT);
+        }
+        const clampedDeletedAt = clampClientTimestamp(ctx, deletedAt);
+        if (!isAtLeastAsNew(clampedDeletedAt, existing.updatedAt)) return;
+        ctx.db.funding_notify_trigger.id.update({...existing, updatedAt: clampedDeletedAt, deletedAt: clampedDeletedAt});
     }
 );

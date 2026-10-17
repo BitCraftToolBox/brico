@@ -32,6 +32,7 @@ export interface CurrencyVocab extends CurrencyData {
 /** Icons keyed the same as `filter-vocab.ts`'s `CURRENCY_DATA` — kept separate since it's JSX. */
 const CURRENCY_ICONS: Record<VocabCurrencyId, () => JSX.Element> = {
     "hex-coin": () => <img src={getAssetURL("Items/HexCoin")} class="size-4" alt="hex-coin"/>,
+    "stelo-hex-coin": () => <img src="/Stelo.svg" class="size-4" alt="stelo-hex-coin"/>,
 };
 
 export function currencyVocab(currency: string): CurrencyVocab | undefined {

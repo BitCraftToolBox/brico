@@ -108,6 +108,22 @@ The identity is stable across restarts because the connection token is persisted
 `BRICO_BOT_STATE_DIR` (one file per uri+database, mode 0600 — these are credentials; delete a file
 to get a fresh identity). Running as the database owner also works and needs no registration.
 
+## Stelo escrow against a local Stelo
+
+Escrowed bounty currencies (`stelo-hex-coin`) move money on Stelo. For local development, publish
+Stelo with its `dev-auth` feature (`spacetime publish --build-options='--features dev-auth'`), then
+from this directory run:
+
+```sh
+node scripts/dev-stelo.mjs
+```
+
+It mints the bot's `localhost` identity into the state dir, seeds Stelo as the database owner (the
+bot as an app, a "Hex Coin" ledger, an escrow wallet, two payer wallets, a payee wallet) and prints
+the `STELO_*` lines for `.env`. It is safe to re-run; set `PAYER_PLAYER_ID` / `PAYEE_PLAYER_ID` to
+seed other BitCraft players as the wallets' owners. The bot also needs to be registered as a
+`brico-app` service principal (see above), and `brico-app` published with the escrow tables.
+
 ## Layout
 
 | Path | What it is |

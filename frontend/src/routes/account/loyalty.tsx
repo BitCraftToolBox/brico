@@ -1,20 +1,13 @@
 /**
- * `/account/loyalty` — the manual loyalty-reward assignment page. A payer picks one of their
- * payees and gives them a payout multiplier (e.g. `1.05` for +5%), stored as an exact ratio in
- * `loyalty_reward` and folded by `brico-bot` into that payee's bounty ratio *before* the
- * entitlement floor, so it behaves like a plain percentage bonus.
+ * `/account/loyalty` — the manual and rule-based loyalty-reward assignment page.
  *
- * Deliberately not surfaced anywhere else in the frontend: a payee's boosted payout is only ever
- * visible in their own totals on `/account/payouts`, never as a separate "estimated" number
- * anywhere — the craft browser/detail page's estimated-payout preview never applies a multiplier.
- *
- * Similar shape to `~/components/crafts/LocalGroupingsManager` (a picker + input to add rows, plus
- * a table of existing rows with an editable field and delete button) but against real backend
- * state via `createLoyaltyRewards`, not `localStorage`.
+ * Payer side only: a payee's boosted payout is only ever visible in their own totals on `/account/payouts`,
+ * never as a separate "estimated" number anywhere.
  */
 import type {LoyaltyBonusTotal, LoyaltyReward, LoyaltyRule, LoyaltyRuleSpec} from "@brico/bindings/brico-app/types";
+import {BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {bonusFromMultiplier, multiplierFromBonus, parseDecimalRatio} from "@brico/crafts/entitlement";
-import {BOUNTY_CURRENCIES, CLAIM_ACCESS_FLAGS, type ClaimAccessFlag} from "@brico/crafts/filter";
+import {CLAIM_ACCESS_FLAGS, type ClaimAccessFlag} from "@brico/crafts/filter";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
@@ -52,7 +45,7 @@ function formatMultiplier(ratioNumerator: bigint, ratioDenominator: bigint): str
 }
 
 /** A bonus-only ratio (e.g. `1/40`) as a `+2.5%` display string, for the read-only resolved-totals list. */
-function formatBonusPercent(bonusRatioNumerator: bigint, bonusRatioDenominator: bigint): string {
+export function formatBonusPercent(bonusRatioNumerator: bigint, bonusRatioDenominator: bigint): string {
     if (bonusRatioDenominator === 0n) return "";
     const percent = (Number(bonusRatioNumerator) / Number(bonusRatioDenominator)) * 100;
     return `+${percent.toLocaleString(undefined, {maximumFractionDigits: 2})}%`;
@@ -410,7 +403,7 @@ export default function LoyaltyRewardsPage() {
         >
             <div class="mx-auto flex max-w-4xl flex-col gap-4 px-4 pb-6">
                 <RouteTabHeader
-                    title={<Trans>Bounty payouts</Trans>}
+                    title={<Trans>Craft Bounties</Trans>}
                     tabs={bountyTabs()}
                     status={<ConnectionStatusBadge connections={[prismConn, bricoConn]}/>}
                 />

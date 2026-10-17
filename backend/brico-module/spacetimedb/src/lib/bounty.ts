@@ -1,5 +1,5 @@
+import {BOUNTY_CURRENCIES, MANUALLY_RECORDED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {CraftError} from '@brico/crafts/errors';
-import {BOUNTY_CURRENCIES, MANUALLY_RECORDED_BOUNTY_CURRENCIES} from '@brico/crafts/filter';
 import {SenderError} from 'spacetimedb/server';
 
 const BOUNTY_CURRENCY_SET = new Set(BOUNTY_CURRENCIES);

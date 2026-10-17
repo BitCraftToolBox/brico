@@ -5,8 +5,9 @@
  * so history is queryable), so this page deliberately does *not* apply the browser's `Active`
  * filter — a link to a finished craft still renders, with a badge saying what became of it.
  */
+import type {CraftBountyOverride} from "@brico/bindings/brico-app/types";
+import {BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {computeEntitlement, parseDecimalRatio, reduceRatio} from "@brico/crafts/entitlement";
-import {BOUNTY_CURRENCIES} from "@brico/crafts/filter";
 import type {CraftBountyFacts} from "@brico/crafts/subject";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
@@ -16,6 +17,9 @@ import type {CellContext, ColumnDef} from "@tanstack/solid-table";
 import {TbOutlineClipboardCheck as IconClipboardCheck, TbOutlineClipboardCopy as IconClipboardCopy, TbOutlineLock as IconLock} from "solid-icons/tb";
 import {createMemo, createSignal, type JSX, Show} from "solid-js";
 import {Timestamp} from "spacetimedb";
+import {CurrencySelect} from "~/components/crafts/CurrencySelect";
+import {FundingStatus} from "~/components/crafts/FundingStatus";
+import {FundingWalletSelect} from "~/components/crafts/FundingWalletSelect";
 import {OutputIcon} from "~/components/crafts/OutputIcon";
 import {PayoutRateButton} from "~/components/crafts/PayoutRateButton";
 import {LiveTable} from "~/components/data-table/live-table";
@@ -29,16 +33,17 @@ import {Button} from "~/components/ui/button";
 import {Checkbox} from "~/components/ui/checkbox";
 import {Label} from "~/components/ui/label";
 import {Popover, PopoverContent, PopoverTrigger} from "~/components/ui/popover";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
 import {TextField, TextFieldInput} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
 import {useLinkedIntegrations} from "~/lib/account/links";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {createBountyAssignments} from "~/lib/crafts/bounty";
+import {type CraftBountyFundingHandle, createCraftBountyFunding, createCraftBountyOverrides} from "~/lib/crafts/bounty-funding";
 import {type CraftContributor, craftContributorsFrom, craftEntriesFrom} from "~/lib/crafts/entries";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
+import {fundingWalletState, walletForCurrency} from "~/lib/crafts/funding-wallet";
 import {type Ratio, useAmountField} from "~/lib/crafts/payout";
 import {createCraftDetailRelay} from "~/lib/crafts/relay";
 import {breadcrumb} from "~/lib/game-links";
@@ -221,8 +226,10 @@ function BountyRateField(props: {
  * tab keeps its own draft, so switching tabs never clobbers the other's value. Storage always ends
  * up as one exact currency-per-effort fraction regardless of which tab was used.
  */
-function BountyEditor(props: {craftId: string; effortTotal: number; existing: CraftBountyFacts | null}) {
+function BountyEditor(props: {craftId: string; effortTotal: number; existing: CraftBountyOverride | null; funding: CraftBountyFundingHandle}) {
     const {_} = useLingui();
+    const links = useLinkedIntegrations();
+    const walletChoices = () => links.steloWallets().map(wallet => ({linkId: wallet.link.id, currency: wallet.currency}));
     const conn = useConnection(BRICO_APP_SERVER);
     const settings = useSettings();
     const rateMode = settings.payoutDisplayMode;
@@ -234,6 +241,7 @@ function BountyEditor(props: {craftId: string; effortTotal: number; existing: Cr
     const [totalAmount, setTotalAmount] = createSignal("");
     const [currency, setCurrency] = createSignal<string>(BOUNTY_CURRENCIES[0]);
     const [isPrivate, setIsPrivate] = createSignal(false);
+    const [fundingLinkId, setFundingLinkId] = createSignal<bigint | null>(null);
     const [busy, setBusy] = createSignal(false);
 
     /** The ratio the total field's current text parses to, or `null` while it's empty/mid-edit. */
@@ -267,14 +275,22 @@ function BountyEditor(props: {craftId: string; effortTotal: number; existing: Cr
             const rate = Number(props.existing.ratioNumerator) / Number(props.existing.ratioDenominator);
             setTotalAmount(String(rate * Math.max(props.effortTotal, 1)));
             setCurrency(props.existing.currency);
+            setFundingLinkId(props.existing.fundingLinkId ?? null);
         } else {
             setRateRatio(null);
             setRateHasText(false);
             setTotalAmount("");
             setCurrency(BOUNTY_CURRENCIES[0]);
+            setFundingLinkId(null);
         }
         setIsPrivate(props.existing?.private ?? false);
         setOpen(true);
+    };
+
+    // An open hold keeps drawing on the wallet that paid for it, whichever wallet is chosen now.
+    const openHoldElsewhere = () => {
+        const hold = props.funding.openEscrows().get(BigInt(props.craftId));
+        return hold !== undefined && fundingLinkId() !== null && hold.fundingLinkId !== fundingLinkId();
     };
 
     const reportError = (title: string, cause: unknown) => {
@@ -292,6 +308,12 @@ function BountyEditor(props: {craftId: string; effortTotal: number; existing: Cr
             return;
         }
 
+        const walletState = fundingWalletState(currency(), fundingLinkId(), walletChoices());
+        if (walletState === "missing" || walletState === "invalid") {
+            reportError(_(msg`Could not save bounty`), new Error(_(msg`Choose a linked Stelo wallet to fund this bounty.`)));
+            return;
+        }
+
         setBusy(true);
         try {
             const active = conn.active();
@@ -303,6 +325,7 @@ function BountyEditor(props: {craftId: string; effortTotal: number; existing: Cr
                 currency: currency(),
                 private: isPrivate(),
                 updatedAt: Timestamp.now(),
+                fundingLinkId: fundingLinkId() ?? undefined,
             });
             setOpen(false);
         } catch (cause) {
@@ -362,17 +385,20 @@ function BountyEditor(props: {craftId: string; effortTotal: number; existing: Cr
                         <p class="text-xs text-muted-foreground"><Trans>Total for this craft's {props.effortTotal.toLocaleString(uiLocale())} effort.</Trans></p>
                     </TabsContent>
                 </Tabs>
-                <Select
+                <CurrencySelect
+                    class="w-full"
                     value={currency()}
-                    onChange={value => value && setCurrency(value)}
-                    options={[...BOUNTY_CURRENCIES]}
-                    itemComponent={itemProps => <SelectItem item={itemProps.item}><CurrencyLabel currency={itemProps.item.rawValue}/></SelectItem>}
-                >
-                    <SelectTrigger class="h-9 w-full">
-                        <SelectValue<string>>{state => <CurrencyLabel currency={state.selectedOption()}/>}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent/>
-                </Select>
+                    onChange={value => {
+                        setCurrency(value);
+                        setFundingLinkId(walletForCurrency(value, fundingLinkId(), walletChoices()));
+                    }}
+                />
+                <FundingWalletSelect currency={currency()} value={fundingLinkId()} onChange={setFundingLinkId}/>
+                <Show when={openHoldElsewhere()}>
+                    <p class="text-xs text-muted-foreground">
+                        <Trans>This craft stays funded from its current wallet until the bounty is removed and added again.</Trans>
+                    </p>
+                </Show>
                 <div class="flex items-center gap-2">
                     <Checkbox checked={isPrivate()} onChange={setIsPrivate}/>
                     <Label><Trans>Private</Trans></Label>
@@ -403,6 +429,8 @@ export default function CraftDetail() {
     const craftId = createMemo(() => parseCraftId(params.id as string | undefined));
     const relay = createCraftDetailRelay(craftId);
     const bountyAssignments = createBountyAssignments();
+    const {overrides} = createCraftBountyOverrides();
+    const fundingHandle = createCraftBountyFunding();
 
     // `craftEntriesFrom` resolves the relay row against the static game data exactly as it does
     // for a browser row, so the claim/owner/region/skill/tier wording is identical on both pages.
@@ -570,8 +598,18 @@ export default function CraftDetail() {
 
                                 <Show when={canEditBounty()}>
                                     <div>
-                                        <BountyEditor craftId={entry().id} effortTotal={entry().effortTotal} existing={bounty()}/>
+                                        <BountyEditor
+                                            craftId={entry().id}
+                                            effortTotal={entry().effortTotal}
+                                            existing={overrides().get(BigInt(entry().id)) ?? null}
+                                            funding={fundingHandle}
+                                        />
                                     </div>
+                                    <FundingStatus
+                                        craftId={BigInt(entry().id)}
+                                        assigned={bounty() ? {numerator: bounty()!.ratioNumerator, denominator: bounty()!.ratioDenominator} : null}
+                                        funding={fundingHandle}
+                                    />
                                 </Show>
                             </div>
                         </div>
