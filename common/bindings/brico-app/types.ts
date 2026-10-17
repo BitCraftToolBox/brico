@@ -3,7 +3,12 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {type Infer as __Infer, t as __t,} from "spacetimedb";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
 export const Account = __t.object("Account", {
   identity: __t.identity(),
@@ -174,6 +179,7 @@ export const BountyPayoutLogRow = __t.object("BountyPayoutLogRow", {
   amount: __t.i64(),
   createdAt: __t.timestamp(),
   source: __t.string(),
+  note: __t.option(__t.string()),
 });
 export type BountyPayoutLogRow = __Infer<typeof BountyPayoutLogRow>;
 
@@ -195,6 +201,7 @@ export const BountyPayoutRecordLog = __t.object("BountyPayoutRecordLog", {
   amount: __t.i64(),
   createdAt: __t.timestamp(),
   source: __t.string(),
+  note: __t.option(__t.string()),
 });
 export type BountyPayoutRecordLog = __Infer<typeof BountyPayoutRecordLog>;
 
@@ -799,6 +806,11 @@ export type SteloCurrencyPolicy = __Infer<typeof SteloCurrencyPolicy>;
 export const SteloDirect = __t.object("SteloDirect", {});
 export type SteloDirect = __Infer<typeof SteloDirect>;
 
+export const SteloDirectNote = __t.object("SteloDirectNote", {
+  note: __t.string(),
+});
+export type SteloDirectNote = __Infer<typeof SteloDirectNote>;
+
 export const SteloExtras = __t.object("SteloExtras", {
   payeePlayerId: __t.u64(),
   fundingAccountId: __t.u64(),
@@ -890,6 +902,9 @@ export const SteloTransferPurpose = __t.enum("SteloTransferPurpose", {
   },
   get Direct() {
     return SteloDirect;
+  },
+  get DirectNote() {
+    return SteloDirectNote;
   },
 });
 export type SteloTransferPurpose = __Infer<typeof SteloTransferPurpose>;

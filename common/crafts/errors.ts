@@ -54,6 +54,8 @@ export const CraftError = {
     SERVICE_PRINCIPAL_CANNOT_REVOKE_SELF: 'SERVICE_PRINCIPAL_CANNOT_REVOKE_SELF',
     /** A *referenced* identity (not the caller) has no `account` row — see `NO_BRICO_ACCOUNT`. */
     UNKNOWN_BRICO_ACCOUNT: 'UNKNOWN_BRICO_ACCOUNT',
+    /** `recordBountyPayment(For)` — the note is empty, too long, or has control characters. */
+    INVALID_PAYOUT_NOTE: 'INVALID_PAYOUT_NOTE',
 
     // Integration links
     EXTERNAL_ACCOUNT_ALREADY_LINKED: 'EXTERNAL_ACCOUNT_ALREADY_LINKED',

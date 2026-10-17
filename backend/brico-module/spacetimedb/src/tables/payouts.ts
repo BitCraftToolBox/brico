@@ -205,5 +205,7 @@ export const bounty_payout_record_log = table(
         createdAt: t.timestamp(),
         /** `recorded` (manual), `transfer` (Stelo payout), `rollover` or `forfeit` (unclaimed escrow money closed out). */
         source: t.string().default('recorded'),
+        /** The payer's optional note on a manually recorded payment (`normalizePayoutNote`). */
+        note: t.option(t.string()).default(undefined),
     }
 );

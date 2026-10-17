@@ -4,6 +4,7 @@
  */
 import type {EscrowState} from "../app/escrow-cache.ts";
 import type {SteloConfig} from "../config.ts";
+import {refOfMemo} from "./memo.ts";
 import type {SteloReadModel, SteloTransfer} from "./stelo-cache.ts";
 
 export interface EscrowDrift {
@@ -49,7 +50,7 @@ export function findEscrowDrift(config: SteloConfig, escrow: EscrowState, stelo:
 
 /**
  * Transfers touching an escrow wallet that no intent explains. A transfer is explained only when
- * its memo is an intent's ref *and* its accounts and posted amount match that intent, so a
+ * its memo starts with an intent's ref *and* its accounts and posted amount match that intent, so a
  * stranger's transfer can't hide behind a copied memo.
  */
 export function findUnknownEscrowTransfers(config: SteloConfig, escrow: EscrowState, stelo: SteloReadModel): SteloTransfer[] {
@@ -59,7 +60,7 @@ export function findUnknownEscrowTransfers(config: SteloConfig, escrow: EscrowSt
     const unknown: SteloTransfer[] = [];
     for (const transfer of stelo.transfers()) {
         if (!escrowAccounts.has(transfer.debitAccountId) && !escrowAccounts.has(transfer.creditAccountId)) continue;
-        const intent = transfer.memo === undefined ? undefined : intents.get(transfer.memo);
+        const intent = transfer.memo === undefined ? undefined : intents.get(refOfMemo(transfer.memo));
         const explained = intent !== undefined && transfer.creditAccountId === intent.fromAccountId
             && transfer.debitAccountId === intent.toAccountId
             && (transfer.state.tag !== "Posted" || transfer.postedAmount === intent.steloAmount);

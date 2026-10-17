@@ -3,6 +3,7 @@
 import {addRatio, advancePool, assertFitsI64, fitFraction, type Fraction, reduceRatio} from '@brico/crafts/entitlement';
 import {CraftError} from '@brico/crafts/errors';
 import {CLAIM_ACCESS_FLAGS} from '@brico/crafts/filter';
+import {normalizePayoutNote} from '@brico/crafts/note';
 import type {Identity, Timestamp} from 'spacetimedb';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount, requireServicePrincipal} from '../lib/auth';
@@ -397,8 +398,9 @@ export const upsertCraftBountyEntitlement = spacetimedb.reducer(
     }
 );
 
-/** Adjusts `payer`'s running (`payeePlayerId`, `currency`) ledger by `delta` and logs it as a recorded payment. */
-function applyBountyPayment(ctx: Ctx, payer: Identity, payeePlayerId: bigint, currency: string, delta: bigint): void {
+/** Adjusts `payer`'s running (`payeePlayerId`, `currency`) ledger by `delta` and logs it as a recorded payment, with `note` if given. */
+function applyBountyPayment(ctx: Ctx, payer: Identity, payeePlayerId: bigint, currency: string, delta: bigint, note: string | undefined): void {
+    if (note !== undefined && normalizePayoutNote(note) !== note) throw new SenderError(CraftError.INVALID_PAYOUT_NOTE);
     const existing = [...ctx.db.bounty_payout_record.by_payer_payee.filter([payer, payeePlayerId])]
         .find(row => row.currency === currency);
     if (existing === undefined) {
@@ -425,20 +427,21 @@ function applyBountyPayment(ctx: Ctx, payer: Identity, payeePlayerId: bigint, cu
         amount: delta,
         createdAt: ctx.timestamp,
         source: 'recorded',
+        note,
     });
 }
 
 /**
  * Adjusts the caller's own (`ctx.sender`, `payeePlayerId`, `currency`) running ledger by `delta`
  * (positive or negative). This is independent of any particular craft. The only validation is the
- * manual currency allow-list.
+ * manual currency allow-list and the optional `note` (already trimmed, see `normalizePayoutNote`).
  */
 export const recordBountyPayment = spacetimedb.reducer(
-    {payeePlayerId: t.u64(), currency: t.string(), delta: t.i64()},
-    (ctx, {payeePlayerId, currency, delta}) => {
+    {payeePlayerId: t.u64(), currency: t.string(), delta: t.i64(), note: t.option(t.string())},
+    (ctx, {payeePlayerId, currency, delta, note}) => {
         requireAccount(ctx);
         validateManualBountyCurrency(currency);
-        applyBountyPayment(ctx, ctx.sender, payeePlayerId, currency, delta);
+        applyBountyPayment(ctx, ctx.sender, payeePlayerId, currency, delta, note);
     }
 );
 
@@ -447,12 +450,12 @@ export const recordBountyPayment = spacetimedb.reducer(
  * have an account.
  */
 export const recordBountyPaymentFor = spacetimedb.reducer(
-    {payerAccountIdentity: t.identity(), payeePlayerId: t.u64(), currency: t.string(), delta: t.i64()},
-    (ctx, {payerAccountIdentity, payeePlayerId, currency, delta}) => {
+    {payerAccountIdentity: t.identity(), payeePlayerId: t.u64(), currency: t.string(), delta: t.i64(), note: t.option(t.string())},
+    (ctx, {payerAccountIdentity, payeePlayerId, currency, delta, note}) => {
         requireServicePrincipal(ctx);
         if (ctx.db.account.identity.find(payerAccountIdentity) === null) throw new SenderError(CraftError.UNKNOWN_BRICO_ACCOUNT);
         validateManualBountyCurrency(currency);
-        applyBountyPayment(ctx, payerAccountIdentity, payeePlayerId, currency, delta);
+        applyBountyPayment(ctx, payerAccountIdentity, payeePlayerId, currency, delta, note);
     }
 );
 

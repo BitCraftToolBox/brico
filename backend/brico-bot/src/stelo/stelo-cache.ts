@@ -7,6 +7,7 @@
 import type {DbConnection} from "@brico/bindings/stelo";
 
 import type {TableFeed} from "../spacetime/feed.ts";
+import {refOfMemo} from "./memo.ts";
 
 type Tagged = {tag: string};
 type Hex = {toHexString(): string};
@@ -70,7 +71,7 @@ export interface SteloReadModel {
     ledgerByName(name: string): SteloLedger | undefined;
     /** Every transfer seen so far, deduplicated by id. */
     transfers(): Iterable<SteloTransfer>;
-    /** The posted Asset transfer for a ref between exactly these accounts for exactly this raw amount, if one is visible. */
+    /** The posted Asset transfer whose memo starts with `ref` (see `refOfMemo`) between exactly these accounts for exactly this raw amount, if one is visible. */
     findPostedTransfer(match: {ref: string; fromAccountId: bigint; toAccountId: bigint; steloAmount: bigint}): SteloTransfer | undefined;
     /** Live balance of an account (raw units), if the bot can see it. */
     balance(accountId: bigint): bigint | undefined;
@@ -118,9 +119,10 @@ export function createSteloCache(): SteloCache {
         const known = transferMap.get(row.id);
         transferMap.set(row.id, row);
         if (row.memo !== undefined) {
-            const ids = transfersByRef.get(row.memo);
+            const ref = refOfMemo(row.memo);
+            const ids = transfersByRef.get(ref);
             if (ids) ids.add(row.id);
-            else transfersByRef.set(row.memo, new Set([row.id]));
+            else transfersByRef.set(ref, new Set([row.id]));
         }
         if (!known || known.state.tag !== row.state.tag) bump();
     }

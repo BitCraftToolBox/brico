@@ -3,15 +3,8 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {
-  TypeBuilder as __TypeBuilder,
-  t as __t,
-  type AlgebraicTypeType as __AlgebraicTypeType,
-  type Infer as __Infer,
-} from "spacetimedb";
-import {
-  DiscordWatchDisplayContent,
-} from "./types";
+import {t as __t,} from "spacetimedb";
+import {DiscordWatchDisplayContent,} from "./types";
 
 
 export default __t.row({

@@ -3,11 +3,17 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {t as __t,} from "spacetimedb";
+import {
+  TypeBuilder as __TypeBuilder,
+  t as __t,
+  type AlgebraicTypeType as __AlgebraicTypeType,
+  type Infer as __Infer,
+} from "spacetimedb";
 
 export default {
   payerAccountIdentity: __t.identity(),
   payeePlayerId: __t.u64(),
   currency: __t.string(),
   delta: __t.i64(),
+  note: __t.option(__t.string()),
 };

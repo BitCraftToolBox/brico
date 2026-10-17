@@ -20,6 +20,7 @@ import type {BricoAppConnection} from "../app/connection.ts";
 import type {EscrowCache} from "../app/escrow-cache.ts";
 import type {Logger} from "../log.ts";
 import {notificationsTotal, timeReducerCall} from "../metrics.ts";
+import {accountName, type PlayerNames} from "./names.ts";
 import type {SteloReadModel} from "./stelo-cache.ts";
 import type {FundingAlert, SteloWrites} from "./writes.ts";
 
@@ -58,10 +59,7 @@ export interface FundingNotifierDeps {
     /** Absent when the Discord bot is not configured; only the toast sink is served then. */
     discord?: {rest: REST; frontendOrigin: string};
     /** Resolves party names; without it alerts carry none. */
-    names?: {
-        player(playerId: bigint): string | undefined;
-        playerAccounts(): ReadonlyMap<bigint, Identity>;
-    };
+    names?: PlayerNames;
     log: Logger;
 }
 
@@ -86,24 +84,9 @@ export function createFundingNotifier(deps: FundingNotifierDeps): FundingNotifie
         return explicit ? explicit[event] : true;
     }
 
-    /** The account's display name, else the name of its first linked player. */
-    function accountName(account: Identity): string | undefined {
-        const conn = app.connection?.connection;
-        if (conn?.isActive) {
-            const acc = conn.db.allAccount.identity.find(account);
-            if (acc && acc.displayName) return acc.displayName;
-        }
-        if (!deps.names) return undefined;
-        for (const [playerId, owner] of deps.names.playerAccounts()) {
-            const name = owner.isEqual(account) ? deps.names.player(playerId) : undefined;
-            if (name) return name;
-        }
-        return undefined;
-    }
-
     function partiesOf(event: FundingEvent): {payerName?: string; payeeName?: string} {
         return {
-            payerName: event.payer ? accountName(event.payer) : undefined,
+            payerName: event.payer ? accountName(app, deps.names, event.payer) : undefined,
             payeeName: event.payeePlayerId === undefined ? undefined : deps.names?.player(event.payeePlayerId),
         };
     }

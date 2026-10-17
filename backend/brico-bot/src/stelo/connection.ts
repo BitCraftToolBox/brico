@@ -21,8 +21,8 @@ export interface SteloConnection {
     readonly isLive: boolean;
     /** Hex identity this connection authenticated as; Stelo's `create_app_ticket` / the dev seed need it. */
     readonly identityHex: string | null;
-    /** Sends one transfer (`pending = false`, memo and idempotency key both `ref`) and resolves when the reducer commits. */
-    createTransfer(args: {fromAccountId: bigint; toAccountId: bigint; steloAmount: bigint; ref: string}): Promise<void>;
+    /** Sends one transfer (`pending = false`, idempotency key `ref`, `memo` starting with `ref`) and resolves when the reducer commits. */
+    createTransfer(args: {fromAccountId: bigint; toAccountId: bigint; steloAmount: bigint; ref: string; memo: string}): Promise<void>;
     /** Accounts on one ledger whose address starts with `address`, from Stelo's public directory (no membership needed). */
     searchAddress(address: string, ledgerId: bigint): Promise<SteloDirectoryHit[]>;
     /** Up to 10 accounts on one ledger whose address or primary-user name starts with `term`; `scope` limits it to usernames or addresses. */
@@ -134,14 +134,14 @@ export function startSteloConnection(options: SteloConnectionOptions): SteloConn
         get identityHex() {
             return identityHex;
         },
-        async createTransfer({fromAccountId, toAccountId, steloAmount, ref}) {
+        async createTransfer({fromAccountId, toAccountId, steloAmount, ref, memo}) {
             const conn = connection.connection;
             if (!conn?.isActive || !connection.isLive) throw new Error("unavailable: stelo connection is not live");
             await conn.reducers.createTransfer({
                 sendingAccountId: fromAccountId,
                 receivingAccountId: toAccountId,
                 amount: steloAmount,
-                memo: ref,
+                memo,
                 idempotencyKey: ref,
                 pending: false,
             });

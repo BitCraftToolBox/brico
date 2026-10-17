@@ -18,6 +18,7 @@
     "./discord-notify": "./discord-notify.ts",
     "./icon-render": "./icon-render.ts",
     "./stelo": "./stelo.ts",
+    "./note": "./note.ts",
     "./notification": "./notification.ts"
   },
   "scripts": {

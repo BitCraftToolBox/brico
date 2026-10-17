@@ -142,11 +142,15 @@ export const SteloTransferPurpose = t.enum('SteloTransferPurpose', {
     }),
     /** One of the payer's own wallets to any wallet, outside the escrow books (the Discord `/pay stelo` command). */
     direct: t.object('SteloDirect', {}),
+    /** `direct` with the payer's note (≤ `STELO_NOTE_MAX_BYTES` UTF-8 bytes), appended to the Stelo memo. */
+    directNote: t.object('SteloDirectNote', {
+        note: t.string(),
+    }),
 });
 
 /**
- * Write-ahead record of one Stelo transfer. `ref` (`<prefix><id>`, ≤ 32 bytes) is both the Stelo memo
- * and idempotency key, so replaying the send can't duplicate it.
+ * Write-ahead record of one Stelo transfer. `ref` (`<prefix><id>`, ≤ 32 bytes) is the Stelo idempotency
+ * key, so replaying the send can't duplicate it, and the start of the memo (`<ref>|<short note>`).
  */
 export const stelo_transfer = table(
     {name: 'stelo_transfer'},

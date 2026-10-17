@@ -650,6 +650,10 @@ msgid "{funcName} Lvl {0}"
 msgstr "{funcName} Lvl {0}"
 
 #: src/routes/account/payees.tsx
+msgid "Note (optional)"
+msgstr "Note (optional)"
+
+#: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
 msgid "Entitled"
 msgstr "Entitled"
@@ -809,6 +813,11 @@ msgstr "{field} {cmpEl} {value}"
 #: src/components/crafts/FilterBuilder.tsx
 msgid "Choose {0}"
 msgstr "Choose {0}"
+
+#: src/lib/crafts/error-vocab.ts
+#: src/routes/account/payees.tsx
+msgid "The note is too long or contains line breaks."
+msgstr "The note is too long or contains line breaks."
 
 #: src/routes/account/bounty-rules.tsx
 msgid "Skill/tier grid"
@@ -2533,6 +2542,10 @@ msgstr "Discover Cargo"
 #: src/lib/crafts/filter-vocab.ts
 msgid "is not"
 msgstr "is not"
+
+#: src/components/crafts/PayoutHistoryDialog.tsx
+msgid "Note"
+msgstr "Note"
 
 #: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/routes/account/payees.tsx

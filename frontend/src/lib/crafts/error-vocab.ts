@@ -41,6 +41,7 @@ const ERROR_VOCAB: Record<CraftErrorCode, VocabEntry> = {
     [CraftError.IDENTITY_ALREADY_HAS_ACCOUNT]: msg`That identity already has a brico account.`,
     [CraftError.SERVICE_PRINCIPAL_CANNOT_REVOKE_SELF]: msg`You can't revoke your own access.`,
     [CraftError.UNKNOWN_BRICO_ACCOUNT]: msg`That account doesn't exist.`,
+    [CraftError.INVALID_PAYOUT_NOTE]: msg`The note is too long or contains line breaks.`,
     [CraftError.EXTERNAL_ACCOUNT_ALREADY_LINKED]: msg`That account is already linked to a different brico account.`,
     [CraftError.UNKNOWN_INTEGRATION_LINK]: msg`That link no longer exists.`,
     [CraftError.LINK_CODE_ALREADY_IN_USE]: msg`That link code is already in use — try again.`,

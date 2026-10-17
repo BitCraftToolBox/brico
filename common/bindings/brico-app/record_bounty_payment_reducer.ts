@@ -14,4 +14,5 @@ export default {
   payeePlayerId: __t.u64(),
   currency: __t.string(),
   delta: __t.i64(),
+  note: __t.option(__t.string()),
 };

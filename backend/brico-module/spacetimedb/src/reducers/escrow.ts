@@ -2,7 +2,7 @@
 
 import {ceilRatio, escrowRequired, overlapRelease, reduceRatio, splitPayout} from '@brico/crafts/entitlement';
 import {CraftError} from '@brico/crafts/errors';
-import {FUNDING_REASONS, FUNDING_SOURCES, FUNDING_STATES} from '@brico/crafts/stelo';
+import {FUNDING_REASONS, FUNDING_SOURCES, FUNDING_STATES, normalizeSteloNote} from '@brico/crafts/stelo';
 import type {Identity} from 'spacetimedb';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount, requireServicePrincipal} from '../lib/auth';
@@ -48,7 +48,7 @@ function pendingTransfers(ctx: Ctx, payer: Identity) {
 /**
  * Service-principal-only: writes the `Pending` row for a Stelo transfer *before* `brico-bot` attempts
  * it. Every argument is checked against the books regardless of what the bot sends; the row's `ref`
- * (`<refPrefix><id>`) is the memo and idempotency key for the transfer.
+ * (`<refPrefix><id>`) is the idempotency key for the transfer and the start of its memo.
  */
 export const recordSteloTransferIntent = spacetimedb.reducer(
     {
@@ -141,7 +141,9 @@ export const recordSteloTransferIntent = spacetimedb.reducer(
                 }
                 break;
             }
-            case 'direct': {
+            case 'direct':
+            case 'directNote': {
+                if (purpose.tag === 'directNote' && normalizeSteloNote(purpose.value.note) !== purpose.value.note) throw invalidTransfer('note');
                 if (fromAccountId === toAccountId) throw invalidTransfer('same-wallet');
                 requireOwnSteloAccount(ctx, payerAccountIdentity, fromAccountId, currency);
                 break;
@@ -249,6 +251,7 @@ export const settleSteloTransfer = spacetimedb.reducer(
                 break;
             }
             case 'direct':
+            case 'directNote':
                 break;
         }
 

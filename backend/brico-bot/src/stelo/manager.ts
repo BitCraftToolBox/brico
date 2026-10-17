@@ -19,6 +19,7 @@ import {createFundingStatusSync, type FundingStatusSync} from "./funding-status.
 import {createFundingGate, type FundingGate} from "./funding.ts";
 import {createInFlight} from "./inflight.ts";
 import {createLinkProcessor} from "./links.ts";
+import {accountName} from "./names.ts";
 import {createFundingNotifier} from "./notify.ts";
 import {createPayoutPlanner} from "./payouts.ts";
 import {findEscrowDrift, findUnknownEscrowTransfers} from "./reconcile.ts";
@@ -82,15 +83,18 @@ export function createSteloManager(options: SteloManagerOptions): SteloManager {
     };
 
     const {playerName} = options;
-    const notifier = createFundingNotifier({
-        app, escrow, stelo, writes, discord: options.discord, log,
-        names: playerName && {player: playerName, playerAccounts: options.playerAccounts},
-    });
+    const names = playerName && {player: playerName, playerAccounts: options.playerAccounts};
+    const notifier = createFundingNotifier({app, escrow, stelo, writes, discord: options.discord, log, names});
     const funding = createFundingGate({config, escrow, stelo, playerAccounts: options.playerAccounts, writes, log, now});
     const fundingStatus = createFundingStatusSync({escrow, writes, notifier, log});
-    const executor = createTransferExecutor({log, stelo, writes, now});
+    const executor = createTransferExecutor({
+        log, stelo, writes, now,
+        payerName: payer => accountName(app, names, payer),
+    });
     const links = createLinkProcessor({config, escrow, playerAccounts: options.playerAccounts, stelo, writes, log});
     const payouts = createPayoutPlanner({config, escrow, playerAccounts: options.playerAccounts, stelo, writes, log, now, notifier});
+
+    const direct = createDirectTransfers({config, escrow, playerAccounts: options.playerAccounts, stelo, writes, now});
 
     const reportedUnknown = new Set<bigint>();
     const drifting = new Set<string>();
@@ -146,7 +150,7 @@ export function createSteloManager(options: SteloManagerOptions): SteloManager {
     return {
         funding,
         fundingStatus,
-        direct: createDirectTransfers({config, escrow, playerAccounts: options.playerAccounts, stelo, writes}),
+        direct,
 
         step(hasEnded) {
             if (!app.isLive) return;
@@ -167,6 +171,7 @@ export function createSteloManager(options: SteloManagerOptions): SteloManager {
             links.run();
             if (changed && options.stelo.isLive) reconcile();
             executor.run([...escrow.state.transfers.values()].filter(isPending));
+            direct.pollOutcomes();
             payouts.refunds();
             if (changed) payouts.overlaps();
             payouts.sweep();

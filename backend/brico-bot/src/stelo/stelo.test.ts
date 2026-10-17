@@ -21,6 +21,7 @@ import {classifyTransferError, createTransferExecutor} from "./executor.ts";
 import {createFundingStatusSync} from "./funding-status.ts";
 import {createFundingGate, type FundingRequest} from "./funding.ts";
 import {createLinkProcessor} from "./links.ts";
+import {buildMemo, composeMemo, memoNote, refOfMemo} from "./memo.ts";
 import {createFundingNotifier} from "./notify.ts";
 import {createPayoutPlanner} from "./payouts.ts";
 import {findEscrowDrift, findUnknownEscrowTransfers} from "./reconcile.ts";
@@ -127,6 +128,48 @@ const hold = (craftId: bigint): SteloTransferPurpose => ({
     tag: "Hold", value: {craftId, fundingLinkId: 1n, ratioNumerator: 1n, ratioDenominator: 20n, effortCovered: 400n},
 });
 
+describe("memo", () => {
+    it("reads the ref back from a memo with or without a note", () => {
+        assert.equal(refOfMemo("bx5|hold for craft 123"), "bx5");
+        assert.equal(refOfMemo("bx5"), "bx5");
+        assert.equal(refOfMemo("hello"), "hello");
+    });
+
+    it("describes each purpose briefly", () => {
+        const note = (purpose: SteloTransferPurpose, name: string | null = "Alice") => memoNote(transfer(5n, purpose), name ?? undefined);
+        assert.equal(note(hold(1234567890123n)), "hold for craft 90123");
+        assert.equal(note({tag: "TopUp", value: {craftId: 42n, ratioNumerator: 1n, ratioDenominator: 2n, reserved: 0n}}), "top-up craft 42");
+        assert.equal(note({tag: "Payout", value: {payeePlayerId: 1n, fundingAccountId: 2n, extras: 0n}}), "payout from Alice");
+        assert.equal(note({tag: "Payout", value: {payeePlayerId: 1n, fundingAccountId: 2n, extras: 0n}}, null), "payout");
+        assert.equal(note({tag: "Refund", value: {fundingAccountId: 2n}}), "escrow refund");
+        assert.equal(note({tag: "Extras", value: {payeePlayerId: 1n, fundingAccountId: 2n}}), "loyalty extras");
+        assert.equal(note({tag: "Direct", value: {}}), "direct pay from Alice");
+    });
+
+    it("appends a payer's note after the first 32 bytes, up to 64 in all", () => {
+        const noted = (note: string, name = "Alice") => buildMemo(transfer(5n, {tag: "DirectNote", value: {note}}), name);
+        assert.equal(noted("thanks for the help!"), "bx5|direct pay from Alice|thanks for the help!");
+        assert.equal(refOfMemo(noted("hi")), "bx5");
+
+        const full = noted("x".repeat(32), "Bartholomew the Magnificent");
+        assert.equal(Buffer.byteLength(full), 64);
+        assert.equal(full, `bx5|direct pay from Bartholomew|${"x".repeat(32)}`);
+        assert.equal(noted("日本語日本語日本語日").length < 64, true);
+        assert.ok(Buffer.byteLength(noted("日本語日本語日本語日".repeat(2))) <= 64);
+    });
+
+    it("cuts the memo to Stelo's 32 bytes without splitting a character", () => {
+        assert.equal(composeMemo("bx5", undefined), "bx5");
+        assert.equal(composeMemo("bx5", "loyalty extras"), "bx5|loyalty extras");
+        const long = composeMemo("bx123456", "direct pay from Bartholomew the Magnificent");
+        assert.ok(Buffer.byteLength(long) <= 32);
+        assert.ok(long.startsWith("bx123456|direct pay from "));
+        const wide = composeMemo("bx5", "payout from 日本語日本語日本語日本語日本語");
+        assert.ok(Buffer.byteLength(wide) <= 32);
+        assert.ok(!wide.includes("�"));
+    });
+});
+
 describe("classifyTransferError", () => {
     it("maps Stelo's rejections to terminal failures and everything else to a retry", () => {
         assert.equal(classifyTransferError(new Error("invalid balance")), "insufficient-funds");
@@ -142,17 +185,23 @@ describe("transfer executor", () => {
     function setup(sendError?: Error) {
         const {cache} = steloWorld();
         const sent: string[] = [];
+        const memos: string[] = [];
         const {writes, calls} = fakeWrites();
         let now = NOW;
+        let payerName: string | undefined = "Alice";
         const stelo = Object.assign(Object.create(cache), {
             isLive: true,
-            createTransfer: async (args: {ref: string}) => {
+            createTransfer: async (args: {ref: string; memo: string}) => {
                 sent.push(args.ref);
+                memos.push(args.memo);
                 if (sendError) throw sendError;
             },
         });
-        const executor = createTransferExecutor({log: quiet, stelo, writes, now: () => now, resendAfterMs: 1000});
-        return {cache, sent, calls, executor, advance: (ms: number) => void (now += ms)};
+        const executor = createTransferExecutor({log: quiet, stelo, writes, now: () => now, resendAfterMs: 1000, payerName: () => payerName});
+        return {
+            cache, sent, memos, calls, executor, advance: (ms: number) => void (now += ms),
+            rename: (name: string) => void (payerName = name),
+        };
     }
     const settle = () => new Promise(resolve => setImmediate(resolve));
 
@@ -165,6 +214,25 @@ describe("transfer executor", () => {
         advance(1500);
         executor.run(pending);
         assert.deepEqual(sent, ["bx1", "bx1"]);
+    });
+
+    it("sends the ref plus a note as the memo, and the same memo on every resend even if the payer is renamed", () => {
+        const {memos, executor, advance, rename} = setup();
+        const pending = [transfer(1n, {tag: "Direct", value: {}})];
+        executor.run(pending);
+        rename("Bob");
+        advance(1500);
+        executor.run(pending);
+        assert.deepEqual(memos, ["bx1|direct pay from Alice", "bx1|direct pay from Alice"]);
+    });
+
+    it("settles a posted transfer whose memo carries a note", async () => {
+        const {cache, sent, calls, executor} = setup();
+        cache.transferRows.insert({id: 55n, debitAccountId: ESCROW, creditAccountId: WALLET, postedAmount: 20_000n, state: {tag: "Posted"}, memo: "bx1|hold for craft 12345"});
+        executor.run([transfer(1n, hold(7n))]);
+        await settle();
+        assert.deepEqual(sent, []);
+        assert.deepEqual(calls, ["settle 1 55"]);
     });
 
     it("settles instead of sending when the posted transfer is already visible (crash resume)", async () => {
@@ -534,7 +602,7 @@ describe("reconcile", () => {
 
         // A payout posted on Stelo but not yet settled in the books has already left the wallet.
         escrow.steloTransfer.insert(transfer(2n, {tag: "Payout", value: {payeePlayerId: 5001n, fundingAccountId: WALLET, extras: 0n}}, {fromAccountId: ESCROW, toAccountId: RECEIVING, amount: 6n, steloAmount: 6000n}));
-        cache.transferRows.insert({id: 70n, debitAccountId: RECEIVING, creditAccountId: ESCROW, postedAmount: 6000n, state: {tag: "Posted"}, memo: "bx2"});
+        cache.transferRows.insert({id: 70n, debitAccountId: RECEIVING, creditAccountId: ESCROW, postedAmount: 6000n, state: {tag: "Posted"}, memo: "bx2|payout from Alice"});
         cache.accounts.update(cache.account(ESCROW)!, {...cache.account(ESCROW)!, balance: 14_000n});
         assert.deepEqual(findEscrowDrift(config, escrow.state, cache), []);
     });
@@ -638,14 +706,16 @@ describe("direct transfers", () => {
 
     function setup(options: {walletRole?: string; walletBalance?: bigint; targetLedger?: bigint} = {}) {
         const {stelo: base} = steloWorld(options);
+        const escrow = escrowWorld();
+        let now = NOW;
         const stelo = Object.assign(Object.create(base), {
             lookupAccount: async (id: bigint) => id === WALLET || id === TARGET
                 ? {accountId: id, address: `A${id}`, ledgerId: id === TARGET ? options.targetLedger ?? 1n : 1n, kind: {tag: "Debit"}, primaryUsername: `user${id}`}
                 : undefined,
         });
         const {writes, intents} = fakeWrites();
-        const direct = createDirectTransfers({config, escrow: escrowWorld(), playerAccounts: payerPlayers, stelo, writes});
-        return {direct, intents};
+        const direct = createDirectTransfers({config, escrow, playerAccounts: payerPlayers, stelo, writes, now: () => now});
+        return {direct, intents, escrow, advance: (ms: number) => void (now += ms)};
     }
 
     const args = (overrides: Partial<Parameters<ReturnType<typeof setup>["direct"]["prepare"]>[0]> = {}) =>
@@ -669,6 +739,77 @@ describe("direct transfers", () => {
         assert.equal(intents.length, 1);
         assert.equal(intents[0].purpose.tag, "Direct");
         assert.deepEqual([intents[0].fromAccountId, intents[0].toAccountId, intents[0].amount, intents[0].steloAmount], [WALLET, TARGET, 5n, 5_000n]);
+    });
+
+    it("records a transfer with a note as a DirectNote intent", async () => {
+        const {direct, intents} = setup();
+        const result = await direct.prepare(args({note: "for the logs"}));
+        assert.ok(result.ok);
+        await direct.submit(result.plan);
+        assert.deepEqual(intents[0].purpose, {tag: "DirectNote", value: {note: "for the logs"}});
+    });
+
+    describe("outcome callbacks", () => {
+        const intent = (id: bigint, fields: Partial<SteloTransfer> = {}) =>
+            transfer(id, {tag: "Direct", value: {}}, {fromAccountId: WALLET, toAccountId: TARGET, amount: 5n, steloAmount: 5_000n, ...fields});
+        const submitWatched = async (world: ReturnType<typeof setup>) => {
+            const prepared = await world.direct.prepare(args());
+            assert.ok(prepared.ok);
+            const outcomes: unknown[] = [];
+            await world.direct.submit(prepared.plan, outcome => outcomes.push(outcome));
+            return outcomes;
+        };
+
+        it("reports success once, when the matching intent settles", async () => {
+            const world = setup();
+            const outcomes = await submitWatched(world);
+            const row = intent(7n);
+            world.escrow.steloTransfer.insert(row);
+            world.direct.pollOutcomes();
+            assert.deepEqual(outcomes, []);
+
+            world.escrow.steloTransfer.update(row, {...row, state: {tag: "Settled"}});
+            world.direct.pollOutcomes();
+            world.direct.pollOutcomes();
+            assert.deepEqual(outcomes, [{ok: true}]);
+        });
+
+        it("reports the failure reason when the intent fails", async () => {
+            const world = setup();
+            const outcomes = await submitWatched(world);
+            const row = intent(7n);
+            world.escrow.steloTransfer.insert(row);
+            world.escrow.steloTransfer.update(row, {...row, state: {tag: "Failed"}, failureReason: "insufficient-funds"});
+            world.direct.pollOutcomes();
+            assert.deepEqual(outcomes, [{ok: false, reason: "insufficient-funds"}]);
+        });
+
+        it("ignores an identical intent from before the submit and one that belongs to another watcher", async () => {
+            const world = setup();
+            world.escrow.steloTransfer.insert(intent(3n, {state: {tag: "Settled"}}));
+            const first = await submitWatched(world);
+            const second = await submitWatched(world);
+            world.direct.pollOutcomes();
+            assert.deepEqual([first, second], [[], []]);
+
+            world.escrow.steloTransfer.insert(intent(7n, {state: {tag: "Settled"}}));
+            world.direct.pollOutcomes();
+            assert.deepEqual([first, second], [[{ok: true}], []]);
+
+            world.escrow.steloTransfer.insert(intent(8n, {state: {tag: "Failed"}, failureReason: "no-permission"}));
+            world.direct.pollOutcomes();
+            assert.deepEqual(second, [{ok: false, reason: "no-permission"}]);
+        });
+
+        it("stops watching after 15 minutes", async () => {
+            const world = setup();
+            const outcomes = await submitWatched(world);
+            world.advance(16 * 60 * 1000);
+            world.direct.pollOutcomes();
+            world.escrow.steloTransfer.insert(intent(7n, {state: {tag: "Settled"}}));
+            world.direct.pollOutcomes();
+            assert.deepEqual(outcomes, []);
+        });
     });
 
     it("rejects a source wallet that is not the payer's, a missing or foreign-ledger destination and an overdraft", async () => {

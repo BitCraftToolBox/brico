@@ -96,7 +96,7 @@ export interface SteloConfig {
     authAlertWebhook: string | null;
     /** Keyed by escrowed bounty currency id. */
     currencies: Record<string, SteloCurrencyConfig>;
-    /** Prefix of every transfer ref (memo and idempotency key); distinct per deployment. */
+    /** Prefix of every transfer ref (idempotency key and start of the memo); distinct per deployment. */
     refPrefix: string;
     /** Sweep cadence for payouts to payees. */
     payoutIntervalMs: number;

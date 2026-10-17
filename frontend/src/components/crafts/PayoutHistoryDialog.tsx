@@ -65,6 +65,7 @@ export function PayoutHistoryDialog(props: {
                                 <TableHead><Trans>Payer</Trans></TableHead>
                                 <TableHead><Trans>Player</Trans></TableHead>
                                 <TableHead><Trans>Amount</Trans></TableHead>
+                                <TableHead><Trans>Note</Trans></TableHead>
                                 <TableHead><Trans>Date</Trans></TableHead>
                             </TableRow>
                         </TableHeader>
@@ -73,7 +74,7 @@ export function PayoutHistoryDialog(props: {
                                 when={filtered().length > 0}
                                 fallback={
                                     <TableRow>
-                                        <TableCell colSpan={4} class="h-16 text-center text-muted-foreground">
+                                        <TableCell colSpan={5} class="h-16 text-center text-muted-foreground">
                                             <Show when={props.ready} fallback={<Trans>Loading…</Trans>}>
                                                 <Trans>No transactions yet.</Trans>
                                             </Show>
@@ -90,8 +91,15 @@ export function PayoutHistoryDialog(props: {
                                                 <span class="inline-flex items-center gap-1">
                                                     <CurrencyLabel currency={row.currency} iconOnly/>
                                                     {row.amount > 0n ? "+" : ""}{row.amount.toString()}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span class="inline-flex items-center gap-1">
                                                     <Show when={payoutSourceLabel(row.source, _)}>
                                                         {text => <Badge variant="outline">{text()}</Badge>}
+                                                    </Show>
+                                                    <Show when={row.note}>
+                                                        {note => <span class="text-sm text-muted-foreground">{note()}</span>}
                                                     </Show>
                                                 </span>
                                             </TableCell>

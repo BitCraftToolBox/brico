@@ -13,6 +13,7 @@
 import type {LoyaltyBonusTotal, LoyaltyReward} from "@brico/bindings/brico-app/types";
 import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {addRatio, bonusFromMultiplier} from "@brico/crafts/entitlement";
+import {normalizePayoutNote, PAYOUT_NOTE_MAX_BYTES} from "@brico/crafts/note";
 import {msg, t} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
@@ -157,15 +158,19 @@ function PaymentDialog(props: {target: Accessor<EditTarget | null>; onClose: () 
     const {_} = useLingui();
     const conn = useConnection(BRICO_APP_SERVER);
     const [amount, setAmount] = createSignal("");
+    const [note, setNote] = createSignal("");
     const [busy, setBusy] = createSignal(false);
 
-    // Clears the typed amount whenever the *target* changes (a new row opened the dialog, or it
+    // Clears the typed amount and note whenever the *target* changes (a new row opened the dialog, or it
     // closed) — but never on its own, so a re-render of whatever row is currently being edited
-    // can't touch it. See the file doc comment.
+    // can't touch them. See the file doc comment.
     createEffect<string | null>(previousKey => {
         const target = props.target();
         const key = target ? `${target.playerId}:${target.currency}` : null;
-        if (key !== previousKey) setAmount("");
+        if (key !== previousKey) {
+            setAmount("");
+            setNote("");
+        }
         return key;
     }, null);
 
@@ -177,6 +182,15 @@ function PaymentDialog(props: {target: Accessor<EditTarget | null>; onClose: () 
             showToast({title: () => _(msg`Could not record payment`), description: () => _(msg`Enter a whole number.`), variant: "destructive"});
             return;
         }
+        const trimmedNote = note().trim();
+        if (trimmedNote !== "" && normalizePayoutNote(trimmedNote) === null) {
+            showToast({
+                title: () => _(msg`Could not record payment`),
+                description: () => _(msg`The note is too long or contains line breaks.`),
+                variant: "destructive",
+            });
+            return;
+        }
         setBusy(true);
         try {
             const active = conn.active();
@@ -185,6 +199,7 @@ function PaymentDialog(props: {target: Accessor<EditTarget | null>; onClose: () 
                 payeePlayerId: BigInt(target.playerId),
                 currency: target.currency,
                 delta: sign * BigInt(trimmed),
+                note: trimmedNote === "" ? undefined : trimmedNote,
             });
             props.onClose();
         } catch (cause) {
@@ -207,6 +222,9 @@ function PaymentDialog(props: {target: Accessor<EditTarget | null>; onClose: () 
                 </DialogHeader>
                 <TextField value={amount()} onChange={setAmount}>
                     <TextFieldInput type="number" class="h-9" placeholder={_(msg`Amount`)}/>
+                </TextField>
+                <TextField value={note()} onChange={setNote}>
+                    <TextFieldInput class="h-9" placeholder={_(msg`Note (optional)`)} maxLength={PAYOUT_NOTE_MAX_BYTES}/>
                 </TextField>
                 <DialogFooter>
                     <Button variant="outline" disabled={busy() || !amount().trim()} onClick={() => record(-1n)}>−</Button>

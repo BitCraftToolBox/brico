@@ -146,6 +146,7 @@ const BountyPayoutLogRow = t.row('BountyPayoutLogRow', {
     amount: t.i64(),
     createdAt: t.timestamp(),
     source: t.string(),
+    note: t.option(t.string()),
 });
 
 /** The caller's own transaction log as a payer — every row `recordBountyPayment` appended under
@@ -164,6 +165,7 @@ export const myBountyPayoutRecordLogAsPayer = spacetimedb.view(
             amount: row.amount,
             createdAt: row.createdAt,
             source: row.source,
+            note: row.note,
         }));
     }
 );
@@ -190,6 +192,7 @@ export const myBountyPayoutRecordLogAsContributor = spacetimedb.view(
                 amount: row.amount,
                 createdAt: row.createdAt,
                 source: row.source,
+                note: row.note,
             }))
         );
     }

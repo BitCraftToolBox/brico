@@ -1,17 +1,20 @@
 /**
  * executor.ts — carries each `Pending` transfer intent through Stelo exactly once.
  *
- * The intent row exists before any money moves, and its `ref` is both the memo and the idempotency
- * key, so sending is safe to repeat: a replay returns the original transfer. An intent settles once
- * the bot sees its posted transfer (ref, both accounts and raw amount must match) in `my_transfers`.
+ * The intent row exists before any money moves, and its `ref` is the idempotency key and the start
+ * of the memo, so sending is safe to repeat: a replay returns the original transfer. An intent
+ * settles once the bot sees its posted transfer (ref, both accounts and raw amount must match) in
+ * `my_transfers`.
  */
 import type {SteloTransfer} from "@brico/bindings/brico-app/types";
+import type {Identity} from "spacetimedb";
 
 import type {Logger} from "../log.ts";
+import {buildMemo} from "./memo.ts";
 import type {SteloReadModel} from "./stelo-cache.ts";
 import type {SteloWrites} from "./writes.ts";
 
-export type FailureKind = "insufficient-funds" | "no-permission" | "invalid-account" | "conflict";
+export type FailureKind = "insufficient-funds" | "no-permission" | "invalid-account" | "conflict" | "invalid-memo";
 
 /** Maps a rejected `create_transfer` to a terminal failure, or `null` for anything worth retrying (outages, timeouts). */
 export function classifyTransferError(cause: unknown): FailureKind | null {
@@ -20,6 +23,7 @@ export function classifyTransferError(cause: unknown): FailureKind | null {
     if (message.includes("insufficient account permission")) return "no-permission";
     if (message.includes("account not found") || message.includes("incompatible account ledgers")) return "invalid-account";
     if (message.includes("idempotency key conflict")) return "conflict";
+    if (message.includes("memo exceeds length limit")) return "invalid-memo";
     return null;
 }
 
@@ -27,9 +31,11 @@ export interface ExecutorDeps {
     log: Logger;
     stelo: SteloReadModel & {
         readonly isLive: boolean;
-        createTransfer(args: {fromAccountId: bigint; toAccountId: bigint; steloAmount: bigint; ref: string}): Promise<void>;
+        createTransfer(args: {fromAccountId: bigint; toAccountId: bigint; steloAmount: bigint; ref: string; memo: string}): Promise<void>;
     };
     writes: SteloWrites;
+    /** The paying brico account's name for the memo, if known. */
+    payerName?(payer: Identity): string | undefined;
     now(): number;
     /** How long to wait for a sent transfer to echo back before sending it again (safe: same idempotency key). */
     resendAfterMs?: number;
@@ -49,6 +55,17 @@ export function createTransferExecutor(deps: ExecutorDeps): TransferExecutor {
     const nextAttempt = new Map<bigint, number>();
     const settling = new Set<bigint>();
     const failing = new Set<bigint>();
+    // Stelo replays an idempotency key only for an identical memo, so each intent keeps the memo of its first send.
+    const memos = new Map<bigint, string>();
+
+    function memoOf(intent: SteloTransfer): string {
+        let memo = memos.get(intent.id);
+        if (memo === undefined) {
+            memo = buildMemo(intent, deps.payerName?.(intent.payerAccountIdentity));
+            memos.set(intent.id, memo);
+        }
+        return memo;
+    }
 
     const executor: TransferExecutor = {
         paused: false,
@@ -75,12 +92,14 @@ export function createTransferExecutor(deps: ExecutorDeps): TransferExecutor {
                 send(intent);
             }
             for (const id of nextAttempt.keys()) if (!live.has(id)) nextAttempt.delete(id);
+            for (const id of memos.keys()) if (!live.has(id)) memos.delete(id);
         },
     };
 
     function send(intent: SteloTransfer): void {
         stelo.createTransfer({
             fromAccountId: intent.fromAccountId, toAccountId: intent.toAccountId, steloAmount: intent.steloAmount, ref: intent.ref,
+            memo: memoOf(intent),
         }).catch(cause => {
             const kind = classifyTransferError(cause);
             if (kind === null) {

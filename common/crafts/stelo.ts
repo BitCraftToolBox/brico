@@ -147,3 +147,13 @@ export function renderFundingTemplate(template: string, ctx: FundingTemplateCont
         }
     });
 }
+
+/** Longest note a payer may attach to a direct Stelo transfer, in UTF-8 bytes. */
+export const STELO_NOTE_MAX_BYTES = 32;
+
+/** The note trimmed, or `null` if it is empty, longer than `STELO_NOTE_MAX_BYTES` in UTF-8, or has control characters. */
+export function normalizeSteloNote(input: string): string | null {
+    const note = input.trim();
+    if (note === "" || /[\u0000-\u001f\u007f]/.test(note)) return null;
+    return new TextEncoder().encode(note).length <= STELO_NOTE_MAX_BYTES ? note : null;
+}

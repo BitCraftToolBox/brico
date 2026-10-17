@@ -1,13 +1,14 @@
 /**
  * direct.ts — wallet-to-wallet transfers between a payer's own linked wallet and any wallet
- * (`/pay stelo`). A transfer is recorded as a `Direct` intent, which the transfer executor then
- * sends and settles; it touches no escrow or entitlement books.
+ * (`/pay stelo`). A transfer is recorded as a `Direct` (or `DirectNote`) intent, which the transfer
+ * executor then sends and settles; it touches no escrow or entitlement books.
  */
+import type {SteloTransfer} from "@brico/bindings/brico-app/types";
 import type {Identity} from "spacetimedb";
 
 import type {EscrowCache} from "../app/escrow-cache.ts";
 import type {SteloConfig} from "../config.ts";
-import {toSteloAmount} from "./books.ts";
+import {isPending, toSteloAmount} from "./books.ts";
 import type {DirectoryAccount} from "./link-verify.ts";
 import {canFundFrom} from "./link-verify.ts";
 import type {SteloReadModel} from "./stelo-cache.ts";
@@ -28,6 +29,8 @@ export interface DirectTransferPlan {
     steloAmount: bigint;
     from: DirectWallet;
     to: DirectWallet;
+    /** The payer's note for the memo (see `normalizeSteloNote`). */
+    note: string | undefined;
 }
 
 export type PrepareResult = {ok: true; plan: DirectTransferPlan} | {ok: false; reason: string};
@@ -55,9 +58,30 @@ export interface DirectTransfers {
     /** The payer's linked wallets in `currency` that the bot can currently send from. */
     sendableWallets(payer: Identity, currency: string): {accountId: bigint; address: string}[];
     /** Checks a transfer against the bot's live view of Stelo; `reason` is user-facing. */
-    prepare(args: {payer: Identity; currency: string; fromAccountId: bigint; toAccountId: bigint; amount: bigint}): Promise<PrepareResult>;
-    /** Records the plan as a pending intent; rejects if the module refuses it or the connection is down. */
-    submit(plan: DirectTransferPlan): Promise<void>;
+    prepare(args: {payer: Identity; currency: string; fromAccountId: bigint; toAccountId: bigint; amount: bigint; note?: string}): Promise<PrepareResult>;
+    /**
+     * Records the plan as a pending intent; rejects if the module refuses it or the connection is down.
+     * `onOutcome` is called once (by `pollOutcomes`) when the intent settles or fails, for up to 15 minutes
+     * and only while the bot keeps running.
+     */
+    submit(plan: DirectTransferPlan, onOutcome?: (outcome: DirectOutcome) => void): Promise<void>;
+    /** Reports the outcome of every submitted transfer whose intent has settled or failed; run once per step. */
+    pollOutcomes(): void;
+}
+
+/** How a submitted transfer ended; `reason` is the failure kind the executor recorded (e.g. `insufficient-funds`). */
+export type DirectOutcome = {ok: true} | {ok: false; reason: string};
+
+/** Discord's interaction tokens, which the outcome callbacks edit through, last this long. */
+const WATCH_MS = 15 * 60 * 1000;
+
+interface OutcomeWatcher {
+    plan: DirectTransferPlan;
+    /** Ids of matching intents that are not this transfer's: those from before it was submitted, and ones already reported to another watcher. */
+    known: Set<bigint>;
+    since: number;
+    intentId?: bigint;
+    onOutcome(outcome: DirectOutcome): void;
 }
 
 export interface DirectTransferDeps {
@@ -71,11 +95,29 @@ export interface DirectTransferDeps {
         searchAccounts(term: string, ledgerId: bigint, scope?: "Username" | "Address"): Promise<DirectoryAccount[]>;
     };
     writes: SteloWrites;
+    now?(): number;
 }
 
 export function createDirectTransfers(deps: DirectTransferDeps): DirectTransfers {
     const {config, escrow, stelo, writes} = deps;
+    const now = deps.now ?? Date.now;
     const escrowAccountIds = new Set(Object.values(config.currencies).map(currency => currency.escrowAccountId));
+    const watchers: OutcomeWatcher[] = [];
+
+    /** The direct intents (oldest first) with the plan's payer, wallets, amount and note. */
+    function matchingIntents(plan: DirectTransferPlan): SteloTransfer[] {
+        const found: SteloTransfer[] = [];
+        for (const intent of escrow.state.transfers.values()) {
+            const {purpose} = intent;
+            const note = purpose.tag === "DirectNote" ? purpose.value.note : undefined;
+            if ((purpose.tag === "Direct" || purpose.tag === "DirectNote") && note === plan.note
+                && intent.payerAccountIdentity.isEqual(plan.payer) && intent.fromAccountId === plan.from.accountId
+                && intent.toAccountId === plan.to.accountId && intent.steloAmount === plan.steloAmount) {
+                found.push(intent);
+            }
+        }
+        return found.sort((a, b) => (a.id < b.id ? -1 : 1));
+    }
 
     function sendableWallets(payer: Identity, currency: string): {accountId: bigint; address: string}[] {
         const players = new Set<bigint>();
@@ -125,7 +167,7 @@ export function createDirectTransfers(deps: DirectTransferDeps): DirectTransfers
             };
         },
 
-        async prepare({payer, currency, fromAccountId, toAccountId, amount}) {
+        async prepare({payer, currency, fromAccountId, toAccountId, amount, note}) {
             if (!config.currencies[currency]) return {ok: false, reason: "That currency can't be sent through Stelo."};
             if (!stelo.isLive) return {ok: false, reason: "Stelo is temporarily unavailable — try again in a moment."};
             if (amount <= 0n) return {ok: false, reason: "The amount must be positive."};
@@ -158,21 +200,45 @@ export function createDirectTransfers(deps: DirectTransferDeps): DirectTransfers
             return {
                 ok: true,
                 plan: {
-                    payer, currency, amount, steloAmount,
+                    payer, currency, amount, steloAmount, note,
                     from: {accountId: fromAccountId, address: fromAccount.address, primaryUsername: from?.primaryUsername},
                     to: {accountId: toAccountId, address: to.address, primaryUsername: to.primaryUsername},
                 },
             };
         },
 
-        submit: plan => writes.recordIntent({
-            currency: plan.currency,
-            payer: plan.payer,
-            fromAccountId: plan.from.accountId,
-            toAccountId: plan.to.accountId,
-            amount: plan.amount,
-            steloAmount: plan.steloAmount,
-            purpose: {tag: "Direct", value: {}},
-        }),
+        async submit(plan, onOutcome) {
+            // Rows that already match belong to earlier transfers, so the watcher never mistakes one for this transfer.
+            const known = new Set(matchingIntents(plan).map(intent => intent.id));
+            await writes.recordIntent({
+                currency: plan.currency,
+                payer: plan.payer,
+                fromAccountId: plan.from.accountId,
+                toAccountId: plan.to.accountId,
+                amount: plan.amount,
+                steloAmount: plan.steloAmount,
+                purpose: plan.note === undefined ? {tag: "Direct", value: {}} : {tag: "DirectNote", value: {note: plan.note}},
+            });
+            if (onOutcome) watchers.push({plan, known, since: now(), onOutcome});
+        },
+
+        pollOutcomes() {
+            const claimed = new Set(watchers.flatMap(watcher => (watcher.intentId === undefined ? [] : [watcher.intentId])));
+            for (const watcher of [...watchers]) {
+                if (now() - watcher.since > WATCH_MS) {
+                    watchers.splice(watchers.indexOf(watcher), 1);
+                    continue;
+                }
+                watcher.intentId ??= matchingIntents(watcher.plan).find(intent => !watcher.known.has(intent.id) && !claimed.has(intent.id))?.id;
+                if (watcher.intentId === undefined) continue;
+                claimed.add(watcher.intentId);
+
+                const intent = escrow.state.transfers.get(watcher.intentId);
+                if (!intent || isPending(intent)) continue;
+                watchers.splice(watchers.indexOf(watcher), 1);
+                for (const other of watchers) other.known.add(intent.id);
+                watcher.onOutcome(intent.state.tag === "Settled" ? {ok: true} : {ok: false, reason: intent.failureReason ?? "unknown"});
+            }
+        },
     };
 }

@@ -240,7 +240,7 @@ export function addSurfacedPayment(
         ctx.db.bounty_payout_record.id.update({...existing, paidTotal: existing.paidTotal + amount, updatedAt: ctx.timestamp});
     }
     ctx.db.bounty_payout_record_log.insert({
-        id: 0n, payerAccountIdentity: payer, payeePlayerId, currency, amount, createdAt: ctx.timestamp, source,
+        id: 0n, payerAccountIdentity: payer, payeePlayerId, currency, amount, createdAt: ctx.timestamp, source, note: undefined,
     });
 }
 
