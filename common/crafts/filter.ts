@@ -15,7 +15,7 @@
 
 // ── Fields ────────────────────────────────────────────────────
 
-import {BOUNTY_CURRENCIES, CURRENCY_LABELS} from "./currencies";
+import {BOUNTY_CURRENCIES, CURRENCY_LABELS} from "./currencies.ts";
 
 /** Every property of a craft a filter can test. */
 export type FilterField =
@@ -652,8 +652,7 @@ export function validateFilter(node: unknown, path = "filter", disallowedFields?
 }
 
 /**
- * Parses a filter out of untrusted JSON (localStorage today, a `filter_json` column later),
- * returning `null` rather than throwing when it doesn't validate.
+ * Parses a filter out of untrusted JSON, returning `null` rather than throwing when it doesn't validate.
  */
 export function parseFilter(raw: unknown): FilterNode | null {
     return validateFilter(raw).length === 0 ? (raw as FilterNode) : null;
@@ -672,11 +671,7 @@ const CMP_TEXT: Record<Comparator, string> = {
 };
 
 /**
- * A one-line human rendering of a filter, for saved-filter lists and Discord embeds later.
- *
- * `labelFor` resolves an id/number to something a player recognizes ("Ferralith Ingot" rather than
- * `1150001`). It stays a caller-supplied callback because resolving those names needs the game
- * data tables, and importing those here would defeat the point of this module being standalone.
+ * A one-line human rendering of a filter, only used for logging/tests.
  */
 export function describeFilter(
     node: FilterNode,

@@ -188,7 +188,7 @@ export function createBridge(options: BridgeOptions): Bridge {
             liveWatchIds.add(watch.id);
             if (!announced.has(watch.id)) {
                 announced.add(watch.id);
-                log.info("watching", {id: watch.id, name: watch.name, filter: describeFilter(watch.filter)});
+                log.debug("watching", {id: watch.id, name: watch.name, filter: describeFilter(watch.filter)});
             }
 
             let state = watchStates.get(watch.id);
@@ -211,7 +211,7 @@ export function createBridge(options: BridgeOptions): Bridge {
                 : matcher.update(filter, everyRow(), state.view);
             for (const event of events) emit({...event, watch});
             if (!wasPrimed) {
-                log.info("primed", {id: watch.id, matches: matcher.matchCount, of: cache.rows.size});
+                log.debug("primed", {id: watch.id, matches: matcher.matchCount, of: cache.rows.size});
             }
 
             stats.matchCounts.set(watch.id, matcher.matchCount);
@@ -276,7 +276,7 @@ export function createLoggingSink(log: Logger): MatchSink {
     const scoped = log.child("match");
     return event => {
         const craft = event.craft;
-        scoped.info(event.kind, {
+        scoped.debug(event.kind, {
             watch: event.watch.id,
             craft: event.craftId,
             recipe: craft?.recipeId,

@@ -308,7 +308,7 @@ msgstr "A multiplier applied on top of the normal bounty math for crafts you pay
 #: src/components/crafts/FilterBuilder.tsx
 #: src/components/shared/DetailPageLayout.tsx
 #: src/lib/crafts/filter-condition.tsx
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "No"
@@ -323,7 +323,7 @@ msgstr "Unlocks"
 msgid "EXP"
 msgstr "EXP"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Paving Tier:"
 msgstr "Paving Tier:"
 
@@ -595,7 +595,7 @@ msgstr "Effort of this currency"
 msgid "A watch display can show at most {MAX_DISPLAY_ROWS_HARD_CAP} crafts."
 msgstr "A watch display can show at most {MAX_DISPLAY_ROWS_HARD_CAP} crafts."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Level {level} {toolName}"
 msgstr "Level {level} {toolName}"
 
@@ -616,7 +616,7 @@ msgstr "Delete loyalty reward"
 msgid "Item Stack Size"
 msgstr "Item Stack Size"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Effort:"
 msgstr "Effort:"
 
@@ -636,7 +636,7 @@ msgstr "Signing in"
 msgid "Threat"
 msgstr "Threat"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Blocking Knowledge:"
 msgstr "Blocking Knowledge:"
 
@@ -1014,7 +1014,7 @@ msgid "Requires"
 msgstr "Requires"
 
 #. placeholder {0}: (min + max) / 2 * perNode
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{perNode} contribution per node × {min} nodes = {0} hits"
 msgstr "{perNode} contribution per node × {min} nodes = {0} hits"
 
@@ -1113,7 +1113,7 @@ msgstr "Search by {0}..."
 msgid "This recipe is not in the loaded game data."
 msgstr "This recipe is not in the loaded game data."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "This recipe is fixed at one progress per hit."
 msgstr "This recipe is fixed at one progress per hit."
 
@@ -1214,7 +1214,7 @@ msgid "Required Knowledge"
 msgstr "Required Knowledge"
 
 #. placeholder {0}: group.name
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Group limit for {0}:"
 msgstr "Group limit for {0}:"
 
@@ -1378,7 +1378,7 @@ msgstr "Trade {reqName} for {offerName} to {npcName}"
 msgid "Deed"
 msgstr "Deed"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Effort Required:"
 msgstr "Effort Required:"
 
@@ -1529,7 +1529,7 @@ msgstr "Spawns"
 msgid "<0>Link a Stelo wallet</0> first."
 msgstr "<0>Link a Stelo wallet</0> first."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Traveler:"
 msgstr "Traveler:"
 
@@ -1563,7 +1563,7 @@ msgstr "Cancel"
 msgid "<0/><1>per effort</1>"
 msgstr "<0/><1>per effort</1>"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Tool:"
 msgstr "Tool:"
 
@@ -1686,7 +1686,7 @@ msgstr "None"
 msgid "deplete"
 msgstr "deplete"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/relations.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Unknown"
@@ -1728,7 +1728,7 @@ msgstr "All items visible"
 msgid "Import / Export"
 msgstr "Import / Export"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Buff"
 msgstr "Buff"
@@ -1907,11 +1907,11 @@ msgstr "My bounties"
 msgid "Log in to sync saved filters and watches to your account, and to set up notifications."
 msgstr "Log in to sync saved filters and watches to your account, and to set up notifications."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
 msgstr "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Total HP"
 msgstr "Total HP"
 
@@ -2009,7 +2009,7 @@ msgstr "<0>Automatically:</0> create filters on the <1>Bounty rules</1> tab. New
 msgid "Money owed to you went unclaimed and was returned to the payer"
 msgstr "Money owed to you went unclaimed and was returned to the payer"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Minimum distance to Group:"
 msgstr "Minimum distance to Group:"
 
@@ -2217,10 +2217,6 @@ msgstr "Notifications"
 msgid "Min Damage"
 msgstr "Min Damage"
 
-#: src/lib/recipe-sources.tsx
-msgid "{skillTag}:"
-msgstr "{skillTag}:"
-
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Traveler Tasks"
@@ -2236,7 +2232,7 @@ msgstr "Link Filters <0/>"
 msgid "Stamina"
 msgstr "Stamina"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{skillName} Exp:"
 msgstr "{skillName} Exp:"
 
@@ -2345,7 +2341,7 @@ msgstr "Up to date"
 msgid "Shown to other players wherever your account is credited."
 msgstr "Shown to other players wherever your account is credited."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "No tool"
 msgstr "No tool"
 
@@ -2353,7 +2349,7 @@ msgstr "No tool"
 msgid "Required to Start"
 msgstr "Required to Start"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Building:"
 msgstr "Building:"
 
@@ -2477,7 +2473,7 @@ msgstr "Chance"
 msgid "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
 msgstr "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Claim Tier:"
 msgstr "Claim Tier:"
 
@@ -2507,7 +2503,7 @@ msgstr "Can fund bounties"
 msgid "Craft Bounties"
 msgstr "Craft Bounties"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "This prospecting is fixed at one contribution, regardless of bread crumb count."
 msgstr "This prospecting is fixed at one contribution, regardless of bread crumb count."
 
@@ -2579,7 +2575,7 @@ msgstr "Resource Spawning"
 msgid "Linked accounts"
 msgstr "Linked accounts"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Prospecting Hits"
 msgstr "Prospecting Hits"
 
@@ -2590,7 +2586,7 @@ msgstr "Prospecting Hits"
 msgid "Delete \"{0}\"?"
 msgstr "Delete \"{0}\"?"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Weighted"
 msgstr "Weighted"
@@ -2653,7 +2649,7 @@ msgstr "Could not record payment"
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/DetailPageLayout.tsx
 #: src/lib/crafts/filter-condition.tsx
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Yes"
@@ -2860,7 +2856,7 @@ msgstr "Payout"
 msgid "Place Time"
 msgstr "Place Time"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Shows Time Left:"
 msgstr "Shows Time Left:"
 
@@ -2994,7 +2990,7 @@ msgstr "Show All"
 msgid "effort logged: {0} ({1}%)"
 msgstr "effort logged: {0} ({1}%)"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Chance per hit"
 msgstr "Chance per hit"
@@ -3144,7 +3140,7 @@ msgstr "Not Deconstructible"
 msgid "My payouts"
 msgstr "My payouts"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Interior Tier:"
 msgstr "Interior Tier:"
 
@@ -3168,7 +3164,7 @@ msgstr "hex coin per day per occupied slot"
 msgid "Last failure:"
 msgstr "Last failure:"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Minimum distance to Claims:"
 msgstr "Minimum distance to Claims:"
 
@@ -3195,7 +3191,7 @@ msgstr "Max Damage"
 msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
 msgstr "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Time:"
 msgstr "Time:"
 
@@ -3369,7 +3365,7 @@ msgstr "Cargo"
 msgid "Favorite items"
 msgstr "Favorite items"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Stamina:"
 msgstr "Stamina:"
 
@@ -3391,7 +3387,7 @@ msgstr "Copy CSV"
 msgid "No matches."
 msgstr "No matches."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Resource ignores regular damage."
 msgstr "Resource ignores regular damage."
 
@@ -3408,7 +3404,7 @@ msgid "Log in for additional options such as Discord notifications."
 msgstr "Log in for additional options such as Discord notifications."
 
 #: src/lib/crafts/filter-vocab.ts
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
@@ -3503,7 +3499,7 @@ msgstr "Hidden currency"
 
 #. placeholder {0}: effort()
 #. placeholder {1}: fixFloat(effort() * perProgress)
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{0} * {perProgress} = {1} XP"
 msgstr "{0} * {perProgress} = {1} XP"
 
@@ -3533,7 +3529,7 @@ msgctxt "ability"
 msgid "Use <0/>"
 msgstr "Use <0/>"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Tier {tier} {name}"
 msgstr "Tier {tier} {name}"
 
@@ -3545,7 +3541,7 @@ msgstr "Asc"
 msgid "Deadzone Angle"
 msgstr "Deadzone Angle"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Hands"
 msgstr "Hands"
 
@@ -3616,7 +3612,7 @@ msgstr "Level Range"
 msgid "What are bounties?"
 msgstr "What are bounties?"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Output is rolled a number of times equal to your contribution. One full HP bar of the enemy is worth 1000 contribution."
 msgstr "Output is rolled a number of times equal to your contribution. One full HP bar of the enemy is worth 1000 contribution."
 
@@ -3694,7 +3690,7 @@ msgstr "Chance of consumption per hit"
 msgid "Choose how Brico's Toolbox looks."
 msgstr "Choose how Brico's Toolbox looks."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Near Building:"
 msgstr "Near Building:"
 
@@ -3979,7 +3975,7 @@ msgstr "Item List"
 msgid "Deployable"
 msgstr "Deployable"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Output is rolled once, regardless of damage dealt, as long as the minimum threshold is reached."
 msgstr "Output is rolled once, regardless of damage dealt, as long as the minimum threshold is reached."
 
@@ -4049,7 +4045,7 @@ msgstr "Allow Hunting"
 msgid "Account linked"
 msgstr "Account linked"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Minimum Contribution"
 msgstr "Minimum Contribution"
 
@@ -4139,7 +4135,7 @@ msgstr "That filter belongs to a different account."
 #. placeholder {0}: task.levelRequirement.minLevel
 #. placeholder {1}: task.levelRequirement.maxLevel
 #. placeholder {2}: skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Lv. {0}-{1} {2}"
 msgstr "Lv. {0}-{1} {2}"
 
@@ -4159,7 +4155,7 @@ msgstr "Disallow Player Build"
 msgid "That link code has already been claimed."
 msgstr "That link code has already been claimed."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "? min"
 msgstr "? min"
 
@@ -4375,7 +4371,7 @@ msgstr "Currency / effort"
 
 #. placeholder {0}: req.level
 #. placeholder {1}: skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Lv. {0} {1}"
 msgstr "Lv. {0} {1}"
 
@@ -4479,7 +4475,7 @@ msgstr "Total for this craft's {0} effort."
 msgid "Choose which Stelo wallet funds this bounty."
 msgstr "Choose which Stelo wallet funds this bounty."
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Biomes:"
 msgstr "Biomes:"
 
@@ -4566,7 +4562,7 @@ msgstr "That notification setting belongs to a different account."
 msgid "Placeable Interactions"
 msgstr "Placeable Interactions"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Level {level} {toolName} (Power >= {power})"
 msgstr "Level {level} {toolName} (Power >= {power})"
 
@@ -4812,7 +4808,7 @@ msgstr "Search players…"
 msgid "Target Buffs"
 msgstr "Target Buffs"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Timed Node"
 msgstr "Timed Node"
 
@@ -4970,7 +4966,7 @@ msgid "Experience per Damage Dealt"
 msgstr "Experience per Damage Dealt"
 
 #. placeholder {0}: (min + max) / 2 * perNode
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{perNode} contribution per node × {min} - {max} nodes = {0} hits average"
 msgstr "{perNode} contribution per node × {min} - {max} nodes = {0} hits average"
 
@@ -5015,7 +5011,7 @@ msgstr "Automatic loyalty rules"
 msgid "Stat Scaling"
 msgstr "Stat Scaling"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Required Knowledge:"
 msgstr "Required Knowledge:"
 
@@ -5039,7 +5035,7 @@ msgstr "Select claim…"
 msgid "Contributors"
 msgstr "Contributors"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{skillName} XP/Progress:"
 msgstr "{skillName} XP/Progress:"
 
@@ -5059,11 +5055,16 @@ msgstr "Delete grouping"
 msgid "Not Respawning"
 msgstr "Not Respawning"
 
+#. placeholder {0}: skillCategoryLabel(skillTag)
+#: src/lib/recipe-stats.tsx
+msgid "{0}:"
+msgstr "{0}:"
+
 #: src/routes/database/item/[id].tsx
 msgid "Required Level"
 msgstr "Required Level"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Range:"
 msgstr "Range:"
 

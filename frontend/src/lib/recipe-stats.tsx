@@ -40,6 +40,7 @@ import {JSX, Show} from "solid-js";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BiomeLink, IconLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
+import {skillCategoryLabel} from "~/lib/game-strings.ts";
 import {trackUILocale} from "~/lib/i18n";
 import {gameText, useLabel} from "~/lib/labels";
 import {getItemListSource, getTravelerNpcName} from "~/lib/relations";
@@ -60,7 +61,7 @@ export function skillReqPair(req: LevelRequirement, skillData: Map<any, SkillDes
     if (!skillTag || skillTag === "None") return null;
     if (skillTag === "Adventure") skillTag = "Skill";
     return [
-        () => <IconSpan icon={skillStatIcon(skill)}><Trans>{skillTag}:</Trans></IconSpan>,
+        () => <IconSpan icon={skillStatIcon(skill)}><Trans>{skillCategoryLabel(skillTag)}:</Trans></IconSpan>,
         () => <span><Trans>Lv. {req.level} {skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`}</Trans></span>,
     ];
 }
@@ -188,7 +189,7 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
     const buildingData = BitCraftTables.BuildingTypeDesc.indexedBy("id")();
     const lines: StatLine[] = [
         [t`Effort:`, recipe.actionsRequired],
-        [t`Time:`, fixFloat(recipe.timeRequirement)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))],
         [t`Stamina:`, fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
@@ -262,7 +263,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
             lines.push([t`Total HP`, resource.maxHealth]);
         }
     }
-    lines.push([t`Time:`, fixFloat(recipe.timeRequirement)]);
+    lines.push([t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))]);
     lines.push([t`Stamina:`, fixFloat(recipe.staminaRequirement)]);
     addCommonRequirements(lines, recipe, totalEffort);
     addUseHandsInformation(lines, recipe);
@@ -275,7 +276,7 @@ export function constructionStatLines(recipe: ConstructionRecipeDesc): StatLine[
     trackUILocale();
     const lines: StatLine[] = [
         [t`Effort:`, recipe.actionsRequired],
-        [t`Time:`, fixFloat(recipe.timeRequirement)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))],
         [t`Stamina:`, fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
@@ -286,7 +287,7 @@ export function constructionStatLines(recipe: ConstructionRecipeDesc): StatLine[
 export function deconstructionStatLines(recipe: DeconstructionRecipeDesc): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Time:`, fixFloat(recipe.timeRequirement)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))],
     ];
     addCommonRequirements(lines, recipe);
     return lines;
@@ -296,7 +297,7 @@ export function pavingStatLines(recipe: PavingTileDesc): StatLine[] {
     trackUILocale();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const lines: StatLine[] = [
-        [t`Time:`, fixFloat(recipe.pavingDuration)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.pavingDuration))],
     ];
     recipe.experiencePerProgress.forEach(xp => {
         const pair = skillExpPair(xp, undefined, skillData);
@@ -310,7 +311,7 @@ export function pillarShapingStatLines(recipe: PillarShapingDesc): StatLine[] {
     trackUILocale();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const lines: StatLine[] = [
-        [t`Time:`, fixFloat(recipe.duration)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.duration))],
     ];
     recipe.experiencePerProgress.forEach(xp => {
         const pair = skillExpPair(xp, undefined, skillData);
@@ -323,7 +324,7 @@ export function pillarShapingStatLines(recipe: PillarShapingDesc): StatLine[] {
 export function conversionStatLines(recipe: ItemConversionRecipeDesc): StatLine[] {
     trackUILocale();
     return [
-        [t`Time:`, fixFloat(recipe.timeCost)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.timeCost))],
         [t`Stamina:`, fixFloat(recipe.staminaCost)],
     ];
 }
@@ -338,7 +339,7 @@ export function travelerTaskStatLines(task: TravelerTaskDesc): StatLine[] {
 
     const lines: StatLine[] = [
         [
-            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} <Trans>{skillTag}:</Trans></span>,
+            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} <Trans>{skillCategoryLabel(skillTag)}:</Trans></span>,
             () => <span><Trans>Lv. {task.levelRequirement.minLevel}-{task.levelRequirement.maxLevel} {skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>}</Trans></span>,
         ],
         [
@@ -502,7 +503,7 @@ function addPlaceableSelfBuffs(lines: StatLine[], placeableBuffs: PlaceableSelfB
 export function interactionStatLines(interaction: PlaceableInteractionDesc, sourcePlaceable: PlaceableDesc | undefined): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Time:`, fixFloat(interaction.timeRequirement)],
+        [t`Time:`, readableSeconds(fixFloat(interaction.timeRequirement))],
         [t`Stamina:`, fixFloat(interaction.staminaRequirement)],
     ];
 

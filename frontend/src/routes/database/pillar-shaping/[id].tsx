@@ -8,7 +8,7 @@ import {InputItemStackArray, ItemStackArray} from "~/components/shared/ItemStack
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {fixFloat} from "~/lib/utils";
+import {fixFloat, readableSeconds} from "~/lib/utils";
 
 export default function PillarShapingDetail() {
     const params = useParams();
@@ -55,7 +55,7 @@ export default function PillarShapingDetail() {
             metaImage={ogImageForAsset(pillar()?.iconAddress)}
             details={[
                 {label: msg`Experience`, value: experienceStr()},
-                {label: msg`Build Time`, value: pillar() ? `${fixFloat(pillar()!.duration)}s` : undefined},
+                {label: msg`Build Time`, value: pillar() ? readableSeconds(fixFloat(pillar()!.duration)) : undefined},
             ]}
             rawData={pillar()}
             spacetimeTable={BitCraftTables.PillarShapingDesc.spacetimeName}

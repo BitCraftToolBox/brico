@@ -61,7 +61,7 @@ import {
     StatLine,
     travelerTaskStatLines,
     travelerTradeStatLines,
-} from "~/lib/recipe-sources";
+} from "~/lib/recipe-stats";
 import {buildingForConstruction, buildingForDeconstruction, questDropsForEnemy, questDropsForExtraction, questDropsForItemList, resourceForExtraction} from "~/lib/relations";
 import {cn, fixFloat, readableSeconds} from "~/lib/utils";
 

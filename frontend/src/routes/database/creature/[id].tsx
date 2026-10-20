@@ -14,7 +14,7 @@ import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {ItemListLink, SkillLinkById} from "~/lib/game-links";
 import {useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
+import {itemListLootWeightedComponent} from "~/lib/recipe-stats";
 import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList, scalingDescsFromEnemy} from "~/lib/relations";
 import {fixFloat} from "~/lib/utils";
 

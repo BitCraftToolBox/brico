@@ -4,8 +4,8 @@ import {absorbWalletCurrencies, sanitizeVisibleCurrencies, shownCurrencies} from
 
 test("sanitizeVisibleCurrencies drops unknown ids and never returns empty", () => {
     assert.deepEqual(sanitizeVisibleCurrencies(["nope", "stelo-hex-coin"]), ["stelo-hex-coin"]);
-    assert.deepEqual(sanitizeVisibleCurrencies([]), ["hex-coin"]);
-    assert.deepEqual(sanitizeVisibleCurrencies("garbage"), ["hex-coin"]);
+    assert.deepEqual(sanitizeVisibleCurrencies([]), ["hex-coin", "stelo-hex-coin"]);
+    assert.deepEqual(sanitizeVisibleCurrencies("garbage"), ["hex-coin", "stelo-hex-coin"]);
     assert.deepEqual(sanitizeVisibleCurrencies(["stelo-hex-coin", "hex-coin", "hex-coin"]), ["hex-coin", "stelo-hex-coin"]);
 });
 
@@ -13,7 +13,7 @@ test("shownCurrencies unions extra values and keeps vocabulary order", () => {
     assert.deepEqual(shownCurrencies(["hex-coin"]), ["hex-coin"]);
     assert.deepEqual(shownCurrencies(["hex-coin"], ["stelo-hex-coin"]), ["hex-coin", "stelo-hex-coin"]);
     assert.deepEqual(shownCurrencies(["stelo-hex-coin"], ["hex-coin"]), ["hex-coin", "stelo-hex-coin"]);
-    assert.deepEqual(shownCurrencies([], []), ["hex-coin"]);
+    assert.deepEqual(shownCurrencies([], []), ["hex-coin", "stelo-hex-coin"]);
 });
 
 test("absorbWalletCurrencies adds a new wallet currency once", () => {

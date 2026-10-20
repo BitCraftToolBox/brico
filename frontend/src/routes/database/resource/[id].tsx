@@ -11,7 +11,7 @@ import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGro
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {IconLink, pageIcon} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {prospectingForResource} from "~/lib/recipe-sources";
+import {prospectingForResource} from "~/lib/recipe-stats";
 import {enemiesForResource, extractionRecipeForResource, resourceGrowthFrom, resourceGrowthInto, resourcesYieldingResource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {fixFloat} from "~/lib/utils";

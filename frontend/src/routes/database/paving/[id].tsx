@@ -8,7 +8,7 @@ import {InputItemStackArray, ItemStackArray} from "~/components/shared/ItemStack
 import {KnowledgeTable, StatTable} from "~/components/shared/RelTablePresets";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {fixFloat} from "~/lib/utils";
+import {fixFloat, readableSeconds} from "~/lib/utils";
 
 export default function PavingDetail() {
     const params = useParams();
@@ -55,7 +55,7 @@ export default function PavingDetail() {
             metaImage={ogImageForAsset(tile()?.iconAddress)}
             details={[
                 {label: msg`Experience`, value: experienceStr()},
-                {label: msg`Build Time`, value: tile() ? `${fixFloat(tile()!.pavingDuration)}s` : undefined},
+                {label: msg`Build Time`, value: tile() ? readableSeconds(fixFloat(tile()!.pavingDuration)) : undefined},
             ]}
             rawData={tile()}
             spacetimeTable={BitCraftTables.PavingTileDesc.spacetimeName}

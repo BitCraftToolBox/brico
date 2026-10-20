@@ -17,7 +17,7 @@ import {trackUILocale} from "~/lib/i18n";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {constructionRecipeForBuilding, deconstructionRecipeForBuilding, resourcesSpawningBuilding} from "~/lib/relations";
 import {constructionCombinedSingleTab} from "~/lib/table-utils/detail-tab-builders";
-import {fixFloat} from "~/lib/utils";
+import {fixFloat, readableSeconds} from "~/lib/utils";
 
 export default function BuildingDetail() {
     const params = useParams();
@@ -84,7 +84,7 @@ export default function BuildingDetail() {
         const groups: DetailGroup[] = [];
 
         const lightRadius = b.lightRadius > 0 ? fixFloat(b.lightRadius) : undefined;
-        const restedBuff = b.restedBuffDuration > 0 ? `${fixFloat(b.restedBuffDuration)}s` : undefined;
+        const restedBuff = b.restedBuffDuration > 0 ? readableSeconds(fixFloat(b.restedBuffDuration)) : undefined;
         if (lightRadius || restedBuff || b.wilderness || b.unenterable || b.notDeconstructible || b.destroyOnUnclaim) {
             groups.push({
                 properties: [

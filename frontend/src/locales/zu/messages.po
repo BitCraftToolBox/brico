@@ -313,7 +313,7 @@ msgstr "crwdns5694:0crwdne5694:0"
 #: src/components/crafts/FilterBuilder.tsx
 #: src/components/shared/DetailPageLayout.tsx
 #: src/lib/crafts/filter-condition.tsx
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "No"
@@ -328,7 +328,7 @@ msgstr "crwdns4394:0crwdne4394:0"
 msgid "EXP"
 msgstr "crwdns4396:0crwdne4396:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Paving Tier:"
 msgstr "crwdns4398:0crwdne4398:0"
 
@@ -600,7 +600,7 @@ msgstr "crwdns5770:0crwdne5770:0"
 msgid "A watch display can show at most {MAX_DISPLAY_ROWS_HARD_CAP} crafts."
 msgstr "crwdns5772:0{MAX_DISPLAY_ROWS_HARD_CAP}crwdne5772:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Level {level} {toolName}"
 msgstr "crwdns4448:0{level}crwdnd4448:0{toolName}crwdne4448:0"
 
@@ -621,7 +621,7 @@ msgstr "crwdns5774:0crwdne5774:0"
 msgid "Item Stack Size"
 msgstr "crwdns4454:0crwdne4454:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Effort:"
 msgstr "crwdns4456:0crwdne4456:0"
 
@@ -641,7 +641,7 @@ msgstr "crwdns5778:0crwdne5778:0"
 msgid "Threat"
 msgstr "crwdns4460:0crwdne4460:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Blocking Knowledge:"
 msgstr "crwdns4462:0crwdne4462:0"
 
@@ -1019,7 +1019,7 @@ msgid "Requires"
 msgstr "crwdns4540:0crwdne4540:0"
 
 #. placeholder {0}: (min + max) / 2 * perNode
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{perNode} contribution per node × {min} nodes = {0} hits"
 msgstr "crwdns4542:0{perNode}crwdnd4542:0{min}crwdnd4542:0{0}crwdne4542:0"
 
@@ -1118,7 +1118,7 @@ msgstr "crwdns4570:0{0}crwdne4570:0"
 msgid "This recipe is not in the loaded game data."
 msgstr "crwdns5870:0crwdne5870:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "This recipe is fixed at one progress per hit."
 msgstr "crwdns5598:0crwdne5598:0"
 
@@ -1219,7 +1219,7 @@ msgid "Required Knowledge"
 msgstr "crwdns4584:0crwdne4584:0"
 
 #. placeholder {0}: group.name
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Group limit for {0}:"
 msgstr "crwdns4586:0{0}crwdne4586:0"
 
@@ -1383,7 +1383,7 @@ msgstr "crwdns4622:0{reqName}crwdnd4622:0{offerName}crwdnd4622:0{npcName}crwdne4
 msgid "Deed"
 msgstr "crwdns4624:0crwdne4624:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Effort Required:"
 msgstr "crwdns4626:0crwdne4626:0"
 
@@ -1534,7 +1534,7 @@ msgstr "crwdns4660:0crwdne4660:0"
 msgid "<0>Link a Stelo wallet</0> first."
 msgstr "crwdns5962:0crwdne5962:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Traveler:"
 msgstr "crwdns4662:0crwdne4662:0"
 
@@ -1568,7 +1568,7 @@ msgstr "crwdns5968:0crwdne5968:0"
 msgid "<0/><1>per effort</1>"
 msgstr "crwdns5970:0crwdne5970:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Tool:"
 msgstr "crwdns4668:0crwdne4668:0"
 
@@ -1691,7 +1691,7 @@ msgstr "crwdns4704:0crwdne4704:0"
 msgid "deplete"
 msgstr "crwdns4706:0crwdne4706:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/relations.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Unknown"
@@ -1733,7 +1733,7 @@ msgstr "crwdns4718:0crwdne4718:0"
 msgid "Import / Export"
 msgstr "crwdns5994:0crwdne5994:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Buff"
 msgstr "crwdns4720:0crwdne4720:0"
@@ -1912,11 +1912,11 @@ msgstr "crwdns6026:0crwdne6026:0"
 msgid "Log in to sync saved filters and watches to your account, and to set up notifications."
 msgstr "crwdns6028:0crwdne6028:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
 msgstr "crwdns4766:0crwdne4766:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Total HP"
 msgstr "crwdns4768:0crwdne4768:0"
 
@@ -2014,7 +2014,7 @@ msgstr "crwdns6046:0crwdne6046:0"
 msgid "Money owed to you went unclaimed and was returned to the payer"
 msgstr "crwdns6048:0crwdne6048:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Minimum distance to Group:"
 msgstr "crwdns4794:0crwdne4794:0"
 
@@ -2222,10 +2222,6 @@ msgstr "crwdns6102:0crwdne6102:0"
 msgid "Min Damage"
 msgstr "crwdns4830:0crwdne4830:0"
 
-#: src/lib/recipe-sources.tsx
-msgid "{skillTag}:"
-msgstr "crwdns4832:0{skillTag}crwdne4832:0"
-
 #: src/lib/sidebar-items.ts
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Traveler Tasks"
@@ -2241,7 +2237,7 @@ msgstr "crwdns4836:0crwdne4836:0"
 msgid "Stamina"
 msgstr "crwdns4838:0crwdne4838:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{skillName} Exp:"
 msgstr "crwdns4840:0{skillName}crwdne4840:0"
 
@@ -2350,7 +2346,7 @@ msgstr "crwdns4864:0crwdne4864:0"
 msgid "Shown to other players wherever your account is credited."
 msgstr "crwdns6120:0crwdne6120:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "No tool"
 msgstr "crwdns4866:0crwdne4866:0"
 
@@ -2358,7 +2354,7 @@ msgstr "crwdns4866:0crwdne4866:0"
 msgid "Required to Start"
 msgstr "crwdns4868:0crwdne4868:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Building:"
 msgstr "crwdns4870:0crwdne4870:0"
 
@@ -2482,7 +2478,7 @@ msgstr "crwdns4894:0crwdne4894:0"
 msgid "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
 msgstr "crwdns6146:0crwdne6146:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Claim Tier:"
 msgstr "crwdns4898:0crwdne4898:0"
 
@@ -2512,7 +2508,7 @@ msgstr "crwdns6150:0crwdne6150:0"
 msgid "Craft Bounties"
 msgstr "crwdns6152:0crwdne6152:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "This prospecting is fixed at one contribution, regardless of bread crumb count."
 msgstr "crwdns4904:0crwdne4904:0"
 
@@ -2584,7 +2580,7 @@ msgstr "crwdns4912:0crwdne4912:0"
 msgid "Linked accounts"
 msgstr "crwdns6174:0crwdne6174:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Prospecting Hits"
 msgstr "crwdns4914:0crwdne4914:0"
 
@@ -2595,7 +2591,7 @@ msgstr "crwdns4914:0crwdne4914:0"
 msgid "Delete \"{0}\"?"
 msgstr "crwdns6176:0{0}crwdne6176:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/creature/[id].tsx
 msgid "Weighted"
 msgstr "crwdns4916:0crwdne4916:0"
@@ -2658,7 +2654,7 @@ msgstr "crwdns6188:0crwdne6188:0"
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/DetailPageLayout.tsx
 #: src/lib/crafts/filter-condition.tsx
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Yes"
@@ -2865,7 +2861,7 @@ msgstr "crwdns6226:0crwdne6226:0"
 msgid "Place Time"
 msgstr "crwdns4982:0crwdne4982:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Shows Time Left:"
 msgstr "crwdns4984:0crwdne4984:0"
 
@@ -2999,7 +2995,7 @@ msgstr "crwdns5006:0crwdne5006:0"
 msgid "effort logged: {0} ({1}%)"
 msgstr "crwdns6260:0{0}crwdnd6260:0{1}crwdne6260:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Chance per hit"
 msgstr "crwdns5518:0crwdne5518:0"
@@ -3149,7 +3145,7 @@ msgstr "crwdns5050:0crwdne5050:0"
 msgid "My payouts"
 msgstr "crwdns6280:0crwdne6280:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Interior Tier:"
 msgstr "crwdns5052:0crwdne5052:0"
 
@@ -3173,7 +3169,7 @@ msgstr "crwdns5056:0crwdne5056:0"
 msgid "Last failure:"
 msgstr "crwdns6286:0crwdne6286:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Minimum distance to Claims:"
 msgstr "crwdns5058:0crwdne5058:0"
 
@@ -3200,7 +3196,7 @@ msgstr "crwdns5064:0crwdne5064:0"
 msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
 msgstr "crwdns5066:0crwdne5066:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Time:"
 msgstr "crwdns5068:0crwdne5068:0"
 
@@ -3374,7 +3370,7 @@ msgstr "crwdns5098:0crwdne5098:0"
 msgid "Favorite items"
 msgstr "crwdns5100:0crwdne5100:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Stamina:"
 msgstr "crwdns5102:0crwdne5102:0"
 
@@ -3396,7 +3392,7 @@ msgstr "crwdns6332:0crwdne6332:0"
 msgid "No matches."
 msgstr "crwdns6334:0crwdne6334:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Resource ignores regular damage."
 msgstr "crwdns5108:0crwdne5108:0"
 
@@ -3413,7 +3409,7 @@ msgid "Log in for additional options such as Discord notifications."
 msgstr "crwdns6338:0crwdne6338:0"
 
 #: src/lib/crafts/filter-vocab.ts
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-defs/traveler-tasks-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
@@ -3508,7 +3504,7 @@ msgstr "crwdns6362:0crwdne6362:0"
 
 #. placeholder {0}: effort()
 #. placeholder {1}: fixFloat(effort() * perProgress)
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{0} * {perProgress} = {1} XP"
 msgstr "crwdns5602:0{0}crwdnd5602:0{perProgress}crwdnd5602:0{1}crwdne5602:0"
 
@@ -3538,7 +3534,7 @@ msgctxt "ability"
 msgid "Use <0/>"
 msgstr "crwdns5578:0crwdne5578:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Tier {tier} {name}"
 msgstr "crwdns5130:0{tier}crwdnd5130:0{name}crwdne5130:0"
 
@@ -3550,7 +3546,7 @@ msgstr "crwdns5132:0crwdne5132:0"
 msgid "Deadzone Angle"
 msgstr "crwdns5134:0crwdne5134:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Hands"
 msgstr "crwdns5604:0crwdne5604:0"
 
@@ -3621,7 +3617,7 @@ msgstr "crwdns5154:0crwdne5154:0"
 msgid "What are bounties?"
 msgstr "crwdns6370:0crwdne6370:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Output is rolled a number of times equal to your contribution. One full HP bar of the enemy is worth 1000 contribution."
 msgstr "crwdns5156:0crwdne5156:0"
 
@@ -3699,7 +3695,7 @@ msgstr "crwdns5170:0crwdne5170:0"
 msgid "Choose how Brico's Toolbox looks."
 msgstr "crwdns5172:0crwdne5172:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Near Building:"
 msgstr "crwdns5174:0crwdne5174:0"
 
@@ -3984,7 +3980,7 @@ msgstr "crwdns5230:0crwdne5230:0"
 msgid "Deployable"
 msgstr "crwdns5232:0crwdne5232:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Output is rolled once, regardless of damage dealt, as long as the minimum threshold is reached."
 msgstr "crwdns5234:0crwdne5234:0"
 
@@ -4054,7 +4050,7 @@ msgstr "crwdns5248:0crwdne5248:0"
 msgid "Account linked"
 msgstr "crwdns6474:0crwdne6474:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Minimum Contribution"
 msgstr "crwdns5250:0crwdne5250:0"
 
@@ -4144,7 +4140,7 @@ msgstr "crwdns6502:0crwdne6502:0"
 #. placeholder {0}: task.levelRequirement.minLevel
 #. placeholder {1}: task.levelRequirement.maxLevel
 #. placeholder {2}: skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Lv. {0}-{1} {2}"
 msgstr "crwdns5260:0{0}crwdnd5260:0{1}crwdnd5260:0{2}crwdne5260:0"
 
@@ -4164,7 +4160,7 @@ msgstr "crwdns5264:0crwdne5264:0"
 msgid "That link code has already been claimed."
 msgstr "crwdns6504:0crwdne6504:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "? min"
 msgstr "crwdns5266:0crwdne5266:0"
 
@@ -4380,7 +4376,7 @@ msgstr "crwdns6550:0crwdne6550:0"
 
 #. placeholder {0}: req.level
 #. placeholder {1}: skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Lv. {0} {1}"
 msgstr "crwdns5306:0{0}crwdnd5306:0{1}crwdne5306:0"
 
@@ -4484,7 +4480,7 @@ msgstr "crwdns6570:0{0}crwdne6570:0"
 msgid "Choose which Stelo wallet funds this bounty."
 msgstr "crwdns6572:0crwdne6572:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Biomes:"
 msgstr "crwdns5330:0crwdne5330:0"
 
@@ -4571,7 +4567,7 @@ msgstr "crwdns6586:0crwdne6586:0"
 msgid "Placeable Interactions"
 msgstr "crwdns5350:0crwdne5350:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Level {level} {toolName} (Power >= {power})"
 msgstr "crwdns5352:0{level}crwdnd5352:0{toolName}crwdnd5352:0{power}crwdne5352:0"
 
@@ -4817,7 +4813,7 @@ msgstr "crwdns6642:0crwdne6642:0"
 msgid "Target Buffs"
 msgstr "crwdns5406:0crwdne5406:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Timed Node"
 msgstr "crwdns5408:0crwdne5408:0"
 
@@ -4975,7 +4971,7 @@ msgid "Experience per Damage Dealt"
 msgstr "crwdns5446:0crwdne5446:0"
 
 #. placeholder {0}: (min + max) / 2 * perNode
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{perNode} contribution per node × {min} - {max} nodes = {0} hits average"
 msgstr "crwdns5448:0{perNode}crwdnd5448:0{min}crwdnd5448:0{max}crwdnd5448:0{0}crwdne5448:0"
 
@@ -5020,7 +5016,7 @@ msgstr "crwdns6678:0crwdne6678:0"
 msgid "Stat Scaling"
 msgstr "crwdns5462:0crwdne5462:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Required Knowledge:"
 msgstr "crwdns5464:0crwdne5464:0"
 
@@ -5044,7 +5040,7 @@ msgstr "crwdns6686:0crwdne6686:0"
 msgid "Contributors"
 msgstr "crwdns6688:0crwdne6688:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "{skillName} XP/Progress:"
 msgstr "crwdns5466:0{skillName}crwdne5466:0"
 
@@ -5064,11 +5060,16 @@ msgstr "crwdns6690:0crwdne6690:0"
 msgid "Not Respawning"
 msgstr "crwdns5472:0crwdne5472:0"
 
+#. placeholder {0}: skillCategoryLabel(skillTag)
+#: src/lib/recipe-stats.tsx
+msgid "{0}:"
+msgstr ""
+
 #: src/routes/database/item/[id].tsx
 msgid "Required Level"
 msgstr "crwdns5474:0crwdne5474:0"
 
-#: src/lib/recipe-sources.tsx
+#: src/lib/recipe-stats.tsx
 msgid "Range:"
 msgstr "crwdns5476:0crwdne5476:0"
 
@@ -5224,4 +5225,3 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
-

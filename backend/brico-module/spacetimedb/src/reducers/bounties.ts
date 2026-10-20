@@ -338,12 +338,8 @@ export const clearCraftBounty = spacetimedb.reducer(
     {craftId: t.u64()},
     (ctx, {craftId}) => {
         requireServicePrincipal(ctx);
-        if (ctx.db.craft_bounty_assignment.craftId.find(craftId) !== null) {
-            ctx.db.craft_bounty_assignment.craftId.delete(craftId);
-        }
-        if (ctx.db.craft_private_bounty_assignment.craftId.find(craftId) !== null) {
-            ctx.db.craft_private_bounty_assignment.craftId.delete(craftId);
-        }
+        ctx.db.craft_bounty_assignment.craftId.delete(craftId);
+        ctx.db.craft_private_bounty_assignment.craftId.delete(craftId);
         closeOpenEscrow(ctx, craftId);
     }
 );

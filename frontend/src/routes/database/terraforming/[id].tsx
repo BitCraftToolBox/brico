@@ -6,7 +6,7 @@ import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForCodepoint} from "~/lib/og-meta";
-import {toolRequirementText} from "~/lib/recipe-sources";
+import {toolRequirementText} from "~/lib/recipe-stats";
 
 export default function TerraformingDetail() {
     const params = useParams();

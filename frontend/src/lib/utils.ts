@@ -113,6 +113,9 @@ function readableSecondsFallback(hours: number, minutes: number, secs: number): 
     ].filter(Boolean).join(" ") || "0s";
 }
 
+export function readableSeconds(seconds: number, shorten?: boolean): string;
+export function readableSeconds(seconds: number | undefined, shorten?: boolean): string | undefined;
+
 export function readableSeconds(seconds: number | undefined, shorten: boolean = false): string | undefined {
     if (seconds === undefined) return undefined;
     trackUILocale();

@@ -341,6 +341,9 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
     let needFullLoyalty = true;
     // Work whose reducer call failed, retried next tick.
     const retryAssign = new Set<bigint>();
+    // Baselines of an escrowed first assignment, taken when its bounty first resolved and kept until the
+    // assignment is stored, so effort done while funding is pending is still paid. Lost on restart.
+    const intentBaselines = new Map<bigint, {playerId: bigint; effort: bigint}[]>();
     const retryEntitlement = new Set<bigint>();
     const retryBonus = new Map<string, Triple>();
     // Triples whose bonus was already written this tick, since the stored rows haven't changed yet.
@@ -481,8 +484,11 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
                 if (bounty) {
                     const row = scope.rowOf(craftId);
                     let baselines: {playerId: bigint; effort: bigint}[] = [];
+                    if (previous !== undefined) intentBaselines.delete(craftId);
                     if (row && previous === undefined) {
-                        baselines = assignmentBaselines(snapshot.contributions.get(craftId), row.firstSeenMs, BigInt(Date.now()));
+                        const latched = intentBaselines.get(craftId);
+                        baselines = latched ?? assignmentBaselines(snapshot.contributions.get(craftId), row.firstSeenMs, BigInt(Date.now()));
+                        if (!latched && funding && ESCROWED_BOUNTY_CURRENCIES.includes(bounty.currency)) intentBaselines.set(craftId, baselines);
                     } else if (row && previous !== undefined && previous.currency !== bounty.currency) {
                         baselines = currencySwitchBaselines(snapshot.contributions.get(craftId));
                     }
@@ -537,6 +543,7 @@ export function createBountyEngine(app: BricoAppConnection, cache: AppCache, log
                         scoped.error("assign_craft_bounty failed", {craftId: craftId.toString(), error: cause instanceof Error ? cause.message : String(cause)});
                     });
                 } else {
+                    intentBaselines.delete(craftId);
                     funding?.status.clear(craftId);
                     publish(craftId, undefined);
                 }
