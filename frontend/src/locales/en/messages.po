@@ -270,6 +270,10 @@ msgstr "Placeable Graph"
 msgid "Terraform Elevation Difference {0}"
 msgstr "Terraform Elevation Difference {0}"
 
+#: src/routes/tools/crafts/browse.tsx
+msgid "Est. payout total"
+msgstr "Est. payout total"
+
 #: src/components/data-table/live-table.tsx
 msgid "No results."
 msgstr "No results."
@@ -537,6 +541,10 @@ msgstr "Choose a sticky interval between {MIN_STICKY_MINUTES} and {MAX_STICKY_MI
 #: src/lib/crafts/filter-vocab.ts
 msgid "Output item tag"
 msgstr "Output item tag"
+
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to next page"
+msgstr "Go to next page"
 
 #: src/lib/notifications/funding.tsx
 msgid "A payout could not be pulled from your wallet"
@@ -822,6 +830,10 @@ msgstr "The note is too long or contains line breaks."
 #: src/routes/account/bounty-rules.tsx
 msgid "Skill/tier grid"
 msgstr "Skill/tier grid"
+
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to first page"
+msgstr "Go to first page"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Allow Aquatic Prospecting"
@@ -1546,6 +1558,10 @@ msgstr "(consumed)"
 msgid "Log in to see notifications from your watched craft filters."
 msgstr "Log in to see notifications from your watched craft filters."
 
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to last page"
+msgstr "Go to last page"
+
 #: src/routes/database/item/[id].tsx
 msgid "Durability"
 msgstr "Durability"
@@ -1725,6 +1741,7 @@ msgid "All items visible"
 msgstr "All items visible"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/tools/crafts/browse.tsx
 msgid "Import / Export"
 msgstr "Import / Export"
 
@@ -1906,10 +1923,6 @@ msgstr "My bounties"
 #: src/routes/account/profile.tsx
 msgid "Log in to sync saved filters and watches to your account, and to set up notifications."
 msgstr "Log in to sync saved filters and watches to your account, and to set up notifications."
-
-#: src/lib/recipe-stats.tsx
-msgid "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
-msgstr "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
 
 #: src/lib/recipe-stats.tsx
 msgid "Total HP"
@@ -2677,10 +2690,6 @@ msgstr "Speed"
 #: src/routes/account/loyalty.tsx
 msgid "No loyalty rewards yet."
 msgstr "No loyalty rewards yet."
-
-#: src/routes/tools/crafts/browse.tsx
-msgid "Saved Filters"
-msgstr "Saved Filters"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Is Self Targeting"
@@ -3469,7 +3478,6 @@ msgid "Display name"
 msgstr "Display name"
 
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Est. payout"
 msgstr "Est. payout"
 
@@ -3496,6 +3504,10 @@ msgstr "Copied!"
 #: src/routes/tools/crafts/browse.tsx
 msgid "Hidden currency"
 msgstr "Hidden currency"
+
+#: src/lib/recipe-stats.tsx
+msgid "This recipe doesn't use tool power, but can still use stat increases (crit, speed, power) from a skill."
+msgstr "This recipe doesn't use tool power, but can still use stat increases (crit, speed, power) from a skill."
 
 #. placeholder {0}: effort()
 #. placeholder {1}: fixFloat(effort() * perProgress)
@@ -4020,6 +4032,10 @@ msgstr "{maxHp} effort required, ignoring base tool power"
 msgid "Rewarded from Quests"
 msgstr "Rewarded from Quests"
 
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to previous page"
+msgstr "Go to previous page"
+
 #: src/lib/sidebar-items.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Achievements"
@@ -4154,10 +4170,6 @@ msgstr "Disallow Player Build"
 #: src/lib/crafts/error-vocab.ts
 msgid "That link code has already been claimed."
 msgstr "That link code has already been claimed."
-
-#: src/lib/recipe-stats.tsx
-msgid "? min"
-msgstr "? min"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Timed Growth"
@@ -4901,6 +4913,10 @@ msgstr "<0><1/></0> is placed into escrow via <2/>. The owner's funds are locked
 #: src/lib/crafts/payout-source.ts
 msgid "Stelo payout"
 msgstr "Stelo payout"
+
+#: src/components/data-table/table-pagination.tsx
+msgid "Rows per page"
+msgstr "Rows per page"
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx

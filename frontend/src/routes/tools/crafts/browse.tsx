@@ -293,24 +293,6 @@ const COLUMNS: ColumnDef<CraftEntry, any>[] = [
         sortUndefined: -1
     },
     {
-        id: "estPayout",
-        meta: {label: msg`Est. payout`},
-        accessorFn: entry => (entry.subject.payout ?? 0) * entry.effortTotal,
-        cell: (props: CraftCell<number>) => {
-            const entry = props.row.original;
-            return (
-                <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                    <div class="flex flex-row justify-center">
-                        <span class="inline-flex gap-1 tabular-nums">
-                            {(entry.subject.payout! * entry.effortTotal).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
-                            <CurrencyLabel currency={entry.subject.currency!} iconOnly={true}/>
-                        </span>
-                    </div>
-                </Show>
-            );
-        },
-    },
-    {
         id: "estPayoutRemaining",
         meta: {label: msg`Est. payout remaining`},
         accessorFn: entry => (entry.subject.payout ?? 0) * entry.effortRemaining,
@@ -321,6 +303,24 @@ const COLUMNS: ColumnDef<CraftEntry, any>[] = [
                     <div class="flex flex-row justify-center">
                         <span class="inline-flex gap-1 tabular-nums">
                             {(entry.subject.payout! * entry.effortRemaining).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
+                            <CurrencyLabel currency={entry.subject.currency!} iconOnly={true}/>
+                        </span>
+                    </div>
+                </Show>
+            );
+        },
+    },
+    {
+        id: "estPayout",
+        meta: {label: msg`Est. payout total`},
+        accessorFn: entry => (entry.subject.payout ?? 0) * entry.effortTotal,
+        cell: (props: CraftCell<number>) => {
+            const entry = props.row.original;
+            return (
+                <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
+                    <div class="flex flex-row justify-center">
+                        <span class="inline-flex gap-1 tabular-nums">
+                            {(entry.subject.payout! * entry.effortTotal).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
                             <CurrencyLabel currency={entry.subject.currency!} iconOnly={true}/>
                         </span>
                     </div>
@@ -706,8 +706,8 @@ export default function CraftBrowser() {
                                 </div>
                             </CollapsibleTrigger>
                             <div class="flex flex-wrap items-center gap-2 pt-2">
-                                <Button variant={openCraftsActive() ? "default" : "outline"} size="sm" class="h-8" onClick={() => setFilter(openWorkFilter())}>
-                                    {quickActive() ? <Trans>Open Crafts</Trans> : <Trans>Reset</Trans>}
+                                <Button variant={openCraftsActive() ? "default" : "secondary"} size="sm" class="h-8" onClick={() => setFilter(openWorkFilter())}>
+                                    {openCraftsActive() ? <Trans>Open Crafts</Trans> : <Trans>Reset</Trans>}
                                 </Button>
                                 <Show when={isLoggedIn() && bitcraftAccounts().length}>
                                     <Button variant={myCraftsActive() ? "default" : "outline"} size="sm" class="h-8" onClick={filterMyCrafts}>
@@ -792,7 +792,7 @@ export default function CraftBrowser() {
                                         </Button>
                                     </Show>
                                     <Button variant="outline" size="sm" class="ml-auto h-9" onClick={() => setSavedFiltersOpen(true)}>
-                                        <IconSavedFilters class="mr-1 size-4"/><Trans>Saved Filters</Trans>
+                                        <IconSavedFilters class="mr-1 size-4"/><Trans>Import / Export</Trans>
                                     </Button>
                                 </div>
                             </CardContent>

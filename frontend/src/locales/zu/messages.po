@@ -275,6 +275,10 @@ msgstr "crwdns4380:0crwdne4380:0"
 msgid "Terraform Elevation Difference {0}"
 msgstr "crwdns4382:0{0}crwdne4382:0"
 
+#: src/routes/tools/crafts/browse.tsx
+msgid "Est. payout total"
+msgstr ""
+
 #: src/components/data-table/live-table.tsx
 msgid "No results."
 msgstr "crwdns5688:0crwdne5688:0"
@@ -542,6 +546,10 @@ msgstr "crwdns5750:0{MIN_STICKY_MINUTES}crwdnd5750:0{MAX_STICKY_MINUTES}crwdne57
 #: src/lib/crafts/filter-vocab.ts
 msgid "Output item tag"
 msgstr "crwdns5752:0crwdne5752:0"
+
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to next page"
+msgstr ""
 
 #: src/lib/notifications/funding.tsx
 msgid "A payout could not be pulled from your wallet"
@@ -827,6 +835,10 @@ msgstr "crwdns5818:0crwdne5818:0"
 #: src/routes/account/bounty-rules.tsx
 msgid "Skill/tier grid"
 msgstr "crwdns5820:0crwdne5820:0"
+
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to first page"
+msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Allow Aquatic Prospecting"
@@ -1551,6 +1563,10 @@ msgstr "crwdns4664:0crwdne4664:0"
 msgid "Log in to see notifications from your watched craft filters."
 msgstr "crwdns5966:0crwdne5966:0"
 
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to last page"
+msgstr ""
+
 #: src/routes/database/item/[id].tsx
 msgid "Durability"
 msgstr "crwdns4666:0crwdne4666:0"
@@ -1730,6 +1746,7 @@ msgid "All items visible"
 msgstr "crwdns4718:0crwdne4718:0"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/tools/crafts/browse.tsx
 msgid "Import / Export"
 msgstr "crwdns5994:0crwdne5994:0"
 
@@ -1911,10 +1928,6 @@ msgstr "crwdns6026:0crwdne6026:0"
 #: src/routes/account/profile.tsx
 msgid "Log in to sync saved filters and watches to your account, and to set up notifications."
 msgstr "crwdns6028:0crwdne6028:0"
-
-#: src/lib/recipe-stats.tsx
-msgid "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
-msgstr "crwdns4766:0crwdne4766:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Total HP"
@@ -2682,10 +2695,6 @@ msgstr "crwdns4936:0crwdne4936:0"
 #: src/routes/account/loyalty.tsx
 msgid "No loyalty rewards yet."
 msgstr "crwdns6190:0crwdne6190:0"
-
-#: src/routes/tools/crafts/browse.tsx
-msgid "Saved Filters"
-msgstr "crwdns6192:0crwdne6192:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Is Self Targeting"
@@ -3474,7 +3483,6 @@ msgid "Display name"
 msgstr "crwdns6356:0crwdne6356:0"
 
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Est. payout"
 msgstr "crwdns6358:0crwdne6358:0"
 
@@ -3501,6 +3509,10 @@ msgstr "crwdns5124:0crwdne5124:0"
 #: src/routes/tools/crafts/browse.tsx
 msgid "Hidden currency"
 msgstr "crwdns6362:0crwdne6362:0"
+
+#: src/lib/recipe-stats.tsx
+msgid "This recipe doesn't use tool power, but can still use stat increases (crit, speed, power) from a skill."
+msgstr ""
 
 #. placeholder {0}: effort()
 #. placeholder {1}: fixFloat(effort() * perProgress)
@@ -4025,6 +4037,10 @@ msgstr "crwdns5620:0{maxHp}crwdne5620:0"
 msgid "Rewarded from Quests"
 msgstr "crwdns5238:0crwdne5238:0"
 
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to previous page"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Achievements"
@@ -4159,10 +4175,6 @@ msgstr "crwdns5264:0crwdne5264:0"
 #: src/lib/crafts/error-vocab.ts
 msgid "That link code has already been claimed."
 msgstr "crwdns6504:0crwdne6504:0"
-
-#: src/lib/recipe-stats.tsx
-msgid "? min"
-msgstr "crwdns5266:0crwdne5266:0"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Timed Growth"
@@ -4906,6 +4918,10 @@ msgstr "crwdns6662:0crwdne6662:0"
 #: src/lib/crafts/payout-source.ts
 msgid "Stelo payout"
 msgstr "crwdns6664:0crwdne6664:0"
+
+#: src/components/data-table/table-pagination.tsx
+msgid "Rows per page"
+msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx

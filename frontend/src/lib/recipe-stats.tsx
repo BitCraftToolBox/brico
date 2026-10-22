@@ -163,23 +163,24 @@ function addCommonRequirements(
     });
 }
 
-function addUseHandsInformation(lines: StatLine[], recipe: { toolRequirements: ToolRequirement[], allowUseHands: boolean }) {
-    if (!recipe.toolRequirements.length && recipe.allowUseHands) {
-        const label = useLabel();
-        lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
-            () => <Tooltip openOnTouchStart>
-                <TooltipTrigger class="underline decoration-dotted">{label(gameText(msg`Hands`))}</TooltipTrigger>
-                <TooltipContent class="max-w-[90svw]"><Trans>This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power.</Trans></TooltipContent>
-            </Tooltip>
-        ]);
-    } else if (!recipe.toolRequirements.length && !recipe.allowUseHands) {
-        lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
-            () => <Tooltip openOnTouchStart>
-                <TooltipTrigger class="underline decoration-dotted"><Trans>No tool</Trans></TooltipTrigger>
-                <TooltipContent class="max-w-[90svw]"><Trans>This recipe is fixed at one progress per hit.</Trans></TooltipContent>
-            </Tooltip>
-        ]);
+function addSkillProgressInfo(lines: StatLine[], recipe: { toolRequirements: ToolRequirement[], experiencePerProgress: ExperienceStackF32[], allowUseHands: boolean }) {
+    if (recipe.toolRequirements.length) {
+        return;
     }
+    const hasSkill = (recipe.experiencePerProgress[0]?.skillId ?? 0) > 1; // as extensions.rs get_skill_type
+    const label = useLabel();
+    lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
+        () => <Tooltip openOnTouchStart>
+            <TooltipTrigger class="underline decoration-dotted">
+                <Show when={recipe.allowUseHands} fallback={<Trans>No tool</Trans>}>{label(gameText(msg`Hands`))}</Show>
+            </TooltipTrigger>
+            <TooltipContent class="max-w-[90svw]">
+                <Show when={hasSkill} fallback={<Trans>This recipe is fixed at one progress per hit.</Trans>}>
+                    <Trans>This recipe doesn't use tool power, but can still use stat increases (crit, speed, power) from a skill.</Trans>
+                </Show>
+            </TooltipContent>
+        </Tooltip>
+    ]);
 }
 
 // ─── Per-Type Stat Line Extractors ──────────────────────────────
@@ -193,7 +194,7 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
         [t`Stamina:`, fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
-    addUseHandsInformation(lines, recipe);
+    addSkillProgressInfo(lines, recipe);
     if (recipe.buildingRequirement) {
         const name = buildingData.get(recipe.buildingRequirement.buildingType)?.name ?? t`Unknown`;
         const tier = recipe.buildingRequirement.tier;
@@ -222,7 +223,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
             const [min, max] = gd.time;
             lines.push([t`Timed Node`, min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`]);
         } else if (resource.showTimeLeft) { // unsure if any resource has this flag but doesn't have a growth desc, but fallback anyway
-            lines.push([t`Timed Node`, t`? min`])
+            lines.push([t`Timed Node`, t`Unknown`])
         }
         const prospectingDescs = prospectingForResource(resource.id);
         if (prospectingDescs?.length) {
@@ -266,7 +267,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
     lines.push([t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))]);
     lines.push([t`Stamina:`, fixFloat(recipe.staminaRequirement)]);
     addCommonRequirements(lines, recipe, totalEffort);
-    addUseHandsInformation(lines, recipe);
+    addSkillProgressInfo(lines, recipe);
     addKnowledgeRequirements(lines, recipe);
     addPlaceableSelfBuffs(lines, recipe.selfBuffs);
     return lines;
@@ -470,34 +471,35 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
 }
 
 function addPlaceableSelfBuffs(lines: StatLine[], placeableBuffs: PlaceableSelfBuffChance[] | undefined) {
-    if (placeableBuffs?.length) {
-        const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
-        lines.push(...placeableBuffs.map(b => {
-            const buff = buffIdx.get(b.buffId);
-            const duration = b.duration ?? buff?.duration;
-            return [
-                () => (
-                    <IconSpan icon={pageIcon("Buffs")}><Trans>Buff</Trans></IconSpan>
-                ),
-                () => (
-                    <IconLink href={`/database/buff/${b.buffId}`}>
-                        {buff?.description ?? `Buff #${b.buffId}`}
-                        {duration ? <span class="text-muted-foreground">{readableSeconds(fixFloat(duration))}</span> : null}
-                        {
-                            <Tooltip>
-                                <TooltipTrigger class="text-muted-foreground decoration-dotted underline">
-                                    ({fixFloat(b.chance * 100)}%)
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <Trans>Chance per hit</Trans>
-                                </TooltipContent>
-                            </Tooltip>
-                        }
-                    </IconLink>
-                )
-            ] satisfies StatLine;
-        }));
+    if (!placeableBuffs?.length) {
+        return;
     }
+    const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
+    lines.push(...placeableBuffs.map(b => {
+        const buff = buffIdx.get(b.buffId);
+        const duration = b.duration ?? buff?.duration;
+        return [
+            () => (
+                <IconSpan icon={pageIcon("Buffs")}><Trans>Buff</Trans></IconSpan>
+            ),
+            () => (
+                <IconLink href={`/database/buff/${b.buffId}`}>
+                    {buff?.description ?? `Buff #${b.buffId}`}
+                    {duration ? <span class="text-muted-foreground">{readableSeconds(fixFloat(duration))}</span> : null}
+                    {
+                        <Tooltip>
+                            <TooltipTrigger class="text-muted-foreground decoration-dotted underline">
+                                ({fixFloat(b.chance * 100)}%)
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <Trans>Chance per hit</Trans>
+                            </TooltipContent>
+                        </Tooltip>
+                    }
+                </IconLink>
+            )
+        ] satisfies StatLine;
+    }));
 }
 
 export function interactionStatLines(interaction: PlaceableInteractionDesc, sourcePlaceable: PlaceableDesc | undefined): StatLine[] {
@@ -517,7 +519,7 @@ export function interactionStatLines(interaction: PlaceableInteractionDesc, sour
 
     // Common requirements (level, xp, tool)
     addCommonRequirements(lines, interaction);
-    addUseHandsInformation(lines, interaction);
+    addSkillProgressInfo(lines, interaction);
     addKnowledgeRequirements(lines, interaction);
     addPlaceableSelfBuffs(lines, interaction.selfBuffs);
 

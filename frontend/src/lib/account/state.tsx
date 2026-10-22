@@ -142,7 +142,7 @@ export function AccountProvider(props: {children: JSX.Element}) {
         conn.close();
         conn.clearToken();
         setLoginMethod(null);
-        await oidc.clearLocalSession();
+        await oidc.logout();
     }
 
     function setDisplayName(name: string | null) {

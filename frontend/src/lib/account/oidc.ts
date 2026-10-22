@@ -59,9 +59,7 @@ export async function getCurrentUser(): Promise<User | null> {
 
 /**
  * Refreshes the session via refresh token against SpacetimeAuth (no redirect, no popup).
- * The cold-start counterpart to `automaticSilentRenew` above. This is currently non-functional
- * since SpacetimeAuth's inbuilt `offline_access` scope does not actually work for offline
- * access (go figure). If they fix it on their end, this should just work™.
+ * The cold-start counterpart to `automaticSilentRenew` above.
  */
 export async function renewSilently(): Promise<User | null> {
     try {
@@ -95,7 +93,10 @@ export function onSilentRenewError(callback: (error: Error) => void): () => void
     return getManager().events.addSilentRenewError(callback);
 }
 
-/** Forgets the local session. No SpacetimeAuth-side (RP-initiated) logout. */
-export function clearLocalSession(): Promise<void> {
-    return getManager().removeUser();
+/** Forgets the local session and redirects to SpacetimeAuth signout. */
+export async function logout(): Promise<void> {
+    await getManager().removeUser();
+    await getManager().signoutRedirect({
+        post_logout_redirect_uri: `${window.location.origin}`,
+    });
 }

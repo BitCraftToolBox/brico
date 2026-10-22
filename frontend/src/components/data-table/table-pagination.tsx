@@ -38,7 +38,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
     }
 
     return (
-        <div class="flex items-center justify-between py-2">
+        <div class="flex flex-wrap items-center justify-between py-2">
             <div class="flex-1 text-sm text-muted-foreground">
                 <Show when={props.label} fallback={
                     <Trans>{props.table.getFilteredRowModel().rows.length} of{" "}
@@ -49,7 +49,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
             </div>
             <div class="flex items-center space-x-6 lg:space-x-8">
                 <div class="flex items-center space-x-2">
-                    <p class="text-sm font-medium">Rows per page</p>
+                    <p class="text-sm font-medium"><Trans>Rows per page</Trans></p>
                     <Select
                         value={props.table.getState().pagination.pageSize}
                         onChange={(value) => value && props.table.setPageSize(value)}
@@ -71,7 +71,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                         onClick={() => props.table.setPageIndex(0)}
                         disabled={!props.table.getCanPreviousPage()}
                     >
-                        <span class="sr-only">Go to first page</span>
+                        <span class="sr-only"><Trans>Go to first page</Trans></span>
                         <IconChevronsLeft/>
                     </Button>
                     <Button
@@ -80,7 +80,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                         onClick={() => props.table.previousPage()}
                         disabled={!props.table.getCanPreviousPage()}
                     >
-                        <span class="sr-only">Go to previous page</span>
+                        <span class="sr-only"><Trans>Go to previous page</Trans></span>
                         <IconChevronLeft/>
                     </Button>
                     <div class="flex items-center justify-center text-sm font-medium">
@@ -101,7 +101,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                             </NumberField>
                             <Button variant="ghost" onclick={setPage}><IconCheck/></Button>
                         </Show>
-                        <span> of {props.table.getPageCount()}</span>
+                        <span class="text-nowrap"> / {props.table.getPageCount()}</span>
                     </div>
                     <Button
                         variant="outline"
@@ -109,7 +109,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                         onClick={() => props.table.nextPage()}
                         disabled={!props.table.getCanNextPage()}
                     >
-                        <span class="sr-only">Go to next page</span>
+                        <span class="sr-only"><Trans>Go to next page</Trans></span>
                         <IconChevronRight/>
                     </Button>
                     <Button
@@ -118,7 +118,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                         onClick={() => props.table.setPageIndex(props.table.getPageCount() - 1)}
                         disabled={!props.table.getCanNextPage()}
                     >
-                        <span class="sr-only">Go to last page</span>
+                        <span class="sr-only"><Trans>Go to last page</Trans></span>
                         <IconChevronsRight/>
                     </Button>
                 </div>

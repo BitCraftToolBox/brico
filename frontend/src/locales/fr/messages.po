@@ -275,6 +275,10 @@ msgstr ""
 msgid "Terraform Elevation Difference {0}"
 msgstr ""
 
+#: src/routes/tools/crafts/browse.tsx
+msgid "Est. payout total"
+msgstr ""
+
 #: src/components/data-table/live-table.tsx
 msgid "No results."
 msgstr ""
@@ -541,6 +545,10 @@ msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Output item tag"
+msgstr ""
+
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to next page"
 msgstr ""
 
 #: src/lib/notifications/funding.tsx
@@ -826,6 +834,10 @@ msgstr ""
 
 #: src/routes/account/bounty-rules.tsx
 msgid "Skill/tier grid"
+msgstr ""
+
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to first page"
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
@@ -1551,6 +1563,10 @@ msgstr ""
 msgid "Log in to see notifications from your watched craft filters."
 msgstr ""
 
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to last page"
+msgstr ""
+
 #: src/routes/database/item/[id].tsx
 msgid "Durability"
 msgstr ""
@@ -1730,6 +1746,7 @@ msgid "All items visible"
 msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/routes/tools/crafts/browse.tsx
 msgid "Import / Export"
 msgstr ""
 
@@ -1910,10 +1927,6 @@ msgstr ""
 
 #: src/routes/account/profile.tsx
 msgid "Log in to sync saved filters and watches to your account, and to set up notifications."
-msgstr ""
-
-#: src/lib/recipe-stats.tsx
-msgid "This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power."
 msgstr ""
 
 #: src/lib/recipe-stats.tsx
@@ -2681,10 +2694,6 @@ msgstr "Vitesse"
 
 #: src/routes/account/loyalty.tsx
 msgid "No loyalty rewards yet."
-msgstr ""
-
-#: src/routes/tools/crafts/browse.tsx
-msgid "Saved Filters"
 msgstr ""
 
 #: src/routes/database/combat/[id].tsx
@@ -3474,7 +3483,6 @@ msgid "Display name"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Est. payout"
 msgstr ""
 
@@ -3500,6 +3508,10 @@ msgstr ""
 
 #: src/routes/tools/crafts/browse.tsx
 msgid "Hidden currency"
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "This recipe doesn't use tool power, but can still use stat increases (crit, speed, power) from a skill."
 msgstr ""
 
 #. placeholder {0}: effort()
@@ -4025,6 +4037,10 @@ msgstr ""
 msgid "Rewarded from Quests"
 msgstr ""
 
+#: src/components/data-table/table-pagination.tsx
+msgid "Go to previous page"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/routes/database/skill/[id].tsx
 msgid "Achievements"
@@ -4158,10 +4174,6 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That link code has already been claimed."
-msgstr ""
-
-#: src/lib/recipe-stats.tsx
-msgid "? min"
 msgstr ""
 
 #: src/routes/database/resource/[id].tsx
@@ -4905,6 +4917,10 @@ msgstr ""
 
 #: src/lib/crafts/payout-source.ts
 msgid "Stelo payout"
+msgstr ""
+
+#: src/components/data-table/table-pagination.tsx
+msgid "Rows per page"
 msgstr ""
 
 #: src/lib/table-defs/buildings-table.tsx
