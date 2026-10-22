@@ -155,6 +155,7 @@ msgstr "crwdns4362:0crwdne4362:0"
 #: src/lib/table-defs/deployables-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
+#: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Type"
@@ -319,6 +320,7 @@ msgstr "crwdns5694:0crwdne5694:0"
 #: src/lib/crafts/filter-condition.tsx
 #: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/buff/[id].tsx
 msgid "No"
 msgstr "crwdns4392:0crwdne4392:0"
@@ -345,6 +347,7 @@ msgstr "crwdns5696:0crwdne5696:0"
 msgid "Build Time"
 msgstr "crwdns4400:0crwdne4400:0"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
@@ -739,6 +742,7 @@ msgid "Can Enter Portals"
 msgstr "crwdns4482:0crwdne4482:0"
 
 #: src/components/data-table/table-faceted-filter.tsx
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/combat-table.tsx
 msgid "Range"
 msgstr "crwdns4484:0crwdne4484:0"
@@ -766,9 +770,12 @@ msgstr "crwdns4488:0crwdne4488:0"
 msgid "Name this filter"
 msgstr "crwdns5802:0crwdne5802:0"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/biome/[id].tsx
 #: src/routes/database/collectible/[id].tsx
+#: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Name"
@@ -786,6 +793,10 @@ msgstr "crwdns5546:0crwdne5546:0"
 #: src/routes/settings.tsx
 msgid "Object ID"
 msgstr "crwdns4492:0crwdne4492:0"
+
+#: src/lib/table-defs/abilities-table.tsx
+msgid "Profession Hit Bonus"
+msgstr ""
 
 #: src/routes/account/settings.tsx
 msgid "Toast everywhere"
@@ -1112,6 +1123,7 @@ msgid "Released"
 msgstr "crwdns5866:0crwdne5866:0"
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Radius"
@@ -1281,6 +1293,7 @@ msgstr "crwdns5904:0crwdne5904:0"
 msgid "Extraction"
 msgstr "crwdns4594:0crwdne4594:0"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/weapon-table.tsx
@@ -1331,6 +1344,11 @@ msgstr "crwdns5600:0{0}crwdnd5600:0{1}crwdne5600:0"
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
 msgstr "crwdns4604:0crwdne4604:0"
+
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Output Items"
+msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Verified. Linking…"
@@ -1542,6 +1560,11 @@ msgstr "crwdns4658:0crwdne4658:0"
 msgid "Spawns"
 msgstr "crwdns4660:0crwdne4660:0"
 
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Profession Hit"
+msgstr ""
+
 #: src/components/crafts/FundingWalletSelect.tsx
 msgid "<0>Link a Stelo wallet</0> first."
 msgstr "crwdns5962:0crwdne5962:0"
@@ -1613,6 +1636,15 @@ msgstr "crwdns4676:0crwdne4676:0"
 msgid "That link code is unknown or has expired."
 msgstr "crwdns5974:0crwdne5974:0"
 
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Spawned Placeables"
+msgstr ""
+
+#: src/routes/database/ability/[id].tsx
+msgid "Required Buffs"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Biome"
 msgstr "crwdns4678:0crwdne4678:0"
@@ -1679,6 +1711,7 @@ msgstr "crwdns5984:0crwdne5984:0"
 msgid "Max Speed"
 msgstr "crwdns4698:0crwdne4698:0"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Ability"
 msgstr "crwdns5552:0crwdne5552:0"
@@ -1750,7 +1783,9 @@ msgstr "crwdns4718:0crwdne4718:0"
 msgid "Import / Export"
 msgstr "crwdns5994:0crwdne5994:0"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/recipe-stats.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Buff"
 msgstr "crwdns4720:0crwdne4720:0"
@@ -1776,6 +1811,7 @@ msgstr "crwdns4724:0crwdne4724:0"
 msgid "Claim membership"
 msgstr "crwdns6000:0crwdne6000:0"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/cargo/[id].tsx
@@ -1907,6 +1943,7 @@ msgid "{0} selected"
 msgstr "crwdns4760:0{0}crwdne4760:0"
 
 #: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "Abilities"
 msgstr "crwdns5556:0crwdne5556:0"
@@ -2061,6 +2098,10 @@ msgstr "crwdns4798:0{0}crwdnd4798:0{1}crwdne4798:0"
 msgid "No deconstruction recipe"
 msgstr "crwdns4800:0crwdne4800:0"
 
+#: src/routes/database/creature/[id].tsx
+msgid "Spawned by"
+msgstr ""
+
 #: src/routes/database/collectible/[id].tsx
 msgid "Starting Loadout"
 msgstr "crwdns4802:0crwdne4802:0"
@@ -2093,6 +2134,10 @@ msgstr "crwdns6062:0crwdne6062:0"
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Read only: can receive, not fund"
 msgstr "crwdns6064:0crwdne6064:0"
+
+#: src/routes/database/ability/[id].tsx
+msgid "Consumption Chance"
+msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "That is not a craft id."
@@ -2175,6 +2220,7 @@ msgstr "crwdns6090:0crwdne6090:0"
 
 #: src/components/crafts/QuickFilterGrid.tsx
 #: src/lib/table-defs/quests-table.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Item"
@@ -2244,6 +2290,7 @@ msgstr "crwdns4834:0crwdne4834:0"
 msgid "Link Filters <0/>"
 msgstr "crwdns4836:0crwdne4836:0"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
@@ -2292,6 +2339,11 @@ msgstr "crwdns4850:0crwdne4850:0"
 #: src/lib/crafts/error-vocab.ts
 msgid "That filter isn't valid JSON."
 msgstr "crwdns6106:0crwdne6106:0"
+
+#: src/routes/database/ability/[id].tsx
+#: src/routes/database/creature/[id].tsx
+msgid "Placeable"
+msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Build"
@@ -2440,6 +2492,7 @@ msgstr "crwdns4882:0crwdne4882:0"
 msgid "You don't have any bounties yet. Set one on a craft or add a rule under Bounty rules."
 msgstr "crwdns6138:0crwdne6138:0"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
@@ -2484,6 +2537,7 @@ msgid "Place ({placeDuration})"
 msgstr "crwdns5618:0{placeDuration}crwdne5618:0"
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/routes/database/ability/[id].tsx
 msgid "Chance"
 msgstr "crwdns4894:0crwdne4894:0"
 
@@ -2669,6 +2723,7 @@ msgstr "crwdns6188:0crwdne6188:0"
 #: src/lib/crafts/filter-condition.tsx
 #: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Yes"
 msgstr "crwdns4928:0crwdne4928:0"
@@ -2746,6 +2801,7 @@ msgstr "crwdns6198:0crwdne6198:0"
 msgid "Global Cooldown"
 msgstr "crwdns4954:0crwdne4954:0"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
@@ -2829,6 +2885,10 @@ msgstr "crwdns6218:0{MAX_FILTER_JSON_LENGTH}crwdne6218:0"
 msgid "Unclaimed money can only roll over to a manually recorded currency."
 msgstr "crwdns6220:0crwdne6220:0"
 
+#: src/lib/table-defs/abilities-table.tsx
+msgid "Required Buff"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Contribution Per Crumb"
 msgstr "crwdns4972:0crwdne4972:0"
@@ -2895,7 +2955,7 @@ msgstr "crwdns6232:0{quantifier}crwdnd6232:0{field}crwdnd6232:0{cmpEl}crwdnd6232
 msgid "No local groupings yet."
 msgstr "crwdns6234:0crwdne6234:0"
 
-#: src/routes/database/resource/[id].tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Spawns Enemies"
 msgstr "crwdns4988:0crwdne4988:0"
 
@@ -3101,6 +3161,10 @@ msgstr "crwdns6272:00={0}crwdne6272:0"
 msgid "Average number of drops for a full bar (resource health, dungeon contribution, etc.): {0}% * {1} = {2}."
 msgstr "crwdns5036:0{0}crwdnd5036:0{1}crwdnd5036:0{2}crwdne5036:0"
 
+#: src/components/shared/RelTablePresets.tsx
+msgid "Stat"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Dropped from"
 msgstr "crwdns5038:0crwdne5038:0"
@@ -3137,8 +3201,9 @@ msgstr "crwdns5046:0crwdne5046:0"
 
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/table-utils/column-builders.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
-#: src/routes/database/resource/[id].tsx
+#: src/routes/database/creature/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "Tier"
@@ -3200,6 +3265,10 @@ msgstr "crwdns5062:0crwdne5062:0"
 #: src/routes/database/item/[id].tsx
 msgid "Max Damage"
 msgstr "crwdns5064:0crwdne5064:0"
+
+#: src/routes/database/creature/[id].tsx
+msgid "Resource"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
@@ -3424,6 +3493,7 @@ msgstr "crwdns6338:0crwdne6338:0"
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/account/bounty-rules.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/progression/index.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -3553,6 +3623,10 @@ msgstr "crwdns5130:0{tier}crwdnd5130:0{name}crwdne5130:0"
 #: src/components/data-table/table-column-header.tsx
 msgid "Asc"
 msgstr "crwdns5132:0crwdne5132:0"
+
+#: src/routes/database/ability/[id].tsx
+msgid "Bonus"
+msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
@@ -4657,12 +4731,18 @@ msgstr "crwdns6604:0crwdne6604:0"
 msgid "Housing Slots"
 msgstr "crwdns5368:0crwdne5368:0"
 
+#: src/routes/database/ability/[id].tsx
+msgid "Probability"
+msgstr ""
+
 #: src/components/crafts/FilterBuilder.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "currency/effort"
 msgstr "crwdns6606:0crwdne6606:0"
 
+#: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required Items"
 msgstr "crwdns5370:0crwdne5370:0"
@@ -4688,6 +4768,10 @@ msgstr "crwdns5378:0{minRad}crwdnd5378:0{maxRad}crwdne5378:0"
 #: src/routes/database/claim-research/[id].tsx
 msgid "Members"
 msgstr "crwdns5380:0crwdne5380:0"
+
+#: src/components/shared/RelTablePresets.tsx
+msgid "Value"
+msgstr ""
 
 #: src/routes/account/loyalty.tsx
 msgid "A standing condition — claim membership or cumulative effort — that grants a bonus to whichever payee currently satisfies it, on top of any manual assignment above. All applicable bonuses are added, not multiplied, with each other."
@@ -4790,6 +4874,10 @@ msgstr "crwdns6632:0crwdne6632:0"
 msgid "Delete filter {0}"
 msgstr "crwdns6634:0{0}crwdne6634:0"
 
+#: src/lib/table-defs/abilities-table.tsx
+msgid "Consume Required Buff"
+msgstr ""
+
 #: src/lib/notifications/funding.tsx
 msgid "Unclaimed money was returned to you"
 msgstr "crwdns6636:0crwdne6636:0"
@@ -4860,6 +4948,10 @@ msgstr "crwdns5414:0crwdne5414:0"
 #: src/lib/table-utils/column-builders.tsx
 msgid "Tier {0}"
 msgstr "crwdns5608:0{0}crwdne5608:0"
+
+#: src/routes/database/ability/[id].tsx
+msgid "Consumed"
+msgstr ""
 
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "all"
@@ -5157,7 +5249,7 @@ msgstr "crwdns6706:0crwdne6706:0"
 msgid "That saved filter no longer exists."
 msgstr "crwdns6708:0crwdne6708:0"
 
-#: src/routes/database/resource/[id].tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Max HP"
 msgstr "crwdns5488:0crwdne5488:0"
 

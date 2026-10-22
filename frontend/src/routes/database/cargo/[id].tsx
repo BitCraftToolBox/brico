@@ -9,6 +9,7 @@ import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
+    abilitiesInvolvingItem,
     claimResearchRequiring,
     constructionRecipesConsuming,
     conversionRecipesConsuming,
@@ -31,6 +32,7 @@ import {
 } from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {
+    abilitiesTab,
     claimResearchTab,
     constructionCombinedTab,
     conversionTab,
@@ -104,6 +106,7 @@ export default function CargoDetail() {
 
     const placeablePlacements = createMemo(() => cargoId() != null ? placementsConsumingItem(cargoId()!, cargoType) : []);
     const placeableInteractions = createMemo(() => cargoId() != null ? interactionsInvolvingItem(cargoId()!, cargoType) : []);
+    const abilities = createMemo(() => cargoId() != null ? abilitiesInvolvingItem(cargoId()!, cargoType) : []);
 
     return (
         <DetailPageLayout
@@ -150,6 +153,7 @@ export default function CargoDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                abilitiesTab(abilities()),
                 claimResearchTab(researchRequires()),
                 itemListsTab(inItemLists()),
                 ...(cargo()?.id === 92169812 && easterEggs() ? [lootTab()] : [])

@@ -134,6 +134,7 @@ export const searchableTables: SearchableTable[] = [
     {
         label: "Abilities", route: "/database/ability", tableKey: "AbilityCustomDesc",
         pk: "id", name: (r) => r.abilityName,
+        fields: [{field: "description", get: (r) => r.description}],
     },
     {
         label: "Buffs", route: "/database/buff", tableKey: "BuffDesc",

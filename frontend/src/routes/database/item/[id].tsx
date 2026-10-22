@@ -14,6 +14,7 @@ import {gameText, useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
+    abilitiesInvolvingItem,
     claimResearchRequiring,
     constructionRecipesConsuming,
     conversionRecipesConsuming,
@@ -42,6 +43,7 @@ import {
 import {useSettings} from "~/lib/settings";
 import {buffsGroups} from "~/lib/table-utils/detail-group-builders";
 import {
+    abilitiesTab,
     claimResearchTab,
     collectiblesTab,
     constructionCombinedTab,
@@ -176,6 +178,7 @@ export default function ItemDetail() {
 
     const placeablePlacements = createMemo(() => itemId() != null ? placementsConsumingItem(itemId()!, itemType) : []);
     const placeableInteractions = createMemo(() => itemId() != null ? interactionsInvolvingItem(itemId()!, itemType) : []);
+    const abilities = createMemo(() => itemId() != null ? abilitiesInvolvingItem(itemId()!, itemType) : []);
 
     const detailGroups = createMemo((): DetailGroup[] => {
         const i = item();
@@ -342,6 +345,7 @@ export default function ItemDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                abilitiesTab(abilities()),
                 ...(placeablePlacements().length === 1 ? [placeableGraphTab(placeablePlacements()[0])]: []),
                 claimResearchTab(researchRequires()),
                 itemListTab(isItemList(), true),

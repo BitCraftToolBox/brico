@@ -18,8 +18,8 @@ import {
     interactionsByPlaceable,
     placementsByPlaceable,
 } from "~/lib/placeables";
-import {getExtractionRecipeName} from "~/lib/relations";
-import {placeableGraphTab, placeableInteractionsCombinedTab} from "~/lib/table-utils/detail-tab-builders";
+import {abilitiesSpawningPlaceable, enemiesForPlaceable, getExtractionRecipeName} from "~/lib/relations";
+import {abilitiesTab, enemySpawnsTab, placeableGraphTab, placeableInteractionsCombinedTab} from "~/lib/table-utils/detail-tab-builders";
 
 export default function PlaceableDetail() {
     const params = useParams();
@@ -48,6 +48,10 @@ export default function PlaceableDetail() {
     const interactionsWith = createMemo(() => placeableId() != null ? interactionsByPlaceable().get(placeableId()!) ?? [] : []);
     const interactionsResultingIn = createMemo(() => placeableId() != null ? interactionsByOutcome().get(placeableId()!) ?? [] : []);
     const extractions = createMemo(() => placeableId() != null ? extractionsByPlaceable().get(placeableId()!) ?? [] : []);
+
+    const abilities = createMemo(() => placeableId() != null ? abilitiesSpawningPlaceable(placeableId()!) : []);
+
+    const enemies = createMemo(() => placeable() != null ? enemiesForPlaceable(placeable()!) : undefined);
 
     // Root placement (for "View in Graph" link)
     const rootPlacement = createMemo(() => placeableId() != null ? findRootPlacement(placeableId()!) : undefined);
@@ -119,6 +123,8 @@ export default function PlaceableDetail() {
             result.push(placeableInteractionsCombinedTab(iaWith, iaResultingIn));
         }
 
+        if (abilities().length) result.push(abilitiesTab(abilities()));
+
         const ext = extractions();
         if (ext.length) {
             result.push({
@@ -159,6 +165,11 @@ export default function PlaceableDetail() {
                     />
                 ),
             });
+        }
+
+        const enemyDescs = enemies();
+        if (enemyDescs) {
+            result.push(enemySpawnsTab(enemyDescs));
         }
 
         const placement = graphPlacement();

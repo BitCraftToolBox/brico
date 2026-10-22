@@ -150,6 +150,7 @@ msgstr "Favorites can be set in the <0><1/> Settings</0>"
 #: src/lib/table-defs/deployables-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
+#: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Type"
@@ -314,6 +315,7 @@ msgstr "A multiplier applied on top of the normal bounty math for crafts you pay
 #: src/lib/crafts/filter-condition.tsx
 #: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/buff/[id].tsx
 msgid "No"
 msgstr "No"
@@ -340,6 +342,7 @@ msgstr "set via <0>/crafts notify-setup</0> in Discord."
 msgid "Build Time"
 msgstr "Build Time"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
@@ -734,6 +737,7 @@ msgid "Can Enter Portals"
 msgstr "Can Enter Portals"
 
 #: src/components/data-table/table-faceted-filter.tsx
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/combat-table.tsx
 msgid "Range"
 msgstr "Range"
@@ -761,9 +765,12 @@ msgstr "Deployables"
 msgid "Name this filter"
 msgstr "Name this filter"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/biome/[id].tsx
 #: src/routes/database/collectible/[id].tsx
+#: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Name"
@@ -781,6 +788,10 @@ msgstr "Total"
 #: src/routes/settings.tsx
 msgid "Object ID"
 msgstr "Object ID"
+
+#: src/lib/table-defs/abilities-table.tsx
+msgid "Profession Hit Bonus"
+msgstr "Profession Hit Bonus"
 
 #: src/routes/account/settings.tsx
 msgid "Toast everywhere"
@@ -1107,6 +1118,7 @@ msgid "Released"
 msgstr "Released"
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Radius"
@@ -1276,6 +1288,7 @@ msgstr "No funds are held for this craft yet."
 msgid "Extraction"
 msgstr "Extraction"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/weapon-table.tsx
@@ -1326,6 +1339,11 @@ msgstr "Chance to spawn within {0}–{1} tiles on resource depletion."
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
 msgstr "Browse raw data on 🥣 cereal"
+
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Output Items"
+msgstr "Output Items"
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Verified. Linking…"
@@ -1537,6 +1555,11 @@ msgstr "Consumed Items"
 msgid "Spawns"
 msgstr "Spawns"
 
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Profession Hit"
+msgstr "Profession Hit"
+
 #: src/components/crafts/FundingWalletSelect.tsx
 msgid "<0>Link a Stelo wallet</0> first."
 msgstr "<0>Link a Stelo wallet</0> first."
@@ -1608,6 +1631,15 @@ msgstr "Automatic"
 msgid "That link code is unknown or has expired."
 msgstr "That link code is unknown or has expired."
 
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Spawned Placeables"
+msgstr "Spawned Placeables"
+
+#: src/routes/database/ability/[id].tsx
+msgid "Required Buffs"
+msgstr "Required Buffs"
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Biome"
 msgstr "Biome"
@@ -1674,6 +1706,7 @@ msgstr "That link code has already been used."
 msgid "Max Speed"
 msgstr "Max Speed"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Ability"
 msgstr "Ability"
@@ -1745,7 +1778,9 @@ msgstr "All items visible"
 msgid "Import / Export"
 msgstr "Import / Export"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/recipe-stats.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Buff"
 msgstr "Buff"
@@ -1771,6 +1806,7 @@ msgstr "Stages"
 msgid "Claim membership"
 msgstr "Claim membership"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/cargo/[id].tsx
@@ -1902,6 +1938,7 @@ msgid "{0} selected"
 msgstr "{0} selected"
 
 #: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "Abilities"
 msgstr "Abilities"
@@ -2056,6 +2093,10 @@ msgstr "Spawns within {0}–{1} tiles."
 msgid "No deconstruction recipe"
 msgstr "No deconstruction recipe"
 
+#: src/routes/database/creature/[id].tsx
+msgid "Spawned by"
+msgstr "Spawned by"
+
 #: src/routes/database/collectible/[id].tsx
 msgid "Starting Loadout"
 msgstr "Starting Loadout"
@@ -2088,6 +2129,10 @@ msgstr "is any of"
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Read only: can receive, not fund"
 msgstr "Read only: can receive, not fund"
+
+#: src/routes/database/ability/[id].tsx
+msgid "Consumption Chance"
+msgstr "Consumption Chance"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "That is not a craft id."
@@ -2170,6 +2215,7 @@ msgstr "Select player…"
 
 #: src/components/crafts/QuickFilterGrid.tsx
 #: src/lib/table-defs/quests-table.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Item"
@@ -2239,6 +2285,7 @@ msgstr "Traveler Tasks"
 msgid "Link Filters <0/>"
 msgstr "Link Filters <0/>"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
@@ -2287,6 +2334,11 @@ msgstr "Join Radius"
 #: src/lib/crafts/error-vocab.ts
 msgid "That filter isn't valid JSON."
 msgstr "That filter isn't valid JSON."
+
+#: src/routes/database/ability/[id].tsx
+#: src/routes/database/creature/[id].tsx
+msgid "Placeable"
+msgstr "Placeable"
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Build"
@@ -2435,6 +2487,7 @@ msgstr "Required for Quests"
 msgid "You don't have any bounties yet. Set one on a craft or add a rule under Bounty rules."
 msgstr "You don't have any bounties yet. Set one on a craft or add a rule under Bounty rules."
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
@@ -2479,6 +2532,7 @@ msgid "Place ({placeDuration})"
 msgstr "Place ({placeDuration})"
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/routes/database/ability/[id].tsx
 msgid "Chance"
 msgstr "Chance"
 
@@ -2664,6 +2718,7 @@ msgstr "Could not record payment"
 #: src/lib/crafts/filter-condition.tsx
 #: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Yes"
 msgstr "Yes"
@@ -2741,6 +2796,7 @@ msgstr "is none of"
 msgid "Global Cooldown"
 msgstr "Global Cooldown"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
@@ -2824,6 +2880,10 @@ msgstr "That filter is too large (maximum {MAX_FILTER_JSON_LENGTH} bytes)."
 msgid "Unclaimed money can only roll over to a manually recorded currency."
 msgstr "Unclaimed money can only roll over to a manually recorded currency."
 
+#: src/lib/table-defs/abilities-table.tsx
+msgid "Required Buff"
+msgstr "Required Buff"
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Contribution Per Crumb"
 msgstr "Contribution Per Crumb"
@@ -2890,7 +2950,7 @@ msgstr "{quantifier} {field} {cmpEl} {value}"
 msgid "No local groupings yet."
 msgstr "No local groupings yet."
 
-#: src/routes/database/resource/[id].tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Spawns Enemies"
 msgstr "Spawns Enemies"
 
@@ -3096,6 +3156,10 @@ msgstr "{0, plural, one {# bounty is not funded. It keeps retrying; fix the reas
 msgid "Average number of drops for a full bar (resource health, dungeon contribution, etc.): {0}% * {1} = {2}."
 msgstr "Average number of drops for a full bar (resource health, dungeon contribution, etc.): {0}% * {1} = {2}."
 
+#: src/components/shared/RelTablePresets.tsx
+msgid "Stat"
+msgstr "Stat"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Dropped from"
 msgstr "Dropped from"
@@ -3132,8 +3196,9 @@ msgstr "Hazard"
 
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/table-utils/column-builders.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
-#: src/routes/database/resource/[id].tsx
+#: src/routes/database/creature/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "Tier"
@@ -3195,6 +3260,10 @@ msgstr "Pick Up Time"
 #: src/routes/database/item/[id].tsx
 msgid "Max Damage"
 msgstr "Max Damage"
+
+#: src/routes/database/creature/[id].tsx
+msgid "Resource"
+msgstr "Resource"
 
 #: src/routes/settings.tsx
 msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
@@ -3419,6 +3488,7 @@ msgstr "Log in for additional options such as Discord notifications."
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/account/bounty-rules.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/progression/index.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -3548,6 +3618,10 @@ msgstr "Tier {tier} {name}"
 #: src/components/data-table/table-column-header.tsx
 msgid "Asc"
 msgstr "Asc"
+
+#: src/routes/database/ability/[id].tsx
+msgid "Bonus"
+msgstr "Bonus"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
@@ -4652,12 +4726,18 @@ msgstr "Local groupings"
 msgid "Housing Slots"
 msgstr "Housing Slots"
 
+#: src/routes/database/ability/[id].tsx
+msgid "Probability"
+msgstr "Probability"
+
 #: src/components/crafts/FilterBuilder.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "currency/effort"
 msgstr "currency/effort"
 
+#: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required Items"
 msgstr "Required Items"
@@ -4683,6 +4763,10 @@ msgstr "Guaranteed spawn within {minRad}–{maxRad} tiles on last hit of resourc
 #: src/routes/database/claim-research/[id].tsx
 msgid "Members"
 msgstr "Members"
+
+#: src/components/shared/RelTablePresets.tsx
+msgid "Value"
+msgstr "Value"
 
 #: src/routes/account/loyalty.tsx
 msgid "A standing condition — claim membership or cumulative effort — that grants a bonus to whichever payee currently satisfies it, on top of any manual assignment above. All applicable bonuses are added, not multiplied, with each other."
@@ -4785,6 +4869,10 @@ msgstr "Link via BitAuth"
 msgid "Delete filter {0}"
 msgstr "Delete filter {0}"
 
+#: src/lib/table-defs/abilities-table.tsx
+msgid "Consume Required Buff"
+msgstr "Consume Required Buff"
+
 #: src/lib/notifications/funding.tsx
 msgid "Unclaimed money was returned to you"
 msgstr "Unclaimed money was returned to you"
@@ -4855,6 +4943,10 @@ msgstr "Accuracy"
 #: src/lib/table-utils/column-builders.tsx
 msgid "Tier {0}"
 msgstr "Tier {0}"
+
+#: src/routes/database/ability/[id].tsx
+msgid "Consumed"
+msgstr "Consumed"
 
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "all"
@@ -5152,7 +5244,7 @@ msgstr "Total effort"
 msgid "That saved filter no longer exists."
 msgstr "That saved filter no longer exists."
 
-#: src/routes/database/resource/[id].tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Max HP"
 msgstr "Max HP"
 

@@ -89,7 +89,7 @@ export default function BuffDetail() {
             }
         }
         for (const ability of BitCraftTables.AbilityCustomDesc.get() ?? []) {
-            if (ability.buffs.some(e => e.buffId === b.id)) {
+            if (ability.buffs.some(e => e.buffId === b.id) || ability.requiredBuffIds?.includes(b.id)) {
                 entries.push({
                     href: `/database/ability/${ability.id}`,
                     iconPage: "Abilities",

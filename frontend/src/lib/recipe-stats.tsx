@@ -201,6 +201,7 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
         lines.push([() => <IconSpan icon={pageIcon("Structures")}><Trans>Building:</Trans></IconSpan>, t`Tier ${tier} ${name}`]);
     }
     addKnowledgeRequirements(lines, recipe);
+    addPlaceableSelfBuffs(lines, recipe.selfBuffs);
     return lines;
 }
 

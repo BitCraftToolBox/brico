@@ -6,6 +6,7 @@
  */
 
 import {
+    AbilityCustomDesc,
     ClaimTechDesc,
     CollectibleDesc,
     ConstructionRecipeDesc,
@@ -57,6 +58,7 @@ import {
 import {Button} from "~/components/ui/button";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {
+    AbilityLink,
     AchievementLink,
     BuildingLink,
     CargoLink,
@@ -496,6 +498,28 @@ export function enemyDropsTab(enemies: EnemyDesc[]): RelationshipTab {
     };
 }
 
+export function enemySpawnsTab(enemies: EnemyDesc[]): RelationshipTab {
+    return {
+        id: "enemies",
+        label: msg`Spawns Enemies`,
+        count: enemies.length,
+        showWhenEmpty: false,
+        content: () => (
+            <RelTable<EnemyDesc>
+                data={enemies}
+                columns={[
+                    {header: msg`Name`, cell: (row) => (
+                            <IconLink href={`/database/creature/${row.enemyType}`} icon={pageIcon("Creatures")}>
+                                {row.name}
+                            </IconLink>
+                        )},
+                    {header: msg`Tier`, cell: (row) => <span>{row.tier}</span>},
+                    {header: msg`Max HP`, cell: (row) => <span>{row.maxHealth}</span>},
+                ]}
+            />
+        ),
+    };
+}
 export function collectiblesTab(collectibles: CollectibleDesc[]) : RelationshipTab {
     return {
         id: "collectibles",
@@ -860,3 +884,18 @@ export function knowledgeUsedByTab(usages: KnowledgeUsage[]): RelationshipTab {
     };
 }
 
+
+
+export function abilitiesTab(abilities: AbilityCustomDesc[], showWhenEmpty: boolean = false): RelationshipTab {
+    return {
+        id: "abilities",
+        label: msg`Abilities`,
+        count: abilities.length,
+        showWhenEmpty,
+        content: () => (
+            <RelTable data={abilities} columns={[
+                {header: msg`Ability`, cell: a => <AbilityLink id={a.id} name={a.abilityName} iconPath={a.iconPath}/>},
+            ]}/>
+        ),
+    };
+}

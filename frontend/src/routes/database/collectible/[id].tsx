@@ -67,9 +67,10 @@ export default function CollectibleDetail() {
             const appearances = BitCraftTables.DeployableAppearanceOverrideDesc.indexedBy("collectibleId")();
             const appearance = appearances.get(c.id);
             if (!appearance) return [];
-            const model = appearance.affectedModelAddress;
+            const models = new Set(appearance.affectedModelAddresses ?? []);
+            models.add(appearance.affectedModelAddress); // already in there for every existing case, but just to be sure
             const deployables = BitCraftTables.DeployableDesc.get();
-            return deployables?.filter(d => d.modelAddress === model)
+            return deployables?.filter(d => models.has(d.modelAddress))
                 .map(d => [d, index().get(d.deployFromCollectibleId)])
                 .filter((p): p is [DeployableDesc, CollectibleDesc] => !!p[1]) ?? [];
         } else if (c.collectibleType.tag === "Deployable") {

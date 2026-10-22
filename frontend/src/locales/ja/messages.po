@@ -155,6 +155,7 @@ msgstr "お気に入りは <0><1/> 設定</0> から登録できます"
 #: src/lib/table-defs/deployables-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
+#: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Type"
@@ -319,6 +320,7 @@ msgstr ""
 #: src/lib/crafts/filter-condition.tsx
 #: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/buff/[id].tsx
 msgid "No"
 msgstr "いいえ"
@@ -345,6 +347,7 @@ msgstr ""
 msgid "Build Time"
 msgstr "ビルド時間"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/lib/table-utils/stats-column-builder.tsx
 #: src/routes/database/buff/[id].tsx
@@ -739,6 +742,7 @@ msgid "Can Enter Portals"
 msgstr "ポータルに入ることができる"
 
 #: src/components/data-table/table-faceted-filter.tsx
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/combat-table.tsx
 msgid "Range"
 msgstr "範囲"
@@ -766,9 +770,12 @@ msgstr "展開物"
 msgid "Name this filter"
 msgstr ""
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/biome/[id].tsx
 #: src/routes/database/collectible/[id].tsx
+#: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Name"
@@ -786,6 +793,10 @@ msgstr "合計"
 #: src/routes/settings.tsx
 msgid "Object ID"
 msgstr "オブジェクト ID"
+
+#: src/lib/table-defs/abilities-table.tsx
+msgid "Profession Hit Bonus"
+msgstr ""
 
 #: src/routes/account/settings.tsx
 msgid "Toast everywhere"
@@ -1112,6 +1123,7 @@ msgid "Released"
 msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Radius"
@@ -1281,6 +1293,7 @@ msgstr ""
 msgid "Extraction"
 msgstr "抽出"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/weapon-table.tsx
@@ -1331,6 +1344,11 @@ msgstr ""
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
 msgstr "🥣 cerealで生データを閲覧する"
+
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Output Items"
+msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Verified. Linking…"
@@ -1542,6 +1560,11 @@ msgstr "消費アイテム"
 msgid "Spawns"
 msgstr "スポーン"
 
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Profession Hit"
+msgstr ""
+
 #: src/components/crafts/FundingWalletSelect.tsx
 msgid "<0>Link a Stelo wallet</0> first."
 msgstr ""
@@ -1613,6 +1636,15 @@ msgstr "自動"
 msgid "That link code is unknown or has expired."
 msgstr ""
 
+#: src/lib/table-defs/abilities-table.tsx
+#: src/routes/database/ability/[id].tsx
+msgid "Spawned Placeables"
+msgstr ""
+
+#: src/routes/database/ability/[id].tsx
+msgid "Required Buffs"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Biome"
 msgstr "バイオーム"
@@ -1679,6 +1711,7 @@ msgstr ""
 msgid "Max Speed"
 msgstr "最大スピード"
 
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Ability"
 msgstr ""
@@ -1750,7 +1783,9 @@ msgstr "すべてのアイテムを表示"
 msgid "Import / Export"
 msgstr ""
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/recipe-stats.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/item/[id].tsx
 msgid "Buff"
 msgstr ""
@@ -1776,6 +1811,7 @@ msgstr "段階"
 msgid "Claim membership"
 msgstr ""
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/cargo/[id].tsx
@@ -1907,6 +1943,7 @@ msgid "{0} selected"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "Abilities"
 msgstr "アビリティ"
@@ -2061,6 +2098,10 @@ msgstr ""
 msgid "No deconstruction recipe"
 msgstr ""
 
+#: src/routes/database/creature/[id].tsx
+msgid "Spawned by"
+msgstr ""
+
 #: src/routes/database/collectible/[id].tsx
 msgid "Starting Loadout"
 msgstr "初期取得"
@@ -2092,6 +2133,10 @@ msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Read only: can receive, not fund"
+msgstr ""
+
+#: src/routes/database/ability/[id].tsx
+msgid "Consumption Chance"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -2175,6 +2220,7 @@ msgstr ""
 
 #: src/components/crafts/QuickFilterGrid.tsx
 #: src/lib/table-defs/quests-table.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Item"
@@ -2244,6 +2290,7 @@ msgstr "旅人のタスク"
 msgid "Link Filters <0/>"
 msgstr "フィルターのリンク <0/>"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
@@ -2291,6 +2338,11 @@ msgstr "参加できる半径"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That filter isn't valid JSON."
+msgstr ""
+
+#: src/routes/database/ability/[id].tsx
+#: src/routes/database/creature/[id].tsx
+msgid "Placeable"
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
@@ -2440,6 +2492,7 @@ msgstr ""
 msgid "You don't have any bounties yet. Set one on a craft or add a rule under Bounty rules."
 msgstr ""
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/combat-table.tsx
 #: src/lib/table-defs/creature-table.tsx
 #: src/routes/database/creature/[id].tsx
@@ -2484,6 +2537,7 @@ msgid "Place ({placeDuration})"
 msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/routes/database/ability/[id].tsx
 msgid "Chance"
 msgstr "確率"
 
@@ -2669,6 +2723,7 @@ msgstr ""
 #: src/lib/crafts/filter-condition.tsx
 #: src/lib/recipe-stats.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/buff/[id].tsx
 msgid "Yes"
 msgstr "はい"
@@ -2746,6 +2801,7 @@ msgstr ""
 msgid "Global Cooldown"
 msgstr "グローバルクールダウン"
 
+#: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/buffs-table.tsx
 #: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/buff/[id].tsx
@@ -2829,6 +2885,10 @@ msgstr ""
 msgid "Unclaimed money can only roll over to a manually recorded currency."
 msgstr ""
 
+#: src/lib/table-defs/abilities-table.tsx
+msgid "Required Buff"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Contribution Per Crumb"
 msgstr "痕跡あたりの貢献"
@@ -2895,7 +2955,7 @@ msgstr ""
 msgid "No local groupings yet."
 msgstr ""
 
-#: src/routes/database/resource/[id].tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Spawns Enemies"
 msgstr ""
 
@@ -3101,6 +3161,10 @@ msgstr ""
 msgid "Average number of drops for a full bar (resource health, dungeon contribution, etc.): {0}% * {1} = {2}."
 msgstr ""
 
+#: src/components/shared/RelTablePresets.tsx
+msgid "Stat"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Dropped from"
 msgstr "ドロップ元"
@@ -3137,8 +3201,9 @@ msgstr "環境"
 
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/table-utils/column-builders.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
-#: src/routes/database/resource/[id].tsx
+#: src/routes/database/creature/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "Tier"
@@ -3200,6 +3265,10 @@ msgstr "取得時間"
 #: src/routes/database/item/[id].tsx
 msgid "Max Damage"
 msgstr "最大ダメージ"
+
+#: src/routes/database/creature/[id].tsx
+msgid "Resource"
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
@@ -3424,6 +3493,7 @@ msgstr ""
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/account/bounty-rules.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/progression/index.tsx
 #: src/routes/database/traveler-task/[id].tsx
@@ -3553,6 +3623,10 @@ msgstr "ティア {tier} {name}"
 #: src/components/data-table/table-column-header.tsx
 msgid "Asc"
 msgstr "昇順"
+
+#: src/routes/database/ability/[id].tsx
+msgid "Bonus"
+msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
@@ -4657,12 +4731,18 @@ msgstr ""
 msgid "Housing Slots"
 msgstr "住宅スロット"
 
+#: src/routes/database/ability/[id].tsx
+msgid "Probability"
+msgstr ""
+
 #: src/components/crafts/FilterBuilder.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "currency/effort"
 msgstr ""
 
+#: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
+#: src/routes/database/ability/[id].tsx
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required Items"
 msgstr "必要アイテム"
@@ -4688,6 +4768,10 @@ msgstr ""
 #: src/routes/database/claim-research/[id].tsx
 msgid "Members"
 msgstr "メンバー数"
+
+#: src/components/shared/RelTablePresets.tsx
+msgid "Value"
+msgstr ""
 
 #: src/routes/account/loyalty.tsx
 msgid "A standing condition — claim membership or cumulative effort — that grants a bonus to whichever payee currently satisfies it, on top of any manual assignment above. All applicable bonuses are added, not multiplied, with each other."
@@ -4790,6 +4874,10 @@ msgstr ""
 msgid "Delete filter {0}"
 msgstr ""
 
+#: src/lib/table-defs/abilities-table.tsx
+msgid "Consume Required Buff"
+msgstr ""
+
 #: src/lib/notifications/funding.tsx
 msgid "Unclaimed money was returned to you"
 msgstr ""
@@ -4860,6 +4948,10 @@ msgstr "命中率"
 #: src/lib/table-utils/column-builders.tsx
 msgid "Tier {0}"
 msgstr "ティア {0}"
+
+#: src/routes/database/ability/[id].tsx
+msgid "Consumed"
+msgstr ""
 
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "all"
@@ -5157,7 +5249,7 @@ msgstr ""
 msgid "That saved filter no longer exists."
 msgstr ""
 
-#: src/routes/database/resource/[id].tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Max HP"
 msgstr ""
 

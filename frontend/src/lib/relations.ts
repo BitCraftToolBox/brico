@@ -9,6 +9,7 @@
  */
 
 import {
+    AbilityCustomDesc,
     AchievementDesc,
     BuildingDesc,
     CargoDesc,
@@ -32,6 +33,7 @@ import {
     ItemType,
     PavingTileDesc,
     PillarShapingDesc,
+    PlaceableDesc,
     PlaceableInteractionDesc,
     PlaceablePlacementDesc,
     ProbabilisticItemStack,
@@ -376,17 +378,60 @@ export function claimResearchRequiring(itemId: number, itemType: string): ClaimT
     return all.filter(t => anyStackMatches(t.input, itemId, itemType));
 }
 
-/** Enemies associated with a resource (via enemyParamsId -> EnemyAiParamsDesc -> EnemyDesc) */
-export function enemiesForResource(resource: ResourceDesc): EnemyDesc[] {
-    if (!resource.enemyParamsId?.length) return [];
+/** via enemyParamsId -> EnemyAiParamsDesc -> EnemyDesc */
+function enemiesFromParams(params: number[]): EnemyDesc[] {
     const paramIdx = BitCraftTables.EnemyAiParamsDesc.indexedBy("id")();
     const enemyIdx = BitCraftTables.EnemyDesc.indexedBy("enemyType")();
-    return resource.enemyParamsId
+    const tagToOrdinal = BitCraftTables.EnemyAiParamsDesc.tagToOrdinal("enemyType");
+    return params
         .map(id => {
             const p = paramIdx.get(id);
-            return p ? enemyIdx.get(p.enemyType as any) : undefined;
+            if (!p) return undefined;
+            const ordinal = tagToOrdinal.get(p.enemyType.tag);
+            return enemyIdx.get(ordinal);
         })
         .filter((e): e is EnemyDesc => !!e);
+}
+
+/** Enemies associated with a resource */
+export function enemiesForResource(resource: ResourceDesc): EnemyDesc[] {
+    if (!resource.enemyParamsId?.length) return [];
+    return enemiesFromParams(resource.enemyParamsId);
+}
+
+/** Enemies associated with a placeable */
+export function enemiesForPlaceable(placeable: PlaceableDesc): EnemyDesc[] {
+    if (!placeable.enemyParamsId?.length) return [];
+    return enemiesFromParams(placeable.enemyParamsId);
+}
+
+/** EnemyAiParamsDesc ids that spawn the given enemy */
+function paramIdsForEnemy(enemyType: number): Set<number> {
+    const all = BitCraftTables.EnemyAiParamsDesc.get();
+    const tagToOrdinal = BitCraftTables.EnemyAiParamsDesc.tagToOrdinal("enemyType");
+    const ids = new Set<number>();
+    for (const p of all ?? []) {
+        if (tagToOrdinal.get(p.enemyType.tag) === enemyType) ids.add(p.id);
+    }
+    return ids;
+}
+
+/** Resources that spawn this enemy */
+export function resourcesSpawningEnemy(enemyType: number): ResourceDesc[] {
+    const all = BitCraftTables.ResourceDesc.get();
+    if (!all) return [];
+    const ids = paramIdsForEnemy(enemyType);
+    if (!ids.size) return [];
+    return all.filter(r => r.enemyParamsId?.some(id => ids.has(id)));
+}
+
+/** Placeables that spawn this enemy */
+export function placeablesSpawningEnemy(enemyType: number): PlaceableDesc[] {
+    const all = BitCraftTables.PlaceableDesc.get();
+    if (!all) return [];
+    const ids = paramIdsForEnemy(enemyType);
+    if (!ids.size) return [];
+    return all.filter(p => p.enemyParamsId?.some(id => ids.has(id)));
 }
 
 /** Prospecting entries for a given biome */
@@ -897,4 +942,20 @@ export function questDropSourcesFor(itemId: number, itemType: string): {
     }
 
     return { extractionRecipes, enemies, itemLists };
+}
+
+
+// ─── Abilities ──────────────────────────────────────────────────
+
+/** Abilities that consume or produce this item/cargo. */
+export function abilitiesInvolvingItem(itemId: number, itemType: string): AbilityCustomDesc[] {
+    return (BitCraftTables.AbilityCustomDesc.get() ?? []).filter(a =>
+        anyStackMatches(a.inputItemStacks ?? [], itemId, itemType)
+        || (a.outputItemStacks ?? []).some(s => s.itemStack && matchesStack(s.itemStack, itemId, itemType)));
+}
+
+/** Abilities that spawn this placeable. */
+export function abilitiesSpawningPlaceable(placeableId: number): AbilityCustomDesc[] {
+    return (BitCraftTables.AbilityCustomDesc.get() ?? []).filter(a =>
+        a.spawnedPlaceables?.some(sp => sp.placeableId === placeableId));
 }

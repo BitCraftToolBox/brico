@@ -35,7 +35,7 @@ export default function DeployableDetail() {
         if (!dep) return [];
         const model = dep.modelAddress;
         const overrides = BitCraftTables.DeployableAppearanceOverrideDesc.get();
-        return overrides?.filter(o => o.affectedModelAddress === model)
+        return overrides?.filter(o => o.affectedModelAddress === model || o.affectedModelAddresses?.includes(model))
             .map(dao => collectibleIndex().get(dao.collectibleId))
             .filter((col): col is CollectibleDesc => !!col) ?? [];
     });
