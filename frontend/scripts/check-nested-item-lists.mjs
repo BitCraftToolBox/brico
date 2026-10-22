@@ -17,13 +17,12 @@
  * Run:  npx tsx scripts/check-nested-item-lists.mjs
  */
 
-import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
+import {ItemDesc, ItemListDesc} from "@brico/bitcraft-bindings/types";
 import {readFileSync} from "node:fs";
 import {dirname, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
-import {ItemDesc} from "../src/bindings/src/item_desc_type.ts";
 
-import {ItemListDesc} from "../src/bindings/src/item_list_desc_type.ts";
+import {AlgebraicType, BinaryReader} from "spacetimedb";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ROOT  = __dir.endsWith("scripts") ? resolve(__dir, "..") : __dir;
@@ -33,9 +32,9 @@ const ROOT  = __dir.endsWith("scripts") ? resolve(__dir, "..") : __dir;
 function loadTable(tableName, binding) {
     const bsatnPath = resolve(ROOT, `public/bsatn/static/${tableName}.bsatn`);
     const data = readFileSync(bsatnPath);
-    const arrayType = AlgebraicType.createArrayType(binding.getTypeScriptAlgebraicType());
+    const deserialize = AlgebraicType.makeDeserializer(AlgebraicType.Array(binding.algebraicType));
     const reader = new BinaryReader(new Uint8Array(data.buffer, data.byteOffset, data.byteLength));
-    return arrayType.deserialize(reader);
+    return deserialize(reader);
 }
 
 // ── Load data ──────────────────────────────────────────────────
@@ -44,10 +43,10 @@ console.log("Loading BSATN data…");
 const allLists = loadTable("item_list_desc", ItemListDesc);
 const allItems = loadTable("item_desc", ItemDesc);
 
-/** @type {Map<number, import("../src/bindings/src/item_desc_type.ts").ItemDesc>} */
+/** @type {Map<number, import("@brico/bitcraft-bindings/types").ItemDesc>} */
 const itemById = new Map(allItems.map(i => [i.id, i]));
 
-/** @type {Map<number, import("../src/bindings/src/item_list_desc_type.ts").ItemListDesc>} */
+/** @type {Map<number, import("@brico/bitcraft-bindings/types").ItemListDesc>} */
 const listById = new Map(allLists.map(l => [l.id, l]));
 
 console.log(`  ${allLists.length} item lists, ${allItems.length} items\n`);

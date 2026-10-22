@@ -14,9 +14,9 @@ import {createMemo, Show} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
 import MainLayout from "~/components/MainLayout";
 import {QuestGraph} from "~/components/shared/QuestGraph";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {breadcrumbCurrent} from "~/lib/game-links";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 
 export default function QuestGraphTool() {
     const [searchParams, setSearchParams] = useSearchParams();

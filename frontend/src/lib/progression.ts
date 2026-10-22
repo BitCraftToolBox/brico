@@ -7,17 +7,19 @@
  * Progression tab on `routes/database/skill/[id].tsx`.
  */
 
-import {AbilityCustomDesc} from "~/bindings/src/ability_custom_desc_type";
-import {AbilityUnlockDesc} from "~/bindings/src/ability_unlock_desc_type";
-import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
-import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
-import {CsvStatEntry} from "~/bindings/src/csv_stat_entry_type";
-import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
-import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
-import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
-import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
-import {BitCraftTables} from "~/lib/spacetime";
+import {
+    AbilityCustomDesc,
+    AbilityUnlockDesc,
+    AchievementDesc,
+    CraftingRecipeDesc,
+    CsvStatEntry,
+    EquipmentDesc,
+    ExtractionRecipeDesc,
+    ProspectingDesc,
+    QuestChainDesc,
+    TravelerTradeOrderDesc
+} from "@brico/bitcraft-bindings/types";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 
 // changes here need to be mirrored to PROGRESSION_CATEGORIES in src/routes/database/skill/[id].tsx
 export type ProgressionUnlock =
@@ -87,8 +89,8 @@ export function progressionUnlocksForSkill(skillId: number): ProgressionUnlock[]
     }
 
     const knowledgeStats = BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")();
-    for (const skillKnowledge of BitCraftTables.SkillLevelKnowledgeDesc.get() ?? []) {
-        if (skillKnowledge.skillId !== skillId) continue;
+    const gains = BitCraftTables.SkillLevelKnowledgeDesc.indexedByMulti("skillId");
+    for (const skillKnowledge of gains().get(skillId) ?? []) {
         const stats = knowledgeStats.get(skillKnowledge.secondaryKnowledgeId)?.stats ?? [];
         for (const stat of stats) {
             unlocks.push({kind: "stat", level: skillKnowledge.level, stat});

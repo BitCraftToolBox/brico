@@ -33,17 +33,17 @@
         --destructive: 345, 66.7%, 48%;
         --destructive-foreground: 0, 0%, 98%;
 
-        --info: 204 94% 94%;
-        --info-foreground: 199 89% 48%;
+        --info: 199 89% 48%;
+        --info-foreground: 204 94% 94%;
 
         --success: 140.5, 82%, 39.2%;
         --success-foreground: 149 80% 90%;
 
-        --warning: 48 96% 89%;
-        --warning-foreground: 50, 100%, 40%;
+        --warning: 50, 100%, 40%;
+        --warning-foreground: 48 96% 89%;
 
-        --error: 0 93% 94%;
-        --error-foreground: 345, 66.7%, 48%;
+        --error: 345, 66.7%, 48%;
+        --error-foreground: 0 93% 94%;
 
         --ring: 203, 70.9%, 28.7%;
 
@@ -102,10 +102,10 @@
         --sidebar-background: 0 0% 0%;
         --sidebar-foreground: 0 0% 90%;
 
-        --card: 0 0% 4%;
+        --card: 0 0% 0%;
         --card-foreground: 0 0% 90%;
 
-        --popover: 0 0% 10%;
+        --popover: 0 0% 0%;
         --popover-foreground: 0 0% 90%;
 
         --muted: 0 0% 10%;
@@ -255,5 +255,6 @@
     height: 1px;
     margin-top: calc(1em + 1px);
     margin-right: 4px;
-    flex-grow: 1;
+    flex: 1 1 0;
+    min-width: 2rem;
 }

@@ -1,4 +1,4 @@
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
+import {ResourceDesc} from "@brico/bitcraft-bindings/types";
 import {ResourceIcon} from "~/components/shared/GameIcon";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rarityColumn, rarityFilter, rowActions, tagColumn, tagFilter, tierColumn, tierFilter} from "~/lib/table-utils/column-builders";

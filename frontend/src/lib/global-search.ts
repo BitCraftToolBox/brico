@@ -3,8 +3,8 @@
  */
 
 import Fuse, {FuseResult, IFuseOptions} from "fuse.js";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {getTravelerTaskName, getTravelerTradeName} from "~/lib/relations";
-import {BitCraftTables} from "~/lib/spacetime";
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -134,6 +134,7 @@ export const searchableTables: SearchableTable[] = [
     {
         label: "Abilities", route: "/database/ability", tableKey: "AbilityCustomDesc",
         pk: "id", name: (r) => r.abilityName,
+        fields: [{field: "description", get: (r) => r.description}],
     },
     {
         label: "Buffs", route: "/database/buff", tableKey: "BuffDesc",

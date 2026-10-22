@@ -3,10 +3,10 @@ import {A} from "@solidjs/router";
 import {createMemo, For} from "solid-js";
 import MainLayout from "~/components/MainLayout";
 import {SkillBanner} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {breadcrumbCurrent} from "~/lib/game-links";
 import {gameText, useLabel} from "~/lib/labels";
 import {BITCRAFT_TITLE_SUFFIX} from "~/lib/og-meta";
-import {BitCraftTables} from "~/lib/spacetime";
 import {cn} from "~/lib/utils";
 
 export default function ProgressionNavIcons() {

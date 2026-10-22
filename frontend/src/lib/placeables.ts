@@ -14,14 +14,10 @@
  * owned by whichever component rendered first, silently frozen from its unmount onward.
  */
 
+import {ExtractionRecipeDesc, PlaceableGroupDesc, PlaceableGrowthDesc, PlaceableInteractionDesc, PlaceablePlacementDesc} from "@brico/bitcraft-bindings/types";
 import {t} from "@lingui/core/macro";
-import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {PlaceableGroupDesc} from "~/bindings/src/placeable_group_desc_type";
-import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
+import {BitCraftTables, derivedTableLookup} from "~/lib/bitcraft-data";
 import {trackUILocale} from "~/lib/i18n";
-import {BitCraftTables, derivedTableLookup} from "~/lib/spacetime";
 
 // ─── Group Lookup ───────────────────────────────────────────────
 

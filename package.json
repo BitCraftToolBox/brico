@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "workspaces": [
-    "frontend"
+    "frontend",
+    "common/*",
+    "backend/brico-bot"
   ],
   "scripts": {
     "typecheck": "npm run typecheck --workspaces --if-present",
@@ -13,5 +15,8 @@
   },
   "engines": {
     "node": ">=24"
+  },
+  "allowScripts": {
+    "sharp@0.34.5": true
   }
 }

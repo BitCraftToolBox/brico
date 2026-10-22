@@ -1,20 +1,20 @@
+import {ProspectingDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
-import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
 import {lootTab} from "~/components/fun/BricoLootBox";
 import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ResourceIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGrowthPanel} from "~/components/shared/RecipeDisplay";
-import {IconLink, pageIcon} from "~/lib/game-links";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {IconLink} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {prospectingForResource} from "~/lib/recipe-sources";
+import {prospectingForResource} from "~/lib/recipe-stats";
 import {enemiesForResource, extractionRecipeForResource, resourceGrowthFrom, resourceGrowthInto, resourcesYieldingResource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
+import {enemySpawnsTab} from "~/lib/table-utils/detail-tab-builders.tsx";
 import {fixFloat} from "~/lib/utils";
 
 export default function ResourceDetail() {
@@ -183,26 +183,7 @@ export default function ResourceDetail() {
                         />
                     ),
                 },
-                {
-                    id: "enemies",
-                    label: msg`Spawns Enemies`,
-                    count: enemies().length,
-                    showWhenEmpty: false,
-                    content: () => (
-                        <RelTable<EnemyDesc>
-                            data={enemies()}
-                            columns={[
-                                {header: msg`Name`, cell: (row) => (
-                                    <IconLink href={`/database/creature/${row.enemyType}`} icon={pageIcon("Creatures")}>
-                                        {row.name}
-                                    </IconLink>
-                                )},
-                                {header: msg`Tier`, cell: (row) => <span>{row.tier}</span>},
-                                {header: msg`Max HP`, cell: (row) => <span>{row.maxHealth}</span>},
-                            ]}
-                        />
-                    ),
-                },
+                enemySpawnsTab(enemies()),
                 ...(resource()?.id === 1702339460 && easterEggs() ? [lootTab()] : [])
             ]}
         />

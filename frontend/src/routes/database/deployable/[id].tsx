@@ -1,15 +1,15 @@
+import {CollectibleDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {StatTable} from "~/components/shared/RelTablePresets";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
 import {IconLink, ItemLink, pageIcon} from "~/lib/game-links";
 import {surfaceTypeLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {collectiblesTab} from "~/lib/table-utils/detail-tab-builders";
 import {fixFloat, readableSeconds, undefinedIfZero} from "~/lib/utils";
 
@@ -35,7 +35,7 @@ export default function DeployableDetail() {
         if (!dep) return [];
         const model = dep.modelAddress;
         const overrides = BitCraftTables.DeployableAppearanceOverrideDesc.get();
-        return overrides?.filter(o => o.affectedModelAddress === model)
+        return overrides?.filter(o => o.affectedModelAddress === model || o.affectedModelAddresses?.includes(model))
             .map(dao => collectibleIndex().get(dao.collectibleId))
             .filter((col): col is CollectibleDesc => !!col) ?? [];
     });

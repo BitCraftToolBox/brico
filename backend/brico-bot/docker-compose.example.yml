@@ -1,0 +1,28 @@
+# Example service block for brico-bot — not meant to be run standalone with `docker compose up`
+# here. It's written to be copy-pasted into an existing compose stack (see prism's
+# configs/docker-compose.prism.yml for the sibling services this is meant to sit next to: an nginx
+# reverse proxy terminating bot.brico.app and forwarding to this container, and a Prometheus
+# instance scraping its /metrics).
+services:
+  brico-bot:
+    container_name: brico-bot
+    image: ghcr.io/bitcrafttoolbox/brico-bot:latest
+    restart: unless-stopped
+    env_file: config/brico-bot/env
+    environment:
+      # Code defaults already assume a container (0.0.0.0, and BRICO_BOT_HTTP_BASE_URL pointed at
+      # the real https://bot.brico.app) — nothing to override here for the HTTP bind itself.
+      #
+      # NOT baked into the image (see the Dockerfile) — point this at the mounted checkout below.
+      BRICO_BOT_GAME_DATA_DIR: /data/bsatn/static
+    volumes:
+      # A checkout of https://github.com/BitCraftToolBox/BitCraft_BSATN_Data (frontend/public/bsatn
+      # in this repo) — only the `static/` subfolder is actually read.
+      - ./data/bsatn/static:/data/bsatn/static:ro
+      # Connection tokens (this process's stable SpacetimeDB identity — see the README's
+      # "brico-app visibility" section) persist here across restarts; the default path is relative
+      # to the package, so a volume at that exact path works with no env override.
+      - brico-bot-state:/app/backend/brico-bot/.state
+
+volumes:
+  brico-bot-state:

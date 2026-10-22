@@ -1,9 +1,9 @@
+import {BuffEffect} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {BuffEffect} from "~/bindings/src/buff_effect_type";
 import {DetailGroup, DetailProperty} from "~/components/shared/DetailPageLayout";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BuffLink} from "~/lib/game-links";
 import {statLabel} from "~/lib/game-strings";
-import {BitCraftTables} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
 export function buffsGroups(buffs: BuffEffect[]): DetailGroup[] {

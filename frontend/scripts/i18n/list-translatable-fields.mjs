@@ -1,7 +1,7 @@
 /**
  * One-off audit script backing the `TRANSLATABLE_FIELDS` constant in `src/lib/data-translation.ts`.
  *
- * Reflects on every table registered in `BitCraftTables` (same `spacetimeType.product.elements`
+ * Reflects on every table registered in `BitCraftTables` (same `spacetimeType.value.elements`
  * technique as `BitCraftTable.tagToOrdinal()`), collects every field whose type is a string —
  * plain `String`, `Option<String>`, or `String[]` — and reports it grouped by *field name*, since
  * the decision we need to make is a flat, global, human-reviewed name list rather than a per-table
@@ -12,11 +12,11 @@
  *
  * Run: npm run i18n:audit-fields [-- --samples 5] [--field name]
  */
-import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
 import {readFileSync} from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
-import {BitCraftTables} from "../../src/lib/spacetime.ts";
+import {AlgebraicType, BinaryReader} from "spacetimedb";
+import {BitCraftTables} from "~/lib/bitcraft-data.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const BSATN_DIR = path.join(ROOT, "public/bsatn/static");
@@ -35,10 +35,10 @@ const ONLY_FIELD = flag("field", null);
  */
 function stringShape(type) {
     if (!type) return null;
-    if (type.type === "String") return "string";
-    if (type.type === "ArrayType" && type.array?.type === "String") return "string[]";
-    if (type.type === "SumType") {
-        const variants = type.sum?.variants ?? [];
+    if (type.tag === "String") return "string";
+    if (type.tag === "Array" && type.value?.tag === "String") return "string[]";
+    if (type.tag === "Sum") {
+        const variants = type.value?.variants ?? [];
         const some = variants.find(v => v.name === "some");
         const isOption = variants.length === 2 && some && variants.some(v => v.name === "none");
         if (isOption) {
@@ -79,7 +79,7 @@ function loadRows(table) {
     try {
         const bytes = readFileSync(file);
         const reader = new BinaryReader(new Uint8Array(bytes));
-        return AlgebraicType.createArrayType(table.spacetimeType).deserialize(reader);
+        return AlgebraicType.makeDeserializer(AlgebraicType.Array(table.spacetimeType))(reader);
     } catch (e) {
         console.warn(`[warn] could not load ${table.spacetimeName}.bsatn: ${e.message}`);
         return null;
@@ -91,7 +91,7 @@ const byField = new Map();
 let tablesScanned = 0;
 
 for (const [key, table] of Object.entries(BitCraftTables)) {
-    const elements = table.spacetimeType?.product?.elements ?? [];
+    const elements = table.spacetimeType?.value?.elements ?? [];
     const stringFields = elements
         .map(e => ({name: e.name, shape: stringShape(e.algebraicType)}))
         .filter(e => e.shape && (!ONLY_FIELD || e.name === ONLY_FIELD));

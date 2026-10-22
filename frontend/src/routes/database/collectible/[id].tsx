@@ -1,19 +1,16 @@
+import {CollectibleDesc, CollectibleType, DeployableDesc, SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
-import {CollectibleType} from "~/bindings/src/collectible_type_type";
-import {DeployableDesc} from "~/bindings/src/deployable_desc_type";
-import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {IconLink, ItemLink, pageIcon} from "~/lib/game-links";
 import {collectibleTypeLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
 
 export default function CollectibleDetail() {
@@ -70,9 +67,10 @@ export default function CollectibleDetail() {
             const appearances = BitCraftTables.DeployableAppearanceOverrideDesc.indexedBy("collectibleId")();
             const appearance = appearances.get(c.id);
             if (!appearance) return [];
-            const model = appearance.affectedModelAddress;
+            const models = new Set(appearance.affectedModelAddresses ?? []);
+            models.add(appearance.affectedModelAddress); // already in there for every existing case, but just to be sure
             const deployables = BitCraftTables.DeployableDesc.get();
-            return deployables?.filter(d => d.modelAddress === model)
+            return deployables?.filter(d => models.has(d.modelAddress))
                 .map(d => [d, index().get(d.deployFromCollectibleId)])
                 .filter((p): p is [DeployableDesc, CollectibleDesc] => !!p[1]) ?? [];
         } else if (c.collectibleType.tag === "Deployable") {

@@ -1,0 +1,20 @@
+{
+  // Matches `common/crafts` and `frontend`: the workspace packages export raw `.ts` with no build
+  // step, so every consumer needs `moduleResolution: "bundler"` and something that can load TS.
+  // Here that something is `tsx` (see README) — `tsc` is only ever run with `--noEmit`.
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    // Relative imports carry their `.ts` extension so the same source runs under `tsx` and,
+    // if it ever needs to, Node's own resolver — which takes relative specifiers literally.
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts"]
+}

@@ -113,6 +113,9 @@ function readableSecondsFallback(hours: number, minutes: number, secs: number): 
     ].filter(Boolean).join(" ") || "0s";
 }
 
+export function readableSeconds(seconds: number, shorten?: boolean): string;
+export function readableSeconds(seconds: number | undefined, shorten?: boolean): string | undefined;
+
 export function readableSeconds(seconds: number | undefined, shorten: boolean = false): string | undefined {
     if (seconds === undefined) return undefined;
     trackUILocale();
@@ -133,6 +136,16 @@ export function readableSeconds(seconds: number | undefined, shorten: boolean = 
     if (minutes > 0) duration.minutes = minutes;
     if (secs > 0) duration.seconds = secs;
     return fmt.format(duration);
+}
+
+/** Triggers a browser download of `content` as a file named `filename`, with no visible UI of its own. */
+export function downloadTextFile(filename: string, content: string, mime: string = "application/json") {
+    const url = URL.createObjectURL(new Blob([content], {type: mime}));
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);
 }
 
 export function useCopy(content: string | Accessor<string>, delay: number = 1500): [() => void, Accessor<boolean>] {

@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 /**
  * Fails the build / typecheck if any source file contains a barrel import from
- * "~/bindings/src" (the auto-generated SpacetimeDB SDK index).
+ * "@brico/bitcraft-bindings/index" (the auto-generated `index.ts`, which pulls in the full
+ * `DbConnection`/reducer/schema machinery for a *live* SpacetimeDB connection).
  *
- * ✅ Allowed:  from "~/bindings/src/item_type_type"
- * ❌ Blocked:  from "~/bindings/src"
+ * ✅ Allowed:  from "@brico/bitcraft-bindings/types"
+ * ❌ Blocked:  from "@brico/bitcraft-bindings/index"
  *
- * The barrel re-exports every table descriptor at once, bloating bundles and
- * making tree-shaking impossible.  Always import the specific module instead.
+ * `@brico/bitcraft-bindings` is only ever used here for offline BSATN decoding (see
+ * `~/lib/bitcraft-data.ts`), never a live connection — importing `index.ts` would drag that whole
+ * connection surface (and its own `spacetimedb` re-exports) into the bundle for nothing.
  */
 
 import {readdirSync, readFileSync} from "fs";
@@ -15,9 +17,11 @@ import {join, relative} from "path";
 
 const ROOT = new URL("../src", import.meta.url).pathname.replace(/^\/([A-Z]:)/, "$1");
 
-// Matches:  from "~/bindings/src"  or  from '~/bindings/src'
-// The look-ahead ensures the quote closes *immediately* – no slash or identifier follows.
-const BARREL_RE = /from\s+["']~\/bindings\/src["']/;
+// Matches:  from "@brico/bitcraft-bindings/index"  or  from '@brico/bitcraft-bindings'
+// (either quote style).  The package's `exports` map has no "." entry, so the bare specifier
+// doesn't actually resolve — it's matched here only to produce this error instead of a
+// resolution failure.  The quote must close *immediately*: no slash or identifier follows.
+const BARREL_RE = /from\s+["']@brico\/bitcraft-bindings(?:\/index)?["']/;
 
 /** Recursively walk a directory and yield .ts / .tsx file paths. */
 function* walk(dir) {
@@ -43,11 +47,11 @@ for (const filePath of walk(ROOT)) {
         if (BARREL_RE.test(line)) {
             const rel = relative(ROOT, filePath).replace(/\\/g, "/");
             console.error(
-                `\n\x1b[31mBarrel import from "~/bindings/src" is not allowed.\x1b[0m\n` +
+                `\n\x1b[31mBarrel import from the @brico/bitcraft-bindings index is not allowed.\x1b[0m\n` +
                 `  ${rel}:${idx + 1}\n` +
                 `  ${line.trim()}\n` +
-                `\n  Use a specific module instead, e.g.:\n` +
-                `  \x1b[32mimport { ItemDesc } from "~/bindings/src/item_desc_type"\x1b[0m\n`
+                `\n  Use the types module instead, e.g.:\n` +
+                `  \x1b[32mimport { ItemDesc } from "@brico/bitcraft-bindings/types"\x1b[0m\n`
             );
             found = true;
         }
@@ -57,6 +61,6 @@ for (const filePath of walk(ROOT)) {
 if (found) {
     process.exit(1);
 } else {
-    console.log("\x1b[32m✓ No barrel imports from ~/bindings/src found.\x1b[0m");
+    console.log("\x1b[32m✓ No barrel imports from the @brico/bitcraft-bindings index found.\x1b[0m");
 }
 

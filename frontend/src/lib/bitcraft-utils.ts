@@ -1,7 +1,5 @@
+import {BuildingDesc, PathfindingDesc, Rarity} from "@brico/bitcraft-bindings/types";
 import {Accessor, createMemo} from "solid-js";
-import {BuildingDesc} from "~/bindings/src/building_desc_type";
-import {PathfindingDesc} from "~/bindings/src/pathfinding_desc_type";
-import {Rarity} from "~/bindings/src/rarity_type";
 
 
 export class Rarities {

@@ -6,8 +6,8 @@
  * templates. Consumed by MainLayout (the single meta sink) and the page/detail layouts.
  */
 
+import {Rarity} from "@brico/bitcraft-bindings/types";
 import {useLocation} from "@solidjs/router";
-import {Rarity} from "~/bindings/src/rarity_type";
 import {codepointKey} from "~/components/icons/font-icons";
 import {GLYPH_ICONS} from "~/components/icons/font-icons-data";
 import {getAssetURL} from "~/lib/bitcraft-utils";

@@ -1,17 +1,16 @@
+import {EmpireColorDesc, EmpireIconDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {createMemo, createSignal, For, Show} from "solid-js";
-import {EmpireColorDesc} from "~/bindings/src/empire_color_desc_type";
-import {EmpireIconDesc} from "~/bindings/src/empire_icon_desc_type";
 import {FontIcon} from "~/components/icons/font-icons";
 import {GLYPH_ICONS} from "~/components/icons/font-icons-data";
 import MainLayout from "~/components/MainLayout";
 import {Button} from "~/components/ui/button";
 import {Tabs, TabsContent, TabsIndicator, TabsList, TabsTrigger} from "~/components/ui/tabs";
+import {loadTableAdHoc} from "~/lib/bitcraft-data";
 import {breadcrumbCurrent} from "~/lib/game-links";
 import {gameText, useLabel} from "~/lib/labels";
 import {PAGE_TITLE_LABELS} from "~/lib/sidebar-items";
-import {loadTableAdHoc} from "~/lib/spacetime";
 
 
 function argbToHex(argb: bigint): string {

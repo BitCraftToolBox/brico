@@ -8,39 +8,42 @@
  * Shared helpers: skillReqPair, toolReqPair, skillExpPair for common stat patterns.
  */
 
+import {
+    Biome,
+    ConstructionRecipeDesc,
+    CraftingRecipeDesc,
+    DeconstructionRecipeDesc,
+    ExperienceStackF32,
+    ExtractionRecipeDesc,
+    ItemConversionRecipeDesc,
+    ItemListDesc,
+    ItemStack,
+    ItemType,
+    LevelRequirement,
+    PavingTileDesc,
+    PillarShapingDesc,
+    PlaceableDesc,
+    PlaceableGrowthDesc,
+    PlaceableInteractionDesc,
+    PlaceablePlacementDesc,
+    PlaceableSelfBuffChance,
+    ResourceDesc,
+    SkillDesc,
+    ToolRequirement,
+    ToolTypeDesc,
+    TravelerTaskDesc,
+    TravelerTradeOrderDesc
+} from "@brico/bitcraft-bindings/types";
 import {msg, t} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {JSX, Show} from "solid-js";
-import {Biome} from "~/bindings/src/biome_type";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
-import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
-import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
-import {ExperienceStackF32} from "~/bindings/src/experience_stack_f_32_type";
-import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {LevelRequirement} from "~/bindings/src/level_requirement_type";
-import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
-import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
-import {PlaceableDesc} from "~/bindings/src/placeable_desc_type";
-import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
-import {PlaceableSelfBuffChance} from "~/bindings/src/placeable_self_buff_chance_type";
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
-import {SkillDesc} from "~/bindings/src/skill_desc_type";
-import {ToolRequirement} from "~/bindings/src/tool_requirement_type";
-import {ToolTypeDesc} from "~/bindings/src/tool_type_desc_type";
-import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
-import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BiomeLink, IconLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
+import {skillCategoryLabel} from "~/lib/game-strings.ts";
 import {trackUILocale} from "~/lib/i18n";
 import {gameText, useLabel} from "~/lib/labels";
 import {getItemListSource, getTravelerNpcName} from "~/lib/relations";
-import {BitCraftTables} from "~/lib/spacetime";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Type ─────────────────────────────────────────────
@@ -58,7 +61,7 @@ export function skillReqPair(req: LevelRequirement, skillData: Map<any, SkillDes
     if (!skillTag || skillTag === "None") return null;
     if (skillTag === "Adventure") skillTag = "Skill";
     return [
-        () => <IconSpan icon={skillStatIcon(skill)}><Trans>{skillTag}:</Trans></IconSpan>,
+        () => <IconSpan icon={skillStatIcon(skill)}><Trans>{skillCategoryLabel(skillTag)}:</Trans></IconSpan>,
         () => <span><Trans>Lv. {req.level} {skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`}</Trans></span>,
     ];
 }
@@ -160,23 +163,24 @@ function addCommonRequirements(
     });
 }
 
-function addUseHandsInformation(lines: StatLine[], recipe: { toolRequirements: ToolRequirement[], allowUseHands: boolean }) {
-    if (!recipe.toolRequirements.length && recipe.allowUseHands) {
-        const label = useLabel();
-        lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
-            () => <Tooltip openOnTouchStart>
-                <TooltipTrigger class="underline decoration-dotted">{label(gameText(msg`Hands`))}</TooltipTrigger>
-                <TooltipContent class="max-w-[90svw]"><Trans>This recipe uses your hands, ignoring your equipped tool power, but including crits and knowledge which increases power.</Trans></TooltipContent>
-            </Tooltip>
-        ]);
-    } else if (!recipe.toolRequirements.length && !recipe.allowUseHands) {
-        lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
-            () => <Tooltip openOnTouchStart>
-                <TooltipTrigger class="underline decoration-dotted"><Trans>No tool</Trans></TooltipTrigger>
-                <TooltipContent class="max-w-[90svw]"><Trans>This recipe is fixed at one progress per hit.</Trans></TooltipContent>
-            </Tooltip>
-        ]);
+function addSkillProgressInfo(lines: StatLine[], recipe: { toolRequirements: ToolRequirement[], experiencePerProgress: ExperienceStackF32[], allowUseHands: boolean }) {
+    if (recipe.toolRequirements.length) {
+        return;
     }
+    const hasSkill = (recipe.experiencePerProgress[0]?.skillId ?? 0) > 1; // as extensions.rs get_skill_type
+    const label = useLabel();
+    lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
+        () => <Tooltip openOnTouchStart>
+            <TooltipTrigger class="underline decoration-dotted">
+                <Show when={recipe.allowUseHands} fallback={<Trans>No tool</Trans>}>{label(gameText(msg`Hands`))}</Show>
+            </TooltipTrigger>
+            <TooltipContent class="max-w-[90svw]">
+                <Show when={hasSkill} fallback={<Trans>This recipe is fixed at one progress per hit.</Trans>}>
+                    <Trans>This recipe doesn't use tool power, but can still use stat increases (crit, speed, power) from a skill.</Trans>
+                </Show>
+            </TooltipContent>
+        </Tooltip>
+    ]);
 }
 
 // ─── Per-Type Stat Line Extractors ──────────────────────────────
@@ -186,17 +190,18 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
     const buildingData = BitCraftTables.BuildingTypeDesc.indexedBy("id")();
     const lines: StatLine[] = [
         [t`Effort:`, recipe.actionsRequired],
-        [t`Time:`, fixFloat(recipe.timeRequirement)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))],
         [t`Stamina:`, fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
-    addUseHandsInformation(lines, recipe);
+    addSkillProgressInfo(lines, recipe);
     if (recipe.buildingRequirement) {
         const name = buildingData.get(recipe.buildingRequirement.buildingType)?.name ?? t`Unknown`;
         const tier = recipe.buildingRequirement.tier;
         lines.push([() => <IconSpan icon={pageIcon("Structures")}><Trans>Building:</Trans></IconSpan>, t`Tier ${tier} ${name}`]);
     }
     addKnowledgeRequirements(lines, recipe);
+    addPlaceableSelfBuffs(lines, recipe.selfBuffs);
     return lines;
 }
 
@@ -219,7 +224,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
             const [min, max] = gd.time;
             lines.push([t`Timed Node`, min == max ? `${readableSeconds(min)}` : `${readableSeconds(min)} - ${readableSeconds(max)}`]);
         } else if (resource.showTimeLeft) { // unsure if any resource has this flag but doesn't have a growth desc, but fallback anyway
-            lines.push([t`Timed Node`, t`? min`])
+            lines.push([t`Timed Node`, t`Unknown`])
         }
         const prospectingDescs = prospectingForResource(resource.id);
         if (prospectingDescs?.length) {
@@ -260,10 +265,10 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
             lines.push([t`Total HP`, resource.maxHealth]);
         }
     }
-    lines.push([t`Time:`, fixFloat(recipe.timeRequirement)]);
+    lines.push([t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))]);
     lines.push([t`Stamina:`, fixFloat(recipe.staminaRequirement)]);
     addCommonRequirements(lines, recipe, totalEffort);
-    addUseHandsInformation(lines, recipe);
+    addSkillProgressInfo(lines, recipe);
     addKnowledgeRequirements(lines, recipe);
     addPlaceableSelfBuffs(lines, recipe.selfBuffs);
     return lines;
@@ -273,7 +278,7 @@ export function constructionStatLines(recipe: ConstructionRecipeDesc): StatLine[
     trackUILocale();
     const lines: StatLine[] = [
         [t`Effort:`, recipe.actionsRequired],
-        [t`Time:`, fixFloat(recipe.timeRequirement)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))],
         [t`Stamina:`, fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
@@ -284,7 +289,7 @@ export function constructionStatLines(recipe: ConstructionRecipeDesc): StatLine[
 export function deconstructionStatLines(recipe: DeconstructionRecipeDesc): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Time:`, fixFloat(recipe.timeRequirement)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))],
     ];
     addCommonRequirements(lines, recipe);
     return lines;
@@ -294,7 +299,7 @@ export function pavingStatLines(recipe: PavingTileDesc): StatLine[] {
     trackUILocale();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const lines: StatLine[] = [
-        [t`Time:`, fixFloat(recipe.pavingDuration)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.pavingDuration))],
     ];
     recipe.experiencePerProgress.forEach(xp => {
         const pair = skillExpPair(xp, undefined, skillData);
@@ -308,7 +313,7 @@ export function pillarShapingStatLines(recipe: PillarShapingDesc): StatLine[] {
     trackUILocale();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const lines: StatLine[] = [
-        [t`Time:`, fixFloat(recipe.duration)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.duration))],
     ];
     recipe.experiencePerProgress.forEach(xp => {
         const pair = skillExpPair(xp, undefined, skillData);
@@ -321,7 +326,7 @@ export function pillarShapingStatLines(recipe: PillarShapingDesc): StatLine[] {
 export function conversionStatLines(recipe: ItemConversionRecipeDesc): StatLine[] {
     trackUILocale();
     return [
-        [t`Time:`, fixFloat(recipe.timeCost)],
+        [t`Time:`, readableSeconds(fixFloat(recipe.timeCost))],
         [t`Stamina:`, fixFloat(recipe.staminaCost)],
     ];
 }
@@ -336,7 +341,7 @@ export function travelerTaskStatLines(task: TravelerTaskDesc): StatLine[] {
 
     const lines: StatLine[] = [
         [
-            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} <Trans>{skillTag}:</Trans></span>,
+            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} <Trans>{skillCategoryLabel(skillTag)}:</Trans></span>,
             () => <span><Trans>Lv. {task.levelRequirement.minLevel}-{task.levelRequirement.maxLevel} {skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>}</Trans></span>,
         ],
         [
@@ -467,40 +472,41 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
 }
 
 function addPlaceableSelfBuffs(lines: StatLine[], placeableBuffs: PlaceableSelfBuffChance[] | undefined) {
-    if (placeableBuffs?.length) {
-        const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
-        lines.push(...placeableBuffs.map(b => {
-            const buff = buffIdx.get(b.buffId);
-            const duration = b.duration ?? buff?.duration;
-            return [
-                () => (
-                    <IconSpan icon={pageIcon("Buffs")}><Trans>Buff</Trans></IconSpan>
-                ),
-                () => (
-                    <IconLink href={`/database/buff/${b.buffId}`}>
-                        {buff?.description ?? `Buff #${b.buffId}`}
-                        {duration ? <span class="text-muted-foreground">{readableSeconds(fixFloat(duration))}</span> : null}
-                        {
-                            <Tooltip>
-                                <TooltipTrigger class="text-muted-foreground decoration-dotted underline">
-                                    ({fixFloat(b.chance * 100)}%)
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <Trans>Chance per hit</Trans>
-                                </TooltipContent>
-                            </Tooltip>
-                        }
-                    </IconLink>
-                )
-            ] satisfies StatLine;
-        }));
+    if (!placeableBuffs?.length) {
+        return;
     }
+    const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
+    lines.push(...placeableBuffs.map(b => {
+        const buff = buffIdx.get(b.buffId);
+        const duration = b.duration ?? buff?.duration;
+        return [
+            () => (
+                <IconSpan icon={pageIcon("Buffs")}><Trans>Buff</Trans></IconSpan>
+            ),
+            () => (
+                <IconLink href={`/database/buff/${b.buffId}`}>
+                    {buff?.description ?? `Buff #${b.buffId}`}
+                    {duration ? <span class="text-muted-foreground">{readableSeconds(fixFloat(duration))}</span> : null}
+                    {
+                        <Tooltip>
+                            <TooltipTrigger class="text-muted-foreground decoration-dotted underline">
+                                ({fixFloat(b.chance * 100)}%)
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <Trans>Chance per hit</Trans>
+                            </TooltipContent>
+                        </Tooltip>
+                    }
+                </IconLink>
+            )
+        ] satisfies StatLine;
+    }));
 }
 
 export function interactionStatLines(interaction: PlaceableInteractionDesc, sourcePlaceable: PlaceableDesc | undefined): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Time:`, fixFloat(interaction.timeRequirement)],
+        [t`Time:`, readableSeconds(fixFloat(interaction.timeRequirement))],
         [t`Stamina:`, fixFloat(interaction.staminaRequirement)],
     ];
 
@@ -514,7 +520,7 @@ export function interactionStatLines(interaction: PlaceableInteractionDesc, sour
 
     // Common requirements (level, xp, tool)
     addCommonRequirements(lines, interaction);
-    addUseHandsInformation(lines, interaction);
+    addSkillProgressInfo(lines, interaction);
     addKnowledgeRequirements(lines, interaction);
     addPlaceableSelfBuffs(lines, interaction.selfBuffs);
 

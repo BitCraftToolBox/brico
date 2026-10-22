@@ -1,19 +1,20 @@
+import {BuffEffect, ItemType} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
-import {useNavigate, useParams} from "@solidjs/router";
+import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {BuffEffect} from "~/bindings/src/buff_effect_type";
-import {ItemType} from "~/bindings/src/item_type_type";
 import {lootTabWith} from "~/components/fun/BricoLootBox";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {BuffLinkById, IconLink, IconSpan, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {equipmentSlotLabel, statLabel} from "~/lib/game-strings";
 import {gameText, useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
+    abilitiesInvolvingItem,
     claimResearchRequiring,
     constructionRecipesConsuming,
     conversionRecipesConsuming,
@@ -40,9 +41,9 @@ import {
     travelerTradesRequiring,
 } from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {buffsGroups} from "~/lib/table-utils/detail-group-builders";
 import {
+    abilitiesTab,
     claimResearchTab,
     collectiblesTab,
     constructionCombinedTab,
@@ -94,7 +95,6 @@ export function questDropAugmentedLists(itemId: () => number | undefined, itemTy
 
 export default function ItemDetail() {
     const params = useParams();
-    const navigate = useNavigate();
     const { easterEggs } = useSettings();
 
     const isLoading = useTablesLoading(BitCraftTables.ItemDesc);
@@ -178,6 +178,7 @@ export default function ItemDetail() {
 
     const placeablePlacements = createMemo(() => itemId() != null ? placementsConsumingItem(itemId()!, itemType) : []);
     const placeableInteractions = createMemo(() => itemId() != null ? interactionsInvolvingItem(itemId()!, itemType) : []);
+    const abilities = createMemo(() => itemId() != null ? abilitiesInvolvingItem(itemId()!, itemType) : []);
 
     const detailGroups = createMemo((): DetailGroup[] => {
         const i = item();
@@ -344,6 +345,7 @@ export default function ItemDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                abilitiesTab(abilities()),
                 ...(placeablePlacements().length === 1 ? [placeableGraphTab(placeablePlacements()[0])]: []),
                 claimResearchTab(researchRequires()),
                 itemListTab(isItemList(), true),

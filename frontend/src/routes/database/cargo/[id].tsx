@@ -1,13 +1,15 @@
+import {ItemType} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {ItemType} from "~/bindings/src/item_type_type";
 import {lootTab} from "~/components/fun/BricoLootBox";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
+    abilitiesInvolvingItem,
     claimResearchRequiring,
     constructionRecipesConsuming,
     conversionRecipesConsuming,
@@ -29,8 +31,8 @@ import {
     travelerTradesRequiring,
 } from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {
+    abilitiesTab,
     claimResearchTab,
     constructionCombinedTab,
     conversionTab,
@@ -104,6 +106,7 @@ export default function CargoDetail() {
 
     const placeablePlacements = createMemo(() => cargoId() != null ? placementsConsumingItem(cargoId()!, cargoType) : []);
     const placeableInteractions = createMemo(() => cargoId() != null ? interactionsInvolvingItem(cargoId()!, cargoType) : []);
+    const abilities = createMemo(() => cargoId() != null ? abilitiesInvolvingItem(cargoId()!, cargoType) : []);
 
     return (
         <DetailPageLayout
@@ -150,6 +153,7 @@ export default function CargoDetail() {
                 questRewardsTab(questRewards()),
                 placeablePlacementTab(placeablePlacements()),
                 placeableInteractionsTab(placeableInteractions()),
+                abilitiesTab(abilities()),
                 claimResearchTab(researchRequires()),
                 itemListsTab(inItemLists()),
                 ...(cargo()?.id === 92169812 && easterEggs() ? [lootTab()] : [])

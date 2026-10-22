@@ -1,14 +1,14 @@
+import {CollectibleDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {CollectibleLink} from "~/lib/game-links";
 import {collectibleTypeLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
 import {ogImageForPage} from "~/lib/og-meta";
 import {achievementRequirements, collectibleRewards, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
 import {achievementRequirementsTab, questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
 
 export default function AchievementDetail() {

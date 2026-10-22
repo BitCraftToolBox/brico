@@ -1,4 +1,4 @@
-import {ColorModeProvider, ColorModeScript} from "@kobalte/core"
+import {ColorModeProvider} from "@kobalte/core"
 import {I18nProvider} from "@lingui/solid";
 import {MetaProvider} from "@solidjs/meta";
 import {Router} from "@solidjs/router";
@@ -11,12 +11,19 @@ import {AppSidebar} from "~/components/app-sidebar"
 import AppLoadingScreen from "~/components/AppLoadingScreen";
 import RishEmulator from "~/components/fun/RishEmulator";
 import {SidebarProvider} from "~/components/ui/sidebar";
+import {Toaster} from "~/components/ui/toast";
+import {LinkedIntegrationsProvider} from "~/lib/account/links";
+import {AccountProvider} from "~/lib/account/state";
+import {useGameDataReady, useLoadingProgress} from "~/lib/bitcraft-data";
 import {isBotUserAgent} from "~/lib/bot-detect";
+import {FilterSyncProvider} from "~/lib/crafts/filter-sync";
+import {useWalletCurrencyAutoAdd} from "~/lib/crafts/shown-currencies";
 import {setActiveDataLocale} from "~/lib/data-translation";
 import {GlobalSearchProvider} from "~/lib/global-search-context";
 import {activateUILocale, i18n} from "~/lib/i18n";
-import {KEYS, SettingsProvider, useSettings} from "~/lib/settings";
-import {useGameDataReady, useLoadingProgress} from "~/lib/spacetime";
+import {NotificationsProvider} from "~/lib/notifications/state";
+import {SettingsProvider, useSettings} from "~/lib/settings";
+import {ConnectionManagerProvider} from "~/lib/spacetime/manager";
 
 /** Inner wrapper — needs to be a child of SettingsProvider so useSettings() resolves */
 function AppRoot(props: { children: any }) {
@@ -24,6 +31,7 @@ function AppRoot(props: { children: any }) {
         sidebarStartsCollapsed, colorStorageManager, midnightDark,
         resolvedUILocale, resolvedDataLocale,
     } = useSettings();
+    useWalletCurrencyAutoAdd();
 
     // `allReady` gates the app UI behind a loading screen until every table has settled, and
     // also triggers the client-side search index build. For bots the data is already loaded at
@@ -55,8 +63,8 @@ function AppRoot(props: { children: any }) {
 
     return (
         <>
-            <ColorModeScript storageType="localStorage" storageKey={KEYS.theme}/>
             <RishEmulator/>
+            <Toaster/>
             <ColorModeProvider storageManager={colorStorageManager}>
                 <GlobalSearchProvider isReady={allReady}>
                     <Show when={allReady()} fallback={<AppLoadingScreen {...loadingProgress()}/>}>
@@ -92,7 +100,17 @@ export default function App() {
                 <MetaProvider>
                     <I18nProvider i18n={i18n}>
                         <SettingsProvider>
-                            <AppRoot>{props.children}</AppRoot>
+                            <ConnectionManagerProvider>
+                                <AccountProvider>
+                                    <LinkedIntegrationsProvider>
+                                        <FilterSyncProvider>
+                                            <NotificationsProvider>
+                                                <AppRoot>{props.children}</AppRoot>
+                                            </NotificationsProvider>
+                                        </FilterSyncProvider>
+                                    </LinkedIntegrationsProvider>
+                                </AccountProvider>
+                            </ConnectionManagerProvider>
                         </SettingsProvider>
                     </I18nProvider>
                 </MetaProvider>

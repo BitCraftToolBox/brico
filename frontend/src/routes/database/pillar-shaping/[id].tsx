@@ -1,15 +1,14 @@
+import {ItemType, SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {SecondaryKnowledgeDesc} from "~/bindings/src/secondary_knowledge_desc_type";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {InputItemStackArray, ItemStackArray} from "~/components/shared/ItemStacks";
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
-import {fixFloat} from "~/lib/utils";
+import {fixFloat, readableSeconds} from "~/lib/utils";
 
 export default function PillarShapingDetail() {
     const params = useParams();
@@ -56,7 +55,7 @@ export default function PillarShapingDetail() {
             metaImage={ogImageForAsset(pillar()?.iconAddress)}
             details={[
                 {label: msg`Experience`, value: experienceStr()},
-                {label: msg`Build Time`, value: pillar() ? `${fixFloat(pillar()!.duration)}s` : undefined},
+                {label: msg`Build Time`, value: pillar() ? readableSeconds(fixFloat(pillar()!.duration)) : undefined},
             ]}
             rawData={pillar()}
             spacetimeTable={BitCraftTables.PillarShapingDesc.spacetimeName}

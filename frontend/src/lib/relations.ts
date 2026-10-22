@@ -8,47 +8,52 @@
  *   ItemStack, InputItemStack, ProbabilisticItemStack, ItemListPossibility, cargo IDs
  */
 
+import {
+    AbilityCustomDesc,
+    AchievementDesc,
+    BuildingDesc,
+    CargoDesc,
+    ClaimTechDesc,
+    CollectibleDesc,
+    ConstructionRecipeDesc,
+    ContributionLootDesc,
+    CraftingRecipeDesc,
+    DeconstructionRecipeDesc,
+    EnemyDesc,
+    EnemyScalingDesc,
+    EquipmentDesc,
+    ExtractionRecipeDesc,
+    FoodDesc,
+    InputItemStack,
+    ItemConversionRecipeDesc,
+    ItemDesc,
+    ItemListDesc,
+    ItemListPossibility,
+    ItemStack,
+    ItemType,
+    PavingTileDesc,
+    PillarShapingDesc,
+    PlaceableDesc,
+    PlaceableInteractionDesc,
+    PlaceablePlacementDesc,
+    ProbabilisticItemStack,
+    ProspectingDesc,
+    QuestChainDesc,
+    QuestDropDesc,
+    ResourceDesc,
+    ResourceGrowthRecipeDesc,
+    ResourcePlacementRecipeDesc,
+    TerraformRecipeDesc,
+    TravelerTaskDesc,
+    TravelerTaskKnowledgeRequirementDesc,
+    TravelerTradeOrderDesc
+} from "@brico/bitcraft-bindings/types";
+import {craftingRecipeDisplayName} from "@brico/crafts/names";
 import {t} from "@lingui/core/macro";
 import {createMemo} from "solid-js";
-import {AchievementDesc} from "~/bindings/src/achievement_desc_type";
-import {BuildingDesc} from "~/bindings/src/building_desc_type";
-import {CargoDesc} from "~/bindings/src/cargo_desc_type";
-import {ClaimTechDesc} from "~/bindings/src/claim_tech_desc_type";
-import {CollectibleDesc} from "~/bindings/src/collectible_desc_type";
-import {ConstructionRecipeDesc} from "~/bindings/src/construction_recipe_desc_type";
-import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
-import {CraftingRecipeDesc} from "~/bindings/src/crafting_recipe_desc_type";
-import {DeconstructionRecipeDesc} from "~/bindings/src/deconstruction_recipe_desc_type";
-import {EnemyDesc} from "~/bindings/src/enemy_desc_type";
-import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
-import {EquipmentDesc} from "~/bindings/src/equipment_desc_type";
-import {ExtractionRecipeDesc} from "~/bindings/src/extraction_recipe_desc_type";
-import {FoodDesc} from "~/bindings/src/food_desc_type";
-import {InputItemStack} from "~/bindings/src/input_item_stack_type";
-import {ItemConversionRecipeDesc} from "~/bindings/src/item_conversion_recipe_desc_type";
-import {ItemDesc} from "~/bindings/src/item_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
-import {ItemListPossibility} from "~/bindings/src/item_list_possibility_type";
-import {ItemStack} from "~/bindings/src/item_stack_type";
-import {ItemType} from "~/bindings/src/item_type_type";
-import {PavingTileDesc} from "~/bindings/src/paving_tile_desc_type";
-import {PillarShapingDesc} from "~/bindings/src/pillar_shaping_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
-import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
-import {ProspectingDesc} from "~/bindings/src/prospecting_desc_type";
-import {QuestChainDesc} from "~/bindings/src/quest_chain_desc_type";
-import {QuestDropDesc} from "~/bindings/src/quest_drop_desc_type";
-import {ResourceDesc} from "~/bindings/src/resource_desc_type";
-import {ResourceGrowthRecipeDesc} from "~/bindings/src/resource_growth_recipe_desc_type";
-import {ResourcePlacementRecipeDesc} from "~/bindings/src/resource_placement_recipe_desc_type";
-import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
-import {TravelerTaskDesc} from "~/bindings/src/traveler_task_desc_type";
-import {TravelerTaskKnowledgeRequirementDesc} from "~/bindings/src/traveler_task_knowledge_requirement_desc_type";
-import {TravelerTradeOrderDesc} from "~/bindings/src/traveler_trade_order_desc_type";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {sourceRow} from "~/lib/data-translation";
 import {compareText, trackUILocale} from "~/lib/i18n";
-import {BitCraftTables} from "~/lib/spacetime";
 
 const AOC_ID: number = 12345; // Art of Cheating knowledge ID
 
@@ -373,17 +378,60 @@ export function claimResearchRequiring(itemId: number, itemType: string): ClaimT
     return all.filter(t => anyStackMatches(t.input, itemId, itemType));
 }
 
-/** Enemies associated with a resource (via enemyParamsId -> EnemyAiParamsDesc -> EnemyDesc) */
-export function enemiesForResource(resource: ResourceDesc): EnemyDesc[] {
-    if (!resource.enemyParamsId?.length) return [];
+/** via enemyParamsId -> EnemyAiParamsDesc -> EnemyDesc */
+function enemiesFromParams(params: number[]): EnemyDesc[] {
     const paramIdx = BitCraftTables.EnemyAiParamsDesc.indexedBy("id")();
     const enemyIdx = BitCraftTables.EnemyDesc.indexedBy("enemyType")();
-    return resource.enemyParamsId
+    const tagToOrdinal = BitCraftTables.EnemyAiParamsDesc.tagToOrdinal("enemyType");
+    return params
         .map(id => {
             const p = paramIdx.get(id);
-            return p ? enemyIdx.get(p.enemyType as any) : undefined;
+            if (!p) return undefined;
+            const ordinal = tagToOrdinal.get(p.enemyType.tag);
+            return enemyIdx.get(ordinal);
         })
         .filter((e): e is EnemyDesc => !!e);
+}
+
+/** Enemies associated with a resource */
+export function enemiesForResource(resource: ResourceDesc): EnemyDesc[] {
+    if (!resource.enemyParamsId?.length) return [];
+    return enemiesFromParams(resource.enemyParamsId);
+}
+
+/** Enemies associated with a placeable */
+export function enemiesForPlaceable(placeable: PlaceableDesc): EnemyDesc[] {
+    if (!placeable.enemyParamsId?.length) return [];
+    return enemiesFromParams(placeable.enemyParamsId);
+}
+
+/** EnemyAiParamsDesc ids that spawn the given enemy */
+function paramIdsForEnemy(enemyType: number): Set<number> {
+    const all = BitCraftTables.EnemyAiParamsDesc.get();
+    const tagToOrdinal = BitCraftTables.EnemyAiParamsDesc.tagToOrdinal("enemyType");
+    const ids = new Set<number>();
+    for (const p of all ?? []) {
+        if (tagToOrdinal.get(p.enemyType.tag) === enemyType) ids.add(p.id);
+    }
+    return ids;
+}
+
+/** Resources that spawn this enemy */
+export function resourcesSpawningEnemy(enemyType: number): ResourceDesc[] {
+    const all = BitCraftTables.ResourceDesc.get();
+    if (!all) return [];
+    const ids = paramIdsForEnemy(enemyType);
+    if (!ids.size) return [];
+    return all.filter(r => r.enemyParamsId?.some(id => ids.has(id)));
+}
+
+/** Placeables that spawn this enemy */
+export function placeablesSpawningEnemy(enemyType: number): PlaceableDesc[] {
+    const all = BitCraftTables.PlaceableDesc.get();
+    if (!all) return [];
+    const ids = paramIdsForEnemy(enemyType);
+    if (!ids.size) return [];
+    return all.filter(p => p.enemyParamsId?.some(id => ids.has(id)));
 }
 
 /** Prospecting entries for a given biome */
@@ -549,27 +597,20 @@ export function knowledgeUsedBy(knowledgeId: number): KnowledgeUsage[] {
 
 // ─── Display Name Helpers ───────────────────────────────────────
 
-/** Resolve a crafting recipe's display name, substituting item names into the template */
+/** Resolve a crafting recipe's display name, substituting item names into the template (shared logic: `craftingRecipeDisplayName`). */
 export function getCraftingRecipeName(recipe: CraftingRecipeDesc): string {
     const itemData = BitCraftTables.ItemDesc.indexedBy("id")();
     const cargoData = BitCraftTables.CargoDesc.indexedBy("id")();
     const mainOutput = recipe.craftedItemStacks.at(0);
     const mainInput = recipe.consumedItemStacks.at(0);
-    if (!mainOutput) return recipe.name;
-    const outputItem = mainOutput.itemType.tag === ItemType.Item.tag
-        ? itemData.get(mainOutput.itemId) : cargoData.get(mainOutput.itemId);
+    const outputItem = mainOutput
+        ? (mainOutput.itemType.tag === ItemType.Item.tag ? itemData.get(mainOutput.itemId) : cargoData.get(mainOutput.itemId))
+        : undefined;
     const inputItem = mainInput
         ? (mainInput.itemType.tag === ItemType.Item.tag
             ? itemData.get(mainInput.itemId) : cargoData.get(mainInput.itemId))
         : undefined;
-    const building = recipe.buildingRequirement?.buildingType;
-    if (building && [104950060, 1837107818].includes(building)) {
-        // Taming Workstation, Sailing Workstation. Blame CWL. Something is hardcoded into the client and I assume it's this.
-        return outputItem?.name ?? recipe.name;
-    }
-    return recipe.name
-        .replace("{1}", inputItem?.name || "{1}")
-        .replace("{0}", outputItem?.name || "{0}");
+    return craftingRecipeDisplayName(recipe.name, outputItem?.name, inputItem?.name, recipe.buildingRequirement?.buildingType ?? null);
 }
 
 /**
@@ -647,7 +688,7 @@ export function getTravelerNpcName(travelerTag: string, opts?: {source?: boolean
     return travelerTag;
 }
 
-const HEX_COIN_ID = 1;
+export const HEX_COIN_ID = 1;
 export const isHexCoin = (s: ItemStack) => s.itemType.tag === ItemType.Item.tag && s.itemId === HEX_COIN_ID;
 
 /** Display name for a traveler trade */
@@ -901,4 +942,20 @@ export function questDropSourcesFor(itemId: number, itemType: string): {
     }
 
     return { extractionRecipes, enemies, itemLists };
+}
+
+
+// ─── Abilities ──────────────────────────────────────────────────
+
+/** Abilities that consume or produce this item/cargo. */
+export function abilitiesInvolvingItem(itemId: number, itemType: string): AbilityCustomDesc[] {
+    return (BitCraftTables.AbilityCustomDesc.get() ?? []).filter(a =>
+        anyStackMatches(a.inputItemStacks ?? [], itemId, itemType)
+        || (a.outputItemStacks ?? []).some(s => s.itemStack && matchesStack(s.itemStack, itemId, itemType)));
+}
+
+/** Abilities that spawn this placeable. */
+export function abilitiesSpawningPlaceable(placeableId: number): AbilityCustomDesc[] {
+    return (BitCraftTables.AbilityCustomDesc.get() ?? []).filter(a =>
+        a.spawnedPlaceables?.some(sp => sp.placeableId === placeableId));
 }

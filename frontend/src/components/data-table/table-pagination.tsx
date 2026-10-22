@@ -1,5 +1,5 @@
+import {Plural, Trans} from "@lingui/solid/macro";
 import type {Table} from "@tanstack/solid-table"
-
 import {
     TbOutlineCheck as IconCheck,
     TbOutlineChevronLeft as IconChevronLeft,
@@ -7,13 +7,15 @@ import {
     TbOutlineChevronsLeft as IconChevronsLeft,
     TbOutlineChevronsRight as IconChevronsRight
 } from "solid-icons/tb"
-import {createSignal, Show} from "solid-js";
+import {createSignal, type JSX, Show} from "solid-js";
 import {Button} from "~/components/ui/button"
 import {NumberField, NumberFieldInput} from "~/components/ui/number-field";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select"
 
 type TablePaginationProps<TData> = {
     table: Table<TData>
+    /** Replaces the default "{filtered} of {core} row(s) shown" text, for a caller with its own counts to report. */
+    label?: JSX.Element
 }
 
 export function TablePagination<TData>(props: TablePaginationProps<TData>) {
@@ -36,14 +38,18 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
     }
 
     return (
-        <div class="flex items-center justify-between py-2">
+        <div class="flex flex-wrap items-center justify-between py-2">
             <div class="flex-1 text-sm text-muted-foreground">
-                {props.table.getFilteredRowModel().rows.length} of{" "}
-                {props.table.getCoreRowModel().rows.length} row(s) shown.
+                <Show when={props.label} fallback={
+                    <Trans>{props.table.getFilteredRowModel().rows.length} of{" "}
+                        <Plural value={props.table.getCoreRowModel().rows.length} one="# row" other="# rows"/> shown.</Trans>
+                }>
+                    {props.label}
+                </Show>
             </div>
             <div class="flex items-center space-x-6 lg:space-x-8">
                 <div class="flex items-center space-x-2">
-                    <p class="text-sm font-medium">Rows per page</p>
+                    <p class="text-sm font-medium"><Trans>Rows per page</Trans></p>
                     <Select
                         value={props.table.getState().pagination.pageSize}
                         onChange={(value) => value && props.table.setPageSize(value)}
@@ -65,7 +71,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                         onClick={() => props.table.setPageIndex(0)}
                         disabled={!props.table.getCanPreviousPage()}
                     >
-                        <span class="sr-only">Go to first page</span>
+                        <span class="sr-only"><Trans>Go to first page</Trans></span>
                         <IconChevronsLeft/>
                     </Button>
                     <Button
@@ -74,7 +80,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                         onClick={() => props.table.previousPage()}
                         disabled={!props.table.getCanPreviousPage()}
                     >
-                        <span class="sr-only">Go to previous page</span>
+                        <span class="sr-only"><Trans>Go to previous page</Trans></span>
                         <IconChevronLeft/>
                     </Button>
                     <div class="flex items-center justify-center text-sm font-medium">
@@ -95,7 +101,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                             </NumberField>
                             <Button variant="ghost" onclick={setPage}><IconCheck/></Button>
                         </Show>
-                        <span> of {props.table.getPageCount()}</span>
+                        <span class="text-nowrap"> / {props.table.getPageCount()}</span>
                     </div>
                     <Button
                         variant="outline"
@@ -103,7 +109,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                         onClick={() => props.table.nextPage()}
                         disabled={!props.table.getCanNextPage()}
                     >
-                        <span class="sr-only">Go to next page</span>
+                        <span class="sr-only"><Trans>Go to next page</Trans></span>
                         <IconChevronRight/>
                     </Button>
                     <Button
@@ -112,7 +118,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                         onClick={() => props.table.setPageIndex(props.table.getPageCount() - 1)}
                         disabled={!props.table.getCanNextPage()}
                     >
-                        <span class="sr-only">Go to last page</span>
+                        <span class="sr-only"><Trans>Go to last page</Trans></span>
                         <IconChevronsRight/>
                     </Button>
                 </div>

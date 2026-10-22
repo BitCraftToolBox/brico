@@ -12,18 +12,16 @@
  * using cubic bezier detour paths (backward edges below, forward edges above).
  */
 
+import {PlaceableGrowthDesc, PlaceableInteractionDesc, PlaceablePlacementDesc} from "@brico/bitcraft-bindings/types";
 import {t} from "@lingui/core/macro";
 import * as d3Selection from "d3-selection";
 import * as d3Zoom from "d3-zoom";
 import {TbOutlineArrowBarRight as IconStart, TbOutlineArrowBarToRight as IconEnd} from "solid-icons/tb";
 import {createEffect, createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
-import {PlaceableGrowthDesc} from "~/bindings/src/placeable_growth_desc_type";
-import {PlaceableInteractionDesc} from "~/bindings/src/placeable_interaction_desc_type";
-import {PlaceablePlacementDesc} from "~/bindings/src/placeable_placement_desc_type";
 import {CargoIcon, ItemIcon, PlaceableIcon} from "~/components/shared/GameIcon";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {trackUILocale} from "~/lib/i18n";
 import {growthByPlaceable as growthByPlaceableMap, interactionsByOutcome, interactionsByPlaceable as interactionsByPlaceableMap} from "~/lib/placeables";
-import {BitCraftTables} from "~/lib/spacetime";
 import {readableSeconds} from "~/lib/utils";
 
 // ─── Types ──────────────────────────────────────────────────────
@@ -818,7 +816,7 @@ export function PlaceableGraph(props: PlaceableGraphProps) {
     const [hoveredNode, setHoveredNode] = createSignal<string | null>(null);
 
     // Path calculator state
-    const [pathMode, setPathMode] = createSignal(false);
+    const [pathMode, _setPathMode] = createSignal(false);
     const [pathStart, setPathStart] = createSignal<string | null>(null);
     const [pathEnd, setPathEnd] = createSignal<string | null>(null);
 

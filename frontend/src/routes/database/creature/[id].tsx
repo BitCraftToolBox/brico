@@ -1,27 +1,25 @@
+import {CombatActionDesc, ContributionLootDesc, EnemyScalingDesc, ItemListDesc, PlaceableDesc, ResourceDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
-import {CombatActionDesc} from "~/bindings/src/combat_action_desc_type";
-import {ContributionLootDesc} from "~/bindings/src/contribution_loot_desc_type";
-import {EnemyScalingDesc} from "~/bindings/src/enemy_scaling_desc_type";
-import {ItemListDesc} from "~/bindings/src/item_list_desc_type";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon} from "~/components/shared/GameIcon";
 import {ItemListDisplay, QuestDropDisplay} from "~/components/shared/ItemStacks";
 import {EnemyDropPanel} from "~/components/shared/RecipeDisplay";
 import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
+import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
-import {ItemListLink, SkillLinkById} from "~/lib/game-links";
+import {ItemListLink, PlaceableLink, ResourceLink, SkillLinkById} from "~/lib/game-links";
 import {useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {itemListLootWeightedComponent} from "~/lib/recipe-sources";
-import {contributionLootFromEnemy, questDropsForEnemy, questDropsForItemList, scalingDescsFromEnemy} from "~/lib/relations";
-import {BitCraftTables, useTablesLoading} from "~/lib/spacetime";
+import {itemListLootWeightedComponent} from "~/lib/recipe-stats";
+import {contributionLootFromEnemy, placeablesSpawningEnemy, questDropsForEnemy, questDropsForItemList, resourcesSpawningEnemy, scalingDescsFromEnemy,} from "~/lib/relations";
 import {fixFloat} from "~/lib/utils";
 
 type LootRow = [ContributionLootDesc, ItemListDesc];
+type SpawnSource = {kind: "resource"; resource: ResourceDesc} | {kind: "placeable"; placeable: PlaceableDesc};
 
 export default function CreatureDetail() {
     const params = useParams();
@@ -51,6 +49,15 @@ export default function CreatureDetail() {
     const contributionLists = createMemo(() => creature() ? contributionLootFromEnemy(creature()!) : []);
 
     const scaling = createMemo(() => creature() ? scalingDescsFromEnemy(creature()!) : []);
+
+    const spawnSources = createMemo((): SpawnSource[] => {
+        const c = creature();
+        if (!c) return [];
+        return [
+            ...resourcesSpawningEnemy(c.enemyType).map((resource): SpawnSource => ({kind: "resource", resource})),
+            ...placeablesSpawningEnemy(c.enemyType).map((placeable): SpawnSource => ({kind: "placeable", placeable})),
+        ];
+    });
 
     const {labels: pathfindingLabels} = checkStepHeight(pathfinding);
 
@@ -200,6 +207,33 @@ export default function CreatureDetail() {
                                             </div>
                                         )
                                     },
+                                },
+                            ]}
+                        />
+                    ),
+                },
+                {
+                    id: "spawned-by",
+                    label: msg`Spawned by`,
+                    count: spawnSources().length,
+                    showWhenEmpty: false,
+                    content: () => (
+                        <RelTable<SpawnSource>
+                            data={spawnSources()}
+                            columns={[
+                                {
+                                    header: msg`Name`,
+                                    cell: (row) => row.kind === "resource"
+                                        ? <ResourceLink id={row.resource.id} name={row.resource.name}/>
+                                        : <PlaceableLink id={row.placeable.id} name={row.placeable.name}/>,
+                                },
+                                {
+                                    header: msg`Type`,
+                                    cell: (row) => row.kind === "resource" ? <Trans>Resource</Trans> : <Trans>Placeable</Trans>,
+                                },
+                                {
+                                    header: msg`Tier`,
+                                    cell: (row) => <span>{row.kind === "resource" ? row.resource.tier : row.placeable.tier}</span>,
                                 },
                             ]}
                         />

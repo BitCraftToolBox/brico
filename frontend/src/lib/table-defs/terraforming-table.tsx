@@ -1,8 +1,7 @@
+import {ProbabilisticItemStack, TerraformRecipeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {CellContext} from "@tanstack/solid-table";
 import {JSX} from "solid-js";
-import {ProbabilisticItemStack} from "~/bindings/src/probabilistic_item_stack_type";
-import {TerraformRecipeDesc} from "~/bindings/src/terraform_recipe_desc_type";
 import {ProbabilisticItemStackArray} from "~/components/shared/ItemStacks";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {headerColumn, rangeFilter, rowActions} from "~/lib/table-utils/column-builders";

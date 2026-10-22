@@ -8,13 +8,13 @@
  *
  * Run: npm run i18n:verify [-- <locale>]        (default locale: de)
  */
-import {AlgebraicType, BinaryReader} from "@clockworklabs/spacetimedb-sdk";
 import {csvParse} from "d3-dsv";
 import {readFileSync} from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
-import {sourceRow, TRANSLATABLE_FIELDS, translatableFieldsOf, translateRow} from "../../src/lib/data-translation.ts";
-import {BitCraftTables} from "../../src/lib/spacetime.ts";
+import {AlgebraicType, BinaryReader} from "spacetimedb";
+import {BitCraftTables} from "~/lib/bitcraft-data.ts";
+import {sourceRow, TRANSLATABLE_FIELDS, translatableFieldsOf, translateRow} from "~/lib/data-translation.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const BSATN_DIR = path.join(ROOT, "public/bsatn/static");
@@ -28,7 +28,7 @@ const check = (ok, label) => {
 
 function rowsOf(table) {
     const bytes = readFileSync(path.join(BSATN_DIR, `${table.spacetimeName}.bsatn`));
-    return AlgebraicType.createArrayType(table.spacetimeType).deserialize(new BinaryReader(new Uint8Array(bytes)));
+    return AlgebraicType.makeDeserializer(AlgebraicType.Array(table.spacetimeType))(new BinaryReader(new Uint8Array(bytes)));
 }
 
 // ── 1. Fetch + parse the CSV the same way data-translation.ts does ──

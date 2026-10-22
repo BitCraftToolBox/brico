@@ -1,7 +1,7 @@
+import {CargoDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
-import {CargoDesc} from "~/bindings/src/cargo_desc_type";
 import {CargoIcon} from "~/components/shared/GameIcon";
-import {BitCraftTables} from "~/lib/spacetime";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {
     descriptionColumn,

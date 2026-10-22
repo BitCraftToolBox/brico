@@ -1,0 +1,226 @@
+import assert from "node:assert/strict";
+import {describe, it} from "node:test";
+import {addRatio, advancePool, bonusFromMultiplier, ceilRatio, computeEntitlement, escrowRequired, fitFraction, multiplierFromBonus, overlapRelease, parseDecimalRatio, reduceRatio, splitPayout} from "./entitlement.ts";
+
+describe("computeEntitlement", () => {
+    it("matches the worked example: ratio 1 Hex Coin per 20 effort", () => {
+        // docs/craft-manager-phase-3-bounties-payouts.md's confirmed worked example.
+        assert.equal(computeEntitlement(130n, 1n, 20n), 6n);
+        assert.equal(computeEntitlement(90n, 1n, 20n), 4n);
+        assert.equal(computeEntitlement(80n, 1n, 20n), 4n);
+        // Sum of individually-floored entitlements (14) never exceeds the ideal total floored off
+        // combined effort (floor(300/20) = 15) — the structural no-overpayment guarantee.
+        const sum = computeEntitlement(130n, 1n, 20n) + computeEntitlement(90n, 1n, 20n) + computeEntitlement(80n, 1n, 20n);
+        assert.equal(sum, 14n);
+        assert.ok(sum <= computeEntitlement(300n, 1n, 20n));
+    });
+
+    it("pays only the delta on top of an already-recorded entitlement, as more effort comes in", () => {
+        // Alice: 130 -> 140 effort. Bob unchanged at 90. Carol: 80 -> 100 effort.
+        const alicePrev = computeEntitlement(130n, 1n, 20n);
+        const aliceNow = computeEntitlement(140n, 1n, 20n);
+        assert.equal(aliceNow - alicePrev, 1n);
+
+        const bobPrev = computeEntitlement(90n, 1n, 20n);
+        const bobNow = computeEntitlement(90n, 1n, 20n);
+        assert.equal(bobNow - bobPrev, 0n);
+
+        const carolPrev = computeEntitlement(80n, 1n, 20n);
+        const carolNow = computeEntitlement(100n, 1n, 20n);
+        assert.equal(carolNow - carolPrev, 1n);
+    });
+
+    it("floors exactly at a multiple of the ratio, with no remainder", () => {
+        assert.equal(computeEntitlement(100n, 1n, 20n), 5n);
+        assert.equal(computeEntitlement(99n, 1n, 20n), 4n);
+        assert.equal(computeEntitlement(101n, 1n, 20n), 5n);
+    });
+
+    it("is exact for large effort/ratio values a float would round", () => {
+        // Number.MAX_SAFE_INTEGER is 2^53 - 1; a naive `Number()` cast here would lose precision.
+        const hugeEffort = 9_007_199_254_740_993n; // 2^53 + 1
+        assert.equal(computeEntitlement(hugeEffort, 1n, 1n), hugeEffort);
+        assert.equal(computeEntitlement(hugeEffort, 3n, 3n), hugeEffort);
+    });
+
+    it("is zero for zero effort", () => {
+        assert.equal(computeEntitlement(0n, 1n, 20n), 0n);
+    });
+});
+
+describe("reduceRatio", () => {
+    it("reduces by gcd", () => {
+        assert.deepEqual(reduceRatio(40n, 100n), {numerator: 2n, denominator: 5n});
+    });
+
+    it("reduces zero to 0/1", () => {
+        assert.deepEqual(reduceRatio(0n, 20n), {numerator: 0n, denominator: 1n});
+    });
+
+    it("leaves an already-reduced fraction alone", () => {
+        assert.deepEqual(reduceRatio(1n, 20n), {numerator: 1n, denominator: 20n});
+    });
+});
+
+describe("parseDecimalRatio", () => {
+    it("parses a simple decimal into a reduced fraction", () => {
+        assert.deepEqual(parseDecimalRatio("0.4"), {numerator: 2n, denominator: 5n});
+    });
+
+    it("reduces trailing zeros to the same fraction as without them", () => {
+        assert.deepEqual(parseDecimalRatio("0.40"), parseDecimalRatio("0.4"));
+    });
+
+    it("parses a whole number with no decimal point", () => {
+        assert.deepEqual(parseDecimalRatio("5"), {numerator: 5n, denominator: 1n});
+    });
+
+    it("parses zero", () => {
+        assert.deepEqual(parseDecimalRatio("0"), {numerator: 0n, denominator: 1n});
+        assert.deepEqual(parseDecimalRatio("0.0"), {numerator: 0n, denominator: 1n});
+    });
+
+    it("parses a multi-digit fraction exactly, never through a float round-trip", () => {
+        // 0.1 + 0.2 famously isn't 0.3 in floating point; this must not go anywhere near that path.
+        assert.deepEqual(parseDecimalRatio("0.123456789"), {numerator: 123456789n, denominator: 1000000000n});
+    });
+
+    it("parses a leading-dot decimal the same as its explicit-zero spelling", () => {
+        assert.deepEqual(parseDecimalRatio(".5"), parseDecimalRatio("0.5"));
+        assert.deepEqual(parseDecimalRatio(".25"), {numerator: 1n, denominator: 4n});
+    });
+
+    it("rejects malformed input", () => {
+        assert.equal(parseDecimalRatio(""), null);
+        assert.equal(parseDecimalRatio("."), null);
+        assert.equal(parseDecimalRatio("5."), null);
+        assert.equal(parseDecimalRatio("1.2.3"), null);
+        assert.equal(parseDecimalRatio("-1"), null);
+        assert.equal(parseDecimalRatio("abc"), null);
+        assert.equal(parseDecimalRatio("1,5"), null);
+    });
+});
+
+describe("bonusFromMultiplier", () => {
+    it("converts a multiplier to a bonus-only fraction", () => {
+        assert.deepEqual(bonusFromMultiplier(105n, 100n), {numerator: 1n, denominator: 20n});
+    });
+
+    it("is zero for an exact no-op multiplier", () => {
+        assert.deepEqual(bonusFromMultiplier(100n, 100n), {numerator: 0n, denominator: 1n});
+    });
+});
+
+describe("multiplierFromBonus", () => {
+    it("is the inverse of bonusFromMultiplier", () => {
+        assert.deepEqual(multiplierFromBonus(1n, 40n), {numerator: 41n, denominator: 40n});
+        const bonus = bonusFromMultiplier(105n, 100n);
+        assert.deepEqual(multiplierFromBonus(bonus.numerator, bonus.denominator), reduceRatio(105n, 100n));
+    });
+
+    it("is 1 for a zero bonus", () => {
+        assert.deepEqual(multiplierFromBonus(0n, 1n), {numerator: 1n, denominator: 1n});
+    });
+});
+
+describe("addRatio", () => {
+    it("adds two fractions with different denominators, reduced", () => {
+        assert.deepEqual(addRatio({numerator: 1n, denominator: 2n}, {numerator: 1n, denominator: 3n}), {numerator: 5n, denominator: 6n});
+    });
+
+    it("is the identity when adding zero", () => {
+        assert.deepEqual(addRatio({numerator: 0n, denominator: 1n}, {numerator: 3n, denominator: 7n}), {numerator: 3n, denominator: 7n});
+    });
+
+    it("matches the worked 2%+2.5%+1.5%+2%=8% example, additive rather than compounding", () => {
+        const manual = bonusFromMultiplier(102n, 100n); // +2%
+        const claimRule = bonusFromMultiplier(1025n, 1000n); // +2.5%
+        const effortTier1 = bonusFromMultiplier(1015n, 1000n); // +1.5%
+        const effortTier2 = bonusFromMultiplier(102n, 100n); // +2%
+
+        const totalBonus = [claimRule, effortTier1, effortTier2].reduce(addRatio, manual);
+        assert.deepEqual(totalBonus, {numerator: 2n, denominator: 25n}); // 8% = 2/25
+
+        const finalMultiplier = {numerator: totalBonus.numerator + totalBonus.denominator, denominator: totalBonus.denominator};
+        assert.deepEqual(finalMultiplier, {numerator: 27n, denominator: 25n}); // 1.08
+
+        // Composed against a sample bounty ratio (1 Hex Coin per 20 effort), one floor
+        const bountyRatioNumerator = 1n;
+        const bountyRatioDenominator = 20n;
+        const effectiveNumerator = bountyRatioNumerator * finalMultiplier.numerator;
+        const effectiveDenominator = bountyRatioDenominator * finalMultiplier.denominator;
+        assert.equal(computeEntitlement(500n, effectiveNumerator, effectiveDenominator), 27n); // floor(500/20 * 1.08) = floor(27) = 27
+    });
+});
+
+describe("escrow pools", () => {
+    const f = (numerator: bigint, denominator: bigint) => ({numerator, denominator});
+
+    it("advancePool matches the single-pool floor/carry rule", () => {
+        let carry = f(0n, 1n);
+        let total = 0n;
+        for (const delta of [f(3n, 5n), f(3n, 5n), f(1n, 2n)]) {
+            const {earned, remainder} = advancePool(carry, delta);
+            total += earned;
+            carry = remainder;
+        }
+        assert.equal(total, 1n);
+        assert.deepEqual(carry, f(7n, 10n));
+    });
+
+    it("advancePool rounds a carry that does not fit i64 down instead of overflowing", () => {
+        const {earned, remainder} = advancePool(f(1n, 2n ** 62n + 1n), f(1n, 2n ** 62n - 1n));
+        assert.equal(earned, 0n);
+        assert.ok(remainder.denominator <= 2n ** 63n - 1n);
+        assert.ok(remainder.numerator * (2n ** 62n + 1n) * (2n ** 62n - 1n) <= (2n ** 62n - 1n + 2n ** 62n + 1n) * remainder.denominator);
+    });
+
+    it("advancePool floors a negative delta so the carry stays in [0, 1)", () => {
+        const {earned, remainder} = advancePool(f(1n, 4n), f(-1n, 2n));
+        assert.equal(earned, -1n);
+        assert.deepEqual(remainder, f(3n, 4n));
+    });
+
+    it("fitFraction rounds up when asked", () => {
+        const big = f(1n, 2n ** 64n + 1n);
+        assert.ok(fitFraction(big, true).numerator >= fitFraction(big).numerator);
+        assert.deepEqual(fitFraction(f(3n, 7n)), f(3n, 7n));
+    });
+
+    it("Alice/Bob/Carol: base sums stay within the hold, effective sums would not", () => {
+        // base 1/20, effective 11/200; efforts 130/130/140 against a 400-effort craft.
+        assert.equal(ceilRatio(f(400n, 20n)), 20n);
+        const rows = [130n, 130n, 140n].map(effort => ({
+            G: advancePool(f(0n, 1n), reduceRatio(effort, 20n)),
+            F: advancePool(f(0n, 1n), reduceRatio(effort * 11n, 200n)),
+        }));
+        assert.deepEqual(rows.map(r => r.G.earned), [6n, 6n, 7n]);
+        assert.deepEqual(rows.map(r => r.F.earned), [7n, 7n, 7n]);
+        assert.deepEqual(rows.map(r => r.F.remainder), [f(3n, 20n), f(3n, 20n), f(7n, 10n)]);
+        assert.equal(rows.reduce((s, r) => s + r.G.earned, 0n), 19n);
+    });
+
+    it("escrowRequired: hold sizing, rate raise and cut", () => {
+        const zero = f(0n, 1n);
+        assert.equal(escrowRequired(zero, f(1n, 20n), 400n, 0n), 20n);
+        // 100 effort priced at 1/20 -> accrued 5; 300 remain. Raise to 1/15 needs 5 + 20 = 25.
+        assert.equal(escrowRequired(f(5n, 1n), f(1n, 15n), 400n, 100n), 25n);
+        // Cut to 1/30 needs 5 + 10 = 15.
+        assert.equal(escrowRequired(f(5n, 1n), f(1n, 30n), 400n, 100n), 15n);
+        // Over-priced effort adds nothing beyond accrued.
+        assert.equal(escrowRequired(f(21n, 2n), f(1n, 20n), 400n, 500n), 11n);
+    });
+
+    it("splitPayout pays the guaranteed part from escrow and the extras from the wallet", () => {
+        assert.deepEqual(splitPayout({total: 7n, guaranteedTotal: 6n, paidEscrow: 0n, paidDirect: 0n}), {owed: 7n, fromEscrow: 6n, fromWallet: 1n});
+        assert.deepEqual(splitPayout({total: 7n, guaranteedTotal: 7n, paidEscrow: 0n, paidDirect: 0n}), {owed: 7n, fromEscrow: 7n, fromWallet: 0n});
+        assert.deepEqual(splitPayout({total: 7n, guaranteedTotal: 7n, paidEscrow: 7n, paidDirect: 0n}), {owed: 0n, fromEscrow: 0n, fromWallet: 0n});
+    });
+
+    it("overlapRelease reclassifies a direct payment that became guaranteed (r = 1)", () => {
+        assert.equal(overlapRelease({total: 7n, guaranteedTotal: 6n, paidEscrow: 6n, paidDirect: 1n}), 0n);
+        assert.equal(overlapRelease({total: 7n, guaranteedTotal: 7n, paidEscrow: 6n, paidDirect: 1n}), 1n);
+        // Never more than was actually paid directly.
+        assert.equal(overlapRelease({total: 7n, guaranteedTotal: 7n, paidEscrow: 0n, paidDirect: 0n}), 0n);
+    });
+});
