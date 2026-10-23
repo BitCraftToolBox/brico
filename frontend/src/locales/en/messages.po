@@ -1728,6 +1728,9 @@ msgid "Ranges"
 msgstr "Ranges"
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/lib/recipe-stats.tsx
+#: src/routes/database/building/[id].tsx
+#: src/routes/database/claim-research/[id].tsx
 msgid "None"
 msgstr "None"
 
@@ -2530,6 +2533,10 @@ msgstr "Database"
 #: src/components/shared/PlaceableGraph.tsx
 msgid "Place ({placeDuration})"
 msgstr "Place ({placeDuration})"
+
+#: src/lib/recipe-stats.tsx
+msgid "Required Research:"
+msgstr "Required Research:"
 
 #: src/components/shared/RecipeDisplay.tsx
 #: src/routes/database/ability/[id].tsx

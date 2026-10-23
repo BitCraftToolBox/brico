@@ -10,16 +10,24 @@
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Plural, Trans} from "@lingui/solid/macro";
+import {throttle} from "@solid-primitives/scheduled";
 import {A, useLocation, useNavigate} from "@solidjs/router";
 import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
 import {createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show} from "solid-js";
 import MainLayout from "~/components/MainLayout";
+import {TierIcon} from "~/components/shared/GameIcon";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "~/components/ui/tabs";
+import {Rarities} from "~/lib/bitcraft-utils";
 import {type GroupedResults, type ObjectMatch} from "~/lib/global-search";
 import {useGlobalSearch} from "~/lib/global-search-context";
+import {useLabel} from "~/lib/labels";
+import {cn} from "~/lib/utils";
+
+const SEARCH_THROTTLE_MS = 200;
 
 export default function SearchPage() {
     const {_} = useLingui();
+    const label = useLabel();
     const location = useLocation();
     const navigate = useNavigate();
     const {globalSearch} = useGlobalSearch();
@@ -57,14 +65,18 @@ export default function SearchPage() {
     createEffect(on(() => location.search, (search) => {
         const q = new URLSearchParams(search).get("q") ?? "";
         if (q !== query()) {
+            setQueryThrottled.clear();
             setQuery(q);
             if (searchInputRef) searchInputRef.value = q;
         }
     }, {defer: true}));
 
+    const setQueryThrottled = throttle((value: string) => setQuery(value), SEARCH_THROTTLE_MS);
+    onCleanup(() => setQueryThrottled.clear());
+
     let debounceTimer: ReturnType<typeof setTimeout> | undefined;
     const handleInput = (val: string) => {
-        setQuery(val);
+        setQueryThrottled(val);
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
             const url = new URL(window.location.href);
@@ -100,12 +112,20 @@ export default function SearchPage() {
     const MatchRow = (match: ObjectMatch, showLabel = false) => (
         <A
             href={match.route}
-            class="flex items-center gap-3 px-3 py-2 rounded-lg border border-border hover:border-primary hover:bg-accent/50 transition-colors text-sm"
+            class={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg border hover:bg-accent/50 transition-colors text-sm",
+                match.rarity ? Rarities.getBorderColorClass(match.rarity) : "border-border hover:border-primary",
+            )}
         >
             <Show when={showLabel}>
-                <span class="shrink-0 text-xs text-muted-foreground w-20 truncate">{match.label}</span>
+                <span class="shrink-0 text-xs text-muted-foreground w-20 truncate">{label(match.label)}</span>
             </Show>
-            <span class="font-medium min-w-0 truncate flex-1">{match.displayName}</span>
+            <span class="font-medium min-w-0 truncate flex-1 flex items-center gap-1.5">
+                <Show when={match.tier} keyed>
+                    {(tier) => <TierIcon tier={tier}/>}
+                </Show>
+                <span class="truncate">{match.displayName}</span>
+            </span>
             <Show when={match.matchField !== "name" && match.matchField !== "id"}>
                 <span class="shrink-0 text-xs text-muted-foreground max-w-[35%] truncate">
                     {match.matchField}: {match.matchValue}
@@ -164,7 +184,7 @@ export default function SearchPage() {
                                             value={tableKey}
                                             class="data-[selected]:border-b-2 data-[selected]:border-primary rounded-none data-[selected]:bg-transparent data-[selected]:shadow-none"
                                         >
-                                            {group.label}
+                                            {label(group.label)}
                                             <span class="ml-1 text-xs opacity-60">{group.total}</span>
                                         </TabsTrigger>
                                     )}

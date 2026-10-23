@@ -1733,6 +1733,9 @@ msgid "Ranges"
 msgstr "crwdns4702:0crwdne4702:0"
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/lib/recipe-stats.tsx
+#: src/routes/database/building/[id].tsx
+#: src/routes/database/claim-research/[id].tsx
 msgid "None"
 msgstr "crwdns4704:0crwdne4704:0"
 
@@ -2535,6 +2538,10 @@ msgstr "crwdns5512:0crwdne5512:0"
 #: src/components/shared/PlaceableGraph.tsx
 msgid "Place ({placeDuration})"
 msgstr "crwdns5618:0{placeDuration}crwdne5618:0"
+
+#: src/lib/recipe-stats.tsx
+msgid "Required Research:"
+msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 #: src/routes/database/ability/[id].tsx
