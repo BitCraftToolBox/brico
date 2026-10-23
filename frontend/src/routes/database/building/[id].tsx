@@ -169,7 +169,7 @@ export default function BuildingDetail() {
                                 {
                                     header: msg`Cost`,
                                     cell: row => (
-                                        <Show when={row.empireCurrencyCost} fallback={"None"}>
+                                        <Show when={row.empireCurrencyCost} fallback={<Trans>None</Trans>}>
                                             <Show when={empireCurrencyId()}>{id => (
                                                 <ItemStackIcon
                                                     stack={{itemId: id(), quantity: row.empireCurrencyCost, itemType: ItemType.Item as any, durability: undefined}}

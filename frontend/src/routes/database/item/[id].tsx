@@ -164,7 +164,7 @@ export default function ItemDetail() {
     const researchRequires = createMemo(() => itemId() != null ? claimResearchRequiring(itemId()!, itemType) : []);
     const foodYields = createMemo(() => foodData()?.outputItemStacks?.length ? [foodData()!] : []);
     const foodByproductOf = createMemo(() => itemId() != null ? foodDescsYielding(itemId()!, itemType) : []);
-    const isItemList = createMemo(() => item() ? item()?.itemListId ? BitCraftTables.ItemListDesc.indexedBy("id")().get(item()?.itemListId) : undefined : undefined);
+    const isItemList = createMemo(() => item() ? item()?.itemListId ? BitCraftTables.ItemListDesc.indexedBy("id")().get(item()?.itemListId ?? 0) : undefined : undefined);
     const {extractionDrops, enemyDrops, inItemLists} = questDropAugmentedLists(itemId, itemType);
 
     const questRequires = createMemo(() => {

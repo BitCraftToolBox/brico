@@ -13,13 +13,19 @@
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
+import {throttle} from "@solid-primitives/scheduled";
 import {A, useNavigate} from "@solidjs/router";
 import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
 import {createMemo, createSignal, For, onCleanup, onMount, Show} from "solid-js";
+import {TierIcon} from "~/components/shared/GameIcon";
 import {useIsMobile} from "~/components/ui/sidebar";
+import {Rarities} from "~/lib/bitcraft-utils";
 import {ObjectMatch} from "~/lib/global-search";
 import {useGlobalSearch} from "~/lib/global-search-context";
+import {type Label, useLabel} from "~/lib/labels";
 import {cn} from "~/lib/utils";
+
+const SEARCH_THROTTLE_MS = 200;
 
 interface GlobalSearchInputProps {
     class?: string;
@@ -36,6 +42,7 @@ interface TabDef {
 
 export default function GlobalSearchInput(props: GlobalSearchInputProps) {
     const {_} = useLingui();
+    const label = useLabel();
     const navigate = useNavigate();
     const {quickSearch} = useGlobalSearch();
     const [query, setQuery] = createSignal("");
@@ -57,8 +64,8 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
     });
 
     // Group suggestions by table label
-    const groupedSuggestions = createMemo((): Map<string, { label: string; matches: ObjectMatch[] }> => {
-        const map = new Map<string, { label: string; matches: ObjectMatch[] }>();
+    const groupedSuggestions = createMemo((): Map<string, { label: Label; matches: ObjectMatch[] }> => {
+        const map = new Map<string, { label: Label; matches: ObjectMatch[] }>();
         for (const match of allSuggestions()) {
             const existing = map.get(match.tableName);
             if (existing) {
@@ -73,7 +80,7 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
     const tabs = createMemo((): TabDef[] => {
         const result: TabDef[] = [{id: "all", label: _(msg`All`), count: allSuggestions().length}];
         for (const [tableKey, group] of groupedSuggestions()) {
-            result.push({id: tableKey, label: group.label, count: group.matches.length});
+            result.push({id: tableKey, label: label(group.label), count: group.matches.length});
         }
         return result;
     });
@@ -101,7 +108,11 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
         tabButtonRefs.get(tabId)?.scrollIntoView({block: "nearest", inline: "nearest"});
     };
 
+    const setQueryThrottled = throttle((value: string) => setQuery(value), SEARCH_THROTTLE_MS);
+    onCleanup(() => setQueryThrottled.clear());
+
     const closeSuggestions = () => {
+        setQueryThrottled.clear();
         setQuery("");
         setDropdownOpen(false);
         setActiveIndex(-1);
@@ -115,14 +126,15 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
 
     const handleInput = (e: InputEvent) => {
         const val = (e.currentTarget as HTMLInputElement).value;
-        setQuery(val);
+        setQueryThrottled(val);
         setDropdownOpen(true);
         setActiveIndex(-1);
     };
 
     const handleSearch = (e: Event) => {
         e.preventDefault();
-        const q = query().trim();
+        setQueryThrottled.clear();
+        const q = (inputRef?.value ?? query()).trim();
         setDropdownOpen(false);
         if (inputRef) inputRef.value = "";
         navigate(`/search?q=${encodeURIComponent(q)}`);
@@ -279,10 +291,18 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
                                             onMouseEnter={() => setActiveIndex(i())}
                                         >
                                             <Show when={activeTab() === "all"}>
-                                                <span class="text-xs text-muted-foreground">{match.label}</span>
+                                                <span class="text-xs text-muted-foreground">{label(match.label)}</span>
                                             </Show>
                                             <span class="font-medium truncate">
-                                                {match.displayName}
+                                                <span class={cn(
+                                                    "inline-flex items-center gap-1.5 rounded-sm px-1 align-middle",
+                                                    match.rarity && `border ${Rarities.getBorderColorClass(match.rarity)}`,
+                                                )}>
+                                                    <Show when={match.tier} keyed>
+                                                        {(tier) => <TierIcon tier={tier}/>}
+                                                    </Show>
+                                                    {match.displayName}
+                                                </span>
                                                 <Show when={match.matchField !== "name" && match.matchField !== "id"}>
                                                     <span class="text-xs text-muted-foreground ml-2">
                                                         ({match.matchField}: {match.matchValue.length > 50 ? match.matchValue.slice(0, 50) + "…" : match.matchValue})

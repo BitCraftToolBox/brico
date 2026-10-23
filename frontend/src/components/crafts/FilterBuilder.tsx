@@ -144,7 +144,7 @@ function newLeaf(options: FieldOptions, disallowedFields?: readonly FilterField[
 
 // ── Value editors ─────────────────────────────────────────────
 
-/** The rarity border an option carries, if any — the same colour the item's icon frame uses. */
+/** The rarity border an option carries, if any — the same color the item's icon frame uses. */
 function borderFor(option: FieldOption | undefined): string {
     return option?.rarity ? `border ${Rarities.getBorderColorClass(option.rarity)}` : "";
 }

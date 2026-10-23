@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-17 16:28\n"
+"PO-Revision-Date: 2026-10-23 09:05\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -1733,6 +1733,9 @@ msgid "Ranges"
 msgstr "範囲"
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/lib/recipe-stats.tsx
+#: src/routes/database/building/[id].tsx
+#: src/routes/database/claim-research/[id].tsx
 msgid "None"
 msgstr ""
 
@@ -2536,6 +2539,10 @@ msgstr "データベース"
 msgid "Place ({placeDuration})"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
+msgid "Required Research:"
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Chance"
@@ -3093,7 +3100,7 @@ msgstr ""
 #: src/components/GlobalSearchInput.tsx
 #: src/routes/search.tsx
 msgid "All"
-msgstr ""
+msgstr "すべて"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Online Timestamp"
@@ -3192,7 +3199,7 @@ msgstr ""
 
 #: src/routes/search.tsx
 msgid "Search items, buildings, creatures, recipes..."
-msgstr ""
+msgstr "アイテム、建物、クリーチャー、レシピを検索…"
 
 #: src/lib/table-defs/biome-table.tsx
 #: src/routes/database/biome/[id].tsx
@@ -4257,7 +4264,7 @@ msgstr "成育までの時間"
 #. placeholder {0}: results()!.totalMatches
 #: src/routes/search.tsx
 msgid "{0, plural, one {# result} other {# results}}"
-msgstr ""
+msgstr "{0, plural, other {#件ヒット}}"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Wind Multiplier"
@@ -5171,7 +5178,7 @@ msgstr "リスポーンしない"
 #. placeholder {0}: skillCategoryLabel(skillTag)
 #: src/lib/recipe-stats.tsx
 msgid "{0}:"
-msgstr "{0}："
+msgstr ""
 
 #: src/routes/database/item/[id].tsx
 msgid "Required Level"
@@ -5333,3 +5340,4 @@ msgstr "Brico's Toolboxは、<0>BitCraft</0>のアイテム、レシピ、生き
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "{buildingName}を解体"
+

@@ -4,7 +4,7 @@
  * 4000-character or 40-component message limits would be exceeded.
  */
 import {composeTemplateFromPresets, type DiscordDisplaySortDirection, type DiscordDisplaySortField, type DiscordDisplayStyle,} from "@brico/crafts/discord-display";
-import {renderDiscordTemplate} from "@brico/crafts/discord-template";
+import {DiscordTemplateContext, renderDiscordTemplate} from "@brico/crafts/discord-template";
 import type {FilterNode} from "@brico/crafts/filter";
 import {tierColorHex} from "@brico/crafts/icon-render";
 import type {APIActionRowComponent, APIButtonComponentWithURL, APIContainerComponent, APIMessageTopLevelComponent, APISectionComponent} from "discord-api-types/v10";
@@ -88,11 +88,12 @@ function templateContextFor(row: CraftRow, info: RecipeDisplayInfo | undefined, 
         skillName: row.subject.skill !== null ? (skillNames.get(row.subject.skill) ?? null) : null,
         effortTotal: row.subject.effortTotal,
         effortRemaining: row.subject.effortRemaining,
+        quantity: row.count,
         payout: row.subject.payout,
         currency: row.subject.currency,
         filterName,
         mentionText: null,
-    };
+    } satisfies DiscordTemplateContext;
 }
 
 /** One row's rendered text plus its recipe info (reused for the `icon` style's thumbnail). */

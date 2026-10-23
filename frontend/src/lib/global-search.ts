@@ -2,35 +2,43 @@
  * Global Search — searchable table declarations and Fuse.js-powered search helpers.
  */
 
+import type {Rarity} from "@brico/bitcraft-bindings/types";
 import Fuse, {FuseResult, IFuseOptions} from "fuse.js";
 import {BitCraftTables} from "~/lib/bitcraft-data";
+import {sourceRow} from "~/lib/data-translation";
+import {deployableTypeLabel} from "~/lib/game-strings.ts";
+import {type Label} from "~/lib/labels";
 import {getTravelerTaskName, getTravelerTradeName} from "~/lib/relations";
+import {PAGE_TITLE_LABELS, type SidebarHrefs} from "~/lib/sidebar-items";
 
 // ─── Types ──────────────────────────────────────────────────────
 
 export interface SearchableTable {
-    label: string;
-    route: string;
+    /** Sidebar href; the group label is the sidebar entry's `titleLabel`. */
+    route: SidebarHrefs;
     tableKey: keyof typeof BitCraftTables;
     pk: string;
     name: (row: any) => string;
     fields?: { field: string; get: (row: any) => string | undefined }[];
     tier?: (row: any) => number | undefined;
+    rarity?: (row: any) => Rarity | undefined;
 }
 
 export interface ObjectMatch {
     tableName: string;
-    label: string;
+    label: Label;
     route: string;
     primaryKey: string | number;
     displayName: string;
     matchField: string;
     matchValue: string;
     score: number;
+    tier?: number;
+    rarity?: Rarity;
 }
 
 export interface GroupedResults {
-    groups: Map<string, { label: string; matches: ObjectMatch[]; total: number }>;
+    groups: Map<string, { label: Label; matches: ObjectMatch[]; total: number }>;
     totalMatches: number;
 }
 
@@ -44,120 +52,126 @@ export interface GlobalSearchIndex {
 
 export const searchableTables: SearchableTable[] = [
     {
-        label: "Items", route: "/database/item", tableKey: "ItemDesc",
+        route: "/database/item", tableKey: "ItemDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}, {field: "tag", get: (r) => r.tag}],
         tier: (r) => r.tier,
+        rarity: (r) => r.rarity,
     },
     {
-        label: "Cargo", route: "/database/cargo", tableKey: "CargoDesc",
+        route: "/database/cargo", tableKey: "CargoDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}, {field: "tag", get: (r) => r.tag}],
         tier: (r) => r.tier,
+        rarity: (r) => r.rarity,
     },
     {
-        label: "Creatures", route: "/database/creature", tableKey: "EnemyDesc",
+        route: "/database/creature", tableKey: "EnemyDesc",
         pk: "enemyType", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}, {field: "tag", get: (r) => r.tag}],
         tier: (r) => r.tier,
+        rarity: (r) => r.rarity,
     },
     {
-        label: "Resources", route: "/database/resource", tableKey: "ResourceDesc",
+        route: "/database/resource", tableKey: "ResourceDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "tag", get: (r) => r.tag}],
         tier: (r) => r.tier,
+        rarity: (r) => r.rarity,
     },
     {
-        label: "Structures", route: "/database/building", tableKey: "BuildingDesc",
+        route: "/database/building", tableKey: "BuildingDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
     },
     {
-        label: "Collectibles", route: "/database/collectible", tableKey: "CollectibleDesc",
+        route: "/database/collectible", tableKey: "CollectibleDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
+        rarity: (r) => r.collectibleRarity,
     },
     {
-        label: "Deployables", route: "/database/deployable", tableKey: "DeployableDesc",
+        route: "/database/deployable", tableKey: "DeployableDesc",
         pk: "id", name: (r) => r.name,
-        fields: [{field: "type", get: (r) => r.deployableType.tag}],
+        fields: [{field: "type", get: (r) => deployableTypeLabel(r.deployableType.tag)}],
     },
     {
-        label: "Traveler Tasks", route: "/database/traveler-task", tableKey: "TravelerTaskDesc",
+        route: "/database/traveler-task", tableKey: "TravelerTaskDesc",
         pk: "id", name: (r) => getTravelerTaskName(r),
     },
     {
-        label: "Traveler Trades", route: "/database/traveler-trade", tableKey: "TravelerTradeOrderDesc",
+        route: "/database/traveler-trade", tableKey: "TravelerTradeOrderDesc",
         pk: "id", name: (r) => getTravelerTradeName(r),
     },
     {
-        label: "Claim Research", route: "/database/claim-research", tableKey: "ClaimTechDesc",
+        route: "/database/claim-research", tableKey: "ClaimTechDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
         tier: (r) => r.tier,
     },
     {
-        label: "Biomes", route: "/database/biome", tableKey: "BiomeDesc",
+        route: "/database/biome", tableKey: "BiomeDesc",
         pk: "biomeType", name: (r) => r.name,
     },
     {
-        label: "Item Lists", route: "/database/item-list", tableKey: "ItemListDesc",
+        route: "/database/item-list", tableKey: "ItemListDesc",
         pk: "id", name: (r) => r.name,
     },
     {
-        label: "Achievements", route: "/database/achievement", tableKey: "AchievementDesc",
-        pk: "id", name: (r) => r.name,
-        fields: [{field: "description", get: (r) => r.description}],
-    },
-    {
-        label: "Prospecting", route: "/database/prospecting", tableKey: "ProspectingDesc",
+        route: "/database/achievement", tableKey: "AchievementDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
     },
     {
-        label: "Combat Actions", route: "/database/combat", tableKey: "CombatActionDesc",
+        route: "/database/prospecting", tableKey: "ProspectingDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
     },
     {
-        label: "Paving", route: "/database/paving", tableKey: "PavingTileDesc",
+        route: "/database/combat", tableKey: "CombatActionDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
-        tier: (r) => r.tier,
     },
     {
-        label: "Pillar Shaping", route: "/database/pillar-shaping", tableKey: "PillarShapingDesc",
+        route: "/database/paving", tableKey: "PavingTileDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
         tier: (r) => r.tier,
     },
     {
-        label: "Abilities", route: "/database/ability", tableKey: "AbilityCustomDesc",
+        route: "/database/pillar-shaping", tableKey: "PillarShapingDesc",
+        pk: "id", name: (r) => r.name,
+        fields: [{field: "description", get: (r) => r.description}],
+        tier: (r) => r.tier,
+    },
+    {
+        route: "/database/ability", tableKey: "AbilityCustomDesc",
         pk: "id", name: (r) => r.abilityName,
         fields: [{field: "description", get: (r) => r.description}],
     },
     {
-        label: "Buffs", route: "/database/buff", tableKey: "BuffDesc",
+        route: "/database/buff", tableKey: "BuffDesc",
         pk: "id", name: (r) => r.description,
         fields: [{field: "description", get: (r) => BitCraftTables.BuffTypeDesc.indexedBy("id")().get(r.buffTypeId)?.name}],
     },
     {
-        label: "Knowledge", route: "/database/knowledge", tableKey: "SecondaryKnowledgeDesc",
+        route: "/database/knowledge", tableKey: "SecondaryKnowledgeDesc",
         pk: "id", name: (r) => r.name,
     },
     {
-        label: "Skills", route: "/database/skill", tableKey: "SkillDesc",
+        route: "/database/skill", tableKey: "SkillDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
     },
     {
-        label: "Quest Chains", route: "/database/quest-chain", tableKey: "QuestChainDesc",
+        route: "/database/quest-chain", tableKey: "QuestChainDesc",
         pk: "id", name: (r) => r.name,
     },
     {
-        label: "Placeables", route: "/database/placeable", tableKey: "PlaceableDesc",
+        route: "/database/placeable", tableKey: "PlaceableDesc",
         pk: "id", name: (r) => r.name,
         tier: (r) => r.tier,
+        rarity: (r) => r.rarity,
     },
 ];
 
@@ -167,11 +181,15 @@ interface SearchDocument {
     primaryKey: string | number;
     name: string;
     fields: Record<string, string>;
+    /** English text, present only where it differs from the displayed (translated) text. */
+    sourceName?: string;
+    sourceFields?: Record<string, string>;
     tier?: number;
+    rarity?: Rarity;
 }
 
 interface SearchDocumentMeta {
-    label: string;
+    label: Label;
     routePrefix: string;
 }
 
@@ -211,9 +229,12 @@ function extractTierFilter(query: string): { tier: number | undefined; remainder
 const searchableFieldNames = [...new Set(
     searchableTables.flatMap((table) => table.fields?.map((field) => field.field) ?? [])
 )];
+const SOURCE_SUFFIX = " (en)";
 const fuseKeys: IFuseOptions<SearchDocument>["keys"] = [
     {name: "name", weight: 3},
+    {name: "sourceName", weight: 2.5},
     ...searchableFieldNames.map((fieldName) => ({name: `fields.${fieldName}`, weight: 1})),
+    ...searchableFieldNames.map((fieldName) => ({name: `sourceFields.${fieldName}`, weight: 0.9})),
 ];
 
 const fuseOptions: IFuseOptions<SearchDocument> = {
@@ -257,11 +278,23 @@ function resolveMatchField(result: FuseResult<SearchDocument>): { matchField: st
         return {matchField: "name", matchValue: result.item.name};
     }
 
+    if (key === "sourceName") {
+        return {matchField: `name${SOURCE_SUFFIX}`, matchValue: result.item.sourceName ?? ""};
+    }
+
     if (key.startsWith("fields.")) {
         const fieldName = key.slice("fields.".length);
         return {
             matchField: fieldName,
             matchValue: result.item.fields[fieldName] ?? "",
+        };
+    }
+
+    if (key.startsWith("sourceFields.")) {
+        const fieldName = key.slice("sourceFields.".length);
+        return {
+            matchField: `${fieldName}${SOURCE_SUFFIX}`,
+            matchValue: result.item.sourceFields?.[fieldName] ?? "",
         };
     }
 
@@ -283,13 +316,15 @@ function collectPkExactMatches(query: string): ObjectMatch[] {
         const displayName = table.name(row);
         matches.push({
             tableName: table.tableKey,
-            label: table.label,
+            label: PAGE_TITLE_LABELS[table.route],
             route: `${table.route}/${primaryKey}`,
             primaryKey,
             displayName,
             matchField: "id",
             matchValue: String(primaryKey),
             score: -1,
+            tier: table.tier?.(row),
+            rarity: table.rarity?.(row),
         });
     }
 
@@ -302,7 +337,7 @@ export function createGlobalSearchIndex(): GlobalSearchIndex {
 
     for (const table of searchableTables) {
         metadataByTableName.set(table.tableKey, {
-            label: table.label,
+            label: PAGE_TITLE_LABELS[table.route],
             routePrefix: table.route,
         });
 
@@ -320,6 +355,22 @@ export function createGlobalSearchIndex(): GlobalSearchIndex {
                 if (value) fields[field.field] = value;
             }
 
+            // Translated rows carry their English original; index it too so English queries
+            // keep working under a non-English data locale.
+            const source = sourceRow(row);
+            let sourceName: string | undefined;
+            let sourceFields: Record<string, string> | undefined;
+            if (source !== row) {
+                const englishName = table.name(source);
+                if (englishName && englishName !== name) sourceName = englishName;
+                for (const field of table.fields ?? []) {
+                    const value = field.get(source);
+                    if (value && value !== fields[field.field]) {
+                        (sourceFields ??= {})[field.field] = value;
+                    }
+                }
+            }
+
             const id = buildDocId(table.tableKey, primaryKey);
             documents.push({
                 id,
@@ -327,7 +378,10 @@ export function createGlobalSearchIndex(): GlobalSearchIndex {
                 primaryKey,
                 name,
                 fields,
+                sourceName,
+                sourceFields,
                 tier: table.tier?.(row),
+                rarity: table.rarity?.(row),
             });
         }
     }
@@ -347,7 +401,7 @@ export function globalSearch(
     scoreCutoff = 0.2,
 ): GroupedResults {
     const q = query.trim();
-    const groups = new Map<string, { label: string; matches: ObjectMatch[]; total: number }>();
+    const groups = new Map<string, { label: Label; matches: ObjectMatch[]; total: number }>();
     let totalMatches = 0;
 
     if (!q || !index) return {groups, totalMatches};
@@ -381,6 +435,8 @@ export function globalSearch(
                 matchField: "tier",
                 matchValue: formatTier(tier),
                 score: TIER_EXACT_SCORE,
+                tier: doc.tier,
+                rarity: doc.rarity,
             });
         }
     } else {
@@ -407,11 +463,13 @@ export function globalSearch(
                 matchField,
                 matchValue,
                 score,
+                tier: result.item.tier,
+                rarity: result.item.rarity,
             });
         }
     }
 
-    const groupedMatches = new Map<string, { label: string; matches: ObjectMatch[] }>();
+    const groupedMatches = new Map<string, { label: Label; matches: ObjectMatch[] }>();
     for (const match of matchByDocId.values()) {
         const existing = groupedMatches.get(match.tableName);
         if (existing) {
