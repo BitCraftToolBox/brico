@@ -9,7 +9,6 @@ node_modules/
 .DS_Store
 Thumbs.db
 
-# used by main branch until craft manager lands
-frontend/src/bindings
 # used only for local ssr testing - CF has this set on the project settings
 frontend/wrangler.toml
+.wrangler

@@ -63,6 +63,7 @@ import {
 import {Accessor, createMemo, createRoot, createSignal} from "solid-js";
 import {isServer} from "solid-js/web";
 import {AlgebraicType, BinaryReader} from "spacetimedb";
+import {makeDeserializer as makeServerDeserializer} from "~/lib/bsatn-deserialize";
 import {activeDataLocale, TranslatableField, translatableFieldsOf, translateRow, translationsFor} from "~/lib/data-translation";
 import {CURRENT_VERSION} from "~/lib/version";
 
@@ -78,6 +79,7 @@ const bsatnPath = "/bsatn/static";
  * `baseUrl` is the relative static path on the client and an absolute origin-qualified
  * path on the server (the Workers runtime has no ambient origin for relative fetch).
  * A version query busts caches on deploy so the files can be served immutably.
+ * The server uses the closure deserializer because the SDK's runs `Function(...)`, which Workers block.
  */
 async function fetchBSATNFrom<T>(baseUrl: string, params: FetchParams): Promise<T[]> {
     const data = await fetch(`${baseUrl}/${params.name}.bsatn?v=${encodeURIComponent(CURRENT_VERSION.tag)}`);
@@ -85,7 +87,9 @@ async function fetchBSATNFrom<T>(baseUrl: string, params: FetchParams): Promise<
         throw Error("Couldn't fetch BSATN data." + await data.text());
     }
     const reader = new BinaryReader(new Uint8Array(await data.arrayBuffer()));
-    return AlgebraicType.makeDeserializer(AlgebraicType.Array(params.itemType))(reader) as T[];
+    const tableType = AlgebraicType.Array(params.itemType);
+    const deserialize = isServer ? makeServerDeserializer(tableType) : AlgebraicType.makeDeserializer(tableType);
+    return deserialize(reader) as T[];
 }
 
 // ── Dual-mode table store ─────────────────────────────────────

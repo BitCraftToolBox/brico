@@ -8,6 +8,7 @@
     "start": "vinxi start",
     "typecheck": "node scripts/check-barrel-imports.mjs && tsc --noEmit",
     "test": "node --test \"src/**/*.test.ts\"",
+    "test:ssr": "node scripts/ssr-smoke.mjs",
     "gen-icons": "node scripts/icons/gen-font-icons.mjs",
     "analyze-icons": "npx tsx scripts/icons/analyze-icon-usage.mjs",
     "i18n:extract": "node scripts/i18n/extract.mjs",
@@ -61,7 +62,8 @@
     "@tailwindcss/vite": "^4.0.7",
     "pofile-ts": "^4.0.3",
     "tailwindcss": "^4.0.7",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "wrangler": "^4.152.0"
   },
   "engines": {
     "node": ">=24"
