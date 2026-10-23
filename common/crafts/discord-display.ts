@@ -69,7 +69,7 @@ export function composeTemplateFromPresets(presets: readonly string[]): string {
     const lines = DISCORD_DISPLAY_FIELD_PRESET_KEYS
         .filter(key => selected.has(key))
         .map(key => DISCORD_DISPLAY_FIELD_PRESETS[key].templateLine);
-    return ["**{craft:name} {link}**", ...lines].join("\n");
+    return ["**{craft:name}** ×{quantity} {link}", ...lines].join("\n");
 }
 
 /** Refresh bounds, kept above Discord's per-channel message-edit rate limit. */

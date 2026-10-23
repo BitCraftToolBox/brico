@@ -16,6 +16,7 @@ export interface DiscordTemplateContext {
     skillName: string | null;
     effortTotal: number;
     effortRemaining: number;
+    quantity: number;
     payout: number | null;
     currency: string | null;
     /** The watch's saved-filter name. */
@@ -36,7 +37,8 @@ type TokenResolver = (ctx: DiscordTemplateContext) => string;
 const TOKENS: Record<string, TokenResolver> = {
     "craft:link": ctx => `[${ctx.recipeName}](<${ctx.frontendOrigin}/tools/crafts/${ctx.craftId}>)`,
     "craft:name": ctx => `${ctx.recipeName}`,
-    "link": ctx => `[↗](<${ctx.frontendOrigin}/tools/crafts/${ctx.craftId}>)`,
+    link: ctx => `[↗](<${ctx.frontendOrigin}/tools/crafts/${ctx.craftId}>)`,
+    quantity: ctx => ctx.quantity.toString(),
     username: ctx => ctx.ownerName ?? DASH,
     claim: ctx => ctx.claimName ?? DASH,
     "region:short": ctx => `(R${ctx.regionId})`,

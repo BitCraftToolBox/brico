@@ -283,6 +283,16 @@ export function constructionStatLines(recipe: ConstructionRecipeDesc): StatLine[
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
     addKnowledgeRequirements(lines, recipe);
+    const claimTechs = BitCraftTables.ClaimTechDesc.indexedBy("id");
+    lines.push([
+        () => <IconSpan icon={pageIcon("Claim Research")}><Trans>Required Research:</Trans></IconSpan>,
+        () => recipe.requiredClaimTechIds?.length ? <LinkedList>
+        {recipe.requiredClaimTechIds.map(n => {
+            const tech = claimTechs().get(n);
+            if (!tech) return undefined;
+            return <IconLink href={`/database/claim-research/${tech.id}`}>{tech.name}</IconLink>;
+        })}
+    </LinkedList> : <Trans>None</Trans>]);
     return lines;
 }
 
@@ -408,6 +418,7 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
         const biomeIndex = BitCraftTables.BiomeDesc.indexedBy("biomeType", true);
         function tagToBiomeLink(tag: string) {
             const descId = biomeOrdinals.get(tag);
+            if (descId === undefined) return tag;
             const desc = biomeIndex().get(descId);
             return descId ? <BiomeLink biomeType={descId} name={desc?.name} showIcon={false}/> : tag;
         }

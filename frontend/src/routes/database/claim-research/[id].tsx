@@ -1,5 +1,6 @@
 import {ClaimTechDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
+import {Trans} from "@lingui/solid/macro";
 import {useNavigate, useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
@@ -53,7 +54,7 @@ export default function ClaimResearchDetail() {
                 {
                     heading: msg`Cost`,
                     properties: [
-                        {label: msg`Item Cost`, value: tech()?.input.length ? () => <ItemStackArray stacks={tech()!.input} class="justify-start py-2"/> : "None"},
+                        {label: msg`Item Cost`, value: () => tech()?.input.length ? <ItemStackArray stacks={tech()!.input} class="justify-start py-2"/> : <Trans>None</Trans>},
                         {label: msg`Supply Cost`, value: tech()?.suppliesCost},
                         {label: msg`Research Time`, value: readableSeconds(undefinedIfZero(tech()?.researchTime))},
                     ]

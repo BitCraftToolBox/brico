@@ -128,6 +128,7 @@ async function sendNotification(
         skillName,
         effortTotal: craft?.subject.effortTotal ?? 0,
         effortRemaining: craft?.subject.effortRemaining ?? 0,
+        quantity: craft?.count ?? 0,
         payout: craft?.subject.payout ?? null,
         currency: craft?.subject.currency ?? null,
         filterName: event.watch.name,

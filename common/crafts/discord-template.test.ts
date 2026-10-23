@@ -18,6 +18,7 @@ function ctx(overrides: Partial<DiscordTemplateContext> = {}): DiscordTemplateCo
         skillName: "Tailoring",
         effortTotal: 100,
         effortRemaining: 15,
+        quantity: 200,
         payout: 1 / 15.3,
         currency: "hex-coin",
         filterName: "Open work",
@@ -73,7 +74,7 @@ test("renderDiscordTemplate reproduces the full example layout from all four pre
     assert.equal(
         rendered,
         [
-            "**Peerless Spool of Thread [↗](<https://brico.app/tools/crafts/123>)**",
+            "**Peerless Spool of Thread** ×200 [↗](<https://brico.app/tools/crafts/123>)",
             "Vasus · Notsolis (R14)",
             "T2 Tailoring",
             "Effort left: 20 · 80% done",
@@ -86,10 +87,10 @@ test("composeTemplateFromPresets always uses canonical order regardless of input
     const template = composeTemplateFromPresets(["bountyPayout", "ownerLocation"]);
     assert.equal(
         template,
-        ["**{craft:name} {link}**", "{username} · {claim} {region:short}", "Bounty: {bounty:effort} · {payout:remaining} left"].join("\n"),
+        ["**{craft:name}** ×{quantity} {link}", "{username} · {claim} {region:short}", "Bounty: {bounty:effort} · {payout:remaining} left"].join("\n"),
     );
 });
 
 test("composeTemplateFromPresets with no presets is just the craft link", () => {
-    assert.equal(composeTemplateFromPresets([]), "**{craft:name} {link}**");
+    assert.equal(composeTemplateFromPresets([]), "**{craft:name}** ×{quantity} {link}");
 });

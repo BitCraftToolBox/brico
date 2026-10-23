@@ -4,7 +4,7 @@ import {FontIcon} from "~/components/icons/font-icons";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
-import {descriptionColumn, headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
+import {headerColumn, rangeFilter, rowActions, uniqueValuesFilter} from "~/lib/table-utils/column-builders";
 import {statsColumn, statsFilter} from "~/lib/table-utils/stats-column-builder";
 import {compareOptions, includedIn, readableSeconds} from "~/lib/utils";
 
@@ -17,7 +17,6 @@ export const BuffDefs: BitCraftToDataDef<BuffDesc> = {
                 <FontIcon codepoint={buff.iconAssetName}/>
             )
         }),
-        descriptionColumn(),
         {
             id: "Buff Type",
             meta: {label: msg`Type`},
@@ -48,5 +47,5 @@ export const BuffDefs: BitCraftToDataDef<BuffDesc> = {
         rangeFilter("Duration", msg`Duration`),
         rangeFilter("Priority", msg`Priority`)
     ],
-    searchColumns: ["Name", "Description"],
+    searchColumns: ["Name"],
 };

@@ -11,7 +11,7 @@ export function buffsGroups(buffs: BuffEffect[]): DetailGroup[] {
     const buffTypeIndex = BitCraftTables.BuffTypeDesc.indexedBy("id");
     return buffs.map(buffEffect => {
         const buff = buffIndex().get(buffEffect.buffId);
-        const category = buffTypeIndex().get(buff?.buffTypeId);
+        const category = buffTypeIndex().get(buff?.buffTypeId ?? 0);
         const label = buff ? category ? `${buff.description} (${category.name})` : buff.description : `Buff #${buffEffect.buffId}`;
         const props: DetailProperty[] = [{
             label: msg`Duration`,

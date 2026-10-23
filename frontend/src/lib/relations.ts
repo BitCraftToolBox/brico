@@ -388,6 +388,7 @@ function enemiesFromParams(params: number[]): EnemyDesc[] {
             const p = paramIdx.get(id);
             if (!p) return undefined;
             const ordinal = tagToOrdinal.get(p.enemyType.tag);
+            if (ordinal === undefined) return undefined;
             return enemyIdx.get(ordinal);
         })
         .filter((e): e is EnemyDesc => !!e);
