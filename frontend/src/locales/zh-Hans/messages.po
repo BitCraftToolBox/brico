@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-17 16:28\n"
+"PO-Revision-Date: 2026-10-23 09:05\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -5340,3 +5340,4 @@ msgstr ""
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr ""
+
