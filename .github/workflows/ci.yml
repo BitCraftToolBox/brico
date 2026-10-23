@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, preview]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # The bindings submodule is imported as raw .ts by the frontend and bot.
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - run: npm test
+
+  ssr-smoke:
+    # Serves the production build in the Workers runtime and fetches pages as a crawler, so SSR
+    # regressions (browser-only globals, runtime-blocked APIs) fail here instead of in prod.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          # gen-version-info reads the BSATN data repo's commit log.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - run: npm run build:ci
+
+      - run: npm run test:ssr --workspace frontend
