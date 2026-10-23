@@ -1220,7 +1220,7 @@ export function QuestGraph(props: QuestGraphProps) {
     return (
         <div
             ref={containerRef!}
-            class="relative flex flex-col flex-1 rounded-lg border bg-background overflow-hidden h-full min-h-[80svh]"
+            class="relative flex flex-col flex-1 rounded-lg border bg-background overflow-hidden h-full"
         >
             {/* Search bar + debug toggle */}
             <div class="absolute top-3 left-3 z-10 flex items-center gap-2">
