@@ -24,7 +24,13 @@ const logLines = [];
 const wrangler = spawn(
     process.execPath,
     [wranglerBin, "pages", "dev", "dist", "--port", String(PORT), "--ip", "127.0.0.1", "--compatibility-flag", "nodejs_compat"],
-    {cwd: frontendDir, stdio: ["ignore", "pipe", "pipe"], env: {...process.env, NO_COLOR: "1", WRANGLER_SEND_METRICS: "false"}},
+    {
+        cwd: frontendDir,
+        stdio: ["ignore", "pipe", "pipe"],
+        env: {...process.env, NO_COLOR: "1", WRANGLER_SEND_METRICS: "false"},
+        // Own process group on POSIX so the whole tree (wrangler + workerd) can be killed together.
+        detached: process.platform !== "win32",
+    },
 );
 for (const stream of [wrangler.stdout, wrangler.stderr]) {
     stream.setEncoding("utf8");
@@ -35,7 +41,12 @@ function stopWrangler() {
     if (process.platform === "win32") {
         spawnSync("taskkill", ["/pid", String(wrangler.pid), "/T", "/F"], {stdio: "ignore"});
     } else {
-        wrangler.kill("SIGKILL");
+        // Killing only wrangler orphans workerd, which keeps our stdio pipes (and this process) alive.
+        try {
+            process.kill(-wrangler.pid, "SIGKILL");
+        } catch {
+            // already exited
+        }
     }
 }
 
@@ -109,3 +120,4 @@ if (failures.length) {
     process.exit(1);
 }
 console.log("SSR smoke test passed.");
+process.exit(0);
