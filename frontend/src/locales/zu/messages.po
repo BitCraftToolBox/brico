@@ -3882,6 +3882,10 @@ msgstr "crwdns5188:0{minRad}crwdnd5188:0{maxRad}crwdne5188:0"
 msgid "Search claims…"
 msgstr "crwdns6418:0crwdne6418:0"
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Copy share link"
+msgstr ""
+
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Min Health"
@@ -5340,4 +5344,3 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
-

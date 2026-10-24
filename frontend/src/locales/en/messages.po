@@ -3877,6 +3877,10 @@ msgstr "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource
 msgid "Search claims…"
 msgstr "Search claims…"
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Copy share link"
+msgstr "Copy share link"
+
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Min Health"

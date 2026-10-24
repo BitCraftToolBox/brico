@@ -3882,6 +3882,10 @@ msgstr ""
 msgid "Search claims…"
 msgstr ""
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Copy share link"
+msgstr ""
+
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Min Health"

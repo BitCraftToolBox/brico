@@ -3882,6 +3882,10 @@ msgstr ""
 msgid "Search claims…"
 msgstr ""
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Copy share link"
+msgstr ""
+
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Min Health"
@@ -5340,4 +5344,3 @@ msgstr "Brico's Toolboxは、<0>BitCraft</0>のアイテム、レシピ、生き
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "{buildingName}を解体"
-
