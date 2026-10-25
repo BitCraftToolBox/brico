@@ -322,7 +322,7 @@ export default function ProfilePage() {
                         <Button variant="outline" as={A} href={"/account/bounties"}>
                             <Trans>Bounties</Trans>
                         </Button>
-                        <Button variant="outline" onClick={() => void logout()}>
+                        <Button variant="outline" onClick={() => void logout(false)}>
                             <Trans>Log out</Trans>
                         </Button>
                     </div>
