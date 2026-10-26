@@ -389,6 +389,10 @@ msgstr "<0>effort per</0><1/>"
 msgid "Upload file"
 msgstr "Upload file"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "You can have at most {MAX_API_KEYS_PER_ACCOUNT} API keys. Delete one first."
+msgstr "You can have at most {MAX_API_KEYS_PER_ACCOUNT} API keys. Delete one first."
+
 #. placeholder {0}: rateText()
 #: src/components/crafts/PayoutRateButton.tsx
 msgid "{0} <0/> / effort"
@@ -610,6 +614,10 @@ msgstr "A watch display can show at most {MAX_DISPLAY_ROWS_HARD_CAP} crafts."
 msgid "Level {level} {toolName}"
 msgstr "Level {level} {toolName}"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That API key no longer exists."
+msgstr "That API key no longer exists."
+
 #: src/lib/table-defs/item-list-table.tsx
 msgid "Possible Items"
 msgstr "Possible Items"
@@ -617,6 +625,10 @@ msgstr "Possible Items"
 #: src/components/app-sidebar.tsx
 msgid "Grid view"
 msgstr "Grid view"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "API keys"
+msgstr "API keys"
 
 #: src/routes/account/loyalty.tsx
 msgid "Delete loyalty reward"
@@ -704,6 +716,10 @@ msgstr "Craft Browser"
 #: src/lib/relations.ts
 msgid "Task: {itemName}"
 msgstr "Task: {itemName}"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "No API keys."
+msgstr "No API keys."
 
 #: src/routes/database/resource/[id].tsx
 msgid "Spawn Priority"
@@ -1162,6 +1178,10 @@ msgstr "Bounties could not be funded"
 msgid "Strength Multiplier"
 msgstr "Strength Multiplier"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "New key name"
+msgstr "New key name"
+
 #: src/routes/database/combat/[id].tsx
 msgid "Self Buffs"
 msgstr "Self Buffs"
@@ -1336,6 +1356,10 @@ msgstr "Interactions"
 msgid "Chance to spawn within {0}–{1} tiles on resource depletion."
 msgstr "Chance to spawn within {0}–{1} tiles on resource depletion."
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Copy your new key now. It won't be shown again."
+msgstr "Copy your new key now. It won't be shown again."
+
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
 msgstr "Browse raw data on 🥣 cereal"
@@ -1445,6 +1469,7 @@ msgstr "Who currently qualifies for a bonus from the rules above, and how much."
 msgid "Total Cargo Size"
 msgstr "Total Cargo Size"
 
+#: src/components/account/ApiKeysCard.tsx
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/notifications.tsx
@@ -1626,6 +1651,10 @@ msgstr "That funding alert setting belongs to a different account."
 #: src/routes/settings.tsx
 msgid "Automatic"
 msgstr "Automatic"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "Done"
+msgstr "Done"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That link code is unknown or has expired."
@@ -2137,6 +2166,10 @@ msgstr "Read only: can receive, not fund"
 msgid "Consumption Chance"
 msgstr "Consumption Chance"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Copy"
+msgstr "Copy"
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "That is not a craft id."
 msgstr "That is not a craft id."
@@ -2434,6 +2467,10 @@ msgstr "Permanently Gain {0} +{1}"
 #: src/lib/crafts/error-vocab.ts
 msgid "That bounty rule belongs to a different account."
 msgstr "That bounty rule belongs to a different account."
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "Read Payouts"
+msgstr "Read Payouts"
 
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
@@ -2910,6 +2947,10 @@ msgstr "Inventory stack: {0}"
 msgid "Assigned"
 msgstr "Assigned"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Couldn't generate a key right now — try again in a minute."
+msgstr "Couldn't generate a key right now — try again in a minute."
+
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Tool"
@@ -3196,6 +3237,10 @@ msgstr "<empty>"
 msgid "Search items, buildings, creatures, recipes..."
 msgstr "Search items, buildings, creatures, recipes..."
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Create key"
+msgstr "Create key"
+
 #: src/lib/table-defs/biome-table.tsx
 #: src/routes/database/biome/[id].tsx
 msgid "Hazard"
@@ -3284,6 +3329,7 @@ msgstr "Time:"
 msgid "Unlock achievement <0/>"
 msgstr "Unlock achievement <0/>"
 
+#: src/components/account/ApiKeysCard.tsx
 #: src/components/account/SteloWalletsCard.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
@@ -3356,6 +3402,10 @@ msgstr "That account can't be linked as a wallet: it isn't on a supported ledger
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Total Item Size"
 msgstr "Total Item Size"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "e.g. Spreadsheet"
+msgstr "e.g. Spreadsheet"
 
 #: src/routes/settings.tsx
 #: src/routes/tools/crafts/browse.tsx
@@ -3573,6 +3623,7 @@ msgstr "Traveler"
 msgid "Run <0>/link</0> in your server to connect your Brico.app account."
 msgstr "Run <0>/link</0> in your server to connect your Brico.app account."
 
+#: src/components/account/ApiKeysCard.tsx
 #: src/components/shared/DetailPageLayout.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
@@ -4259,6 +4310,10 @@ msgstr "That link code has already been claimed."
 #: src/routes/database/resource/[id].tsx
 msgid "Timed Growth"
 msgstr "Timed Growth"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Enter a key name of at most {MAX_API_KEY_NAME_LENGTH} characters."
+msgstr "Enter a key name of at most {MAX_API_KEY_NAME_LENGTH} characters."
 
 #. placeholder {0}: results()!.totalMatches
 #: src/routes/search.tsx
@@ -5202,6 +5257,10 @@ msgstr "Found an account. Confirm it below to link it."
 #: src/routes/settings.tsx
 msgid "How many rows are shown per page when a table first loads."
 msgstr "How many rows are shown per page when a table first loads."
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "Let scripts read your data over HTTP. Send a key as an Authorization: Bearer header."
+msgstr "Let scripts read your data over HTTP. Send a key as an Authorization: Bearer header."
 
 #: src/lib/crafts/error-vocab.ts
 msgid "A loyalty reward's multiplier must be 1 or higher."

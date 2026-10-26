@@ -394,6 +394,10 @@ msgstr ""
 msgid "Upload file"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "You can have at most {MAX_API_KEYS_PER_ACCOUNT} API keys. Delete one first."
+msgstr ""
+
 #. placeholder {0}: rateText()
 #: src/components/crafts/PayoutRateButton.tsx
 msgid "{0} <0/> / effort"
@@ -615,12 +619,20 @@ msgstr ""
 msgid "Level {level} {toolName}"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That API key no longer exists."
+msgstr ""
+
 #: src/lib/table-defs/item-list-table.tsx
 msgid "Possible Items"
 msgstr ""
 
 #: src/components/app-sidebar.tsx
 msgid "Grid view"
+msgstr ""
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "API keys"
 msgstr ""
 
 #: src/routes/account/loyalty.tsx
@@ -708,6 +720,10 @@ msgstr ""
 
 #: src/lib/relations.ts
 msgid "Task: {itemName}"
+msgstr ""
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "No API keys."
 msgstr ""
 
 #: src/routes/database/resource/[id].tsx
@@ -1167,6 +1183,10 @@ msgstr ""
 msgid "Strength Multiplier"
 msgstr ""
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "New key name"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Self Buffs"
 msgstr ""
@@ -1341,6 +1361,10 @@ msgstr ""
 msgid "Chance to spawn within {0}–{1} tiles on resource depletion."
 msgstr ""
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Copy your new key now. It won't be shown again."
+msgstr ""
+
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
 msgstr ""
@@ -1450,6 +1474,7 @@ msgstr ""
 msgid "Total Cargo Size"
 msgstr ""
 
+#: src/components/account/ApiKeysCard.tsx
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/notifications.tsx
@@ -1630,6 +1655,10 @@ msgstr ""
 #: src/components/Nav.tsx
 #: src/routes/settings.tsx
 msgid "Automatic"
+msgstr ""
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "Done"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -2142,6 +2171,10 @@ msgstr ""
 msgid "Consumption Chance"
 msgstr ""
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Copy"
+msgstr ""
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "That is not a craft id."
 msgstr ""
@@ -2438,6 +2471,10 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That bounty rule belongs to a different account."
+msgstr ""
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "Read Payouts"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -2915,6 +2952,10 @@ msgstr ""
 msgid "Assigned"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Couldn't generate a key right now — try again in a minute."
+msgstr ""
+
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Tool"
@@ -3201,6 +3242,10 @@ msgstr ""
 msgid "Search items, buildings, creatures, recipes..."
 msgstr ""
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Create key"
+msgstr ""
+
 #: src/lib/table-defs/biome-table.tsx
 #: src/routes/database/biome/[id].tsx
 msgid "Hazard"
@@ -3289,6 +3334,7 @@ msgstr ""
 msgid "Unlock achievement <0/>"
 msgstr ""
 
+#: src/components/account/ApiKeysCard.tsx
 #: src/components/account/SteloWalletsCard.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
@@ -3360,6 +3406,10 @@ msgstr ""
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Total Item Size"
+msgstr ""
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "e.g. Spreadsheet"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -3578,6 +3628,7 @@ msgstr ""
 msgid "Run <0>/link</0> in your server to connect your Brico.app account."
 msgstr ""
 
+#: src/components/account/ApiKeysCard.tsx
 #: src/components/shared/DetailPageLayout.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
@@ -4263,6 +4314,10 @@ msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Timed Growth"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Enter a key name of at most {MAX_API_KEY_NAME_LENGTH} characters."
 msgstr ""
 
 #. placeholder {0}: results()!.totalMatches
@@ -5206,6 +5261,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "How many rows are shown per page when a table first loads."
+msgstr ""
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "Let scripts read your data over HTTP. Send a key as an Authorization: Bearer header."
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts

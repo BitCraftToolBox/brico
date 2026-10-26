@@ -1,6 +1,6 @@
 /**
  * profile.tsx — `/account/profile`, the "Profile" tab of the account pages: display name, linked
- * accounts, and log out. See `~/lib/account/route-tabs.tsx`'s `accountTabs` for the other two tabs
+ * accounts, API keys, and log out. See `~/lib/account/route-tabs.tsx`'s `accountTabs` for the other two tabs
  * (`/account/notifications`, `/account/settings`).
  */
 import type {LinkedIntegration} from "@brico/bindings/brico-app/types";
@@ -10,6 +10,7 @@ import {Trans} from "@lingui/solid/macro";
 import {A, useSearchParams} from "@solidjs/router";
 import type {JSX} from "solid-js";
 import {createEffect, createMemo, createSignal, For, onMount, Show} from "solid-js";
+import {ApiKeysCard} from "~/components/account/ApiKeysCard";
 import {SteloWalletsCard} from "~/components/account/SteloWalletsCard";
 import MainLayout from "~/components/MainLayout";
 import {ConnectionStatusBadge} from "~/components/shared/ConnectionStatusBadge";
@@ -317,6 +318,8 @@ export default function ProfilePage() {
                     </Card>
 
                     <SteloWalletsCard onUnlink={link => setUnlinkTarget({id: link.id, provider: STELO_PROVIDER})}/>
+
+                    <ApiKeysCard/>
 
                     <div class="flex flex-row justify-between">
                         <Button variant="outline" as={A} href={"/account/bounties"}>

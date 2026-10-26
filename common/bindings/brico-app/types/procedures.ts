@@ -6,9 +6,12 @@
 import {type Infer as __Infer} from "spacetimedb";
 
 // Import all procedure arg schemas
+import * as CreateApiKeyProcedure from "../create_api_key_procedure";
 import * as CreateSharedFiltersProcedure from "../create_shared_filters_procedure";
 import * as ReadSharedFiltersProcedure from "../read_shared_filters_procedure";
 
+export type CreateApiKeyArgs = __Infer<typeof CreateApiKeyProcedure.params>;
+export type CreateApiKeyResult = __Infer<typeof CreateApiKeyProcedure.returnType>;
 export type CreateSharedFiltersArgs = __Infer<typeof CreateSharedFiltersProcedure.params>;
 export type CreateSharedFiltersResult = __Infer<typeof CreateSharedFiltersProcedure.returnType>;
 export type ReadSharedFiltersArgs = __Infer<typeof ReadSharedFiltersProcedure.params>;
