@@ -15,6 +15,8 @@ export const api_key = table(
         createdAt: t.timestamp(),
         /** May call the read-only payout routes. */
         readPayouts: t.bool(),
+        /** May call the public dashboard route; the key is meant to be shared with the dashboard's viewers. */
+        publicDashboard: t.bool(),
     }
 );
 

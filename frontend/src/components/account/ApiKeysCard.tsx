@@ -14,6 +14,7 @@ import {Checkbox} from "~/components/ui/checkbox";
 import {TextField, TextFieldInput, TextFieldLabel} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
 import {createApiKeys} from "~/lib/account/api-keys";
+import {dashboardUrl} from "~/lib/crafts/dashboard";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {useCopy} from "~/lib/utils.ts";
 
@@ -23,10 +24,12 @@ export function ApiKeysCard() {
 
     const [name, setName] = createSignal("");
     const [readPayouts, setReadPayouts] = createSignal(true);
+    const [publicDashboard, setPublicDashboard] = createSignal(false);
     const [busy, setBusy] = createSignal(false);
-    /** The token of the key just created; held only until dismissed, since the module never returns it again. */
-    const [newToken, setNewToken] = createSignal<string | null>(null);
-    const [copyToken, tokenCopied] = useCopy(() => newToken() ?? "");
+    /** The key just created and its token; held only until dismissed, since the module never returns the token again. */
+    const [created, setCreated] = createSignal<{token: string; dashboard: boolean} | null>(null);
+    const [copyToken, tokenCopied] = useCopy(() => created()?.token ?? "");
+    const [copyLink, linkCopied] = useCopy(() => dashboardUrl(created()?.token ?? ""));
 
     function reportError(e: unknown) {
         console.error(e);
@@ -41,7 +44,8 @@ export function ApiKeysCard() {
         e.preventDefault();
         setBusy(true);
         try {
-            setNewToken(await create(name(), {readPayouts: readPayouts()}));
+            const access = {readPayouts: readPayouts(), publicDashboard: publicDashboard()};
+            setCreated({token: await create(name(), access), dashboard: access.publicDashboard});
             setName("");
         } catch (err) {
             reportError(err);
@@ -59,14 +63,25 @@ export function ApiKeysCard() {
                 </CardDescription>
             </CardHeader>
             <CardContent class="flex flex-col gap-3">
-                <Show when={newToken()}>
-                    {token => (
+                <Show when={created()}>
+                    {key => (
                         <div class="flex flex-col gap-2 rounded-md border border-primary p-3">
                             <p class="text-sm font-medium"><Trans>Copy your new key now. It won't be shown again.</Trans></p>
-                            <code class="break-all rounded bg-muted p-2 text-xs">{token()}</code>
+                            <code class="break-all rounded bg-muted p-2 text-xs">{key().token}</code>
+                            <Show when={key().dashboard}>
+                                <p class="text-sm text-muted-foreground">
+                                    <Trans>Anyone with this dashboard link can see your payees and bounties, including private ones.</Trans>
+                                </p>
+                                <code class="break-all rounded bg-muted p-2 text-xs">{dashboardUrl(key().token)}</code>
+                            </Show>
                             <div class="flex gap-2">
                                 <Button size="sm" onClick={copyToken}><Show when={tokenCopied()} fallback={<Trans>Copy</Trans>}><Trans>Copied!</Trans></Show></Button>
-                                <Button size="sm" variant="outline" onClick={() => setNewToken(null)}><Trans>Done</Trans></Button>
+                                <Show when={key().dashboard}>
+                                    <Button size="sm" variant="outline" onClick={copyLink}>
+                                        <Show when={linkCopied()} fallback={<Trans>Copy dashboard link</Trans>}><Trans>Copied!</Trans></Show>
+                                    </Button>
+                                </Show>
+                                <Button size="sm" variant="outline" onClick={() => setCreated(null)}><Trans>Done</Trans></Button>
                             </div>
                         </div>
                     )}
@@ -84,6 +99,7 @@ export function ApiKeysCard() {
                                         <p class="text-sm font-medium truncate">{key.name}</p>
                                         <div class="flex flex-wrap items-center gap-2">
                                             <Show when={key.readPayouts}><Badge variant="outline"><Trans>Read Payouts</Trans></Badge></Show>
+                                            <Show when={key.publicDashboard}><Badge variant="outline"><Trans>Public Dashboard</Trans></Badge></Show>
                                             <span class="text-xs text-muted-foreground">{key.createdAt.toDate().toLocaleDateString()}</span>
                                         </div>
                                     </div>
@@ -101,9 +117,15 @@ export function ApiKeysCard() {
                         <TextFieldLabel><Trans>New key name</Trans></TextFieldLabel>
                         <TextFieldInput maxLength={MAX_API_KEY_NAME_LENGTH} placeholder={_(msg`e.g. Spreadsheet`)}/>
                     </TextField>
-                    <Checkbox checked={readPayouts()} onChange={(checked: boolean) => setReadPayouts(checked)} label={<Trans>Read Payouts</Trans>}/>
+                    <Checkbox checked={readPayouts()} onChange={(checked: boolean) => {setReadPayouts(checked); if (checked) setPublicDashboard(false);}} label={<Trans>Read Payouts</Trans>}/>
+                    <Checkbox checked={publicDashboard()} onChange={(checked: boolean) => {setPublicDashboard(checked); if (checked) setReadPayouts(false);}} label={<Trans>Public Dashboard</Trans>}/>
+                    <Show when={publicDashboard()}>
+                        <p class="text-sm text-muted-foreground">
+                            <Trans>A dashboard key is meant to be shared. Anyone holding it can see your payees' names, what they've earned and been paid, and your bounties, including private ones.</Trans>
+                        </p>
+                    </Show>
                     <div>
-                        <Button type="submit" disabled={busy() || name().trim() === "" || !readPayouts()}>
+                        <Button type="submit" disabled={busy() || name().trim() === "" || !(readPayouts() || publicDashboard())}>
                             <Trans>Create key</Trans>
                         </Button>
                     </div>

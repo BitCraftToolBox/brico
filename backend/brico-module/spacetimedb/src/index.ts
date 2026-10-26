@@ -40,3 +40,5 @@ export * from './views/notify';
 export * from './views/apiKeys';
 
 export * from './http/payouts';
+export * from './http/dashboard';
+export * from './http/router';

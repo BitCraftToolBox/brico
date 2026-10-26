@@ -63,7 +63,7 @@ function resolvePayeeAccount(db: ReadDb, payeePlayerId: bigint): { identity: Ide
 }
 
 /** Every BitCraft player id the account has ever linked (`bitcraft-ea2`, revoked included). */
-function linkedPlayerIds(db: ReadDb, accountIdentity: Identity): Set<bigint> {
+export function linkedPlayerIds(db: ReadDb, accountIdentity: Identity): Set<bigint> {
     const playerIds = new Set<bigint>();
     for (const link of db.linked_integration.accountIdentity.filter(accountIdentity)) {
         if (link.provider === 'bitcraft-ea2') playerIds.add(BigInt(link.externalId));

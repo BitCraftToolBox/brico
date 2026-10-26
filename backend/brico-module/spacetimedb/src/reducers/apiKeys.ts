@@ -14,9 +14,9 @@ const CreateApiKeyResult = t.object('CreateApiKeyResult', {
 
 /** Mints an API key for the caller's own account. */
 export const createApiKey = spacetimedb.procedure(
-    {name: t.string(), readPayouts: t.bool()},
+    {name: t.string(), readPayouts: t.bool(), publicDashboard: t.bool()},
     CreateApiKeyResult,
-    (ctx, {name, readPayouts}) => {
+    (ctx, {name, readPayouts, publicDashboard}) => {
         const trimmed = name.trim();
         if (trimmed === '' || trimmed.length > MAX_API_KEY_NAME_LENGTH) {
             throw new SenderError(CraftError.INVALID_API_KEY_NAME);
@@ -34,8 +34,9 @@ export const createApiKey = spacetimedb.procedure(
                 accountIdentity: tx.sender,
                 name: trimmed,
                 tokenHash: hashApiToken(token),
-                readPayouts,
                 createdAt: tx.timestamp,
+                readPayouts,
+                publicDashboard,
             });
             return {id: row.id, token};
         });

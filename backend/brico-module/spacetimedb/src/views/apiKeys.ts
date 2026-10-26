@@ -8,6 +8,7 @@ const ApiKeyRow = t.row('ApiKeyRow', {
     name: t.string(),
     createdAt: t.timestamp(),
     readPayouts: t.bool(),
+    publicDashboard: t.bool(),
 });
 
 /** The caller's own API keys, without their tokens. Procedural, not a query, to drop the token hash. */
@@ -19,5 +20,6 @@ export const myApiKey = spacetimedb.view(
         name: key.name,
         createdAt: key.createdAt,
         readPayouts: key.readPayouts,
+        publicDashboard: key.publicDashboard,
     }))
 );

@@ -109,6 +109,7 @@ export const ApiKey = __t.object("ApiKey", {
   tokenHash: __t.string(),
   createdAt: __t.timestamp(),
   readPayouts: __t.bool(),
+  publicDashboard: __t.bool(),
 });
 export type ApiKey = __Infer<typeof ApiKey>;
 
@@ -123,6 +124,7 @@ export const ApiKeyRow = __t.object("ApiKeyRow", {
   name: __t.string(),
   createdAt: __t.timestamp(),
   readPayouts: __t.bool(),
+  publicDashboard: __t.bool(),
 });
 export type ApiKeyRow = __Infer<typeof ApiKeyRow>;
 

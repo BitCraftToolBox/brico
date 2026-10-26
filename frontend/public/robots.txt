@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+Disallow: /bounty-dashboard
 Sitemap: https://brico.app/sitemap.xml

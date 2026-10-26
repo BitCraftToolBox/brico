@@ -10,4 +10,5 @@ export default __t.row({
   name: __t.string(),
   createdAt: __t.timestamp().name("created_at"),
   readPayouts: __t.bool().name("read_payouts"),
+  publicDashboard: __t.bool().name("public_dashboard"),
 });

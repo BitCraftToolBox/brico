@@ -88,7 +88,7 @@ export const craft_bounty_assignment = table(
         ratioNumerator: t.i64(),
         ratioDenominator: t.i64(),
         currency: t.string(),
-        assignedByAccountIdentity: t.identity(),
+        assignedByAccountIdentity: t.identity().index('btree'),
         assignedAt: t.timestamp(),
         updatedAt: t.timestamp(),
         /** False when the assignment came from the craft's override: removing the override sends the craft back to its rules. True (the default) keeps the assignment against rule edits and deletions. */

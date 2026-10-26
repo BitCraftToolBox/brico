@@ -10,5 +10,6 @@ import {CreateApiKeyResult,} from "./types";
 export const params = {
   name: __t.string(),
   readPayouts: __t.bool(),
+  publicDashboard: __t.bool(),
 };
 export const returnType = CreateApiKeyResult

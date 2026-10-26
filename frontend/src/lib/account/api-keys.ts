@@ -11,6 +11,7 @@ import {useConnection} from "~/lib/spacetime/manager";
 /** Access flags a key can carry; mirrors the boolean columns of `api_key`. */
 export interface ApiKeyAccess {
     readPayouts: boolean;
+    publicDashboard: boolean;
 }
 
 export interface ApiKeysHandle {
@@ -61,7 +62,7 @@ export function createApiKeys(): ApiKeysHandle {
     async function create(name: string, access: ApiKeyAccess): Promise<string> {
         const active = conn.active();
         if (!active) throw new Error("Not connected.");
-        const result = await active.procedures.createApiKey({name, readPayouts: access.readPayouts});
+        const result = await active.procedures.createApiKey({name, readPayouts: access.readPayouts, publicDashboard: access.publicDashboard});
         return result.token;
     }
 

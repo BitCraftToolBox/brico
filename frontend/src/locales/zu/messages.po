@@ -85,6 +85,10 @@ msgstr "crwdns5642:0crwdne5642:0"
 msgid "Converted from"
 msgstr "crwdns4344:0crwdne4344:0"
 
+#: src/routes/bounty-dashboard.tsx
+msgid "This dashboard key is invalid or has been revoked."
+msgstr ""
+
 #: src/lib/relations.ts
 msgid "{skillName} Task: {itemName}"
 msgstr "crwdns4346:0{skillName}crwdnd4346:0{itemName}crwdne4346:0"
@@ -276,13 +280,17 @@ msgstr "crwdns4380:0crwdne4380:0"
 msgid "Terraform Elevation Difference {0}"
 msgstr "crwdns4382:0{0}crwdne4382:0"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Est. payout total"
 msgstr "crwdns6726:0crwdne6726:0"
 
 #: src/components/data-table/live-table.tsx
 msgid "No results."
 msgstr "crwdns5688:0crwdne5688:0"
+
+#: src/routes/bounty-dashboard.tsx
+msgid "Couldn't refresh the dashboard."
+msgstr ""
 
 #. placeholder {0}: props.row.name
 #: src/components/crafts/SavedFiltersDialog.tsx
@@ -504,8 +512,8 @@ msgstr "crwdns4434:0crwdne4434:0"
 msgid "Move down"
 msgstr "crwdns5730:0crwdne5730:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "private"
 msgstr "crwdns5732:0crwdne5732:0"
 
@@ -683,6 +691,7 @@ msgstr "crwdns5780:0crwdne5780:0"
 
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Entitled"
 msgstr "crwdns5782:0crwdne5782:0"
 
@@ -749,7 +758,7 @@ msgstr "crwdns5792:0crwdne5792:0"
 msgid "{0, plural, one {# unread} other {# unread}}"
 msgstr "crwdns5794:00={0}crwdne5794:0"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Est. payout remaining"
 msgstr "crwdns5796:0crwdne5796:0"
 
@@ -834,6 +843,10 @@ msgstr "crwdns5810:0{0}crwdne5810:0"
 #: src/routes/database/resource/[id].tsx
 msgid "Flattenable"
 msgstr "crwdns4496:0crwdne4496:0"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "A dashboard key is meant to be shared. Anyone holding it can see your payees' names, what they've earned and been paid, and your bounties, including private ones."
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/index.tsx
@@ -1378,8 +1391,8 @@ msgstr "crwdns6734:0crwdne6734:0"
 msgid "Verified. Linking…"
 msgstr "crwdns5916:0crwdne5916:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Bounty"
 msgstr "crwdns5918:0crwdne5918:0"
 
@@ -1490,7 +1503,7 @@ msgstr "crwdns5938:0crwdne5938:0"
 msgid "Combat"
 msgstr "crwdns4634:0crwdne4634:0"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Progress"
 msgstr "crwdns5940:0crwdne5940:0"
 
@@ -1719,6 +1732,10 @@ msgstr "crwdns5982:0crwdne5982:0"
 #: src/lib/sidebar-items.ts
 msgid "Terraforming"
 msgstr "crwdns4690:0crwdne4690:0"
+
+#: src/routes/bounty-dashboard.tsx
+msgid "This link has no dashboard key."
+msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Collapse sidebar by default"
@@ -2159,6 +2176,10 @@ msgctxt "less or equal"
 msgid "{field} {cmpEl} {value}"
 msgstr "crwdns6060:0{field}crwdnd6060:0{cmpEl}crwdnd6060:0{value}crwdne6060:0"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Anyone with this dashboard link can see your payees and bounties, including private ones."
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "is any of"
 msgstr "crwdns6062:0crwdne6062:0"
@@ -2201,10 +2222,10 @@ msgstr "crwdns6074:0{quantifier}crwdnd6074:0{field}crwdnd6074:0{cmpEl}crwdnd6074
 msgid "Loading translations…"
 msgstr "crwdns4810:0crwdne4810:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/components/crafts/QuickFilterGrid.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Claim"
 msgstr "crwdns6076:0crwdne6076:0"
 
@@ -2497,9 +2518,9 @@ msgstr "crwdns6128:0crwdne6128:0"
 msgid "Asc Multi"
 msgstr "crwdns4876:0crwdne4876:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/account/my-bounties.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "ready"
 msgstr "crwdns6130:0crwdne6130:0"
 
@@ -2592,6 +2613,10 @@ msgstr "crwdns6146:0crwdne6146:0"
 #: src/lib/recipe-stats.tsx
 msgid "Claim Tier:"
 msgstr "crwdns4898:0crwdne4898:0"
+
+#: src/routes/bounty-dashboard.tsx
+msgid "Bounty dashboard"
+msgstr ""
 
 #: src/lib/table-defs/skills-table.tsx
 msgid "Category"
@@ -2868,8 +2893,8 @@ msgstr "crwdns4960:0crwdne4960:0"
 msgid "Match any"
 msgstr "crwdns6204:0crwdne6204:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Private bounty"
 msgstr "crwdns6206:0crwdne6206:0"
 
@@ -2899,9 +2924,9 @@ msgstr "crwdns6212:0crwdne6212:0"
 msgid "Latest available <0>(check preview <1/>)</0>"
 msgstr "crwdns4966:0crwdne4966:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Owner"
 msgstr "crwdns6214:0crwdne6214:0"
 
@@ -3020,6 +3045,11 @@ msgstr "crwdns4992:0crwdne4992:0"
 msgid "Evade Range"
 msgstr "crwdns4994:0crwdne4994:0"
 
+#. placeholder {0}: crafts().length
+#: src/routes/bounty-dashboard.tsx
+msgid "{0, plural, one {# craft with a bounty} other {# crafts with a bounty}}"
+msgstr ""
+
 #: src/components/app-sidebar.tsx
 msgid "Showing all items"
 msgstr "crwdns4996:0crwdne4996:0"
@@ -3036,8 +3066,8 @@ msgstr "crwdns4998:0crwdne4998:0"
 msgid "Stamina Use Multiplier"
 msgstr "crwdns5000:0crwdne5000:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Last active"
 msgstr "crwdns6236:0crwdne6236:0"
 
@@ -3251,13 +3281,13 @@ msgstr ""
 msgid "Hazard"
 msgstr "crwdns5046:0crwdne5046:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/table-utils/column-builders.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Tier"
 msgstr "crwdns5048:0crwdne5048:0"
 
@@ -3543,6 +3573,7 @@ msgstr "crwdns6336:0crwdne6336:0"
 msgid "Log in for additional options such as Discord notifications."
 msgstr "crwdns6338:0crwdne6338:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/equipment-table.tsx
@@ -3555,7 +3586,6 @@ msgstr "crwdns6338:0crwdne6338:0"
 #: src/routes/database/progression/index.tsx
 #: src/routes/database/traveler-task/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Skill"
 msgstr "crwdns5112:0crwdne5112:0"
 
@@ -3634,7 +3664,7 @@ msgstr "crwdns6360:0crwdne6360:0"
 msgid "Copied!"
 msgstr "crwdns5124:0crwdne5124:0"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Hidden currency"
 msgstr "crwdns6362:0crwdne6362:0"
 
@@ -3713,6 +3743,7 @@ msgstr "crwdns5140:0{verbPhrase}crwdnd5140:0{targetName}crwdne5140:0"
 #: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 #: src/routes/settings.tsx
 msgid "Loading…"
 msgstr "crwdns5142:0crwdne5142:0"
@@ -3750,6 +3781,7 @@ msgstr "crwdns5152:0crwdne5152:0"
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Currency"
 msgstr "crwdns6368:0crwdne6368:0"
 
@@ -3851,9 +3883,14 @@ msgstr "crwdns6390:0crwdne6390:0"
 msgid "Move up"
 msgstr "crwdns6392:0crwdne6392:0"
 
+#: src/routes/bounty-dashboard.tsx
+msgid "Active bounties"
+msgstr ""
+
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 #: src/routes/database/terraforming/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Effort"
@@ -4002,6 +4039,10 @@ msgstr "crwdns5196:0crwdne5196:0"
 msgid "Rish Emulation"
 msgstr "crwdns5584:0crwdne5584:0"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Copy dashboard link"
+msgstr ""
+
 #: src/routes/account/settings.tsx
 msgid "Enabled"
 msgstr "crwdns6438:0crwdne6438:0"
@@ -4140,6 +4181,10 @@ msgstr "crwdns6464:0crwdne6464:0"
 msgid "at most"
 msgstr "crwdns6466:0crwdne6466:0"
 
+#: src/routes/bounty-dashboard.tsx
+msgid "No open crafts have a bounty."
+msgstr ""
+
 #: src/components/app-sidebar.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/link.tsx
@@ -4230,10 +4275,12 @@ msgstr "crwdns6484:0{quantifier}crwdnd6484:0{field}crwdnd6484:0{cmpEl}crwdnd6484
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Difference"
 msgstr "crwdns5252:0crwdne5252:0"
 
 #: src/routes/account/payees.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Payee"
 msgstr "crwdns6486:0crwdne6486:0"
 
@@ -4429,13 +4476,17 @@ msgstr "crwdns5290:0crwdne5290:0"
 msgid "You can link it again later."
 msgstr "crwdns6526:0crwdne6526:0"
 
+#: src/routes/bounty-dashboard.tsx
+msgid "No contributors yet."
+msgstr ""
+
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Share link"
 msgstr "crwdns6528:0crwdne6528:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Region"
 msgstr "crwdns6530:0crwdne6530:0"
 
@@ -4465,6 +4516,10 @@ msgstr "crwdns6538:0crwdne6538:0"
 msgid "Health"
 msgstr "crwdns5594:0crwdne5594:0"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Public Dashboard"
+msgstr ""
+
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"
 msgstr "crwdns5294:0crwdne5294:0"
@@ -4490,9 +4545,9 @@ msgstr "crwdns5296:0crwdne5296:0"
 msgid "Get notified about matches with <0>/notify link</0> then <1>/crafts notify-setup</1>."
 msgstr "crwdns6544:0crwdne6544:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/account/my-bounties.tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Craft"
 msgstr "crwdns5530:0crwdne5530:0"
 
@@ -4563,6 +4618,7 @@ msgstr "crwdns6554:0crwdne6554:0"
 
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Paid"
 msgstr "crwdns6556:0crwdne6556:0"
 
@@ -5024,7 +5080,7 @@ msgctxt "all"
 msgid "{field} {cmpEl} {value}"
 msgstr "crwdns6648:0{field}crwdnd6648:0{cmpEl}crwdnd6648:0{value}crwdne6648:0"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "just now"
 msgstr "crwdns6650:0crwdne6650:0"
 
@@ -5136,6 +5192,10 @@ msgstr "crwdns5442:0crwdne5442:0"
 msgid "Paste group from clipboard"
 msgstr "crwdns6672:0crwdne6672:0"
 
+#: src/routes/bounty-dashboard.tsx
+msgid "Showing the last data received."
+msgstr ""
+
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Affected By Wind"
 msgstr "crwdns5444:0crwdne5444:0"
@@ -5210,6 +5270,7 @@ msgstr "crwdns6684:0crwdne6684:0"
 msgid "Select claim…"
 msgstr "crwdns6686:0crwdne6686:0"
 
+#: src/routes/bounty-dashboard.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Contributors"
 msgstr "crwdns6688:0crwdne6688:0"
@@ -5310,8 +5371,8 @@ msgstr "crwdns5486:0crwdne5486:0"
 msgid "That Discord channel isn't linked for notifications anymore."
 msgstr "crwdns6704:0crwdne6704:0"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
-#: src/routes/tools/crafts/browse.tsx
 msgid "Total effort"
 msgstr "crwdns6706:0crwdne6706:0"
 
@@ -5344,7 +5405,7 @@ msgstr "crwdns6712:0crwdne6712:0"
 msgid "Guaranteed spawn on last hit of resource extraction."
 msgstr "crwdns5494:0crwdne5494:0"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Remaining"
 msgstr "crwdns6714:0crwdne6714:0"
 
