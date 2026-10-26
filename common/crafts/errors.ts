@@ -25,6 +25,8 @@ export const MAX_DISPLAY_NAME_LENGTH = 40;
 export const MAX_FILTER_NAME_LENGTH = 80;
 export const MAX_FILTER_JSON_LENGTH = 8 * 1024;
 export const MAX_SHARED_FILTER_IDS = 200;
+export const MAX_API_KEY_NAME_LENGTH = 40;
+export const MAX_API_KEYS_PER_ACCOUNT = 10;
 /** `attachDiscordWatchDisplay`'s `template` content; only length is validated, not token grammar. */
 export const MAX_DISPLAY_TEMPLATE_LENGTH = 2000;
 /** `discord_notify_target`'s `added`/`finished`/`removedTemplate` columns (single-line messages). */
@@ -187,6 +189,18 @@ export const CraftError = {
     INVALID_FUNDING_STATUS: 'INVALID_FUNDING_STATUS',
     FUNDING_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT: 'FUNDING_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT',
     DISCORD_FUNDING_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT: 'DISCORD_FUNDING_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT',
+
+    // API keys
+    /** `createApiKey` — the name is empty or longer than `MAX_API_KEY_NAME_LENGTH`. */
+    INVALID_API_KEY_NAME: 'INVALID_API_KEY_NAME',
+    /** `createApiKey` — the account already holds `MAX_API_KEYS_PER_ACCOUNT` keys. */
+    TOO_MANY_API_KEYS: 'TOO_MANY_API_KEYS',
+    /** `createApiKey` — no seeded entropy is available right now; `brico-bot` refills the pool periodically. */
+    ENTROPY_UNAVAILABLE: 'ENTROPY_UNAVAILABLE',
+    /** `seedApiKeyEntropy` — a chunk isn't the expected length of lowercase hex. */
+    INVALID_API_KEY_ENTROPY: 'INVALID_API_KEY_ENTROPY',
+    /** `deleteApiKey` — no such key, or it belongs to another account. */
+    UNKNOWN_API_KEY: 'UNKNOWN_API_KEY',
 } as const;
 
 export type CraftErrorCode = (typeof CraftError)[keyof typeof CraftError];

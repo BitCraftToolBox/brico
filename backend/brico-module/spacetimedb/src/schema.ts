@@ -1,6 +1,7 @@
 import type {InferSchema, ReducerCtx, ViewCtx} from 'spacetimedb/server';
 import {schema} from 'spacetimedb/server';
 import {account, service_principal} from './tables/accounts';
+import {api_key, api_key_entropy} from './tables/apiKeys';
 import {bounty_rule, craft_bounty_assignment, craft_bounty_override, craft_private_bounty_assignment} from './tables/bounties';
 import {craft_filter_watch, saved_craft_filter, shared_filter} from './tables/crafts';
 import {discord_funding_notify_target, discord_guild_install, discord_notify_sink, discord_notify_target, discord_watch_display} from './tables/discord';
@@ -35,6 +36,8 @@ const spacetimedb = schema({
     linked_integration,
     integration_link_request,
     service_principal,
+    api_key,
+    api_key_entropy,
     saved_craft_filter,
     craft_filter_watch,
     shared_filter,
@@ -76,3 +79,5 @@ export default spacetimedb;
 
 export type Ctx = ReducerCtx<InferSchema<typeof spacetimedb>>;
 export type VCtx = ViewCtx<InferSchema<typeof spacetimedb>>;
+/** Read-only table access, as a view sees it; a transaction's `db` is assignable to it. */
+export type ReadDb = VCtx['db'];

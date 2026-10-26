@@ -21,6 +21,7 @@ import {
     TbOutlineClipboardCheck as IconClipboardCheck,
     TbOutlineCopy as IconCopy,
     TbOutlineDownload as IconDownload,
+    TbOutlineLink as IconLink,
     TbOutlineShare as IconShare,
     TbOutlineTrash as IconRemove,
     TbOutlineUpload as IconUpload,
@@ -117,6 +118,7 @@ function ExportRowView(props: {row: ExportRow; canShare: boolean; onShare: (filt
     const [shareError, setShareError] = createSignal<string | null>(null);
     const [shareBusy, setShareBusy] = createSignal(false);
     const [copyCode, codeCopied] = useCopy(() => shareCode() ?? "");
+    const [copyLink, linkCopied] = useCopy(() => shareCode() ? `${window.origin}/tools/crafts/browse?share=${shareCode()}` : "");
     const [confirmOpen, setConfirmOpen] = createSignal(false);
 
     const onShareOpenChange = (open: boolean) => {
@@ -151,6 +153,9 @@ function ExportRowView(props: {row: ExportRow; canShare: boolean; onShare: (filt
                                         <code class="rounded bg-muted px-2 py-1 font-mono text-sm tracking-widest">{code()}</code>
                                         <Button variant="ghost" size="icon" class="size-8" aria-label={_(msg`Copy share code`)} onClick={copyCode}>
                                             <Show when={codeCopied()} fallback={<IconCopy class="size-4"/>}><IconClipboardCheck class="size-4"/></Show>
+                                        </Button>
+                                        <Button variant="ghost" size="icon" class="size-8" aria-label={_(msg`Copy share link`)} onClick={copyLink}>
+                                            <Show when={linkCopied()} fallback={<IconLink class="size-4"/>}><IconClipboardCheck class="size-4"/></Show>
                                         </Button>
                                     </div>
                                 )}

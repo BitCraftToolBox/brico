@@ -80,6 +80,10 @@ msgstr "No such craft. The relay keeps a craft for 24 hours after it leaves the 
 msgid "Converted from"
 msgstr "Converted from"
 
+#: src/routes/bounty-dashboard.tsx
+msgid "This dashboard key is invalid or has been revoked."
+msgstr "This dashboard key is invalid or has been revoked."
+
 #: src/lib/relations.ts
 msgid "{skillName} Task: {itemName}"
 msgstr "{skillName} Task: {itemName}"
@@ -271,13 +275,17 @@ msgstr "Placeable Graph"
 msgid "Terraform Elevation Difference {0}"
 msgstr "Terraform Elevation Difference {0}"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Est. payout total"
 msgstr "Est. payout total"
 
 #: src/components/data-table/live-table.tsx
 msgid "No results."
 msgstr "No results."
+
+#: src/routes/bounty-dashboard.tsx
+msgid "Couldn't refresh the dashboard."
+msgstr "Couldn't refresh the dashboard."
 
 #. placeholder {0}: props.row.name
 #: src/components/crafts/SavedFiltersDialog.tsx
@@ -389,6 +397,10 @@ msgstr "<0>effort per</0><1/>"
 msgid "Upload file"
 msgstr "Upload file"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "You can have at most {MAX_API_KEYS_PER_ACCOUNT} API keys. Delete one first."
+msgstr "You can have at most {MAX_API_KEYS_PER_ACCOUNT} API keys. Delete one first."
+
 #. placeholder {0}: rateText()
 #: src/components/crafts/PayoutRateButton.tsx
 msgid "{0} <0/> / effort"
@@ -495,8 +507,8 @@ msgstr "Single Contribution Only"
 msgid "Move down"
 msgstr "Move down"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "private"
 msgstr "private"
 
@@ -610,6 +622,10 @@ msgstr "A watch display can show at most {MAX_DISPLAY_ROWS_HARD_CAP} crafts."
 msgid "Level {level} {toolName}"
 msgstr "Level {level} {toolName}"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That API key no longer exists."
+msgstr "That API key no longer exists."
+
 #: src/lib/table-defs/item-list-table.tsx
 msgid "Possible Items"
 msgstr "Possible Items"
@@ -617,6 +633,10 @@ msgstr "Possible Items"
 #: src/components/app-sidebar.tsx
 msgid "Grid view"
 msgstr "Grid view"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "API keys"
+msgstr "API keys"
 
 #: src/routes/account/loyalty.tsx
 msgid "Delete loyalty reward"
@@ -666,6 +686,7 @@ msgstr "Note (optional)"
 
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Entitled"
 msgstr "Entitled"
 
@@ -705,6 +726,10 @@ msgstr "Craft Browser"
 msgid "Task: {itemName}"
 msgstr "Task: {itemName}"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "No API keys."
+msgstr "No API keys."
+
 #: src/routes/database/resource/[id].tsx
 msgid "Spawn Priority"
 msgstr "Spawn Priority"
@@ -728,7 +753,7 @@ msgstr "Unlink"
 msgid "{0, plural, one {# unread} other {# unread}}"
 msgstr "{0, plural, one {# unread} other {# unread}}"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Est. payout remaining"
 msgstr "Est. payout remaining"
 
@@ -813,6 +838,10 @@ msgstr "{0} currencies"
 #: src/routes/database/resource/[id].tsx
 msgid "Flattenable"
 msgstr "Flattenable"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "A dashboard key is meant to be shared. Anyone holding it can see your payees' names, what they've earned and been paid, and your bounties, including private ones."
+msgstr "A dashboard key is meant to be shared. Anyone holding it can see your payees' names, what they've earned and been paid, and your bounties, including private ones."
 
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/index.tsx
@@ -1162,6 +1191,10 @@ msgstr "Bounties could not be funded"
 msgid "Strength Multiplier"
 msgstr "Strength Multiplier"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "New key name"
+msgstr "New key name"
+
 #: src/routes/database/combat/[id].tsx
 msgid "Self Buffs"
 msgstr "Self Buffs"
@@ -1336,6 +1369,10 @@ msgstr "Interactions"
 msgid "Chance to spawn within {0}–{1} tiles on resource depletion."
 msgstr "Chance to spawn within {0}–{1} tiles on resource depletion."
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Copy your new key now. It won't be shown again."
+msgstr "Copy your new key now. It won't be shown again."
+
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
 msgstr "Browse raw data on 🥣 cereal"
@@ -1349,8 +1386,8 @@ msgstr "Output Items"
 msgid "Verified. Linking…"
 msgstr "Verified. Linking…"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Bounty"
 msgstr "Bounty"
 
@@ -1445,6 +1482,7 @@ msgstr "Who currently qualifies for a bonus from the rules above, and how much."
 msgid "Total Cargo Size"
 msgstr "Total Cargo Size"
 
+#: src/components/account/ApiKeysCard.tsx
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/notifications.tsx
@@ -1460,7 +1498,7 @@ msgstr "Not valid JSON."
 msgid "Combat"
 msgstr "Combat"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Progress"
 msgstr "Progress"
 
@@ -1627,6 +1665,10 @@ msgstr "That funding alert setting belongs to a different account."
 msgid "Automatic"
 msgstr "Automatic"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Done"
+msgstr "Done"
+
 #: src/lib/crafts/error-vocab.ts
 msgid "That link code is unknown or has expired."
 msgstr "That link code is unknown or has expired."
@@ -1685,6 +1727,10 @@ msgstr "is"
 #: src/lib/sidebar-items.ts
 msgid "Terraforming"
 msgstr "Terraforming"
+
+#: src/routes/bounty-dashboard.tsx
+msgid "This link has no dashboard key."
+msgstr "This link has no dashboard key."
 
 #: src/routes/settings.tsx
 msgid "Collapse sidebar by default"
@@ -2125,6 +2171,10 @@ msgctxt "less or equal"
 msgid "{field} {cmpEl} {value}"
 msgstr "{field} {cmpEl} {value}"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Anyone with this dashboard link can see your payees and bounties, including private ones."
+msgstr "Anyone with this dashboard link can see your payees and bounties, including private ones."
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "is any of"
 msgstr "is any of"
@@ -2136,6 +2186,10 @@ msgstr "Read only: can receive, not fund"
 #: src/routes/database/ability/[id].tsx
 msgid "Consumption Chance"
 msgstr "Consumption Chance"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "Copy"
+msgstr "Copy"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "That is not a craft id."
@@ -2163,10 +2217,10 @@ msgstr "{quantifier} {field} {cmpEl} {value}"
 msgid "Loading translations…"
 msgstr "Loading translations…"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/components/crafts/QuickFilterGrid.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Claim"
 msgstr "Claim"
 
@@ -2435,6 +2489,10 @@ msgstr "Permanently Gain {0} +{1}"
 msgid "That bounty rule belongs to a different account."
 msgstr "That bounty rule belongs to a different account."
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Read Payouts"
+msgstr "Read Payouts"
+
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
 msgstr "Choose the languages used for Brico's own text and for in-game text."
@@ -2455,9 +2513,9 @@ msgstr "Reward players who help you finish crafts."
 msgid "Asc Multi"
 msgstr "Asc Multi"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/account/my-bounties.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "ready"
 msgstr "ready"
 
@@ -2550,6 +2608,10 @@ msgstr "Brico will stop paying out to and funding from this wallet. This does no
 #: src/lib/recipe-stats.tsx
 msgid "Claim Tier:"
 msgstr "Claim Tier:"
+
+#: src/routes/bounty-dashboard.tsx
+msgid "Bounty dashboard"
+msgstr "Bounty dashboard"
 
 #: src/lib/table-defs/skills-table.tsx
 msgid "Category"
@@ -2826,8 +2888,8 @@ msgstr "No Outputs"
 msgid "Match any"
 msgstr "Match any"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Private bounty"
 msgstr "Private bounty"
 
@@ -2857,9 +2919,9 @@ msgstr "The funding wallet doesn't have enough funds."
 msgid "Latest available <0>(check preview <1/>)</0>"
 msgstr "Latest available <0>(check preview <1/>)</0>"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Owner"
 msgstr "Owner"
 
@@ -2909,6 +2971,10 @@ msgstr "Inventory stack: {0}"
 #: src/routes/account/my-bounties.tsx
 msgid "Assigned"
 msgstr "Assigned"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Couldn't generate a key right now — try again in a minute."
+msgstr "Couldn't generate a key right now — try again in a minute."
 
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
@@ -2974,6 +3040,11 @@ msgstr "XP to mint Hex Coin"
 msgid "Evade Range"
 msgstr "Evade Range"
 
+#. placeholder {0}: crafts().length
+#: src/routes/bounty-dashboard.tsx
+msgid "{0, plural, one {# craft with a bounty} other {# crafts with a bounty}}"
+msgstr "{0, plural, one {# craft with a bounty} other {# crafts with a bounty}}"
+
 #: src/components/app-sidebar.tsx
 msgid "Showing all items"
 msgstr "Showing all items"
@@ -2990,8 +3061,8 @@ msgstr "Title"
 msgid "Stamina Use Multiplier"
 msgstr "Stamina Use Multiplier"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Last active"
 msgstr "Last active"
 
@@ -3196,18 +3267,22 @@ msgstr "<empty>"
 msgid "Search items, buildings, creatures, recipes..."
 msgstr "Search items, buildings, creatures, recipes..."
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Create key"
+msgstr "Create key"
+
 #: src/lib/table-defs/biome-table.tsx
 #: src/routes/database/biome/[id].tsx
 msgid "Hazard"
 msgstr "Hazard"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/table-utils/column-builders.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Tier"
 msgstr "Tier"
 
@@ -3284,6 +3359,7 @@ msgstr "Time:"
 msgid "Unlock achievement <0/>"
 msgstr "Unlock achievement <0/>"
 
+#: src/components/account/ApiKeysCard.tsx
 #: src/components/account/SteloWalletsCard.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
@@ -3356,6 +3432,10 @@ msgstr "That account can't be linked as a wallet: it isn't on a supported ledger
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Total Item Size"
 msgstr "Total Item Size"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "e.g. Spreadsheet"
+msgstr "e.g. Spreadsheet"
 
 #: src/routes/settings.tsx
 #: src/routes/tools/crafts/browse.tsx
@@ -3488,6 +3568,7 @@ msgstr "Building"
 msgid "Log in for additional options such as Discord notifications."
 msgstr "Log in for additional options such as Discord notifications."
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/equipment-table.tsx
@@ -3500,7 +3581,6 @@ msgstr "Log in for additional options such as Discord notifications."
 #: src/routes/database/progression/index.tsx
 #: src/routes/database/traveler-task/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Skill"
 msgstr "Skill"
 
@@ -3573,12 +3653,13 @@ msgstr "Traveler"
 msgid "Run <0>/link</0> in your server to connect your Brico.app account."
 msgstr "Run <0>/link</0> in your server to connect your Brico.app account."
 
+#: src/components/account/ApiKeysCard.tsx
 #: src/components/shared/DetailPageLayout.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
 msgstr "Copied!"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Hidden currency"
 msgstr "Hidden currency"
 
@@ -3657,6 +3738,7 @@ msgstr "{verbPhrase} {targetName}"
 #: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 #: src/routes/settings.tsx
 msgid "Loading…"
 msgstr "Loading…"
@@ -3694,6 +3776,7 @@ msgstr "Attack Level"
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Currency"
 msgstr "Currency"
 
@@ -3795,9 +3878,14 @@ msgstr "Copy the account address (starts with #) and paste it here."
 msgid "Move up"
 msgstr "Move up"
 
+#: src/routes/bounty-dashboard.tsx
+msgid "Active bounties"
+msgstr "Active bounties"
+
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 #: src/routes/database/terraforming/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Effort"
@@ -3877,6 +3965,10 @@ msgstr "Chance to spawn within {minRad}–{maxRad} tiles on last hit of resource
 msgid "Search claims…"
 msgstr "Search claims…"
 
+#: src/components/crafts/SavedFiltersDialog.tsx
+msgid "Copy share link"
+msgstr "Copy share link"
+
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Min Health"
@@ -3941,6 +4033,10 @@ msgstr "Stage Requirements"
 #: src/routes/settings.tsx
 msgid "Rish Emulation"
 msgstr "Rish Emulation"
+
+#: src/components/account/ApiKeysCard.tsx
+msgid "Copy dashboard link"
+msgstr "Copy dashboard link"
 
 #: src/routes/account/settings.tsx
 msgid "Enabled"
@@ -4080,6 +4176,10 @@ msgstr "You can't revoke your own access."
 msgid "at most"
 msgstr "at most"
 
+#: src/routes/bounty-dashboard.tsx
+msgid "No open crafts have a bounty."
+msgstr "No open crafts have a bounty."
+
 #: src/components/app-sidebar.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/link.tsx
@@ -4170,10 +4270,12 @@ msgstr "{quantifier} {field} {cmpEl} {value}"
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Difference"
 msgstr "Difference"
 
 #: src/routes/account/payees.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Payee"
 msgstr "Payee"
 
@@ -4255,6 +4357,10 @@ msgstr "That link code has already been claimed."
 #: src/routes/database/resource/[id].tsx
 msgid "Timed Growth"
 msgstr "Timed Growth"
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Enter a key name of at most {MAX_API_KEY_NAME_LENGTH} characters."
+msgstr "Enter a key name of at most {MAX_API_KEY_NAME_LENGTH} characters."
 
 #. placeholder {0}: results()!.totalMatches
 #: src/routes/search.tsx
@@ -4365,13 +4471,17 @@ msgstr "Compendium Entry"
 msgid "You can link it again later."
 msgstr "You can link it again later."
 
+#: src/routes/bounty-dashboard.tsx
+msgid "No contributors yet."
+msgstr "No contributors yet."
+
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Share link"
 msgstr "Share link"
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Region"
 msgstr "Region"
 
@@ -4401,6 +4511,10 @@ msgstr "Held"
 msgid "Health"
 msgstr "Health"
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Public Dashboard"
+msgstr "Public Dashboard"
+
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"
 msgstr "Buff Type"
@@ -4426,9 +4540,9 @@ msgstr "Details"
 msgid "Get notified about matches with <0>/notify link</0> then <1>/crafts notify-setup</1>."
 msgstr "Get notified about matches with <0>/notify link</0> then <1>/crafts notify-setup</1>."
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/account/my-bounties.tsx
-#: src/routes/tools/crafts/browse.tsx
 msgid "Craft"
 msgstr "Craft"
 
@@ -4499,6 +4613,7 @@ msgstr "Couldn't add Brico"
 
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/bounty-dashboard.tsx
 msgid "Paid"
 msgstr "Paid"
 
@@ -4960,7 +5075,7 @@ msgctxt "all"
 msgid "{field} {cmpEl} {value}"
 msgstr "{field} {cmpEl} {value}"
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "just now"
 msgstr "just now"
 
@@ -5072,6 +5187,10 @@ msgstr "Color mode"
 msgid "Paste group from clipboard"
 msgstr "Paste group from clipboard"
 
+#: src/routes/bounty-dashboard.tsx
+msgid "Showing the last data received."
+msgstr "Showing the last data received."
+
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Affected By Wind"
 msgstr "Affected By Wind"
@@ -5146,6 +5265,7 @@ msgstr "That isn't a known sort direction."
 msgid "Select claim…"
 msgstr "Select claim…"
 
+#: src/routes/bounty-dashboard.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Contributors"
 msgstr "Contributors"
@@ -5199,6 +5319,10 @@ msgstr "Found an account. Confirm it below to link it."
 msgid "How many rows are shown per page when a table first loads."
 msgstr "How many rows are shown per page when a table first loads."
 
+#: src/components/account/ApiKeysCard.tsx
+msgid "Let scripts read your data over HTTP. Send a key as an Authorization: Bearer header."
+msgstr "Let scripts read your data over HTTP. Send a key as an Authorization: Bearer header."
+
 #: src/lib/crafts/error-vocab.ts
 msgid "A loyalty reward's multiplier must be 1 or higher."
 msgstr "A loyalty reward's multiplier must be 1 or higher."
@@ -5242,8 +5366,8 @@ msgstr "Offered by"
 msgid "That Discord channel isn't linked for notifications anymore."
 msgstr "That Discord channel isn't linked for notifications anymore."
 
+#: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
-#: src/routes/tools/crafts/browse.tsx
 msgid "Total effort"
 msgstr "Total effort"
 
@@ -5276,7 +5400,7 @@ msgstr "Advanced Filters"
 msgid "Guaranteed spawn on last hit of resource extraction."
 msgstr "Guaranteed spawn on last hit of resource extraction."
 
-#: src/routes/tools/crafts/browse.tsx
+#: src/components/crafts/craft-columns.tsx
 msgid "Remaining"
 msgstr "Remaining"
 

@@ -6,25 +6,25 @@
 /* eslint-disable */
 /* tslint:disable */
 import {
-    convertToAccessorMap as __convertToAccessorMap,
-    DbConnectionBuilder as __DbConnectionBuilder,
-    type DbConnectionConfig as __DbConnectionConfig,
-    DbConnectionImpl as __DbConnectionImpl,
-    type ErrorContextInterface as __ErrorContextInterface,
-    type EventContextInterface as __EventContextInterface,
-    makeQueryBuilder as __makeQueryBuilder,
-    procedures as __procedures,
-    procedureSchema as __procedureSchema,
-    type QueryBuilder as __QueryBuilder,
-    type ReducerEventContextInterface as __ReducerEventContextInterface,
-    reducers as __reducers,
-    reducerSchema as __reducerSchema,
-    type RemoteModule as __RemoteModule,
-    schema as __schema,
-    SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
-    type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
-    type SubscriptionHandleImpl as __SubscriptionHandleImpl,
-    table as __table,
+  convertToAccessorMap as __convertToAccessorMap,
+  DbConnectionBuilder as __DbConnectionBuilder,
+  type DbConnectionConfig as __DbConnectionConfig,
+  DbConnectionImpl as __DbConnectionImpl,
+  type ErrorContextInterface as __ErrorContextInterface,
+  type EventContextInterface as __EventContextInterface,
+  makeQueryBuilder as __makeQueryBuilder,
+  procedures as __procedures,
+  procedureSchema as __procedureSchema,
+  type QueryBuilder as __QueryBuilder,
+  type ReducerEventContextInterface as __ReducerEventContextInterface,
+  reducers as __reducers,
+  reducerSchema as __reducerSchema,
+  type RemoteModule as __RemoteModule,
+  schema as __schema,
+  SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
+  type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
+  type SubscriptionHandleImpl as __SubscriptionHandleImpl,
+  table as __table,
 } from "spacetimedb";
 
 // Import all table schema definitions
@@ -74,7 +74,9 @@ import CloseCraftEscrowReducer from "./close_craft_escrow_reducer";
 import ConfirmIntegrationLinkCandidateReducer from "./confirm_integration_link_candidate_reducer";
 
 // Import all procedure arg schemas
+import * as CreateApiKeyProcedure from "./create_api_key_procedure";
 import * as CreateSharedFiltersProcedure from "./create_shared_filters_procedure";
+import DeleteApiKeyReducer from "./delete_api_key_reducer";
 import DeleteBountyRuleReducer from "./delete_bounty_rule_reducer";
 import DeleteCraftBountyOverrideReducer from "./delete_craft_bounty_override_reducer";
 import DeleteLoyaltyBonusTotalReducer from "./delete_loyalty_bonus_total_reducer";
@@ -97,6 +99,7 @@ import MarkAllNotificationsReadReducer from "./mark_all_notifications_read_reduc
 import MarkNotificationReadReducer from "./mark_notification_read_reducer";
 import MigrateNotificationsToV2Reducer from "./migrate_notifications_to_v_2_reducer";
 import MyAccountRow from "./my_account_table";
+import MyApiKeyRow from "./my_api_key_table";
 import MyBountyEscrowWalletRow from "./my_bounty_escrow_wallet_table";
 import MyBountyPayoutRecordAsPayerRow from "./my_bounty_payout_record_as_payer_table";
 import MyBountyPayoutRecordLogAsContributorRow from "./my_bounty_payout_record_log_as_contributor_table";
@@ -139,6 +142,7 @@ import RegisterSteloWalletReducer from "./register_stelo_wallet_reducer";
 import ReleaseEscrowOverlapReducer from "./release_escrow_overlap_reducer";
 import ReorderBountyRulesReducer from "./reorder_bounty_rules_reducer";
 import RevokeServicePrincipalReducer from "./revoke_service_principal_reducer";
+import SeedApiKeyEntropyReducer from "./seed_api_key_entropy_reducer";
 import SetCraftBountyFundingReducer from "./set_craft_bounty_funding_reducer";
 import SetDiscordWatchDisplayMessageReducer from "./set_discord_watch_display_message_reducer";
 import SetDisplayNameReducer from "./set_display_name_reducer";
@@ -402,6 +406,13 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, MyAccountRow),
+  myApiKey: __table({
+    name: 'my_api_key',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, MyApiKeyRow),
   myBountyEscrowWallet: __table({
     name: 'my_bounty_escrow_wallet',
     indexes: [
@@ -615,6 +626,7 @@ const reducersSchema = __reducers(
   __reducerSchema("clear_craft_bounty_funding", ClearCraftBountyFundingReducer),
   __reducerSchema("close_craft_escrow", CloseCraftEscrowReducer),
   __reducerSchema("confirm_integration_link_candidate", ConfirmIntegrationLinkCandidateReducer),
+  __reducerSchema("delete_api_key", DeleteApiKeyReducer),
   __reducerSchema("delete_bounty_rule", DeleteBountyRuleReducer),
   __reducerSchema("delete_craft_bounty_override", DeleteCraftBountyOverrideReducer),
   __reducerSchema("delete_loyalty_bonus_total", DeleteLoyaltyBonusTotalReducer),
@@ -649,6 +661,7 @@ const reducersSchema = __reducers(
   __reducerSchema("release_escrow_overlap", ReleaseEscrowOverlapReducer),
   __reducerSchema("reorder_bounty_rules", ReorderBountyRulesReducer),
   __reducerSchema("revoke_service_principal", RevokeServicePrincipalReducer),
+  __reducerSchema("seed_api_key_entropy", SeedApiKeyEntropyReducer),
   __reducerSchema("set_craft_bounty_funding", SetCraftBountyFundingReducer),
   __reducerSchema("set_discord_watch_display_message", SetDiscordWatchDisplayMessageReducer),
   __reducerSchema("set_display_name", SetDisplayNameReducer),
@@ -677,6 +690,7 @@ const reducersSchema = __reducers(
 
 /** The schema information for all procedures in this module. This is defined the same way as the procedures would have been defined in the server. */
 const proceduresSchema = __procedures(
+  __procedureSchema("create_api_key", CreateApiKeyProcedure.params, CreateApiKeyProcedure.returnType),
   __procedureSchema("create_shared_filters", CreateSharedFiltersProcedure.params, CreateSharedFiltersProcedure.returnType),
   __procedureSchema("read_shared_filters", ReadSharedFiltersProcedure.params, ReadSharedFiltersProcedure.returnType),
 );

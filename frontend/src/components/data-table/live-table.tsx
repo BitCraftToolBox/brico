@@ -231,7 +231,7 @@ export function LiveTable<TData>(props: LiveTableProps<TData>) {
                                 inside a memo keeps the `<TableRow>` element itself stable; cells
                                 are still rebuilt on every tick, which is fine — no cell here holds
                                 interactive state, and the column defs read `row.original`
-                                non-reactively on purpose (see the comment above `COLUMNS`), relying
+                                non-reactively on purpose (see the comment above `craftColumns`), relying
                                 on that rebuild to pick up fresh values. `Index` is not an
                                 alternative for the cells, since a cell receives its context as a
                                 one-time spread and would never see the new row. */}

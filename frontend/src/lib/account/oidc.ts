@@ -93,6 +93,11 @@ export function onSilentRenewError(callback: (error: Error) => void): () => void
     return getManager().events.addSilentRenewError(callback);
 }
 
+/** Forgets the local session. No SpacetimeAuth-side (RP-initiated) logout. */
+export function clearLocalSession(): Promise<void> {
+    return getManager().removeUser();
+}
+
 /** Forgets the local session and redirects to SpacetimeAuth signout. */
 export async function logout(): Promise<void> {
     await getManager().removeUser();

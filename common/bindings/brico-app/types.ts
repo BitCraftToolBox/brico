@@ -3,12 +3,7 @@
 
 /* eslint-disable */
 /* tslint:disable */
-import {
-  TypeBuilder as __TypeBuilder,
-  t as __t,
-  type AlgebraicTypeType as __AlgebraicTypeType,
-  type Infer as __Infer,
-} from "spacetimedb";
+import {type Infer as __Infer, t as __t,} from "spacetimedb";
 
 export const Account = __t.object("Account", {
   identity: __t.identity(),
@@ -106,6 +101,32 @@ export type AllSteloWallet = __Infer<typeof AllSteloWallet>;
 
 export const AllSteloWalletStatus = __t.object("AllSteloWalletStatus", {});
 export type AllSteloWalletStatus = __Infer<typeof AllSteloWalletStatus>;
+
+export const ApiKey = __t.object("ApiKey", {
+  id: __t.u64(),
+  accountIdentity: __t.identity(),
+  name: __t.string(),
+  tokenHash: __t.string(),
+  createdAt: __t.timestamp(),
+  readPayouts: __t.bool(),
+  publicDashboard: __t.bool(),
+});
+export type ApiKey = __Infer<typeof ApiKey>;
+
+export const ApiKeyEntropy = __t.object("ApiKeyEntropy", {
+  id: __t.u64(),
+  bytes: __t.string(),
+});
+export type ApiKeyEntropy = __Infer<typeof ApiKeyEntropy>;
+
+export const ApiKeyRow = __t.object("ApiKeyRow", {
+  id: __t.u64(),
+  name: __t.string(),
+  createdAt: __t.timestamp(),
+  readPayouts: __t.bool(),
+  publicDashboard: __t.bool(),
+});
+export type ApiKeyRow = __Infer<typeof ApiKeyRow>;
 
 export const AssignmentBaseline = __t.object("AssignmentBaseline", {
   playerId: __t.u64(),
@@ -371,6 +392,12 @@ export const CraftPrivateBountyAssignment = __t.object("CraftPrivateBountyAssign
 });
 export type CraftPrivateBountyAssignment = __Infer<typeof CraftPrivateBountyAssignment>;
 
+export const CreateApiKeyResult = __t.object("CreateApiKeyResult", {
+  id: __t.u64(),
+  token: __t.string(),
+});
+export type CreateApiKeyResult = __Infer<typeof CreateApiKeyResult>;
+
 export const CreateSharedFiltersResult = __t.object("CreateSharedFiltersResult", {
   code: __t.string(),
 });
@@ -619,6 +646,9 @@ export type LoyaltyRuleSpec = __Infer<typeof LoyaltyRuleSpec>;
 
 export const MyAccount = __t.object("MyAccount", {});
 export type MyAccount = __Infer<typeof MyAccount>;
+
+export const MyApiKey = __t.object("MyApiKey", {});
+export type MyApiKey = __Infer<typeof MyApiKey>;
 
 export const MyBountyEscrowWallet = __t.object("MyBountyEscrowWallet", {});
 export type MyBountyEscrowWallet = __Infer<typeof MyBountyEscrowWallet>;

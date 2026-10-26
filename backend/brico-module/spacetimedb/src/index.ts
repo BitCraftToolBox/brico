@@ -11,6 +11,8 @@
  *   - escrow:        Stelo escrow holds, transfer intents, per-wallet entitlement pools and wallets
  *   - discord:       Discord bot watch displays, notification sinks and guild installs
  *   - notify:        per-(filter, sink) notification triggers
+ *   - apiKeys:       per-account API tokens for the HTTP API
+ *   - http:          token-authenticated HTTP routes
  */
 
 export {default} from './schema';
@@ -24,6 +26,7 @@ export * from './reducers/payouts';
 export * from './reducers/escrow';
 export * from './reducers/discord';
 export * from './reducers/notify';
+export * from './reducers/apiKeys';
 
 export * from './views/accounts';
 export * from './views/integrations';
@@ -34,3 +37,8 @@ export * from './views/payouts';
 export * from './views/escrow';
 export * from './views/discord';
 export * from './views/notify';
+export * from './views/apiKeys';
+
+export * from './http/payouts';
+export * from './http/dashboard';
+export * from './http/router';

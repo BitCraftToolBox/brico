@@ -35,8 +35,8 @@ export interface AccountContextValue {
     loginMethod: () => string | null;
     /** Starts the SpacetimeAuth login flow. Navigates away. */
     login: () => Promise<void>;
-    /** Ends the local session and drops the `brico-app` connection's resource claim. */
-    logout: () => Promise<void>;
+    /** Drops the `brico-app` connection's resource claim. Clears auth from local session. If local is false, also redirects to SpacetimeAuth logout. */
+    logout: (local: boolean) => Promise<void>;
     /** Renames the caller's own account. `null`/empty clears the display name. No-op while logged out. */
     setDisplayName: (name: string | null) => Promise<void>;
     /**
@@ -127,12 +127,12 @@ export function AccountProvider(props: {children: JSX.Element}) {
         }));
         // A silent renewal that fails in the background means the refresh token itself is dead, not
         // just the short-lived access token — unrecoverable without an interactive login, so treat
-        // it as a real logout rather than let `connection.ts` redial a permanently-expired
+        // it as a local logout rather than let `connection.ts` redial a permanently-expired
         // credential every `reconnectDelayMs` forever.
-        onCleanup(oidc.onSilentRenewError(() => void logout()));
+        onCleanup(oidc.onSilentRenewError(() => void logout(true)));
     });
 
-    async function logout() {
+    async function logout(local: boolean) {
         unsubscribe();
         // `unsubscribe`'s resource release alone won't bring the connection's ref count to zero —
         // this provider's own `useConnection` above holds a base claim for its entire (app-lifetime)
@@ -142,7 +142,10 @@ export function AccountProvider(props: {children: JSX.Element}) {
         conn.close();
         conn.clearToken();
         setLoginMethod(null);
-        await oidc.logout();
+        await oidc.clearLocalSession();
+        if (!local) {
+            await oidc.logout();
+        }
     }
 
     function setDisplayName(name: string | null) {

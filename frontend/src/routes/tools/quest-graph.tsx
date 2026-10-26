@@ -55,7 +55,7 @@ export default function QuestGraphTool() {
                     <Spinner type={SpinnerType.ballTriangle} class="mx-auto"/>
                 </div>
             }>
-                <div class="flex flex-col gap-4 px-4 pb-6 h-full">
+                <div class="flex flex-col gap-4 px-4 pb-6 h-full min-h-[80svh]">
                     <div class="flex justify-center">
                         <h1 class="text-xl font-bold"><Trans>Quest Graph</Trans></h1>
                     </div>

@@ -12,6 +12,7 @@
 import {createAppCache} from "./app/app-cache.ts";
 import {createBountyEngine} from "./app/bounty-sink.ts";
 import {startBricoAppConnection} from "./app/connection.ts";
+import {startEntropySeeder} from "./app/entropy-seeder.ts";
 import {createEscrowCache} from "./app/escrow-cache.ts";
 import {createNotificationSink} from "./app/notification-sink.ts";
 import {createAccountWatchSource} from "./app/watch-source.ts";
@@ -300,6 +301,8 @@ async function main(): Promise<void> {
     const steloTimer = steloManager ? setInterval(() => relay?.mark(), 10_000) : null;
     steloTimer?.unref();
 
+    const entropySeeder = startEntropySeeder(app, log, 60_000);
+
     const heartbeat = config.heartbeatMs > 0
         ? setInterval(() => {
             log.info(`heartbeat prism=${relay.connection.status} bricoApp=${app.connection?.status ?? "disabled"} stelo=${stelo?.connection?.status ?? "disabled"} ${bridge.describe()}`);
@@ -313,6 +316,7 @@ async function main(): Promise<void> {
         log.info("shutting down", {signal, summary: bridge.describe()});
         if (heartbeat) clearInterval(heartbeat);
         if (steloTimer) clearInterval(steloTimer);
+        entropySeeder.stop();
         displayManager?.stop();
         linkHttp.stop();
         relay.stop();

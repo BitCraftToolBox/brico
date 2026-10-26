@@ -1,7 +1,7 @@
 import {ColorModeProvider} from "@kobalte/core"
 import {I18nProvider} from "@lingui/solid";
 import {MetaProvider} from "@solidjs/meta";
-import {Router} from "@solidjs/router";
+import {Router, useLocation} from "@solidjs/router";
 import {FileRoutes} from "@solidjs/start/router";
 import "@fontsource-variable/inter/wght.css";
 import "./app.css";
@@ -16,6 +16,7 @@ import {LinkedIntegrationsProvider} from "~/lib/account/links";
 import {AccountProvider} from "~/lib/account/state";
 import {useGameDataReady, useLoadingProgress} from "~/lib/bitcraft-data";
 import {isBotUserAgent} from "~/lib/bot-detect";
+import {DASHBOARD_PATH} from "~/lib/crafts/dashboard";
 import {FilterSyncProvider} from "~/lib/crafts/filter-sync";
 import {useWalletCurrencyAutoAdd} from "~/lib/crafts/shown-currencies";
 import {setActiveDataLocale} from "~/lib/data-translation";
@@ -40,6 +41,9 @@ function AppRoot(props: { children: any }) {
     // client-side data fetch kicked off in entry-client, exactly like the pre-SSR app did.
     const allReady = useGameDataReady();
     const loadingProgress = useLoadingProgress();
+    // The public dashboard is a standalone page: no sidebar, which would also expose the rest of the app.
+    const location = useLocation();
+    const standalone = () => location.pathname === DASHBOARD_PATH;
 
     createEffect(() => {
         if (midnightDark()) {
@@ -68,12 +72,17 @@ function AppRoot(props: { children: any }) {
             <ColorModeProvider storageManager={colorStorageManager}>
                 <GlobalSearchProvider isReady={allReady}>
                     <Show when={allReady()} fallback={<AppLoadingScreen {...loadingProgress()}/>}>
-                        <SidebarProvider defaultOpen={!sidebarStartsCollapsed()}>
-                            <Suspense>
-                                {props.children}
-                            </Suspense>
-                            <AppSidebar/>
-                        </SidebarProvider>
+                        <Show
+                            when={!standalone()}
+                            fallback={<Suspense>{props.children}</Suspense>}
+                        >
+                            <SidebarProvider defaultOpen={!sidebarStartsCollapsed()}>
+                                <Suspense>
+                                    {props.children}
+                                </Suspense>
+                                <AppSidebar/>
+                            </SidebarProvider>
+                        </Show>
                     </Show>
                 </GlobalSearchProvider>
             </ColorModeProvider>
