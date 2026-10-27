@@ -69,7 +69,7 @@ function parseWatchFilter(filterId: string, filterJson: string, log: Logger): Fi
  * A filter is watched if it has any non-tombstoned trigger row; its `triggers` are the OR across
  * sinks. `filterJson` is untrusted, so it goes through `parseFilter` and is skipped with a
  * `log.warn` on failure, never thrown. A trigger row with no matching (or mismatched-owner, or
- * tombstoned) filter row is skipped the same way.
+ * tombstoned) filter row is skipped the same way. Each such skip warns once per filter id, not per call.
  *
  * This is a genuine cross-database join: accounts' filters/triggers come off the `brico-app`
  * connection, crafts off prism's, and the same `@brico/crafts/filter` engine decides what each
@@ -83,6 +83,8 @@ export function createAccountWatchSource(app: BricoAppConnection, log: Logger): 
     // Parsed filter per saved-filter id, valid while its `filterJson` is unchanged (`null` = unusable,
     // already warned about). Keeps each `FilterNode`'s identity stable across snapshots.
     const parsedFilters = new Map<string, {json: string; filter: FilterNode | null}>();
+    // Filter ids whose triggers have no usable saved filter, already warned about.
+    const warnedOrphans = new Set<string>();
     return {
         origin: "brico-app all_saved_craft_filter × all_craft_filter_notify_trigger",
         watches() {
@@ -109,9 +111,13 @@ export function createAccountWatchSource(app: BricoAppConnection, log: Logger): 
                 const savedFilter = filtersById.get(filterId);
                 const owner = triggers[0]?.accountIdentity;
                 if (!savedFilter || !owner || !savedFilter.accountIdentity.isEqual(owner)) {
-                    log.warn("skipping watch: no matching saved filter", {filterId});
+                    if (!warnedOrphans.has(filterId)) {
+                        warnedOrphans.add(filterId);
+                        log.warn("skipping watch: no matching saved filter", {filterId});
+                    }
                     continue;
                 }
+                warnedOrphans.delete(filterId);
 
                 let cached = parsedFilters.get(filterId);
                 if (!cached || cached.json !== savedFilter.filterJson) {
@@ -137,6 +143,9 @@ export function createAccountWatchSource(app: BricoAppConnection, log: Logger): 
 
             for (const filterId of parsedFilters.keys()) {
                 if (!triggersByFilterId.has(filterId)) parsedFilters.delete(filterId);
+            }
+            for (const filterId of warnedOrphans) {
+                if (!triggersByFilterId.has(filterId)) warnedOrphans.delete(filterId);
             }
 
             if (specs.length !== lastCount) {
