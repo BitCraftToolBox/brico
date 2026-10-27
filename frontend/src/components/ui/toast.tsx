@@ -169,10 +169,13 @@ function queueToast(options: ShowToastOptions) {
   enqueuePending(options)
 }
 
+/** Dismisses visible toasts (their `release` fires `onDismiss`) and fires `onDismiss` for queued ones that never showed. */
 function dismissAll() {
+  const queued = pendingRequests()
   setPendingRequests([])
   evicting.clear()
   ToastPrimitive.toaster.clear()
+  for (const options of queued) options.onDismiss?.()
 }
 
 /** Matches Tailwind's `sm` breakpoint, which is what flips the toast list between mobile (top-anchored, reversed) and desktop (bottom-anchored) layouts below. */
