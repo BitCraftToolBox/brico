@@ -200,8 +200,8 @@ function bitAuthConfig(httpBaseUrl: string): BitAuthConfig | null {
         clientId,
         clientSecret,
         redirectUri: str("BITAUTH_REDIRECT_URI", `${httpBaseUrl}/auth/bitauth/callback`),
-        // openid profile is sufficient for the sub/preferred_username this app reads.
-        scope: str("BITAUTH_SCOPE", "openid profile"),
+        // `linked_accounts` adds the player's other shared characters; the BitAuth client must allow it.
+        scope: str("BITAUTH_SCOPE", "openid profile linked_accounts"),
     };
 }
 

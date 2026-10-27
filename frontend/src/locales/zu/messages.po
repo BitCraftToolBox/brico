@@ -3958,6 +3958,10 @@ msgstr "crwdns6412:0crwdne6412:0"
 msgid "Log in to finish linking"
 msgstr "crwdns6414:0crwdne6414:0"
 
+#: src/routes/account/profile.tsx
+msgid "All your BitCraft characters will be grouped under this name. Leave it blank if don't want your characters associated together."
+msgstr ""
+
 #: src/routes/account/payouts.tsx
 msgid "Log in to see what you've earned from bounties."
 msgstr "crwdns6416:0crwdne6416:0"

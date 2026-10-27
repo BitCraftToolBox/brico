@@ -259,6 +259,30 @@ async function main(): Promise<void> {
             if (!conn) throw new Error("brico-app connection is not live");
             await timeReducerCall("note_integration_link_external", conn.reducers.noteIntegrationLinkExternal({code, externalId, externalHandle}));
         },
+        accountForLinkCode: code => {
+            const conn = app.connection?.connection;
+            if (!conn) return undefined;
+            for (const row of conn.db.allIntegrationLinkRequest.iter()) {
+                if (row.code === code) return row.accountIdentity;
+            }
+            return undefined;
+        },
+        linkAdditionalBitauthAccounts: async ({accountIdentity, accounts}) => {
+            const conn = app.connection?.connection;
+            if (!conn) throw new Error("brico-app connection is not live");
+            for (const {sub, name} of accounts) {
+                try {
+                    await timeReducerCall("link_integration", conn.reducers.linkIntegration({
+                        accountIdentity,
+                        provider: "bitcraft-ea2",
+                        externalId: sub,
+                        externalHandle: name,
+                    }));
+                } catch (cause) {
+                    log.warn("linking additional BitAuth character failed", {sub, error: cause instanceof Error ? cause.message : String(cause)});
+                }
+            }
+        },
         discordInteractions,
         discordInstall,
         icons: {index: itemIcons, renderer: iconRenderer},
