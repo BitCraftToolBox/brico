@@ -21,6 +21,7 @@ import {Button} from "~/components/ui/button";
 import {DropdownMenuItem} from "~/components/ui/dropdown-menu";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {Rarities, Tiers} from "~/lib/bitcraft-utils";
+import {chatLink, type ChatLinkPrefix} from "~/lib/chat-links";
 import {sourceRow, translateGameText} from "~/lib/data-translation";
 import {BuffLink, KnowledgeLinkById, LinkedList} from "~/lib/game-links";
 import {rarityLabel} from "~/lib/game-strings";
@@ -329,7 +330,7 @@ export function tierColumn<T>(
  */
 export function rowActions<T, V extends string | number>(
     accessor: AccessorProp<T, V> = {accessorKey: "id" as AccessorKey<T, V>},
-    chatLinkPrefix?: string,
+    chatLinkPrefix?: ChatLinkPrefix,
     mapUrlPrefix?: string,
     chatLinkIdAccessor?: AccessorProp<T, V | undefined>,
 ): ColumnDef<T, V> {
@@ -356,7 +357,7 @@ export function rowActions<T, V extends string | number>(
                         <DropdownMenuItem>
                             <Button
                                 class="w-full" variant="ghost"
-                                onclick={() => navigator.clipboard.writeText(`(${chatLinkPrefix}=${chatLinkId})`)}
+                                onclick={() => navigator.clipboard.writeText(chatLink(chatLinkPrefix!, chatLinkId)!)}
                             >
                                 <Trans>Copy Chat Link</Trans> <IconLink/>
                             </Button>

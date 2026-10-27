@@ -6,6 +6,7 @@ import {lootTab} from "~/components/fun/BricoLootBox";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {chatLink} from "~/lib/chat-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
@@ -137,7 +138,7 @@ export default function CargoDetail() {
             rawData={cargo()}
             spacetimeTable={BitCraftTables.CargoDesc.spacetimeName}
             objectId={cargo()?.id}
-            chatLink={`(cargo=${cargo()?.id})`}
+            chatLink={chatLink("cargo", cargo()?.id)}
             tabs={!cargo() ? [] : [
                 craftedFromTab(craftedFrom()),
                 craftsIntoTab(craftsInto()),

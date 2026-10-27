@@ -4,6 +4,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {chatLink} from "~/lib/chat-links";
 import {ItemLink} from "~/lib/game-links";
 import {statLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
@@ -103,7 +104,7 @@ export default function KnowledgeDetail() {
             rawData={knowledge()}
             spacetimeTable={BitCraftTables.SecondaryKnowledgeDesc.spacetimeName}
             objectId={knowledge()?.id}
-            chatLink={scroll() ? `(know=${scroll()!.itemId})` : undefined}
+            chatLink={scroll() ? chatLink("know", scroll()!.itemId) : undefined}
             tabs={[
                 {
                     id: "item", label: msg`Item`, count: item() ? 1 : 0,

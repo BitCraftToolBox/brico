@@ -15,6 +15,7 @@ import type {CellContext, ColumnDef} from "@tanstack/solid-table";
 import {createMemo, Show} from "solid-js";
 import {craftColumns} from "~/components/crafts/craft-columns";
 import {LiveTable} from "~/components/data-table/live-table";
+import {ConnectionStatusIndicator} from "~/components/Nav.tsx";
 import {ConnectionStatusBadge} from "~/components/shared/ConnectionStatusBadge";
 import {Badge} from "~/components/ui/badge";
 import {bountyFactsFrom, type DashboardPayeeRow, payeeRowsFrom, readDashboardKey} from "~/lib/crafts/dashboard";
@@ -23,6 +24,7 @@ import {craftEntriesFrom} from "~/lib/crafts/entries";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
 import {createCraftRelay, createPlayerNames} from "~/lib/crafts/relay";
 import {uiLocale} from "~/lib/i18n";
+import {useSettings} from "~/lib/settings.tsx";
 
 const CRAFT_COLUMNS = craftColumns(false);
 
@@ -76,6 +78,7 @@ const PAYEE_COLUMNS: ColumnDef<DashboardPayeeRow, any>[] = [
 export default function DashboardPage() {
     const {_} = useLingui();
     const location = useLocation();
+    const {devMenusEnabled} = useSettings();
     const key = createMemo(() => readDashboardKey(location.hash));
     const {data, error} = createDashboardFeed(key);
     const relay = createCraftRelay();
@@ -93,6 +96,9 @@ export default function DashboardPage() {
             <div class="flex flex-wrap items-center gap-3">
                 <h1 class="text-3xl font-bold text-foreground"><Trans>Bounty dashboard</Trans></h1>
                 <div class="ml-auto flex flex-row gap-2">
+                    <Show when={devMenusEnabled()}>
+                        <ConnectionStatusIndicator/>
+                    </Show>
                     <ConnectionStatusBadge connections={[relay]}/>
                 </div>
             </div>

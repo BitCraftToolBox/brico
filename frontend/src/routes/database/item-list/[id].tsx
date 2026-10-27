@@ -3,6 +3,7 @@ import {createMemo, Show} from "solid-js";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemListSourceIcon} from "~/components/shared/GameIcon";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {chatLink} from "~/lib/chat-links";
 import {absoluteUrl, ogImageForPage} from "~/lib/og-meta";
 import {getItemListSource, ItemListSource} from "~/lib/relations";
 import {detailHref} from "~/lib/table-utils/column-builders";
@@ -44,16 +45,16 @@ export default function ItemListDetail() {
         return undefined;
     });
 
-    const chatLink = createMemo(() => {
+    const ownerChatLink = createMemo(() => {
         const s = source();
         switch (s.type) {
             case "Item":
-                return `(item=${s.item.id})`;
+                return chatLink("item", s.item.id);
             case "Enemy":
-                return s.enemy ? `(mob=${s.enemy.enemyType})` : undefined;
+                return chatLink("mob", s.enemy?.enemyType);
         }
         return undefined;
-    })
+    });
 
     return (
         <DetailPageLayout
@@ -69,7 +70,7 @@ export default function ItemListDetail() {
             rawData={itemList()}
             spacetimeTable={BitCraftTables.ItemListDesc.spacetimeName}
             objectId={itemList()?.id}
-            chatLink={chatLink()}
+            chatLink={ownerChatLink()}
             tabs={[
                 itemListTab(itemList(), true),
             ]}

@@ -8,6 +8,7 @@ import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayou
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {chatLink} from "~/lib/chat-links";
 import {BuffLinkById, IconLink, IconSpan, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {equipmentSlotLabel, statLabel} from "~/lib/game-strings";
 import {gameText, useLabel} from "~/lib/labels";
@@ -327,7 +328,7 @@ export default function ItemDetail() {
             rawData={item()}
             spacetimeTable={BitCraftTables.ItemDesc.spacetimeName}
             objectId={item()?.id}
-            chatLink={`(item=${item()?.id})`}
+            chatLink={chatLink("item", item()?.id)}
             tabs={!item() ? [] : [
                 craftedFromTab(craftedFrom()),
                 craftsIntoTab(craftsInto()),

@@ -6,6 +6,7 @@ import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/Detai
 import {GameIcon} from "~/components/shared/GameIcon";
 import {BuffTable} from "~/components/shared/RelTablePresets";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {chatLink} from "~/lib/chat-links";
 import {BuffLinkById, ItemStackLink, PlaceableLinkById, SkillLinkById} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {fixFloat, readableSeconds} from "~/lib/utils";
@@ -79,7 +80,7 @@ export default function AbilityDetail() {
             metaKind="ability"
             metaImage={ogImageForAsset(ability()?.iconPath)}
             description={ability()?.description}
-            chatLink={`(ability=${ability()?.id})`}
+            chatLink={chatLink("ability", ability()?.id)}
             details={details()}
             rawData={ability()}
             spacetimeTable={BitCraftTables.AbilityCustomDesc.spacetimeName}

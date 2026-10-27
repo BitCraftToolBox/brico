@@ -7,6 +7,7 @@ import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {StatTable} from "~/components/shared/RelTablePresets";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
+import {chatLink} from "~/lib/chat-links";
 import {IconLink, ItemLink, pageIcon} from "~/lib/game-links";
 import {surfaceTypeLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
@@ -108,7 +109,7 @@ export default function DeployableDetail() {
             rawData={deployable()}
             spacetimeTable={BitCraftTables.DeployableDesc.spacetimeName}
             objectId={deployable()?.id}
-            chatLink={`(coll=${collectible()?.id})`}
+            chatLink={chatLink("coll", collectible()?.id)}
             tabs={[
                 {
                     id: "appearances",

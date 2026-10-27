@@ -126,7 +126,7 @@ const CONNECTION_STATUS_CLASS: Record<OverallConnectionStatus, string> = {
 };
 
 /** Navbar status icon for the app-wide `ConnectionManager` — a tooltip lists what it's holding. */
-function ConnectionStatusIndicator() {
+export function ConnectionStatusIndicator() {
     const {_} = useLingui();
     const {devMenusEnabled, connectionManagerOpen: open, setConnectionManagerOpen: setOpen} = useSettings();
     const connections = useConnectionManager().snapshot;
