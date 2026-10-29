@@ -31,6 +31,7 @@ import {useAccount} from "~/lib/account/state";
 import {createCurrencyPolicies} from "~/lib/crafts/currency-policy";
 import {type ContributorPayerGroup, createContributorEntitlements, createPayoutLogAsContributor, groupContributorRows} from "~/lib/crafts/entitlement-reports";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
+import {ledgerFooters} from "~/lib/crafts/ledger-footer";
 import {currenciesNeedingWallet, filterByCurrency} from "~/lib/crafts/report-math";
 import {useShownCurrencies} from "~/lib/crafts/shown-currencies";
 import {breadcrumb} from "~/lib/game-links";
@@ -95,12 +96,14 @@ function toRows(groups: readonly ContributorPayerGroup[], ownNames: ReadonlyMap<
 type Cell<TValue> = CellContext<PayoutRow, TValue>;
 
 function buildColumns(onHistory: (row: PayoutRow) => void): ColumnDef<PayoutRow, any>[] {
+    const footers = ledgerFooters<PayoutRow>();
     return [
         {
             id: "name",
             meta: {label: msg`Payer`},
             enableHiding: false,
             accessorFn: row => row.name,
+            footer: footers.name,
             cell: (props: Cell<string>) => (
                 <div class="flex items-center gap-1" style={{"padding-left": `${props.row.depth * 1.25}rem`}}>
                     <Show when={props.row.getCanExpand()} fallback={<span class="inline-block size-4"/>}>
@@ -125,6 +128,7 @@ function buildColumns(onHistory: (row: PayoutRow) => void): ColumnDef<PayoutRow,
             id: "currency",
             meta: {label: msg`Currency`},
             accessorFn: row => row.currency,
+            footer: footers.currency,
             cell: (props: Cell<string | null>) => <Show when={props.getValue()}>{currency => <CurrencyLabel currency={currency()}/>}</Show>,
         },
         {
@@ -143,12 +147,14 @@ function buildColumns(onHistory: (row: PayoutRow) => void): ColumnDef<PayoutRow,
             id: "paid",
             meta: {label: msg`Paid`, align: "right"},
             accessorFn: row => row.paidTotal,
+            footer: footers.paid,
             cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toLocaleString(uiLocale())}</span>,
         },
         {
             id: "difference",
             meta: {label: msg`Difference`, align: "right"},
             accessorFn: row => row.earnedTotal - row.paidTotal,
+            footer: footers.difference,
             cell: (props: Cell<bigint>) => {
                 const diff = props.getValue();
                 return <Badge variant={diff > 0n ? "outline" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toLocaleString(uiLocale())}</Badge>;

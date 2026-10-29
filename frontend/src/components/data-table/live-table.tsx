@@ -36,7 +36,7 @@ import {Dynamic} from "solid-js/web";
 import {TableColumnHeader} from "~/components/data-table/table-column-header";
 import {TablePagination} from "~/components/data-table/table-pagination";
 import {TableViewOptions} from "~/components/data-table/table-view-options";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "~/components/ui/table";
+import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "~/components/ui/table";
 import {TextField, TextFieldInput} from "~/components/ui/text-field";
 import {useLabel} from "~/lib/labels";
 import {type TableSessionState, useSettings} from "~/lib/settings";
@@ -257,6 +257,27 @@ export function LiveTable<TData>(props: LiveTableProps<TData>) {
                             </For>
                         </Show>
                     </TableBody>
+                    {/* Rendered only when a visible column defines `footer`; each cell sits under its own
+                        column, so hiding a column hides its footer cell too. */}
+                    <Show when={table.getVisibleLeafColumns().some(column => column.columnDef.footer)}>
+                        <TableFooter>
+                            <For each={table.getFooterGroups()}>
+                                {footerGroup => (
+                                    <TableRow>
+                                        <For each={footerGroup.headers}>
+                                            {header => (
+                                                <TableCell colSpan={header.colSpan} class={header.column.columnDef.meta?.align === "right" ? "text-right" : undefined}>
+                                                    <Show when={!header.isPlaceholder}>
+                                                        <Dynamic component={header.column.columnDef.footer} {...header.getContext()}/>
+                                                    </Show>
+                                                </TableCell>
+                                            )}
+                                        </For>
+                                    </TableRow>
+                                )}
+                            </For>
+                        </TableFooter>
+                    </Show>
                 </Table>
             </div>
             <TablePagination table={table} label={props.paginationLabel}/>

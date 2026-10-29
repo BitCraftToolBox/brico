@@ -790,6 +790,10 @@ msgstr "Deployables"
 msgid "Name this filter"
 msgstr "Name this filter"
 
+#: src/routes/account/my-bounties.tsx
+msgid "Estimated total"
+msgstr "Estimated total"
+
 #: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -805,6 +809,7 @@ msgstr "Name"
 msgid "This bounty's funding doesn't cover that rate yet."
 msgstr "This bounty's funding doesn't cover that rate yet."
 
+#: src/lib/crafts/ledger-footer.tsx
 #: src/routes/database/skill/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Total"
@@ -2433,6 +2438,10 @@ msgstr "{0} crafts are still funded from it; they keep accruing and refunds stil
 msgid "Sell <0/> to {npcName}"
 msgstr "Sell <0/> to {npcName}"
 
+#: src/routes/account/my-bounties.tsx
+msgid "Estimated outgoing"
+msgstr "Estimated outgoing"
+
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
 msgstr "Accuracy Multiplier"
@@ -3548,6 +3557,7 @@ msgstr "Copy CSV"
 
 #: src/components/crafts/FilterBuilder.tsx
 #: src/components/crafts/PlayerPicker.tsx
+#: src/routes/account/my-bounties.tsx
 #: src/routes/account/payees.tsx
 msgid "No matches."
 msgstr "No matches."
