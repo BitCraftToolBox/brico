@@ -87,11 +87,13 @@ import {
     getExtractionRecipeName,
     getFoodItemName,
     getItemListName,
+    getItemListSources,
     getPavingTileName,
     getPillarShapingName,
     getResourceDepletionName,
     getTravelerTaskName,
     getTravelerTradeName,
+    ItemListSource,
     KnowledgeUsage,
     resourceForExtraction,
 } from "~/lib/relations";
@@ -448,6 +450,16 @@ export function travelerTradesTab(tradeOffers: TravelerTradeOrderDesc[], tradeRe
     };
 }
 
+type ListWithSource = {list: ItemListDesc, source?: ItemListSource};
+
+/** One entry per source of each list, so a list reachable several ways gets a panel for each. */
+function listsBySource(lists: ItemListDesc[]): ListWithSource[] {
+    return lists.flatMap((list): ListWithSource[] => {
+        const sources = getItemListSources(list);
+        return sources.length ? sources.map(source => ({list, source})) : [{list}];
+    });
+}
+
 export function itemListsTab(recipes: ItemListDesc[]): RelationshipTab {
     return {
         id: "item-lists",
@@ -456,9 +468,9 @@ export function itemListsTab(recipes: ItemListDesc[]): RelationshipTab {
         showWhenEmpty: false,
         content: () => (
             <RecipeSelect
-                recipes={recipes}
-                nameFor={getItemListName}
-                render={l => <ItemListPanel list={l}/>}
+                recipes={listsBySource(recipes)}
+                nameFor={e => getItemListName(e.list)}
+                render={e => <ItemListPanel list={e.list} source={e.source}/>}
             />
         ),
     };
@@ -473,9 +485,9 @@ export function itemListTab(list: ItemListDesc | undefined, showEmptyItemList: b
         content: () => (
             <Show when={list} fallback={<h4 class="text-sm text-muted-foreground mb-2"><Trans>Item list missing</Trans></h4>}>
                 <RecipeSelect
-                    recipes={[list!]}
-                    nameFor={getItemListName}
-                    render={l => <ItemListPanel list={l} showEmptyItemList={showEmptyItemList}/>}
+                    recipes={listsBySource([list!])}
+                    nameFor={e => getItemListName(e.list)}
+                    render={e => <ItemListPanel list={e.list} source={e.source} showEmptyItemList={showEmptyItemList}/>}
                 />
             </Show>
         ),

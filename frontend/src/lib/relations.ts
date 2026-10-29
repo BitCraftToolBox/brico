@@ -54,6 +54,7 @@ import {createMemo} from "solid-js";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {sourceRow} from "~/lib/data-translation";
 import {compareText, trackUILocale} from "~/lib/i18n";
+import {ITEM_LIST_SOURCE_OVERRIDES} from "~/lib/item-list-overrides";
 
 const AOC_ID: number = 12345; // Art of Cheating knowledge ID
 
@@ -307,27 +308,45 @@ export function itemListsContaining(itemId: number, itemType: string): ItemListD
 
 export type ItemListSource =
     | { type: "Item"; item: ItemDesc }
-    | { type: "Enemy"; loot: ContributionLootDesc; enemy?: EnemyDesc }
-    | { type: "Unknown" };
+    | { type: "Enemy"; loot: ContributionLootDesc; enemy?: EnemyDesc };
 
-export function getItemListSource(il: ItemListDesc | undefined): ItemListSource {
-    if (!il) return {type: "Unknown"};
-
-    // Check if any item references this list (ItemDesc.itemListId)
-    const items = BitCraftTables.ItemDesc.indexedByMulti("itemListId")().get(il.id);
-    let matchedItem = items?.length ? items[0] : null;
-    // TODO see item-list-table
-    if (items?.length && il.id === 1096831250) matchedItem = items.find(i => i.id === 1753489769) ?? matchedItem;
-    if (matchedItem) return {type: "Item", item: matchedItem};
-
-    // Check ContributionLootDesc -> enemyTypeId -> EnemyDesc
+/**
+ * Every item (ItemDesc.itemListId) and enemy contribution threshold that yields this list, narrowed
+ * by ITEM_LIST_SOURCE_OVERRIDES; empty if none. An enemy may appear several times, once per threshold.
+ */
+export function getItemListSources(il: ItemListDesc | undefined): ItemListSource[] {
+    if (!il) return [];
+    const items = BitCraftTables.ItemDesc.indexedByMulti("itemListId")().get(il.id) ?? [];
+    const loots = BitCraftTables.ContributionLootDesc.indexedByMulti("itemListId")().get(il.id) ?? [];
     const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
-    // NB should also be multi but doesn't happen in practice
-    const lootDescs = BitCraftTables.ContributionLootDesc.indexedBy("itemListId");
-    const matchedLoot = lootDescs().get(il.id);
-    if (matchedLoot) return {type: "Enemy", loot: matchedLoot, enemy: enemyIndex().get(matchedLoot.enemyTypeId)};
+    const itemSources = items.map((item): ItemListSource => ({type: "Item", item}));
+    const enemySources = loots.map((loot): ItemListSource => ({type: "Enemy", loot, enemy: enemyIndex().get(loot.enemyTypeId)}));
 
-    return {type: "Unknown"};
+    const override = ITEM_LIST_SOURCE_OVERRIDES.get(il.id);
+    if (override === "Enemy") return enemySources;
+    if (override !== undefined) {
+        const chosen = itemSources.filter(s => s.type === "Item" && s.item.id === override);
+        if (chosen.length) return chosen;
+    }
+    return [...itemSources, ...enemySources];
+}
+
+export type ItemListOwner =
+    | { type: "Item"; item: ItemDesc }
+    | { type: "Enemy"; enemy: EnemyDesc };
+
+/**
+ * The single object that owns a list: its only source, or the shared enemy when every source is a
+ * contribution threshold of that same enemy. Undefined when ownership is ambiguous or unresolved.
+ */
+export function getItemListOwner(sources: ItemListSource[]): ItemListOwner | undefined {
+    const first = sources[0];
+    if (!first) return undefined;
+    if (first.type === "Item") return sources.length === 1 ? first : undefined;
+    const enemy = first.enemy;
+    if (!enemy) return undefined;
+    const sameEnemy = sources.every(s => s.type === "Enemy" && s.enemy?.enemyType === enemy.enemyType);
+    return sameEnemy ? {type: "Enemy", enemy} : undefined;
 }
 
 export function contributionLootFromEnemy(enemy: EnemyDesc | undefined): [ContributionLootDesc, ItemListDesc][] {

@@ -1,22 +1,19 @@
-import {ItemDesc, ItemListDesc} from "@brico/bitcraft-bindings/types";
+import {EnemyDesc, ItemDesc, ItemListDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {JSX} from "solid-js";
 import {EnemyIcon, ItemIcon} from "~/components/shared/GameIcon";
 import {ItemListDisplay} from "~/components/shared/ItemStacks";
-import {BitCraftTables} from "~/lib/bitcraft-data";
-import {getItemListSource} from "~/lib/relations";
+import {getItemListOwner, getItemListSources, ItemListOwner} from "~/lib/relations";
 import {BitCraftToDataDef} from "~/lib/table-utils/base";
 import {type DetailRoute, headerColumn, rarityColumn, rarityFilter, rowActions, tagColumn, tagFilter, tierColumn, tierFilter} from "~/lib/table-utils/column-builders";
 
+function listOwner(list: ItemListDesc): ItemListOwner | undefined {
+    return getItemListOwner(getItemListSources(list));
+}
+
 function listToItem(list: ItemListDesc): ItemDesc | undefined {
-    const items = BitCraftTables.ItemDesc.indexedByMulti("itemListId")().get(list.id);
-    if (items && items.length >= 1) {
-        let item = items[0];
-        // TODO this is the only current case where the item we want isn't the first one. but man is this ugly.
-        if (list.id === 1096831250) item = items.find(i => i.id === 1753489769) ?? item;
-        return item;
-    }
-    return undefined;
+    const owner = listOwner(list);
+    return owner?.type === "Item" ? owner.item : undefined;
 }
 
 /**
@@ -26,14 +23,24 @@ function listToItem(list: ItemListDesc): ItemDesc | undefined {
  * is the case that page continues to exist for.
  */
 function itemListRoute(list: ItemListDesc): DetailRoute {
-    const source = getItemListSource(list);
-    switch (source.type) {
+    const owner = listOwner(list);
+    switch (owner?.type) {
         case "Item":
-            return ["item", source.item.id, "item-list"];
+            return ["item", owner.item.id, "item-list"];
         case "Enemy":
-            if (source.enemy) return ["creature", source.enemy.enemyType, "loot"];
+            return ["creature", owner.enemy.enemyType, "loot"];
     }
     return ["item-list", list.id];
+}
+
+function listToEnemy(list: ItemListDesc): EnemyDesc | undefined {
+    const owner = listOwner(list);
+    return owner?.type === "Enemy" ? owner.enemy : undefined;
+}
+
+function ownerDesc(list: ItemListDesc): ItemDesc | EnemyDesc | undefined {
+    const owner = listOwner(list);
+    return owner?.type === "Item" ? owner.item : owner?.enemy;
 }
 
 export const ItemListDescDefs: BitCraftToDataDef<ItemListDesc> = {
@@ -46,20 +53,13 @@ export const ItemListDescDefs: BitCraftToDataDef<ItemListDesc> = {
                 if (item) {
                     return <ItemIcon item={item} small noInteract/>;
                 }
-                // NB should also be multi but doesn't happen in practice
-                const lootDescs = BitCraftTables.ContributionLootDesc.indexedBy("itemListId");
-                const matchedLoot = lootDescs().get(list.id);
-                if (matchedLoot) {
-                    const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
-                    const matchedEnemy = enemyIndex().get(matchedLoot.enemyTypeId);
-                    if (matchedEnemy) return <EnemyIcon enemy={matchedEnemy} small noInteract/>
-                }
-                return <></>;
+                const enemy = listToEnemy(list);
+                return enemy ? <EnemyIcon enemy={enemy} small noInteract/> : <></>;
             },
         }),
         tagColumn(undefined, {accessorFn: (list) => listToItem(list)?.tag ?? ""}),
-        tierColumn({accessorFn: (list) => listToItem(list)?.tier ?? -1}),
-        rarityColumn({accessorFn: (list) => listToItem(list)?.rarity.tag ?? "Default"}),
+        tierColumn({accessorFn: (list) => ownerDesc(list)?.tier ?? -1}),
+        rarityColumn({accessorFn: (list) => ownerDesc(list)?.rarity.tag ?? "Default"}),
         {
             id: "Possible Items",
             meta: {label: msg`Possible Items`},
@@ -70,14 +70,8 @@ export const ItemListDescDefs: BitCraftToDataDef<ItemListDesc> = {
                 if (item) {
                     originalIcon = <ItemIcon item={item} small noInteract/>;
                 } else {
-                    // NB should also be multi but doesn't happen in practice
-                    const lootDescs = BitCraftTables.ContributionLootDesc.indexedBy("itemListId");
-                    const matchedLoot = lootDescs().get(props.row.original.id);
-                    if (matchedLoot) {
-                        const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
-                        const matchedEnemy = enemyIndex().get(matchedLoot.enemyTypeId);
-                        if (matchedEnemy) originalIcon = <EnemyIcon enemy={matchedEnemy} small noInteract/>;
-                    }
+                    const enemy = listToEnemy(props.row.original);
+                    if (enemy) originalIcon = <EnemyIcon enemy={enemy} small noInteract/>;
                 }
                 return <ItemListDisplay
                     itemList={props.row.original}

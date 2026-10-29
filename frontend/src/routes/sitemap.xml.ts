@@ -1,6 +1,6 @@
 import type {APIEvent} from "@solidjs/start/server";
 import {BitCraftTables, preloadAllTablesServer} from "~/lib/bitcraft-data";
-import {getItemListSource} from "~/lib/relations";
+import {getItemListOwner, getItemListSources} from "~/lib/relations";
 
 /**
  * Every crawlable detail-page family: URL slug, the table it reads, the field whose value appears in
@@ -26,10 +26,9 @@ const ENTITIES: {slug: string; table: keyof typeof BitCraftTables; idField: stri
     {slug: "creature", table: "EnemyDesc", idField: "enemyType"},
     {slug: "deployable", table: "DeployableDesc", idField: "id"},
     {slug: "item", table: "ItemDesc", idField: "id"},
-    // Only lists with no resolvable owner: the rest canonicalize to the item or creature whose page
-    // already renders their contents in full (see item-list/[id].tsx), so listing them here would
-    // just ask Google to crawl URLs we've told it not to index.
-    {slug: "item-list", table: "ItemListDesc", idField: "id", include: row => getItemListSource(row).type === "Unknown"},
+    // Only lists with no single owner: the rest canonicalize to the item or creature whose page
+    // already renders their contents in full (see item-list/[id].tsx)
+    {slug: "item-list", table: "ItemListDesc", idField: "id", include: row => !getItemListOwner(getItemListSources(row))},
     {slug: "knowledge", table: "SecondaryKnowledgeDesc", idField: "id"},
     {slug: "paving", table: "PavingTileDesc", idField: "id"},
     {slug: "pillar-shaping", table: "PillarShapingDesc", idField: "id"},

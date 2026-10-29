@@ -5,7 +5,7 @@ import {ItemListSourceIcon} from "~/components/shared/GameIcon";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {chatLink} from "~/lib/chat-links";
 import {absoluteUrl, ogImageForPage} from "~/lib/og-meta";
-import {getItemListSource, ItemListSource} from "~/lib/relations";
+import {getItemListOwner, getItemListSources} from "~/lib/relations";
 import {detailHref} from "~/lib/table-utils/column-builders";
 import {itemListTab} from "~/lib/table-utils/detail-tab-builders";
 
@@ -21,37 +21,33 @@ export default function ItemListDetail() {
         return index().get(id);
     });
 
-    const source = createMemo((): ItemListSource => {
-        const il = itemList();
-        return getItemListSource(il);
-    });
+    const owner = createMemo(() => getItemListOwner(getItemListSources(itemList())));
     /**
-     * An item list whose owner is known is a duplicate of a tab that owner's page already renders in
-     * full — so point the canonical there and let the ranking signals consolidate onto one URL.
+     * An item list with a single owner (see getItemListOwner) is a duplicate of a tab that owner's
+     * page already renders in full.
      * Deliberately *not* a redirect (unlike the tool/food/weapon/equipment pages, see middleware.ts):
-     * plenty of item lists are reached from the very page they'd redirect to — a creature's
-     * Contribution Loot tab links lists owned by that same creature — so a redirect would bounce the
-     * reader straight back where they came from. Lists with no resolvable owner stay canonical here,
+     * plenty of item lists are reached from the very page they'd redirect to, so a redirect would bounce
+     * the reader straight back where they came from. Lists with no resolvable owner stay canonical here,
      * which is what this page continues to exist for.
      */
     const canonicalOverride = createMemo(() => {
-        const s = source();
-        switch (s.type) {
+        const o = owner();
+        switch (o?.type) {
             case "Item":
-                return absoluteUrl(detailHref(["item", s.item.id]));
+                return absoluteUrl(detailHref(["item", o.item.id]));
             case "Enemy":
-                return s.enemy ? absoluteUrl(detailHref(["creature", s.enemy.enemyType])) : undefined;
+                return absoluteUrl(detailHref(["creature", o.enemy.enemyType]));
         }
         return undefined;
     });
 
     const ownerChatLink = createMemo(() => {
-        const s = source();
-        switch (s.type) {
+        const o = owner();
+        switch (o?.type) {
             case "Item":
-                return chatLink("item", s.item.id);
+                return chatLink("item", o.item.id);
             case "Enemy":
-                return chatLink("mob", s.enemy?.enemyType);
+                return chatLink("mob", o.enemy.enemyType);
         }
         return undefined;
     });

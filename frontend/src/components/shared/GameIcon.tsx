@@ -15,7 +15,7 @@ import {BitCraftTables} from "~/lib/bitcraft-data";
 import {ASSET_CDN_BASE, getAssetURL, getBuildingTier, Rarities, Tiers} from "~/lib/bitcraft-utils";
 import {rarityLabel} from "~/lib/game-strings";
 import {gameText, useLabel} from "~/lib/labels";
-import {getItemListSource} from "~/lib/relations";
+import {getItemListOwner, getItemListSources, ItemListOwner, ItemListSource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {cn} from "~/lib/utils";
 
@@ -515,19 +515,32 @@ export const PlaceableIcon: Component<PlaceableIconProps> = (props) => {
 
 type ItemListSourceIconProps = Omit<GameIconProps, "name" | "iconAsset" | "tier" | "rarity" | "href" | "shape"> & {
     list: ItemListDesc;
+    /** Icon for this specific source instead of the list's owner. */
+    source?: ItemListSource;
 }
 
+/** Icon of the list's owner, or of `source` when given. Empty if the owner is ambiguous. */
 export const ItemListSourceIcon: Component<ItemListSourceIconProps> = (props) => {
-    const [local, others] = splitProps(props, ["list"]);
+    const [local, others] = splitProps(props, ["list", "source"]);
 
-    const source = getItemListSource(local.list);
-    switch (source.type) {
-        case "Item":
-            return <ItemIcon item={source.item} {...others} />;
-        case "Enemy":
-            return source.enemy ? <EnemyIcon enemy={source.enemy} {...others} /> : <></>;
-        case "Unknown":
-        default:
-            return <></>;
-    }
+    const owner = (): ItemListOwner | undefined => {
+        const s = local.source;
+        if (!s) return getItemListOwner(getItemListSources(local.list));
+        if (s.type === "Item") return s;
+        return s.enemy ? {type: "Enemy", enemy: s.enemy} : undefined;
+    };
+    const item = () => {
+        const o = owner();
+        return o?.type === "Item" ? o.item : undefined;
+    };
+    const enemy = () => {
+        const o = owner();
+        return o?.type === "Enemy" ? o.enemy : undefined;
+    };
+    return (
+        <>
+            <Show when={item()}>{i => <ItemIcon item={i()} {...others} />}</Show>
+            <Show when={enemy()}>{e => <EnemyIcon enemy={e()} {...others} />}</Show>
+        </>
+    );
 }
