@@ -36,6 +36,7 @@ import {
     PlaceableDesc,
     PlaceableInteractionDesc,
     PlaceablePlacementDesc,
+    PremiumItemDesc,
     ProbabilisticItemStack,
     ProspectingDesc,
     QuestChainDesc,
@@ -547,6 +548,13 @@ export function collectibleRewards(collectibleIds: number[]): CollectibleDesc[] 
     if (!collectibleIds?.length) return [];
     const idx = BitCraftTables.CollectibleDesc.indexedBy("id")();
     return collectibleIds.map(id => idx.get(id)).filter((v): v is CollectibleDesc => !!v);
+}
+
+/** Premium items that include this collectible */
+export function premiumItemsIncluding(collectibleId: number): PremiumItemDesc[] {
+    const all = BitCraftTables.PremiumItemDesc.get();
+    if (!all) return [];
+    return all.filter(p => p.collectibleIds.includes(collectibleId));
 }
 
 // ─── Knowledge Usage ─────────────────────────────────────────────

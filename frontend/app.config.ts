@@ -47,7 +47,7 @@ export default defineConfig({
       }
     },
     routeRules: {
-      // BSATN data files are versioned via a ?v=<version> query (see spacetime.ts), so the
+      // BSATN data files are versioned via a ?v=<version> query (see bitcraft-data.ts), so the
       // underlying path can be cached immutably — a data update changes the query and busts it.
       "/bsatn/static/**": {
         headers: {"cache-control": "public, max-age=31536000, immutable"}

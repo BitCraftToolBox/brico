@@ -11,6 +11,7 @@ import {deployableTypeLabel} from "~/lib/game-strings.ts";
 import {type Label} from "~/lib/labels";
 import {getTravelerTaskName, getTravelerTradeName} from "~/lib/relations";
 import {PAGE_TITLE_LABELS, type SidebarHrefs} from "~/lib/sidebar-items";
+import {getBuildingTier} from "./bitcraft-utils";
 
 // ─── Types ──────────────────────────────────────────────────────
 
@@ -84,6 +85,7 @@ export const searchableTables: SearchableTable[] = [
         route: "/database/building", tableKey: "BuildingDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
+        tier: (r) => getBuildingTier(r),
     },
     {
         route: "/database/collectible", tableKey: "CollectibleDesc",
@@ -125,6 +127,11 @@ export const searchableTables: SearchableTable[] = [
     },
     {
         route: "/database/prospecting", tableKey: "ProspectingDesc",
+        pk: "id", name: (r) => r.name,
+        fields: [{field: "description", get: (r) => r.description}],
+    },
+    {
+        route: "/database/premium-item", tableKey: "PremiumItemDesc",
         pk: "id", name: (r) => r.name,
         fields: [{field: "description", get: (r) => r.description}],
     },
@@ -244,7 +251,7 @@ const fuseOptions: IFuseOptions<SearchDocument> = {
     ignoreLocation: true,
     useExtendedSearch: true,
     threshold: 0.2,
-    minMatchCharLength: 2,
+    minMatchCharLength: 1,
     keys: fuseKeys,
 };
 

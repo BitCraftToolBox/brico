@@ -243,6 +243,20 @@ export function CollectibleLink(props: { id: number; name?: string; class?: stri
     );
 }
 
+/** Renders a premium item name as a link. */
+export function PremiumItemLink(props: { id: number; name?: string; class?: string; showIcon?: boolean }) {
+    const show = () => props.showIcon !== false;
+    return (
+        <IconLink
+            href={`/database/premium-item/${props.id}`}
+            icon={show() ? pageIcon("Premium Items") : undefined}
+            class={props.class}
+        >
+            {props.name ?? `Premium Item #${props.id}`}
+        </IconLink>
+    );
+}
+
 /** Resolves a collectible ID to a CollectibleLink. */
 export function CollectibleLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
     const col = () => BitCraftTables.CollectibleDesc.indexedBy("id")().get(props.id);

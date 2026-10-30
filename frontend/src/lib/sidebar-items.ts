@@ -81,6 +81,7 @@ const sidebarGroups = [
             {href: '/database/combat', title: 'Combat Actions', titleLabel: gameText(msg`Combat Actions`), codepoint: "FFC3"},
             {href: '/database/ability', title: 'Abilities', titleLabel: gameText(msg`Abilities`), codepoint: "FF61"},
             {href: '/database/buff', title: 'Buffs', titleLabel: gameText(msg`Buffs`), codepoint: "FFD0"},
+            {href: '/database/premium-item', title: 'Premium Items', titleLabel: gameText(msg`Premium Items`), codepoint: "FF5F"},
         ] as const
     },
     {

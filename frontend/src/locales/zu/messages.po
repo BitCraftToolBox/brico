@@ -65,6 +65,10 @@ msgstr "crwdns4338:0crwdne4338:0"
 msgid "Total Passive Slots"
 msgstr "crwdns4340:0crwdne4340:0"
 
+#: src/lib/premium-items.ts
+msgid "Other"
+msgstr ""
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Go to your <0>Stelo</0> account."
 msgstr "crwdns5638:0crwdne5638:0"
@@ -92,6 +96,10 @@ msgstr "crwdns6776:0crwdne6776:0"
 #: src/lib/relations.ts
 msgid "{skillName} Task: {itemName}"
 msgstr "crwdns4346:0{skillName}crwdnd4346:0{itemName}crwdne4346:0"
+
+#: src/lib/premium-items.ts
+msgid "Clothing"
+msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Edit bounty"
@@ -157,10 +165,12 @@ msgstr "crwdns4362:0crwdne4362:0"
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/lib/table-defs/collectible-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
+#: src/lib/table-defs/premium-items-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Type"
 msgstr "crwdns4364:0crwdne4364:0"
@@ -806,6 +816,7 @@ msgstr "crwdns6788:0crwdne6788:0"
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Name"
 msgstr "crwdns4490:0crwdne4490:0"
@@ -857,6 +868,11 @@ msgstr "crwdns6790:0crwdne6790:0"
 #: src/routes/tools/index.tsx
 msgid "Toolbox"
 msgstr "crwdns4498:0crwdne4498:0"
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Sort Priority"
+msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Remaining payout"
@@ -912,6 +928,10 @@ msgstr "crwdns4506:0crwdne4506:0"
 #: src/lib/crafts/funding-vocab.ts
 msgid "Brico.app lost permission on the funding wallet."
 msgstr "crwdns5826:0crwdne5826:0"
+
+#: src/routes/database/collectible/[id].tsx
+msgid "Hexite Exchange"
+msgstr ""
 
 #: src/routes/account/payees.tsx
 msgid "Secured"
@@ -1043,6 +1063,12 @@ msgstr "crwdns4532:0crwdne4532:0"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Yields when eaten"
 msgstr "crwdns5550:0crwdne5550:0"
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Price"
+msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
@@ -1544,6 +1570,10 @@ msgstr "crwdns5950:0{reason}crwdne5950:0"
 msgid "Filters"
 msgstr "crwdns5952:0crwdne5952:0"
 
+#: src/lib/premium-items.ts
+msgid "Bundles"
+msgstr ""
+
 #: src/routes/account/my-bounties.tsx
 msgid "Assigned: <0/>"
 msgstr "crwdns5954:0crwdne5954:0"
@@ -1607,6 +1637,11 @@ msgstr "crwdns4660:0crwdne4660:0"
 #: src/routes/database/ability/[id].tsx
 msgid "Profession Hit"
 msgstr "crwdns6736:0crwdne6736:0"
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Base Price"
+msgstr ""
 
 #: src/components/crafts/FundingWalletSelect.tsx
 msgid "<0>Link a Stelo wallet</0> first."
@@ -2117,6 +2152,10 @@ msgstr "crwdns6046:0crwdne6046:0"
 #: src/lib/notifications/funding.tsx
 msgid "Money owed to you went unclaimed and was returned to the payer"
 msgstr "crwdns6048:0crwdne6048:0"
+
+#: src/lib/sidebar-items.ts
+msgid "Premium Items"
+msgstr ""
 
 #: src/lib/recipe-stats.tsx
 msgid "Minimum distance to Group:"
@@ -3028,6 +3067,10 @@ msgstr "crwdns4986:0crwdne4986:0"
 msgid "Enables various menus and displays that aren't useful to most players."
 msgstr "crwdns6230:0crwdne6230:0"
 
+#: src/lib/premium-items.ts
+msgid "Emotes"
+msgstr ""
+
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "in"
 msgid "{quantifier} {field} {cmpEl} {value}"
@@ -3276,6 +3319,10 @@ msgstr "crwdns6278:0crwdne6278:0"
 #: src/lib/table-utils/column-builders.tsx
 msgid "<empty>"
 msgstr "crwdns5042:0crwdne5042:0"
+
+#: src/lib/premium-items.ts
+msgid "Pets"
+msgstr ""
 
 #: src/routes/search.tsx
 msgid "Search items, buildings, creatures, recipes..."
@@ -3836,6 +3883,7 @@ msgid "Changes to rules only affect crafts that don't have a bounty yet. To chan
 msgstr "crwdns6378:0crwdne6378:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Collectibles"
 msgstr "crwdns5164:0crwdne5164:0"
 
@@ -4057,7 +4105,10 @@ msgstr "crwdns5584:0crwdne5584:0"
 msgid "Copy dashboard link"
 msgstr "crwdns6824:0crwdne6824:0"
 
+#: src/lib/table-defs/premium-items-table.tsx
 #: src/routes/account/settings.tsx
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Enabled"
 msgstr "crwdns6438:0crwdne6438:0"
 
@@ -4518,6 +4569,10 @@ msgstr "crwdns6534:0crwdne6534:0"
 msgid "Tag"
 msgstr "crwdns5292:0crwdne5292:0"
 
+#: src/lib/premium-items.ts
+msgid "Decor"
+msgstr ""
+
 #: src/routes/account/callback.tsx
 msgid "Signing you in…"
 msgstr "crwdns6536:0crwdne6536:0"
@@ -4655,6 +4710,11 @@ msgstr "crwdns5322:0crwdne5322:0"
 #: src/lib/table-defs/quests-table.tsx
 msgid "Quest Chain"
 msgstr "crwdns5324:0crwdne5324:0"
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Quantity"
+msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Remaining effort"
@@ -5198,6 +5258,11 @@ msgstr "crwdns6670:0crwdne6670:0"
 msgid "← Back to list"
 msgstr "crwdns5440:0crwdne5440:0"
 
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Premium Item"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Color mode"
 msgstr "crwdns5442:0crwdne5442:0"
@@ -5431,6 +5496,7 @@ msgstr "crwdns5496:0crwdne5496:0"
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/deployable/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Collectible"
 msgstr "crwdns5498:0crwdne5498:0"
 
@@ -5478,4 +5544,3 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
-

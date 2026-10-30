@@ -60,6 +60,10 @@ msgstr "Compendium"
 msgid "Total Passive Slots"
 msgstr "Total Passive Slots"
 
+#: src/lib/premium-items.ts
+msgid "Other"
+msgstr "Other"
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Go to your <0>Stelo</0> account."
 msgstr "Go to your <0>Stelo</0> account."
@@ -87,6 +91,10 @@ msgstr "This dashboard key is invalid or has been revoked."
 #: src/lib/relations.ts
 msgid "{skillName} Task: {itemName}"
 msgstr "{skillName} Task: {itemName}"
+
+#: src/lib/premium-items.ts
+msgid "Clothing"
+msgstr "Clothing"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Edit bounty"
@@ -152,10 +160,12 @@ msgstr "Favorites can be set in the <0><1/> Settings</0>"
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/lib/table-defs/collectible-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
+#: src/lib/table-defs/premium-items-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Type"
 msgstr "Type"
@@ -801,6 +811,7 @@ msgstr "Estimated total"
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Name"
 msgstr "Name"
@@ -852,6 +863,11 @@ msgstr "A dashboard key is meant to be shared. Anyone holding it can see your pa
 #: src/routes/tools/index.tsx
 msgid "Toolbox"
 msgstr "Toolbox"
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Sort Priority"
+msgstr "Sort Priority"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Remaining payout"
@@ -907,6 +923,10 @@ msgstr "Search items, buildings, creatures..."
 #: src/lib/crafts/funding-vocab.ts
 msgid "Brico.app lost permission on the funding wallet."
 msgstr "Brico.app lost permission on the funding wallet."
+
+#: src/routes/database/collectible/[id].tsx
+msgid "Hexite Exchange"
+msgstr "Hexite Exchange"
 
 #: src/routes/account/payees.tsx
 msgid "Secured"
@@ -1038,6 +1058,12 @@ msgstr "Quests"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Yields when eaten"
 msgstr "Yields when eaten"
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Price"
+msgstr "Price"
 
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
@@ -1539,6 +1565,10 @@ msgstr "That Stelo transfer isn't valid: {reason}"
 msgid "Filters"
 msgstr "Filters"
 
+#: src/lib/premium-items.ts
+msgid "Bundles"
+msgstr "Bundles"
+
 #: src/routes/account/my-bounties.tsx
 msgid "Assigned: <0/>"
 msgstr "Assigned: <0/>"
@@ -1602,6 +1632,11 @@ msgstr "Spawns"
 #: src/routes/database/ability/[id].tsx
 msgid "Profession Hit"
 msgstr "Profession Hit"
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Base Price"
+msgstr "Base Price"
 
 #: src/components/crafts/FundingWalletSelect.tsx
 msgid "<0>Link a Stelo wallet</0> first."
@@ -2112,6 +2147,10 @@ msgstr "<0>Automatically:</0> create filters on the <1>Bounty rules</1> tab. New
 #: src/lib/notifications/funding.tsx
 msgid "Money owed to you went unclaimed and was returned to the payer"
 msgstr "Money owed to you went unclaimed and was returned to the payer"
+
+#: src/lib/sidebar-items.ts
+msgid "Premium Items"
+msgstr "Premium Items"
 
 #: src/lib/recipe-stats.tsx
 msgid "Minimum distance to Group:"
@@ -3023,6 +3062,10 @@ msgstr "When enabled, only your favorite items are shown in the sidebar."
 msgid "Enables various menus and displays that aren't useful to most players."
 msgstr "Enables various menus and displays that aren't useful to most players."
 
+#: src/lib/premium-items.ts
+msgid "Emotes"
+msgstr "Emotes"
+
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "in"
 msgid "{quantifier} {field} {cmpEl} {value}"
@@ -3271,6 +3314,10 @@ msgstr "has all of"
 #: src/lib/table-utils/column-builders.tsx
 msgid "<empty>"
 msgstr "<empty>"
+
+#: src/lib/premium-items.ts
+msgid "Pets"
+msgstr "Pets"
 
 #: src/routes/search.tsx
 msgid "Search items, buildings, creatures, recipes..."
@@ -3831,6 +3878,7 @@ msgid "Changes to rules only affect crafts that don't have a bounty yet. To chan
 msgstr "Changes to rules only affect crafts that don't have a bounty yet. To change a craft that already has one, set a bounty on that craft directly."
 
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Collectibles"
 msgstr "Collectibles"
 
@@ -4052,7 +4100,10 @@ msgstr "Rish Emulation"
 msgid "Copy dashboard link"
 msgstr "Copy dashboard link"
 
+#: src/lib/table-defs/premium-items-table.tsx
 #: src/routes/account/settings.tsx
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Enabled"
 msgstr "Enabled"
 
@@ -4513,6 +4564,10 @@ msgstr "Unclaimed money moved"
 msgid "Tag"
 msgstr "Tag"
 
+#: src/lib/premium-items.ts
+msgid "Decor"
+msgstr "Decor"
+
 #: src/routes/account/callback.tsx
 msgid "Signing you in…"
 msgstr "Signing you in…"
@@ -4650,6 +4705,11 @@ msgstr "Awareness & Aggro"
 #: src/lib/table-defs/quests-table.tsx
 msgid "Quest Chain"
 msgstr "Quest Chain"
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Quantity"
+msgstr "Quantity"
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Remaining effort"
@@ -5193,6 +5253,11 @@ msgstr "New rule"
 msgid "← Back to list"
 msgstr "← Back to list"
 
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Premium Item"
+msgstr "Premium Item"
+
 #: src/routes/settings.tsx
 msgid "Color mode"
 msgstr "Color mode"
@@ -5426,6 +5491,7 @@ msgstr "Select a recipe"
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/deployable/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Collectible"
 msgstr "Collectible"
 

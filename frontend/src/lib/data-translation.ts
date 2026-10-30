@@ -73,7 +73,7 @@ export function dataLocaleFor(uiLocale: string): DataLocale {
  *
  * This is a bare module-level signal rather than a Solid context on purpose: `BitCraftTable`
  * instances are constructed at module-load time (see the `BitCraftTables` object literal in
- * `spacetime.ts`), long before any provider mounts, so that layer has no component to call
+ * `bitcraft-data.ts`), long before any provider mounts, so that layer has no component to call
  * `useContext()` from. `AppRoot` syncs it from the persisted setting with a client-only effect.
  *
  * ⚠️ **INVARIANT: `setActiveDataLocale` must NEVER be called on the server.**

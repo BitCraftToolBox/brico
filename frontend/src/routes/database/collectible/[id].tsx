@@ -1,17 +1,19 @@
-import {CollectibleDesc, CollectibleType, DeployableDesc, SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
+import {CollectibleDesc, CollectibleType, DeployableDesc, PremiumItemDesc, SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
-import {CollectibleIcon} from "~/components/shared/GameIcon";
+import {CollectibleIcon, GameIcon} from "~/components/shared/GameIcon";
+import {HexiteShardPrice} from "~/components/shared/HexiteShardPrice.tsx";
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {chatLink} from "~/lib/chat-links";
-import {IconLink, ItemLink, pageIcon} from "~/lib/game-links";
+import {translateGameText} from "~/lib/data-translation";
+import {IconLink, ItemLink, pageIcon, PremiumItemLink} from "~/lib/game-links";
 import {collectibleTypeLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
-import {questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
+import {premiumItemsIncluding, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
 
 export default function CollectibleDetail() {
@@ -61,6 +63,11 @@ export default function CollectibleDetail() {
         return questsRewarding("Collectible", c.id);
     });
 
+    const premiumItems = createMemo(() => {
+        const c = collectible();
+        return c ? premiumItemsIncluding(c.id) : [];
+    });
+
     const deployables = createMemo(() => {
         const c = collectible();
         if (!c) return [];
@@ -108,6 +115,29 @@ export default function CollectibleDetail() {
             objectId={collectible()?.id}
             chatLink={chatLink("coll", collectible()?.id)}
             tabs={[
+                {
+                    id: "hexite-exchange",
+                    label: gameText(msg`Hexite Exchange`),
+                    count: premiumItems().length,
+                    showWhenEmpty: false,
+                    content: () => (
+                        <RelTable<PremiumItemDesc> data={premiumItems()} columns={[
+                            {
+                                header: msg`Premium Item`,
+                                cell: p => (
+                                    <span class="inline-flex items-center gap-2">
+                                        <GameIcon name={p.name} iconAsset={p.imageAddress} shape="square" small noInteract/>
+                                        <PremiumItemLink id={p.id} name={p.name} showIcon={false}/>
+                                    </span>
+                                ),
+                            },
+                            // bundles have multiple occurrences of one id, while a single item is sold by quantity.
+                            {header: msg`Quantity`, cell: p => <span>{p.collectibleIds.filter(id => id === collectible()?.id).length * p.quantity}</span>},
+                            {header: msg`Price`, cell: p => <HexiteShardPrice amount={p.price}/>},
+                            {header: msg`Enabled`, cell: p => <>{translateGameText(p.isEnabled ? "Yes" : "No")}</>},
+                        ]}/>
+                    )
+                },
                 {
                     id: "deployables",
                     label: gameText(msg`Deployables`),

@@ -33,6 +33,7 @@ const ENTITIES: {slug: string; table: keyof typeof BitCraftTables; idField: stri
     {slug: "paving", table: "PavingTileDesc", idField: "id"},
     {slug: "pillar-shaping", table: "PillarShapingDesc", idField: "id"},
     {slug: "placeable", table: "PlaceableDesc", idField: "id"},
+    {slug: "premium-item", table: "PremiumItemDesc", idField: "id"},
     {slug: "prospecting", table: "ProspectingDesc", idField: "id"},
     {slug: "quest-chain", table: "QuestChainDesc", idField: "id"},
     {slug: "resource", table: "ResourceDesc", idField: "id"},

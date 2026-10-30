@@ -65,6 +65,10 @@ msgstr "Compendio"
 msgid "Total Passive Slots"
 msgstr ""
 
+#: src/lib/premium-items.ts
+msgid "Other"
+msgstr ""
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Go to your <0>Stelo</0> account."
 msgstr ""
@@ -91,6 +95,10 @@ msgstr ""
 
 #: src/lib/relations.ts
 msgid "{skillName} Task: {itemName}"
+msgstr ""
+
+#: src/lib/premium-items.ts
+msgid "Clothing"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -157,10 +165,12 @@ msgstr ""
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/lib/table-defs/collectible-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
+#: src/lib/table-defs/premium-items-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Type"
 msgstr ""
@@ -806,6 +816,7 @@ msgstr ""
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Name"
 msgstr "Nombre"
@@ -856,6 +867,11 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/index.tsx
 msgid "Toolbox"
+msgstr ""
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Sort Priority"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -911,6 +927,10 @@ msgstr ""
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "Brico.app lost permission on the funding wallet."
+msgstr ""
+
+#: src/routes/database/collectible/[id].tsx
+msgid "Hexite Exchange"
 msgstr ""
 
 #: src/routes/account/payees.tsx
@@ -1042,6 +1062,12 @@ msgstr "Misiones"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Yields when eaten"
+msgstr ""
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Price"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -1544,6 +1570,10 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
+#: src/lib/premium-items.ts
+msgid "Bundles"
+msgstr ""
+
 #: src/routes/account/my-bounties.tsx
 msgid "Assigned: <0/>"
 msgstr ""
@@ -1606,6 +1636,11 @@ msgstr ""
 #: src/lib/table-defs/abilities-table.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Profession Hit"
+msgstr ""
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Base Price"
 msgstr ""
 
 #: src/components/crafts/FundingWalletSelect.tsx
@@ -2116,6 +2151,10 @@ msgstr ""
 
 #: src/lib/notifications/funding.tsx
 msgid "Money owed to you went unclaimed and was returned to the payer"
+msgstr ""
+
+#: src/lib/sidebar-items.ts
+msgid "Premium Items"
 msgstr ""
 
 #: src/lib/recipe-stats.tsx
@@ -3028,6 +3067,10 @@ msgstr ""
 msgid "Enables various menus and displays that aren't useful to most players."
 msgstr ""
 
+#: src/lib/premium-items.ts
+msgid "Emotes"
+msgstr ""
+
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "in"
 msgid "{quantifier} {field} {cmpEl} {value}"
@@ -3275,6 +3318,10 @@ msgstr ""
 
 #: src/lib/table-utils/column-builders.tsx
 msgid "<empty>"
+msgstr ""
+
+#: src/lib/premium-items.ts
+msgid "Pets"
 msgstr ""
 
 #: src/routes/search.tsx
@@ -3836,6 +3883,7 @@ msgid "Changes to rules only affect crafts that don't have a bounty yet. To chan
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Collectibles"
 msgstr ""
 
@@ -4057,7 +4105,10 @@ msgstr ""
 msgid "Copy dashboard link"
 msgstr ""
 
+#: src/lib/table-defs/premium-items-table.tsx
 #: src/routes/account/settings.tsx
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Enabled"
 msgstr ""
 
@@ -4518,6 +4569,10 @@ msgstr ""
 msgid "Tag"
 msgstr ""
 
+#: src/lib/premium-items.ts
+msgid "Decor"
+msgstr ""
+
 #: src/routes/account/callback.tsx
 msgid "Signing you in…"
 msgstr ""
@@ -4654,6 +4709,11 @@ msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
 msgid "Quest Chain"
+msgstr ""
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Quantity"
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
@@ -5198,6 +5258,11 @@ msgstr ""
 msgid "← Back to list"
 msgstr ""
 
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Premium Item"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Color mode"
 msgstr ""
@@ -5431,6 +5496,7 @@ msgstr ""
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/deployable/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Collectible"
 msgstr "Coleccionable"
 
