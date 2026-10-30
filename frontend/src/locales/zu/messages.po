@@ -8,7 +8,7 @@ msgstr ""
 "Language: zu\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-23 09:05\n"
+"PO-Revision-Date: 2026-10-30 10:43\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -87,7 +87,7 @@ msgstr "crwdns4344:0crwdne4344:0"
 
 #: src/routes/bounty-dashboard.tsx
 msgid "This dashboard key is invalid or has been revoked."
-msgstr ""
+msgstr "crwdns6776:0crwdne6776:0"
 
 #: src/lib/relations.ts
 msgid "{skillName} Task: {itemName}"
@@ -290,7 +290,7 @@ msgstr "crwdns5688:0crwdne5688:0"
 
 #: src/routes/bounty-dashboard.tsx
 msgid "Couldn't refresh the dashboard."
-msgstr ""
+msgstr "crwdns6778:0crwdne6778:0"
 
 #. placeholder {0}: props.row.name
 #: src/components/crafts/SavedFiltersDialog.tsx
@@ -404,7 +404,7 @@ msgstr "crwdns5704:0crwdne5704:0"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "You can have at most {MAX_API_KEYS_PER_ACCOUNT} API keys. Delete one first."
-msgstr ""
+msgstr "crwdns6780:0{MAX_API_KEYS_PER_ACCOUNT}crwdne6780:0"
 
 #. placeholder {0}: rateText()
 #: src/components/crafts/PayoutRateButton.tsx
@@ -629,7 +629,7 @@ msgstr "crwdns4448:0{level}crwdnd4448:0{toolName}crwdne4448:0"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That API key no longer exists."
-msgstr ""
+msgstr "crwdns6782:0crwdne6782:0"
 
 #: src/lib/table-defs/item-list-table.tsx
 msgid "Possible Items"
@@ -641,7 +641,7 @@ msgstr "crwdns4452:0crwdne4452:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "API keys"
-msgstr ""
+msgstr "crwdns6784:0crwdne6784:0"
 
 #: src/routes/account/loyalty.tsx
 msgid "Delete loyalty reward"
@@ -733,7 +733,7 @@ msgstr "crwdns4472:0{itemName}crwdne4472:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "No API keys."
-msgstr ""
+msgstr "crwdns6786:0crwdne6786:0"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Spawn Priority"
@@ -797,7 +797,7 @@ msgstr "crwdns5802:0crwdne5802:0"
 
 #: src/routes/account/my-bounties.tsx
 msgid "Estimated total"
-msgstr ""
+msgstr "crwdns6788:0crwdne6788:0"
 
 #: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-utils/column-builders.tsx
@@ -851,7 +851,7 @@ msgstr "crwdns4496:0crwdne4496:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "A dashboard key is meant to be shared. Anyone holding it can see your payees' names, what they've earned and been paid, and your bounties, including private ones."
-msgstr ""
+msgstr "crwdns6790:0crwdne6790:0"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/index.tsx
@@ -1203,7 +1203,7 @@ msgstr "crwdns4574:0crwdne4574:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "New key name"
-msgstr ""
+msgstr "crwdns6792:0crwdne6792:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Self Buffs"
@@ -1381,7 +1381,7 @@ msgstr "crwdns5600:0{0}crwdnd5600:0{1}crwdne5600:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Copy your new key now. It won't be shown again."
-msgstr ""
+msgstr "crwdns6794:0crwdne6794:0"
 
 #: src/components/shared/DetailPageLayout.tsx
 msgid "Browse raw data on 🥣 cereal"
@@ -1677,7 +1677,7 @@ msgstr "crwdns4676:0crwdne4676:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Done"
-msgstr ""
+msgstr "crwdns6796:0crwdne6796:0"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That link code is unknown or has expired."
@@ -1740,7 +1740,7 @@ msgstr "crwdns4690:0crwdne4690:0"
 
 #: src/routes/bounty-dashboard.tsx
 msgid "This link has no dashboard key."
-msgstr ""
+msgstr "crwdns6798:0crwdne6798:0"
 
 #: src/routes/settings.tsx
 msgid "Collapse sidebar by default"
@@ -2183,7 +2183,7 @@ msgstr "crwdns6060:0{field}crwdnd6060:0{cmpEl}crwdnd6060:0{value}crwdne6060:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Anyone with this dashboard link can see your payees and bounties, including private ones."
-msgstr ""
+msgstr "crwdns6800:0crwdne6800:0"
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "is any of"
@@ -2199,7 +2199,7 @@ msgstr "crwdns6746:0crwdne6746:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Copy"
-msgstr ""
+msgstr "crwdns6802:0crwdne6802:0"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "That is not a craft id."
@@ -2445,7 +2445,7 @@ msgstr "crwdns5564:0{npcName}crwdne5564:0"
 
 #: src/routes/account/my-bounties.tsx
 msgid "Estimated outgoing"
-msgstr ""
+msgstr "crwdns6804:0crwdne6804:0"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
@@ -2505,7 +2505,7 @@ msgstr "crwdns6124:0crwdne6124:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Read Payouts"
-msgstr ""
+msgstr "crwdns6806:0crwdne6806:0"
 
 #: src/routes/settings.tsx
 msgid "Choose the languages used for Brico's own text and for in-game text."
@@ -2625,7 +2625,7 @@ msgstr "crwdns4898:0crwdne4898:0"
 
 #: src/routes/bounty-dashboard.tsx
 msgid "Bounty dashboard"
-msgstr ""
+msgstr "crwdns6808:0crwdne6808:0"
 
 #: src/lib/table-defs/skills-table.tsx
 msgid "Category"
@@ -2988,7 +2988,7 @@ msgstr "crwdns6222:0crwdne6222:0"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "Couldn't generate a key right now — try again in a minute."
-msgstr ""
+msgstr "crwdns6810:0crwdne6810:0"
 
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
@@ -3057,7 +3057,7 @@ msgstr "crwdns4994:0crwdne4994:0"
 #. placeholder {0}: crafts().length
 #: src/routes/bounty-dashboard.tsx
 msgid "{0, plural, one {# craft with a bounty} other {# crafts with a bounty}}"
-msgstr ""
+msgstr "crwdns6812:00={0}crwdne6812:0"
 
 #: src/components/app-sidebar.tsx
 msgid "Showing all items"
@@ -3283,7 +3283,7 @@ msgstr "crwdns5044:0crwdne5044:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Create key"
-msgstr ""
+msgstr "crwdns6814:0crwdne6814:0"
 
 #: src/lib/table-defs/biome-table.tsx
 #: src/routes/database/biome/[id].tsx
@@ -3449,7 +3449,7 @@ msgstr "crwdns5080:0crwdne5080:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "e.g. Spreadsheet"
-msgstr ""
+msgstr "crwdns6816:0crwdne6816:0"
 
 #: src/routes/settings.tsx
 #: src/routes/tools/crafts/browse.tsx
@@ -3895,7 +3895,7 @@ msgstr "crwdns6392:0crwdne6392:0"
 
 #: src/routes/bounty-dashboard.tsx
 msgid "Active bounties"
-msgstr ""
+msgstr "crwdns6818:0crwdne6818:0"
 
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/account/payees.tsx
@@ -3970,7 +3970,7 @@ msgstr "crwdns6414:0crwdne6414:0"
 
 #: src/routes/account/profile.tsx
 msgid "All your BitCraft characters will be grouped under this name. Leave it blank if don't want your characters associated together."
-msgstr ""
+msgstr "crwdns6820:0crwdne6820:0"
 
 #: src/routes/account/payouts.tsx
 msgid "Log in to see what you've earned from bounties."
@@ -3986,7 +3986,7 @@ msgstr "crwdns6418:0crwdne6418:0"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Copy share link"
-msgstr ""
+msgstr "crwdns6822:0crwdne6822:0"
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -4055,7 +4055,7 @@ msgstr "crwdns5584:0crwdne5584:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Copy dashboard link"
-msgstr ""
+msgstr "crwdns6824:0crwdne6824:0"
 
 #: src/routes/account/settings.tsx
 msgid "Enabled"
@@ -4197,7 +4197,7 @@ msgstr "crwdns6466:0crwdne6466:0"
 
 #: src/routes/bounty-dashboard.tsx
 msgid "No open crafts have a bounty."
-msgstr ""
+msgstr "crwdns6826:0crwdne6826:0"
 
 #: src/components/app-sidebar.tsx
 #: src/routes/account/bounty-rules.tsx
@@ -4379,7 +4379,7 @@ msgstr "crwdns5268:0crwdne5268:0"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "Enter a key name of at most {MAX_API_KEY_NAME_LENGTH} characters."
-msgstr ""
+msgstr "crwdns6828:0{MAX_API_KEY_NAME_LENGTH}crwdne6828:0"
 
 #. placeholder {0}: results()!.totalMatches
 #: src/routes/search.tsx
@@ -4492,7 +4492,7 @@ msgstr "crwdns6526:0crwdne6526:0"
 
 #: src/routes/bounty-dashboard.tsx
 msgid "No contributors yet."
-msgstr ""
+msgstr "crwdns6830:0crwdne6830:0"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Share link"
@@ -4532,7 +4532,7 @@ msgstr "crwdns5594:0crwdne5594:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Public Dashboard"
-msgstr ""
+msgstr "crwdns6832:0crwdne6832:0"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"
@@ -5208,7 +5208,7 @@ msgstr "crwdns6672:0crwdne6672:0"
 
 #: src/routes/bounty-dashboard.tsx
 msgid "Showing the last data received."
-msgstr ""
+msgstr "crwdns6834:0crwdne6834:0"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Affected By Wind"
@@ -5340,7 +5340,7 @@ msgstr "crwdns5478:0crwdne5478:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Let scripts read your data over HTTP. Send a key as an Authorization: Bearer header."
-msgstr ""
+msgstr "crwdns6836:0crwdne6836:0"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "A loyalty reward's multiplier must be 1 or higher."
@@ -5478,3 +5478,4 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
+

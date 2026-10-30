@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-23 09:05\n"
+"PO-Revision-Date: 2026-10-30 10:43\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -5478,3 +5478,4 @@ msgstr "Brico's Toolboxは、<0>BitCraft</0>のアイテム、レシピ、生き
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "{buildingName}を解体"
+
