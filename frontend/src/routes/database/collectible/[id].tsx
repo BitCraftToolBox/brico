@@ -6,6 +6,7 @@ import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {KnowledgeTable} from "~/components/shared/RelTablePresets";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {chatLink} from "~/lib/chat-links";
 import {IconLink, ItemLink, pageIcon} from "~/lib/game-links";
 import {collectibleTypeLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
@@ -105,7 +106,7 @@ export default function CollectibleDetail() {
             rawData={collectible()}
             spacetimeTable={BitCraftTables.CollectibleDesc.spacetimeName}
             objectId={collectible()?.id}
-            chatLink={`(coll=${collectible()?.id})`}
+            chatLink={chatLink("coll", collectible()?.id)}
             tabs={[
                 {
                     id: "deployables",

@@ -40,6 +40,7 @@ import {createPayerEntitlements, createPayoutLogAsPayer, groupPayerRows, type Pa
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
 import {currencyData} from "~/lib/crafts/filter-vocab";
+import {ledgerFooters} from "~/lib/crafts/ledger-footer";
 import {createLoyaltyRewards} from "~/lib/crafts/loyalty-rewards.ts";
 import {createLoyaltyBonusTotals} from "~/lib/crafts/loyalty-rules";
 import {createPlayerNames} from "~/lib/crafts/relay";
@@ -238,12 +239,14 @@ function PaymentDialog(props: {target: Accessor<EditTarget | null>; onClose: () 
 type Cell<TValue> = CellContext<PayeeRow, TValue>;
 
 function buildColumns(onEdit: (target: EditTarget) => void, onHistory: (row: PayeeRow) => void, label: LabelResolver): ColumnDef<PayeeRow, any>[] {
+    const footers = ledgerFooters<PayeeRow>();
     return [
         {
             id: "name",
             meta: {label: msg`Payee`},
             enableHiding: false,
             accessorFn: row => row.name,
+            footer: footers.name,
             cell: (props: Cell<string>) => (
                 <div class="flex items-center gap-1" style={{"padding-left": `${props.row.depth * 1.25}rem`}}>
                     <Show when={props.row.getCanExpand()} fallback={<span class="inline-block size-4"/>}>
@@ -277,6 +280,7 @@ function buildColumns(onEdit: (target: EditTarget) => void, onHistory: (row: Pay
             id: "currency",
             meta: {label: msg`Currency`},
             accessorFn: row => row.currency,
+            footer: footers.currency,
             cell: (props: Cell<string | null>) => <Show when={props.getValue()}>{currency => <CurrencyLabel currency={currency()}/>}</Show>,
         },
         {
@@ -307,12 +311,14 @@ function buildColumns(onEdit: (target: EditTarget) => void, onHistory: (row: Pay
             id: "paid",
             meta: {label: msg`Paid`, align: "right"},
             accessorFn: row => row.paidTotal,
+            footer: footers.paid,
             cell: (props: Cell<bigint>) => <span class="tabular-nums">{props.getValue().toLocaleString(uiLocale())}</span>,
         },
         {
             id: "difference",
             meta: {label: msg`Difference`, align: "right"},
             accessorFn: row => row.earnedTotal - row.paidTotal,
+            footer: footers.difference,
             cell: (props: Cell<bigint>) => {
                 const diff = props.getValue();
                 return <Badge variant={diff > 0n ? "outline" : "secondary"} class="tabular-nums">{diff > 0n ? "+" : ""}{diff.toLocaleString(uiLocale())}</Badge>;

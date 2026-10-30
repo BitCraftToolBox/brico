@@ -11,6 +11,7 @@ import {CombatActionTable} from "~/components/shared/RelTablePresets";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {checkStepHeight} from "~/lib/bitcraft-utils";
+import {chatLink} from "~/lib/chat-links";
 import {ItemListLink, PlaceableLink, ResourceLink, SkillLinkById} from "~/lib/game-links";
 import {useLabel} from "~/lib/labels";
 import {ogImageForAsset} from "~/lib/og-meta";
@@ -147,7 +148,7 @@ export default function CreatureDetail() {
             rawData={creature()}
             spacetimeTable={BitCraftTables.EnemyDesc.spacetimeName}
             objectId={creature()?.enemyType}
-            chatLink={`(mob=${creature()?.enemyType})`}
+            chatLink={chatLink("mob", creature()?.enemyType)}
             tabs={[
                 {
                     id: "combat",

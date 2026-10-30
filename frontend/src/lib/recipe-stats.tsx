@@ -16,7 +16,6 @@ import {
     ExperienceStackF32,
     ExtractionRecipeDesc,
     ItemConversionRecipeDesc,
-    ItemListDesc,
     ItemStack,
     ItemType,
     LevelRequirement,
@@ -43,7 +42,7 @@ import {BiomeLink, IconLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, Lin
 import {skillCategoryLabel} from "~/lib/game-strings.ts";
 import {trackUILocale} from "~/lib/i18n";
 import {gameText, useLabel} from "~/lib/labels";
-import {getItemListSource, getTravelerNpcName} from "~/lib/relations";
+import {getTravelerNpcName, ItemListSource} from "~/lib/relations";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Type ─────────────────────────────────────────────
@@ -393,10 +392,9 @@ export function itemListLootWeightedComponent(weighted: boolean) {
     )
 }
 
-export function itemListStatLines(list: ItemListDesc): StatLine[] {
+export function itemListStatLines(source: ItemListSource | undefined): StatLine[] {
+    if (source?.type !== "Enemy") return [];
     trackUILocale();
-    const source = getItemListSource(list);
-    if (source.type !== "Enemy") return [];
     const loot = source.loot;
     return [
         [t`Minimum Contribution`, loot.minimumContribution],

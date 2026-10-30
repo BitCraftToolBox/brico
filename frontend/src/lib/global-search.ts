@@ -5,6 +5,7 @@
 import type {Rarity} from "@brico/bitcraft-bindings/types";
 import Fuse, {FuseResult, IFuseOptions} from "fuse.js";
 import {BitCraftTables} from "~/lib/bitcraft-data";
+import {parseChatLink, resolveChatLink} from "~/lib/chat-links";
 import {sourceRow} from "~/lib/data-translation";
 import {deployableTypeLabel} from "~/lib/game-strings.ts";
 import {type Label} from "~/lib/labels";
@@ -301,34 +302,49 @@ function resolveMatchField(result: FuseResult<SearchDocument>): { matchField: st
     return {matchField: FALLBACK_FIELD, matchValue: result.item.name};
 }
 
+function exactMatch(table: SearchableTable, row: any): ObjectMatch {
+    const primaryKey = row[table.pk] as string | number;
+    return {
+        tableName: table.tableKey,
+        label: PAGE_TITLE_LABELS[table.route],
+        route: `${table.route}/${primaryKey}`,
+        primaryKey,
+        displayName: table.name(row),
+        matchField: "id",
+        matchValue: String(primaryKey),
+        score: -1,
+        tier: table.tier?.(row),
+        rarity: table.rarity?.(row),
+    };
+}
+
+function lookupByPk(table: SearchableTable, pk: number): any {
+    // @ts-ignore
+    return BitCraftTables[table.tableKey].indexedBy(table.pk)().get(pk);
+}
+
 function collectPkExactMatches(query: string): ObjectMatch[] {
     const parsed = parseNumberAsPK(query);
     if (parsed === null) return [];
 
     const matches: ObjectMatch[] = [];
     for (const table of searchableTables) {
-        // @ts-ignore
-        const idx = BitCraftTables[table.tableKey].indexedBy(table.pk);
-        const row = idx().get(parsed);
-        if (!row) continue;
-
-        const primaryKey = (row as any)[table.pk] as string | number;
-        const displayName = table.name(row);
-        matches.push({
-            tableName: table.tableKey,
-            label: PAGE_TITLE_LABELS[table.route],
-            route: `${table.route}/${primaryKey}`,
-            primaryKey,
-            displayName,
-            matchField: "id",
-            matchValue: String(primaryKey),
-            score: -1,
-            tier: table.tier?.(row),
-            rarity: table.rarity?.(row),
-        });
+        const row = lookupByPk(table, parsed);
+        if (row) matches.push(exactMatch(table, row));
     }
 
     return matches;
+}
+
+/** An in-game chat link like `(item=123)` matches the single page it points at. */
+function collectChatLinkMatches(query: string): ObjectMatch[] {
+    const link = parseChatLink(query);
+    const target = link && resolveChatLink(link);
+    if (!target) return [];
+
+    const table = searchableTables.find((t) => t.route === target.route);
+    const row = table && lookupByPk(table, target.pk);
+    return table && row ? [exactMatch(table, row)] : [];
 }
 
 export function createGlobalSearchIndex(): GlobalSearchIndex {
@@ -407,7 +423,7 @@ export function globalSearch(
     if (!q || !index) return {groups, totalMatches};
 
     const matchByDocId = new Map<string, ObjectMatch>();
-    for (const exact of collectPkExactMatches(q)) {
+    for (const exact of [...collectPkExactMatches(q), ...collectChatLinkMatches(q)]) {
         matchByDocId.set(buildDocId(exact.tableName, exact.primaryKey), exact);
     }
 

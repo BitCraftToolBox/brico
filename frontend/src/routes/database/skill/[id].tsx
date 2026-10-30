@@ -17,6 +17,7 @@ import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {SkillBanner} from "~/components/shared/GameIcon";
 import {NumberField, NumberFieldDecrementTrigger, NumberFieldGroup, NumberFieldIncrementTrigger, NumberFieldInput} from "~/components/ui/number-field";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {chatLink} from "~/lib/chat-links";
 import {AbilityLink, AchievementLink, EnemyLink, IconLink, ItemLink, ItemStackLink, LinkedList, pageIcon, QuestChainLink, ResourceLink} from "~/lib/game-links";
 import {skillCategoryLabel} from "~/lib/game-strings";
 import {gameText, Label, useLabel} from "~/lib/labels";
@@ -310,7 +311,7 @@ export default function SkillDetail() {
             rawData={skill()}
             spacetimeTable={BitCraftTables.SkillDesc.spacetimeName}
             objectId={skill()?.id}
-            chatLink={`(prof=${skill()?.id})`}
+            chatLink={chatLink("prof", skill()?.id)}
             tabs={[
                 {
                     id: "progression",

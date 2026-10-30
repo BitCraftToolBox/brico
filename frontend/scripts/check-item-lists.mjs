@@ -1,5 +1,5 @@
 /**
- * check-nested-item-lists.mjs
+ * check-item-lists.mjs
  *
  * Analyses ItemListDesc data for nested item lists (items whose ItemDesc.itemListId
  * points to another list), replicating the logic used by computeAveragesFlatExpanded
@@ -13,16 +13,20 @@
  *   - Per-depth breakdown
  *   - How many (and which) item lists have no outputs (empty `possibilities`, or every
  *     possibility has an empty `items` array)
+ *   - Item lists with several sources (items via ItemDesc.itemListId, enemies via
+ *     ContributionLootDesc), or both kinds, mirroring getItemListSources in relations.ts;
+ *     lists covered by ITEM_LIST_SOURCE_OVERRIDES are marked, and chosen items starred
  *
- * Run:  npx tsx scripts/check-nested-item-lists.mjs
+ * Run:  npx tsx scripts/check-item-lists.mjs
  */
 
-import {ItemDesc, ItemListDesc} from "@brico/bitcraft-bindings/types";
+import {ContributionLootDesc, EnemyDesc, ItemDesc, ItemListDesc} from "@brico/bitcraft-bindings/types";
 import {readFileSync} from "node:fs";
 import {dirname, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 
 import {AlgebraicType, BinaryReader} from "spacetimedb";
+import {ITEM_LIST_SOURCE_OVERRIDES} from "../src/lib/item-list-overrides.ts";
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const ROOT  = __dir.endsWith("scripts") ? resolve(__dir, "..") : __dir;
@@ -42,6 +46,8 @@ function loadTable(tableName, binding) {
 console.log("Loading BSATN data…");
 const allLists = loadTable("item_list_desc", ItemListDesc);
 const allItems = loadTable("item_desc", ItemDesc);
+const allLoots = loadTable("contribution_loot_desc", ContributionLootDesc);
+const allEnemies = loadTable("enemy_desc", EnemyDesc);
 
 /** @type {Map<number, import("@brico/bitcraft-bindings/types").ItemDesc>} */
 const itemById = new Map(allItems.map(i => [i.id, i]));
@@ -170,3 +176,68 @@ if (listsWithNoOutputs.length > 0) {
         console.log(`  [${list.id}] "${list.name}" — possibilities: ${list.possibilities.length}`);
     }
 }
+
+// ── Item list sources ──────────────────────────────────────────
+
+/** @type {Map<number, object[]>} list id → items whose itemListId points at it */
+const itemsByList = new Map();
+for (const item of allItems) {
+    if (!item.itemListId) continue;
+    if (!itemsByList.has(item.itemListId)) itemsByList.set(item.itemListId, []);
+    itemsByList.get(item.itemListId).push(item);
+}
+
+/** @type {Map<number, object[]>} list id → contribution loot rows that yield it */
+const lootsByList = new Map();
+for (const loot of allLoots) {
+    if (!lootsByList.has(loot.itemListId)) lootsByList.set(loot.itemListId, []);
+    lootsByList.get(loot.itemListId).push(loot);
+}
+
+const enemyByType = new Map(allEnemies.map(e => [e.enemyType, e]));
+
+const multiItemLists = allLists.filter(l => (itemsByList.get(l.id)?.length ?? 0) > 1);
+const multiEnemyLists = allLists.filter(l => (lootsByList.get(l.id)?.length ?? 0) > 1);
+const mixedSourceLists = allLists.filter(l => itemsByList.has(l.id) && lootsByList.has(l.id));
+
+console.log(`\n${line}`);
+row("Lists with >1 item source", multiItemLists.length);
+row("Lists with >1 enemy source", multiEnemyLists.length);
+row("Lists with item and enemy sources", mixedSourceLists.length);
+
+function overrideLabel(list) {
+    const override = ITEM_LIST_SOURCE_OVERRIDES.get(list.id);
+    if (override === undefined) return "";
+    return override === "Enemy" ? "  (override: enemy)" : `  (override: item ${override})`;
+}
+
+function printItemSources(list) {
+    const override = ITEM_LIST_SOURCE_OVERRIDES.get(list.id);
+    for (const item of itemsByList.get(list.id) ?? []) {
+        const star = item.id === override ? "*" : " ";
+        console.log(`      ${star} item [${item.id}] "${item.name}"`);
+    }
+}
+
+function printEnemySources(list) {
+    const star = ITEM_LIST_SOURCE_OVERRIDES.get(list.id) === "Enemy" ? "*" : " ";
+    for (const loot of lootsByList.get(list.id) ?? []) {
+        const enemy = enemyByType.get(loot.enemyTypeId);
+        const who = enemy ? `[${enemy.enemyType}] "${enemy.name}"` : `#${loot.enemyTypeId} (no EnemyDesc)`;
+        console.log(`      ${star} enemy ${who} — minimumContribution: ${loot.minimumContribution}, weighted: ${loot.weighted}`);
+    }
+}
+
+function printSourceGroup(title, lists, printers) {
+    if (lists.length === 0) return;
+    console.log(`\n${line}`);
+    console.log(`  ${title}:\n`);
+    for (const list of lists) {
+        console.log(`  [${list.id}] "${list.name}"${overrideLabel(list)}`);
+        for (const print of printers) print(list);
+    }
+}
+
+printSourceGroup("Lists with more than one item source", multiItemLists, [printItemSources]);
+printSourceGroup("Lists with more than one enemy source", multiEnemyLists, [printEnemySources]);
+printSourceGroup("Lists with both item and enemy sources", mixedSourceLists, [printItemSources, printEnemySources]);

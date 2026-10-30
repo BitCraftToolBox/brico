@@ -795,6 +795,10 @@ msgstr "Déployables"
 msgid "Name this filter"
 msgstr ""
 
+#: src/routes/account/my-bounties.tsx
+msgid "Estimated total"
+msgstr ""
+
 #: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-utils/column-builders.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -810,6 +814,7 @@ msgstr "Nom"
 msgid "This bounty's funding doesn't cover that rate yet."
 msgstr ""
 
+#: src/lib/crafts/ledger-footer.tsx
 #: src/routes/database/skill/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Total"
@@ -2438,6 +2443,10 @@ msgstr ""
 msgid "Sell <0/> to {npcName}"
 msgstr ""
 
+#: src/routes/account/my-bounties.tsx
+msgid "Estimated outgoing"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
 msgstr ""
@@ -3553,6 +3562,7 @@ msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
 #: src/components/crafts/PlayerPicker.tsx
+#: src/routes/account/my-bounties.tsx
 #: src/routes/account/payees.tsx
 msgid "No matches."
 msgstr ""
@@ -3956,6 +3966,10 @@ msgstr ""
 
 #: src/routes/account/link.tsx
 msgid "Log in to finish linking"
+msgstr ""
+
+#: src/routes/account/profile.tsx
+msgid "All your BitCraft characters will be grouped under this name. Leave it blank if don't want your characters associated together."
 msgstr ""
 
 #: src/routes/account/payouts.tsx

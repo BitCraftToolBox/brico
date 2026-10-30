@@ -254,7 +254,13 @@ export default function ProfilePage() {
                     <Card>
                         <CardHeader>
                             <CardTitle><Trans>Display name</Trans></CardTitle>
-                            <CardDescription><Trans>Shown to other players wherever your account is credited.</Trans></CardDescription>
+                            <CardDescription>
+                                <Trans>Shown to other players wherever your account is credited.</Trans>
+                                <Show when={bitcraftLinks().length > 1}>
+                                    <br/>
+                                    <Trans>All your BitCraft characters will be grouped under this name. Leave it blank if don't want your characters associated together.</Trans>
+                                </Show>
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <form

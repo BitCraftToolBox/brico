@@ -17,6 +17,7 @@
  *      back to itself rather than to `returnUrl`'s configured default — see `resolveReturnUrl`.
  */
 import {createServer, type IncomingMessage, type ServerResponse} from "node:http";
+import type {Identity} from "spacetimedb";
 import type {DiscordOAuthClient} from "./auth/discord-oauth.ts";
 
 import {createLinkStateStore, type LinkStateStore} from "./auth/link-state-store.ts";
@@ -43,6 +44,11 @@ export interface LinkHttpServerOptions {
      * message (e.g. "unknown or expired link code", the cross-account collision message) — that
      * message is safe to surface to the browser as-is. */
     noteExternalLink(args: {code: string; externalId: string; externalHandle: string | undefined}): Promise<void>;
+    /** The brico account that started link `code`; `noteExternalLink` deletes the request, so read this first. */
+    accountForLinkCode(code: string): Identity | undefined;
+    /** Directly links further BitAuth characters (the `linked_accounts` claim) to `accountIdentity`.
+     * Per-character failures (e.g. already linked to another account) are logged, not thrown. */
+    linkAdditionalBitauthAccounts(args: {accountIdentity: Identity; accounts: BitauthLinkedAccount[]}): Promise<void>;
     /** Handler for `POST /discord/interactions`; `null` when the bot is not configured (route 503s). */
     discordInteractions: ((req: IncomingMessage, res: ServerResponse) => Promise<void>) | null;
     /** Self-serve "add to your server" flow (`/discord/install[/callback]`); `null` disables it (503). */
@@ -58,6 +64,25 @@ export interface LinkHttpServerOptions {
         index: ItemIconIndex;
         renderer: IconRenderer;
     };
+}
+
+export interface BitauthLinkedAccount {
+    sub: string;
+    name: string;
+}
+
+/** Reads the ID token's `linked_accounts` claim, dropping malformed entries and the token's own `sub`. */
+function readLinkedAccounts(claims: Record<string, unknown>, ownSub: string): BitauthLinkedAccount[] {
+    const raw = claims.linked_accounts;
+    if (!Array.isArray(raw)) return [];
+    const accounts: BitauthLinkedAccount[] = [];
+    for (const entry of raw) {
+        if (typeof entry !== "object" || entry === null) continue;
+        const {sub, name} = entry as Record<string, unknown>;
+        if (typeof sub !== "string" || sub === "" || sub === ownSub) continue;
+        accounts.push({sub, name: typeof name === "string" ? name : ""});
+    }
+    return accounts;
 }
 
 export interface LinkHttpServer {
@@ -141,7 +166,12 @@ export function createLinkHttpServer(options: LinkHttpServerOptions): LinkHttpSe
             const externalHandle = typeof identity.claims.preferred_username === "string"
                 ? identity.claims.preferred_username
                 : undefined;
+            const accountIdentity = options.accountForLinkCode(pending.linkCode);
             await options.noteExternalLink({code: pending.linkCode, externalId: identity.sub, externalHandle});
+            const accounts = readLinkedAccounts(identity.claims, identity.sub);
+            if (accountIdentity && accounts.length > 0) {
+                await options.linkAdditionalBitauthAccounts({accountIdentity, accounts});
+            }
             redirect(res, withParam(returnUrl, "linked", "bitcraft-ea2"));
         } catch (cause) {
             options.log.warn("BitAuth link finalization failed", {error: describeError(cause)});

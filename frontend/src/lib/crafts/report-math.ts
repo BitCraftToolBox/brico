@@ -1,6 +1,6 @@
 /**
  * report-math.ts — pure helpers behind the payout reports: the next Stelo payout time, the currency
- * filter, the escrow summary and the payee wallet warning. No imports, so plain `node --test` can load it.
+ * filter, the ledger totals, the escrow summary and the payee wallet warning. No imports, so plain `node --test` can load it.
  */
 
 /** `stelo_payout_schedule`'s fields, as plain numbers of microseconds. */
@@ -39,6 +39,20 @@ export function escrowSummary(
     for (const hold of holds) entry(hold.currency).held += hold.heldAmount - hold.releasedAmount;
     for (const wallet of wallets) entry(wallet.currency).refundDue += wallet.refundDue;
     return summary;
+}
+
+/** Σ (earned − paid) and Σ paid per currency. */
+export function ledgerTotals(
+    rows: readonly {currency: string; earnedTotal: bigint; paidTotal: bigint}[],
+): Map<string, {owed: bigint; paid: bigint}> {
+    const totals = new Map<string, {owed: bigint; paid: bigint}>();
+    for (const row of rows) {
+        const entry = totals.get(row.currency) ?? {owed: 0n, paid: 0n};
+        entry.owed += row.earnedTotal - row.paidTotal;
+        entry.paid += row.paidTotal;
+        totals.set(row.currency, entry);
+    }
+    return totals;
 }
 
 /** Currencies the payee is owed more than they were paid in, but has no receiving wallet for. */

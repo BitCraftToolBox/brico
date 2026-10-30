@@ -60,7 +60,7 @@ export function TableColumnHeader<TData>(props: TableColumnHeaderProps<TData>) {
                         as={Button<"button">}
                         variant="ghost"
                         size="sm"
-                        class={cn("h-8 data-[expanded]:bg-accent", right() ? "-mr-3" : "-ml-3")}
+                        class={cn("h-8 data-[expanded]:bg-accent", right() ? "-mr-2 px-2" : "-ml-3")}
                     >
                         <Show when={props.children} fallback={<span>{props.title}</span>}>
                             {props.children}

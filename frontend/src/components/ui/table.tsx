@@ -25,7 +25,7 @@ const TableBody: Component<ComponentProps<"tbody">> = (props) => {
 const TableFooter: Component<ComponentProps<"tfoot">> = (props) => {
     const [local, others] = splitProps(props, ["class"])
     return (
-        <tfoot class={cn("bg-primary font-medium text-primary-foreground", local.class)} {...others} />
+        <tfoot class={cn("bg-primary-foreground font-medium text-primary", local.class)} {...others} />
     )
 }
 

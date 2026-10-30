@@ -60,8 +60,8 @@ export const upsertSavedCraftFilter = spacetimedb.reducer(
 
 /**
  * Tombstones the caller's own saved filter (no hard delete — see the table's doc comment) and
- * cascades the tombstone to its watch row, if any, so a deleted filter doesn't leave a dangling
- * watch behind.
+ * cascades the tombstone to its notify triggers, so a deleted filter doesn't leave dangling
+ * triggers behind.
  */
 export const deleteSavedCraftFilter = spacetimedb.reducer(
     {id: t.string(), deletedAt: t.timestamp()},
@@ -77,6 +77,15 @@ export const deleteSavedCraftFilter = spacetimedb.reducer(
         if (!isAtLeastAsNew(clampedDeletedAt, existing.updatedAt)) return;
 
         ctx.db.saved_craft_filter.id.update({...existing, updatedAt: clampedDeletedAt, deletedAt: clampedDeletedAt});
+
+        for (const trigger of ctx.db.craft_filter_notify_trigger.filterId.filter(id)) {
+            if (trigger.deletedAt !== undefined) continue;
+            ctx.db.craft_filter_notify_trigger.id.update({
+                ...trigger,
+                updatedAt: clampedDeletedAt,
+                deletedAt: clampedDeletedAt,
+            });
+        }
     }
 );
 

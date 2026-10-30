@@ -460,7 +460,7 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                             <Show when={props.spacetimeTable && props.objectId !== undefined}>
                                                 <a
                                                     href={`https://cereal.brico.app/table/${props.spacetimeTable}/${props.objectId}`}
-                                                    target="_blank"
+                                                    target="_blank" rel="nofollow"
                                                     class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
                                                 >
                                                     <IconExternal/> <Trans>Browse raw data on 🥣 cereal</Trans>

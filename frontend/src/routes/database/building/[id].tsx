@@ -11,6 +11,7 @@ import {RecipeSelect, ResourceDepletionPanel} from "~/components/shared/RecipeDi
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {getBuildingTier} from "~/lib/bitcraft-utils";
+import {chatLink} from "~/lib/chat-links";
 import {sourceRow} from "~/lib/data-translation";
 import {BuffLinkById, LinkedList} from "~/lib/game-links";
 import {trackUILocale} from "~/lib/i18n";
@@ -154,7 +155,7 @@ export default function BuildingDetail() {
             rawData={building()}
             spacetimeTable={BitCraftTables.BuildingDesc.spacetimeName}
             objectId={building()?.id}
-            chatLink={`(build=${building()?.id})`}
+            chatLink={chatLink("build", building()?.id)}
             tabs={[
                 constructionCombinedSingleTab(constructionRecipe(), deconstructionRecipe()),
                 {

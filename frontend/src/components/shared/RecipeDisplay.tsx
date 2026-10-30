@@ -62,7 +62,15 @@ import {
     travelerTaskStatLines,
     travelerTradeStatLines,
 } from "~/lib/recipe-stats";
-import {buildingForConstruction, buildingForDeconstruction, questDropsForEnemy, questDropsForExtraction, questDropsForItemList, resourceForExtraction} from "~/lib/relations";
+import {
+    buildingForConstruction,
+    buildingForDeconstruction,
+    ItemListSource,
+    questDropsForEnemy,
+    questDropsForExtraction,
+    questDropsForItemList,
+    resourceForExtraction
+} from "~/lib/relations";
 import {cn, fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Line Display ─────────────────────────────────────────
@@ -512,12 +520,13 @@ export const ResourceGrowthPanel: Component<{ growth: ResourceGrowthRecipeDesc }
 
 // ─── Item List Panel ────────────────────────────────────────────
 
-export const ItemListPanel: Component<{ list: ItemListDesc, showEmptyItemList?: boolean }> = (props) => {
+/** One list as produced by `source`; a list with several sources gets one panel per source. */
+export const ItemListPanel: Component<{ list: ItemListDesc, source?: ItemListSource, showEmptyItemList?: boolean }> = (props) => {
     const questDrops = () => questDropsForItemList(props.list.id);
     const listComp = expandStack(props.list, undefined, props.showEmptyItemList);
     return (
         <RecipeVisual
-            inputs={<ItemListSourceIcon list={props.list}/>}
+            inputs={<ItemListSourceIcon list={props.list} source={props.source}/>}
             outputs={
                 <>
                     <Show when={questDrops().length} fallback={listComp}>
@@ -528,7 +537,7 @@ export const ItemListPanel: Component<{ list: ItemListDesc, showEmptyItemList?: 
                     </For>
                 </>
             }
-            stats={itemListStatLines(props.list)}
+            stats={itemListStatLines(props.source)}
         />
     );
 };

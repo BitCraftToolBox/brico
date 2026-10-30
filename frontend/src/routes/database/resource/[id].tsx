@@ -9,6 +9,7 @@ import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ResourceIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGrowthPanel} from "~/components/shared/RecipeDisplay";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {chatLink} from "~/lib/chat-links";
 import {IconLink} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {prospectingForResource} from "~/lib/recipe-stats";
@@ -106,7 +107,7 @@ export default function ResourceDetail() {
             rawData={resource()}
             spacetimeTable={BitCraftTables.ResourceDesc.spacetimeName}
             objectId={resource()?.id}
-            chatLink={`(res=${resource()?.id})`}
+            chatLink={chatLink("res", resource()?.id)}
             tabs={[
                 {
                     id: "extraction",
