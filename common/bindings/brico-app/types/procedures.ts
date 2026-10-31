@@ -6,14 +6,29 @@
 import {type Infer as __Infer} from "spacetimedb";
 
 // Import all procedure arg schemas
+import * as AdminGetCommenterProcedure from "../admin_get_commenter_procedure";
+import * as AdminGetCommentsProcedure from "../admin_get_comments_procedure";
+import * as AdminListCommentsProcedure from "../admin_list_comments_procedure";
 import * as CreateApiKeyProcedure from "../create_api_key_procedure";
 import * as CreateSharedFiltersProcedure from "../create_shared_filters_procedure";
+import * as EditCommentProcedure from "../edit_comment_procedure";
+import * as PostCommentProcedure from "../post_comment_procedure";
 import * as ReadSharedFiltersProcedure from "../read_shared_filters_procedure";
 
+export type AdminGetCommenterArgs = __Infer<typeof AdminGetCommenterProcedure.params>;
+export type AdminGetCommenterResult = __Infer<typeof AdminGetCommenterProcedure.returnType>;
+export type AdminGetCommentsArgs = __Infer<typeof AdminGetCommentsProcedure.params>;
+export type AdminGetCommentsResult = __Infer<typeof AdminGetCommentsProcedure.returnType>;
+export type AdminListCommentsArgs = __Infer<typeof AdminListCommentsProcedure.params>;
+export type AdminListCommentsResult = __Infer<typeof AdminListCommentsProcedure.returnType>;
 export type CreateApiKeyArgs = __Infer<typeof CreateApiKeyProcedure.params>;
 export type CreateApiKeyResult = __Infer<typeof CreateApiKeyProcedure.returnType>;
 export type CreateSharedFiltersArgs = __Infer<typeof CreateSharedFiltersProcedure.params>;
 export type CreateSharedFiltersResult = __Infer<typeof CreateSharedFiltersProcedure.returnType>;
+export type EditCommentArgs = __Infer<typeof EditCommentProcedure.params>;
+export type EditCommentResult = __Infer<typeof EditCommentProcedure.returnType>;
+export type PostCommentArgs = __Infer<typeof PostCommentProcedure.params>;
+export type PostCommentResult = __Infer<typeof PostCommentProcedure.returnType>;
 export type ReadSharedFiltersArgs = __Infer<typeof ReadSharedFiltersProcedure.params>;
 export type ReadSharedFiltersResult = __Infer<typeof ReadSharedFiltersProcedure.returnType>;
 

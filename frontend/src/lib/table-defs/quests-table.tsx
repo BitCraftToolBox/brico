@@ -90,7 +90,7 @@ export function ReqOrRewardLink(props: { qr: QuestEntry }) {
         case "Level": {
             const lr = props.qr.value as LevelRequirement;
             return (
-                <span class="inline-flex items-center gap-1">
+                <span class="inline-flex items-baseline gap-1">
                     <SkillLinkById skillId={lr.skillId}/> <span class="text-muted-foreground"><Trans>Lvl. {lr.level}</Trans></span>
                 </span>
             );
@@ -98,7 +98,7 @@ export function ReqOrRewardLink(props: { qr: QuestEntry }) {
         case "Experience": {
             const expStack = props.qr.value as { skillId: number; quantity: number };
             return (
-                <span class="inline-flex items-center gap-1">
+                <span class="inline-flex items-baseline gap-1">
                     <SkillLinkById skillId={expStack.skillId}/><span class="text-muted-foreground"><Trans>EXP: {fixFloat(expStack.quantity)}</Trans></span>
                 </span>
             );

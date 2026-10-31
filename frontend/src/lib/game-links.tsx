@@ -40,7 +40,7 @@ export function IconLink(props: {
     class?: string;
 }) {
     return (
-        <A href={props.href} class={cn("inline-flex flex-nowrap text-nowrap items-center gap-1 hover:underline", props.class)}>
+        <A href={props.href} class={cn("icon-text text-nowrap gap-1 hover:underline", props.class)}>
             {props.icon}
             {props.children}
         </A>
@@ -54,7 +54,7 @@ export function IconSpan(props: {
     class?: string;
 }) {
     return (
-        <span class={cn("inline-flex flex-nowrap text-nowrap items-center gap-1", props.class)}>
+        <span class={cn("icon-text text-nowrap gap-1", props.class)}>
             {props.icon}
             {props.children}
         </span>
@@ -64,7 +64,7 @@ export function IconSpan(props: {
 // ─── Page icon helper ───────────────────────────────────────────
 
 /** Returns a page icon element by page title (from sidebar-items). */
-export function pageIcon(pageTitle: SidebarPages, iconClass: string = "size-4 shrink-0 align-text-bottom"): JSX.Element | undefined {
+export function pageIcon(pageTitle: SidebarPages, iconClass: string = "size-4 shrink-0"): JSX.Element | undefined {
     const icon = PAGE_ICONS[pageTitle];
     if (!icon) return undefined;
     return icon({class: iconClass});
@@ -80,7 +80,7 @@ export function SkillLink(props: { skill: SkillDesc; class?: string; showIcon?: 
     return (
         <IconLink
             href={`/database/skill/${props.skill.id}`}
-            icon={show() ? <FontIcon codepoint={codepoint()} class="size-4 shrink-0 align-text-bottom"/> : undefined}
+            icon={show() ? <FontIcon codepoint={codepoint()} class="size-4 shrink-0"/> : undefined}
             class={props.class}
         >
             {props.skill.name} {props.level ? <span class={"text-muted-foreground"}>{props.level}</span> : null}
@@ -109,7 +109,7 @@ export function KnowledgeLink(props: { id: number; name?: string; class?: string
             <TooltipTrigger
                 as={A}
                 href={`/database/knowledge/${props.id}`}
-                class={cn("inline-flex items-center gap-1 hover:underline", props.class)}
+                class={cn("icon-text gap-1 hover:underline", props.class)}
             >
                 <Show when={show()}>
                     {pageIcon("Knowledge")}
@@ -382,7 +382,7 @@ export function ItemListLink(props: { id: number; name?: string; class?: string;
  */
 export function CombatActionLink(props: { id: number; name?: string; iconAssetName?: string; class?: string }) {
     const icon = () => props.iconAssetName
-        ? <img src={getAssetURL(props.iconAssetName)} alt="" class="size-4 shrink-0 align-text-bottom object-contain"/>
+        ? <img src={getAssetURL(props.iconAssetName)} alt="" class="size-4 shrink-0 object-contain"/>
         : pageIcon("Combat Actions");
     return (
         <IconLink href={`/database/combat/${props.id}`} icon={icon()} class={props.class}>
@@ -399,7 +399,7 @@ export function CombatActionLink(props: { id: number; name?: string; iconAssetNa
  */
 export function AbilityLink(props: { id: number; name?: string; iconPath?: string; class?: string }) {
     const icon = () => props.iconPath
-        ? <img src={getAssetURL(props.iconPath)} alt="" class="size-4 shrink-0 align-text-bottom object-contain"/>
+        ? <img src={getAssetURL(props.iconPath)} alt="" class="size-4 shrink-0 object-contain"/>
         : pageIcon("Abilities");
     return (
         <IconLink href={`/database/ability/${props.id}`} icon={icon()} class={props.class}>

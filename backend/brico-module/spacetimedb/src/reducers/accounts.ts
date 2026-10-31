@@ -1,8 +1,10 @@
 // noinspection JSUnusedGlobalSymbols
 
-import {CraftError, MAX_DISPLAY_NAME_LENGTH} from '@brico/crafts/errors';
+import {CraftError} from '@brico/crafts/errors';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount, requireServicePrincipal, requireTrustedJwt} from '../lib/auth';
+import {requireValidDisplayName, syncAuthorName} from '../lib/comments';
+import {isRestricted} from '../lib/permissions';
 import {spacetimedb} from '../schema';
 
 // ---------------------------------------------------------------------------
@@ -75,14 +77,20 @@ export const setDisplayName = spacetimedb.reducer(
     {displayName: t.option(t.string())},
     (ctx, {displayName}) => {
         const existing = requireAccount(ctx);
-        const trimmed = displayName?.trim();
-        if (trimmed && trimmed.length > MAX_DISPLAY_NAME_LENGTH) {
-            throw new SenderError(CraftError.DISPLAY_NAME_TOO_LONG);
+        if (isRestricted(ctx.db, ctx.sender, 'nameLockedUntil', ctx.timestamp)) {
+            throw new SenderError(CraftError.NAME_CHANGE_RESTRICTED);
         }
-        ctx.db.account.identity.update({
-            ...existing,
-            displayName: trimmed === undefined || trimmed === '' ? undefined : trimmed,
-        });
+        const trimmed = displayName?.trim();
+        if (trimmed === undefined || trimmed === '') {
+            ctx.db.account.identity.update({...existing, displayName: undefined});
+            return;
+        }
+        const name = requireValidDisplayName(trimmed);
+        if (name === existing.displayName) {
+            return;
+        }
+        ctx.db.account.identity.update({...existing, displayName: name});
+        syncAuthorName(ctx, ctx.sender, name);
     }
 );
 

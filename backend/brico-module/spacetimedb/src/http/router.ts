@@ -2,6 +2,7 @@
 
 import {Router} from 'spacetimedb/server';
 import {spacetimedb} from '../schema';
+import {commentCount} from './comments';
 import {dashboard} from './dashboard';
 import {payeeEntitlements, payeeLog, payerEntitlements, payerLog} from './payouts';
 
@@ -12,4 +13,5 @@ export const httpRoutes = spacetimedb.httpRouter(
         .get('/payouts/payee/entitlements', payeeEntitlements)
         .get('/payouts/payee/log', payeeLog)
         .get('/dashboard', dashboard)
+        .get('/comments/count', commentCount)
 );

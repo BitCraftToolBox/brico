@@ -33,6 +33,9 @@ Nothing about the connection manager or `connection.ts` distinguishes them — t
 | A table whose rows arrive as a live feed          | `LiveTable`, not `DataTable` |
 | Adding a new prism table to a resource            | `prismTable(tables.x)` (whole table) or `prismRows(tables.x, tables.x.where(...))` (narrowed) |
 | Adding a new brico-app view to a resource         | `bricoAppTable(tables.x)` |
+| Subscribing to a view that takes arguments        | A raw SQL string, `{table: "user_comments", query: "SELECT * FROM user_comments('item:1')"}`; filter the shared cache by the argument when reading |
+
+View-with-arg format is as of SpacetimeDB 2.14. Future versions should introduce query builder syntax for these.
 
 ## Connection manager
 

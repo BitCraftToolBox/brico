@@ -410,7 +410,7 @@ function RuleCard(props: {
                                             <tr class="h-8">
                                                 <td class="bg-background p-1 text-left font-medium">
                                                     <div
-                                                        class="inline-flex items-center gap-1.5"
+                                                        class="icon-text gap-1.5"
                                                         classList={{"text-muted-foreground": !skillsWithRecipes().has(skill.id)}}
                                                     >
                                                         <Show when={skill.iconAssetName}>

@@ -8,7 +8,7 @@ import type {Identity, Timestamp} from 'spacetimedb';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount, requireServicePrincipal} from '../lib/auth';
 import {validateBountyCurrency, validateManualBountyCurrency, validateRatio} from '../lib/bounty';
-import {addSurfacedTotal, escrowAccrued, escrowRatio, findOpenEscrow, findPool, isEscrowedCurrency, poolFractions, ratioAtLeast} from '../lib/escrow';
+import {addSurfacedTotal, escrowAccrued, escrowRatio, type EscrowRow, findOpenEscrow, findPool, isEscrowedCurrency, poolFractions, ratioAtLeast} from '../lib/escrow';
 import {clampClientTimestamp, isAtLeastAsNew} from '../lib/sync';
 import type {Ctx} from '../schema';
 import {spacetimedb} from '../schema';
@@ -244,7 +244,7 @@ function addToEntitlementTotal(
  */
 function addToEscrowPools(
     ctx: Ctx,
-    escrow: NonNullable<ReturnType<typeof findOpenEscrow>>,
+    escrow: EscrowRow,
     payeePlayerId: bigint,
     deltaFull: Fraction,
     deltaGuaranteed: Fraction,

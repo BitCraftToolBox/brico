@@ -15,6 +15,66 @@ export const Account = __t.object("Account", {
 });
 export type Account = __Infer<typeof Account>;
 
+export const AccountPermission = __t.object("AccountPermission", {
+  identity: __t.identity(),
+  reason: __t.option(__t.string()),
+  updatedBy: __t.identity(),
+  updatedAt: __t.timestamp(),
+  postBlockedUntil: __t.option(__t.timestamp()),
+  reviewRequiredUntil: __t.option(__t.timestamp()),
+  nameLockedUntil: __t.option(__t.timestamp()),
+  reportBlockedUntil: __t.option(__t.timestamp()),
+});
+export type AccountPermission = __Infer<typeof AccountPermission>;
+
+export const AdminCommentFilters = __t.object("AdminCommentFilters", {
+  status: __t.option(__t.u8()),
+  author: __t.option(__t.identity()),
+  pageKey: __t.option(__t.string()),
+});
+export type AdminCommentFilters = __Infer<typeof AdminCommentFilters>;
+
+export const AdminCommentPage = __t.object("AdminCommentPage", {
+  get comments() {
+    return __t.array(Comment);
+  },
+  nextCursor: __t.option(__t.u64()),
+});
+export type AdminCommentPage = __Infer<typeof AdminCommentPage>;
+
+export const AdminCommentRevisions = __t.object("AdminCommentRevisions", {
+  commentId: __t.u64(),
+});
+export type AdminCommentRevisions = __Infer<typeof AdminCommentRevisions>;
+
+export const AdminCommenter = __t.object("AdminCommenter", {
+  identity: __t.identity(),
+  displayName: __t.option(__t.string()),
+  createdAt: __t.timestamp(),
+  isModerator: __t.bool(),
+  get permission() {
+    return __t.option(AccountPermission);
+  },
+  get comments() {
+    return __t.array(Comment);
+  },
+  get reportsBy() {
+    return __t.array(CommentReport);
+  },
+  get reportsAgainst() {
+    return __t.array(CommentReport);
+  },
+});
+export type AdminCommenter = __Infer<typeof AdminCommenter>;
+
+export const AdminComments = __t.object("AdminComments", {
+  pageKey: __t.string(),
+});
+export type AdminComments = __Infer<typeof AdminComments>;
+
+export const AdminOpenReports = __t.object("AdminOpenReports", {});
+export type AdminOpenReports = __Infer<typeof AdminOpenReports>;
+
 export const AllAccount = __t.object("AllAccount", {});
 export type AllAccount = __Infer<typeof AllAccount>;
 
@@ -258,6 +318,92 @@ export const ClaimMembershipLoyaltyRule = __t.object("ClaimMembershipLoyaltyRule
   requiredAccess: __t.string(),
 });
 export type ClaimMembershipLoyaltyRule = __Infer<typeof ClaimMembershipLoyaltyRule>;
+
+export const Comment = __t.object("Comment", {
+  id: __t.u64(),
+  pageKey: __t.string(),
+  parentId: __t.option(__t.u64()),
+  depth: __t.u8(),
+  author: __t.identity(),
+  authorName: __t.string(),
+  body: __t.string(),
+  status: __t.u8(),
+  createdAt: __t.timestamp(),
+  versionTag: __t.option(__t.string()),
+  editedAt: __t.option(__t.timestamp()),
+  editedVersionTag: __t.option(__t.string()),
+  outdatedAt: __t.option(__t.timestamp()),
+  outdatedVersionTag: __t.option(__t.string()),
+  score: __t.i32(),
+});
+export type Comment = __Infer<typeof Comment>;
+
+export const CommentNotifyTrigger = __t.object("CommentNotifyTrigger", {
+  id: __t.string(),
+  accountIdentity: __t.identity(),
+  get sink() {
+    return NotifySinkRef;
+  },
+  reply: __t.bool(),
+  updatedAt: __t.timestamp(),
+  deletedAt: __t.option(__t.timestamp()),
+});
+export type CommentNotifyTrigger = __Infer<typeof CommentNotifyTrigger>;
+
+export const CommentReport = __t.object("CommentReport", {
+  id: __t.u64(),
+  commentId: __t.u64(),
+  reporter: __t.identity(),
+  author: __t.identity(),
+  get reason() {
+    return CommentReportReason;
+  },
+  note: __t.option(__t.string()),
+  createdAt: __t.timestamp(),
+  state: __t.u8(),
+  resolvedBy: __t.option(__t.identity()),
+  resolvedAt: __t.option(__t.timestamp()),
+});
+export type CommentReport = __Infer<typeof CommentReport>;
+
+// The tagged union or sum type for the algebraic type `CommentReportReason`.
+export const CommentReportReason = __t.enum("CommentReportReason", {
+  Spam: __t.unit(),
+  Abuse: __t.unit(),
+  OffTopic: __t.unit(),
+  BadName: __t.unit(),
+  Outdated: __t.unit(),
+  Updated: __t.unit(),
+  Other: __t.unit(),
+});
+export type CommentReportReason = __Infer<typeof CommentReportReason>;
+
+export const CommentRevision = __t.object("CommentRevision", {
+  id: __t.u64(),
+  commentId: __t.u64(),
+  body: __t.string(),
+  editedAt: __t.timestamp(),
+  editor: __t.identity(),
+  versionTag: __t.option(__t.string()),
+});
+export type CommentRevision = __Infer<typeof CommentRevision>;
+
+export const CommentVote = __t.object("CommentVote", {
+  id: __t.u64(),
+  commentId: __t.u64(),
+  pageKey: __t.string(),
+  voter: __t.identity(),
+  up: __t.bool(),
+});
+export type CommentVote = __Infer<typeof CommentVote>;
+
+export const Commenter = __t.object("Commenter", {
+  identity: __t.identity(),
+  lastPostAt: __t.timestamp(),
+  windowStartedAt: __t.timestamp(),
+  postWindowCount: __t.u32(),
+});
+export type Commenter = __Infer<typeof Commenter>;
 
 export const ContributorEntitlementRow = __t.object("ContributorEntitlementRow", {
   id: __t.string(),
@@ -545,6 +691,14 @@ export const FundingNotifyTrigger = __t.object("FundingNotifyTrigger", {
 });
 export type FundingNotifyTrigger = __Infer<typeof FundingNotifyTrigger>;
 
+export const GameVersionCache = __t.object("GameVersionCache", {
+  id: __t.u8(),
+  tag: __t.string(),
+  label: __t.option(__t.string()),
+  fetchedAt: __t.timestamp(),
+});
+export type GameVersionCache = __Infer<typeof GameVersionCache>;
+
 export const GridBountyValue = __t.object("GridBountyValue", {
   get cells() {
     return __t.array(GridCell);
@@ -644,6 +798,13 @@ export const LoyaltyRuleSpec = __t.enum("LoyaltyRuleSpec", {
 });
 export type LoyaltyRuleSpec = __Infer<typeof LoyaltyRuleSpec>;
 
+export const Moderator = __t.object("Moderator", {
+  identity: __t.identity(),
+  grantedBy: __t.identity(),
+  grantedAt: __t.timestamp(),
+});
+export type Moderator = __Infer<typeof Moderator>;
+
 export const MyAccount = __t.object("MyAccount", {});
 export type MyAccount = __Infer<typeof MyAccount>;
 
@@ -664,6 +825,14 @@ export type MyBountyPayoutRecordLogAsPayer = __Infer<typeof MyBountyPayoutRecord
 
 export const MyBountyRule = __t.object("MyBountyRule", {});
 export type MyBountyRule = __Infer<typeof MyBountyRule>;
+
+export const MyCommentNotifyTrigger = __t.object("MyCommentNotifyTrigger", {});
+export type MyCommentNotifyTrigger = __Infer<typeof MyCommentNotifyTrigger>;
+
+export const MyCommentVotes = __t.object("MyCommentVotes", {
+  pageKey: __t.string(),
+});
+export type MyCommentVotes = __Infer<typeof MyCommentVotes>;
 
 export const MyCraftBountyEscrow = __t.object("MyCraftBountyEscrow", {});
 export type MyCraftBountyEscrow = __Infer<typeof MyCraftBountyEscrow>;
@@ -712,6 +881,9 @@ export type MyLoyaltyReward = __Infer<typeof MyLoyaltyReward>;
 
 export const MyLoyaltyRule = __t.object("MyLoyaltyRule", {});
 export type MyLoyaltyRule = __Infer<typeof MyLoyaltyRule>;
+
+export const MyModerator = __t.object("MyModerator", {});
+export type MyModerator = __Infer<typeof MyModerator>;
 
 export const MyNotification = __t.object("MyNotification", {});
 export type MyNotification = __Infer<typeof MyNotification>;
@@ -965,4 +1137,9 @@ export type SteloWalletStatus = __Infer<typeof SteloWalletStatus>;
 
 export const ToastNotifySinkRef = __t.object("ToastNotifySinkRef", {});
 export type ToastNotifySinkRef = __Infer<typeof ToastNotifySinkRef>;
+
+export const UserComments = __t.object("UserComments", {
+  pageKey: __t.string(),
+});
+export type UserComments = __Infer<typeof UserComments>;
 

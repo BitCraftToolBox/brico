@@ -2,7 +2,7 @@
 
 import {t} from 'spacetimedb/server';
 import {spacetimedb} from '../schema';
-import {craft_filter_notify_trigger, funding_notify_trigger} from '../tables/notify';
+import {comment_notify_trigger, craft_filter_notify_trigger, funding_notify_trigger} from '../tables/notify';
 
 /** The caller's own notification trigger rows, tombstoned ones included — same reason as `mySavedCraftFilter`. */
 export const myCraftFilterNotifyTrigger = spacetimedb.view(
@@ -19,6 +19,13 @@ export const allCraftFilterNotifyTrigger = spacetimedb.view(
         const isTrusted = ctx.db.service_principal.identity.find(ctx.sender) !== null;
         return ctx.from.craft_filter_notify_trigger.where(_ => isTrusted);
     }
+);
+
+/** The caller's own comment-notification triggers, tombstoned ones included. */
+export const myCommentNotifyTrigger = spacetimedb.view(
+    {name: 'my_comment_notify_trigger', public: true},
+    t.array(comment_notify_trigger.rowType),
+    ctx => ctx.from.comment_notify_trigger.where(r => r.accountIdentity.eq(ctx.sender))
 );
 
 /** The caller's own funding-alert triggers, tombstoned ones included. */

@@ -26,7 +26,9 @@ import DeleteLoyaltyBonusTotalReducer from "../delete_loyalty_bonus_total_reduce
 import DeleteLoyaltyRewardReducer from "../delete_loyalty_reward_reducer";
 import DeleteLoyaltyRuleReducer from "../delete_loyalty_rule_reducer";
 import DeleteNotificationReducer from "../delete_notification_reducer";
+import DeleteOwnCommentReducer from "../delete_own_comment_reducer";
 import DeleteSavedCraftFilterReducer from "../delete_saved_craft_filter_reducer";
+import DetachCommentNotifyTriggerReducer from "../detach_comment_notify_trigger_reducer";
 import DetachCraftFilterNotifyTriggerReducer from "../detach_craft_filter_notify_trigger_reducer";
 import DetachDiscordFundingTargetReducer from "../detach_discord_funding_target_reducer";
 import DetachDiscordNotifySinkReducer from "../detach_discord_notify_sink_reducer";
@@ -35,12 +37,15 @@ import DetachDiscordWatchDisplayReducer from "../detach_discord_watch_display_re
 import DetachFundingNotifyTriggerReducer from "../detach_funding_notify_trigger_reducer";
 import EnsureAccountReducer from "../ensure_account_reducer";
 import FailSteloTransferReducer from "../fail_stelo_transfer_reducer";
+import GrantModeratorReducer from "../grant_moderator_reducer";
+import HideAllByCommenterReducer from "../hide_all_by_commenter_reducer";
 import ImportHistoricalBountyLedgerReducer from "../import_historical_bounty_ledger_reducer";
 import LinkDiscordViaSpacetimeAuthReducer from "../link_discord_via_spacetime_auth_reducer";
 import LinkIntegrationReducer from "../link_integration_reducer";
 import MarkAllNotificationsReadReducer from "../mark_all_notifications_read_reducer";
 import MarkNotificationReadReducer from "../mark_notification_read_reducer";
 import MigrateNotificationsToV2Reducer from "../migrate_notifications_to_v_2_reducer";
+import ModeratorSetDisplayNameReducer from "../moderator_set_display_name_reducer";
 import NoteIntegrationLinkExternalReducer from "../note_integration_link_external_reducer";
 import NoteIntegrationLinkStatusReducer from "../note_integration_link_status_reducer";
 import PostCraftNotificationReducer from "../post_craft_notification_reducer";
@@ -53,8 +58,14 @@ import RegisterServicePrincipalReducer from "../register_service_principal_reduc
 import RegisterSteloWalletReducer from "../register_stelo_wallet_reducer";
 import ReleaseEscrowOverlapReducer from "../release_escrow_overlap_reducer";
 import ReorderBountyRulesReducer from "../reorder_bounty_rules_reducer";
+import ReportCommentReducer from "../report_comment_reducer";
+import ResolveReportReducer from "../resolve_report_reducer";
+import RevokeModeratorReducer from "../revoke_moderator_reducer";
 import RevokeServicePrincipalReducer from "../revoke_service_principal_reducer";
 import SeedApiKeyEntropyReducer from "../seed_api_key_entropy_reducer";
+import SetAccountPermissionsReducer from "../set_account_permissions_reducer";
+import SetCommentOutdatedReducer from "../set_comment_outdated_reducer";
+import SetCommentStatusReducer from "../set_comment_status_reducer";
 import SetCraftBountyFundingReducer from "../set_craft_bounty_funding_reducer";
 import SetDiscordWatchDisplayMessageReducer from "../set_discord_watch_display_message_reducer";
 import SetDisplayNameReducer from "../set_display_name_reducer";
@@ -68,6 +79,7 @@ import SubmitIntegrationLinkCandidateReducer from "../submit_integration_link_ca
 import SyncEscrowPoolUnclaimedReducer from "../sync_escrow_pool_unclaimed_reducer";
 import UnlinkIntegrationReducer from "../unlink_integration_reducer";
 import UpsertBountyRuleReducer from "../upsert_bounty_rule_reducer";
+import UpsertCommentNotifyTriggerReducer from "../upsert_comment_notify_trigger_reducer";
 import UpsertCraftBountyEntitlementReducer from "../upsert_craft_bounty_entitlement_reducer";
 import UpsertCraftBountyOverrideReducer from "../upsert_craft_bounty_override_reducer";
 import UpsertCraftFilterNotifyTriggerReducer from "../upsert_craft_filter_notify_trigger_reducer";
@@ -79,6 +91,7 @@ import UpsertLoyaltyBonusTotalReducer from "../upsert_loyalty_bonus_total_reduce
 import UpsertLoyaltyRewardReducer from "../upsert_loyalty_reward_reducer";
 import UpsertLoyaltyRuleReducer from "../upsert_loyalty_rule_reducer";
 import UpsertSavedCraftFilterReducer from "../upsert_saved_craft_filter_reducer";
+import VoteCommentReducer from "../vote_comment_reducer";
 
 export type AssignCraftBountyParams = __Infer<typeof AssignCraftBountyReducer>;
 export type AttachDiscordFundingTargetParams = __Infer<typeof AttachDiscordFundingTargetReducer>;
@@ -100,7 +113,9 @@ export type DeleteLoyaltyBonusTotalParams = __Infer<typeof DeleteLoyaltyBonusTot
 export type DeleteLoyaltyRewardParams = __Infer<typeof DeleteLoyaltyRewardReducer>;
 export type DeleteLoyaltyRuleParams = __Infer<typeof DeleteLoyaltyRuleReducer>;
 export type DeleteNotificationParams = __Infer<typeof DeleteNotificationReducer>;
+export type DeleteOwnCommentParams = __Infer<typeof DeleteOwnCommentReducer>;
 export type DeleteSavedCraftFilterParams = __Infer<typeof DeleteSavedCraftFilterReducer>;
+export type DetachCommentNotifyTriggerParams = __Infer<typeof DetachCommentNotifyTriggerReducer>;
 export type DetachCraftFilterNotifyTriggerParams = __Infer<typeof DetachCraftFilterNotifyTriggerReducer>;
 export type DetachDiscordFundingTargetParams = __Infer<typeof DetachDiscordFundingTargetReducer>;
 export type DetachDiscordNotifySinkParams = __Infer<typeof DetachDiscordNotifySinkReducer>;
@@ -109,12 +124,15 @@ export type DetachDiscordWatchDisplayParams = __Infer<typeof DetachDiscordWatchD
 export type DetachFundingNotifyTriggerParams = __Infer<typeof DetachFundingNotifyTriggerReducer>;
 export type EnsureAccountParams = __Infer<typeof EnsureAccountReducer>;
 export type FailSteloTransferParams = __Infer<typeof FailSteloTransferReducer>;
+export type GrantModeratorParams = __Infer<typeof GrantModeratorReducer>;
+export type HideAllByCommenterParams = __Infer<typeof HideAllByCommenterReducer>;
 export type ImportHistoricalBountyLedgerParams = __Infer<typeof ImportHistoricalBountyLedgerReducer>;
 export type LinkDiscordViaSpacetimeAuthParams = __Infer<typeof LinkDiscordViaSpacetimeAuthReducer>;
 export type LinkIntegrationParams = __Infer<typeof LinkIntegrationReducer>;
 export type MarkAllNotificationsReadParams = __Infer<typeof MarkAllNotificationsReadReducer>;
 export type MarkNotificationReadParams = __Infer<typeof MarkNotificationReadReducer>;
 export type MigrateNotificationsToV2Params = __Infer<typeof MigrateNotificationsToV2Reducer>;
+export type ModeratorSetDisplayNameParams = __Infer<typeof ModeratorSetDisplayNameReducer>;
 export type NoteIntegrationLinkExternalParams = __Infer<typeof NoteIntegrationLinkExternalReducer>;
 export type NoteIntegrationLinkStatusParams = __Infer<typeof NoteIntegrationLinkStatusReducer>;
 export type PostCraftNotificationParams = __Infer<typeof PostCraftNotificationReducer>;
@@ -127,8 +145,14 @@ export type RegisterServicePrincipalParams = __Infer<typeof RegisterServicePrinc
 export type RegisterSteloWalletParams = __Infer<typeof RegisterSteloWalletReducer>;
 export type ReleaseEscrowOverlapParams = __Infer<typeof ReleaseEscrowOverlapReducer>;
 export type ReorderBountyRulesParams = __Infer<typeof ReorderBountyRulesReducer>;
+export type ReportCommentParams = __Infer<typeof ReportCommentReducer>;
+export type ResolveReportParams = __Infer<typeof ResolveReportReducer>;
+export type RevokeModeratorParams = __Infer<typeof RevokeModeratorReducer>;
 export type RevokeServicePrincipalParams = __Infer<typeof RevokeServicePrincipalReducer>;
 export type SeedApiKeyEntropyParams = __Infer<typeof SeedApiKeyEntropyReducer>;
+export type SetAccountPermissionsParams = __Infer<typeof SetAccountPermissionsReducer>;
+export type SetCommentOutdatedParams = __Infer<typeof SetCommentOutdatedReducer>;
+export type SetCommentStatusParams = __Infer<typeof SetCommentStatusReducer>;
 export type SetCraftBountyFundingParams = __Infer<typeof SetCraftBountyFundingReducer>;
 export type SetDiscordWatchDisplayMessageParams = __Infer<typeof SetDiscordWatchDisplayMessageReducer>;
 export type SetDisplayNameParams = __Infer<typeof SetDisplayNameReducer>;
@@ -142,6 +166,7 @@ export type SubmitIntegrationLinkCandidateParams = __Infer<typeof SubmitIntegrat
 export type SyncEscrowPoolUnclaimedParams = __Infer<typeof SyncEscrowPoolUnclaimedReducer>;
 export type UnlinkIntegrationParams = __Infer<typeof UnlinkIntegrationReducer>;
 export type UpsertBountyRuleParams = __Infer<typeof UpsertBountyRuleReducer>;
+export type UpsertCommentNotifyTriggerParams = __Infer<typeof UpsertCommentNotifyTriggerReducer>;
 export type UpsertCraftBountyEntitlementParams = __Infer<typeof UpsertCraftBountyEntitlementReducer>;
 export type UpsertCraftBountyOverrideParams = __Infer<typeof UpsertCraftBountyOverrideReducer>;
 export type UpsertCraftFilterNotifyTriggerParams = __Infer<typeof UpsertCraftFilterNotifyTriggerReducer>;
@@ -153,4 +178,5 @@ export type UpsertLoyaltyBonusTotalParams = __Infer<typeof UpsertLoyaltyBonusTot
 export type UpsertLoyaltyRewardParams = __Infer<typeof UpsertLoyaltyRewardReducer>;
 export type UpsertLoyaltyRuleParams = __Infer<typeof UpsertLoyaltyRuleReducer>;
 export type UpsertSavedCraftFilterParams = __Infer<typeof UpsertSavedCraftFilterReducer>;
+export type VoteCommentParams = __Infer<typeof VoteCommentReducer>;
 

@@ -39,8 +39,8 @@
         --success: 140.5, 82%, 39.2%;
         --success-foreground: 149 80% 90%;
 
-        --warning: 50, 100%, 40%;
-        --warning-foreground: 48 96% 89%;
+        --warning: 48 96% 89%;
+        --warning-foreground: 50, 100%, 40%;
 
         --error: 345, 66.7%, 48%;
         --error-foreground: 0 93% 94%;
@@ -83,8 +83,8 @@
         --success: 140.7, 82.9%, 19%;
         --success-foreground: 149 80% 90%;
 
-        --warning: 50, 100%, 40%;
-        --warning-foreground: 48 96% 89%;
+        --warning: 48 96% 5%;
+        --warning-foreground: 50, 100%, 30%;
 
         --error: 345.3, 66.5%, 48%;
         --error-foreground: 0, 33.3%, 98.8%;
@@ -153,6 +153,24 @@
 
     .mt-25\% {
         margin-top: 25%;
+    }
+}
+
+/*
+ * An icon glued to its text, on the text's baseline so neighbouring text needs no wrapper. svg/img
+ * have no baseline of their own, so they align by their bottom edge and direct-child icons are
+ * nudged down 0.125em to sit optically centred on the text; the matching negative top margin keeps
+ * the icon's layout box from growing the line upward. Add `gap-*` as needed. Anything that
+ * contains an `icon-text` next to other text should align by baseline too (`items-baseline`).
+ */
+@utility icon-text {
+    display: inline-flex;
+    align-items: baseline;
+
+    > svg,
+    > img {
+        translate: 0 0.125em;
+        margin-top: -0.125em;
     }
 }
 

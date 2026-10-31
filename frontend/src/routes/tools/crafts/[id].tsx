@@ -133,7 +133,7 @@ const CONTRIBUTOR_COLUMNS: ColumnDef<CraftContributor, any>[] = [
         accessorFn: contributor => contributor.estimatedPayout?.toString() ?? "",
         cell: (props: ContributorCell<string>) => (
             <Show when={props.row.original.estimatedPayout !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                <span class="inline-flex gap-1 tabular-nums">
+                <span class="inline-flex items-baseline gap-1 tabular-nums">
                     {props.row.original.estimatedPayout!.toString()} <CurrencyLabel currency={props.row.original.currency!} iconOnly={true}/>
                 </span>
             </Show>
@@ -547,7 +547,7 @@ export default function CraftDetail() {
                                     <MetaRow label={label(msg`Skill`)}>
                                         <Show when={entry().skillName} fallback={<span class="text-muted-foreground">—</span>}>
                                             {name => (
-                                                <span class="inline-flex items-center gap-1.5">
+                                                <span class="icon-text gap-1.5">
                                                     <Show when={entry().skillIcon}>
                                                         {icon => <FontIcon codepoint={icon()} class="size-4"/>}
                                                     </Show>
@@ -564,7 +564,7 @@ export default function CraftDetail() {
                                     <MetaRow label={label(msg`Bounty`)}>
                                         <Show when={bounty()} fallback={<span class="text-muted-foreground">—</span>}>
                                             {b => (
-                                                <span class="inline-flex flex-nowrap text-nowrap items-center gap-1">
+                                                <span class="icon-text text-nowrap gap-1">
                                                     <Show when={b().private}>
                                                         <IconLock class="size-3.5 text-muted-foreground" title={label(msg`Private bounty`)}/>
                                                     </Show>

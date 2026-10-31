@@ -3,6 +3,7 @@ import {schema} from 'spacetimedb/server';
 import {account, service_principal} from './tables/accounts';
 import {api_key, api_key_entropy} from './tables/apiKeys';
 import {bounty_rule, craft_bounty_assignment, craft_bounty_override, craft_private_bounty_assignment} from './tables/bounties';
+import {account_permission, comment, comment_report, comment_revision, comment_vote, commenter, game_version_cache, moderator} from './tables/comments';
 import {craft_filter_watch, saved_craft_filter, shared_filter} from './tables/crafts';
 import {discord_funding_notify_target, discord_guild_install, discord_notify_sink, discord_notify_target, discord_watch_display} from './tables/discord';
 import {
@@ -20,7 +21,7 @@ import {
 } from './tables/escrow';
 import {integration_link_request, linked_integration} from './tables/integrations';
 import {notification, notification_v2} from './tables/notifications';
-import {craft_filter_notify_trigger, funding_notify_trigger} from './tables/notify';
+import {comment_notify_trigger, craft_filter_notify_trigger, funding_notify_trigger} from './tables/notify';
 import {
     bounty_entitlement_total,
     bounty_payout_record,
@@ -71,7 +72,16 @@ const spacetimedb = schema({
     craft_bounty_funding,
     stelo_wallet_status,
     funding_notify_trigger,
+    comment_notify_trigger,
     discord_funding_notify_target,
+    comment,
+    comment_report,
+    comment_revision,
+    comment_vote,
+    commenter,
+    account_permission,
+    game_version_cache,
+    moderator,
 });
 
 export {spacetimedb};

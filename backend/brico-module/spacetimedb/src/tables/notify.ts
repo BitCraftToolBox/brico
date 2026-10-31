@@ -30,6 +30,22 @@ export const craft_filter_notify_trigger = table(
 );
 
 /**
+ * Per-(account, sink) on/off flags for comment notifications. With no row the toast sink is on for
+ * replies; an explicit row overrides that. Only the toast sink is accepted.
+ */
+export const comment_notify_trigger = table(
+    {name: 'comment_notify_trigger'},
+    {
+        id: t.string().primaryKey(), // client-generated uuid
+        accountIdentity: t.identity().index('btree'),
+        sink: NotifySinkRef,
+        reply: t.bool(),
+        updatedAt: t.timestamp(),
+        deletedAt: t.option(t.timestamp()),
+    }
+);
+
+/**
  * Per-(account, sink) on/off flags for funding alerts, independent of any saved filter. With no
  * row the toast sink is on for every event and Discord is off; an explicit row overrides that.
  * Wording and mentions for a Discord sink live in `discord_funding_notify_target`.
