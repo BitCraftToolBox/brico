@@ -108,6 +108,8 @@ type RecipeWithKnowledge = {
 } | {
     requiredKnowledges: number[];
     blockingKnowledges: number[];
+} | {
+    discoveryTriggers: number[];
 }
 
 function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge) {
@@ -126,6 +128,17 @@ function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge
         const ids = Array.from(new Set(recipe.blockingKnowledges));
         lines.push([
             () => <IconSpan icon={knowledgeStatIcon()}><Trans>Blocking Knowledge:</Trans></IconSpan>,
+            () => <LinkedList>
+                {ids.map((id) => (
+                    <KnowledgeLinkById id={id} showIcon={false}/>
+                ))}
+            </LinkedList>
+        ]);
+    }
+    if ('discoveryTriggers' in recipe && Array.isArray(recipe.discoveryTriggers) && recipe.discoveryTriggers.length) {
+        const ids = Array.from(new Set(recipe.discoveryTriggers));
+        lines.push([
+            () => <IconSpan icon={knowledgeStatIcon()}><Trans>Discovered By:</Trans></IconSpan>,
             () => <LinkedList>
                 {ids.map((id) => (
                     <KnowledgeLinkById id={id} showIcon={false}/>

@@ -577,7 +577,7 @@ function requiresOrBlocksKnowledge(o: { requiredKnowledges?: number[]; blockingK
     return !!o.requiredKnowledges?.includes(knowledgeId) || !!o.blockingKnowledges?.includes(knowledgeId);
 }
 
-/** Every object across the database that requires or is blocked by this knowledge */
+/** Every object across the database that requires or is blocked by this knowledge (types with `discoveryTriggers` also match as discovered by it) */
 export function knowledgeUsedBy(knowledgeId: number): KnowledgeUsage[] {
     const usages: KnowledgeUsage[] = [];
 
@@ -587,22 +587,22 @@ export function knowledgeUsedBy(knowledgeId: number): KnowledgeUsage[] {
         }
     }
     for (const constructionRecipe of BitCraftTables.ConstructionRecipeDesc.get() ?? []) {
-        if (requiresOrBlocksKnowledge(constructionRecipe, knowledgeId)) usages.push({type: "constructionRecipe", constructionRecipe});
+        if (requiresOrBlocksKnowledge(constructionRecipe, knowledgeId) || constructionRecipe.discoveryTriggers.includes(knowledgeId)) usages.push({type: "constructionRecipe", constructionRecipe});
     }
     for (const craftingRecipe of BitCraftTables.CraftingRecipeDesc.get() ?? []) {
-        if (requiresOrBlocksKnowledge(craftingRecipe, knowledgeId)) usages.push({type: "craftingRecipe", craftingRecipe});
+        if (requiresOrBlocksKnowledge(craftingRecipe, knowledgeId) || craftingRecipe.discoveryTriggers.includes(knowledgeId)) usages.push({type: "craftingRecipe", craftingRecipe});
     }
     for (const equipment of BitCraftTables.EquipmentDesc.get() ?? []) {
         if (requiresOrBlocksKnowledge(equipment, knowledgeId)) usages.push({type: "equipment", equipment});
     }
     for (const extractionRecipe of BitCraftTables.ExtractionRecipeDesc.get() ?? []) {
-        if (requiresOrBlocksKnowledge(extractionRecipe, knowledgeId)) usages.push({type: "extractionRecipe", extractionRecipe});
+        if (requiresOrBlocksKnowledge(extractionRecipe, knowledgeId) || extractionRecipe.discoveryTriggers.includes(knowledgeId)) usages.push({type: "extractionRecipe", extractionRecipe});
     }
     for (const pavingTile of BitCraftTables.PavingTileDesc.get() ?? []) {
-        if (requiresOrBlocksKnowledge(pavingTile, knowledgeId)) usages.push({type: "pavingTile", pavingTile});
+        if (requiresOrBlocksKnowledge(pavingTile, knowledgeId) || pavingTile.discoveryTriggers.includes(knowledgeId)) usages.push({type: "pavingTile", pavingTile});
     }
     for (const pillarShaping of BitCraftTables.PillarShapingDesc.get() ?? []) {
-        if (requiresOrBlocksKnowledge(pillarShaping, knowledgeId)) usages.push({type: "pillarShaping", pillarShaping});
+        if (requiresOrBlocksKnowledge(pillarShaping, knowledgeId) || pillarShaping.discoveryTriggers.includes(knowledgeId)) usages.push({type: "pillarShaping", pillarShaping});
     }
     for (const placeableInteraction of BitCraftTables.PlaceableInteractionDesc.get() ?? []) {
         if (requiresOrBlocksKnowledge(placeableInteraction, knowledgeId)) usages.push({type: "placeableInteraction", placeableInteraction});
@@ -611,7 +611,7 @@ export function knowledgeUsedBy(knowledgeId: number): KnowledgeUsage[] {
         if (requiresOrBlocksKnowledge(placeablePlacement, knowledgeId)) usages.push({type: "placeablePlacement", placeablePlacement});
     }
     for (const resourcePlacementRecipe of BitCraftTables.ResourcePlacementRecipeDesc.get() ?? []) {
-        if (requiresOrBlocksKnowledge(resourcePlacementRecipe, knowledgeId)) usages.push({type: "resourcePlacementRecipe", resourcePlacementRecipe});
+        if (requiresOrBlocksKnowledge(resourcePlacementRecipe, knowledgeId) || resourcePlacementRecipe.discoveryTriggers.includes(knowledgeId)) usages.push({type: "resourcePlacementRecipe", resourcePlacementRecipe});
     }
     for (const travelerTrade of BitCraftTables.TravelerTradeOrderDesc.get() ?? []) {
         if (requiresOrBlocksKnowledge(travelerTrade, knowledgeId)) usages.push({type: "travelerTrade", travelerTrade});
