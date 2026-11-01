@@ -25,6 +25,7 @@ import RouteTabHeader from "~/components/shared/RouteTabHeader";
 import {Badge} from "~/components/ui/badge";
 import {Button} from "~/components/ui/button.tsx";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components/ui/card";
+import {Checkbox} from "~/components/ui/checkbox";
 import {useLinkedIntegrations} from "~/lib/account/links";
 import {bountyTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state";
@@ -165,12 +166,20 @@ function buildColumns(onHistory: (row: PayoutRow) => void): ColumnDef<PayoutRow,
 
 export default function PayoutsPage() {
     const {_} = useLingui();
-    const {isLoggedIn, login} = useAccount();
+    const {isLoggedIn, login, account} = useAccount();
     const {links, steloWalletsFor, walletsReady} = useLinkedIntegrations();
     const conn = useConnection(BRICO_APP_SERVER);
     const {rows, ready: rowsReady} = createContributorEntitlements();
     const [currencyFilter, setCurrencyFilter] = createSignal<string[]>([]);
-    const groups = createMemo(() => groupContributorRows(filterByCurrency(rows(), currencyFilter())));
+    const ownNames = createMemo(() => new Map(
+        links().filter(link => link.provider === "bitcraft-ea2").map(link => [link.externalId, link.externalHandle ?? link.externalId]),
+    ));
+    const [excludeSelf, setExcludeSelf] = createSignal(true);
+    const groups = createMemo(() => {
+        const byCurrency = filterByCurrency(rows(), currencyFilter());
+        const own = account()?.identity;
+        return groupContributorRows(excludeSelf() && own ? byCurrency.filter(row => !row.payerAccountIdentity.isEqual(own)) : byCurrency);
+    });
     const presentCurrencies = createMemo(() => [...new Set(rows().map(row => row.currency))]);
     const shownCurrencies = useShownCurrencies(presentCurrencies);
     const filterCurrencies = createMemo(() => shownCurrencies().filter(currency => presentCurrencies().includes(currency)));
@@ -183,9 +192,6 @@ export default function PayoutsPage() {
             currency => steloWalletsFor(currency).some(wallet => wallet.isReceiving),
         )
         : []);
-    const ownNames = createMemo(() => new Map(
-        links().filter(link => link.provider === "bitcraft-ea2").map(link => [link.externalId, link.externalHandle ?? link.externalId]),
-    ));
     const tableRows = createMemo(() => toRows(groups(), ownNames()));
     const {rows: paymentLog, ready: paymentLogReady} = createPayoutLogAsContributor();
 
@@ -271,6 +277,7 @@ export default function PayoutsPage() {
                                 >
                                     <IconHistory class="mr-1 size-4"/><Trans>History</Trans>
                                 </Button>
+                                <Checkbox checked={excludeSelf()} onChange={setExcludeSelf} class="items-center" label={<Trans>Exclude Self</Trans>}/>
                             </>
                         }
                     />

@@ -30,9 +30,11 @@ import RouteTabHeader from "~/components/shared/RouteTabHeader";
 import {Badge} from "~/components/ui/badge";
 import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components/ui/card";
+import {Checkbox} from "~/components/ui/checkbox";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "~/components/ui/dialog";
 import {TextField, TextFieldInput} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
+import {useLinkedIntegrations} from "~/lib/account/links";
 import {bountyTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state";
 import {createCraftBountyFunding} from "~/lib/crafts/bounty-funding";
@@ -371,7 +373,14 @@ export default function PayeesPage() {
     const {totals: bonusTotals} = createLoyaltyBonusTotals();
     const {names: playerNames} = createPlayerNames();
     const [currencyFilter, setCurrencyFilter] = createSignal<string[]>([]);
-    const groups = createMemo(() => groupPayerRows(filterByCurrency(rows(), currencyFilter()), settings.localPayeeGroupings()));
+    const {links} = useLinkedIntegrations();
+    const ownIds = createMemo(() => new Set(links().filter(link => link.provider === "bitcraft-ea2").map(link => link.externalId)));
+    const [excludeSelf, setExcludeSelf] = createSignal(true);
+    const groups = createMemo(() => {
+        const byCurrency = filterByCurrency(rows(), currencyFilter());
+        const visible = excludeSelf() ? byCurrency.filter(row => !ownIds().has(row.payeePlayerId.toString())) : byCurrency;
+        return groupPayerRows(visible, settings.localPayeeGroupings());
+    });
     const presentCurrencies = createMemo(() => [...new Set(rows().map(row => row.currency))]);
     const shownCurrencies = useShownCurrencies(presentCurrencies);
     const filterCurrencies = createMemo(() => shownCurrencies().filter(currency => presentCurrencies().includes(currency)));
@@ -446,6 +455,7 @@ export default function PayeesPage() {
                                 >
                                     <IconHistory class="mr-1 size-4"/><Trans>History</Trans>
                                 </Button>
+                                <Checkbox checked={excludeSelf()} onChange={setExcludeSelf} class="items-center" label={<Trans>Exclude Self</Trans>}/>
                             </>
                         }
                     />
