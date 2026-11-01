@@ -41,6 +41,12 @@ export interface ResourceRequest {
     ready: Accessor<boolean>;
     /** Idempotent. Starts the grace timer if this was the last claim. */
     release: () => void;
+    /**
+     * Releases this claim (if still held) and, when no other requester shares the resource,
+     * unsubscribes it right away instead of waiting out the grace period. Idempotent; a resource
+     * with other live requesters is left subscribed.
+     */
+    dispose: () => void;
 }
 
 /** The manager's view of one connection, handed to whoever asked for it. */
@@ -266,18 +272,29 @@ export function createConnectionManager(graceMs: number = DEFAULT_GRACE_MS): Con
                 clearTimer(claimed);
                 claimed.graceTimer = setTimeout(() => {
                     claimed.graceTimer = null;
-                    if (claimed.refs > 0 || entry.resources.get(spec.key) !== claimed) return;
-                    claimed.handle.release();
-                    claimed.onDispose?.();
-                    entry.resources.delete(spec.key);
-                    bump();
+                    dropIfUnclaimed();
                 }, graceMs);
             }
             unhold(key, entry);
         };
 
+        /** Unsubscribes and forgets the resource if nobody holds it any more. */
+        const dropIfUnclaimed = () => {
+            if (claimed.refs > 0 || entry.resources.get(spec.key) !== claimed) return;
+            clearTimer(claimed);
+            claimed.handle.release();
+            claimed.onDispose?.();
+            entry.resources.delete(spec.key);
+            bump();
+        };
+
+        const dispose = () => {
+            release();
+            dropIfUnclaimed();
+        };
+
         releaseOnCleanup(release);
-        return {ready: claimed.handle.ready, release};
+        return {ready: claimed.handle.ready, release, dispose};
     }
 
     return {

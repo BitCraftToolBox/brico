@@ -12,6 +12,7 @@
  *   - discord:       Discord bot watch displays, notification sinks and guild installs
  *   - notify:        per-(filter, sink) notification triggers
  *   - apiKeys:       per-account API tokens for the HTTP API
+ *   - dashboard:     key-addressed views behind the public bounty dashboard
  *   - comments:      page comments, account restrictions and the game-version stamp
  *   - http:          token-authenticated HTTP routes
  */
@@ -43,6 +44,7 @@ export * from './views/discord';
 export * from './views/notify';
 export * from './views/apiKeys';
 export * from './views/comments';
+export * from './views/dashboard';
 
 export * from './http/payouts';
 export * from './http/dashboard';

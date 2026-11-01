@@ -6,25 +6,25 @@
 /* eslint-disable */
 /* tslint:disable */
 import {
-    convertToAccessorMap as __convertToAccessorMap,
-    DbConnectionBuilder as __DbConnectionBuilder,
-    type DbConnectionConfig as __DbConnectionConfig,
-    DbConnectionImpl as __DbConnectionImpl,
-    type ErrorContextInterface as __ErrorContextInterface,
-    type EventContextInterface as __EventContextInterface,
-    makeQueryBuilder as __makeQueryBuilder,
-    procedures as __procedures,
-    procedureSchema as __procedureSchema,
-    type QueryBuilder as __QueryBuilder,
-    type ReducerEventContextInterface as __ReducerEventContextInterface,
-    reducers as __reducers,
-    reducerSchema as __reducerSchema,
-    type RemoteModule as __RemoteModule,
-    schema as __schema,
-    SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
-    type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
-    type SubscriptionHandleImpl as __SubscriptionHandleImpl,
-    table as __table,
+  convertToAccessorMap as __convertToAccessorMap,
+  DbConnectionBuilder as __DbConnectionBuilder,
+  type DbConnectionConfig as __DbConnectionConfig,
+  DbConnectionImpl as __DbConnectionImpl,
+  type ErrorContextInterface as __ErrorContextInterface,
+  type EventContextInterface as __EventContextInterface,
+  makeQueryBuilder as __makeQueryBuilder,
+  procedures as __procedures,
+  procedureSchema as __procedureSchema,
+  type QueryBuilder as __QueryBuilder,
+  type ReducerEventContextInterface as __ReducerEventContextInterface,
+  reducers as __reducers,
+  reducerSchema as __reducerSchema,
+  type RemoteModule as __RemoteModule,
+  schema as __schema,
+  SubscriptionBuilderImpl as __SubscriptionBuilderImpl,
+  type SubscriptionEventContextInterface as __SubscriptionEventContextInterface,
+  type SubscriptionHandleImpl as __SubscriptionHandleImpl,
+  table as __table,
 } from "spacetimedb";
 
 // Import all table schema definitions
@@ -82,6 +82,9 @@ import CloseCraftEscrowReducer from "./close_craft_escrow_reducer";
 import ConfirmIntegrationLinkCandidateReducer from "./confirm_integration_link_candidate_reducer";
 import * as CreateApiKeyProcedure from "./create_api_key_procedure";
 import * as CreateSharedFiltersProcedure from "./create_shared_filters_procedure";
+import DashboardBountyRow from "./dashboard_bounty_table";
+import DashboardKeyRow from "./dashboard_key_table";
+import DashboardPayeeRow from "./dashboard_payee_table";
 import DeleteApiKeyReducer from "./delete_api_key_reducer";
 import DeleteBountyRuleReducer from "./delete_bounty_rule_reducer";
 import DeleteCraftBountyOverrideReducer from "./delete_craft_bounty_override_reducer";
@@ -445,6 +448,27 @@ const tablesSchema = __schema({
     constraints: [
     ],
   }, AllSteloWalletStatusRow),
+  dashboardBounty: __table({
+    name: 'dashboard_bounty',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, DashboardBountyRow),
+  dashboardKey: __table({
+    name: 'dashboard_key',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, DashboardKeyRow),
+  dashboardPayee: __table({
+    name: 'dashboard_payee',
+    indexes: [
+    ],
+    constraints: [
+    ],
+  }, DashboardPayeeRow),
   myAccount: __table({
     name: 'my_account',
     indexes: [
@@ -802,7 +826,7 @@ const REMOTE_MODULE = {
     cliVersion: "2.14.0" as const,
   },
   tables: tablesSchema.schemaType.tables as __SchemaWithTableAccessorAliases["tables"],
-  viewsWithArgs: ["admin_comment_revisions", "admin_comments", "my_comment_votes", "user_comments"],
+  viewsWithArgs: ["admin_comment_revisions", "admin_comments", "dashboard_bounty", "dashboard_key", "dashboard_payee", "my_comment_votes", "user_comments"],
   reducers: reducersSchema.reducersType.reducers,
   ...proceduresSchema,
 } satisfies __RemoteModule<

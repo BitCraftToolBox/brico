@@ -549,6 +549,46 @@ export const CreateSharedFiltersResult = __t.object("CreateSharedFiltersResult",
 });
 export type CreateSharedFiltersResult = __Infer<typeof CreateSharedFiltersResult>;
 
+export const DashboardBounty = __t.object("DashboardBounty", {
+  key: __t.string(),
+});
+export type DashboardBounty = __Infer<typeof DashboardBounty>;
+
+export const DashboardBountyRow = __t.object("DashboardBountyRow", {
+  craftId: __t.u64(),
+  ratioNumerator: __t.i64(),
+  ratioDenominator: __t.i64(),
+  currency: __t.string(),
+  private: __t.bool(),
+});
+export type DashboardBountyRow = __Infer<typeof DashboardBountyRow>;
+
+export const DashboardKey = __t.object("DashboardKey", {
+  key: __t.string(),
+});
+export type DashboardKey = __Infer<typeof DashboardKey>;
+
+export const DashboardKeyRow = __t.object("DashboardKeyRow", {
+  key: __t.string(),
+  name: __t.string(),
+});
+export type DashboardKeyRow = __Infer<typeof DashboardKeyRow>;
+
+export const DashboardPayee = __t.object("DashboardPayee", {
+  key: __t.string(),
+});
+export type DashboardPayee = __Infer<typeof DashboardPayee>;
+
+export const DashboardPayeeRow = __t.object("DashboardPayeeRow", {
+  payeePlayerId: __t.u64(),
+  payeeName: __t.option(__t.string()),
+  currency: __t.string(),
+  effortTotal: __t.i64(),
+  earnedTotal: __t.i64(),
+  paidTotal: __t.i64(),
+});
+export type DashboardPayeeRow = __Infer<typeof DashboardPayeeRow>;
+
 export const DiscordFundingNotifyTarget = __t.object("DiscordFundingNotifyTarget", {
   id: __t.string(),
   accountIdentity: __t.identity(),
