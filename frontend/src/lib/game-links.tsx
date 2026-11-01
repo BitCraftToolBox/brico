@@ -501,7 +501,7 @@ export function knowledgeStatIcon(): JSX.Element {
  * Coarse top-level section a breadcrumb path lives under, and the landing page it links to.
  */
 function breadcrumbSection(href: string): {label: Label; href: string} | undefined {
-    return href.startsWith("/tools") ? {label: msg`Tools`, href: "/tools"}
+    return href.startsWith("/tools") ? {label: msg`Toolbox`, href: "/tools"}
         : href.startsWith("/database") ? {label: msg`Database`, href: "/database"}
         : href.startsWith("/account") ? {label: msg`Account`, href: "/account"}
         : undefined;

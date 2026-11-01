@@ -85,6 +85,11 @@ readiness" below for `ready`. `release()` is idempotent and auto-wired to the ow
 cleanup when called during render; call it yourself if the request was made outside one (e.g. from
 a timer).
 
+An optional third argument, `onDispose`, runs once when the resource is actually dropped (grace
+period elapsed, or the connection shut down) — use it to tear down state that should live exactly as
+long as the subscription, rather than as long as the requesting component (`relay.ts`'s effort
+history). Only the request that creates the resource registers it; joiners' callbacks are ignored.
+
 **prism vs brico-app**: pick the server that owns the data you need. World/game data (crafts,
 claims, players, regions) is prism, always anonymous. Per-account data (accounts, saved filters,
 watches, bounty rules, payouts) is brico-app, and requires the connection to have a token primed

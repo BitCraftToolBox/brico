@@ -531,6 +531,10 @@ msgstr "crwdns5732:0crwdne5732:0"
 msgid "Contributor"
 msgstr "crwdns5734:0crwdne5734:0"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Collecting samples…"
+msgstr ""
+
 #: src/lib/crafts/error-vocab.ts
 msgid "Nothing is owed to that payee."
 msgstr "crwdns5736:0crwdne5736:0"
@@ -864,6 +868,7 @@ msgstr "crwdns4496:0crwdne4496:0"
 msgid "A dashboard key is meant to be shared. Anyone holding it can see your payees' names, what they've earned and been paid, and your bounties, including private ones."
 msgstr "crwdns6790:0crwdne6790:0"
 
+#: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/index.tsx
 msgid "Toolbox"
@@ -1261,6 +1266,11 @@ msgstr "crwdns4578:0crwdne4578:0"
 msgid "This can't be undone. The filter will still be visible via previously created share codes, Discord displays, etc."
 msgstr "crwdns5884:0crwdne5884:0"
 
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Exclude Self"
+msgstr ""
+
 #: src/lib/crafts/error-vocab.ts
 msgid "This action is restricted."
 msgstr "crwdns5886:0crwdne5886:0"
@@ -1470,6 +1480,10 @@ msgstr "crwdns5924:0crwdne5924:0"
 #: src/routes/settings.tsx
 msgid "Moves the <0/> menu to the first column instead of the last."
 msgstr "crwdns4620:0crwdne4620:0"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Lines"
+msgstr ""
 
 #: src/lib/relations.ts
 msgid "Trade {reqName} for {offerName} to {npcName}"
@@ -1817,6 +1831,10 @@ msgstr "crwdns5986:0crwdne5986:0"
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Ranges"
 msgstr "crwdns4702:0crwdne4702:0"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Estimated completion: Collecting data…"
+msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 #: src/lib/recipe-stats.tsx
@@ -3554,6 +3572,10 @@ msgstr "crwdns6320:0crwdne6320:0"
 msgid "Raw Data"
 msgstr "crwdns5090:0crwdne5090:0"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Stacked"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Prospecting Duration"
 msgstr "crwdns5092:0crwdne5092:0"
@@ -4416,6 +4438,13 @@ msgstr "crwdns5262:0crwdne5262:0"
 msgid "Unlock quest <0/>"
 msgstr "crwdns5590:0crwdne5590:0"
 
+#. placeholder {0}: formatTime(e.atMs)
+#. placeholder {1}: readableSeconds(e.remainingMs / 1000, true)
+#. placeholder {2}: e.ratePerSecond.toFixed(2)
+#: src/components/crafts/EffortChart.tsx
+msgid "Estimated completion: {0} (in {1}) at {2} effort/s"
+msgstr ""
+
 #: src/routes/database/biome/[id].tsx
 msgid "Disallow Player Build"
 msgstr "crwdns5264:0crwdne5264:0"
@@ -4712,6 +4741,7 @@ msgid "Quest Chain"
 msgstr "crwdns5324:0crwdne5324:0"
 
 #: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/collectible/[id].tsx
 #: src/routes/database/premium-item/[id].tsx
 msgid "Quantity"
 msgstr ""
@@ -4965,6 +4995,10 @@ msgstr "crwdns5378:0{minRad}crwdnd5378:0{maxRad}crwdne5378:0"
 msgid "Members"
 msgstr "crwdns5380:0crwdne5380:0"
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "Effort over time"
+msgstr ""
+
 #: src/components/shared/RelTablePresets.tsx
 msgid "Value"
 msgstr "crwdns6766:0crwdne6766:0"
@@ -5092,7 +5126,6 @@ msgstr "crwdns5402:0crwdne5402:0"
 msgid "Wallet already linked"
 msgstr "crwdns6638:0crwdne6638:0"
 
-#: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
 msgid "Tools"
 msgstr "crwdns5404:0crwdne5404:0"
@@ -5466,6 +5499,10 @@ msgstr "crwdns5488:0crwdne5488:0"
 #: src/routes/database/placeable/[id].tsx
 msgid "Grows from"
 msgstr "crwdns5490:0crwdne5490:0"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Estimated completion: No recent progress."
+msgstr ""
 
 #: src/lib/relations.ts
 msgid "Construct {buildingName}"

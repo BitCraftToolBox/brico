@@ -7,7 +7,7 @@ import Fuse, {FuseResult, IFuseOptions} from "fuse.js";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {parseChatLink, resolveChatLink} from "~/lib/chat-links";
 import {sourceRow} from "~/lib/data-translation";
-import {deployableTypeLabel} from "~/lib/game-strings.ts";
+import {deployableTypeLabel} from "~/lib/game-strings";
 import {type Label} from "~/lib/labels";
 import {getTravelerTaskName, getTravelerTradeName} from "~/lib/relations";
 import {PAGE_TITLE_LABELS, type SidebarHrefs} from "~/lib/sidebar-items";

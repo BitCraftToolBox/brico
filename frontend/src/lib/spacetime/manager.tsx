@@ -72,8 +72,12 @@ export interface ManagedConnection<TConnection, TQuery> {
      * `onChange` fires on any row change in those tables and once when the subscription applies.
      * It is per-requester, so two pages sharing a resource each get their own callback — coalesce
      * it yourself; the SDK delivers one call per row.
+     *
+     * `onDispose` runs once when the resource is actually dropped (grace period elapsed, or the
+     * connection shut down). Only the request that creates the resource registers it; requests
+     * that join an existing resource ignore theirs.
      */
-    requestResource: (spec: ResourceSpec<TQuery>, onChange?: () => void) => ResourceRequest;
+    requestResource: (spec: ResourceSpec<TQuery>, onChange?: () => void, onDispose?: () => void) => ResourceRequest;
 }
 
 /** One resource's held state, as a diagnostics view would show it. */
@@ -117,6 +121,8 @@ interface ManagedResource {
     listeners: Set<() => void>;
     refs: number;
     graceTimer: ReturnType<typeof setTimeout> | null;
+    /** From the request that created the resource; runs once when the resource is dropped. */
+    onDispose: (() => void) | undefined;
 }
 
 interface ConnectionEntry {
@@ -178,6 +184,7 @@ export function createConnectionManager(graceMs: number = DEFAULT_GRACE_MS): Con
         for (const resource of entry.resources.values()) {
             clearTimer(resource);
             resource.handle.release();
+            resource.onDispose?.();
         }
         entry.resources.clear();
         entry.connection.close();
@@ -199,13 +206,22 @@ export function createConnectionManager(graceMs: number = DEFAULT_GRACE_MS): Con
         }, graceMs);
     }
 
-    function requestResource<TQuery>(key: string, entry: ConnectionEntry, spec: ResourceSpec<TQuery>, onChange?: () => void): ResourceRequest {
+    function requestResource<TQuery>(
+        key: string,
+        entry: ConnectionEntry,
+        spec: ResourceSpec<TQuery>,
+        onChange?: () => void,
+        onDispose?: () => void,
+    ): ResourceRequest {
         clearTimer(entry);
         entry.refs += 1;
 
         let resource = entry.resources.get(spec.key);
         if (resource) {
             clearTimer(resource);
+            if (onDispose && onDispose !== resource.onDispose) {
+                console.warn(`requestResource("${spec.key}"): onDispose ignored — the resource already exists and only its creator's onDispose runs.`);
+            }
         } else {
             const listeners = new Set<() => void>();
             const handle = entry.connection.addResource(
@@ -217,7 +233,7 @@ export function createConnectionManager(graceMs: number = DEFAULT_GRACE_MS): Con
                     for (const listener of listeners) listener();
                 },
             );
-            resource = {handle, listeners, refs: 0, graceTimer: null};
+            resource = {handle, listeners, refs: 0, graceTimer: null, onDispose};
             entry.resources.set(spec.key, resource);
         }
 
@@ -252,6 +268,7 @@ export function createConnectionManager(graceMs: number = DEFAULT_GRACE_MS): Con
                     claimed.graceTimer = null;
                     if (claimed.refs > 0 || entry.resources.get(spec.key) !== claimed) return;
                     claimed.handle.release();
+                    claimed.onDispose?.();
                     entry.resources.delete(spec.key);
                     bump();
                 }, graceMs);
@@ -288,7 +305,7 @@ export function createConnectionManager(graceMs: number = DEFAULT_GRACE_MS): Con
                 close: connection.close,
                 primeToken: connection.primeToken,
                 clearToken: connection.clearToken,
-                requestResource: (spec, onChange) => requestResource(key, entry, spec, onChange),
+                requestResource: (spec, onChange, onDispose) => requestResource(key, entry, spec, onChange, onDispose),
             };
         },
         dispose() {

@@ -526,6 +526,10 @@ msgstr "private"
 msgid "Contributor"
 msgstr "Contributor"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Collecting samples…"
+msgstr "Collecting samples…"
+
 #: src/lib/crafts/error-vocab.ts
 msgid "Nothing is owed to that payee."
 msgstr "Nothing is owed to that payee."
@@ -859,6 +863,7 @@ msgstr "Flattenable"
 msgid "A dashboard key is meant to be shared. Anyone holding it can see your payees' names, what they've earned and been paid, and your bounties, including private ones."
 msgstr "A dashboard key is meant to be shared. Anyone holding it can see your payees' names, what they've earned and been paid, and your bounties, including private ones."
 
+#: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/index.tsx
 msgid "Toolbox"
@@ -1256,6 +1261,11 @@ msgstr "Min Level"
 msgid "This can't be undone. The filter will still be visible via previously created share codes, Discord displays, etc."
 msgstr "This can't be undone. The filter will still be visible via previously created share codes, Discord displays, etc."
 
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Exclude Self"
+msgstr "Exclude Self"
+
 #: src/lib/crafts/error-vocab.ts
 msgid "This action is restricted."
 msgstr "This action is restricted."
@@ -1465,6 +1475,10 @@ msgstr "collected"
 #: src/routes/settings.tsx
 msgid "Moves the <0/> menu to the first column instead of the last."
 msgstr "Moves the <0/> menu to the first column instead of the last."
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Lines"
+msgstr "Lines"
 
 #: src/lib/relations.ts
 msgid "Trade {reqName} for {offerName} to {npcName}"
@@ -1812,6 +1826,10 @@ msgstr "There is no escrowed balance for that payee."
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Ranges"
 msgstr "Ranges"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Estimated completion: Collecting data…"
+msgstr "Estimated completion: Collecting data…"
 
 #: src/components/shared/RecipeDisplay.tsx
 #: src/lib/recipe-stats.tsx
@@ -3549,6 +3567,10 @@ msgstr "This identity can't hold a brico account."
 msgid "Raw Data"
 msgstr "Raw Data"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Stacked"
+msgstr "Stacked"
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Prospecting Duration"
 msgstr "Prospecting Duration"
@@ -4411,6 +4433,13 @@ msgstr "Barter Slots"
 msgid "Unlock quest <0/>"
 msgstr "Unlock quest <0/>"
 
+#. placeholder {0}: formatTime(e.atMs)
+#. placeholder {1}: readableSeconds(e.remainingMs / 1000, true)
+#. placeholder {2}: e.ratePerSecond.toFixed(2)
+#: src/components/crafts/EffortChart.tsx
+msgid "Estimated completion: {0} (in {1}) at {2} effort/s"
+msgstr "Estimated completion: {0} (in {1}) at {2} effort/s"
+
 #: src/routes/database/biome/[id].tsx
 msgid "Disallow Player Build"
 msgstr "Disallow Player Build"
@@ -4707,6 +4736,7 @@ msgid "Quest Chain"
 msgstr "Quest Chain"
 
 #: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/collectible/[id].tsx
 #: src/routes/database/premium-item/[id].tsx
 msgid "Quantity"
 msgstr "Quantity"
@@ -4960,6 +4990,10 @@ msgstr "Guaranteed spawn within {minRad}–{maxRad} tiles on last hit of resourc
 msgid "Members"
 msgstr "Members"
 
+#: src/routes/tools/crafts/[id].tsx
+msgid "Effort over time"
+msgstr "Effort over time"
+
 #: src/components/shared/RelTablePresets.tsx
 msgid "Value"
 msgstr "Value"
@@ -5087,7 +5121,6 @@ msgstr "Combat Stats"
 msgid "Wallet already linked"
 msgstr "Wallet already linked"
 
-#: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
 msgid "Tools"
 msgstr "Tools"
@@ -5461,6 +5494,10 @@ msgstr "Max HP"
 #: src/routes/database/placeable/[id].tsx
 msgid "Grows from"
 msgstr "Grows from"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Estimated completion: No recent progress."
+msgstr "Estimated completion: No recent progress."
 
 #: src/lib/relations.ts
 msgid "Construct {buildingName}"

@@ -43,7 +43,7 @@ import {describeServerError} from "~/lib/crafts/error-vocab";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
 import {currencyData} from "~/lib/crafts/filter-vocab";
 import {ledgerFooters} from "~/lib/crafts/ledger-footer";
-import {createLoyaltyRewards} from "~/lib/crafts/loyalty-rewards.ts";
+import {createLoyaltyRewards} from "~/lib/crafts/loyalty-rewards";
 import {createLoyaltyBonusTotals} from "~/lib/crafts/loyalty-rules";
 import {createPlayerNames} from "~/lib/crafts/relay";
 import {escrowSummary, filterByCurrency} from "~/lib/crafts/report-math";
@@ -56,7 +56,7 @@ import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
 import {PRISM_SERVER} from "~/lib/spacetime/prism";
 import {cn} from "~/lib/utils";
-import {formatBonusPercent} from "~/routes/account/loyalty.tsx";
+import {formatBonusPercent} from "~/routes/account/loyalty";
 
 const TABLE_NAME = "account-payees";
 

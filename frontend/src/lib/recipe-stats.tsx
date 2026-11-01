@@ -39,7 +39,7 @@ import {JSX, Show} from "solid-js";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BiomeLink, IconLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
-import {skillCategoryLabel} from "~/lib/game-strings.ts";
+import {skillCategoryLabel} from "~/lib/game-strings";
 import {trackUILocale} from "~/lib/i18n";
 import {gameText, useLabel} from "~/lib/labels";
 import {getTravelerNpcName, ItemListSource} from "~/lib/relations";

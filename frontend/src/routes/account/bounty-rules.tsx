@@ -20,10 +20,10 @@ import {createEffect, createMemo, createSignal, For, onCleanup, onMount, Show} f
 import {CurrencySelect} from "~/components/crafts/CurrencySelect";
 import {type FieldOption, type FieldOptions, FilterBuilder} from "~/components/crafts/FilterBuilder";
 import {FundingWalletSelect} from "~/components/crafts/FundingWalletSelect";
-import {FontIcon} from "~/components/icons/font-icons.tsx";
+import {FontIcon} from "~/components/icons/font-icons";
 import MainLayout from "~/components/MainLayout";
 import {ConnectionStatusBadge} from "~/components/shared/ConnectionStatusBadge";
-import {TierIcon} from "~/components/shared/GameIcon.tsx";
+import {TierIcon} from "~/components/shared/GameIcon";
 import RouteTabHeader from "~/components/shared/RouteTabHeader";
 import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components/ui/card";
@@ -32,12 +32,12 @@ import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, Di
 import {Label} from "~/components/ui/label";
 import {TextField, TextFieldInput} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
-import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip.tsx";
+import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {useLinkedIntegrations} from "~/lib/account/links";
 import {bountyTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state";
 import {BitCraftTables} from "~/lib/bitcraft-data";
-import {Tiers} from "~/lib/bitcraft-utils.ts";
+import {Tiers} from "~/lib/bitcraft-utils";
 import {createBountyRules} from "~/lib/crafts/bounty-rules";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {claimAccessFlagLabel, currencyData} from "~/lib/crafts/filter-vocab";
