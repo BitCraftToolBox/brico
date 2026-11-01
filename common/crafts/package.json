@@ -19,7 +19,8 @@
     "./icon-render": "./icon-render.ts",
     "./stelo": "./stelo.ts",
     "./note": "./note.ts",
-    "./notification": "./notification.ts"
+    "./notification": "./notification.ts",
+    "./effort-rate": "./effort-rate.ts"
   },
   "scripts": {
     "test": "node --test \"*.test.ts\"",

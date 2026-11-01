@@ -9,7 +9,7 @@ import type {ClaimInfo, ClaimMember, CraftContribution, CraftMeta, CraftProgress
 import {claimDisplayName} from "@brico/crafts/names";
 import {leadingAndTrailing, throttle} from "@solid-primitives/scheduled";
 import {type Accessor, createEffect, createSignal, onCleanup, onMount} from "solid-js";
-import {type EffortReading, hasEffortHistory, startEffortHistory, stopEffortHistory} from "~/lib/crafts/effort-history";
+import {type EffortReading, hasEffortHistory, observeEffort, startEffortHistory, stopEffortHistory} from "~/lib/crafts/effort-history";
 import {craftEntriesFrom} from "~/lib/crafts/entries";
 import type {ConnectionStatus, ResourceSpec} from "~/lib/spacetime/connection";
 import {useConnection} from "~/lib/spacetime/manager";
@@ -234,7 +234,7 @@ function readContributions(conn: PrismConnection, craftId: bigint): CraftContrib
 
 /**
  * One effort reading for the effort history, straight from the connection cache. Builds only the
- * craft and progress rows it needs (not the full reference snapshot) since it runs every few seconds.
+ * craft and progress rows it needs (not the full reference snapshot) since it runs on every relay update.
  * `null` once the craft is complete, so a finished craft stops accumulating flat samples.
  */
 function readEffortReading(conn: PrismConnection, craftId: bigint): EffortReading {
@@ -413,7 +413,10 @@ export function createCraftDetailRelay(craftId: Accessor<bigint | null>): CraftD
         if (!conn || id === null) return;
         setSnapshot(readCraftSnapshot(conn, id));
         setContributions(readContributions(conn, id));
+        // Only once the craft's own resource has applied: rows arriving piecemeal would read as effort gains.
+        if (craftResourceReady() && hasEffortHistory(id)) observeEffort(id, readEffortReading(conn, id));
     };
+    let craftResourceReady: Accessor<boolean> = () => false;
     // Leading *and* trailing here, unlike the browser above. The browser's feed is a firehose —
     // a coalesced tick it drops is corrected by the next one milliseconds later. One craft can go
     // quiet immediately after its last contribution lands, and a leading-only throttle would then
@@ -438,6 +441,7 @@ export function createCraftDetailRelay(craftId: Accessor<bigint | null>): CraftD
             scheduleRebuild,
             hasEffortHistory(id) ? undefined : () => stopEffortHistory(id),
         );
+        craftResourceReady = request.ready;
         // Sampled for as long as the manager holds the resource (including its grace period), not
         // just while this component does, so leaving and coming back resumes the same history.
         startEffortHistory(id, () => {

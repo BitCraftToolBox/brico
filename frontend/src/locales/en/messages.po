@@ -263,6 +263,10 @@ msgstr "no longer matches"
 msgid "Unknown event: {kind}"
 msgstr "Unknown event: {kind}"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Basic"
+msgstr "Basic"
+
 #: src/lib/sidebar-items.ts
 #: src/routes/account/bounties.tsx
 #: src/routes/account/profile.tsx
@@ -790,6 +794,10 @@ msgstr "Supplies"
 #: src/routes/discord/installed.tsx
 msgid "Brico.app Discord Bot"
 msgstr "Brico.app Discord Bot"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "away"
+msgstr "away"
 
 #: src/routes/account/bounty-rules.tsx
 msgid "Could not delete rule"
@@ -1892,6 +1900,10 @@ msgstr "Import / Export"
 msgid "Buff"
 msgstr "Buff"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "resting"
+msgstr "resting"
+
 #: src/routes/account/settings.tsx
 msgid "Removed"
 msgstr "Removed"
@@ -2821,6 +2833,10 @@ msgstr "For contributors"
 msgid "No stats found."
 msgstr "No stats found."
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Players hitting now"
+msgstr "Players hitting now"
+
 #: src/components/crafts/FundingAlertsCard.tsx
 msgid "Payout shortfall"
 msgstr "Payout shortfall"
@@ -3231,6 +3247,10 @@ msgstr "Deaggro Health"
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Press Link."
 msgstr "Press Link."
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Craft complete."
+msgstr "Craft complete."
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/GlobalSearchInput.tsx
@@ -4313,6 +4333,10 @@ msgstr "Achievements"
 msgid "Favorites only"
 msgstr "Favorites only"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Advanced"
+msgstr "Advanced"
+
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
 msgstr "Checked items appear in the sidebar. New items are always visible by default."
@@ -4541,6 +4565,10 @@ msgstr "Status"
 #: src/routes/account/loyalty.tsx
 msgid "Could not save loyalty reward"
 msgstr "Could not save loyalty reward"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Effort per second"
+msgstr "Effort per second"
 
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/placeable/[id].tsx
@@ -5302,6 +5330,10 @@ msgstr "Paste group from clipboard"
 #: src/routes/bounty-dashboard.tsx
 msgid "Showing the last data received."
 msgstr "Showing the last data received."
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Expected rate"
+msgstr "Expected rate"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Affected By Wind"

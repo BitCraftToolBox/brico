@@ -1,9 +1,10 @@
 /**
  * effort-history.ts — client-side time series of a craft's effort, sampled for as long as the
- * craft's relay subscription is held.
+ * craft's relay subscription is held, with the rate estimate taken at each sample.
  *
  * Nothing here is persisted or fetched: the history is lost on reload and when the subscription is dropped.
  */
+import {PlayerActivityModel, type PlayerPhase} from "@brico/crafts/effort-rate";
 import {type Accessor, createSignal} from "solid-js";
 
 /** How often the live numbers are snapshotted. */
@@ -12,11 +13,11 @@ export const SAMPLE_INTERVAL_MS = 5_000;
 /** Oldest samples are dropped past this count (~3 hours at `SAMPLE_INTERVAL_MS`). */
 const MAX_SAMPLES = 2_000;
 
-/** Window the completion estimate's moving average spans. */
-export const RATE_WINDOW_MS = 10 * 60_000;
-
-/** The shortest span of samples a rate is computed over; shorter than this is mostly noise. */
-const MIN_RATE_SPAN_MS = 4 * SAMPLE_INTERVAL_MS;
+export interface SamplePlayer {
+    phase: PlayerPhase;
+    /** Effort per millisecond this player is expected to add, rests included; 0 unless active or resting. */
+    expectedRate: number;
+}
 
 export interface EffortSample {
     /** Epoch milliseconds the sample was taken at. */
@@ -25,6 +26,12 @@ export interface EffortSample {
     done: number;
     /** Cumulative effort per contributor, keyed by player id. */
     efforts: Record<string, number>;
+    /** Expected effort per millisecond from now on; `null` until a player has been measured. 0 means nobody is working. */
+    rate: number | null;
+    /** Effort per millisecond from the players hitting at this moment, ignoring rests; bumpy by design. */
+    instantRate: number;
+    /** Each contributor's state at this sample. */
+    players: Record<string, SamplePlayer>;
 }
 
 /** What one tick records; `null` skips the tick (not connected, craft not loaded, or craft finished). */
@@ -33,11 +40,27 @@ export type EffortReading = Pick<EffortSample, "done" | "efforts"> | null;
 interface HistoryEntry {
     samples: Accessor<EffortSample[]>;
     timer: ReturnType<typeof setInterval>;
+    /** Sees every relay update, not just the sampled ones. */
+    model: PlayerActivityModel;
 }
 
 /** Live histories by craft id. Only ever populated in the browser, by `startEffortHistory`. */
 const entries = new Map<bigint, HistoryEntry>();
 const [registryVersion, bumpRegistry] = createSignal(0);
+
+function takeSample(entry: HistoryEntry, t: number, reading: NonNullable<EffortReading>): EffortSample {
+    const observation = {t, ...reading};
+    entry.model.observe(observation);
+    const players: Record<string, SamplePlayer> = {};
+    for (const {id, phase, expectedRate} of entry.model.activity()) players[id] = {phase, expectedRate};
+    return {
+        t,
+        ...reading,
+        rate: entry.model.rate(),
+        instantRate: entry.model.instantaneousRate(),
+        players,
+    };
+}
 
 /**
  * Begins sampling `craftId` every `SAMPLE_INTERVAL_MS` and keeps going until `stopEffortHistory`.
@@ -47,16 +70,31 @@ const [registryVersion, bumpRegistry] = createSignal(0);
 export function startEffortHistory(craftId: bigint, read: () => EffortReading): void {
     if (entries.has(craftId)) return;
     const [samples, setSamples] = createSignal<EffortSample[]>([]);
-    const timer = setInterval(() => {
-        const reading = read();
-        if (!reading) return;
-        setSamples(prev => {
-            const next = [...prev, {t: Date.now(), ...reading}];
-            return next.length > MAX_SAMPLES ? next.slice(next.length - MAX_SAMPLES) : next;
-        });
-    }, SAMPLE_INTERVAL_MS);
-    entries.set(craftId, {samples, timer});
+    const entry: HistoryEntry = {
+        samples,
+        model: new PlayerActivityModel(),
+        timer: setInterval(() => {
+            const reading = read();
+            if (!reading) return;
+            const sample = takeSample(entry, Date.now(), reading);
+            setSamples(prev => {
+                const next = [...prev, sample];
+                return next.length > MAX_SAMPLES ? next.slice(next.length - MAX_SAMPLES) : next;
+            });
+        }, SAMPLE_INTERVAL_MS),
+    };
+    entries.set(craftId, entry);
     bumpRegistry(v => v + 1);
+}
+
+/**
+ * Feeds a relay update to the craft's rate model between samples; the model needs every
+ * contribution change to time players' hits, which the 5 s samples alone would miss. A no-op
+ * when the craft isn't being sampled.
+ */
+export function observeEffort(craftId: bigint, reading: EffortReading): void {
+    const entry = entries.get(craftId);
+    if (entry && reading) entry.model.observe({t: Date.now(), ...reading});
 }
 
 /** Whether `craftId` is currently being sampled. */
@@ -79,32 +117,4 @@ const NO_SAMPLES: EffortSample[] = [];
 export function effortSamples(craftId: bigint | null): EffortSample[] {
     registryVersion();
     return (craftId === null ? undefined : entries.get(craftId)?.samples()) ?? NO_SAMPLES;
-}
-
-/**
- * Effort per millisecond averaged over the trailing `windowMs` of `samples`, or `null` when the
- * window holds less than `MIN_RATE_SPAN_MS` of data.
- */
-export function movingRate(samples: readonly EffortSample[], windowMs: number = RATE_WINDOW_MS): number | null {
-    const last = samples.at(-1);
-    if (!last) return null;
-    const first = samples.find(s => s.t >= last.t - windowMs) ?? last;
-    const span = last.t - first.t;
-    if (span < MIN_RATE_SPAN_MS) return null;
-    return (last.done - first.done) / span;
-}
-
-export type CompletionEstimate =
-    | {kind: "unknown"}
-    | {kind: "stalled"}
-    | {kind: "eta"; atMs: number; remainingMs: number; ratePerSecond: number};
-
-/** When the craft finishes if effort keeps arriving at the recent average rate. */
-export function estimateCompletion(samples: readonly EffortSample[], effortTotal: number): CompletionEstimate {
-    const last = samples.at(-1);
-    const rate = movingRate(samples);
-    if (!last || rate === null || effortTotal <= 0) return {kind: "unknown"};
-    if (rate <= 0) return {kind: "stalled"};
-    const remainingMs = Math.max(effortTotal - last.done, 0) / rate;
-    return {kind: "eta", atMs: last.t + remainingMs, remainingMs, ratePerSecond: rate * 1000};
 }

@@ -661,6 +661,7 @@ export default function CraftDetail() {
                                 samples={effortHistory()}
                                 names={playerId => contributorNames().get(playerId) ?? null}
                                 effortTotal={entry().effortTotal}
+                                effortDone={entry().effortDone}
                             />
                         </div>
                     )}

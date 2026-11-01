@@ -1,18 +1,23 @@
 /**
  * EffortChart — per-contributor effort over time as lines or stacked areas, with a completion estimate.
+ * The advanced view adds the expected-rate trend line to completion and a strip of the rate estimates.
  */
 import {Trans} from "@lingui/solid/macro";
 import {scaleLinear, scaleTime} from "d3-scale";
 import {area, line, type SeriesPoint, stack} from "d3-shape";
 import {createMemo, createSignal, For, Show} from "solid-js";
 import {Tabs, TabsList, TabsTrigger} from "~/components/ui/tabs";
-import {type EffortSample, estimateCompletion} from "~/lib/crafts/effort-history";
+import type {EffortSample} from "~/lib/crafts/effort-history";
+import {estimateCompletion, trendProjection} from "~/lib/crafts/effort-trend";
 import {uiLocale} from "~/lib/i18n";
 import {readableSeconds} from "~/lib/utils";
 
 const WIDTH = 800;
 const HEIGHT = 280;
+const RATE_HEIGHT = 120;
 const MARGIN = {top: 12, right: 12, bottom: 24, left: 48};
+/** The trend line reaches at most this far past the latest sample, or the history's own span if longer. */
+const MIN_TREND_HORIZON_MS = 5 * 60_000;
 const LEGEND_LIMIT = 10;
 const TOOLTIP_LIMIT = 10;
 
@@ -40,8 +45,11 @@ export function EffortChart(props: {
     /** Player id → display name; ids without an entry are shown raw. */
     names: (playerId: string) => string | null;
     effortTotal: number;
+    /** The craft's live effort done; the history stops sampling once it completes. */
+    effortDone: number;
 }) {
     const [mode, setMode] = createSignal<ChartMode>("stacked");
+    const [advanced, setAdvanced] = createSignal(false);
     /** Time (epoch ms) of the sample under the pointer; tracked by time, not index, so it survives the history being trimmed. */
     const [hoverT, setHoverT] = createSignal<number | null>(null);
 
@@ -70,16 +78,22 @@ export function EffortChart(props: {
         if (samples.length < 2 || keys.length === 0) return null;
 
         const stacked = mode() === "stacked";
+        const showAdvanced = advanced();
         const layers = stack<EffortSample, string>().keys(keys).value((d, key) => d.efforts[key] ?? 0)(samples);
-        const yMax = stacked
-            ? Math.max(...layers.at(-1)!.map(point => point[1]))
+        const totals = layers.at(-1)!.map(point => point[1]);
+        const yMax = stacked || showAdvanced
+            ? Math.max(...totals)
             : Math.max(...samples.flatMap(sample => keys.map(key => sample.efforts[key] ?? 0)));
 
+        const first = samples[0].t;
+        const lastT = samples.at(-1)!.t;
+        const trend = showAdvanced ? trendProjection(samples, props.effortTotal, Math.max(lastT - first, MIN_TREND_HORIZON_MS)) : null;
+
         const x = scaleTime()
-            .domain([samples[0].t, samples.at(-1)!.t])
+            .domain([first, trend?.to.t ?? lastT])
             .range([MARGIN.left, WIDTH - MARGIN.right]);
         const y = scaleLinear()
-            .domain([0, Math.max(yMax, 1)]).nice()
+            .domain([0, Math.max(yMax, trend?.to.effort ?? 0, 1)]).nice()
             .range([HEIGHT - MARGIN.bottom, MARGIN.top]);
 
         const rawLine = (key: string) => line<EffortSample>().x(d => x(d.t)).y(d => y(d.efforts[key] ?? 0))(samples);
@@ -91,11 +105,35 @@ export function EffortChart(props: {
             fill: stacked ? stackedArea(layers[index]) : null,
         }));
 
+        const totalPath = showAdvanced && !stacked ? line<number>().x((_, i) => x(samples[i].t)).y(d => y(d))(totals) : null;
+        const trendView = trend && {
+            path: `M${x(trend.from.t)},${y(trend.from.effort)}L${x(trend.to.t)},${y(trend.to.effort)}`,
+            targetY: y(trend.target),
+            etaX: trend.etaT === null ? null : x(trend.etaT),
+            targetVisible: trend.target <= y.domain()[1],
+        };
+
+        const rateMax = showAdvanced ? Math.max(...samples.map(s => Math.max(s.rate ?? 0, s.instantRate)), 1e-9) * 1000 : 0;
+        const rateY = scaleLinear().domain([0, rateMax]).nice().range([RATE_HEIGHT - MARGIN.bottom, MARGIN.top]);
+        const ratePath = (value: (s: EffortSample) => number | null) =>
+            line<EffortSample>().defined(s => value(s) !== null).x(s => x(s.t)).y(s => rateY(value(s)! * 1000))(samples);
+        const rates = showAdvanced
+            ? {
+                y: rateY,
+                yTicks: rateY.ticks(3).map(v => ({v, y: rateY(v)})),
+                expected: ratePath(s => s.rate),
+                instant: ratePath(s => s.instantRate),
+            }
+            : null;
+
         return {
             x,
             y,
             stacked,
             paths,
+            totalPath,
+            trend: trendView,
+            rates,
             xTicks: x.ticks(5).map(t => ({t, x: x(t)})),
             yTicks: y.ticks(5).map(v => ({v, y: y(v)})),
         };
@@ -111,7 +149,8 @@ export function EffortChart(props: {
         const rows = ids().map(id => {
             const effort = sample.efforts[id] ?? 0;
             running += effort;
-            return {id, effort, y: chart.y(chart.stacked ? running : effort)};
+            const player = sample.players[id];
+            return {id, effort, y: chart.y(chart.stacked ? running : effort), phase: player?.phase, ratePerSecond: (player?.expectedRate ?? 0) * 1000};
         });
         return {sample, x: chart.x(sample.t), rows};
     });
@@ -124,7 +163,7 @@ export function EffortChart(props: {
         setHoverT(chart.x.invert(viewX).getTime());
     };
 
-    const estimate = createMemo(() => estimateCompletion(props.samples, props.effortTotal));
+    const estimate = createMemo(() => estimateCompletion(props.samples, props.effortTotal, props.effortDone));
     const timeFormat = createMemo(() => new Intl.DateTimeFormat(uiLocale(), {hour: "numeric", minute: "numeric", second: "numeric"}));
     const formatTime = (ms: number) => timeFormat().format(new Date(ms));
     const compact = createMemo(() => new Intl.NumberFormat(uiLocale(), {notation: "compact", maximumFractionDigits: 1}));
@@ -142,22 +181,31 @@ export function EffortChart(props: {
                                 </Trans>
                             );
                         }
+                        if (e.kind === "complete") return <Trans>Craft complete.</Trans>;
                         return e.kind === "stalled"
                             ? <Trans>Estimated completion: No recent progress.</Trans>
                             : <Trans>Estimated completion: Collecting data…</Trans>;
                     })()}
                 </p>
-                <Tabs value={mode()} onChange={value => setMode(value as ChartMode)}>
-                    <TabsList>
-                        <TabsTrigger value="lines"><Trans>Lines</Trans></TabsTrigger>
-                        <TabsTrigger value="stacked"><Trans>Stacked</Trans></TabsTrigger>
-                    </TabsList>
-                </Tabs>
+                <div class="flex flex-wrap items-center gap-2">
+                    <Tabs value={advanced() ? "advanced" : "basic"} onChange={value => setAdvanced(value === "advanced")}>
+                        <TabsList>
+                            <TabsTrigger value="basic"><Trans>Basic</Trans></TabsTrigger>
+                            <TabsTrigger value="advanced"><Trans>Advanced</Trans></TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                    <Tabs value={mode()} onChange={value => setMode(value as ChartMode)}>
+                        <TabsList>
+                            <TabsTrigger value="lines"><Trans>Lines</Trans></TabsTrigger>
+                            <TabsTrigger value="stacked"><Trans>Stacked</Trans></TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
             </div>
 
             <Show
                 when={geometry()}
-                fallback={<p class="text-sm text-muted-foreground"><Trans>Collecting samples…</Trans></p>}
+                fallback={estimate().kind === "complete" ? null : <p class="text-sm text-muted-foreground"><Trans>Collecting samples…</Trans></p>}
             >
                 {chart => (
                     <>
@@ -196,6 +244,22 @@ export function EffortChart(props: {
                                         </>
                                     )}
                                 </For>
+                                <Show when={chart().totalPath}>
+                                    {path => <path d={path()} fill="none" class="stroke-muted-foreground" stroke-width="1" stroke-dasharray="2 2"/>}
+                                </Show>
+                                <Show when={chart().trend}>
+                                    {trend => (
+                                        <g pointer-events="none">
+                                            <Show when={trend().targetVisible}>
+                                                <line x1={MARGIN.left} x2={WIDTH - MARGIN.right} y1={trend().targetY} y2={trend().targetY} class="stroke-muted-foreground" stroke-width="0.75" stroke-dasharray="1 4"/>
+                                            </Show>
+                                            <path d={trend().path} fill="none" class="stroke-foreground" stroke-width="1.5" stroke-dasharray="6 4"/>
+                                            <Show when={trend().etaX}>
+                                                {etaX => <circle cx={etaX()} cy={trend().targetY} r="4" class="fill-background stroke-foreground" stroke-width="1.5"/>}
+                                            </Show>
+                                        </g>
+                                    )}
+                                </Show>
                                 <Show when={hover()}>
                                     {h => (
                                         <g pointer-events="none">
@@ -210,7 +274,7 @@ export function EffortChart(props: {
                             <Show when={hover()}>
                                 {h => (
                                     <div
-                                        class="pointer-events-none absolute top-2 z-10 min-w-40 rounded-md border bg-popover p-2 text-xs text-popover-foreground shadow-md"
+                                        class="pointer-events-none absolute top-2 z-10 w-max min-w-40 max-w-80 whitespace-nowrap rounded-md border bg-popover p-2 text-xs text-popover-foreground shadow-md"
                                         style={{
                                             left: `${(h().x / WIDTH) * 100}%`,
                                             transform: h().x > WIDTH / 2 ? "translateX(calc(-100% - 12px))" : "translateX(12px)",
@@ -223,6 +287,12 @@ export function EffortChart(props: {
                                                     <div class="flex items-center gap-1.5">
                                                         <span class="inline-block size-2.5 shrink-0 rounded-sm" style={{"background-color": colorOf(row.id)}}/>
                                                         <span class="truncate">{labelOf(row.id)}</span>
+                                                        <Show when={advanced()}>
+                                                            <span class="shrink-0 pl-2 text-muted-foreground tabular-nums">
+                                                                {row.phase === "resting" ? <Trans>resting</Trans> : row.phase === "gone" ? <Trans>away</Trans> : null}
+                                                                {" "}{row.ratePerSecond.toFixed(2)}/s
+                                                            </span>
+                                                        </Show>
                                                         <span class="ml-auto pl-3 tabular-nums">{row.effort.toLocaleString(uiLocale())}</span>
                                                     </div>
                                                 )}
@@ -235,6 +305,46 @@ export function EffortChart(props: {
                                 )}
                             </Show>
                         </div>
+                        <Show when={chart().rates}>
+                            {rates => (
+                                <div class="space-y-1">
+                                    <p class="text-xs text-muted-foreground"><Trans>Effort per second</Trans></p>
+                                    <svg
+                                        viewBox={`0 0 ${WIDTH} ${RATE_HEIGHT}`}
+                                        class="w-full rounded-md border"
+                                        role="img"
+                                        onPointerMove={onPointerMove}
+                                        onPointerLeave={() => setHoverT(null)}
+                                    >
+                                        <For each={rates().yTicks}>
+                                            {tick => (
+                                                <g>
+                                                    <line x1={MARGIN.left} x2={WIDTH - MARGIN.right} y1={tick.y} y2={tick.y} class="stroke-border"/>
+                                                    <text x={MARGIN.left - 6} y={tick.y} dy="0.32em" text-anchor="end" class="fill-muted-foreground text-[10px]">
+                                                        {tick.v}
+                                                    </text>
+                                                </g>
+                                            )}
+                                        </For>
+                                        <path d={rates().instant ?? ""} fill="none" class="stroke-muted-foreground" stroke-width="1" stroke-opacity="0.7"/>
+                                        <path d={rates().expected ?? ""} fill="none" class="stroke-foreground" stroke-width="2"/>
+                                        <Show when={hover()}>
+                                            {h => <line x1={h().x} x2={h().x} y1={MARGIN.top} y2={RATE_HEIGHT - MARGIN.bottom} class="stroke-muted-foreground" stroke-dasharray="3 3" pointer-events="none"/>}
+                                        </Show>
+                                    </svg>
+                                    <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <span class="inline-block h-0.5 w-4 bg-foreground"/>
+                                            <Trans>Expected rate</Trans>
+                                        </span>
+                                        <span class="inline-flex items-center gap-1.5">
+                                            <span class="inline-block h-px w-4 bg-muted-foreground"/>
+                                            <Trans>Players hitting now</Trans>
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+                        </Show>
                         <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                             <For each={ids().slice(0, LEGEND_LIMIT)}>
                                 {id => (

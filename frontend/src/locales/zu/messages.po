@@ -268,6 +268,10 @@ msgstr "crwdns5680:0crwdne5680:0"
 msgid "Unknown event: {kind}"
 msgstr "crwdns5682:0{kind}crwdne5682:0"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Basic"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 #: src/routes/account/bounties.tsx
 #: src/routes/account/profile.tsx
@@ -795,6 +799,10 @@ msgstr "crwdns4486:0crwdne4486:0"
 #: src/routes/discord/installed.tsx
 msgid "Brico.app Discord Bot"
 msgstr "crwdns5798:0crwdne5798:0"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "away"
+msgstr ""
 
 #: src/routes/account/bounty-rules.tsx
 msgid "Could not delete rule"
@@ -1897,6 +1905,10 @@ msgstr "crwdns5994:0crwdne5994:0"
 msgid "Buff"
 msgstr "crwdns4720:0crwdne4720:0"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "resting"
+msgstr ""
+
 #: src/routes/account/settings.tsx
 msgid "Removed"
 msgstr "crwdns5996:0crwdne5996:0"
@@ -2826,6 +2838,10 @@ msgstr "crwdns6180:0crwdne6180:0"
 msgid "No stats found."
 msgstr "crwdns4924:0crwdne4924:0"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Players hitting now"
+msgstr ""
+
 #: src/components/crafts/FundingAlertsCard.tsx
 msgid "Payout shortfall"
 msgstr "crwdns6182:0crwdne6182:0"
@@ -3236,6 +3252,10 @@ msgstr "crwdns5010:0crwdne5010:0"
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Press Link."
 msgstr "crwdns6266:0crwdne6266:0"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Craft complete."
+msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/GlobalSearchInput.tsx
@@ -4318,6 +4338,10 @@ msgstr "crwdns5240:0crwdne5240:0"
 msgid "Favorites only"
 msgstr "crwdns5242:0crwdne5242:0"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Advanced"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
 msgstr "crwdns5246:0crwdne5246:0"
@@ -4546,6 +4570,10 @@ msgstr "crwdns6520:0crwdne6520:0"
 #: src/routes/account/loyalty.tsx
 msgid "Could not save loyalty reward"
 msgstr "crwdns6522:0crwdne6522:0"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Effort per second"
+msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/placeable/[id].tsx
@@ -5307,6 +5335,10 @@ msgstr "crwdns6672:0crwdne6672:0"
 #: src/routes/bounty-dashboard.tsx
 msgid "Showing the last data received."
 msgstr "crwdns6834:0crwdne6834:0"
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Expected rate"
+msgstr ""
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Affected By Wind"
