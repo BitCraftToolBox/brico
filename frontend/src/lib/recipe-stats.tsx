@@ -450,6 +450,21 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
     if (placement.requiredPavingTier > 0) {
         lines.push([t`Paving Tier`, placement.requiredPavingTier]);
     }
+    if (placement.acceptablePavements?.length) {
+        const pavingIdx = BitCraftTables.PavingTileDesc.indexedBy("id");
+        lines.push([
+            () => <IconSpan icon={pageIcon("Paving")}><Trans>Paving Type</Trans></IconSpan>,
+            () => <LinkedList>
+                {placement.acceptablePavements!.map(pid => {
+                    const paving = pavingIdx().get(pid);
+                    if (!paving) return `Paving #${pid}`;
+                    return <IconLink href={`/database/paving/${paving.id}`}>
+                        {paving.name}
+                    </IconLink>;
+                })}
+            </LinkedList>
+        ]);
+    }
     if (placement.requiredInteriorTier > 0) {
         lines.push([t`Interior Tier`, placement.requiredInteriorTier]);
     }

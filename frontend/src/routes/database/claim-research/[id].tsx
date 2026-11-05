@@ -35,6 +35,20 @@ export default function ClaimResearchDetail() {
         return t.unlocksTechs.map(id => idx.get(id)).filter((v): v is ClaimTechDesc => !!v);
     });
 
+    const unlockedByTechs = createMemo(() => {
+        const t = tech();
+        if (!t) return [];
+        const allTechs = BitCraftTables.ClaimTechDesc.get() ?? [];
+        return allTechs.filter(other => other.unlocksTechs.includes(t.id));
+    });
+
+    const blockedTechs = createMemo(() => {
+        const t = tech();
+        if (!t?.blockingClaimTechs?.length) return [];
+        const idx = index();
+        return t.blockingClaimTechs.map(id => idx.get(id)).filter((v): v is ClaimTechDesc => !!v);
+    })
+
     const claimTechColumns = [
         {header: msg`Tech`, cell: (row: ClaimTechDesc) => <span>{row.name}</span>},
         {header: msg`Tier`, cell: (row: ClaimTechDesc) => <span>{row.tier}</span>},
@@ -51,6 +65,12 @@ export default function ClaimResearchDetail() {
             metaKind="claim research"
             metaImage={ogImageForPage("Claim Research")}
             details={[
+                {
+                    properties: [
+                        {label: msg`Researchable`, value: !tech() ? undefined : !tech()!.cannotBeResearched},
+                        {label: msg`Hidden`, value: tech()?.notShownInUi}
+                    ]
+                },
                 {
                     heading: msg`Cost`,
                     properties: [
@@ -86,6 +106,19 @@ export default function ClaimResearchDetail() {
                     showWhenEmpty: false,
                     content: () => <RelTable<ClaimTechDesc> data={unlocksTechs()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>
                 },
+                {
+                    id: "unlocked-by",
+                    label: msg`Unlocked By Techs`,
+                    count: unlockedByTechs().length,
+                    showWhenEmpty: false,
+                    content: () => <RelTable<ClaimTechDesc> data={unlockedByTechs()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>
+                },
+                {
+                    id: "blocking",
+                    label: msg`Blocked by Techs`,
+                    count: blockedTechs().length,
+                    content: () => <RelTable<ClaimTechDesc> data={blockedTechs()} columns={claimTechColumns} onRowClick={(row) => navigate(`/database/claim-research/${row.id}`)}/>
+                }
             ]}
         />
     );

@@ -563,6 +563,10 @@ msgstr ""
 msgid "% of total"
 msgstr "crwdns5716:0crwdne5716:0"
 
+#: src/routes/database/claim-research/[id].tsx
+msgid "Unlocked By Techs"
+msgstr ""
+
 #: src/routes/admin/comments/commenter.tsx
 msgid "Restrictions saved"
 msgstr ""
@@ -1852,6 +1856,8 @@ msgstr "crwdns4652:0crwdne4652:0"
 #: src/components/comments/admin/AdminCommentList.tsx
 #: src/components/comments/admin/AdminCommentRow.tsx
 #: src/components/comments/CommentItem.tsx
+#: src/lib/table-defs/claim-research-table.tsx
+#: src/routes/database/claim-research/[id].tsx
 msgid "Hidden"
 msgstr ""
 
@@ -3226,6 +3232,10 @@ msgstr "crwdns6184:0crwdne6184:0"
 msgid "Deleted by author"
 msgstr ""
 
+#: src/routes/database/paving/[id].tsx
+msgid "Placaeable"
+msgstr ""
+
 #: src/routes/database/skill/[id].tsx
 msgid "Unlock trade"
 msgstr "crwdns5568:0crwdne5568:0"
@@ -3786,6 +3796,7 @@ msgstr "crwdns5046:0crwdne5046:0"
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/claim-research/[id].tsx
 #: src/routes/database/creature/[id].tsx
+#: src/routes/database/paving/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Tier"
 msgstr "crwdns5048:0crwdne5048:0"
@@ -4101,6 +4112,7 @@ msgstr "crwdns6338:0crwdne6338:0"
 #: src/routes/database/ability/[id].tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/progression/index.tsx
+#: src/routes/database/prospecting/[id].tsx
 #: src/routes/database/traveler-task/[id].tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Skill"
@@ -4255,6 +4267,11 @@ msgstr "crwdns6364:0{issuer}crwdne6364:0"
 
 #: src/routes/account/settings.tsx
 msgid "Craft watches"
+msgstr ""
+
+#: src/lib/table-defs/claim-research-table.tsx
+#: src/routes/database/claim-research/[id].tsx
+msgid "Researchable"
 msgstr ""
 
 #: src/routes/database/skill/[id].tsx
@@ -4419,6 +4436,7 @@ msgid "Remove group"
 msgstr "crwdns6384:0crwdne6384:0"
 
 #: src/routes/database/claim-research/[id].tsx
+#: src/routes/database/prospecting/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirements"
 msgstr "crwdns5166:0crwdne5166:0"
@@ -5213,6 +5231,7 @@ msgstr ""
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
+#: src/routes/database/paving/[id].tsx
 msgid "Tag"
 msgstr "crwdns5292:0crwdne5292:0"
 
@@ -5308,6 +5327,7 @@ msgstr "crwdns6550:0crwdne6550:0"
 #. placeholder {0}: req.level
 #. placeholder {1}: skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`
 #: src/lib/recipe-stats.tsx
+#: src/routes/database/prospecting/[id].tsx
 msgid "Lv. {0} {1}"
 msgstr "crwdns5306:0{0}crwdnd5306:0{1}crwdne5306:0"
 
@@ -6082,6 +6102,10 @@ msgstr "crwdns5462:0crwdne5462:0"
 msgid "Commenter"
 msgstr ""
 
+#: src/routes/database/claim-research/[id].tsx
+msgid "Blocked by Techs"
+msgstr ""
+
 #: src/lib/crafts/error-vocab.ts
 msgid "That isn't a known display field preset: {preset}"
 msgstr "crwdns6680:0{preset}crwdne6680:0"
@@ -6184,6 +6208,10 @@ msgstr ""
 msgid "Share"
 msgstr "crwdns6702:0crwdne6702:0"
 
+#: src/lib/recipe-stats.tsx
+msgid "Paving Type"
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Placeables"
 msgstr "crwdns5480:0crwdne5480:0"
@@ -6276,6 +6304,10 @@ msgstr ""
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Select a recipe"
 msgstr "crwdns5496:0crwdne5496:0"
+
+#: src/routes/database/paving/[id].tsx
+msgid "Required to place"
+msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx

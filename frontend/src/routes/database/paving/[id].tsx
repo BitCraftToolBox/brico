@@ -1,13 +1,15 @@
-import {ItemType, SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
+import {ItemType, PlaceableDesc, SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {modelTab} from "~/components/model-viewer/model-tab";
-import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
+import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {InputItemStackArray, ItemStackArray} from "~/components/shared/ItemStacks";
 import {KnowledgeTable, StatTable} from "~/components/shared/RelTablePresets";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
+import {PlaceableLink} from "~/lib/game-links.tsx";
+import {gameText} from "~/lib/labels.ts";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -17,6 +19,7 @@ export default function PavingDetail() {
     const index = BitCraftTables.PavingTileDesc.indexedBy("id");
     const skillIndex = BitCraftTables.SkillDesc.indexedBy("id");
     const knowledgeIndex = BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id");
+    const placeableIdx = BitCraftTables.PlaceableDesc.indexedBy("id");
 
     const tile = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
@@ -39,6 +42,22 @@ export default function PavingDetail() {
         const idx = knowledgeIndex();
         return t.requiredKnowledges.map(id => idx.get(id)).filter((v): v is SecondaryKnowledgeDesc => !!v);
     });
+
+    const requiredByPlaceables = createMemo(() => {
+        const t = tile();
+        if (!t) return [];
+        const placements = BitCraftTables.PlaceablePlacementDesc.get() ?? [];
+        const placeables: PlaceableDesc[] = [];
+        for (const placement of placements) {
+            if (placement.acceptablePavements?.includes(t.id)) {
+                const placeable = placeableIdx().get(placement.placedPlaceableId);
+                if (placeable) {
+                    placeables.push(placeable);
+                }
+            }
+        }
+        return placeables;
+    })
 
     return (
         <DetailPageLayout
@@ -76,6 +95,22 @@ export default function PavingDetail() {
                 },
                 {id: "knowledge", label: msg`Required Knowledge`, count: requiredKnowledges().length, showWhenEmpty: false, content: () => <KnowledgeTable data={requiredKnowledges()}/>},
                 {id: "stats", label: msg`Stat Effects`, count: tile()?.statEffects?.length ?? 0, content: () => <StatTable data={tile()!.statEffects}/>},
+                {
+                    id: "placeables",
+                    label: msg`Required to place`,
+                    count: requiredByPlaceables().length,
+                    showWhenEmpty: false,
+                    content: () => {
+                        return <RelTable<PlaceableDesc>
+                            data={requiredByPlaceables()}
+                            columns={[
+                                {header: gameText(msg`Placaeable`), cell: plc => <PlaceableLink id={plc.id} name={plc.name}/>},
+                                {header: gameText(msg`Tag`), cell: plc => plc.tag},
+                                {header: gameText(msg`Tier`), cell: plc => plc.tier},
+                            ]}
+                        />
+                    }
+                },
                 modelTab(() => tile() && {paths: [tile()!.prefabAddress], viewDirection: [0.25, 1, 0.35]}),
             ]}
         />
