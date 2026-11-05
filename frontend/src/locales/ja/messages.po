@@ -147,6 +147,10 @@ msgstr "自動適応"
 msgid "Prospect for {target}"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
+msgid "Discovered By"
+msgstr ""
+
 #: src/routes/account/bounties.tsx
 msgid "Find crafts with a bounty in the <0/> and contribute as usual. There's nothing to sign up for; your share is tracked automatically."
 msgstr ""
@@ -228,6 +232,10 @@ msgstr ""
 #: src/components/AppLoadingScreen.tsx
 msgid "Loading game data… {0}/{1}"
 msgstr "ゲームデータを読み込んでいます… {0}/{1}"
+
+#: src/lib/recipe-stats.tsx
+msgid "{skillName} XP/Progress"
+msgstr "{skillName} 経験値/進捗"
 
 #: src/routes/account/settings.tsx
 msgid "Match"
@@ -355,10 +363,6 @@ msgstr "アンロック"
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "EXP"
 msgstr "経験値"
-
-#: src/lib/recipe-stats.tsx
-msgid "Paving Tier:"
-msgstr "舗装ティア："
 
 #: src/routes/account/settings.tsx
 msgid "set via <0>/crafts notify-setup</0> in Discord."
@@ -670,10 +674,6 @@ msgstr ""
 msgid "Item Stack Size"
 msgstr "アイテムスタックサイズ"
 
-#: src/lib/recipe-stats.tsx
-msgid "Effort:"
-msgstr "労力："
-
 #: src/routes/account/link.tsx
 msgid "Missing link code."
 msgstr ""
@@ -689,10 +689,6 @@ msgstr ""
 #: src/routes/database/combat/[id].tsx
 msgid "Threat"
 msgstr "脅威"
-
-#: src/lib/recipe-stats.tsx
-msgid "Blocking Knowledge:"
-msgstr "解放される知識："
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interact with this placeable"
@@ -786,6 +782,7 @@ msgstr "ポータルに入ることができる"
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/RelTablePresets.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/combat-table.tsx
 msgid "Range"
 msgstr "範囲"
@@ -990,6 +987,10 @@ msgstr ""
 msgid "Explore"
 msgstr "探索"
 
+#: src/lib/table-defs/resources-table.tsx
+msgid "Variable respawn. Spawns randomly among valid areas in the region when available resource count drops below a threshold."
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
 msgstr "武器"
@@ -1140,6 +1141,8 @@ msgstr "基本的な脅威"
 #: src/lib/table-defs/creature-table.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/lib/table-defs/placeables-table.tsx
+#: src/lib/table-defs/resources-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/placeable/[id].tsx
@@ -1314,20 +1317,17 @@ msgstr "住宅収入"
 msgid "Cargo Stack Size"
 msgstr "カーゴスタックサイズ"
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/paving-table.tsx
 #: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
 #: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
 msgstr "必要な知識"
-
-#. placeholder {0}: group.name
-#: src/lib/recipe-stats.tsx
-msgid "Group limit for {0}:"
-msgstr "{0}のグループ制限："
 
 #: src/routes/database/creature/[id].tsx
 msgid "Day Aggro Range"
@@ -1503,10 +1503,6 @@ msgstr "{reqName}を{npcName}の{offerName}と交換する"
 msgid "Deed"
 msgstr "権利証"
 
-#: src/lib/recipe-stats.tsx
-msgid "Effort Required:"
-msgstr "要求される労力："
-
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Registering…"
 msgstr ""
@@ -1669,10 +1665,6 @@ msgstr ""
 msgid "<0>Link a Stelo wallet</0> first."
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Traveler:"
-msgstr "旅人："
-
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "not equals"
 msgid "{field} {cmpEl} {value}"
@@ -1707,10 +1699,6 @@ msgstr ""
 msgid "<0/><1>per effort</1>"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Tool:"
-msgstr "ツール："
-
 #: src/routes/database/deployable/[id].tsx
 msgid "Allow Gathering"
 msgstr "採集可能"
@@ -1731,6 +1719,10 @@ msgstr ""
 #: src/routes/settings.tsx
 msgid "Automatic"
 msgstr "自動"
+
+#: src/lib/recipe-stats.tsx
+msgid "Minimum distance to Claims"
+msgstr ""
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Done"
@@ -1786,6 +1778,10 @@ msgstr ""
 #: src/routes/settings.tsx
 msgid "View style"
 msgstr "表示スタイル"
+
+#: src/lib/recipe-stats.tsx
+msgid "Interior Tier"
+msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "is"
@@ -1845,7 +1841,6 @@ msgid "Estimated completion: Collecting data…"
 msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
-#: src/lib/recipe-stats.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "None"
@@ -1857,6 +1852,7 @@ msgstr "枯渇"
 
 #: src/lib/recipe-stats.tsx
 #: src/lib/relations.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "Unknown"
 msgstr "不明"
@@ -1933,7 +1929,8 @@ msgstr ""
 #: src/components/shared/RelTablePresets.tsx
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/quests-table.tsx
-#: src/routes/database/cargo/[id].tsx
+#: src/lib/table-utils/detail-group-builders.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Knowledge"
 msgstr "知識"
 
@@ -2111,6 +2108,10 @@ msgstr ""
 msgid "{0} bounty rules or overrides name it as the funding wallet; they stop being fundable."
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
+msgid "Paving Tier"
+msgstr "舗装ティア"
+
 #. placeholder {0}: notification.event.craftId
 #: src/routes/tools/crafts/browse.tsx
 msgid "Craft {0}"
@@ -2186,10 +2187,6 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 msgid "Premium Items"
 msgstr ""
-
-#: src/lib/recipe-stats.tsx
-msgid "Minimum distance to Group:"
-msgstr "グループの最小距離："
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "Funding…"
@@ -2295,6 +2292,10 @@ msgstr ""
 #: src/routes/settings.tsx
 msgid "Loading translations…"
 msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Effort Required"
+msgstr "要求される労力"
 
 #: src/components/crafts/craft-columns.tsx
 #: src/components/crafts/QuickFilterGrid.tsx
@@ -2422,15 +2423,12 @@ msgid "Link Filters <0/>"
 msgstr "フィルターのリンク <0/>"
 
 #: src/components/shared/RelTablePresets.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Stamina"
 msgstr "スタミナ"
-
-#: src/lib/recipe-stats.tsx
-msgid "{skillName} Exp:"
-msgstr "{skillName}経験値："
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -2554,10 +2552,6 @@ msgstr "ツールなし"
 msgid "Required to Start"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Building:"
-msgstr "建物："
-
 #: src/lib/crafts/error-vocab.ts
 msgid "That watch display no longer exists."
 msgstr ""
@@ -2675,10 +2669,6 @@ msgstr "データベース"
 msgid "Place ({placeDuration})"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Required Research:"
-msgstr ""
-
 #: src/components/shared/RecipeDisplay.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Chance"
@@ -2686,10 +2676,6 @@ msgstr "確率"
 
 #: src/routes/account/profile.tsx
 msgid "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
-msgstr ""
-
-#: src/lib/recipe-stats.tsx
-msgid "Claim Tier:"
 msgstr ""
 
 #: src/routes/bounty-dashboard.tsx
@@ -2932,6 +2918,7 @@ msgid "Link your BitCraft account to get credit for crafts and contributions."
 msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Time"
 msgstr "時間"
@@ -3063,6 +3050,7 @@ msgstr ""
 msgid "Couldn't generate a key right now — try again in a minute."
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Tool"
@@ -3084,10 +3072,6 @@ msgstr ""
 #: src/routes/database/cargo/[id].tsx
 msgid "Place Time"
 msgstr "配置時間"
-
-#: src/lib/recipe-stats.tsx
-msgid "Shows Time Left:"
-msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Delete all filters?"
@@ -3300,6 +3284,7 @@ msgstr ""
 msgid "Required Skill"
 msgstr "必要スキル"
 
+#: src/lib/table-defs/resources-table.tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Scheduled Respawn"
 msgstr "リスポーンのスケジュール"
@@ -3395,10 +3380,6 @@ msgstr ""
 msgid "My payouts"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Interior Tier:"
-msgstr ""
-
 #: src/lib/sidebar-items.ts
 msgid "Emblem Editor"
 msgstr "エンブレムエディター"
@@ -3417,10 +3398,6 @@ msgstr ""
 
 #: src/components/crafts/FundingStatus.tsx
 msgid "Last failure:"
-msgstr ""
-
-#: src/lib/recipe-stats.tsx
-msgid "Minimum distance to Claims:"
 msgstr ""
 
 #: src/lib/table-defs/traveler-tasks-table.tsx
@@ -3450,10 +3427,6 @@ msgstr ""
 msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
 msgstr "ゲーム内の名前や説明文などの言語。<0/><1>Clockwork Labsによる公式翻訳（AI生成によるものですが）です。これらはゲーム内のテキストを反映したものであり、Brico.appによって管理されているものではありません。</1>"
 
-#: src/lib/recipe-stats.tsx
-msgid "Time:"
-msgstr "時間："
-
 #: src/routes/database/skill/[id].tsx
 msgid "Unlock achievement <0/>"
 msgstr ""
@@ -3463,6 +3436,10 @@ msgstr ""
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
 msgid "Something went wrong"
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Shows Time Left"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -3633,10 +3610,6 @@ msgstr "貨物"
 msgid "Favorite items"
 msgstr "お気に入りアイテム"
 
-#: src/lib/recipe-stats.tsx
-msgid "Stamina:"
-msgstr "スタミナ："
-
 #: src/lib/crafts/filter-vocab.ts
 msgid "Member"
 msgstr ""
@@ -3657,6 +3630,7 @@ msgid "No matches."
 msgstr ""
 
 #: src/lib/recipe-stats.tsx
+#: src/lib/table-defs/resources-table.tsx
 msgid "Resource ignores regular damage."
 msgstr ""
 
@@ -3665,6 +3639,7 @@ msgid "Tags"
 msgstr "タグ"
 
 #: src/lib/crafts/filter-vocab.ts
+#: src/lib/recipe-stats.tsx
 msgid "Building"
 msgstr ""
 
@@ -3748,6 +3723,7 @@ msgstr ""
 msgid "Quest Graph"
 msgstr "クエストのグラフ"
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Traveler"
@@ -3762,6 +3738,11 @@ msgstr ""
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
 msgstr "コピーしました！"
+
+#. placeholder {0}: group.name
+#: src/lib/recipe-stats.tsx
+msgid "Group limit for {0}"
+msgstr "{0}のグループ制限"
 
 #: src/components/crafts/craft-columns.tsx
 msgid "Hidden currency"
@@ -3971,10 +3952,6 @@ msgstr ""
 msgid "Choose how Brico's Toolbox looks."
 msgstr "Brico's Toolboxの見た目を選択します。"
 
-#: src/lib/recipe-stats.tsx
-msgid "Near Building:"
-msgstr ""
-
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Copy the account address (starts with #) and paste it here."
 msgstr ""
@@ -3987,6 +3964,7 @@ msgstr ""
 msgid "Active bounties"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
@@ -4236,6 +4214,10 @@ msgstr ""
 msgid "Paste a filter, a list of filters, or a share code"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
+msgid "{skillName} Exp"
+msgstr "{skillName}経験値"
+
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
 msgstr "認識のしきい値"
@@ -4447,6 +4429,10 @@ msgstr ""
 msgid "That filter belongs to a different account."
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
+msgid "Claim Tier"
+msgstr ""
+
 #. placeholder {0}: task.levelRequirement.minLevel
 #. placeholder {1}: task.levelRequirement.maxLevel
 #. placeholder {2}: skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>
@@ -4496,6 +4482,10 @@ msgstr "風力倍率"
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "No wallets linked."
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Required Research"
 msgstr ""
 
 #: src/routes/database/skill/[id].tsx
@@ -4820,10 +4810,6 @@ msgstr ""
 msgid "Choose which Stelo wallet funds this bounty."
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Biomes:"
-msgstr "バイオーム："
-
 #: src/lib/table-defs/quests-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Achievement"
@@ -5023,6 +5009,10 @@ msgstr ""
 msgid "Members"
 msgstr "メンバー数"
 
+#: src/lib/table-defs/resources-table.tsx
+msgid "Fixed respawn. Spawns in the same chunk after specified amount of time."
+msgstr ""
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "Effort over time"
 msgstr ""
@@ -5158,6 +5148,10 @@ msgstr ""
 msgid "Tools"
 msgstr "ツール"
 
+#: src/lib/recipe-stats.tsx
+msgid "Near Building"
+msgstr ""
+
 #: src/routes/account/bounty-rules.tsx
 msgid "Flat rate"
 msgstr ""
@@ -5174,6 +5168,7 @@ msgstr "対象バフ"
 msgid "Timed Node"
 msgstr "ノードの時間"
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/prospecting-table.tsx
 #: src/routes/database/prospecting/[id].tsx
@@ -5235,7 +5230,9 @@ msgstr "行動までの時間"
 msgid "Compact list or icon grid."
 msgstr "コンパクトな一覧表示またはグリッド表示。"
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
+#: src/lib/table-utils/detail-group-builders.tsx
 msgid "Blocking Knowledge"
 msgstr "解放される知識"
 
@@ -5394,10 +5391,6 @@ msgstr ""
 msgid "Stat Scaling"
 msgstr "ステータスのスケーリング"
 
-#: src/lib/recipe-stats.tsx
-msgid "Required Knowledge:"
-msgstr "必要な知識："
-
 #: src/lib/crafts/error-vocab.ts
 msgid "That isn't a known display field preset: {preset}"
 msgstr ""
@@ -5419,10 +5412,6 @@ msgstr ""
 msgid "Contributors"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "{skillName} XP/Progress:"
-msgstr "{skillName} 経験値/進捗："
-
 #: src/routes/database/placeable/[id].tsx
 msgid "Limit"
 msgstr "制限"
@@ -5439,18 +5428,9 @@ msgstr ""
 msgid "Not Respawning"
 msgstr "リスポーンしない"
 
-#. placeholder {0}: skillCategoryLabel(skillTag)
-#: src/lib/recipe-stats.tsx
-msgid "{0}:"
-msgstr ""
-
 #: src/routes/database/item/[id].tsx
 msgid "Required Level"
 msgstr "必要レベル"
-
-#: src/lib/recipe-stats.tsx
-msgid "Range:"
-msgstr "範囲："
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Close"
@@ -5524,10 +5504,6 @@ msgstr ""
 msgid "That saved filter no longer exists."
 msgstr ""
 
-#: src/lib/table-utils/detail-tab-builders.tsx
-msgid "Max HP"
-msgstr ""
-
 #: src/routes/database/placeable/[id].tsx
 msgid "Grows from"
 msgstr ""
@@ -5544,6 +5520,10 @@ msgstr ""
 #: src/components/crafts/FundingAlertsCard.tsx
 msgid "Customize funding alerts for {0}"
 msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Minimum distance to Group"
+msgstr "グループの最小距離"
 
 #: src/routes/tools/crafts/browse.tsx
 msgid "Advanced Filters"

@@ -57,6 +57,7 @@ import {
     foodByproductsTab,
     itemListsTab,
     itemListTab,
+    knowledgeTab,
     placeableGraphTab,
     placeableInteractionsTab,
     placeablePlacementTab,
@@ -109,6 +110,7 @@ export default function ItemDetail() {
     const weaponTypeIndex = BitCraftTables.WeaponTypeDesc.indexedBy("id");
     const knowledgeScrollIndex = BitCraftTables.KnowledgeScrollDesc.indexedBy("itemId");
     const collectibleIndex = BitCraftTables.CollectibleDesc.indexedByMulti("itemDeedId");
+    const knowledgeIndex = BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id");
 
     const item = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
@@ -180,6 +182,13 @@ export default function ItemDetail() {
     const placeablePlacements = createMemo(() => itemId() != null ? placementsConsumingItem(itemId()!, itemType) : []);
     const placeableInteractions = createMemo(() => itemId() != null ? interactionsInvolvingItem(itemId()!, itemType) : []);
     const abilities = createMemo(() => itemId() != null ? abilitiesInvolvingItem(itemId()!, itemType) : []);
+
+    const knowledge = createMemo(() => {
+        const i = item();
+        if (!i?.secondaryKnowledgeId) return [];
+        const k = knowledgeIndex().get(i.secondaryKnowledgeId);
+        return k ? [k] : [];
+    });
 
     const detailGroups = createMemo((): DetailGroup[] => {
         const i = item();
@@ -351,6 +360,7 @@ export default function ItemDetail() {
                 claimResearchTab(researchRequires()),
                 itemListTab(isItemList(), true),
                 itemListsTab(inItemLists()),
+                knowledgeTab(knowledge()),
                 ...(item()?.id === 164053808 && easterEggs() ? [lootTabWith({loot: [[1602206011, "Item", 1687372047]], chest: [item()!.iconAssetName, item()!.rarity, item()!.tier]})] : [])
             ]}
         />

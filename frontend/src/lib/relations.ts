@@ -10,6 +10,7 @@
 
 import {
     AbilityCustomDesc,
+    AbilityUnlockDesc,
     AchievementDesc,
     BuildingDesc,
     CargoDesc,
@@ -560,6 +561,7 @@ export function premiumItemsIncluding(collectibleId: number): PremiumItemDesc[] 
 // ─── Knowledge Usage ─────────────────────────────────────────────
 
 export type KnowledgeUsage =
+    | { type: "abilityUnlock", abilityUnlock: AbilityUnlockDesc}
     | { type: "collectible"; collectible: CollectibleDesc }
     | { type: "constructionRecipe"; constructionRecipe: ConstructionRecipeDesc }
     | { type: "craftingRecipe"; craftingRecipe: CraftingRecipeDesc }
@@ -581,10 +583,11 @@ function requiresOrBlocksKnowledge(o: { requiredKnowledges?: number[]; blockingK
 export function knowledgeUsedBy(knowledgeId: number): KnowledgeUsage[] {
     const usages: KnowledgeUsage[] = [];
 
+    for (const abilityUnlock of BitCraftTables.AbilityUnlockDesc.get() ?? []) {
+        if (requiresOrBlocksKnowledge(abilityUnlock, knowledgeId)) usages.push({type: "abilityUnlock", abilityUnlock});
+    }
     for (const collectible of BitCraftTables.CollectibleDesc.get() ?? []) {
-        if (collectible.requiredKnowledgesToUse.includes(knowledgeId) || collectible.requiredKnowledgesToConvert.includes(knowledgeId)) {
-            usages.push({type: "collectible", collectible});
-        }
+        if (collectible.requiredKnowledgesToUse.includes(knowledgeId) || collectible.requiredKnowledgesToConvert.includes(knowledgeId)) usages.push({type: "collectible", collectible});
     }
     for (const constructionRecipe of BitCraftTables.ConstructionRecipeDesc.get() ?? []) {
         if (requiresOrBlocksKnowledge(constructionRecipe, knowledgeId) || constructionRecipe.discoveryTriggers.includes(knowledgeId)) usages.push({type: "constructionRecipe", constructionRecipe});

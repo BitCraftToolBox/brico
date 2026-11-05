@@ -4,12 +4,13 @@ import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {FontIcon} from "~/components/icons/font-icons";
-import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
+import {type DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon, ResourceIcon} from "~/components/shared/GameIcon";
 import {ItemStackArray} from "~/components/shared/ItemStacks";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {BiomeLink, SkillLinkById} from "~/lib/game-links";
 import {ogImageForCodepoint} from "~/lib/og-meta";
+import {knowledgeRequirementsGroup} from "~/lib/table-utils/detail-group-builders.tsx";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
 function ProspectingItemsPanel(props: { prospecting: ProspectingDesc }) {
@@ -54,6 +55,7 @@ export default function ProspectingDetail() {
     const biomeIndex = BitCraftTables.BiomeDesc.indexedBy("biomeType", true);
     const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
     const enemyParamsIndex = BitCraftTables.EnemyAiParamsDesc.indexedBy("id");
+    const abilityUnlocks = BitCraftTables.AbilityUnlockDesc.get();
 
     const prospecting = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
@@ -104,6 +106,48 @@ export default function ProspectingDetail() {
         return undefined;
     });
 
+    const abilityUnlock = createMemo((): {requiredKnowledges: number[], blockingKnowledges: number[]} | undefined => {
+        const pid = prospecting()?.id;
+        if (!pid) return undefined;
+        for (const unlock of abilityUnlocks ?? []) {
+            if (unlock.abilityData?.tag === "Prospecting" && unlock.abilityData.value === pid) {
+                return unlock;
+            }
+        }
+        return undefined;
+    });
+
+    const unlockGroup = createMemo((): DetailGroup[] => {
+        const unlock = abilityUnlock();
+        return knowledgeRequirementsGroup(unlock);
+    });
+
+    const detailGroups = createMemo((): DetailGroup[] => {
+        const p = prospecting();
+        if (!p) return [];
+        return [
+            {
+                properties: [
+                    {label: msg`Breadcrumb Count`, value: rangeStr(p.breadCrumbCount)},
+                    {label: msg`Contribution Per Crumb`, value: p.contributionPerVisitedBreadCrumb},
+                    {label: msg`% Nodes for Max Contribution`, value: (p.pctNodesForMaxContribution ?? 0) * 100},
+                    {label: msg`Single Contribution Only`, value: p.singleContributionOnly},
+                    {label: msg`Breadcrumb Distance`, value: rangeStr(p.distanceBetweenBreadCrumbs)},
+                    {label: msg`Breadcrumb Radius`, value: rangeStr(p.breadCrumbRadius)},
+                    {label: msg`Deadzone Angle`, value: p.deadzoneAngleBetweenCrumbs},
+                    {label: msg`Join Radius`, value: p.joinRadius},
+                    {label: msg`Experience Per Node`, value: experienceStr()},
+                    {label: msg`Pointer Duration`, value: readableSeconds(p.pointerDuration)},
+                    {label: msg`Prospecting Duration`, value: readableSeconds(p.prospectingDuration)},
+                    {label: msg`Is Aquatic Resource`, value: p.isAquaticResource},
+                    {label: msg`Allow Aquatic Prospecting`, value: p.allowAquaticProspecting},
+                    {label: msg`Allow Aquatic Breadcrumb`, value: p.allowAquaticBreadCrumb},
+                ]
+            },
+            ...unlockGroup()
+        ];
+    });
+
     return (
         <DetailPageLayout
             title={prospecting()?.name ?? `Prospecting #${params.id}`}
@@ -114,22 +158,7 @@ export default function ProspectingDetail() {
             description={prospecting()?.description}
             metaKind="prospecting node"
             metaImage={ogImageForCodepoint(prospecting()?.iconAssetPath)}
-            details={[
-                {label: msg`Breadcrumb Count`, value: rangeStr(prospecting()?.breadCrumbCount)},
-                {label: msg`Contribution Per Crumb`, value: prospecting()?.contributionPerVisitedBreadCrumb},
-                {label: msg`% Nodes for Max Contribution`, value: (prospecting()?.pctNodesForMaxContribution ?? 0) * 100},
-                {label: msg`Single Contribution Only`, value: prospecting()?.singleContributionOnly},
-                {label: msg`Breadcrumb Distance`, value: rangeStr(prospecting()?.distanceBetweenBreadCrumbs)},
-                {label: msg`Breadcrumb Radius`, value: rangeStr(prospecting()?.breadCrumbRadius)},
-                {label: msg`Deadzone Angle`, value: prospecting()?.deadzoneAngleBetweenCrumbs},
-                {label: msg`Join Radius`, value: prospecting()?.joinRadius},
-                {label: msg`Experience Per Node`, value: experienceStr()},
-                {label: msg`Pointer Duration`, value: readableSeconds(prospecting()?.pointerDuration)},
-                {label: msg`Prospecting Duration`, value: readableSeconds(prospecting()?.prospectingDuration)},
-                {label: msg`Is Aquatic Resource`, value: prospecting()?.isAquaticResource},
-                {label: msg`Allow Aquatic Prospecting`, value: prospecting()?.allowAquaticProspecting},
-                {label: msg`Allow Aquatic Breadcrumb`, value: prospecting()?.allowAquaticBreadCrumb},
-            ]}
+            details={detailGroups()}
             rawData={prospecting()}
             spacetimeTable={BitCraftTables.ProspectingDesc.spacetimeName}
             objectId={prospecting()?.id}

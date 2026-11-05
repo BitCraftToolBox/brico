@@ -9,6 +9,7 @@ import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {chatLink} from "~/lib/chat-links";
 import {BuffLinkById, ItemStackLink, PlaceableLinkById, SkillLinkById} from "~/lib/game-links";
 import {ogImageForAsset} from "~/lib/og-meta";
+import {knowledgeRequirementsGroup} from "~/lib/table-utils/detail-group-builders.tsx";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
 export default function AbilityDetail() {
@@ -16,11 +17,23 @@ export default function AbilityDetail() {
     const isLoading = useTablesLoading(BitCraftTables.AbilityCustomDesc);
     const index = BitCraftTables.AbilityCustomDesc.indexedBy("id");
     const buffIndex = BitCraftTables.BuffDesc.indexedBy("id");
+    const abilityUnlocks = BitCraftTables.AbilityUnlockDesc.get();
 
     const ability = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
         if (isNaN(id)) return undefined;
         return index().get(id);
+    });
+
+    const abilityUnlock = createMemo(() => {
+        const aid = ability()?.id;
+        if (!aid) return undefined;
+        for (const unlock of abilityUnlocks ?? []) {
+            if (unlock.abilityData?.tag === "Custom" && unlock.abilityData.value === aid) {
+                return unlock;
+            }
+        }
+        return undefined;
     });
 
     const buffs = createMemo(() => {
@@ -61,6 +74,8 @@ export default function AbilityDetail() {
                 ],
             });
         }
+        const unlock = abilityUnlock();
+        groups.push(...knowledgeRequirementsGroup(unlock));
         return groups;
     });
 

@@ -26,11 +26,10 @@ function professionHitSkillId(a: AbilityCustomDesc): number | undefined {
     return a.performProfessionHit && a.professionHitSkillId > 0 ? a.professionHitSkillId : undefined;
 }
 
-/** English item/cargo name — backs search, so it must not follow the data locale. */
 function stackName(stack: { itemId: number, itemType: ItemType }): string {
     return stack.itemType.tag === ItemType.Cargo.tag
-        ? sourceRow(BitCraftTables.CargoDesc.indexedBy("id")().get(stack.itemId))?.name ?? `Cargo #${stack.itemId}`
-        : sourceRow(BitCraftTables.ItemDesc.indexedBy("id")().get(stack.itemId))?.name ?? `Item #${stack.itemId}`;
+        ? BitCraftTables.CargoDesc.indexedBy("id")().get(stack.itemId)?.name ?? `Cargo #${stack.itemId}`
+        : BitCraftTables.ItemDesc.indexedBy("id")().get(stack.itemId)?.name ?? `Item #${stack.itemId}`;
 }
 
 /** English buff descriptions (backs search/filter), so they must not follow the data locale. */
@@ -39,7 +38,7 @@ function buffNames(a: AbilityCustomDesc): string[] | undefined {
 }
 
 function placeableNames(a: AbilityCustomDesc): string[] | undefined {
-    return a.spawnedPlaceables?.map(sp => sourceRow(BitCraftTables.PlaceableDesc.indexedBy("id")().get(sp.placeableId))?.name ?? `Placeable #${sp.placeableId}`);
+    return a.spawnedPlaceables?.map(sp => BitCraftTables.PlaceableDesc.indexedBy("id")().get(sp.placeableId)?.name ?? `Placeable #${sp.placeableId}`);
 }
 
 /** Output stacks that resolve to an actual item (the stack is optional on the wire). */
@@ -50,11 +49,8 @@ function outputStacks(a: AbilityCustomDesc) {
 /**
  * Deliberately narrow: `castTime`, `range`, `radius`, `damage`, `threatValue`, `globalCooldown` and
  * `linkedAbilityBuffDescId` are 0 for every row, `friendly` is always true, `buffToggle` always
- * false, and `animation` is `"None"`/`""` — none of them tell the reader anything. The Raw Data tab
- * on the detail page still exposes the full row. This can change as new abilities are added.
- *
- * What an ability actually *is* is the buffs it applies, so those get both a linked-pill column and
- * a consolidated stat column, exactly as food does.
+ * false, and `animation` is `"None"`/`""`.
+ * This can change as new abilities are added.
  */
 export const AbilityDefs: BitCraftToDataDef<AbilityCustomDesc> = {
     columns: [
