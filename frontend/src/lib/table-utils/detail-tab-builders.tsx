@@ -526,7 +526,7 @@ export function enemySpawnsTab(enemies: EnemyDesc[]): RelationshipTab {
                             </IconLink>
                         )},
                     {header: msg`Tier`, cell: (row) => <span>{row.tier}</span>},
-                    {header: msg`Max HP`, cell: (row) => <span>{row.maxHealth}</span>},
+                    {header: msg`Max Health`, cell: (row) => <span>{row.maxHealth}</span>},
                 ]}
             />
         ),

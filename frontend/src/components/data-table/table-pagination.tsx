@@ -85,7 +85,7 @@ export function TablePagination<TData>(props: TablePaginationProps<TData>) {
                     </Button>
                     <div class="flex items-center justify-center text-sm font-medium">
                         <Show when={editing()} fallback={
-                            <Button variant="ghost" class="w-fit px-2 sm underline decoration-dotted" onclick={() => {
+                            <Button variant="ghost" class="w-fit px-2 sm decoration-dotted underline" onclick={() => {
                                 setEditing(true);
                                 setPageInput?.focus();
                                 setPageInput?.select();

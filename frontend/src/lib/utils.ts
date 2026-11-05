@@ -59,6 +59,8 @@ export function fixFloat(f: number | undefined, p?: number): number | undefined;
 
 export function fixFloat(f: number | undefined, places: number = 3): number | undefined {
     if (typeof f === 'undefined') return undefined;
+    // don't truncate to sig figs for large (e.g. multiplied) numbers
+    if (Math.abs(f) >= 10 ** places) return Math.round(f);
     return +f.toPrecision(places);
 }
 

@@ -183,7 +183,7 @@ function addSkillProgressInfo(lines: StatLine[], recipe: { toolRequirements: Too
     const label = useLabel();
     lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
         () => <Tooltip openOnTouchStart>
-            <TooltipTrigger class="underline decoration-dotted">
+            <TooltipTrigger class="decoration-dotted underline">
                 <Show when={recipe.allowUseHands} fallback={<Trans>No tool</Trans>}>{label(gameText(msg`Hands`))}</Show>
             </TooltipTrigger>
             <TooltipContent class="max-w-[90svw]">
