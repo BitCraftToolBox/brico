@@ -414,6 +414,16 @@ export function AbilityLinkById(props: { id: number; class?: string }) {
     return <AbilityLink id={props.id} name={ability()?.abilityName} iconPath={ability()?.iconPath} class={props.class}/>;
 }
 
+export function ProspectingLink(props: {id: number; name?: string; iconPath?: string; class?: string }) {
+    const icon = () => props.iconPath
+        ? <FontIcon codepoint={props.iconPath} class="size-4 shrink-0 inline align-text-bottom"/>
+        : pageIcon("Prospecting");
+    return (
+        <IconLink href={`/database/prospecting/${props.id}`} icon={icon()} class={props.class}>
+            {props.name ?? `Prospecting #${props.id}`}
+        </IconLink>
+    );
+}
 // ─── Item Stack (lightweight) ───────────────────────────────────
 
 /**

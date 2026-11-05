@@ -70,6 +70,7 @@ import {
     LinkedList,
     pageIcon,
     PlaceableLink,
+    ProspectingLink,
     QuestChainLink,
     ResourceLink,
     SkillLinkById,
@@ -807,6 +808,7 @@ export function placeableInteractionsCombinedTab(
 // ─── Knowledge Usage Tab ─────────────────────────────────────────
 
 const KNOWLEDGE_USAGE_TYPE_LABELS: Record<KnowledgeUsage["type"], MessageDescriptor> = {
+    abilityUnlock: msg`Ability`,
     collectible: msg`Collectible`,
     constructionRecipe: msg`Construction Recipe`,
     craftingRecipe: msg`Crafting Recipe`,
@@ -828,6 +830,21 @@ function usageTypeLabel(type: KnowledgeUsage["type"]): string {
 
 function knowledgeUsageLink(usage: KnowledgeUsage) {
     switch (usage.type) {
+        case "abilityUnlock":
+            const abilityData = usage.abilityUnlock.abilityData;
+            if (abilityData) {
+                switch (abilityData.tag) {
+                    case "Custom":
+                        const ability = BitCraftTables.AbilityCustomDesc.indexedBy("id")().get(abilityData.value);
+                        if (!ability) return <Trans>Unknown</Trans>;
+                        return <AbilityLink id={ability.id} name={ability.abilityName} iconPath={ability.iconPath}/>;
+                    case "Prospecting":
+                        const prospecting = BitCraftTables.ProspectingDesc.indexedBy("id")().get(abilityData.value);
+                        if (!prospecting) return <Trans>Unknown</Trans>;
+                        return <ProspectingLink id={prospecting.id} name={prospecting.name} iconPath={prospecting.iconAssetPath}/>;
+                }
+            }
+            return <Trans>Unknown</Trans>;
         case "collectible":
             return <CollectibleLink id={usage.collectible.id} name={usage.collectible.name}/>;
         case "constructionRecipe": {

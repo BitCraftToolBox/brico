@@ -142,6 +142,10 @@ msgstr "Auto-cast"
 msgid "Prospect for {target}"
 msgstr "Prospect for {target}"
 
+#: src/lib/recipe-stats.tsx
+msgid "Discovered By"
+msgstr "Discovered By"
+
 #: src/routes/account/bounties.tsx
 msgid "Find crafts with a bounty in the <0/> and contribute as usual. There's nothing to sign up for; your share is tracked automatically."
 msgstr "Find crafts with a bounty in the <0/> and contribute as usual. There's nothing to sign up for; your share is tracked automatically."
@@ -223,6 +227,10 @@ msgstr "That wallet can't fund bounties: Brico.app hasn't verified that you admi
 #: src/components/AppLoadingScreen.tsx
 msgid "Loading game data… {0}/{1}"
 msgstr "Loading game data… {0}/{1}"
+
+#: src/lib/recipe-stats.tsx
+msgid "{skillName} XP/Progress"
+msgstr "{skillName} XP/Progress"
 
 #: src/routes/account/settings.tsx
 msgid "Match"
@@ -350,10 +358,6 @@ msgstr "Unlocks"
 #: src/lib/table-defs/traveler-tasks-table.tsx
 msgid "EXP"
 msgstr "EXP"
-
-#: src/lib/recipe-stats.tsx
-msgid "Paving Tier:"
-msgstr "Paving Tier:"
 
 #: src/routes/account/settings.tsx
 msgid "set via <0>/crafts notify-setup</0> in Discord."
@@ -665,10 +669,6 @@ msgstr "Delete loyalty reward"
 msgid "Item Stack Size"
 msgstr "Item Stack Size"
 
-#: src/lib/recipe-stats.tsx
-msgid "Effort:"
-msgstr "Effort:"
-
 #: src/routes/account/link.tsx
 msgid "Missing link code."
 msgstr "Missing link code."
@@ -684,10 +684,6 @@ msgstr "Signing in"
 #: src/routes/database/combat/[id].tsx
 msgid "Threat"
 msgstr "Threat"
-
-#: src/lib/recipe-stats.tsx
-msgid "Blocking Knowledge:"
-msgstr "Blocking Knowledge:"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interact with this placeable"
@@ -781,6 +777,7 @@ msgstr "Can Enter Portals"
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/RelTablePresets.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/combat-table.tsx
 msgid "Range"
 msgstr "Range"
@@ -985,6 +982,10 @@ msgstr "You need to be logged in to do that."
 msgid "Explore"
 msgstr "Explore"
 
+#: src/lib/table-defs/resources-table.tsx
+msgid "Variable respawn. Spawns randomly among valid areas in the region when available resource count drops below a threshold."
+msgstr "Variable respawn. Spawns randomly among valid areas in the region when available resource count drops below a threshold."
+
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
 msgstr "Weapons"
@@ -1135,6 +1136,8 @@ msgstr "Base Threat"
 #: src/lib/table-defs/creature-table.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/lib/table-defs/placeables-table.tsx
+#: src/lib/table-defs/resources-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/placeable/[id].tsx
@@ -1309,20 +1312,17 @@ msgstr "Housing Income"
 msgid "Cargo Stack Size"
 msgstr "Cargo Stack Size"
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/paving-table.tsx
 #: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
 #: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
 msgstr "Required Knowledge"
-
-#. placeholder {0}: group.name
-#: src/lib/recipe-stats.tsx
-msgid "Group limit for {0}:"
-msgstr "Group limit for {0}:"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Day Aggro Range"
@@ -1498,10 +1498,6 @@ msgstr "Trade {reqName} for {offerName} to {npcName}"
 msgid "Deed"
 msgstr "Deed"
 
-#: src/lib/recipe-stats.tsx
-msgid "Effort Required:"
-msgstr "Effort Required:"
-
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Registering…"
 msgstr "Registering…"
@@ -1664,10 +1660,6 @@ msgstr "Base Price"
 msgid "<0>Link a Stelo wallet</0> first."
 msgstr "<0>Link a Stelo wallet</0> first."
 
-#: src/lib/recipe-stats.tsx
-msgid "Traveler:"
-msgstr "Traveler:"
-
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "not equals"
 msgid "{field} {cmpEl} {value}"
@@ -1702,10 +1694,6 @@ msgstr "Cancel"
 msgid "<0/><1>per effort</1>"
 msgstr "<0/><1>per effort</1>"
 
-#: src/lib/recipe-stats.tsx
-msgid "Tool:"
-msgstr "Tool:"
-
 #: src/routes/database/deployable/[id].tsx
 msgid "Allow Gathering"
 msgstr "Allow Gathering"
@@ -1726,6 +1714,10 @@ msgstr "That funding alert setting belongs to a different account."
 #: src/routes/settings.tsx
 msgid "Automatic"
 msgstr "Automatic"
+
+#: src/lib/recipe-stats.tsx
+msgid "Minimum distance to Claims"
+msgstr "Minimum distance to Claims"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Done"
@@ -1781,6 +1773,10 @@ msgstr "{0} of {1, plural, one {# row} other {# rows}} shown."
 #: src/routes/settings.tsx
 msgid "View style"
 msgstr "View style"
+
+#: src/lib/recipe-stats.tsx
+msgid "Interior Tier"
+msgstr "Interior Tier"
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "is"
@@ -1840,7 +1836,6 @@ msgid "Estimated completion: Collecting data…"
 msgstr "Estimated completion: Collecting data…"
 
 #: src/components/shared/RecipeDisplay.tsx
-#: src/lib/recipe-stats.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "None"
@@ -1852,6 +1847,7 @@ msgstr "deplete"
 
 #: src/lib/recipe-stats.tsx
 #: src/lib/relations.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "Unknown"
 msgstr "Unknown"
@@ -1928,6 +1924,7 @@ msgstr "Claim membership"
 #: src/components/shared/RelTablePresets.tsx
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/quests-table.tsx
+#: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/cargo/[id].tsx
 msgid "Knowledge"
 msgstr "Knowledge"
@@ -2106,6 +2103,10 @@ msgstr "Paving Tile"
 msgid "{0} bounty rules or overrides name it as the funding wallet; they stop being fundable."
 msgstr "{0} bounty rules or overrides name it as the funding wallet; they stop being fundable."
 
+#: src/lib/recipe-stats.tsx
+msgid "Paving Tier"
+msgstr "Paving Tier"
+
 #. placeholder {0}: notification.event.craftId
 #: src/routes/tools/crafts/browse.tsx
 msgid "Craft {0}"
@@ -2181,10 +2182,6 @@ msgstr "Money owed to you went unclaimed and was returned to the payer"
 #: src/lib/sidebar-items.ts
 msgid "Premium Items"
 msgstr "Premium Items"
-
-#: src/lib/recipe-stats.tsx
-msgid "Minimum distance to Group:"
-msgstr "Minimum distance to Group:"
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "Funding…"
@@ -2290,6 +2287,10 @@ msgstr "{quantifier} {field} {cmpEl} {value}"
 #: src/routes/settings.tsx
 msgid "Loading translations…"
 msgstr "Loading translations…"
+
+#: src/lib/recipe-stats.tsx
+msgid "Effort Required"
+msgstr "Effort Required"
 
 #: src/components/crafts/craft-columns.tsx
 #: src/components/crafts/QuickFilterGrid.tsx
@@ -2417,15 +2418,12 @@ msgid "Link Filters <0/>"
 msgstr "Link Filters <0/>"
 
 #: src/components/shared/RelTablePresets.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Stamina"
 msgstr "Stamina"
-
-#: src/lib/recipe-stats.tsx
-msgid "{skillName} Exp:"
-msgstr "{skillName} Exp:"
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -2549,10 +2547,6 @@ msgstr "No tool"
 msgid "Required to Start"
 msgstr "Required to Start"
 
-#: src/lib/recipe-stats.tsx
-msgid "Building:"
-msgstr "Building:"
-
 #: src/lib/crafts/error-vocab.ts
 msgid "That watch display no longer exists."
 msgstr "That watch display no longer exists."
@@ -2670,10 +2664,6 @@ msgstr "Database"
 msgid "Place ({placeDuration})"
 msgstr "Place ({placeDuration})"
 
-#: src/lib/recipe-stats.tsx
-msgid "Required Research:"
-msgstr "Required Research:"
-
 #: src/components/shared/RecipeDisplay.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Chance"
@@ -2682,10 +2672,6 @@ msgstr "Chance"
 #: src/routes/account/profile.tsx
 msgid "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
 msgstr "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
-
-#: src/lib/recipe-stats.tsx
-msgid "Claim Tier:"
-msgstr "Claim Tier:"
 
 #: src/routes/bounty-dashboard.tsx
 msgid "Bounty dashboard"
@@ -2927,6 +2913,7 @@ msgid "Link your BitCraft account to get credit for crafts and contributions."
 msgstr "Link your BitCraft account to get credit for crafts and contributions."
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Time"
 msgstr "Time"
@@ -3058,6 +3045,7 @@ msgstr "Assigned"
 msgid "Couldn't generate a key right now — try again in a minute."
 msgstr "Couldn't generate a key right now — try again in a minute."
 
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Tool"
@@ -3079,10 +3067,6 @@ msgstr "Payout"
 #: src/routes/database/cargo/[id].tsx
 msgid "Place Time"
 msgstr "Place Time"
-
-#: src/lib/recipe-stats.tsx
-msgid "Shows Time Left:"
-msgstr "Shows Time Left:"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Delete all filters?"
@@ -3295,6 +3279,7 @@ msgstr "Deplete {resourceName}"
 msgid "Required Skill"
 msgstr "Required Skill"
 
+#: src/lib/table-defs/resources-table.tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Scheduled Respawn"
 msgstr "Scheduled Respawn"
@@ -3390,10 +3375,6 @@ msgstr "Not Deconstructible"
 msgid "My payouts"
 msgstr "My payouts"
 
-#: src/lib/recipe-stats.tsx
-msgid "Interior Tier:"
-msgstr "Interior Tier:"
-
 #: src/lib/sidebar-items.ts
 msgid "Emblem Editor"
 msgstr "Emblem Editor"
@@ -3413,10 +3394,6 @@ msgstr "hex coin per day per occupied slot"
 #: src/components/crafts/FundingStatus.tsx
 msgid "Last failure:"
 msgstr "Last failure:"
-
-#: src/lib/recipe-stats.tsx
-msgid "Minimum distance to Claims:"
-msgstr "Minimum distance to Claims:"
 
 #: src/lib/table-defs/traveler-tasks-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
@@ -3445,10 +3422,6 @@ msgstr "Resource"
 msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
 msgstr "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
 
-#: src/lib/recipe-stats.tsx
-msgid "Time:"
-msgstr "Time:"
-
 #: src/routes/database/skill/[id].tsx
 msgid "Unlock achievement <0/>"
 msgstr "Unlock achievement <0/>"
@@ -3459,6 +3432,10 @@ msgstr "Unlock achievement <0/>"
 #: src/routes/account/settings.tsx
 msgid "Something went wrong"
 msgstr "Something went wrong"
+
+#: src/lib/recipe-stats.tsx
+msgid "Shows Time Left"
+msgstr "Shows Time Left"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Extraction Recipe"
@@ -3628,10 +3605,6 @@ msgstr "Cargo"
 msgid "Favorite items"
 msgstr "Favorite items"
 
-#: src/lib/recipe-stats.tsx
-msgid "Stamina:"
-msgstr "Stamina:"
-
 #: src/lib/crafts/filter-vocab.ts
 msgid "Member"
 msgstr "Member"
@@ -3652,6 +3625,7 @@ msgid "No matches."
 msgstr "No matches."
 
 #: src/lib/recipe-stats.tsx
+#: src/lib/table-defs/resources-table.tsx
 msgid "Resource ignores regular damage."
 msgstr "Resource ignores regular damage."
 
@@ -3660,6 +3634,7 @@ msgid "Tags"
 msgstr "Tags"
 
 #: src/lib/crafts/filter-vocab.ts
+#: src/lib/recipe-stats.tsx
 msgid "Building"
 msgstr "Building"
 
@@ -3743,6 +3718,7 @@ msgstr "Est. payout"
 msgid "Quest Graph"
 msgstr "Quest Graph"
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Traveler"
@@ -3757,6 +3733,11 @@ msgstr "Run <0>/link</0> in your server to connect your Brico.app account."
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
 msgstr "Copied!"
+
+#. placeholder {0}: group.name
+#: src/lib/recipe-stats.tsx
+msgid "Group limit for {0}"
+msgstr "Group limit for {0}"
 
 #: src/components/crafts/craft-columns.tsx
 msgid "Hidden currency"
@@ -3966,10 +3947,6 @@ msgstr "Chance of consumption per hit"
 msgid "Choose how Brico's Toolbox looks."
 msgstr "Choose how Brico's Toolbox looks."
 
-#: src/lib/recipe-stats.tsx
-msgid "Near Building:"
-msgstr "Near Building:"
-
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Copy the account address (starts with #) and paste it here."
 msgstr "Copy the account address (starts with #) and paste it here."
@@ -3982,6 +3959,7 @@ msgstr "Move up"
 msgid "Active bounties"
 msgstr "Active bounties"
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
@@ -4231,6 +4209,10 @@ msgstr "{0} effort / <0/>"
 msgid "Paste a filter, a list of filters, or a share code"
 msgstr "Paste a filter, a list of filters, or a share code"
 
+#: src/lib/recipe-stats.tsx
+msgid "{skillName} Exp"
+msgstr "{skillName} Exp"
+
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
 msgstr "Awareness Threshold"
@@ -4442,6 +4424,10 @@ msgstr "Save"
 msgid "That filter belongs to a different account."
 msgstr "That filter belongs to a different account."
 
+#: src/lib/recipe-stats.tsx
+msgid "Claim Tier"
+msgstr "Claim Tier"
+
 #. placeholder {0}: task.levelRequirement.minLevel
 #. placeholder {1}: task.levelRequirement.maxLevel
 #. placeholder {2}: skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>
@@ -4492,6 +4478,10 @@ msgstr "Wind Multiplier"
 #: src/components/account/SteloWalletsCard.tsx
 msgid "No wallets linked."
 msgstr "No wallets linked."
+
+#: src/lib/recipe-stats.tsx
+msgid "Required Research"
+msgstr "Required Research"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Buy <0/> from {npcName}"
@@ -4815,10 +4805,6 @@ msgstr "Total for this craft's {0} effort."
 msgid "Choose which Stelo wallet funds this bounty."
 msgstr "Choose which Stelo wallet funds this bounty."
 
-#: src/lib/recipe-stats.tsx
-msgid "Biomes:"
-msgstr "Biomes:"
-
 #: src/lib/table-defs/quests-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Achievement"
@@ -5018,6 +5004,10 @@ msgstr "Guaranteed spawn within {minRad}–{maxRad} tiles on last hit of resourc
 msgid "Members"
 msgstr "Members"
 
+#: src/lib/table-defs/resources-table.tsx
+msgid "Fixed respawn. Spawns in the same chunk after specified amount of time."
+msgstr "Fixed respawn. Spawns in the same chunk after specified amount of time."
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "Effort over time"
 msgstr "Effort over time"
@@ -5153,6 +5143,10 @@ msgstr "Wallet already linked"
 msgid "Tools"
 msgstr "Tools"
 
+#: src/lib/recipe-stats.tsx
+msgid "Near Building"
+msgstr "Near Building"
+
 #: src/routes/account/bounty-rules.tsx
 msgid "Flat rate"
 msgstr "Flat rate"
@@ -5169,6 +5163,7 @@ msgstr "Target Buffs"
 msgid "Timed Node"
 msgstr "Timed Node"
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/prospecting-table.tsx
 #: src/routes/database/prospecting/[id].tsx
@@ -5230,7 +5225,9 @@ msgstr "Lead In Time"
 msgid "Compact list or icon grid."
 msgstr "Compact list or icon grid."
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
+#: src/lib/table-utils/detail-group-builders.tsx
 msgid "Blocking Knowledge"
 msgstr "Blocking Knowledge"
 
@@ -5389,10 +5386,6 @@ msgstr "Automatic loyalty rules"
 msgid "Stat Scaling"
 msgstr "Stat Scaling"
 
-#: src/lib/recipe-stats.tsx
-msgid "Required Knowledge:"
-msgstr "Required Knowledge:"
-
 #: src/lib/crafts/error-vocab.ts
 msgid "That isn't a known display field preset: {preset}"
 msgstr "That isn't a known display field preset: {preset}"
@@ -5414,10 +5407,6 @@ msgstr "Select claim…"
 msgid "Contributors"
 msgstr "Contributors"
 
-#: src/lib/recipe-stats.tsx
-msgid "{skillName} XP/Progress:"
-msgstr "{skillName} XP/Progress:"
-
 #: src/routes/database/placeable/[id].tsx
 msgid "Limit"
 msgstr "Limit"
@@ -5434,18 +5423,9 @@ msgstr "Delete grouping"
 msgid "Not Respawning"
 msgstr "Not Respawning"
 
-#. placeholder {0}: skillCategoryLabel(skillTag)
-#: src/lib/recipe-stats.tsx
-msgid "{0}:"
-msgstr "{0}:"
-
 #: src/routes/database/item/[id].tsx
 msgid "Required Level"
 msgstr "Required Level"
-
-#: src/lib/recipe-stats.tsx
-msgid "Range:"
-msgstr "Range:"
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Close"
@@ -5519,10 +5499,6 @@ msgstr "Total effort"
 msgid "That saved filter no longer exists."
 msgstr "That saved filter no longer exists."
 
-#: src/lib/table-utils/detail-tab-builders.tsx
-msgid "Max HP"
-msgstr "Max HP"
-
 #: src/routes/database/placeable/[id].tsx
 msgid "Grows from"
 msgstr "Grows from"
@@ -5539,6 +5515,10 @@ msgstr "Construct {buildingName}"
 #: src/components/crafts/FundingAlertsCard.tsx
 msgid "Customize funding alerts for {0}"
 msgstr "Customize funding alerts for {0}"
+
+#: src/lib/recipe-stats.tsx
+msgid "Minimum distance to Group"
+msgstr "Minimum distance to Group"
 
 #: src/routes/tools/crafts/browse.tsx
 msgid "Advanced Filters"
