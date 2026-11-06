@@ -2578,6 +2578,10 @@ msgstr "Brico'sの独自テキストと、ゲーム内テキストに使用す�
 msgid "Only Stelo currencies use a funding wallet."
 msgstr ""
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Reset zoom"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Experience Per Node"
 msgstr ""

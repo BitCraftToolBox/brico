@@ -5,7 +5,8 @@
 import {Trans} from "@lingui/solid/macro";
 import {scaleLinear, scaleTime} from "d3-scale";
 import {area, line, type SeriesPoint, stack} from "d3-shape";
-import {createMemo, createSignal, For, Show} from "solid-js";
+import {createMemo, createSignal, createUniqueId, For, Show} from "solid-js";
+import {Button} from "~/components/ui/button";
 import {Tabs, TabsList, TabsTrigger} from "~/components/ui/tabs";
 import type {EffortSample} from "~/lib/crafts/effort-history";
 import {estimateCompletion, trendProjection} from "~/lib/crafts/effort-trend";
@@ -20,6 +21,9 @@ const MARGIN = {top: 12, right: 12, bottom: 24, left: 48};
 const MIN_TREND_HORIZON_MS = 5 * 60_000;
 const LEGEND_LIMIT = 10;
 const TOOLTIP_LIMIT = 10;
+/** Drags narrower than this (viewBox units) are treated as clicks. */
+const MIN_DRAG_PX = 6;
+const MIN_ZOOM_MS = 5000;
 
 type ChartMode = "lines" | "stacked";
 
@@ -52,6 +56,11 @@ export function EffortChart(props: {
     const [advanced, setAdvanced] = createSignal(false);
     /** Time (epoch ms) of the sample under the pointer; tracked by time, not index, so it survives the history being trimmed. */
     const [hoverT, setHoverT] = createSignal<number | null>(null);
+    /** Zoomed time window (epoch ms), or null to show the whole history. */
+    const [zoom, setZoom] = createSignal<[number, number] | null>(null);
+    /** In-progress drag selection in viewBox x coordinates. */
+    const [drag, setDrag] = createSignal<{from: number; to: number} | null>(null);
+    const clipId = `effort-clip-${createUniqueId()}`;
 
     /** Contributors ordered by their latest effort, largest first — this order fixes stack and legend order, not color. */
     const ids = createMemo(() => {
@@ -81,16 +90,22 @@ export function EffortChart(props: {
         const showAdvanced = advanced();
         const layers = stack<EffortSample, string>().keys(keys).value((d, key) => d.efforts[key] ?? 0)(samples);
         const totals = layers.at(-1)!.map(point => point[1]);
-        const yMax = stacked || showAdvanced
-            ? Math.max(...totals)
-            : Math.max(...samples.flatMap(sample => keys.map(key => sample.efforts[key] ?? 0)));
 
         const first = samples[0].t;
         const lastT = samples.at(-1)!.t;
-        const trend = showAdvanced ? trendProjection(samples, props.effortTotal, Math.max(lastT - first, MIN_TREND_HORIZON_MS)) : null;
+        const trend = showAdvanced ? trendProjection(samples, props.effortTotal, Math.max((lastT - first) * 0.2, MIN_TREND_HORIZON_MS)) : null;
+
+        const zoomed = zoom();
+        const domain: [number, number] = zoomed ?? [first, trend?.to.t ?? lastT];
+        /** Samples inside the zoom window (all of them when unzoomed or the window holds none), so the y axes fit what is shown. */
+        const inView = zoomed ? samples.filter(s => s.t >= zoomed[0] && s.t <= zoomed[1]) : samples;
+        const visible = inView.length > 0 ? inView : samples;
+        const yMax = stacked || showAdvanced
+            ? Math.max(...visible.map(s => keys.reduce((sum, key) => sum + (s.efforts[key] ?? 0), 0)))
+            : Math.max(...visible.flatMap(sample => keys.map(key => sample.efforts[key] ?? 0)));
 
         const x = scaleTime()
-            .domain([first, trend?.to.t ?? lastT])
+            .domain(domain)
             .range([MARGIN.left, WIDTH - MARGIN.right]);
         const y = scaleLinear()
             .domain([0, Math.max(yMax, trend?.to.effort ?? 0, 1)]).nice()
@@ -113,7 +128,7 @@ export function EffortChart(props: {
             targetVisible: trend.target <= y.domain()[1],
         };
 
-        const rateMax = showAdvanced ? Math.max(...samples.map(s => Math.max(s.rate ?? 0, s.instantRate)), 1e-9) * 1000 : 0;
+        const rateMax = showAdvanced ? Math.max(...visible.map(s => Math.max(s.rate ?? 0, s.instantRate)), 1e-9) * 1000 : 0;
         const rateY = scaleLinear().domain([0, rateMax]).nice().range([RATE_HEIGHT - MARGIN.bottom, MARGIN.top]);
         const ratePath = (value: (s: EffortSample) => number | null) =>
             line<EffortSample>().defined(s => value(s) !== null).x(s => x(s.t)).y(s => rateY(value(s)! * 1000))(samples);
@@ -155,12 +170,42 @@ export function EffortChart(props: {
         return {sample, x: chart.x(sample.t), rows};
     });
 
+    const viewXOf = (event: PointerEvent & {currentTarget: SVGSVGElement}) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const viewX = ((event.clientX - rect.left) / rect.width) * WIDTH;
+        return Math.min(Math.max(viewX, MARGIN.left), WIDTH - MARGIN.right);
+    };
+
+    const onPointerDown = (event: PointerEvent & {currentTarget: SVGSVGElement}) => {
+        if (event.button !== 0 || !geometry()) return;
+        event.currentTarget.setPointerCapture(event.pointerId);
+        const viewX = viewXOf(event);
+        setDrag({from: viewX, to: viewX});
+    };
+
     const onPointerMove = (event: PointerEvent & {currentTarget: SVGSVGElement}) => {
         const chart = geometry();
         if (!chart) return;
-        const rect = event.currentTarget.getBoundingClientRect();
-        const viewX = ((event.clientX - rect.left) / rect.width) * WIDTH;
+        const viewX = viewXOf(event);
         setHoverT(chart.x.invert(viewX).getTime());
+        if (drag()) setDrag({from: drag()!.from, to: viewX});
+    };
+
+    const onPointerUp = () => {
+        const d = drag();
+        const chart = geometry();
+        setDrag(null);
+        if (!d || !chart || Math.abs(d.to - d.from) < MIN_DRAG_PX) return;
+        const [a, b] = [d.from, d.to].sort((p, q) => p - q).map(v => chart.x.invert(v).getTime());
+        if (b - a >= MIN_ZOOM_MS) setZoom([a, b]);
+    };
+
+    const pointerHandlers = {
+        onPointerDown,
+        onPointerMove,
+        onPointerUp,
+        onPointerCancel: () => setDrag(null),
+        onPointerLeave: () => setHoverT(null),
     };
 
     const estimate = createMemo(() => estimateCompletion(props.samples, props.effortTotal, props.effortDone));
@@ -188,6 +233,9 @@ export function EffortChart(props: {
                     })()}
                 </p>
                 <div class="flex flex-wrap items-center gap-2">
+                    <Show when={zoom()}>
+                        <Button variant="outline" size="sm" onClick={() => setZoom(null)}><Trans>Reset zoom</Trans></Button>
+                    </Show>
                     <Tabs value={advanced() ? "advanced" : "basic"} onChange={value => setAdvanced(value === "advanced")}>
                         <TabsList>
                             <TabsTrigger value="basic"><Trans>Basic</Trans></TabsTrigger>
@@ -212,11 +260,15 @@ export function EffortChart(props: {
                         <div class="relative">
                             <svg
                                 viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-                                class="w-full rounded-md border"
+                                class="w-full cursor-crosshair touch-pan-y select-none rounded-md border"
                                 role="img"
-                                onPointerMove={onPointerMove}
-                                onPointerLeave={() => setHoverT(null)}
+                                {...pointerHandlers}
                             >
+                                <defs>
+                                    <clipPath id={clipId}>
+                                        <rect x={MARGIN.left} y="0" width={WIDTH - MARGIN.left - MARGIN.right} height={HEIGHT}/>
+                                    </clipPath>
+                                </defs>
                                 <For each={chart().yTicks}>
                                     {tick => (
                                         <g>
@@ -234,30 +286,44 @@ export function EffortChart(props: {
                                         </text>
                                     )}
                                 </For>
-                                <For each={chart().paths}>
-                                    {series => (
-                                        <>
-                                            <Show when={series.fill}>
-                                                {fill => <path d={fill()} fill={colorOf(series.key)} fill-opacity="0.45"/>}
-                                            </Show>
-                                            <path d={series.stroke ?? ""} fill="none" stroke={colorOf(series.key)} stroke-width="1.5"/>
-                                        </>
-                                    )}
-                                </For>
-                                <Show when={chart().totalPath}>
-                                    {path => <path d={path()} fill="none" class="stroke-muted-foreground" stroke-width="1" stroke-dasharray="2 2"/>}
-                                </Show>
-                                <Show when={chart().trend}>
-                                    {trend => (
-                                        <g pointer-events="none">
-                                            <Show when={trend().targetVisible}>
-                                                <line x1={MARGIN.left} x2={WIDTH - MARGIN.right} y1={trend().targetY} y2={trend().targetY} class="stroke-muted-foreground" stroke-width="0.75" stroke-dasharray="1 4"/>
-                                            </Show>
-                                            <path d={trend().path} fill="none" class="stroke-foreground" stroke-width="1.5" stroke-dasharray="6 4"/>
-                                            <Show when={trend().etaX}>
-                                                {etaX => <circle cx={etaX()} cy={trend().targetY} r="4" class="fill-background stroke-foreground" stroke-width="1.5"/>}
-                                            </Show>
-                                        </g>
+                                <g clip-path={`url(#${clipId})`}>
+                                    <For each={chart().paths}>
+                                        {series => (
+                                            <>
+                                                <Show when={series.fill}>
+                                                    {fill => <path d={fill()} fill={colorOf(series.key)} fill-opacity="0.45"/>}
+                                                </Show>
+                                                <path d={series.stroke ?? ""} fill="none" stroke={colorOf(series.key)} stroke-width="1.5"/>
+                                            </>
+                                        )}
+                                    </For>
+                                    <Show when={chart().totalPath}>
+                                        {path => <path d={path()} fill="none" class="stroke-muted-foreground" stroke-width="1" stroke-dasharray="2 2"/>}
+                                    </Show>
+                                    <Show when={chart().trend}>
+                                        {trend => (
+                                            <g pointer-events="none">
+                                                <Show when={trend().targetVisible}>
+                                                    <line x1={MARGIN.left} x2={WIDTH - MARGIN.right} y1={trend().targetY} y2={trend().targetY} class="stroke-muted-foreground" stroke-width="0.75" stroke-dasharray="1 4"/>
+                                                </Show>
+                                                <path d={trend().path} fill="none" class="stroke-foreground" stroke-width="1.5" stroke-dasharray="6 4"/>
+                                                <Show when={trend().etaX}>
+                                                    {etaX => <circle cx={etaX()} cy={trend().targetY} r="4" class="fill-background stroke-foreground" stroke-width="1.5"/>}
+                                                </Show>
+                                            </g>
+                                        )}
+                                    </Show>
+                                </g>
+                                <Show when={drag()}>
+                                    {d => (
+                                        <rect
+                                            x={Math.min(d().from, d().to)}
+                                            y={MARGIN.top}
+                                            width={Math.abs(d().to - d().from)}
+                                            height={HEIGHT - MARGIN.top - MARGIN.bottom}
+                                            class="fill-foreground/10 stroke-foreground/40"
+                                            pointer-events="none"
+                                        />
                                     )}
                                 </Show>
                                 <Show when={hover()}>
@@ -311,10 +377,9 @@ export function EffortChart(props: {
                                     <p class="text-xs text-muted-foreground"><Trans>Effort per second</Trans></p>
                                     <svg
                                         viewBox={`0 0 ${WIDTH} ${RATE_HEIGHT}`}
-                                        class="w-full rounded-md border"
+                                        class="w-full cursor-crosshair touch-pan-y select-none rounded-md border"
                                         role="img"
-                                        onPointerMove={onPointerMove}
-                                        onPointerLeave={() => setHoverT(null)}
+                                        {...pointerHandlers}
                                     >
                                         <For each={rates().yTicks}>
                                             {tick => (
@@ -326,8 +391,22 @@ export function EffortChart(props: {
                                                 </g>
                                             )}
                                         </For>
-                                        <path d={rates().instant ?? ""} fill="none" class="stroke-muted-foreground" stroke-width="1" stroke-opacity="0.7"/>
-                                        <path d={rates().expected ?? ""} fill="none" class="stroke-foreground" stroke-width="2"/>
+                                        <g clip-path={`url(#${clipId})`}>
+                                            <path d={rates().instant ?? ""} fill="none" class="stroke-muted-foreground" stroke-width="1" stroke-opacity="0.7"/>
+                                            <path d={rates().expected ?? ""} fill="none" class="stroke-foreground" stroke-width="2"/>
+                                        </g>
+                                        <Show when={drag()}>
+                                            {d => (
+                                                <rect
+                                                    x={Math.min(d().from, d().to)}
+                                                    y={MARGIN.top}
+                                                    width={Math.abs(d().to - d().from)}
+                                                    height={RATE_HEIGHT - MARGIN.top - MARGIN.bottom}
+                                                    class="fill-foreground/10 stroke-foreground/40"
+                                                    pointer-events="none"
+                                                />
+                                            )}
+                                        </Show>
                                         <Show when={hover()}>
                                             {h => <line x1={h().x} x2={h().x} y1={MARGIN.top} y2={RATE_HEIGHT - MARGIN.bottom} class="stroke-muted-foreground" stroke-dasharray="3 3" pointer-events="none"/>}
                                         </Show>

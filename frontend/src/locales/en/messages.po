@@ -2573,6 +2573,10 @@ msgstr "Choose the languages used for Brico's own text and for in-game text."
 msgid "Only Stelo currencies use a funding wallet."
 msgstr "Only Stelo currencies use a funding wallet."
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Reset zoom"
+msgstr "Reset zoom"
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Experience Per Node"
 msgstr "Experience Per Node"

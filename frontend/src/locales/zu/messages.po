@@ -2578,6 +2578,10 @@ msgstr "crwdns4872:0crwdne4872:0"
 msgid "Only Stelo currencies use a funding wallet."
 msgstr "crwdns6126:0crwdne6126:0"
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Reset zoom"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Experience Per Node"
 msgstr "crwdns4874:0crwdne4874:0"

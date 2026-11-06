@@ -2578,6 +2578,10 @@ msgstr ""
 msgid "Only Stelo currencies use a funding wallet."
 msgstr ""
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Reset zoom"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Experience Per Node"
 msgstr ""
