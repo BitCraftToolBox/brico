@@ -8,7 +8,7 @@ msgstr ""
 "Language: zu\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-30 10:43\n"
+"PO-Revision-Date: 2026-11-06 11:48\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -67,7 +67,7 @@ msgstr "crwdns4340:0crwdne4340:0"
 
 #: src/lib/premium-items.ts
 msgid "Other"
-msgstr ""
+msgstr "crwdns6838:0crwdne6838:0"
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Go to your <0>Stelo</0> account."
@@ -99,7 +99,7 @@ msgstr "crwdns4346:0{skillName}crwdnd4346:0{itemName}crwdne4346:0"
 
 #: src/lib/premium-items.ts
 msgid "Clothing"
-msgstr ""
+msgstr "crwdns6840:0crwdne6840:0"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Edit bounty"
@@ -149,7 +149,7 @@ msgstr "crwdns5542:0{target}crwdne5542:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Discovered By"
-msgstr ""
+msgstr "crwdns6842:0crwdne6842:0"
 
 #: src/routes/account/bounties.tsx
 msgid "Find crafts with a bounty in the <0/> and contribute as usual. There's nothing to sign up for; your share is tracked automatically."
@@ -235,7 +235,7 @@ msgstr "crwdns4376:0{0}crwdnd4376:0{1}crwdne4376:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "{skillName} XP/Progress"
-msgstr ""
+msgstr "crwdns6844:0{skillName}crwdne6844:0"
 
 #: src/routes/account/settings.tsx
 msgid "Match"
@@ -278,7 +278,7 @@ msgstr "crwdns5682:0{kind}crwdne5682:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Basic"
-msgstr ""
+msgstr "crwdns6846:0crwdne6846:0"
 
 #: src/lib/sidebar-items.ts
 #: src/routes/account/bounties.tsx
@@ -541,7 +541,7 @@ msgstr "crwdns5734:0crwdne5734:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Collecting samples…"
-msgstr ""
+msgstr "crwdns6848:0crwdne6848:0"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "Nothing is owed to that payee."
@@ -799,7 +799,7 @@ msgstr "crwdns5798:0crwdne5798:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "away"
-msgstr ""
+msgstr "crwdns6850:0crwdne6850:0"
 
 #: src/routes/account/bounty-rules.tsx
 msgid "Could not delete rule"
@@ -882,7 +882,7 @@ msgstr "crwdns4498:0crwdne4498:0"
 #: src/lib/table-defs/premium-items-table.tsx
 #: src/routes/database/premium-item/[id].tsx
 msgid "Sort Priority"
-msgstr ""
+msgstr "crwdns6852:0crwdne6852:0"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Remaining payout"
@@ -941,7 +941,7 @@ msgstr "crwdns5826:0crwdne5826:0"
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Hexite Exchange"
-msgstr ""
+msgstr "crwdns6854:0crwdne6854:0"
 
 #: src/routes/account/payees.tsx
 msgid "Secured"
@@ -989,7 +989,7 @@ msgstr "crwdns5508:0crwdne5508:0"
 
 #: src/lib/table-defs/resources-table.tsx
 msgid "Variable respawn. Spawns randomly among valid areas in the region when available resource count drops below a threshold."
-msgstr ""
+msgstr "crwdns6856:0crwdne6856:0"
 
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
@@ -1082,7 +1082,7 @@ msgstr "crwdns5550:0crwdne5550:0"
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/premium-item/[id].tsx
 msgid "Price"
-msgstr ""
+msgstr "crwdns6858:0crwdne6858:0"
 
 #: src/lib/sidebar-items.ts
 msgid "Item Details"
@@ -1280,7 +1280,7 @@ msgstr "crwdns5884:0crwdne5884:0"
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
 msgid "Exclude Self"
-msgstr ""
+msgstr "crwdns6860:0crwdne6860:0"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "This action is restricted."
@@ -1491,7 +1491,7 @@ msgstr "crwdns4620:0crwdne4620:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Lines"
-msgstr ""
+msgstr "crwdns6862:0crwdne6862:0"
 
 #: src/lib/relations.ts
 msgid "Trade {reqName} for {offerName} to {npcName}"
@@ -1590,7 +1590,7 @@ msgstr "crwdns5952:0crwdne5952:0"
 
 #: src/lib/premium-items.ts
 msgid "Bundles"
-msgstr ""
+msgstr "crwdns6864:0crwdne6864:0"
 
 #: src/routes/account/my-bounties.tsx
 msgid "Assigned: <0/>"
@@ -1659,7 +1659,7 @@ msgstr "crwdns6736:0crwdne6736:0"
 #: src/lib/table-defs/premium-items-table.tsx
 #: src/routes/database/premium-item/[id].tsx
 msgid "Base Price"
-msgstr ""
+msgstr "crwdns6866:0crwdne6866:0"
 
 #: src/components/crafts/FundingWalletSelect.tsx
 msgid "<0>Link a Stelo wallet</0> first."
@@ -1722,7 +1722,7 @@ msgstr "crwdns4676:0crwdne4676:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Minimum distance to Claims"
-msgstr ""
+msgstr "crwdns6868:0crwdne6868:0"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "Done"
@@ -1781,7 +1781,7 @@ msgstr "crwdns4688:0crwdne4688:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Interior Tier"
-msgstr ""
+msgstr "crwdns6870:0crwdne6870:0"
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "is"
@@ -1838,7 +1838,7 @@ msgstr "crwdns4702:0crwdne4702:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Estimated completion: Collecting data…"
-msgstr ""
+msgstr "crwdns6872:0crwdne6872:0"
 
 #: src/components/shared/RecipeDisplay.tsx
 #: src/routes/database/building/[id].tsx
@@ -1903,7 +1903,7 @@ msgstr "crwdns4720:0crwdne4720:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "resting"
-msgstr ""
+msgstr "crwdns6874:0crwdne6874:0"
 
 #: src/routes/account/settings.tsx
 msgid "Removed"
@@ -2110,7 +2110,7 @@ msgstr "crwdns6034:0{0}crwdne6034:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Paving Tier"
-msgstr ""
+msgstr "crwdns6876:0crwdne6876:0"
 
 #. placeholder {0}: notification.event.craftId
 #: src/routes/tools/crafts/browse.tsx
@@ -2186,7 +2186,7 @@ msgstr "crwdns6048:0crwdne6048:0"
 
 #: src/lib/sidebar-items.ts
 msgid "Premium Items"
-msgstr ""
+msgstr "crwdns6878:0crwdne6878:0"
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "Funding…"
@@ -2295,7 +2295,7 @@ msgstr "crwdns4810:0crwdne4810:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Effort Required"
-msgstr ""
+msgstr "crwdns6880:0crwdne6880:0"
 
 #: src/components/crafts/craft-columns.tsx
 #: src/components/crafts/QuickFilterGrid.tsx
@@ -2826,7 +2826,7 @@ msgstr "crwdns4924:0crwdne4924:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Players hitting now"
-msgstr ""
+msgstr "crwdns6882:0crwdne6882:0"
 
 #: src/components/crafts/FundingAlertsCard.tsx
 msgid "Payout shortfall"
@@ -3087,7 +3087,7 @@ msgstr "crwdns6230:0crwdne6230:0"
 
 #: src/lib/premium-items.ts
 msgid "Emotes"
-msgstr ""
+msgstr "crwdns6884:0crwdne6884:0"
 
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "in"
@@ -3239,7 +3239,7 @@ msgstr "crwdns6266:0crwdne6266:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Craft complete."
-msgstr ""
+msgstr "crwdns6886:0crwdne6886:0"
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/GlobalSearchInput.tsx
@@ -3345,7 +3345,7 @@ msgstr "crwdns5042:0crwdne5042:0"
 
 #: src/lib/premium-items.ts
 msgid "Pets"
-msgstr ""
+msgstr "crwdns6888:0crwdne6888:0"
 
 #: src/routes/search.tsx
 msgid "Search items, buildings, creatures, recipes..."
@@ -3440,7 +3440,7 @@ msgstr "crwdns6288:0crwdne6288:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Shows Time Left"
-msgstr ""
+msgstr "crwdns6890:0crwdne6890:0"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Extraction Recipe"
@@ -3571,7 +3571,7 @@ msgstr "crwdns5090:0crwdne5090:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Stacked"
-msgstr ""
+msgstr "crwdns6892:0crwdne6892:0"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Prospecting Duration"
@@ -3742,7 +3742,7 @@ msgstr "crwdns5124:0crwdne5124:0"
 #. placeholder {0}: group.name
 #: src/lib/recipe-stats.tsx
 msgid "Group limit for {0}"
-msgstr ""
+msgstr "crwdns6894:0{0}crwdne6894:0"
 
 #: src/components/crafts/craft-columns.tsx
 msgid "Hidden currency"
@@ -4216,7 +4216,7 @@ msgstr "crwdns6454:0crwdne6454:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "{skillName} Exp"
-msgstr ""
+msgstr "crwdns6896:0{skillName}crwdne6896:0"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
@@ -4322,7 +4322,7 @@ msgstr "crwdns5242:0crwdne5242:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Advanced"
-msgstr ""
+msgstr "crwdns6898:0crwdne6898:0"
 
 #: src/routes/settings.tsx
 msgid "Checked items appear in the sidebar. New items are always visible by default."
@@ -4431,7 +4431,7 @@ msgstr "crwdns6502:0crwdne6502:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Claim Tier"
-msgstr ""
+msgstr "crwdns6900:0crwdne6900:0"
 
 #. placeholder {0}: task.levelRequirement.minLevel
 #. placeholder {1}: task.levelRequirement.maxLevel
@@ -4453,7 +4453,7 @@ msgstr "crwdns5590:0crwdne5590:0"
 #. placeholder {2}: e.ratePerSecond.toFixed(2)
 #: src/components/crafts/EffortChart.tsx
 msgid "Estimated completion: {0} (in {1}) at {2} effort/s"
-msgstr ""
+msgstr "crwdns6902:0{0}crwdnd6902:0{1}crwdnd6902:0{2}crwdne6902:0"
 
 #: src/routes/database/biome/[id].tsx
 msgid "Disallow Player Build"
@@ -4486,7 +4486,7 @@ msgstr "crwdns6506:0crwdne6506:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Required Research"
-msgstr ""
+msgstr "crwdns6904:0crwdne6904:0"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Buy <0/> from {npcName}"
@@ -4563,7 +4563,7 @@ msgstr "crwdns6522:0crwdne6522:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Effort per second"
-msgstr ""
+msgstr "crwdns6906:0crwdne6906:0"
 
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/placeable/[id].tsx
@@ -4618,7 +4618,7 @@ msgstr "crwdns5292:0crwdne5292:0"
 
 #: src/lib/premium-items.ts
 msgid "Decor"
-msgstr ""
+msgstr "crwdns6908:0crwdne6908:0"
 
 #: src/routes/account/callback.tsx
 msgid "Signing you in…"
@@ -4762,7 +4762,7 @@ msgstr "crwdns5324:0crwdne5324:0"
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/premium-item/[id].tsx
 msgid "Quantity"
-msgstr ""
+msgstr "crwdns6910:0crwdne6910:0"
 
 #: src/lib/crafts/filter-vocab.ts
 msgid "Remaining effort"
@@ -5011,11 +5011,11 @@ msgstr "crwdns5380:0crwdne5380:0"
 
 #: src/lib/table-defs/resources-table.tsx
 msgid "Fixed respawn. Spawns in the same chunk after specified amount of time."
-msgstr ""
+msgstr "crwdns6912:0crwdne6912:0"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Effort over time"
-msgstr ""
+msgstr "crwdns6914:0crwdne6914:0"
 
 #: src/components/shared/RelTablePresets.tsx
 msgid "Value"
@@ -5150,7 +5150,7 @@ msgstr "crwdns5404:0crwdne5404:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Near Building"
-msgstr ""
+msgstr "crwdns6916:0crwdne6916:0"
 
 #: src/routes/account/bounty-rules.tsx
 msgid "Flat rate"
@@ -5319,7 +5319,7 @@ msgstr "crwdns5440:0crwdne5440:0"
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/premium-item/[id].tsx
 msgid "Premium Item"
-msgstr ""
+msgstr "crwdns6918:0crwdne6918:0"
 
 #: src/routes/settings.tsx
 msgid "Color mode"
@@ -5335,7 +5335,7 @@ msgstr "crwdns6834:0crwdne6834:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Expected rate"
-msgstr ""
+msgstr "crwdns6920:0crwdne6920:0"
 
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Affected By Wind"
@@ -5510,7 +5510,7 @@ msgstr "crwdns5490:0crwdne5490:0"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Estimated completion: No recent progress."
-msgstr ""
+msgstr "crwdns6922:0crwdne6922:0"
 
 #: src/lib/relations.ts
 msgid "Construct {buildingName}"
@@ -5523,7 +5523,7 @@ msgstr "crwdns6710:0{0}crwdne6710:0"
 
 #: src/lib/recipe-stats.tsx
 msgid "Minimum distance to Group"
-msgstr ""
+msgstr "crwdns6924:0crwdne6924:0"
 
 #: src/routes/tools/crafts/browse.tsx
 msgid "Advanced Filters"
@@ -5593,3 +5593,4 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
+

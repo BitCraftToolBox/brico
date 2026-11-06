@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-30 10:43\n"
+"PO-Revision-Date: 2026-11-06 11:48\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -67,7 +67,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Other"
-msgstr ""
+msgstr "其他"
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Go to your <0>Stelo</0> account."
@@ -99,7 +99,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Clothing"
-msgstr ""
+msgstr "服裝"
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Edit bounty"
@@ -941,7 +941,7 @@ msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Hexite Exchange"
-msgstr ""
+msgstr "Hexite 兌換所"
 
 #: src/routes/account/payees.tsx
 msgid "Secured"
@@ -1590,7 +1590,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Bundles"
-msgstr ""
+msgstr "組合包"
 
 #: src/routes/account/my-bounties.tsx
 msgid "Assigned: <0/>"
@@ -2186,7 +2186,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Premium Items"
-msgstr ""
+msgstr "高級物品"
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "Funding…"
@@ -3087,7 +3087,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Emotes"
-msgstr ""
+msgstr "表情動作"
 
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "in"
@@ -3345,7 +3345,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Pets"
-msgstr ""
+msgstr "寵物"
 
 #: src/routes/search.tsx
 msgid "Search items, buildings, creatures, recipes..."
@@ -4618,7 +4618,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Decor"
-msgstr ""
+msgstr "裝飾"
 
 #: src/routes/account/callback.tsx
 msgid "Signing you in…"
