@@ -4,6 +4,7 @@ import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {lootTabWith} from "~/components/fun/BricoLootBox";
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {ItemIcon} from "~/components/shared/GameIcon";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
@@ -12,6 +13,7 @@ import {chatLink} from "~/lib/chat-links";
 import {BuffLinkById, IconLink, IconSpan, pageIcon, SkillLinkById} from "~/lib/game-links";
 import {equipmentSlotLabel, statLabel} from "~/lib/game-strings";
 import {gameText, useLabel} from "~/lib/labels";
+import {collectibleDressingRoomHref, collectibleModelPath, dressingRoomHref} from "~/lib/models";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {interactionsInvolvingItem, placementsConsumingItem} from "~/lib/placeables";
 import {
@@ -361,6 +363,12 @@ export default function ItemDetail() {
                 itemListTab(isItemList(), true),
                 itemListsTab(inItemLists()),
                 knowledgeTab(knowledge()),
+                modelTab(() => {
+                    const hand = equipData()?.handEquipmentVisual?.prefabNames;
+                    if (hand?.length) return {paths: hand, dressingRoom: dressingRoomHref({Tool: item()?.id})};
+                    const c = collectibleData().find(c => collectibleModelPath(c));
+                    return c ? {paths: [collectibleModelPath(c)!], variant: c.variant, dressingRoom: collectibleDressingRoomHref(c)} : undefined;
+                }),
                 ...(item()?.id === 164053808 && easterEggs() ? [lootTabWith({loot: [[1602206011, "Item", 1687372047]], chest: [item()!.iconAssetName, item()!.rarity, item()!.tier]})] : [])
             ]}
         />

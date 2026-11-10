@@ -2,6 +2,7 @@ import {CollectibleDesc, CollectibleType, DeployableDesc, PremiumItemDesc, Secon
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon, GameIcon} from "~/components/shared/GameIcon";
 import {HexiteShardPrice} from "~/components/shared/HexiteShardPrice.tsx";
@@ -12,6 +13,7 @@ import {translateGameText} from "~/lib/data-translation";
 import {IconLink, ItemLink, pageIcon, PremiumItemLink} from "~/lib/game-links";
 import {collectibleTypeLabel} from "~/lib/game-strings";
 import {gameText} from "~/lib/labels";
+import {collectibleDressingRoomHref, collectibleModelPath, HAIR_COLOR_PREVIEW_STYLE, hairColorPreview, MASK_PATTERN_PARTS,} from "~/lib/models";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {premiumItemsIncluding, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
 import {questRequirementsTab, questRewardsTab} from "~/lib/table-utils/detail-tab-builders";
@@ -22,6 +24,7 @@ export default function CollectibleDetail() {
     const index = BitCraftTables.CollectibleDesc.indexedBy("id");
     const itemIndex = BitCraftTables.ItemDesc.indexedBy("id");
     const knowledgeIndex = BitCraftTables.SecondaryKnowledgeDesc.indexedBy("id");
+    const appearanceOverrideIndex = BitCraftTables.DeployableAppearanceOverrideDesc.indexedBy("collectibleId");
 
     const collectible = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
@@ -176,6 +179,28 @@ export default function CollectibleDetail() {
                 },
                 questRequirementsTab(questRequires()),
                 questRewardsTab(questRewardsForCol()),
+                modelTab(() => {
+                    const c = collectible();
+                    if (c?.collectibleType.tag === "HairColor") {
+                        const preview = hairColorPreview(c, index().get(HAIR_COLOR_PREVIEW_STYLE));
+                        return preview && {
+                            options: [{parts: preview.parts}],
+                            tints: preview.tints,
+                            viewDirection: [0, 0.15, 1],
+                            dressingRoom: collectibleDressingRoomHref(c),
+                        };
+                    }
+                    if (c?.collectibleType.tag === "MaskPattern") {
+                        return {
+                            options: [{parts: MASK_PATTERN_PARTS}],
+                            tints: {maskPattern: c},
+                            viewDirection: [0, 0.15, 1],
+                            dressingRoom: collectibleDressingRoomHref(c),
+                        };
+                    }
+                    const path = c && (collectibleModelPath(c) ?? appearanceOverrideIndex().get(c.id)?.modelAddress);
+                    return path ? {paths: [path], variant: c!.variant, dressingRoom: collectibleDressingRoomHref(c!)} : undefined;
+                }),
             ]}
         />
     );
