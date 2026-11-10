@@ -4195,6 +4195,10 @@ msgstr ""
 msgid "Run <0>/link</0> in your server to connect your Brico.app account."
 msgstr "crwdns6360:0crwdne6360:0"
 
+#: src/components/shared/RecipeDisplay.tsx
+msgid "Guaranteed drop on depletion."
+msgstr ""
+
 #: src/components/account/ApiKeysCard.tsx
 #: src/components/comments/CommentItem.tsx
 #: src/components/model-viewer/DressingRoom.tsx
