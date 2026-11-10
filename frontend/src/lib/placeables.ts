@@ -125,12 +125,13 @@ export const interactionsByOutcome = derivedTableLookup(BitCraftTables.Placeable
     return map;
 });
 
-/** Finds interactions where the given item appears in either consumedItemStacks or outputItemStacks */
+/** Finds interactions where the given item appears in consumedItemStacks, outputItemStacks or onDestroyYield */
 export function interactionsInvolvingItem(itemId: number, itemType: string): PlaceableInteractionDesc[] {
     const all = BitCraftTables.PlaceableInteractionDesc.get() ?? [];
     return all.filter(ia =>
         ia.consumedItemStacks.some(s => s.itemId === itemId && s.itemType.tag === itemType) ||
-        ia.outputItemStacks.some(s => s.itemId === itemId && s.itemType.tag === itemType)
+        ia.outputItemStacks.some(s => s.itemId === itemId && s.itemType.tag === itemType) ||
+        ia.onDestroyYield?.some(s => s.itemId === itemId && s.itemType.tag === itemType)
     );
 }
 

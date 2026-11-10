@@ -349,13 +349,6 @@ export const ItemListDisplay: Component<{
                 <Show when={props.probability != null}>
                     <ProbBadge probability={props.probability!} chances={props.chances}/>
                 </Show>
-                {/* Deterministic quantity badge — independent of the probability badge above, since
-                    a list can be both probabilistic (badge above) and multi-picked (badge here). */}
-                <Show when={quantityMultiplier() !== 1}>
-                    <span class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
-                        ×{fixFloat(quantityMultiplier())}
-                    </span>
-                </Show>
                 <PopoverTrigger class="cursor-pointer">
                     {/* Averaged items in a styled group */}
                     <div class="flex flex-row flex-wrap justify-center items-end gap-0.5 rounded-md px-1 py-0.5 bg-muted/40 border border-dashed border-muted-foreground">
@@ -603,11 +596,6 @@ export function expandStack(
     input: ItemStack | ProbabilisticItemStack | ItemListDesc,
     chances?: number,
     showEmptyItemList?: boolean,
-    /** See `ItemListDisplay.quantity` — an extra scale factor (e.g. a craft order's count) applied
-     * on top of the stack's own quantity. Passed as an accessor, not a number, so a live-updating
-     * caller doesn't have to bake the multiplied value into a new stack object just to display it —
-     * doing that defeats `<For>`'s item identity and tears down/rebuilds this component (and any
-     * open tooltip in it) on every unrelated tick. */
     multiplier?: Accessor<number>
 ): JSX.Element {
     // ProbabilisticItemStack

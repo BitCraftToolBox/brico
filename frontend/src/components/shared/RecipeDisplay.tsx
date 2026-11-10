@@ -741,6 +741,23 @@ export const InteractionPanel: Component<{ interaction: PlaceableInteractionDesc
                             </For>
                         </div>
                     </Show>
+                    <Show when={props.interaction.onDestroyYield?.length}>
+                        <div class="flex flex-col items-center gap-0.5">
+                            <Tooltip openOnTouchStart>
+                                <TooltipTrigger class="text-[10px] font-medium text-muted-foreground bg-muted/80 rounded px-1 py-px leading-tight">
+                                    <Trans>deplete</Trans>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <Trans>Guaranteed drop on depletion.</Trans>
+                                </TooltipContent>
+                            </Tooltip>
+                            <div class="flex flex-row flex-wrap justify-center gap-0.5 pt-1">
+                                <For each={props.interaction.onDestroyYield}>
+                                    {(stack) => expandStack(stack)}
+                                </For>
+                            </div>
+                        </div>
+                    </Show>
                     <Show when={outcomes()?.length}>
                         <div class="flex flex-row flex-wrap justify-center gap-0.5 rounded-md px-1 py-0.5 bg-muted/40 border border-dashed border-muted-foreground">
                             <For each={outcomes()}>
