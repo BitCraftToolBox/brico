@@ -2,6 +2,7 @@ import {CollectibleDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {CollectibleIcon} from "~/components/shared/GameIcon";
 import {StatTable} from "~/components/shared/RelTablePresets";
@@ -31,15 +32,16 @@ export default function DeployableDetail() {
     const collectible = createMemo(() => deployable() ? collectibleIndex().get(deployable()!.deployFromCollectibleId) : undefined);
     const itemDeed = createMemo(() => collectible() ? itemIndex().get(collectible()!.itemDeedId) : undefined);
     const pathfinding = createMemo(() => deployable() ? pathfindingIndex().get(deployable()!.pathfindingId) : undefined);
-    const appearances = createMemo(() => {
+    const appearanceOverrides = createMemo(() => {
         const dep = deployable();
         if (!dep) return [];
         const model = dep.modelAddress;
-        const overrides = BitCraftTables.DeployableAppearanceOverrideDesc.get();
-        return overrides?.filter(o => o.affectedModelAddress === model || o.affectedModelAddresses?.includes(model))
-            .map(dao => collectibleIndex().get(dao.collectibleId))
-            .filter((col): col is CollectibleDesc => !!col) ?? [];
+        return BitCraftTables.DeployableAppearanceOverrideDesc.get()
+            ?.filter(o => o.affectedModelAddress === model || o.affectedModelAddresses?.includes(model)) ?? [];
     });
+    const appearances = createMemo(() => appearanceOverrides()
+        .map(dao => collectibleIndex().get(dao.collectibleId))
+        .filter((col): col is CollectibleDesc => !!col));
 
     const {labels: pathfindingLabels} = checkStepHeight(pathfinding);
 
@@ -145,6 +147,13 @@ export default function DeployableDetail() {
                         </Show>
                     ),
                 },
+                modelTab(() => deployable() && {
+                    paths: [deployable()!.modelAddress],
+                    options: appearanceOverrides().map(o => ({
+                        label: collectibleIndex().get(o.collectibleId)?.name,
+                        parts: [{id: "model", path: o.modelAddress}],
+                    })),
+                }),
             ]}
         />
     );

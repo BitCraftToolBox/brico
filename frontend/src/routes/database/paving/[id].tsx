@@ -2,6 +2,7 @@ import {ItemType, SecondaryKnowledgeDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {GameIcon} from "~/components/shared/GameIcon";
 import {InputItemStackArray, ItemStackArray} from "~/components/shared/ItemStacks";
@@ -75,6 +76,7 @@ export default function PavingDetail() {
                 },
                 {id: "knowledge", label: msg`Required Knowledge`, count: requiredKnowledges().length, showWhenEmpty: false, content: () => <KnowledgeTable data={requiredKnowledges()}/>},
                 {id: "stats", label: msg`Stat Effects`, count: tile()?.statEffects?.length ?? 0, content: () => <StatTable data={tile()!.statEffects}/>},
+                modelTab(() => tile() && {paths: [tile()!.prefabAddress], viewDirection: [0.25, 1, 0.35]}),
             ]}
         />
     );

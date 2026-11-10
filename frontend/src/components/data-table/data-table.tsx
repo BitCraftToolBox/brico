@@ -80,6 +80,11 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     const [globalFilter, setGlobalFilterRaw] = [session.globalFilter, session.setGlobalFilter];
     const [pagination, setPagination] = [session.pagination, session.setPagination];
 
+    // `state.sorting` below always wins over tanstack's own `initialState`, so seed the session instead.
+    if (!sorting().length && props.initialState?.sorting?.length) {
+        setSorting(props.initialState.sorting);
+    }
+
     const setGlobalFilter = (s: string) => {
         setSearchParams({q: s});
         setGlobalFilterRaw(s);

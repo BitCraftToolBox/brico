@@ -85,7 +85,7 @@ export function FundingStatus(props: {craftId: bigint; assigned: Ratio | null; f
                     </Show>
                     <Show when={current().raisingTo}>
                         {ratio => (
-                            <p class="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                            <p class="inline-flex items-baseline gap-1 text-xs text-muted-foreground">
                                 <Trans>Raising to</Trans>
                                 <PayoutRateButton rate={rateOf(ratio())} currency={row()!.currency}/>
                             </p>
@@ -95,7 +95,7 @@ export function FundingStatus(props: {craftId: bigint; assigned: Ratio | null; f
                         <p class="text-xs text-muted-foreground"><Trans>Held for crafters:</Trans> {current().spendable!.toString()}</p>
                     </Show>
                     <Show when={current().intended.numerator != props.assigned?.numerator || current().intended.denominator != props.assigned?.denominator}>
-                        <p class="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                        <p class="inline-flex items-baseline gap-1 text-xs text-muted-foreground">
                             <Trans>Intended rate</Trans>
                             <PayoutRateButton rate={rateOf(current().intended)} currency={row()!.currency}/>
                         </p>

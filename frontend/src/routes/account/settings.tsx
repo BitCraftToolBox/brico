@@ -19,32 +19,32 @@ import type {MessageDescriptor} from "@lingui/core";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
-import type {IconTypes} from "solid-icons";
 import {TbOutlineCoin as IconCurrency, TbOutlineHammer as IconEffort, TbOutlineRestore as IconRestore, TbOutlineSettings as IconSettings} from "solid-icons/tb";
 import {createMemo, createSignal, For, Show} from "solid-js";
 import {CurrencyVisibilitySelect} from "~/components/crafts/CurrencyVisibilitySelect";
 import {FundingAlertsCard} from "~/components/crafts/FundingAlertsCard";
 import {LocalGroupingsManager} from "~/components/crafts/LocalGroupingsManager";
-import {PlayerOption} from "~/components/crafts/PlayerPicker.tsx";
+import {PlayerOption} from "~/components/crafts/PlayerPicker";
 import MainLayout from "~/components/MainLayout";
 import {ConnectionStatusBadge} from "~/components/shared/ConnectionStatusBadge";
 import RouteTabHeader from "~/components/shared/RouteTabHeader";
+import {ButtonGroup, SettingsCard, SettingsGroup, SettingsRow} from "~/components/shared/SettingsLayout";
 import {Button} from "~/components/ui/button";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components/ui/card";
 import {Checkbox} from "~/components/ui/checkbox";
 import {Collapsible, CollapsibleContent} from "~/components/ui/collapsible";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "~/components/ui/dialog";
-import {Label} from "~/components/ui/label";
+import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
 import {TextField, TextFieldInput, TextFieldLabel} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
-import {installDiscordBotUrl} from "~/lib/account/brico-bot.ts";
+import {installDiscordBotUrl} from "~/lib/account/brico-bot";
 import {accountTabs} from "~/lib/account/route-tabs";
-import {useAccount} from "~/lib/account/state.tsx";
+import {useAccount} from "~/lib/account/state";
+import {createCommentNotifySettings} from "~/lib/crafts/comment-notify-settings";
 import {createDiscordNotifySettings, type DiscordNotifySettings, type DiscordNotifyTemplates} from "~/lib/crafts/discord-notify-settings";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {createPlayerNames} from "~/lib/crafts/relay";
 import {breadcrumb} from "~/lib/game-links";
-import {compareText} from "~/lib/i18n.ts";
+import {compareText} from "~/lib/i18n";
 import {type CraftWatchTriggers, type PayoutDisplayMode, type SavedCraftFilter, useSettings} from "~/lib/settings";
 import {useConnection} from "~/lib/spacetime/manager";
 import {PRISM_SERVER} from "~/lib/spacetime/prism";
@@ -179,43 +179,13 @@ function NotifySettingsFilterCard(props: {filter: SavedCraftFilter; discord: Dis
     );
 }
 
-/** Same control as `routes/settings.tsx`'s `ButtonGroup` — copied, not shared, per this file's doc comment. */
-function ButtonGroup<T extends string>(props: {
-    options: {value: T; icon: IconTypes; label: string}[];
-    value: T;
-    onChange: (v: T) => void;
-}) {
-    return (
-        <div class="inline-flex flex-col sm:flex-row rounded-md border border-input overflow-hidden">
-            <For each={props.options}>
-                {(opt) => (
-                    <button
-                        title={opt.label}
-                        aria-label={opt.label}
-                        aria-pressed={props.value === opt.value}
-                        class={`flex items-center gap-1.5 px-3 py-1.5 text-sm transition-colors
-                            ${props.value === opt.value
-                                ? "bg-primary text-primary-foreground font-medium"
-                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                            }
-                            not-last:border-r not-last:border-input`}
-                        onClick={() => props.onChange(opt.value)}
-                    >
-                        {opt.icon({class: "size-4 shrink-0"})}
-                        <span>{opt.label}</span>
-                    </button>
-                )}
-            </For>
-        </div>
-    );
-}
-
 export default function AccountSettingsPage() {
     const settings = useSettings();
     const {_} = useLingui();
     const {isLoggedIn} = useAccount();
     const {names: playerNames} = createPlayerNames();
     const discord = createDiscordNotifySettings();
+    const commentNotify = createCommentNotifySettings();
     const conn = useConnection(PRISM_SERVER);
     const [unlinkSinkTarget, setUnlinkSinkTarget] = createSignal<DiscordNotifySink | null>(null);
     const [unlinkSinkBusy, setUnlinkSinkBusy] = createSignal(false);
@@ -250,107 +220,95 @@ export default function AccountSettingsPage() {
 
     return (
         <MainLayout title={_(msg`Settings`)} hideSearch ownHeading description="Account-level bounty and notification preferences." navTitle={breadcrumb("/account", msg`Settings`)}>
-            <div class="max-w-2xl mx-auto flex flex-col gap-4 px-4 pb-6">
+            <div class="max-w-3xl mx-auto flex flex-col gap-6 px-4 pb-6">
                 <RouteTabHeader
                     title={<Trans>Account</Trans>}
                     tabs={accountTabs()}
                     status={<ConnectionStatusBadge connections={[conn]}/>}
                 />
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle class="text-base"><Trans>Payout display</Trans></CardTitle>
-                        <CardDescription>
-                            <Trans>How bounty rates are shown and entered.</Trans>
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent class="flex justify-center">
-                        <ButtonGroup<PayoutDisplayMode>
-                            value={settings.payoutDisplayMode()}
-                            onChange={settings.setPayoutDisplayMode}
-                            options={[
-                                {value: "currencyPerEffort", icon: IconCurrency, label: _(msg`Currency / effort`)},
-                                {value: "effortPerCurrency", icon: IconEffort, label: _(msg`Effort / currency`)},
-                            ]}
-                        />
-                    </CardContent>
-                </Card>
+                <SettingsGroup
+                    title={<Trans>Notifications</Trans>}
+                    description={
+                        <Show when={!isLoggedIn()} fallback={<Trans>Where and when Brico.app notifies you.</Trans>}>
+                            <Trans>Log in to be notified about comments and funding, and to add Discord notifications for craft watches.</Trans>
+                        </Show>
+                    }
+                >
+                    <Show when={isLoggedIn()}>
+                        <SettingsCard title={<Trans>Comments</Trans>}>
+                            <SettingsRow label={<Trans>Replies</Trans>} description={<Trans>Show a toast when someone replies to your comment.</Trans>}>
+                                <Switch checked={commentNotify.replyToast()} onChange={commentNotify.setReplyToast}>
+                                    <SwitchControl><SwitchThumb/></SwitchControl>
+                                </Switch>
+                            </SettingsRow>
+                            <Show when={commentNotify.lastError()}>{error => <p class="text-sm text-destructive">{error()}</p>}</Show>
+                        </SettingsCard>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle class="text-base"><Trans>Currencies</Trans></CardTitle>
-                        <CardDescription>
-                            <Trans>Which bounty currencies are offered. Currencies already in use stay visible.</Trans>
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent class="flex justify-center">
-                        <CurrencyVisibilitySelect/>
-                    </CardContent>
-                </Card>
+                        <FundingAlertsCard/>
+                    </Show>
 
-                <Show when={settings.savedCraftFilters().length > 0}>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle class="text-base"><Trans>Notification targets</Trans></CardTitle>
-                            <CardDescription>
-                                <Trans>Per saved filter, which targets notify on which events.</Trans>{" "}
-                                <Show when={!isLoggedIn()}
-                                    fallback={
-                                        <Trans>Discord columns appear once a channel or DM is linked via <code>/notify link</code>.</Trans>
-                                    }
-                                >
-                                    <Trans>Log in for additional options such as Discord notifications.</Trans>
+                    <SettingsCard
+                        title={<Trans>Craft watches</Trans>}
+                        description={<Trans>Per saved filter, which targets notify on which events.</Trans>}
+                    >
+                        <SettingsRow
+                            label={<Trans>Toast everywhere</Trans>}
+                            description={<Trans>Show a toast for a watched craft anywhere on the site, not just on craft pages.</Trans>}
+                        >
+                            <Switch checked={settings.notifyToastEverywhere()} onChange={settings.setNotifyToastEverywhere}>
+                                <SwitchControl><SwitchThumb/></SwitchControl>
+                            </Switch>
+                        </SettingsRow>
+                        <Show when={settings.devMenusEnabled()}>
+                            <div class="flex flex-row gap-2 justify-end">
+                                {/* dev-facing, no i18n */}
+                                <Button variant="ghost" onclick={() => sendTestToast("low")}>Test Toast (Low)</Button>
+                                <Button variant="ghost" onclick={() => sendTestToast("high")}>Test Toast (High)</Button>
+                            </div>
+                        </Show>
+                        <Show when={settings.savedCraftFilters().length > 0}>
+                            <p class="text-xs text-muted-foreground">
+                                <Show when={isLoggedIn()} fallback={<Trans>Log in for additional options such as Discord notifications.</Trans>}>
+                                    <Trans>Discord columns appear once a channel or DM is linked via <code>/notify link</code>.</Trans>
                                 </Show>
-                                <div class="flex flex-col items-center">
-                                    <Button as="a" href={installDiscordBotUrl()} variant="outline" class="mt-3">
-                                        <Trans>Add the Brico.app bot to your Discord server</Trans>
-                                    </Button>
-                                </div>
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent class="flex flex-col gap-3">
+                            </p>
+                            <div class="flex flex-col items-center">
+                                <Button as="a" href={installDiscordBotUrl()} variant="outline">
+                                    <Trans>Add the Brico.app bot to your Discord server</Trans>
+                                </Button>
+                            </div>
                             <For each={settings.savedCraftFilters()}>{saved => <NotifySettingsFilterCard filter={saved} discord={discord} onRequestUnlinkSink={setUnlinkSinkTarget} unlinkSinkBusy={unlinkSinkBusy()}/>}</For>
-                        </CardContent>
-                    </Card>
-                </Show>
+                        </Show>
+                    </SettingsCard>
+                </SettingsGroup>
 
-                <Show when={!isLoggedIn()}>
-                    <div class="text-center font-bold"><Trans>The following settings require you to be logged in to function.</Trans></div>
-                </Show>
+                <SettingsGroup title={<Trans>Crafts</Trans>} description={<Trans>How bounties are displayed, and how payees are grouped.</Trans>}>
+                    <SettingsCard>
+                        <SettingsRow label={<Trans>Payout display</Trans>} description={<Trans>How bounty rates are shown and entered.</Trans>}>
+                            <ButtonGroup<PayoutDisplayMode>
+                                value={settings.payoutDisplayMode()}
+                                onChange={settings.setPayoutDisplayMode}
+                                options={[
+                                    {value: "currencyPerEffort", icon: IconCurrency, label: _(msg`Currency / effort`)},
+                                    {value: "effortPerCurrency", icon: IconEffort, label: _(msg`Effort / currency`)},
+                                ]}
+                            />
+                        </SettingsRow>
+                        <SettingsRow
+                            label={<Trans>Currencies</Trans>}
+                            description={<Trans>Which bounty currencies are offered. Currencies already in use stay visible.</Trans>}
+                        >
+                            <CurrencyVisibilitySelect/>
+                        </SettingsRow>
+                    </SettingsCard>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle class="text-base"><Trans>Toast everywhere</Trans></CardTitle>
-                        <CardDescription>
-                            <Trans>
-                                Show a toast for a new notification anywhere on the site. The craft browser page always notifies on watched filters, regardless of this setting.
-                            </Trans>
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div class="flex flex-row items-center gap-2">
-                            <Checkbox checked={settings.notifyToastEverywhere()} onChange={settings.setNotifyToastEverywhere}/>
-                            <Label><Trans>Enabled</Trans></Label>
-                            <Show when={settings.devMenusEnabled()}>
-                                <div class="flex flex-row gap-2 ml-auto">
-                                    {/* dev-facing, no i18n */}
-                                    <Button variant="ghost" onclick={() => sendTestToast("low")}>Test Toast (Low)</Button>
-                                    <Button variant="ghost" onclick={() => sendTestToast("high")}>Test Toast (High)</Button>
-                                </div>
-                            </Show>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Show when={isLoggedIn()}>
-                    <FundingAlertsCard/>
-                </Show>
-
-                <LocalGroupingsManager
-                    playerOptions={playerOptions()}
-                    groupings={settings.localPayeeGroupings()}
-                    onChange={settings.setLocalPayeeGroupings}
-                />
+                    <LocalGroupingsManager
+                        playerOptions={playerOptions()}
+                        groupings={settings.localPayeeGroupings()}
+                        onChange={settings.setLocalPayeeGroupings}
+                    />
+                </SettingsGroup>
             </div>
 
             <Dialog open={unlinkSinkTarget() !== null} onOpenChange={open => { if (!open) setUnlinkSinkTarget(null); }}>

@@ -8,6 +8,10 @@
  *   - "/" shortcut to focus
  *   - Click outside to close
  *   - Enter navigates to full /search page
+ *
+ * With `onSelect` it is a page picker instead: choosing a result calls `onSelect` rather than
+ * navigating, Enter picks the highlighted (or first) result, the "/" shortcut is off, and the
+ * suggestions sit in the flow below the input instead of floating over the page.
  */
 
 import {msg} from "@lingui/core/macro";
@@ -32,6 +36,8 @@ interface GlobalSearchInputProps {
     placeholder?: string;
     autofocus?: boolean;
     large?: boolean;
+    /** `keepOpen` is true when the choice was made with Shift held. */
+    onSelect?: (match: ObjectMatch, keepOpen: boolean) => void;
 }
 
 interface TabDef {
@@ -119,9 +125,15 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
         if (inputRef) inputRef.value = "";
     };
 
-    const commitSuggestion = (match: ObjectMatch) => {
-        closeSuggestions();
-        navigate(match.route);
+    /** With `keepOpen` (picker mode only) the query and suggestions stay so another result can be chosen. */
+    const commitSuggestion = (match: ObjectMatch, keepOpen = false) => {
+        if (props.onSelect) {
+            if (!keepOpen) closeSuggestions();
+            props.onSelect(match, keepOpen);
+        } else {
+            closeSuggestions();
+            navigate(match.route);
+        }
     };
 
     const handleInput = (e: InputEvent) => {
@@ -133,6 +145,11 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
 
     const handleSearch = (e: Event) => {
         e.preventDefault();
+        if (props.onSelect) {
+            const item = visibleItems()[Math.max(activeIndex(), 0)];
+            if (item) commitSuggestion(item);
+            return;
+        }
         setQueryThrottled.clear();
         const q = (inputRef?.value ?? query()).trim();
         setDropdownOpen(false);
@@ -170,12 +187,12 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
             const nextIdx = Math.min(tabList.length - 1, currentTabIdx + 1);
             switchTab(tabList[nextIdx].id, true);
         } else if (e.key === "Enter" && activeIndex() >= 0) {
-            if (e.shiftKey) {
+            if (e.shiftKey && !props.onSelect) {
                 handleSearch(e);
             } else {
                 e.preventDefault();
                 const item = items[activeIndex()];
-                if (item) commitSuggestion(item);
+                if (item) commitSuggestion(item, e.shiftKey);
             }
         }
     };
@@ -183,7 +200,7 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
     onMount(() => {
 
         const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key !== "/") return;
+            if (e.key !== "/" || props.onSelect) return;
             const tag = (e.target as HTMLElement).tagName;
             if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
             e.preventDefault();
@@ -235,17 +252,22 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
                         aria-expanded={hasSuggestions()}
                         autocomplete="off"
                     />
-                    <kbd class={cn(
-                        "absolute top-1/2 -translate-y-1/2 text-xs text-muted-foreground hidden sm:inline",
-                        isLarge() ? "right-4" : "right-2"
-                    )}>/</kbd>
+                    <Show when={!props.onSelect}>
+                        <kbd class={cn(
+                            "absolute top-1/2 -translate-y-1/2 text-xs text-muted-foreground hidden sm:inline",
+                            isLarge() ? "right-4" : "right-2"
+                        )}>/</kbd>
+                    </Show>
                 </div>
             </form>
 
             <Show when={hasSuggestions()}>
                 <div
                     ref={dropdownRef}
-                    class="absolute top-full mt-1 left-0 right-0 bg-popover border border-border rounded-md shadow-lg z-50 min-w-64 flex flex-col"
+                    class={cn(
+                        "mt-1 bg-popover border border-border rounded-md min-w-64 flex flex-col",
+                        !props.onSelect && "absolute top-full left-0 right-0 shadow-lg z-50",
+                    )}
                 >
                     {/* Tab bar */}
                     <Show when={tabs().length > 2}>
@@ -287,7 +309,11 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
                                                 "px-3 py-1.5 text-sm cursor-pointer transition-colors flex flex-col gap-0.5",
                                                 isActive() ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
                                             )}
-                                            onClick={closeSuggestions}
+                                            onClick={(e: MouseEvent) => {
+                                                if (!props.onSelect) return closeSuggestions();
+                                                e.preventDefault();
+                                                commitSuggestion(match, e.shiftKey);
+                                            }}
                                             onMouseEnter={() => setActiveIndex(i())}
                                         >
                                             <Show when={activeTab() === "all"}>
@@ -318,7 +344,12 @@ export default function GlobalSearchInput(props: GlobalSearchInputProps) {
 
                     {/* Footer */}
                     <div class="px-3 py-1 text-xs text-muted-foreground border-t border-border flex justify-between items-center">
-                        <span><Trans><kbd>Shift</kbd>+<kbd>Enter</kbd> for full results · ←→ switch tabs</Trans></span>
+                        <Show
+                            when={!props.onSelect}
+                            fallback={<span><Trans><kbd>Shift</kbd>+click to insert several · ←→ switch tabs</Trans></span>}
+                        >
+                            <span><Trans><kbd>Shift</kbd>+<kbd>Enter</kbd> for full results · ←→ switch tabs</Trans></span>
+                        </Show>
                     </div>
                 </div>
             </Show>

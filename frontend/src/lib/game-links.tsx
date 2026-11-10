@@ -40,7 +40,7 @@ export function IconLink(props: {
     class?: string;
 }) {
     return (
-        <A href={props.href} class={cn("inline-flex flex-nowrap text-nowrap items-center gap-1 hover:underline", props.class)}>
+        <A href={props.href} class={cn("icon-text text-nowrap gap-1 hover:underline", props.class)}>
             {props.icon}
             {props.children}
         </A>
@@ -54,7 +54,7 @@ export function IconSpan(props: {
     class?: string;
 }) {
     return (
-        <span class={cn("inline-flex flex-nowrap text-nowrap items-center gap-1", props.class)}>
+        <span class={cn("icon-text text-nowrap gap-1", props.class)}>
             {props.icon}
             {props.children}
         </span>
@@ -64,7 +64,7 @@ export function IconSpan(props: {
 // ─── Page icon helper ───────────────────────────────────────────
 
 /** Returns a page icon element by page title (from sidebar-items). */
-export function pageIcon(pageTitle: SidebarPages, iconClass: string = "size-4 shrink-0 align-text-bottom"): JSX.Element | undefined {
+export function pageIcon(pageTitle: SidebarPages, iconClass: string = "size-4 shrink-0"): JSX.Element | undefined {
     const icon = PAGE_ICONS[pageTitle];
     if (!icon) return undefined;
     return icon({class: iconClass});
@@ -80,7 +80,7 @@ export function SkillLink(props: { skill: SkillDesc; class?: string; showIcon?: 
     return (
         <IconLink
             href={`/database/skill/${props.skill.id}`}
-            icon={show() ? <FontIcon codepoint={codepoint()} class="size-4 shrink-0 align-text-bottom"/> : undefined}
+            icon={show() ? <FontIcon codepoint={codepoint()} class="size-4 shrink-0"/> : undefined}
             class={props.class}
         >
             {props.skill.name} {props.level ? <span class={"text-muted-foreground"}>{props.level}</span> : null}
@@ -109,7 +109,7 @@ export function KnowledgeLink(props: { id: number; name?: string; class?: string
             <TooltipTrigger
                 as={A}
                 href={`/database/knowledge/${props.id}`}
-                class={cn("inline-flex items-center gap-1 hover:underline", props.class)}
+                class={cn("icon-text gap-1 hover:underline", props.class)}
             >
                 <Show when={show()}>
                     {pageIcon("Knowledge")}
@@ -243,6 +243,20 @@ export function CollectibleLink(props: { id: number; name?: string; class?: stri
     );
 }
 
+/** Renders a premium item name as a link. */
+export function PremiumItemLink(props: { id: number; name?: string; class?: string; showIcon?: boolean }) {
+    const show = () => props.showIcon !== false;
+    return (
+        <IconLink
+            href={`/database/premium-item/${props.id}`}
+            icon={show() ? pageIcon("Premium Items") : undefined}
+            class={props.class}
+        >
+            {props.name ?? `Premium Item #${props.id}`}
+        </IconLink>
+    );
+}
+
 /** Resolves a collectible ID to a CollectibleLink. */
 export function CollectibleLinkById(props: { id: number; class?: string; showIcon?: boolean }) {
     const col = () => BitCraftTables.CollectibleDesc.indexedBy("id")().get(props.id);
@@ -368,7 +382,7 @@ export function ItemListLink(props: { id: number; name?: string; class?: string;
  */
 export function CombatActionLink(props: { id: number; name?: string; iconAssetName?: string; class?: string }) {
     const icon = () => props.iconAssetName
-        ? <img src={getAssetURL(props.iconAssetName)} alt="" class="size-4 shrink-0 align-text-bottom object-contain"/>
+        ? <img src={getAssetURL(props.iconAssetName)} alt="" class="size-4 shrink-0 object-contain"/>
         : pageIcon("Combat Actions");
     return (
         <IconLink href={`/database/combat/${props.id}`} icon={icon()} class={props.class}>
@@ -385,7 +399,7 @@ export function CombatActionLink(props: { id: number; name?: string; iconAssetNa
  */
 export function AbilityLink(props: { id: number; name?: string; iconPath?: string; class?: string }) {
     const icon = () => props.iconPath
-        ? <img src={getAssetURL(props.iconPath)} alt="" class="size-4 shrink-0 align-text-bottom object-contain"/>
+        ? <img src={getAssetURL(props.iconPath)} alt="" class="size-4 shrink-0 object-contain"/>
         : pageIcon("Abilities");
     return (
         <IconLink href={`/database/ability/${props.id}`} icon={icon()} class={props.class}>
@@ -400,6 +414,16 @@ export function AbilityLinkById(props: { id: number; class?: string }) {
     return <AbilityLink id={props.id} name={ability()?.abilityName} iconPath={ability()?.iconPath} class={props.class}/>;
 }
 
+export function ProspectingLink(props: {id: number; name?: string; iconPath?: string; class?: string }) {
+    const icon = () => props.iconPath
+        ? <FontIcon codepoint={props.iconPath} class="size-4 shrink-0 inline align-text-bottom"/>
+        : pageIcon("Prospecting");
+    return (
+        <IconLink href={`/database/prospecting/${props.id}`} icon={icon()} class={props.class}>
+            {props.name ?? `Prospecting #${props.id}`}
+        </IconLink>
+    );
+}
 // ─── Item Stack (lightweight) ───────────────────────────────────
 
 /**
@@ -487,7 +511,7 @@ export function knowledgeStatIcon(): JSX.Element {
  * Coarse top-level section a breadcrumb path lives under, and the landing page it links to.
  */
 function breadcrumbSection(href: string): {label: Label; href: string} | undefined {
-    return href.startsWith("/tools") ? {label: msg`Tools`, href: "/tools"}
+    return href.startsWith("/tools") ? {label: msg`Toolbox`, href: "/tools"}
         : href.startsWith("/database") ? {label: msg`Database`, href: "/database"}
         : href.startsWith("/account") ? {label: msg`Account`, href: "/account"}
         : undefined;

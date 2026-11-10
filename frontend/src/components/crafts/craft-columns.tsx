@@ -119,7 +119,7 @@ export function craftColumns(honorHiddenCurrencies: boolean): ColumnDef<CraftEnt
                 return (
                     <Show when={entry.skillName} fallback={<span class="text-muted-foreground">—</span>}>
                         {name => (
-                            <span class="inline-flex items-center gap-1.5">
+                            <span class="icon-text gap-1.5">
                                 <Show when={entry.skillIcon}>{icon => <FontIcon codepoint={icon()} class="size-4"/>}</Show>
                                 {name()}
                             </span>
@@ -177,7 +177,7 @@ export function craftColumns(honorHiddenCurrencies: boolean): ColumnDef<CraftEnt
                         fallback={<IconEyeOff class="size-4 text-muted-foreground" title={hiddenTitle()}/>}
                     >
                         <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                            <span class="inline-flex flex-nowrap text-nowrap items-center gap-1">
+                            <span class="icon-text text-nowrap gap-1">
                                 <Show when={entry.subject.bountyPrivate}>
                                     <IconLock class="size-3.5 text-muted-foreground" title={label(msg`Private bounty`)}/>
                                 </Show>
@@ -199,7 +199,7 @@ export function craftColumns(honorHiddenCurrencies: boolean): ColumnDef<CraftEnt
                 return (
                     <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
                         <div class="flex flex-row justify-center">
-                            <span class="inline-flex gap-1 tabular-nums">
+                            <span class="inline-flex items-baseline gap-1 tabular-nums">
                                 {(entry.subject.payout! * entry.effortRemaining).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
                                 <CurrencyLabel currency={entry.subject.currency!} iconOnly={true}/>
                             </span>
@@ -217,7 +217,7 @@ export function craftColumns(honorHiddenCurrencies: boolean): ColumnDef<CraftEnt
                 return (
                     <Show when={entry.subject.payout !== null && entry.subject.currency !== null} fallback={<span class="text-muted-foreground">—</span>}>
                         <div class="flex flex-row justify-center">
-                            <span class="inline-flex gap-1 tabular-nums">
+                            <span class="inline-flex items-baseline gap-1 tabular-nums">
                                 {(entry.subject.payout! * entry.effortTotal).toLocaleString(uiLocale(), {maximumFractionDigits: 0})}
                                 <CurrencyLabel currency={entry.subject.currency!} iconOnly={true}/>
                             </span>

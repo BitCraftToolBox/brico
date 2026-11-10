@@ -39,7 +39,7 @@ import {JSX, Show} from "solid-js";
 import {Tooltip, TooltipContent, TooltipTrigger} from "~/components/ui/tooltip";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BiomeLink, IconLink, IconSpan, KnowledgeLinkById, knowledgeStatIcon, LinkedList, pageIcon, SkillLink, skillStatIcon, toolStatIcon,} from "~/lib/game-links";
-import {skillCategoryLabel} from "~/lib/game-strings.ts";
+import {skillCategoryLabel} from "~/lib/game-strings";
 import {trackUILocale} from "~/lib/i18n";
 import {gameText, useLabel} from "~/lib/labels";
 import {getTravelerNpcName, ItemListSource} from "~/lib/relations";
@@ -60,7 +60,7 @@ export function skillReqPair(req: LevelRequirement, skillData: Map<any, SkillDes
     if (!skillTag || skillTag === "None") return null;
     if (skillTag === "Adventure") skillTag = "Skill";
     return [
-        () => <IconSpan icon={skillStatIcon(skill)}><Trans>{skillCategoryLabel(skillTag)}:</Trans></IconSpan>,
+        () => <IconSpan icon={skillStatIcon(skill)}>{skillCategoryLabel(skillTag)}</IconSpan>,
         () => <span><Trans>Lv. {req.level} {skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`}</Trans></span>,
     ];
 }
@@ -75,7 +75,7 @@ export function toolReqPair(req: ToolRequirement, toolData: Map<any, ToolTypeDes
     const tool = toolData.get(req.toolType);
     if (!tool) return null;
     return [
-        () => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
+        () => <IconSpan icon={toolStatIcon()}><Trans>Tool</Trans></IconSpan>,
         toolRequirementText(req.level, tool.name, req.power),
     ];
 }
@@ -87,7 +87,7 @@ export function skillExpPair(xp: ExperienceStackF32, total: number | undefined, 
     const skill = skillData.get(xp.skillId);
     const skillName = skill?.name ?? t`Skill`;
     return [
-        () => <IconSpan icon={skillStatIcon(skill)}><Trans>{skillName} XP/Progress:</Trans></IconSpan>,
+        () => <IconSpan icon={skillStatIcon(skill)}><Trans>{skillName} XP/Progress</Trans></IconSpan>,
         () => <Tooltip openOnTouchStart disabled={!total}>
             <TooltipTrigger class={!!total ? "decoration-dotted underline" : ""}>
                 {perProgress}
@@ -108,13 +108,15 @@ type RecipeWithKnowledge = {
 } | {
     requiredKnowledges: number[];
     blockingKnowledges: number[];
+} | {
+    discoveryTriggers: number[];
 }
 
 function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge) {
     if ('requiredKnowledges' in recipe && Array.isArray(recipe.requiredKnowledges) && recipe.requiredKnowledges.length) {
         const ids = Array.from(new Set(recipe.requiredKnowledges));
         lines.push([
-            () => <IconSpan icon={knowledgeStatIcon()}><Trans>Required Knowledge:</Trans></IconSpan>,
+            () => <IconSpan icon={knowledgeStatIcon()}><Trans>Required Knowledge</Trans></IconSpan>,
             () => <LinkedList>
                 {ids.map((id) => (
                     <KnowledgeLinkById id={id} showIcon={false}/>
@@ -125,7 +127,7 @@ function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge
     if ('blockingKnowledges' in recipe && Array.isArray(recipe.blockingKnowledges) && recipe.blockingKnowledges.length) {
         const ids = Array.from(new Set(recipe.blockingKnowledges));
         lines.push([
-            () => <IconSpan icon={knowledgeStatIcon()}><Trans>Blocking Knowledge:</Trans></IconSpan>,
+            () => <IconSpan icon={knowledgeStatIcon()}><Trans>Blocking Knowledge</Trans></IconSpan>,
             () => <LinkedList>
                 {ids.map((id) => (
                     <KnowledgeLinkById id={id} showIcon={false}/>
@@ -133,6 +135,32 @@ function addKnowledgeRequirements(lines: StatLine[], recipe: RecipeWithKnowledge
             </LinkedList>
         ]);
     }
+    if ('discoveryTriggers' in recipe && Array.isArray(recipe.discoveryTriggers) && recipe.discoveryTriggers.length) {
+        const ids = Array.from(new Set(recipe.discoveryTriggers));
+        lines.push([
+            () => <IconSpan icon={knowledgeStatIcon()}><Trans>Discovered By</Trans></IconSpan>,
+            () => <LinkedList>
+                {ids.map((id) => (
+                    <KnowledgeLinkById id={id} showIcon={false}/>
+                ))}
+            </LinkedList>
+        ]);
+    }
+}
+
+function addClaimTechRequirements(lines: StatLine[], requiredTechIds: number[]) {
+    if (!requiredTechIds.length || requiredTechIds.every(n => n === 0)) return;
+    const claimTechs = BitCraftTables.ClaimTechDesc.indexedBy("id");
+    lines.push([
+        () => <IconSpan icon={pageIcon("Claim Research")}><Trans>Required Research</Trans></IconSpan>,
+        () => <LinkedList>
+            {requiredTechIds.map(n => {
+                const tech = claimTechs().get(n);
+                if (!tech) return undefined;
+                return <IconLink href={`/database/claim-research/${tech.id}`}>{tech.name}</IconLink>;
+            })}
+        </LinkedList>
+    ]);
 }
 
 /** Shared: add level requirements, experience, and tool requirements to stat lines */
@@ -168,9 +196,9 @@ function addSkillProgressInfo(lines: StatLine[], recipe: { toolRequirements: Too
     }
     const hasSkill = (recipe.experiencePerProgress[0]?.skillId ?? 0) > 1; // as extensions.rs get_skill_type
     const label = useLabel();
-    lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool:</Trans></IconSpan>,
+    lines.push([() => <IconSpan icon={toolStatIcon()}><Trans>Tool</Trans></IconSpan>,
         () => <Tooltip openOnTouchStart>
-            <TooltipTrigger class="underline decoration-dotted">
+            <TooltipTrigger class="decoration-dotted underline">
                 <Show when={recipe.allowUseHands} fallback={<Trans>No tool</Trans>}>{label(gameText(msg`Hands`))}</Show>
             </TooltipTrigger>
             <TooltipContent class="max-w-[90svw]">
@@ -188,18 +216,19 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
     trackUILocale();
     const buildingData = BitCraftTables.BuildingTypeDesc.indexedBy("id")();
     const lines: StatLine[] = [
-        [t`Effort:`, recipe.actionsRequired],
-        [t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))],
-        [t`Stamina:`, fixFloat(recipe.staminaRequirement)],
+        [t`Effort`, recipe.actionsRequired],
+        [t`Time`, readableSeconds(fixFloat(recipe.timeRequirement))],
+        [t`Stamina`, fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
     addSkillProgressInfo(lines, recipe);
     if (recipe.buildingRequirement) {
         const name = buildingData.get(recipe.buildingRequirement.buildingType)?.name ?? t`Unknown`;
         const tier = recipe.buildingRequirement.tier;
-        lines.push([() => <IconSpan icon={pageIcon("Structures")}><Trans>Building:</Trans></IconSpan>, t`Tier ${tier} ${name}`]);
+        lines.push([() => <IconSpan icon={pageIcon("Structures")}><Trans>Building</Trans></IconSpan>, t`Tier ${tier} ${name}`]);
     }
     addKnowledgeRequirements(lines, recipe);
+    addClaimTechRequirements(lines, [recipe.requiredClaimTechId]);
     addPlaceableSelfBuffs(lines, recipe.selfBuffs);
     return lines;
 }
@@ -264,8 +293,8 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
             lines.push([t`Total HP`, resource.maxHealth]);
         }
     }
-    lines.push([t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))]);
-    lines.push([t`Stamina:`, fixFloat(recipe.staminaRequirement)]);
+    lines.push([t`Time`, readableSeconds(fixFloat(recipe.timeRequirement))]);
+    lines.push([t`Stamina`, fixFloat(recipe.staminaRequirement)]);
     addCommonRequirements(lines, recipe, totalEffort);
     addSkillProgressInfo(lines, recipe);
     addKnowledgeRequirements(lines, recipe);
@@ -276,29 +305,20 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
 export function constructionStatLines(recipe: ConstructionRecipeDesc): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Effort:`, recipe.actionsRequired],
-        [t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))],
-        [t`Stamina:`, fixFloat(recipe.staminaRequirement)],
+        [t`Effort`, recipe.actionsRequired],
+        [t`Time`, readableSeconds(fixFloat(recipe.timeRequirement))],
+        [t`Stamina`, fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
     addKnowledgeRequirements(lines, recipe);
-    const claimTechs = BitCraftTables.ClaimTechDesc.indexedBy("id");
-    lines.push([
-        () => <IconSpan icon={pageIcon("Claim Research")}><Trans>Required Research:</Trans></IconSpan>,
-        () => recipe.requiredClaimTechIds?.length ? <LinkedList>
-        {recipe.requiredClaimTechIds.map(n => {
-            const tech = claimTechs().get(n);
-            if (!tech) return undefined;
-            return <IconLink href={`/database/claim-research/${tech.id}`}>{tech.name}</IconLink>;
-        })}
-    </LinkedList> : <Trans>None</Trans>]);
+    addClaimTechRequirements(lines, recipe.requiredClaimTechIds);
     return lines;
 }
 
 export function deconstructionStatLines(recipe: DeconstructionRecipeDesc): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Time:`, readableSeconds(fixFloat(recipe.timeRequirement))],
+        [t`Time`, readableSeconds(fixFloat(recipe.timeRequirement))],
     ];
     addCommonRequirements(lines, recipe);
     return lines;
@@ -308,7 +328,7 @@ export function pavingStatLines(recipe: PavingTileDesc): StatLine[] {
     trackUILocale();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const lines: StatLine[] = [
-        [t`Time:`, readableSeconds(fixFloat(recipe.pavingDuration))],
+        [t`Time`, readableSeconds(fixFloat(recipe.pavingDuration))],
     ];
     recipe.experiencePerProgress.forEach(xp => {
         const pair = skillExpPair(xp, undefined, skillData);
@@ -322,7 +342,7 @@ export function pillarShapingStatLines(recipe: PillarShapingDesc): StatLine[] {
     trackUILocale();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const lines: StatLine[] = [
-        [t`Time:`, readableSeconds(fixFloat(recipe.duration))],
+        [t`Time`, readableSeconds(fixFloat(recipe.duration))],
     ];
     recipe.experiencePerProgress.forEach(xp => {
         const pair = skillExpPair(xp, undefined, skillData);
@@ -335,8 +355,8 @@ export function pillarShapingStatLines(recipe: PillarShapingDesc): StatLine[] {
 export function conversionStatLines(recipe: ItemConversionRecipeDesc): StatLine[] {
     trackUILocale();
     return [
-        [t`Time:`, readableSeconds(fixFloat(recipe.timeCost))],
-        [t`Stamina:`, fixFloat(recipe.staminaCost)],
+        [t`Time`, readableSeconds(fixFloat(recipe.timeCost))],
+        [t`Stamina`, fixFloat(recipe.staminaCost)],
     ];
 }
 
@@ -350,11 +370,11 @@ export function travelerTaskStatLines(task: TravelerTaskDesc): StatLine[] {
 
     const lines: StatLine[] = [
         [
-            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} <Trans>{skillCategoryLabel(skillTag)}:</Trans></span>,
+            () => <span class="icon-text gap-1">{skillStatIcon(skill)} {skillCategoryLabel(skillTag)}</span>,
             () => <span><Trans>Lv. {task.levelRequirement.minLevel}-{task.levelRequirement.maxLevel} {skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>}</Trans></span>,
         ],
         [
-            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} <Trans>{skillName} Exp:</Trans></span>,
+            () => <span class="icon-text gap-1">{skillStatIcon(skill)} <Trans>{skillName} Exp</Trans></span>,
             fixFloat(task.rewardedExperience.quantity),
         ],
     ];
@@ -369,7 +389,7 @@ export function travelerTradeStatLines(trade: TravelerTradeOrderDesc): StatLine[
     trackUILocale();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const npcName = getTravelerNpcName(trade.traveler.tag);
-    const lines: StatLine[] = [[t`Traveler:`, npcName]];
+    const lines: StatLine[] = [[t`Traveler`, npcName]];
     trade.levelRequirements.forEach(req => {
         const pair = skillReqPair(req, skillData);
         if (pair) lines.push(pair);
@@ -407,7 +427,7 @@ export function itemListStatLines(source: ItemListSource | undefined): StatLine[
 export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Time:`, fixFloat(placement.requiredTime)],
+        [t`Time`, fixFloat(placement.requiredTime)],
     ];
 
     // Biome requirements
@@ -421,20 +441,20 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
             return descId ? <BiomeLink biomeType={descId} name={desc?.name} showIcon={false}/> : tag;
         }
         lines.push([
-            () => <IconSpan icon={pageIcon("Biomes")}><Trans>Biomes:</Trans></IconSpan>,
+            () => <IconSpan icon={pageIcon("Biomes")}><Trans>Biomes</Trans></IconSpan>,
             () => <LinkedList>{placement.requiredBiomes.map((b: Biome) => tagToBiomeLink(b.tag))}</LinkedList>
         ]);
     }
 
     // Paving/Interior tier
     if (placement.requiredPavingTier > 0) {
-        lines.push([t`Paving Tier:`, placement.requiredPavingTier]);
+        lines.push([t`Paving Tier`, placement.requiredPavingTier]);
     }
     if (placement.requiredInteriorTier > 0) {
-        lines.push([t`Interior Tier:`, placement.requiredInteriorTier]);
+        lines.push([t`Interior Tier`, placement.requiredInteriorTier]);
     }
     if (placement.requiredClaimTier > 0) {
-        lines.push([() => <IconSpan icon={pageIcon("Claim Research")}><Trans>Claim Tier:</Trans></IconSpan>, placement.requiredClaimTier]);
+        lines.push([() => <IconSpan icon={pageIcon("Claim Research")}><Trans>Claim Tier</Trans></IconSpan>, placement.requiredClaimTier]);
     }
 
     // Level/tool/knowledge requirements
@@ -456,15 +476,15 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
         .filter(g => g.placementLimit);
 
     for (const group of groupLimits) {
-        lines.push([() => <IconSpan icon={pageIcon("Placeables")}><Trans>Group limit for {group.name}:</Trans></IconSpan>, group.placementLimit]);
+        lines.push([() => <IconSpan icon={pageIcon("Placeables")}><Trans>Group limit for {group.name}</Trans></IconSpan>, group.placementLimit]);
     }
 
     // Distance constraints
     if (placement.minDistanceToGroup > 0) {
-        lines.push([() => <IconSpan icon={pageIcon("Placeables")}><Trans>Minimum distance to Group:</Trans></IconSpan>, placement.minDistanceToGroup])
+        lines.push([() => <IconSpan icon={pageIcon("Placeables")}><Trans>Minimum distance to Group</Trans></IconSpan>, placement.minDistanceToGroup])
     }
     if (placement.minDistanceToPlayerClaims > 0) {
-        lines.push([() => <IconSpan icon={pageIcon("Claim Research")}><Trans>Minimum distance to Claims:</Trans></IconSpan>, placement.minDistanceToPlayerClaims]);
+        lines.push([() => <IconSpan icon={pageIcon("Claim Research")}><Trans>Minimum distance to Claims</Trans></IconSpan>, placement.minDistanceToPlayerClaims]);
     }
     // Building proximity
     if (placement.buildings.length) {
@@ -472,7 +492,7 @@ export function placementStatLines(placement: PlaceablePlacementDesc): StatLine[
         const names = placement.buildings
             .map(id => buildingIndex.get(id)?.name ?? `Building #${id}`)
             .join(", ");
-        lines.push([() => <IconSpan icon={pageIcon("Structures")}><Trans>Near Building:</Trans></IconSpan>, `${names} (≤${placement.maxDistanceToBuildings}m)`]);
+        lines.push([() => <IconSpan icon={pageIcon("Structures")}><Trans>Near Building</Trans></IconSpan>, `${names} (≤${placement.maxDistanceToBuildings}m)`]);
     }
 
     addPlaceableSelfBuffs(lines, placement.selfBuffs);
@@ -515,16 +535,16 @@ function addPlaceableSelfBuffs(lines: StatLine[], placeableBuffs: PlaceableSelfB
 export function interactionStatLines(interaction: PlaceableInteractionDesc, sourcePlaceable: PlaceableDesc | undefined): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Time:`, readableSeconds(fixFloat(interaction.timeRequirement))],
-        [t`Stamina:`, fixFloat(interaction.staminaRequirement)],
+        [t`Time`, readableSeconds(fixFloat(interaction.timeRequirement))],
+        [t`Stamina`, fixFloat(interaction.staminaRequirement)],
     ];
 
     if (sourcePlaceable?.maxHealth) {
-        lines.push([t`Effort Required:`, sourcePlaceable?.maxHealth]);
+        lines.push([t`Effort Required`, sourcePlaceable?.maxHealth]);
     }
 
     if (interaction.range > 1) {
-        lines.push([t`Range:`, interaction.range]);
+        lines.push([t`Range`, interaction.range]);
     }
 
     // Common requirements (level, xp, tool)
@@ -541,12 +561,12 @@ export function growthStatLines(growth: PlaceableGrowthDesc): StatLine[] {
     const minTime = growth.time[0] ?? 0;
     const maxTime = growth.time[1] ?? minTime;
     const lines: StatLine[] = [
-        [t`Time:`, minTime === maxTime
+        [t`Time`, minTime === maxTime
             ? `${readableSeconds(fixFloat(minTime))}`
             : `${readableSeconds(fixFloat(minTime))} - ${readableSeconds(fixFloat(maxTime))}`],
     ];
     if (!growth.showTimeLeft) {
-        lines.push([t`Shows Time Left:`, t`No`]);
+        lines.push([t`Shows Time Left`, t`No`]);
     }
     return lines;
 }

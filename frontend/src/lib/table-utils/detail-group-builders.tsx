@@ -2,7 +2,7 @@ import {BuffEffect} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {DetailGroup, DetailProperty} from "~/components/shared/DetailPageLayout";
 import {BitCraftTables} from "~/lib/bitcraft-data";
-import {BuffLink} from "~/lib/game-links";
+import {BuffLink, KnowledgeLinkById, LinkedList} from "~/lib/game-links";
 import {statLabel} from "~/lib/game-strings";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
@@ -26,4 +26,25 @@ export function buffsGroups(buffs: BuffEffect[]): DetailGroup[] {
             properties: props,
         };
     });
+}
+
+export function knowledgeRequirementsGroup(knowledges: {requiredKnowledges: number[], blockingKnowledges: number[]} | undefined): DetailGroup[] {
+    if (knowledges !== undefined && (knowledges.requiredKnowledges.length || knowledges.blockingKnowledges.length)) {
+        return [{
+            heading: msg`Knowledge`,
+            properties: [
+                {label: msg`Required Knowledge`, value: () => {
+                    return knowledges.requiredKnowledges.length ? <LinkedList>
+                        {knowledges.requiredKnowledges.map(n => <KnowledgeLinkById id={n}/>)}
+                    </LinkedList> : undefined;
+                }},
+                {label: msg`Blocking Knowledge`, value: () => {
+                    return knowledges.blockingKnowledges.length ? <LinkedList>
+                        {knowledges.blockingKnowledges.map(n => <KnowledgeLinkById id={n}/>)}
+                    </LinkedList> : undefined;
+                }},
+            ]
+        }];
+    }
+    return [];
 }

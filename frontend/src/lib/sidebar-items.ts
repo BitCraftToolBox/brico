@@ -81,6 +81,7 @@ const sidebarGroups = [
             {href: '/database/combat', title: 'Combat Actions', titleLabel: gameText(msg`Combat Actions`), codepoint: "FFC3"},
             {href: '/database/ability', title: 'Abilities', titleLabel: gameText(msg`Abilities`), codepoint: "FF61"},
             {href: '/database/buff', title: 'Buffs', titleLabel: gameText(msg`Buffs`), codepoint: "FFD0"},
+            {href: '/database/premium-item', title: 'Premium Items', titleLabel: gameText(msg`Premium Items`), codepoint: "FF5F"},
         ] as const
     },
     {
@@ -99,6 +100,7 @@ const sidebarGroups = [
         name: "Toolbox", nameLabel: msg`Toolbox`,
         items: [
             {href: '/tools/crafts/browse', title: 'Craft Browser', titleLabel: msg`Craft Browser`, codepoint: "0086"},
+            {href: '/tools/dressing-room', title: 'Dressing Room', titleLabel: msg`Dressing Room`, codepoint: "FF58"},
             {href: '/tools/emblem', title: 'Emblem Editor', titleLabel: msg`Emblem Editor`, codepoint: "FFB7"},
             {href: '/tools/placeable-graph', title: 'Placeable Graph', titleLabel: msg`Placeable Graph`, codepoint: "0072"},
             {href: '/tools/quest-graph', title: 'Quest Graph', titleLabel: msg`Quest Graph`, codepoint: "0107"},

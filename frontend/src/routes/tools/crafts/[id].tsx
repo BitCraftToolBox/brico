@@ -18,6 +18,7 @@ import {TbOutlineClipboardCheck as IconClipboardCheck, TbOutlineClipboardCopy as
 import {createMemo, createSignal, type JSX, Show} from "solid-js";
 import {Timestamp} from "spacetimedb";
 import {CurrencySelect} from "~/components/crafts/CurrencySelect";
+import {EffortChart} from "~/components/crafts/EffortChart";
 import {FundingStatus} from "~/components/crafts/FundingStatus";
 import {FundingWalletSelect} from "~/components/crafts/FundingWalletSelect";
 import {OutputIcon} from "~/components/crafts/OutputIcon";
@@ -40,6 +41,7 @@ import {useLinkedIntegrations} from "~/lib/account/links";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {createBountyAssignments} from "~/lib/crafts/bounty";
 import {type CraftBountyFundingHandle, createCraftBountyFunding, createCraftBountyOverrides} from "~/lib/crafts/bounty-funding";
+import {effortSamples} from "~/lib/crafts/effort-history";
 import {type CraftContributor, craftContributorsFrom, craftEntriesFrom} from "~/lib/crafts/entries";
 import {describeServerError} from "~/lib/crafts/error-vocab";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
@@ -47,12 +49,12 @@ import {fundingWalletState, walletForCurrency} from "~/lib/crafts/funding-wallet
 import {type Ratio, useAmountField} from "~/lib/crafts/payout";
 import {createCraftDetailRelay} from "~/lib/crafts/relay";
 import {breadcrumb} from "~/lib/game-links";
-import {uiLocale} from "~/lib/i18n.ts";
+import {uiLocale} from "~/lib/i18n";
 import {useLabel} from "~/lib/labels";
 import {type PayoutDisplayMode, useSettings} from "~/lib/settings";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
-import {fixFloat, useCopy} from "~/lib/utils.ts";
+import {fixFloat, useCopy} from "~/lib/utils";
 
 const BROWSE_HREF = "/tools/crafts/browse";
 
@@ -131,7 +133,7 @@ const CONTRIBUTOR_COLUMNS: ColumnDef<CraftContributor, any>[] = [
         accessorFn: contributor => contributor.estimatedPayout?.toString() ?? "",
         cell: (props: ContributorCell<string>) => (
             <Show when={props.row.original.estimatedPayout !== null} fallback={<span class="text-muted-foreground">—</span>}>
-                <span class="inline-flex gap-1 tabular-nums">
+                <span class="inline-flex items-baseline gap-1 tabular-nums">
                     {props.row.original.estimatedPayout!.toString()} <CurrencyLabel currency={props.row.original.currency!} iconOnly={true}/>
                 </span>
             </Show>
@@ -444,6 +446,9 @@ export default function CraftDetail() {
     const contributedTotal = createMemo(() => contributors().reduce((sum, entry) => sum + entry.contribution, 0));
     const contributionCoverage = createMemo(() => craft() ? contributedTotal() / craft()!.effortDone : 0);
 
+    const effortHistory = createMemo(() => effortSamples(craftId()));
+    const contributorNames = createMemo(() => new Map(contributors().map(entry => [entry.playerId, entry.name])));
+
     // The viewer's own linked BitCraft player ids — an "owns this craft, or owns its claim" check,
     // done client-side with data this page already has. Non-blocking: `brico-bot` is the real
     // authority for whether a bounty edit is actually accepted.
@@ -542,7 +547,7 @@ export default function CraftDetail() {
                                     <MetaRow label={label(msg`Skill`)}>
                                         <Show when={entry().skillName} fallback={<span class="text-muted-foreground">—</span>}>
                                             {name => (
-                                                <span class="inline-flex items-center gap-1.5">
+                                                <span class="icon-text gap-1.5">
                                                     <Show when={entry().skillIcon}>
                                                         {icon => <FontIcon codepoint={icon()} class="size-4"/>}
                                                     </Show>
@@ -559,7 +564,7 @@ export default function CraftDetail() {
                                     <MetaRow label={label(msg`Bounty`)}>
                                         <Show when={bounty()} fallback={<span class="text-muted-foreground">—</span>}>
                                             {b => (
-                                                <span class="inline-flex flex-nowrap text-nowrap items-center gap-1">
+                                                <span class="icon-text text-nowrap gap-1">
                                                     <Show when={b().private}>
                                                         <IconLock class="size-3.5 text-muted-foreground" title={label(msg`Private bounty`)}/>
                                                     </Show>
@@ -646,6 +651,20 @@ export default function CraftDetail() {
                             }
                         />
                     </div>
+                </Show>
+
+                <Show when={craft()}>
+                    {entry => (
+                        <div class="space-y-2">
+                            <h2 class="text-xl font-semibold text-foreground"><Trans>Effort over time</Trans></h2>
+                            <EffortChart
+                                samples={effortHistory()}
+                                names={playerId => contributorNames().get(playerId) ?? null}
+                                effortTotal={entry().effortTotal}
+                                effortDone={entry().effortDone}
+                            />
+                        </div>
+                    )}
                 </Show>
 
                 <p class="text-sm text-muted-foreground">

@@ -30,9 +30,11 @@ import RouteTabHeader from "~/components/shared/RouteTabHeader";
 import {Badge} from "~/components/ui/badge";
 import {Button} from "~/components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "~/components/ui/card";
+import {Checkbox} from "~/components/ui/checkbox";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "~/components/ui/dialog";
 import {TextField, TextFieldInput} from "~/components/ui/text-field";
 import {showToast} from "~/components/ui/toast";
+import {useLinkedIntegrations} from "~/lib/account/links";
 import {bountyTabs} from "~/lib/account/route-tabs";
 import {useAccount} from "~/lib/account/state";
 import {createCraftBountyFunding} from "~/lib/crafts/bounty-funding";
@@ -41,7 +43,7 @@ import {describeServerError} from "~/lib/crafts/error-vocab";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
 import {currencyData} from "~/lib/crafts/filter-vocab";
 import {ledgerFooters} from "~/lib/crafts/ledger-footer";
-import {createLoyaltyRewards} from "~/lib/crafts/loyalty-rewards.ts";
+import {createLoyaltyRewards} from "~/lib/crafts/loyalty-rewards";
 import {createLoyaltyBonusTotals} from "~/lib/crafts/loyalty-rules";
 import {createPlayerNames} from "~/lib/crafts/relay";
 import {escrowSummary, filterByCurrency} from "~/lib/crafts/report-math";
@@ -54,7 +56,7 @@ import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
 import {PRISM_SERVER} from "~/lib/spacetime/prism";
 import {cn} from "~/lib/utils";
-import {formatBonusPercent} from "~/routes/account/loyalty.tsx";
+import {formatBonusPercent} from "~/routes/account/loyalty";
 
 const TABLE_NAME = "account-payees";
 
@@ -371,7 +373,14 @@ export default function PayeesPage() {
     const {totals: bonusTotals} = createLoyaltyBonusTotals();
     const {names: playerNames} = createPlayerNames();
     const [currencyFilter, setCurrencyFilter] = createSignal<string[]>([]);
-    const groups = createMemo(() => groupPayerRows(filterByCurrency(rows(), currencyFilter()), settings.localPayeeGroupings()));
+    const {links} = useLinkedIntegrations();
+    const ownIds = createMemo(() => new Set(links().filter(link => link.provider === "bitcraft-ea2").map(link => link.externalId)));
+    const [excludeSelf, setExcludeSelf] = createSignal(true);
+    const groups = createMemo(() => {
+        const byCurrency = filterByCurrency(rows(), currencyFilter());
+        const visible = excludeSelf() ? byCurrency.filter(row => !ownIds().has(row.payeePlayerId.toString())) : byCurrency;
+        return groupPayerRows(visible, settings.localPayeeGroupings());
+    });
     const presentCurrencies = createMemo(() => [...new Set(rows().map(row => row.currency))]);
     const shownCurrencies = useShownCurrencies(presentCurrencies);
     const filterCurrencies = createMemo(() => shownCurrencies().filter(currency => presentCurrencies().includes(currency)));
@@ -446,6 +455,7 @@ export default function PayeesPage() {
                                 >
                                     <IconHistory class="mr-1 size-4"/><Trans>History</Trans>
                                 </Button>
+                                <Checkbox checked={excludeSelf()} onChange={setExcludeSelf} class="items-center" label={<Trans>Exclude Self</Trans>}/>
                             </>
                         }
                     />

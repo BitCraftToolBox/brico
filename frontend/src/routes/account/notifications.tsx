@@ -1,7 +1,7 @@
 /**
  * notifications.tsx — `/account/notifications`, the inbox behind the sidebar's unread badge.
  *
- * Rendering switches on `payload.tag` (e.g. `craft` and `funding`), so a new notification
+ * Rendering switches on `payload.tag` (`craft`, `funding`, `comment`), so a new notification
  * source slots in without touching this page's layout.
  */
 import {msg} from "@lingui/core/macro";
@@ -21,6 +21,7 @@ import {useAccount} from "~/lib/account/state";
 import {BitCraftTables} from "~/lib/bitcraft-data";
 import {breadcrumb} from "~/lib/game-links";
 import {uiLocale} from "~/lib/i18n";
+import {CommentReplyDetail} from "~/lib/notifications/comment";
 import {fundingHeadline, FundingNotificationDetail, fundingSeverity} from "~/lib/notifications/funding";
 import {type Notification, useNotifications} from "~/lib/notifications/state";
 import {getCraftingRecipeName} from "~/lib/relations";
@@ -61,10 +62,18 @@ function NotificationRow(props: {notification: Notification; onMarkRead: () => v
                         </>
                     )}
                 </Show>
+                <Show when={props.notification.payload.tag === "comment" ? props.notification.payload.value : null}>
+                    {value => (
+                        <>
+                            <p class="text-sm font-medium"><Trans>New reply</Trans></p>
+                            <p class="text-sm text-muted-foreground"><CommentReplyDetail value={value()}/></p>
+                        </>
+                    )}
+                </Show>
                 <Show
                     when={props.notification.payload.tag === "craft" ? props.notification.payload.value : null}
                     fallback={
-                        <Show when={props.notification.payload.tag !== "funding"}>
+                        <Show when={props.notification.payload.tag !== "funding" && props.notification.payload.tag !== "comment"}>
                             <p class="text-sm text-muted-foreground"><Trans>Unsupported notification.</Trans></p>
                         </Show>
                     }

@@ -8,10 +8,10 @@ import {msg} from "@lingui/core/macro";
 import {useNavigate} from "@solidjs/router";
 import {Component} from "solid-js";
 import {RelTable, RelTableColumn} from "~/components/shared/DetailPageLayout";
-import {BitCraftTables} from "~/lib/bitcraft-data.ts";
+import {BitCraftTables} from "~/lib/bitcraft-data";
 import {BuffLink, CombatActionLink, KnowledgeLink} from "~/lib/game-links";
 import {statLabel} from "~/lib/game-strings";
-import {StatPillList} from "~/lib/table-utils/stats-column-builder.tsx";
+import {StatPillList} from "~/lib/table-utils/stats-column-builder";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
 // ─── Stat Entry Table ───────────────────────────────────────────

@@ -9,6 +9,8 @@ import type {ClaimInfo, ClaimMember, CraftContribution, CraftMeta, CraftProgress
 import {claimDisplayName} from "@brico/crafts/names";
 import {leadingAndTrailing, throttle} from "@solid-primitives/scheduled";
 import {type Accessor, createEffect, createSignal, onCleanup, onMount} from "solid-js";
+import {type EffortReading, hasEffortHistory, observeEffort, startEffortHistory, stopEffortHistory} from "~/lib/crafts/effort-history";
+import {craftEntriesFrom} from "~/lib/crafts/entries";
 import type {ConnectionStatus, ResourceSpec} from "~/lib/spacetime/connection";
 import {useConnection} from "~/lib/spacetime/manager";
 import {PRISM_SERVER, type PrismConnection, type PrismQuery, prismRows, prismTable} from "~/lib/spacetime/prism";
@@ -231,6 +233,26 @@ function readContributions(conn: PrismConnection, craftId: bigint): CraftContrib
 }
 
 /**
+ * One effort reading for the effort history, straight from the connection cache. Builds only the
+ * craft and progress rows it needs (not the full reference snapshot) since it runs on every relay update.
+ * `null` once the craft is complete, so a finished craft stops accumulating flat samples.
+ */
+function readEffortReading(conn: PrismConnection, craftId: bigint): EffortReading {
+    const craft = conn.db.craftMeta.iter().find(row => row.entityId === craftId);
+    if (!craft) return null;
+    const progress = new Map<bigint, CraftProgress>();
+    for (const row of conn.db.craftProgress.iter()) {
+        if (row.entityId === craftId) progress.set(craftId, row);
+    }
+    const entry = craftEntriesFrom({...EMPTY_SNAPSHOT, crafts: [craft], progress}).at(0);
+    if (!entry || entry.complete) return null;
+
+    const efforts: Record<string, number> = {};
+    for (const row of readContributions(conn, craftId)) efforts[row.playerId.toString()] = row.contribution;
+    return {done: entry.effortDone, efforts};
+}
+
+/**
  * Opens the relay for the lifetime of the calling component and exposes the coalesced snapshot of
  * every open craft.
  *
@@ -391,7 +413,10 @@ export function createCraftDetailRelay(craftId: Accessor<bigint | null>): CraftD
         if (!conn || id === null) return;
         setSnapshot(readCraftSnapshot(conn, id));
         setContributions(readContributions(conn, id));
+        // Only once the craft's own resource has applied: rows arriving piecemeal would read as effort gains.
+        if (craftResourceReady() && hasEffortHistory(id)) observeEffort(id, readEffortReading(conn, id));
     };
+    let craftResourceReady: Accessor<boolean> = () => false;
     // Leading *and* trailing here, unlike the browser above. The browser's feed is a firehose —
     // a coalesced tick it drops is corrected by the next one milliseconds later. One craft can go
     // quiet immediately after its last contribution lands, and a leading-only throttle would then
@@ -409,7 +434,20 @@ export function createCraftDetailRelay(craftId: Accessor<bigint | null>): CraftD
         setContributions([]);
         setReady(false);
         if (id === null) return;
-        const request = connection.requestResource(craftDetailResource(id), scheduleRebuild);
+        // The history and the resource are created and dropped together, so only the request that
+        // creates the resource (no history yet) registers the dispose.
+        const request = connection.requestResource(
+            craftDetailResource(id),
+            scheduleRebuild,
+            hasEffortHistory(id) ? undefined : () => stopEffortHistory(id),
+        );
+        craftResourceReady = request.ready;
+        // Sampled for as long as the manager holds the resource (including its grace period), not
+        // just while this component does, so leaving and coming back resumes the same history.
+        startEffortHistory(id, () => {
+            const conn = connection.active();
+            return conn && request.ready() ? readEffortReading(conn, id) : null;
+        });
         createEffect(() => {
             const isReady = request.ready();
             // `scheduleRebuild`'s throttle may already be mid-cooldown — the reference resource's

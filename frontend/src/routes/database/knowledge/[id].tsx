@@ -1,11 +1,12 @@
+import {CargoDesc, ItemDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
-import {createMemo, Show} from "solid-js";
-import {DetailGroup, DetailPageLayout} from "~/components/shared/DetailPageLayout";
-import {ItemIcon} from "~/components/shared/GameIcon";
+import {Accessor, createMemo, Show} from "solid-js";
+import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
+import {CargoIcon, ItemIcon} from "~/components/shared/GameIcon";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
 import {chatLink} from "~/lib/chat-links";
-import {ItemLink} from "~/lib/game-links";
+import {CargoLink, ItemLink} from "~/lib/game-links";
 import {statLabel} from "~/lib/game-strings";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {knowledgeUsedBy, questsRequiring, questsRewarding, questsWithStageCondition} from "~/lib/relations";
@@ -35,10 +36,25 @@ export default function KnowledgeDetail() {
         return BitCraftTables.KnowledgeStatModifierDesc.indexedBy("secondaryKnowledgeId")().get(k.id);
     });
 
-    const item = createMemo(() => {
+    type KnowledgeItem =
+        | {type: "scroll", item: ItemDesc}
+        | {type: "item", item: ItemDesc}
+        | {type: "cargo", item: CargoDesc}
+    ;
+
+    const item: Accessor<KnowledgeItem | undefined> = createMemo(() => {
         const s = scroll();
-        if (!s) return undefined;
-        return BitCraftTables.ItemDesc.indexedBy("id")().get(s.itemId);
+        if (s) {
+            const i = BitCraftTables.ItemDesc.indexedBy("id")().get(s.itemId);
+            if (i) return {type: "scroll", item: i} satisfies KnowledgeItem;
+        }
+        const itemIdx = BitCraftTables.ItemDesc.indexedBy("secondaryKnowledgeId");
+        const i = itemIdx().get(knowledge()!.id);
+        if (i) return {type: "item", item: i} satisfies KnowledgeItem;
+        const cargoIdx = BitCraftTables.CargoDesc.indexedBy("secondaryKnowledgeId");
+        const c = cargoIdx().get(knowledge()!.id);
+        if (c) return {type: "cargo", item: c} satisfies KnowledgeItem;
+        return undefined;
     });
 
     const questRequires = createMemo(() => {
@@ -92,14 +108,21 @@ export default function KnowledgeDetail() {
             title={knowledge()?.name ?? `Knowledge #${params.id}`}
             breadcrumbHref="/database/knowledge"
             loading={isLoading() && !knowledge()}
-            icon={<Show when={item()}>{(i) =>
-                <ItemIcon item={i()} small={false} noInteract/>
-            }</Show>}
+            icon={
+                <Show when={item()} keyed>
+                    {(i) =>
+                        <Show when={i.type === "cargo"} fallback={<ItemIcon item={i.item as ItemDesc} small={false} noInteract/>}>
+                            <CargoIcon cargo={i.item as CargoDesc} small={false} noInteract/>
+                        </Show>
+                    }
+                </Show>
+            }
+            iconIsWide={item()?.type === "cargo"}
             name={knowledge()?.name ?? `Knowledge #${params.id}`}
             description={scroll()?.content}
             tag={scroll()?.tag}
             metaKind="knowledge"
-            metaImage={ogImageForAsset(item()?.iconAssetName)}
+            metaImage={ogImageForAsset(item()?.item.iconAssetName)}
             details={details()}
             rawData={knowledge()}
             spacetimeTable={BitCraftTables.SecondaryKnowledgeDesc.spacetimeName}
@@ -109,11 +132,13 @@ export default function KnowledgeDetail() {
                 {
                     id: "item", label: msg`Item`, count: item() ? 1 : 0,
                     content: () => (
-                        <Show when={item()}>
-                            {d => <div class="p-1">
-                                <ItemLink id={d().id} name={d().name}/>
-                            </div>}
-                        </Show>
+                        <RelTable<KnowledgeItem> data={[item()!]} columns={[
+                            {header: msg`Item`, cell: ki => (
+                                <Show when={ki.type === "cargo"} fallback={<ItemLink id={ki.item.id} name={ki.item.name}/>}>
+                                    <CargoLink id={ki.item.id} name={ki.item.name}/>
+                                </Show>
+                            )}
+                        ]}/>
                     ),
                 },
                 questRequirementsTab(questRequires()),

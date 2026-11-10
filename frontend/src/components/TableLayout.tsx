@@ -1,5 +1,5 @@
 import {useLocation} from "@solidjs/router";
-import {ColumnDef} from "@tanstack/solid-table"
+import {ColumnDef, InitialTableState} from "@tanstack/solid-table"
 import {Accessor, Show} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
 import {DataTable, FilterSetupProps} from "~/components/data-table/data-table";
@@ -14,6 +14,8 @@ interface TableLayoutProps<TData> {
     title: Label | string;
     items: Accessor<TData[] | undefined>
     idAccessor?: AccessorProp<TData, any>
+    /** Seeds the sort when the table's session has none; a sort the user picked takes over. */
+    initialState?: InitialTableState
     colDefs: {
         columns: ColumnDef<TData>[]
         facetedFilters?: FilterSetupProps<TData, any>[]
@@ -53,6 +55,7 @@ export default function TableLayout<TData>(props: TableLayoutProps<TData>) {
                             columns={props.colDefs.columns}
                             facetedFilters={props.colDefs.facetedFilters}
                             searchColumns={props.colDefs.searchColumns}
+                            initialState={props.initialState}
                         />
                     )}
                 </Show>

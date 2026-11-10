@@ -3,6 +3,7 @@ import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {lootTab} from "~/components/fun/BricoLootBox";
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
@@ -43,6 +44,7 @@ import {
     enemyDropsTab,
     extractionTab,
     itemListsTab,
+    knowledgeTab,
     placeableInteractionsTab,
     placeablePlacementTab,
     questRequirementsTab,
@@ -67,10 +69,11 @@ export default function CargoDetail() {
         return cargoIndex().get(id);
     });
 
-    const knowledgeName = createMemo(() => {
+    const knowledge = createMemo(() => {
         const c = cargo();
-        if (!c?.secondaryKnowledgeId) return undefined;
-        return knowledgeIndex().get(c.secondaryKnowledgeId)?.name;
+        if (!c?.secondaryKnowledgeId) return [];
+        const k = knowledgeIndex().get(c.secondaryKnowledgeId);
+        return k ? [k] : [];
     });
 
     // ─── Per-type recipe/relationship finders ───────────────────
@@ -133,7 +136,6 @@ export default function CargoDetail() {
                 {label: msg`Blocks Path`, value: cargo()?.blocksPath},
                 {label: msg`Not Pickupable`, value: cargo()?.notPickupable ? true : undefined},
                 //{label: "Despawn Time", value: readableSeconds(fixFloat(cargo()?.despawnTime))}, // game doesn't actually use this anymore, cargo are just DroppedItems now
-                {label: msg`Knowledge`, value: knowledgeName()},
             ]}
             rawData={cargo()}
             spacetimeTable={BitCraftTables.CargoDesc.spacetimeName}
@@ -157,6 +159,8 @@ export default function CargoDetail() {
                 abilitiesTab(abilities()),
                 claimResearchTab(researchRequires()),
                 itemListsTab(inItemLists()),
+                knowledgeTab(knowledge()),
+                modelTab(() => cargo() && {paths: [...new Set([cargo()!.modelAssetName, cargo()!.carriedModelAssetName])]}),
                 ...(cargo()?.id === 92169812 && easterEggs() ? [lootTab()] : [])
             ]}
         />

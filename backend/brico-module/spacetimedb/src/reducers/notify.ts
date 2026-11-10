@@ -3,7 +3,7 @@
 import {CraftError} from '@brico/crafts/errors';
 import {SenderError, t} from 'spacetimedb/server';
 import {requireAccount} from '../lib/auth';
-import {findFundingTrigger, requireOwnDiscordSink} from '../lib/notify';
+import {findCommentToastTrigger, findFundingTrigger, requireOwnDiscordSink} from '../lib/notify';
 import {clampClientTimestamp, isAtLeastAsNew} from '../lib/sync';
 import {spacetimedb} from '../schema';
 import {NotifySinkRef} from '../tables/notify';
@@ -88,6 +88,41 @@ export const detachCraftFilterNotifyTrigger = spacetimedb.reducer(
         if (!isAtLeastAsNew(clampedDeletedAt, existing.updatedAt)) return;
 
         ctx.db.craft_filter_notify_trigger.id.update({...existing, updatedAt: clampedDeletedAt, deletedAt: clampedDeletedAt});
+    }
+);
+
+/** Creates or edits the caller's comment-notification trigger. Only the toast sink is supported. */
+export const upsertCommentNotifyTrigger = spacetimedb.reducer(
+    {id: t.string(), sink: NotifySinkRef, reply: t.bool(), updatedAt: t.timestamp()},
+    (ctx, {id, sink, reply, updatedAt}) => {
+        requireAccount(ctx);
+        if (sink.tag !== 'toast') throw new SenderError(CraftError.COMMENT_NOTIFY_SINK_UNSUPPORTED);
+
+        const existing = findCommentToastTrigger(ctx, ctx.sender);
+        const clampedUpdatedAt = clampClientTimestamp(ctx, updatedAt);
+        if (existing !== null && !isAtLeastAsNew(clampedUpdatedAt, existing.updatedAt)) return;
+
+        if (existing === null) {
+            ctx.db.comment_notify_trigger.insert({id, accountIdentity: ctx.sender, sink, reply, updatedAt: clampedUpdatedAt, deletedAt: undefined});
+        } else {
+            ctx.db.comment_notify_trigger.id.update({...existing, reply, updatedAt: clampedUpdatedAt, deletedAt: undefined});
+        }
+    }
+);
+
+/** Tombstones the caller's own comment trigger (no hard delete), restoring the default. Silent no-op if already gone. */
+export const detachCommentNotifyTrigger = spacetimedb.reducer(
+    {id: t.string(), deletedAt: t.timestamp()},
+    (ctx, {id, deletedAt}) => {
+        requireAccount(ctx);
+        const existing = ctx.db.comment_notify_trigger.id.find(id);
+        if (existing === null) return;
+        if (!existing.accountIdentity.isEqual(ctx.sender)) {
+            throw new SenderError(CraftError.COMMENT_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT);
+        }
+        const clampedDeletedAt = clampClientTimestamp(ctx, deletedAt);
+        if (!isAtLeastAsNew(clampedDeletedAt, existing.updatedAt)) return;
+        ctx.db.comment_notify_trigger.id.update({...existing, updatedAt: clampedDeletedAt, deletedAt: clampedDeletedAt});
     }
 );
 

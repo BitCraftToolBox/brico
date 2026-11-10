@@ -33,6 +33,9 @@ Nothing about the connection manager or `connection.ts` distinguishes them — t
 | A table whose rows arrive as a live feed          | `LiveTable`, not `DataTable` |
 | Adding a new prism table to a resource            | `prismTable(tables.x)` (whole table) or `prismRows(tables.x, tables.x.where(...))` (narrowed) |
 | Adding a new brico-app view to a resource         | `bricoAppTable(tables.x)` |
+| Subscribing to a view that takes arguments        | A raw SQL string, `{table: "user_comments", query: "SELECT * FROM user_comments('item:1')"}`; filter the shared cache by the argument when reading |
+
+View-with-arg format is as of SpacetimeDB 2.14. Future versions should introduce query builder syntax for these.
 
 ## Connection manager
 
@@ -84,6 +87,11 @@ and the SDK delivers one callback per row, so coalesce it yourself (see `relay.t
 readiness" below for `ready`. `release()` is idempotent and auto-wired to the owning computation's
 cleanup when called during render; call it yourself if the request was made outside one (e.g. from
 a timer).
+
+An optional third argument, `onDispose`, runs once when the resource is actually dropped (grace
+period elapsed, or the connection shut down) — use it to tear down state that should live exactly as
+long as the subscription, rather than as long as the requesting component (`relay.ts`'s effort
+history). Only the request that creates the resource registers it; joiners' callbacks are ignored.
 
 **prism vs brico-app**: pick the server that owns the data you need. World/game data (crafts,
 claims, players, regions) is prism, always anonymous. Per-account data (accounts, saved filters,

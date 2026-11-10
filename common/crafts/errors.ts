@@ -189,6 +189,9 @@ export const CraftError = {
     INVALID_FUNDING_STATUS: 'INVALID_FUNDING_STATUS',
     FUNDING_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT: 'FUNDING_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT',
     DISCORD_FUNDING_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT: 'DISCORD_FUNDING_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT',
+    COMMENT_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT: 'COMMENT_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT',
+    /** `upsertCommentNotifyTrigger` — comment notifications only support the toast sink. */
+    COMMENT_NOTIFY_SINK_UNSUPPORTED: 'COMMENT_NOTIFY_SINK_UNSUPPORTED',
 
     // API keys
     /** `createApiKey` — the name is empty or longer than `MAX_API_KEY_NAME_LENGTH`. */
@@ -201,6 +204,62 @@ export const CraftError = {
     INVALID_API_KEY_ENTROPY: 'INVALID_API_KEY_ENTROPY',
     /** `deleteApiKey` — no such key, or it belongs to another account. */
     UNKNOWN_API_KEY: 'UNKNOWN_API_KEY',
+
+    // Comments
+    /** `setDisplayName` — fails `checkDisplayName` (`@brico/crafts/comments`) other than by being too long. */
+    DISPLAY_NAME_INVALID: 'DISPLAY_NAME_INVALID',
+    /** `setDisplayName` — a moderator has locked the account's name (`nameLockedUntil`). */
+    NAME_CHANGE_RESTRICTED: 'NAME_CHANGE_RESTRICTED',
+    /** `postComment`/`editComment` — the page key doesn't match `isValidCommentPageKey`. */
+    INVALID_COMMENT_PAGE_KEY: 'INVALID_COMMENT_PAGE_KEY',
+    /** `postComment`/`editComment` — empty, over `MAX_COMMENT_LENGTH`, or has control characters (`normalizeCommentBody`). */
+    INVALID_COMMENT_BODY: 'INVALID_COMMENT_BODY',
+    /** `postComment` — no display name or active linked handle to post under; the user has to set one in their profile. */
+    COMMENT_AUTHOR_NAME_REQUIRED: 'COMMENT_AUTHOR_NAME_REQUIRED',
+    /** `postComment`/`editComment` — a moderator has blocked the account from posting (`postBlockedUntil`). */
+    POSTING_RESTRICTED: 'POSTING_RESTRICTED',
+    /** `postComment` — inside `COMMENT_COOLDOWN_SECONDS` of the account's previous post. */
+    COMMENT_COOLDOWN: 'COMMENT_COOLDOWN',
+    /** `postComment` — `MAX_COMMENTS_PER_HOUR` reached. */
+    COMMENT_RATE_LIMITED: 'COMMENT_RATE_LIMITED',
+    /** `postComment` — the page holds `MAX_TOP_LEVEL_COMMENTS_PER_PAGE` top-level comments. */
+    COMMENT_PAGE_FULL: 'COMMENT_PAGE_FULL',
+    /** `postComment` — the parent doesn't exist, is on another page, or isn't visible. */
+    INVALID_COMMENT_PARENT: 'INVALID_COMMENT_PARENT',
+    /** `postComment` — the parent is already at `MAX_COMMENT_DEPTH`. */
+    COMMENT_TOO_DEEP: 'COMMENT_TOO_DEEP',
+    /** `editComment`/`deleteOwnComment` — no such comment. */
+    UNKNOWN_COMMENT: 'UNKNOWN_COMMENT',
+    /** `editComment`/`deleteOwnComment` — the comment belongs to another account. */
+    COMMENT_BELONGS_TO_ANOTHER_ACCOUNT: 'COMMENT_BELONGS_TO_ANOTHER_ACCOUNT',
+    /** `editComment` — the comment was deleted or hidden. */
+    COMMENT_NOT_EDITABLE: 'COMMENT_NOT_EDITABLE',
+    /** `voteComment` — the caller wrote the comment. */
+    CANNOT_VOTE_OWN_COMMENT: 'CANNOT_VOTE_OWN_COMMENT',
+    /** `voteComment` — a vote can only be cast or changed on a visible comment. */
+    COMMENT_NOT_VOTABLE: 'COMMENT_NOT_VOTABLE',
+
+    // Moderation
+    /** The caller has no `moderator` row. */
+    NOT_MODERATOR: 'NOT_MODERATOR',
+    /** `reportComment` — a moderator has blocked the account from reporting (`reportBlockedUntil`). */
+    REPORTING_RESTRICTED: 'REPORTING_RESTRICTED',
+    /** `reportComment` — `MAX_REPORTS_PER_HOUR` reached. */
+    REPORT_RATE_LIMITED: 'REPORT_RATE_LIMITED',
+    /** `reportComment` — the reason is `updated`, which only `editComment` files. */
+    INVALID_REPORT_REASON: 'INVALID_REPORT_REASON',
+    /** `reportComment` — the note exceeds `MAX_REPORT_NOTE_LENGTH` or has control characters. */
+    INVALID_REPORT_NOTE: 'INVALID_REPORT_NOTE',
+    /** `resolveReport` — no such report. */
+    UNKNOWN_COMMENT_REPORT: 'UNKNOWN_COMMENT_REPORT',
+    /** `setCommentStatus` — the target status isn't `Visible` or `Hidden`. */
+    INVALID_COMMENT_STATUS: 'INVALID_COMMENT_STATUS',
+    /** `setAccountPermissions` — the reason exceeds `MAX_MODERATION_REASON_LENGTH` or has control characters. */
+    INVALID_MODERATION_REASON: 'INVALID_MODERATION_REASON',
+    /** `setAccountPermissions` — a restriction end is later than `PERMANENT_UNTIL_MICROS`. */
+    INVALID_RESTRICTION_END: 'INVALID_RESTRICTION_END',
+    /** Moderation actions on an account can't target another moderator. */
+    CANNOT_MODERATE_MODERATOR: 'CANNOT_MODERATE_MODERATOR',
 } as const;
 
 export type CraftErrorCode = (typeof CraftError)[keyof typeof CraftError];

@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-23 09:05\n"
+"PO-Revision-Date: 2026-10-30 10:43\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -38,10 +38,6 @@ msgstr ""
 msgid "Unlink this channel?"
 msgstr ""
 
-#: src/routes/account/settings.tsx
-msgid "Notification targets"
-msgstr ""
-
 #. placeholder {0}: pendingImport()?.length ?? 0
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Import {0, plural, one {# filter} other {# filters}}?"
@@ -65,12 +61,21 @@ msgstr "Kompendium"
 msgid "Total Passive Slots"
 msgstr ""
 
+#: src/lib/premium-items.ts
+msgid "Other"
+msgstr ""
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Go to your <0>Stelo</0> account."
 msgstr ""
 
 #: src/components/crafts/FundingStatus.tsx
 msgid "Retries automatically."
+msgstr ""
+
+#: src/lib/notifications/state.tsx
+#: src/routes/account/notifications.tsx
+msgid "New reply"
 msgstr ""
 
 #: src/lib/table-defs/food-table.tsx
@@ -85,6 +90,10 @@ msgstr ""
 msgid "Converted from"
 msgstr ""
 
+#: src/components/comments/CommentItem.tsx
+msgid "Report as outdated"
+msgstr ""
+
 #: src/routes/bounty-dashboard.tsx
 msgid "This dashboard key is invalid or has been revoked."
 msgstr ""
@@ -93,12 +102,29 @@ msgstr ""
 msgid "{skillName} Task: {itemName}"
 msgstr ""
 
+#: src/lib/premium-items.ts
+msgid "Clothing"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "You've reached the hourly report limit. Try again later."
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+#: src/components/comments/ModeratorControls.tsx
+msgid "Clear outdated"
+msgstr ""
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "Edit bounty"
 msgstr ""
 
 #: src/routes/account/bounties.tsx
 msgid "For Stelo Hex Coin, link a wallet on your <0/> to receive payouts. They are sent in batches about once a day. <1>If you have no wallet linked, payouts are converted to the trust-backed Hex Coin ledger after a few days.</1> Brico.app no longer guarantees payouts after this rollover. Link a wallet before work on escrow-backed crafts pays out to avoid this."
+msgstr ""
+
+#: src/components/model-viewer/ModelViewer.tsx
+msgid "Models are for reference only and may not reflect in-game appearance."
 msgstr ""
 
 #. placeholder {0}: esp.radiusMin
@@ -111,8 +137,16 @@ msgstr ""
 msgid "Change language"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That comment notification setting belongs to a different account."
+msgstr ""
+
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Equivalent \"player inventory\" slots."
+msgstr ""
+
+#: src/components/comments/admin/AdminCommentList.tsx
+msgid "Page, e.g. item:1234"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -135,8 +169,16 @@ msgstr ""
 msgid "Auto-cast"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Your display name has been locked by a moderator."
+msgstr ""
+
 #: src/routes/database/skill/[id].tsx
 msgid "Prospect for {target}"
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Discovered By"
 msgstr ""
 
 #: src/routes/account/bounties.tsx
@@ -157,10 +199,12 @@ msgstr ""
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/lib/table-defs/collectible-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
+#: src/lib/table-defs/premium-items-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/item/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Type"
 msgstr ""
@@ -191,6 +235,10 @@ msgstr ""
 msgid "Un-hide {0, plural, one {# table column} other {# table columns}} across {1, plural, one {# table page} other {# table pages}}."
 msgstr ""
 
+#: src/components/model-viewer/fullscreen.tsx
+msgid "Reset view"
+msgstr ""
+
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "not in"
 msgid "{field} {cmpEl} {value}"
@@ -204,6 +252,8 @@ msgstr ""
 msgid "TF2 Mode"
 msgstr ""
 
+#: src/components/comments/CommentItem.tsx
+#: src/components/comments/ModeratorControls.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
 msgid "History"
@@ -219,6 +269,10 @@ msgstr ""
 msgid "Loading game data… {0}/{1}"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
+msgid "{skillName} XP/Progress"
+msgstr ""
+
 #: src/routes/account/settings.tsx
 msgid "Match"
 msgstr ""
@@ -230,6 +284,10 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That isn't a known display style."
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Search for a page to link…"
 msgstr ""
 
 #. placeholder {0}: entries.length
@@ -256,6 +314,10 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "Unknown event: {kind}"
+msgstr ""
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Basic"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -288,6 +350,14 @@ msgstr ""
 msgid "No results."
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "see all"
+msgstr ""
+
+#: src/components/GlobalSearchInput.tsx
+msgid "<0>Shift</0>+click to insert several · ←→ switch tabs"
+msgstr ""
+
 #: src/routes/bounty-dashboard.tsx
 msgid "Couldn't refresh the dashboard."
 msgstr ""
@@ -306,6 +376,11 @@ msgstr "Beruf"
 msgid "Priority"
 msgstr ""
 
+#. placeholder {0}: props.until.toDate().toLocaleString(uiLocale())
+#: src/routes/admin/comments/commenter.tsx
+msgid "until {0}"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "No construction recipe"
 msgstr ""
@@ -317,6 +392,14 @@ msgstr ""
 #: src/components/Nav.tsx
 #: src/routes/settings.tsx
 msgid "Light"
+msgstr ""
+
+#: src/routes/admin/comments/reports.tsx
+msgid "Dismiss"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Open"
 msgstr ""
 
 #: src/routes/account/loyalty.tsx
@@ -342,8 +425,8 @@ msgstr "Schaltet frei"
 msgid "EXP"
 msgstr "EXP"
 
-#: src/lib/recipe-stats.tsx
-msgid "Paving Tier:"
+#: src/lib/crafts/error-vocab.ts
+msgid "Choose a reason for the report."
 msgstr ""
 
 #: src/routes/account/settings.tsx
@@ -378,6 +461,10 @@ msgstr ""
 msgid "List"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "Log in to be notified about comments and funding, and to add Discord notifications for craft watches."
+msgstr ""
+
 #: src/components/shared/PlaceableGraph.tsx
 msgid "→ {outputQty}× {outputName}"
 msgstr ""
@@ -388,6 +475,10 @@ msgstr ""
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "The account that linked the funding wallet is no longer an Admin or Owner of it."
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Joined"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -418,6 +509,10 @@ msgstr ""
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Requirement"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Restrictions"
 msgstr ""
 
 #: src/components/Nav.tsx
@@ -457,8 +552,19 @@ msgstr "Wissensschriftrolle"
 msgid "Any manually applied column sort will override this."
 msgstr ""
 
+#: src/components/comments/admin/AdminCommentList.tsx
+#: src/components/comments/admin/AdminCommentRow.tsx
+#: src/components/comments/admin/AdminLayout.tsx
+#: src/components/comments/CommentItem.tsx
+msgid "Pending review"
+msgstr ""
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "% of total"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Restrictions saved"
 msgstr ""
 
 #: src/components/shared/GameIcon.tsx
@@ -512,6 +618,10 @@ msgstr ""
 msgid "Move down"
 msgstr ""
 
+#: src/components/model-viewer/DressingRoom.tsx
+msgid "Copy link to this outfit"
+msgstr ""
+
 #: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "private"
@@ -519,6 +629,10 @@ msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "Contributor"
+msgstr ""
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Collecting samples…"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -533,12 +647,20 @@ msgstr ""
 msgid "Clear grid"
 msgstr ""
 
+#: src/components/comments/CommentComposer.tsx
+msgid "Nothing to preview."
+msgstr ""
+
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Stage"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "Could not generate a share code — try again."
+msgstr ""
+
+#: src/components/model-viewer/fullscreen.tsx
+msgid "Fullscreen"
 msgstr ""
 
 #: src/routes/account/profile.tsx
@@ -583,6 +705,10 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That account is already linked to a different brico account."
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "New display name"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -652,8 +778,13 @@ msgstr ""
 msgid "Item Stack Size"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Effort:"
+#: src/components/comments/admin/AdminCommentList.tsx
+msgid "Any status"
+msgstr ""
+
+#. placeholder {0}: childIds().length
+#: src/components/comments/CommentItem.tsx
+msgid "{0, plural, one {Show # reply} other {Show # replies}}"
 msgstr ""
 
 #: src/routes/account/link.tsx
@@ -672,8 +803,8 @@ msgstr ""
 msgid "Threat"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Blocking Knowledge:"
+#: src/routes/admin/comments/commenter.tsx
+msgid "No display name"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -685,6 +816,7 @@ msgstr ""
 msgid "{funcName} Lvl {0}"
 msgstr ""
 
+#: src/components/comments/ReportDialog.tsx
 #: src/routes/account/payees.tsx
 msgid "Note (optional)"
 msgstr ""
@@ -753,6 +885,11 @@ msgstr ""
 msgid "Unlink"
 msgstr ""
 
+#: src/lib/sidebar-items.ts
+#: src/routes/tools/dressing-room.tsx
+msgid "Dressing Room"
+msgstr ""
+
 #. placeholder {0}: unreadCount()
 #: src/routes/account/notifications.tsx
 msgid "{0, plural, one {# unread} other {# unread}}"
@@ -768,9 +905,15 @@ msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/shared/RelTablePresets.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/combat-table.tsx
 msgid "Range"
 msgstr "Reichweite"
+
+#: src/routes/admin/comments/commenter.tsx
+#: src/routes/admin/comments/reports.tsx
+msgid "Reporter"
+msgstr ""
 
 #: src/lib/table-defs/cargo-table.tsx
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -780,6 +923,10 @@ msgstr ""
 
 #: src/routes/discord/installed.tsx
 msgid "Brico.app Discord Bot"
+msgstr ""
+
+#: src/components/crafts/EffortChart.tsx
+msgid "away"
 msgstr ""
 
 #: src/routes/account/bounty-rules.tsx
@@ -806,6 +953,7 @@ msgstr ""
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/deployable/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Name"
 msgstr "Name"
@@ -853,9 +1001,19 @@ msgstr ""
 msgid "A dashboard key is meant to be shared. Anyone holding it can see your payees' names, what they've earned and been paid, and your bounties, including private ones."
 msgstr ""
 
+#: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
 #: src/routes/tools/index.tsx
 msgid "Toolbox"
+msgstr ""
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Sort Priority"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Posting and editing blocked"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -879,6 +1037,10 @@ msgstr ""
 
 #: src/routes/account/bounty-rules.tsx
 msgid "Skill/tier grid"
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+msgid "Confirm"
 msgstr ""
 
 #: src/components/data-table/table-pagination.tsx
@@ -911,6 +1073,10 @@ msgstr ""
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "Brico.app lost permission on the funding wallet."
+msgstr ""
+
+#: src/routes/database/collectible/[id].tsx
+msgid "Hexite Exchange"
 msgstr ""
 
 #: src/routes/account/payees.tsx
@@ -957,6 +1123,10 @@ msgstr ""
 msgid "Explore"
 msgstr ""
 
+#: src/lib/table-defs/resources-table.tsx
+msgid "Variable respawn. Spawns randomly among valid areas in the region when available resource count drops below a threshold."
+msgstr ""
+
 #: src/lib/sidebar-items.ts
 msgid "Weapons"
 msgstr "Waffen"
@@ -980,6 +1150,10 @@ msgstr ""
 
 #: src/components/crafts/FundingAlertsCard.tsx
 msgid "Get told when a bounty can't be funded from your Stelo wallet, a payout can't be pulled, or unclaimed money is moved. Discord channels appear once linked via <0>/notify link</0>."
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Reports they filed"
 msgstr ""
 
 #: src/lib/crafts/funding-vocab.ts
@@ -1021,12 +1195,20 @@ msgstr ""
 msgid "Join the project on Crowdin and contribute by using <0>translate.brico.app</0>."
 msgstr ""
 
+#: src/components/comments/admin/AdminCommentList.tsx
+msgid "Filtered to one author"
+msgstr ""
+
 #: src/routes/database/buff/[id].tsx
 msgid "If No, buff ticks down while offline."
 msgstr ""
 
 #: src/lib/crafts/payout-source.ts
 msgid "Unclaimed: returned to payer"
+msgstr ""
+
+#: src/lib/comments/moderation.ts
+msgid "Off topic"
 msgstr ""
 
 #: src/components/Nav.tsx
@@ -1042,6 +1224,12 @@ msgstr "Quests"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Yields when eaten"
+msgstr ""
+
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Price"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -1090,6 +1278,10 @@ msgstr ""
 msgid "Account"
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "Replace name"
+msgstr ""
+
 #: src/routes/database/resource/[id].tsx
 msgid "Depletion Drops"
 msgstr ""
@@ -1098,9 +1290,15 @@ msgstr ""
 msgid "Base Threat"
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "Name replaced"
+msgstr ""
+
 #: src/lib/table-defs/creature-table.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/lib/table-defs/placeables-table.tsx
+#: src/lib/table-defs/resources-table.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/creature/[id].tsx
 #: src/routes/database/placeable/[id].tsx
@@ -1116,6 +1314,10 @@ msgstr ""
 msgid "% Nodes for Max Contribution"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "Show a toast when someone replies to your comment."
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Ignores Global Cooldown"
 msgstr ""
@@ -1126,6 +1328,7 @@ msgstr ""
 msgid "Max Level"
 msgstr ""
 
+#: src/components/model-viewer/DressingRoom.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Weapon"
 msgstr "Waffe"
@@ -1133,6 +1336,10 @@ msgstr "Waffe"
 #: src/components/crafts/FundingAlertsCard.tsx
 #: src/routes/account/settings.tsx
 msgid "Toast"
+msgstr ""
+
+#: src/lib/comments/moderation.ts
+msgid "Abusive or harassing"
 msgstr ""
 
 #: src/routes/database/resource/[id].tsx
@@ -1180,6 +1387,10 @@ msgstr ""
 msgid "This recipe is fixed at one progress per hit."
 msgstr ""
 
+#: src/lib/comments/moderation.ts
+msgid "Something else"
+msgstr ""
+
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "Supply Cost"
@@ -1193,6 +1404,10 @@ msgstr ""
 msgid "A notification message can be at most {MAX_NOTIFY_TEMPLATE_LENGTH} characters."
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Replies can't be nested any deeper."
+msgstr ""
+
 #: src/lib/notifications/funding.tsx
 msgid "Bounties could not be funded"
 msgstr ""
@@ -1203,6 +1418,11 @@ msgstr ""
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "New key name"
+msgstr ""
+
+#. placeholder {0}: count()
+#: src/components/comments/CommentSection.tsx
+msgid "{0, plural, one {# comment} other {# comments}}"
 msgstr ""
 
 #: src/routes/database/combat/[id].tsx
@@ -1233,6 +1453,11 @@ msgstr ""
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/tools/crafts/browse.tsx
 msgid "This can't be undone. The filter will still be visible via previously created share codes, Discord displays, etc."
+msgstr ""
+
+#: src/routes/account/payees.tsx
+#: src/routes/account/payouts.tsx
+msgid "Exclude Self"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -1270,19 +1495,16 @@ msgstr ""
 msgid "Cargo Stack Size"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/paving-table.tsx
 #: src/lib/table-defs/pillar-shaping-table.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/lib/table-utils/column-builders.tsx
+#: src/lib/table-utils/detail-group-builders.tsx
 #: src/routes/database/collectible/[id].tsx
 #: src/routes/database/paving/[id].tsx
 #: src/routes/database/pillar-shaping/[id].tsx
 msgid "Required Knowledge"
-msgstr ""
-
-#. placeholder {0}: group.name
-#: src/lib/recipe-stats.tsx
-msgid "Group limit for {0}:"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
@@ -1341,6 +1563,10 @@ msgstr ""
 msgid "Cooldown"
 msgstr "Abklingzeit"
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Set a display name or link an account in your profile to post."
+msgstr ""
+
 #: src/routes/database/creature/[id].tsx
 msgid "Exp"
 msgstr ""
@@ -1369,6 +1595,10 @@ msgstr ""
 msgid "Co-owner"
 msgstr ""
 
+#: src/components/comments/ModeratorControls.tsx
+msgid "Diff"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Interactions"
 msgstr ""
@@ -1392,6 +1622,10 @@ msgstr ""
 msgid "Output Items"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "You can't report comments right now."
+msgstr ""
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Verified. Linking…"
 msgstr ""
@@ -1399,6 +1633,10 @@ msgstr ""
 #: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Bounty"
+msgstr ""
+
+#: src/components/model-viewer/model-tab.tsx
+msgid "3D Model"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -1417,6 +1655,10 @@ msgstr ""
 msgid "Placement Group"
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "expand"
+msgstr ""
+
 #: src/components/data-table/table-toolbar.tsx
 msgid "Link Copied! <0/>"
 msgstr ""
@@ -1433,6 +1675,18 @@ msgstr ""
 msgid "Terraforming Drops"
 msgstr ""
 
+#: src/components/comments/ReportDialog.tsx
+msgid "Report comment"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Display name locked"
+msgstr ""
+
+#: src/routes/admin/comments/reports.tsx
+msgid "Any reason"
+msgstr ""
+
 #: src/routes/database/combat/[id].tsx
 msgid "Inaction Time"
 msgstr ""
@@ -1445,6 +1699,14 @@ msgstr ""
 msgid "Moves the <0/> menu to the first column instead of the last."
 msgstr ""
 
+#: src/components/comments/admin/AdminLayout.tsx
+msgid "Recent"
+msgstr ""
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Lines"
+msgstr ""
+
 #: src/lib/relations.ts
 msgid "Trade {reqName} for {offerName} to {npcName}"
 msgstr ""
@@ -1454,10 +1716,6 @@ msgstr ""
 #: src/routes/database/collectible/[id].tsx
 msgid "Deed"
 msgstr "Urkunde"
-
-#: src/lib/recipe-stats.tsx
-msgid "Effort Required:"
-msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Registering…"
@@ -1476,10 +1734,6 @@ msgstr ""
 msgid "Breadcrumb Count"
 msgstr ""
 
-#: src/routes/account/settings.tsx
-msgid "Show a toast for a new notification anywhere on the site. The craft browser page always notifies on watched filters, regardless of this setting."
-msgstr ""
-
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Builds from"
 msgstr ""
@@ -1493,6 +1747,7 @@ msgid "Total Cargo Size"
 msgstr ""
 
 #: src/components/account/ApiKeysCard.tsx
+#: src/components/comments/CommentItem.tsx
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/notifications.tsx
@@ -1532,6 +1787,10 @@ msgstr ""
 msgid "Every"
 msgstr ""
 
+#: src/components/comments/admin/AdminLayout.tsx
+msgid "This page is for moderators."
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Options for the craft browser, a craft's detail page, and bounty rules."
 msgstr ""
@@ -1542,6 +1801,10 @@ msgstr ""
 
 #: src/routes/tools/crafts/browse.tsx
 msgid "Filters"
+msgstr ""
+
+#: src/lib/premium-items.ts
+msgid "Bundles"
 msgstr ""
 
 #: src/routes/account/my-bounties.tsx
@@ -1573,6 +1836,10 @@ msgstr ""
 msgid "Brico's Toolbox Discord"
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "How bounties are displayed, and how payees are grouped."
+msgstr ""
+
 #: src/routes/database/deployable/[id].tsx
 msgid "Show After Logout"
 msgstr ""
@@ -1580,6 +1847,12 @@ msgstr ""
 #: src/components/Nav.tsx
 #: src/routes/settings.tsx
 msgid "System"
+msgstr ""
+
+#: src/components/comments/admin/AdminCommentList.tsx
+#: src/components/comments/admin/AdminCommentRow.tsx
+#: src/components/comments/CommentItem.tsx
+msgid "Hidden"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -1592,6 +1865,10 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "This bounty has not been funded yet."
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Recent comments"
 msgstr ""
 
 #: src/routes/database/paving/[id].tsx
@@ -1608,12 +1885,13 @@ msgstr ""
 msgid "Profession Hit"
 msgstr ""
 
-#: src/components/crafts/FundingWalletSelect.tsx
-msgid "<0>Link a Stelo wallet</0> first."
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Base Price"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Traveler:"
+#: src/components/crafts/FundingWalletSelect.tsx
+msgid "<0>Link a Stelo wallet</0> first."
 msgstr ""
 
 #: src/lib/crafts/filter-condition.tsx
@@ -1633,11 +1911,18 @@ msgstr ""
 msgid "Go to last page"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That end date is out of range."
+msgstr ""
+
 #: src/routes/database/item/[id].tsx
 msgid "Durability"
 msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
+#: src/components/comments/CommentComposer.tsx
+#: src/components/comments/CommentItem.tsx
+#: src/components/comments/ReportDialog.tsx
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/profile.tsx
@@ -1650,8 +1935,8 @@ msgstr ""
 msgid "<0/><1>per effort</1>"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Tool:"
+#: src/components/comments/CommentSection.tsx
+msgid "Show comments"
 msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
@@ -1675,6 +1960,10 @@ msgstr ""
 msgid "Automatic"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
+msgid "Minimum distance to Claims"
+msgstr ""
+
 #: src/components/account/ApiKeysCard.tsx
 msgid "Done"
 msgstr ""
@@ -1683,9 +1972,17 @@ msgstr ""
 msgid "That link code is unknown or has expired."
 msgstr ""
 
+#: src/components/model-viewer/ModelViewer.tsx
+msgid "Left mouse: rotate · Right mouse: pan · Scroll: zoom"
+msgstr ""
+
 #: src/lib/table-defs/abilities-table.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Spawned Placeables"
+msgstr ""
+
+#: src/components/model-viewer/model-tab.tsx
+msgid "Try on in the Dressing Room"
 msgstr ""
 
 #: src/routes/database/ability/[id].tsx
@@ -1694,6 +1991,10 @@ msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Biome"
+msgstr ""
+
+#: src/components/comments/CommentSection.tsx
+msgid "Newest"
 msgstr ""
 
 #: src/lib/relations.ts
@@ -1730,6 +2031,10 @@ msgstr ""
 msgid "View style"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
+msgid "Interior Tier"
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "is"
 msgstr ""
@@ -1762,6 +2067,10 @@ msgstr ""
 msgid "Max Speed"
 msgstr ""
 
+#: src/components/comments/ModeratorControls.tsx
+msgid "Flag outdated"
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Ability"
@@ -1783,8 +2092,13 @@ msgstr ""
 msgid "Ranges"
 msgstr ""
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Estimated completion: Collecting data…"
+msgstr ""
+
+#: src/components/model-viewer/DressingRoom.tsx
 #: src/components/shared/RecipeDisplay.tsx
-#: src/lib/recipe-stats.tsx
+#: src/routes/admin/comments/commenter.tsx
 #: src/routes/database/building/[id].tsx
 #: src/routes/database/claim-research/[id].tsx
 msgid "None"
@@ -1796,6 +2110,7 @@ msgstr ""
 
 #: src/lib/recipe-stats.tsx
 #: src/lib/relations.ts
+#: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "Unknown"
 msgstr ""
@@ -1844,8 +2159,21 @@ msgstr ""
 msgid "Buff"
 msgstr ""
 
+#: src/components/crafts/EffortChart.tsx
+msgid "resting"
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+msgid "Edit"
+msgstr ""
+
 #: src/routes/account/settings.tsx
 msgid "Removed"
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+#: src/components/comments/CommentSection.tsx
+msgid "Score"
 msgstr ""
 
 #: src/lib/crafts/funding-vocab.ts
@@ -1868,7 +2196,8 @@ msgstr ""
 #: src/components/shared/RelTablePresets.tsx
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/quests-table.tsx
-#: src/routes/database/cargo/[id].tsx
+#: src/lib/table-utils/detail-group-builders.tsx
+#: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Knowledge"
 msgstr "Wissen"
 
@@ -1878,6 +2207,10 @@ msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Guaranteed to spawn on depletion."
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Code"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -1892,6 +2225,10 @@ msgstr ""
 
 #: src/components/crafts/PayoutHistoryDialog.tsx
 msgid "No transactions yet."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Only moderators can do that."
 msgstr ""
 
 #: src/components/crafts/FundingWalletSelect.tsx
@@ -1917,6 +2254,23 @@ msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Bonuses"
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+msgid "Report this comment as outdated?"
+msgstr ""
+
+#: src/components/comments/admin/AdminCommentList.tsx
+msgid "No comments match."
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+msgid "Upvote"
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+#: src/lib/crafts/error-vocab.ts
+msgid "You can't vote on your own comment."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -2046,6 +2400,14 @@ msgstr ""
 msgid "{0} bounty rules or overrides name it as the funding wallet; they stop being fundable."
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
+msgid "Paving Tier"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "You've reached the hourly comment limit. Try again later."
+msgstr ""
+
 #. placeholder {0}: notification.event.craftId
 #: src/routes/tools/crafts/browse.tsx
 msgid "Craft {0}"
@@ -2098,6 +2460,15 @@ msgstr ""
 msgid "Can Auto-Follow"
 msgstr ""
 
+#: src/components/comments/CommentItem.tsx
+#: src/components/comments/ReportDialog.tsx
+msgid "Report"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Moderator"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Want to help translate Brico.app?"
 msgstr ""
@@ -2118,8 +2489,12 @@ msgstr ""
 msgid "Money owed to you went unclaimed and was returned to the payer"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Minimum distance to Group:"
+#: src/routes/admin/comments/commenter.tsx
+msgid "1 day"
+msgstr ""
+
+#: src/lib/sidebar-items.ts
+msgid "Premium Items"
 msgstr ""
 
 #: src/lib/crafts/funding-vocab.ts
@@ -2128,6 +2503,10 @@ msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Enter the account address, like #ABCDEF."
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Reason (shown to moderators only)"
 msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
@@ -2185,6 +2564,10 @@ msgstr ""
 msgid "Anyone with this dashboard link can see your payees and bounties, including private ones."
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "Where and when Brico.app notifies you."
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "is any of"
 msgstr ""
@@ -2198,6 +2581,7 @@ msgid "Consumption Chance"
 msgstr ""
 
 #: src/components/account/ApiKeysCard.tsx
+#: src/components/comments/CommentItem.tsx
 msgid "Copy"
 msgstr ""
 
@@ -2208,6 +2592,10 @@ msgstr ""
 #: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/routes/account/payees.tsx
 msgid "Amount"
+msgstr ""
+
+#: src/routes/database/building/[id].tsx
+msgid "Basket"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -2225,6 +2613,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Loading translations…"
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Effort Required"
 msgstr ""
 
 #: src/components/crafts/craft-columns.tsx
@@ -2272,6 +2664,10 @@ msgstr ""
 msgid "Forced to Crowdin's target language for review."
 msgstr ""
 
+#: src/routes/account/settings.tsx
+msgid "Show a toast for a watched craft anywhere on the site, not just on craft pages."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Byproduct of eating"
 msgstr ""
@@ -2288,6 +2684,14 @@ msgstr ""
 msgid "Item"
 msgstr ""
 
+#: src/components/comments/ModeratorControls.tsx
+msgid "Original"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "The comment you're replying to is no longer available."
+msgstr ""
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Paste"
 msgstr ""
@@ -2302,6 +2706,10 @@ msgstr ""
 
 #: src/routes/database/building/[id].tsx
 msgid "Unenterable"
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Write"
 msgstr ""
 
 #: src/routes/account/loyalty.tsx
@@ -2333,6 +2741,7 @@ msgstr ""
 #: src/lib/account/route-tabs.tsx
 #: src/routes/account/index.tsx
 #: src/routes/account/notifications.tsx
+#: src/routes/account/settings.tsx
 msgid "Notifications"
 msgstr ""
 
@@ -2353,15 +2762,12 @@ msgid "Link Filters <0/>"
 msgstr ""
 
 #: src/components/shared/RelTablePresets.tsx
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Stamina"
 msgstr "Ausdauer"
-
-#: src/lib/recipe-stats.tsx
-msgid "{skillName} Exp:"
-msgstr ""
 
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
@@ -2376,6 +2782,10 @@ msgstr ""
 #: src/lib/table-defs/food-table.tsx
 msgid "HP"
 msgstr "Gesundheit"
+
+#: src/components/comments/CommentItem.tsx
+msgid "Reply"
+msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Despawns"
@@ -2443,6 +2853,10 @@ msgstr ""
 msgid "Sell <0/> to {npcName}"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "You can't post comments right now."
+msgstr ""
+
 #: src/routes/account/my-bounties.tsx
 msgid "Estimated outgoing"
 msgstr ""
@@ -2477,16 +2891,16 @@ msgstr ""
 msgid "Shown to other players wherever your account is credited."
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "Dismissed"
+msgstr ""
+
 #: src/lib/recipe-stats.tsx
 msgid "No tool"
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Required to Start"
-msgstr ""
-
-#: src/lib/recipe-stats.tsx
-msgid "Building:"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -2513,6 +2927,14 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "Only Stelo currencies use a funding wallet."
+msgstr ""
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Reset zoom"
+msgstr ""
+
+#: src/components/comments/admin/AdminLayout.tsx
+msgid "Comment moderation"
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
@@ -2550,6 +2972,10 @@ msgstr ""
 msgid "View"
 msgstr ""
 
+#: src/components/model-viewer/ModelViewer.tsx
+msgid "This model could not be loaded."
+msgstr ""
+
 #: src/routes/account/profile.tsx
 msgid "Link Discord"
 msgstr ""
@@ -2560,6 +2986,10 @@ msgstr ""
 
 #: src/routes/account/my-bounties.tsx
 msgid "You don't have any bounties yet. Set one on a craft or add a rule under Bounty rules."
+msgstr ""
+
+#: src/routes/database/building/[id].tsx
+msgid "Bottom platform"
 msgstr ""
 
 #: src/components/shared/RelTablePresets.tsx
@@ -2606,21 +3036,17 @@ msgstr ""
 msgid "Place ({placeDuration})"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Required Research:"
-msgstr ""
-
 #: src/components/shared/RecipeDisplay.tsx
 #: src/routes/database/ability/[id].tsx
 msgid "Chance"
 msgstr ""
 
-#: src/routes/account/profile.tsx
-msgid "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
+#: src/components/comments/VersionBadge.tsx
+msgid "edited"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Claim Tier:"
+#: src/routes/account/profile.tsx
+msgid "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
 msgstr ""
 
 #: src/routes/bounty-dashboard.tsx
@@ -2725,8 +3151,16 @@ msgstr ""
 msgid "Linked accounts"
 msgstr ""
 
+#: src/components/comments/CommentComposer.tsx
+msgid "Bold"
+msgstr ""
+
 #: src/lib/recipe-stats.tsx
 msgid "Prospecting Hits"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Save restrictions"
 msgstr ""
 
 #. placeholder {0}: props.row.name
@@ -2769,6 +3203,10 @@ msgstr ""
 msgid "No stats found."
 msgstr ""
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Players hitting now"
+msgstr ""
+
 #: src/components/crafts/FundingAlertsCard.tsx
 msgid "Payout shortfall"
 msgstr ""
@@ -2780,6 +3218,12 @@ msgstr "Errungenschaftspunkte"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Import"
+msgstr ""
+
+#: src/components/comments/admin/AdminCommentList.tsx
+#: src/components/comments/admin/AdminCommentRow.tsx
+#: src/components/comments/CommentItem.tsx
+msgid "Deleted by author"
 msgstr ""
 
 #: src/routes/database/skill/[id].tsx
@@ -2833,6 +3277,10 @@ msgstr ""
 msgid "Is Self Targeting"
 msgstr ""
 
+#: src/components/comments/CommentItem.tsx
+msgid "Delete this comment?"
+msgstr ""
+
 #: src/components/data-table/table-view-options.tsx
 msgid "Hide All"
 msgstr ""
@@ -2854,11 +3302,16 @@ msgstr ""
 msgid "Threat Per Damage"
 msgstr ""
 
+#: src/components/model-viewer/ModelViewer.tsx
+msgid "Viewer controls and notice"
+msgstr ""
+
 #: src/routes/account/profile.tsx
 msgid "Link your BitCraft account to get credit for crafts and contributions."
 msgstr ""
 
 #: src/components/shared/RecipeDisplay.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Time"
 msgstr ""
@@ -2990,10 +3443,16 @@ msgstr ""
 msgid "Couldn't generate a key right now — try again in a minute."
 msgstr ""
 
+#: src/components/model-viewer/DressingRoom.tsx
+#: src/lib/recipe-stats.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/terraforming/[id].tsx
 msgid "Tool"
 msgstr "Werkzeug"
+
+#: src/lib/comments/moderation.ts
+msgid "Author updated an outdated comment"
+msgstr ""
 
 #: src/lib/table-defs/claim-research-table.tsx
 msgid "Supply Cap"
@@ -3008,12 +3467,12 @@ msgstr ""
 msgid "Payout"
 msgstr ""
 
-#: src/routes/database/cargo/[id].tsx
-msgid "Place Time"
+#: src/components/comments/CommentComposer.tsx
+msgid "Numbered list"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Shows Time Left:"
+#: src/routes/database/cargo/[id].tsx
+msgid "Place Time"
 msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
@@ -3026,6 +3485,10 @@ msgstr ""
 
 #: src/routes/settings.tsx
 msgid "Enables various menus and displays that aren't useful to most players."
+msgstr ""
+
+#: src/lib/premium-items.ts
+msgid "Emotes"
 msgstr ""
 
 #: src/lib/crafts/filter-condition.tsx
@@ -3151,6 +3614,11 @@ msgstr ""
 msgid "effort logged: {0} ({1}%)"
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+#: src/routes/admin/comments/reports.tsx
+msgid "Comment not found."
+msgstr ""
+
 #: src/lib/recipe-stats.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Chance per hit"
@@ -3176,6 +3644,10 @@ msgstr ""
 msgid "Press Link."
 msgstr ""
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Craft complete."
+msgstr ""
+
 #: src/components/data-table/table-faceted-filter.tsx
 #: src/components/GlobalSearchInput.tsx
 #: src/routes/search.tsx
@@ -3192,6 +3664,19 @@ msgstr ""
 
 #: src/routes/database/claim-research/[id].tsx
 msgid "Research Time"
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+#: src/components/comments/ReportDialog.tsx
+msgid "Report sent"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "Replies"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "The note is too long or contains unsupported characters."
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -3219,6 +3704,7 @@ msgstr ""
 msgid "Required Skill"
 msgstr ""
 
+#: src/lib/table-defs/resources-table.tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Scheduled Respawn"
 msgstr ""
@@ -3277,6 +3763,10 @@ msgstr ""
 msgid "<empty>"
 msgstr ""
 
+#: src/lib/premium-items.ts
+msgid "Pets"
+msgstr ""
+
 #: src/routes/search.tsx
 msgid "Search items, buildings, creatures, recipes..."
 msgstr ""
@@ -3310,8 +3800,8 @@ msgstr ""
 msgid "My payouts"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Interior Tier:"
+#: src/components/comments/CommentItem.tsx
+msgid "Mark this comment as outdated?"
 msgstr ""
 
 #: src/lib/sidebar-items.ts
@@ -3332,10 +3822,6 @@ msgstr ""
 
 #: src/components/crafts/FundingStatus.tsx
 msgid "Last failure:"
-msgstr ""
-
-#: src/lib/recipe-stats.tsx
-msgid "Minimum distance to Claims:"
 msgstr ""
 
 #: src/lib/table-defs/traveler-tasks-table.tsx
@@ -3365,10 +3851,6 @@ msgstr ""
 msgid "Language for in-game names, descriptions, etc.<0/><1>Official (though AI-generated) translations from Clockwork Labs. These reflect in-game text, and are not controlled by Brico.app.</1>"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Time:"
-msgstr ""
-
 #: src/routes/database/skill/[id].tsx
 msgid "Unlock achievement <0/>"
 msgstr ""
@@ -3378,6 +3860,10 @@ msgstr ""
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
 msgid "Something went wrong"
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Shows Time Left"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -3408,6 +3894,10 @@ msgstr ""
 
 #: src/components/crafts/FundingStatus.tsx
 msgid "from rule"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "This page has reached its comment limit."
 msgstr ""
 
 #: src/lib/table-utils/column-builders.tsx
@@ -3479,6 +3969,10 @@ msgstr ""
 msgid "Brico.app needs Write access on this wallet before it can fund the bounty."
 msgstr ""
 
+#: src/components/comments/admin/AdminCommentList.tsx
+msgid "Visible"
+msgstr ""
+
 #: src/routes/database/building/[id].tsx
 msgid "Terraform"
 msgstr ""
@@ -3507,8 +4001,18 @@ msgstr ""
 msgid "Raw Data"
 msgstr ""
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Stacked"
+msgstr ""
+
 #: src/routes/database/prospecting/[id].tsx
 msgid "Prospecting Duration"
+msgstr ""
+
+#. placeholder {0}: senderName()
+#. placeholder {1}: t().name
+#: src/lib/notifications/comment.tsx
+msgid "{0} replied to your comment on <0>{1}</0>"
 msgstr ""
 
 #: src/routes/database/prospecting/[id].tsx
@@ -3528,6 +4032,10 @@ msgstr ""
 msgid "That payee can still be paid."
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "Keep current"
+msgstr ""
+
 #: src/routes/database/creature/[id].tsx
 msgid "Night Aggro Range"
 msgstr ""
@@ -3542,10 +4050,6 @@ msgstr "Fracht"
 
 #: src/routes/settings.tsx
 msgid "Favorite items"
-msgstr ""
-
-#: src/lib/recipe-stats.tsx
-msgid "Stamina:"
 msgstr ""
 
 #: src/lib/crafts/filter-vocab.ts
@@ -3568,6 +4072,7 @@ msgid "No matches."
 msgstr ""
 
 #: src/lib/recipe-stats.tsx
+#: src/lib/table-defs/resources-table.tsx
 msgid "Resource ignores regular damage."
 msgstr ""
 
@@ -3576,6 +4081,7 @@ msgid "Tags"
 msgstr "Tags"
 
 #: src/lib/crafts/filter-vocab.ts
+#: src/lib/recipe-stats.tsx
 msgid "Building"
 msgstr ""
 
@@ -3607,12 +4113,24 @@ msgstr ""
 msgid "Scaled Armor"
 msgstr ""
 
+#: src/components/comments/VersionBadge.tsx
+msgid "This comment may be outdated (flagged {version})"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "That page can't have comments."
+msgstr ""
+
 #: src/routes/tools/crafts/browse.tsx
 msgid "Connecting to the relay…"
 msgstr ""
 
 #: src/routes/account/bounties.tsx
 msgid "For craft owners"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "30 days"
 msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
@@ -3645,6 +4163,10 @@ msgstr ""
 msgid "That identity already has a brico account."
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "Permanent"
+msgstr ""
+
 #: src/routes/account/profile.tsx
 msgid "Display name"
 msgstr ""
@@ -3659,9 +4181,14 @@ msgstr ""
 msgid "Quest Graph"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
 #: src/routes/database/traveler-trade/[id].tsx
 msgid "Traveler"
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Log in to join the discussion."
 msgstr ""
 
 #: src/routes/discord/installed.tsx
@@ -3669,9 +4196,16 @@ msgid "Run <0>/link</0> in your server to connect your Brico.app account."
 msgstr ""
 
 #: src/components/account/ApiKeysCard.tsx
+#: src/components/comments/CommentItem.tsx
+#: src/components/model-viewer/DressingRoom.tsx
 #: src/components/shared/DetailPageLayout.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
+msgstr ""
+
+#. placeholder {0}: group.name
+#: src/lib/recipe-stats.tsx
+msgid "Group limit for {0}"
 msgstr ""
 
 #: src/components/crafts/craft-columns.tsx
@@ -3700,6 +4234,10 @@ msgstr ""
 msgid "Nothing"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "Comment notifications can only be shown on the site."
+msgstr ""
+
 #: src/components/shared/DetailPageLayout.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "No data"
@@ -3707,6 +4245,10 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "Login issuer not accepted: {issuer}"
+msgstr ""
+
+#: src/routes/account/settings.tsx
+msgid "Craft watches"
 msgstr ""
 
 #: src/routes/database/skill/[id].tsx
@@ -3750,9 +4292,11 @@ msgstr ""
 msgid "{verbPhrase} {targetName}"
 msgstr ""
 
+#: src/components/comments/ModeratorControls.tsx
 #: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
+#: src/routes/admin/comments/reports.tsx
 #: src/routes/bounty-dashboard.tsx
 #: src/routes/settings.tsx
 msgid "Loading…"
@@ -3772,6 +4316,10 @@ msgstr ""
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows From"
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Italic"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
@@ -3803,6 +4351,10 @@ msgstr ""
 msgid "What are bounties?"
 msgstr ""
 
+#: src/components/comments/CommentSection.tsx
+msgid "No comments yet."
+msgstr ""
+
 #: src/lib/recipe-stats.tsx
 msgid "Output is rolled a number of times equal to your contribution. One full HP bar of the enemy is worth 1000 contribution."
 msgstr ""
@@ -3813,6 +4365,14 @@ msgstr ""
 
 #: src/lib/crafts/filter-condition.tsx
 msgid " or "
+msgstr ""
+
+#: src/routes/admin/comments/reports.tsx
+msgid "Mark actioned"
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+msgid "[removed]"
 msgstr ""
 
 #: src/components/data-table/table-faceted-filter.tsx
@@ -3836,6 +4396,7 @@ msgid "Changes to rules only affect crafts that don't have a bounty yet. To chan
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Collectibles"
 msgstr ""
 
@@ -3881,10 +4442,6 @@ msgstr ""
 msgid "Choose how Brico's Toolbox looks."
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Near Building:"
-msgstr ""
-
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Copy the account address (starts with #) and paste it here."
 msgstr ""
@@ -3897,6 +4454,7 @@ msgstr ""
 msgid "Active bounties"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/terraforming-table.tsx
 #: src/routes/account/payees.tsx
 #: src/routes/account/payouts.tsx
@@ -3939,6 +4497,10 @@ msgstr ""
 msgid "Deploy time"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That comment belongs to a different account."
+msgstr ""
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Enemy Drops"
 msgstr ""
@@ -3952,8 +4514,20 @@ msgstr ""
 msgid "Save and leave"
 msgstr ""
 
+#: src/components/comments/CommentItem.tsx
+msgid "Hide replies"
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Preview"
+msgstr ""
+
 #: src/routes/tools/crafts/browse.tsx
 msgid "Save Copy"
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Set a display name or link an account in your <0>profile</0> to post."
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -3997,10 +4571,22 @@ msgstr ""
 msgid "read only"
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "Reporting blocked"
+msgstr ""
+
 #: src/lib/table-defs/buildings-table.tsx
 #: src/lib/table-defs/deployables-table.tsx
 #: src/routes/database/deployable/[id].tsx
 msgid "Item Slots"
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Links"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "7 days"
 msgstr ""
 
 #: src/components/crafts/SavedFiltersDialog.tsx
@@ -4057,7 +4643,9 @@ msgstr ""
 msgid "Copy dashboard link"
 msgstr ""
 
-#: src/routes/account/settings.tsx
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Enabled"
 msgstr ""
 
@@ -4139,8 +4727,16 @@ msgstr ""
 msgid "{0} effort / <0/>"
 msgstr ""
 
+#: src/lib/comments/moderation.ts
+msgid "Inappropriate display name"
+msgstr ""
+
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Paste a filter, a list of filters, or a share code"
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "{skillName} Exp"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
@@ -4151,8 +4747,17 @@ msgstr ""
 msgid "Unsaved changes"
 msgstr ""
 
+#: src/components/model-viewer/DressingRoom.tsx
+#: src/components/model-viewer/model-tab.tsx
+msgid "Model"
+msgstr ""
+
 #: src/components/crafts/LocalGroupingsManager.tsx
 msgid "Group payees who haven't linked a shared account under a name of your own, just for the totals on the <0>Payouts</0> page. Stored only in this browser."
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Hide all comments"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -4165,6 +4770,10 @@ msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Invalidates Type"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Reports against their comments"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -4183,6 +4792,10 @@ msgstr ""
 msgid "Deployable"
 msgstr "Einsetzbar"
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "New comments need review"
+msgstr ""
+
 #: src/lib/recipe-stats.tsx
 msgid "Output is rolled once, regardless of damage dealt, as long as the minimum threshold is reached."
 msgstr ""
@@ -4200,6 +4813,8 @@ msgid "No open crafts have a bounty."
 msgstr ""
 
 #: src/components/app-sidebar.tsx
+#: src/components/comments/admin/AdminLayout.tsx
+#: src/components/comments/CommentComposer.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/link.tsx
 #: src/routes/account/loyalty.tsx
@@ -4210,6 +4825,10 @@ msgstr ""
 #: src/routes/account/profile.tsx
 #: src/routes/discord/installed.tsx
 msgid "Log in"
+msgstr ""
+
+#: src/components/model-viewer/fullscreen.tsx
+msgid "Exit fullscreen"
 msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
@@ -4243,6 +4862,10 @@ msgstr "Errungenschaften"
 
 #: src/routes/settings.tsx
 msgid "Favorites only"
+msgstr ""
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Advanced"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -4298,6 +4921,11 @@ msgstr ""
 msgid "Payee"
 msgstr ""
 
+#. placeholder {0}: name()
+#: src/components/comments/CommentComposer.tsx
+msgid "Posting as {0}"
+msgstr ""
+
 #. placeholder {0}: props.saved.name
 #: src/routes/tools/crafts/browse.tsx
 msgid "Copy filter {0} as JSON"
@@ -4311,8 +4939,20 @@ msgstr ""
 msgid "Bounties can be private: rates hidden from other players but totals still shown in payouts. The <0>Loyalty rewards</0> tab allows adding a bonus for specific players. For Stelo currencies, the bonus isn't placed in escrow, but pulled from your wallet when paying out. If that fails you'll be alerted and it's retried at the next payout."
 msgstr ""
 
+#: src/lib/comments/moderation.ts
+msgid "Spam"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "permanent"
+msgstr ""
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "That account can't be linked as a wallet: it is Brico's own escrow account."
+msgstr ""
+
+#: src/components/comments/admin/AdminLayout.tsx
+msgid "Reports"
 msgstr ""
 
 #: src/routes/account/bounties.tsx
@@ -4337,6 +4977,7 @@ msgstr ""
 msgid "Whether to show the sidebar in its collapsed (icon only) state on initial load."
 msgstr ""
 
+#: src/components/comments/CommentItem.tsx
 #: src/components/crafts/LocalGroupingsManager.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/loyalty.tsx
@@ -4348,6 +4989,10 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That filter belongs to a different account."
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Claim Tier"
 msgstr ""
 
 #. placeholder {0}: task.levelRequirement.minLevel
@@ -4365,8 +5010,23 @@ msgstr ""
 msgid "Unlock quest <0/>"
 msgstr ""
 
+#. placeholder {0}: formatTime(e.atMs)
+#. placeholder {1}: readableSeconds(e.remainingMs / 1000, true)
+#. placeholder {2}: e.ratePerSecond.toFixed(2)
+#: src/components/crafts/EffortChart.tsx
+msgid "Estimated completion: {0} (in {1}) at {2} effort/s"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Look up"
+msgstr ""
+
 #: src/routes/database/biome/[id].tsx
 msgid "Disallow Player Build"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Names can only use letters, numbers, and single spaces, dots, dashes or underscores (at least {MIN_DISPLAY_NAME_LENGTH} characters)."
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -4381,6 +5041,10 @@ msgstr ""
 msgid "Enter a key name of at most {MAX_API_KEY_NAME_LENGTH} characters."
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "Account identity (64 hex characters)"
+msgstr ""
+
 #. placeholder {0}: results()!.totalMatches
 #: src/routes/search.tsx
 msgid "{0, plural, one {# result} other {# results}}"
@@ -4392,6 +5056,14 @@ msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "No wallets linked."
+msgstr ""
+
+#: src/components/model-viewer/model-tab.tsx
+msgid "No 3D model has been published for this object."
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Required Research"
 msgstr ""
 
 #: src/routes/database/skill/[id].tsx
@@ -4420,6 +5092,10 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "The reason is too long or contains unsupported characters."
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "A–Z"
 msgstr ""
@@ -4431,6 +5107,10 @@ msgstr ""
 #. placeholder {0}: request().candidateAddress
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Found <0>#{0}.</0>"
+msgstr ""
+
+#: src/components/comments/ModeratorControls.tsx
+msgid "Markdown"
 msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
@@ -4451,10 +5131,6 @@ msgstr ""
 msgid "Clear filters"
 msgstr ""
 
-#: src/routes/account/settings.tsx
-msgid "The following settings require you to be logged in to function."
-msgstr ""
-
 #: src/lib/crafts/payout-source.ts
 msgid "Unclaimed: rolled over"
 msgstr ""
@@ -4467,10 +5143,18 @@ msgstr ""
 msgid "Could not save loyalty reward"
 msgstr ""
 
+#: src/components/crafts/EffortChart.tsx
+msgid "Effort per second"
+msgstr ""
+
 #: src/routes/database/deployable/[id].tsx
 #: src/routes/database/placeable/[id].tsx
 #: src/routes/database/resource/[id].tsx
 msgid "Water Depth"
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+msgid "Mark as outdated"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -4512,10 +5196,22 @@ msgstr ""
 msgid "Unclaimed money moved"
 msgstr ""
 
+#: src/routes/admin/comments/reports.tsx
+msgid "Hide and resolve"
+msgstr ""
+
 #: src/lib/table-defs/knowledge-table.tsx
 #: src/routes/database/item/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
 msgid "Tag"
+msgstr ""
+
+#: src/lib/premium-items.ts
+msgid "Decor"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Actioned"
 msgstr ""
 
 #: src/routes/account/callback.tsx
@@ -4540,6 +5236,10 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Discover Resource"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Moderators can't be moderated this way."
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -4656,6 +5356,18 @@ msgstr ""
 msgid "Quest Chain"
 msgstr ""
 
+#: src/lib/table-defs/premium-items-table.tsx
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Quantity"
+msgstr ""
+
+#: src/components/comments/comments-tab.tsx
+#: src/components/comments/CommentSection.tsx
+#: src/routes/account/settings.tsx
+msgid "Comments"
+msgstr ""
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "Remaining effort"
 msgstr ""
@@ -4699,11 +5411,15 @@ msgid "Total for this craft's {0} effort."
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
+msgid "That comment can't be edited."
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
 msgid "Choose which Stelo wallet funds this bounty."
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Biomes:"
+#: src/routes/account/settings.tsx
+msgid "Crafts"
 msgstr ""
 
 #: src/lib/table-defs/quests-table.tsx
@@ -4719,6 +5435,7 @@ msgstr ""
 msgid "No saved filters yet."
 msgstr ""
 
+#: src/components/comments/ModeratorControls.tsx
 #: src/components/data-table/table-column-header.tsx
 msgid "Hide"
 msgstr ""
@@ -4763,6 +5480,10 @@ msgstr ""
 msgid "{qty}× {name}"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That status can't be set."
+msgstr ""
+
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Reward"
 msgstr ""
@@ -4775,6 +5496,14 @@ msgstr ""
 #: src/routes/account/payouts.tsx
 #: src/routes/account/profile.tsx
 msgid "You're not logged in"
+msgstr ""
+
+#: src/lib/crafts/error-vocab.ts
+msgid "Write a comment of up to {MAX_COMMENT_LENGTH} characters."
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+msgid "Clear the outdated flag?"
 msgstr ""
 
 #: src/routes/settings.tsx
@@ -4791,6 +5520,10 @@ msgstr ""
 
 #: src/lib/recipe-stats.tsx
 msgid "Level {level} {toolName} (Power >= {power})"
+msgstr ""
+
+#: src/routes/database/building/[id].tsx
+msgid "Top platform"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
@@ -4858,6 +5591,14 @@ msgstr ""
 msgid "held in escrow: {0}, refund due: {1}"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "You're posting too quickly. Wait a moment and try again."
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Strikethrough"
+msgstr ""
+
 #: src/components/crafts/LocalGroupingsManager.tsx
 msgid "Local groupings"
 msgstr ""
@@ -4905,6 +5646,14 @@ msgstr ""
 msgid "Members"
 msgstr ""
 
+#: src/lib/table-defs/resources-table.tsx
+msgid "Fixed respawn. Spawns in the same chunk after specified amount of time."
+msgstr ""
+
+#: src/routes/tools/crafts/[id].tsx
+msgid "Effort over time"
+msgstr ""
+
 #: src/components/shared/RelTablePresets.tsx
 msgid "Value"
 msgstr ""
@@ -4940,6 +5689,14 @@ msgstr ""
 msgid "Condition"
 msgstr ""
 
+#: src/routes/admin/comments/reports.tsx
+msgid "No open reports."
+msgstr ""
+
+#: src/components/comments/CommentItem.tsx
+msgid "Downvote"
+msgstr ""
+
 #: src/routes/account/settings.tsx
 msgid "Discord columns appear once a channel or DM is linked via <0>/notify link</0>."
 msgstr ""
@@ -4948,8 +5705,16 @@ msgstr ""
 msgid "XP Reward"
 msgstr ""
 
+#: src/lib/comments/moderation.ts
+msgid "Outdated"
+msgstr ""
+
 #: src/routes/database/claim-research/[id].tsx
 msgid "Item Cost"
+msgstr ""
+
+#: src/components/comments/ReportDialog.tsx
+msgid "Moderators will review it."
 msgstr ""
 
 #. placeholder {0}: matched().length.toLocaleString(uiLocale())
@@ -5032,10 +5797,13 @@ msgstr ""
 msgid "Wallet already linked"
 msgstr ""
 
-#: src/lib/game-links.tsx
 #: src/lib/sidebar-items.ts
 msgid "Tools"
 msgstr "Werkzeuge"
+
+#: src/lib/recipe-stats.tsx
+msgid "Near Building"
+msgstr ""
 
 #: src/routes/account/bounty-rules.tsx
 msgid "Flat rate"
@@ -5053,6 +5821,7 @@ msgstr ""
 msgid "Timed Node"
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/sidebar-items.ts
 #: src/lib/table-defs/prospecting-table.tsx
 #: src/routes/database/prospecting/[id].tsx
@@ -5089,11 +5858,16 @@ msgstr "Stufe {0}"
 msgid "Consumed"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That report no longer exists."
+msgstr ""
+
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "all"
 msgid "{field} {cmpEl} {value}"
 msgstr ""
 
+#: src/components/comments/CommentTime.tsx
 #: src/components/crafts/craft-columns.tsx
 msgid "just now"
 msgstr ""
@@ -5114,7 +5888,9 @@ msgstr ""
 msgid "Compact list or icon grid."
 msgstr ""
 
+#: src/lib/recipe-stats.tsx
 #: src/lib/table-defs/traveler-trades-table.tsx
+#: src/lib/table-utils/detail-group-builders.tsx
 msgid "Blocking Knowledge"
 msgstr ""
 
@@ -5178,6 +5954,10 @@ msgstr ""
 msgid "Item Deed"
 msgstr ""
 
+#: src/components/comments/CommentSection.tsx
+msgid "Post"
+msgstr ""
+
 #: src/routes/account/my-bounties.tsx
 msgid "Held:"
 msgstr ""
@@ -5198,6 +5978,11 @@ msgstr ""
 msgid "← Back to list"
 msgstr ""
 
+#: src/routes/database/collectible/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
+msgid "Premium Item"
+msgstr ""
+
 #: src/routes/settings.tsx
 msgid "Color mode"
 msgstr ""
@@ -5208,6 +5993,10 @@ msgstr ""
 
 #: src/routes/bounty-dashboard.tsx
 msgid "Showing the last data received."
+msgstr ""
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Expected rate"
 msgstr ""
 
 #: src/lib/table-defs/deployables-table.tsx
@@ -5244,8 +6033,15 @@ msgstr ""
 #: src/components/data-table/live-table.tsx
 #: src/components/data-table/table-toolbar.tsx
 #: src/components/GlobalSearchInput.tsx
+#: src/components/model-viewer/SlotPicker.tsx
 #: src/components/Nav.tsx
 msgid "Search..."
+msgstr ""
+
+#. placeholder {0}: senderName()
+#. placeholder {1}: gameLinkFallback(props.value.pageKey)
+#: src/lib/notifications/comment.tsx
+msgid "{0} replied to your comment on {1}"
 msgstr ""
 
 #: src/routes/database/resource/[id].tsx
@@ -5256,16 +6052,24 @@ msgstr ""
 msgid "Unlocks hidden easter-egg features scattered across the site."
 msgstr ""
 
+#: src/components/comments/ModeratorControls.tsx
+msgid "Restore"
+msgstr ""
+
 #: src/routes/account/loyalty.tsx
 msgid "Automatic loyalty rules"
+msgstr ""
+
+#: src/components/comments/CommentComposer.tsx
+msgid "Bulleted list"
 msgstr ""
 
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Scaling"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Required Knowledge:"
+#: src/components/comments/admin/AdminLayout.tsx
+msgid "Commenter"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
@@ -5284,13 +6088,13 @@ msgstr ""
 msgid "Select claim…"
 msgstr ""
 
+#: src/components/comments/admin/AdminCommentList.tsx
+msgid "Load more"
+msgstr ""
+
 #: src/routes/bounty-dashboard.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Contributors"
-msgstr ""
-
-#: src/lib/recipe-stats.tsx
-msgid "{skillName} XP/Progress:"
 msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
@@ -5305,21 +6109,28 @@ msgstr ""
 msgid "Delete grouping"
 msgstr ""
 
+#: src/routes/admin/comments/commenter.tsx
+msgid "Replace display name"
+msgstr ""
+
+#: src/components/model-viewer/ModelViewer.tsx
+msgid "3D rendering is not available in this browser."
+msgstr ""
+
 #: src/routes/database/resource/[id].tsx
 msgid "Not Respawning"
 msgstr ""
 
-#. placeholder {0}: skillCategoryLabel(skillTag)
-#: src/lib/recipe-stats.tsx
-msgid "{0}:"
+#: src/components/model-viewer/model-tab.tsx
+msgid "Alternative"
 msgstr ""
 
 #: src/routes/database/item/[id].tsx
 msgid "Required Level"
 msgstr ""
 
-#: src/lib/recipe-stats.tsx
-msgid "Range:"
+#: src/components/comments/ModeratorControls.tsx
+msgid "Never edited."
 msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
@@ -5327,6 +6138,7 @@ msgid "Close"
 msgstr ""
 
 #: src/components/account/SteloWalletsCard.tsx
+#: src/components/comments/CommentComposer.tsx
 msgid "Link"
 msgstr ""
 
@@ -5346,8 +6158,16 @@ msgstr ""
 msgid "A loyalty reward's multiplier must be 1 or higher."
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That comment no longer exists."
+msgstr ""
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "That account can't be linked as a wallet: it isn't a debit account."
+msgstr ""
+
+#: src/components/comments/ModeratorControls.tsx
+msgid "Approve"
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
@@ -5385,6 +6205,10 @@ msgstr ""
 msgid "That Discord channel isn't linked for notifications anymore."
 msgstr ""
 
+#: src/components/comments/CommentComposer.tsx
+msgid "Quote"
+msgstr ""
+
 #: src/components/crafts/craft-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 msgid "Total effort"
@@ -5394,12 +6218,20 @@ msgstr ""
 msgid "That saved filter no longer exists."
 msgstr ""
 
-#: src/lib/table-utils/detail-tab-builders.tsx
-msgid "Max HP"
+#: src/routes/admin/comments/commenter.tsx
+msgid "collapse"
 msgstr ""
 
 #: src/routes/database/placeable/[id].tsx
 msgid "Grows from"
+msgstr ""
+
+#: src/routes/admin/comments/commenter.tsx
+msgid "Comments hidden"
+msgstr ""
+
+#: src/components/crafts/EffortChart.tsx
+msgid "Estimated completion: No recent progress."
 msgstr ""
 
 #: src/lib/relations.ts
@@ -5409,6 +6241,10 @@ msgstr ""
 #. placeholder {0}: sink.channelName ?? sink.channelId
 #: src/components/crafts/FundingAlertsCard.tsx
 msgid "Customize funding alerts for {0}"
+msgstr ""
+
+#: src/lib/recipe-stats.tsx
+msgid "Minimum distance to Group"
 msgstr ""
 
 #: src/routes/tools/crafts/browse.tsx
@@ -5423,6 +6259,10 @@ msgstr ""
 msgid "Remaining"
 msgstr ""
 
+#: src/lib/crafts/error-vocab.ts
+msgid "That comment can't be voted on."
+msgstr ""
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "Select a recipe"
 msgstr ""
@@ -5431,8 +6271,14 @@ msgstr ""
 #: src/lib/table-utils/detail-tab-builders.tsx
 #: src/routes/database/achievement/[id].tsx
 #: src/routes/database/deployable/[id].tsx
+#: src/routes/database/premium-item/[id].tsx
 msgid "Collectible"
 msgstr "Sammelobjekt"
+
+#. placeholder {0}: props.initialCount
+#: src/components/comments/CommentSection.tsx
+msgid "Show comments ({0})"
+msgstr ""
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Appearances"
@@ -5450,6 +6296,10 @@ msgstr ""
 #: src/lib/sidebar-items.ts
 msgid "Creatures"
 msgstr "Kreaturen"
+
+#: src/components/comments/CommentSection.tsx
+msgid "Oldest"
+msgstr ""
 
 #: src/routes/account/loyalty.tsx
 msgid "Delete loyalty rule"
@@ -5469,6 +6319,10 @@ msgstr ""
 #: src/routes/account/my-bounties.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Private"
+msgstr ""
+
+#: src/components/model-viewer/model-tab.tsx
+msgid "Variant"
 msgstr ""
 
 #: src/components/SiteFooter.tsx

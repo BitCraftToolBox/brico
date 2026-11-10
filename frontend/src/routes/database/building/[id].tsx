@@ -1,9 +1,11 @@
 import {ItemType, ResourceDesc} from "@brico/bitcraft-bindings/types";
 import {msg, t} from "@lingui/core/macro";
+import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailGroup, DetailPageLayout, DetailProperty, RelTable} from "~/components/shared/DetailPageLayout";
 import {BuildingIcon} from "~/components/shared/GameIcon";
 import {ItemStackIcon} from "~/components/shared/ItemStacks";
@@ -15,16 +17,21 @@ import {chatLink} from "~/lib/chat-links";
 import {sourceRow} from "~/lib/data-translation";
 import {BuffLinkById, LinkedList} from "~/lib/game-links";
 import {trackUILocale} from "~/lib/i18n";
+import {gateParts, wallRunParts} from "~/lib/models";
 import {ogImageForAsset} from "~/lib/og-meta";
 import {constructionRecipeForBuilding, deconstructionRecipeForBuilding, resourcesSpawningBuilding} from "~/lib/relations";
 import {constructionCombinedSingleTab} from "~/lib/table-utils/detail-tab-builders";
 import {fixFloat, readableSeconds} from "~/lib/utils";
 
 export default function BuildingDetail() {
+    const {_} = useLingui();
     const params = useParams();
     const isLoading = useTablesLoading(BitCraftTables.BuildingDesc);
     const buildingIndex = BitCraftTables.BuildingDesc.indexedBy("id");
     const buildingTypeIndex = BitCraftTables.BuildingTypeDesc.indexedBy("id");
+    const wallIndex = BitCraftTables.WallDesc.indexedBy("buildingId");
+    const gateIndex = BitCraftTables.GateDesc.indexedBy("buildingId");
+    const elevatorIndex = BitCraftTables.ElevatorDesc.indexedBy("buildingId");
 
     const building = createMemo(() => {
         const id = parseInt(params.id as string ?? "", 10);
@@ -205,6 +212,40 @@ export default function BuildingDetail() {
                         />
                     ),
                 },
+                modelTab(() => {
+                    const b = building();
+                    if (!b) return undefined;
+                    // A wall building's own model is empty; the wall is its posts and sections.
+                    const wall = wallIndex().get(b.id);
+                    if (wall) {
+                        return {options: [
+                            {parts: wallRunParts({largePost: wall.largePostAssetName, smallPost: wall.smallPostAssetName, sections: wall.wallAssetNames})},
+                        ]};
+                    }
+                    const gate = gateIndex().get(b.id);
+                    if (gate) {
+                        return {options: [
+                            {parts: gateParts({
+                                model: b.modelAssetName,
+                                smallPost: gate.smallPostAssetName,
+                                walkableX: b.footprint.filter(f => f.footprintType.tag === "Walkable").map(f => f.x),
+                                hitboxX: b.footprint.filter(f => f.footprintType.tag === "Hitbox").map(f => f.x),
+                            })},
+                        ]};
+                    }
+                    const elevator = elevatorIndex().get(b.id);
+                    if (elevator) {
+                        // The building's own model is empty; the elevator is its three parts.
+                        return {
+                            options: [
+                                {label: _(msg`Basket`), parts: [{id: "model", path: elevator.basketAddress}]},
+                                {label: _(msg`Top platform`), parts: [{id: "model", path: elevator.topPlatformAddress}]},
+                                {label: _(msg`Bottom platform`), parts: [{id: "model", path: elevator.bottomPlatformAddress}]},
+                            ],
+                        };
+                    }
+                    return {paths: [b.modelAssetName]};
+                }),
             ]}
         />
     );

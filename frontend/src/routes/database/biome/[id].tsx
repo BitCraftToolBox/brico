@@ -2,10 +2,9 @@ import {ProspectingDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo} from "solid-js";
-import {FontIcon} from "~/components/icons/font-icons";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
-import {IconLink} from "~/lib/game-links";
+import {ProspectingLink} from "~/lib/game-links";
 import {ogImageForPage} from "~/lib/og-meta";
 import {prospectingForBiome} from "~/lib/relations";
 
@@ -50,9 +49,7 @@ export default function BiomeDetail() {
                             data={prospectingEntries()}
                             columns={[
                                 {header: msg`Name`, cell: (row) => (
-                                    <IconLink href={`/database/prospecting/${row.id}`} icon={<FontIcon codepoint={row.iconAssetPath} class="size-4 inline"/>}>
-                                        {row.name}
-                                    </IconLink>
+                                    <ProspectingLink id={row.id} name={row.name} iconPath={row.iconAssetPath}/>
                                 )},
                                 {header: msg`Description`, cell: (row) => <span class="text-muted-foreground text-xs">{row.description}</span>},
                             ]}

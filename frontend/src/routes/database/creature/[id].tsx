@@ -3,6 +3,7 @@ import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {EnemyIcon} from "~/components/shared/GameIcon";
 import {ItemListDisplay, QuestDropDisplay} from "~/components/shared/ItemStacks";
@@ -282,7 +283,8 @@ export default function CreatureDetail() {
                             ]}
                         />
                     )
-                }
+                },
+                modelTab(() => creature() && {paths: [creature()!.prefabAddress]}),
             ]}
         />
     );
