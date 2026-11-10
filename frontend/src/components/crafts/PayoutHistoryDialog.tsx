@@ -88,7 +88,7 @@ export function PayoutHistoryDialog(props: {
                                             <TableCell>{row.payerName}</TableCell>
                                             <TableCell>{props.playerName(row.payeePlayerId.toString())}</TableCell>
                                             <TableCell class="tabular-nums">
-                                                <span class="inline-flex items-center gap-1">
+                                                <span class="inline-flex items-baseline gap-1">
                                                     <CurrencyLabel currency={row.currency} iconOnly/>
                                                     {row.amount > 0n ? "+" : ""}{row.amount.toString()}
                                                 </span>

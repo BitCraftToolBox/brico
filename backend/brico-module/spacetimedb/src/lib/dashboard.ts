@@ -1,16 +1,23 @@
 import type {Identity} from 'spacetimedb';
 import type {ReadDb} from '../schema';
+import {hashApiToken} from './apiKeys';
 import {entitlementsAsPayer, linkedPlayerIds} from './payouts';
 
+/** The account that owns `token` if it is an API key with `publicDashboard`, else `null`. */
+export function publicDashboardOwner(db: ReadDb, token: string): {owner: Identity, name: string} | null {
+    const key = db.api_key.tokenHash.find(hashApiToken(token));
+    return key !== null && key.publicDashboard ? {owner: key.accountIdentity, name: key.name} : null;
+}
+
 /**
- * The feed behind `GET /dashboard`: the account's payees and its active bounties, public and
- * private. The key is meant to be shared, so this leaves out anything that identifies accounts or
- * wallets (identities, escrow/guaranteed totals, payment history).
+ * The account's payees, shared by `GET /dashboard` and the `dashboard_*` views. The key is meant to
+ * be shared, so this leaves out anything that identifies accounts or wallets (identities,
+ * escrow/guaranteed totals, payment history).
  *
- * The owner's own players are left out of the payees. Payees are one row per (payee, currency), with players of one brico account (one that has set a
+ * The owner's own players are left out. Payees are one row per (payee, currency), with players of one brico account (one that has set a
  * display name) merged under that name. `payeePlayerId` is the player's own id, or the lowest id of the merged ones.
  */
-export function dashboardReport(db: ReadDb, accountIdentity: Identity) {
+export function dashboardPayees(db: ReadDb, accountIdentity: Identity) {
     const payees = new Map<string, {
         payeePlayerId: bigint;
         payeeName: string | undefined;
@@ -40,7 +47,11 @@ export function dashboardReport(db: ReadDb, accountIdentity: Identity) {
             });
         }
     }
+    return [...payees.values()];
+}
 
+/** The account's active bounties, public and private. */
+export function dashboardBounties(db: ReadDb, accountIdentity: Identity) {
     const bounty = (isPrivate: boolean) => (row: {
         craftId: bigint;
         ratioNumerator: bigint;
@@ -53,10 +64,13 @@ export function dashboardReport(db: ReadDb, accountIdentity: Identity) {
         currency: row.currency,
         private: isPrivate,
     });
-    const bounties = [
+    return [
         ...Array.from(db.craft_bounty_assignment.assignedByAccountIdentity.filter(accountIdentity), bounty(false)),
         ...Array.from(db.craft_private_bounty_assignment.assignedByAccountIdentity.filter(accountIdentity), bounty(true)),
     ];
+}
 
-    return {payees: [...payees.values()], bounties};
+/** The feed behind `GET /dashboard`. */
+export function dashboardReport(db: ReadDb, accountIdentity: Identity) {
+    return {payees: dashboardPayees(db, accountIdentity), bounties: dashboardBounties(db, accountIdentity)};
 }

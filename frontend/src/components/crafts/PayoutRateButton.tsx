@@ -22,7 +22,7 @@ export function PayoutRateButton(props: {rate: number; currency: string}) {
     };
     return (
         <button
-            class="hover:underline inline-flex flex-nowrap"
+            class="hover:underline inline-flex items-baseline flex-nowrap"
             title={_(msg`Switch between currency/effort and effort/currency`)}
             onClick={() => settings.setPayoutDisplayMode(inverted() ? "currencyPerEffort" : "effortPerCurrency")}
         >

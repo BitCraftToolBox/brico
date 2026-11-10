@@ -3,7 +3,6 @@ import * as SelectPrimitive from "@kobalte/core/select";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Plural, Trans} from "@lingui/solid/macro";
-import {type IconTypes} from "solid-icons";
 import {FaSolidArrowDownAZ as IconSortAZ, FaSolidFolderTree as IconSortTree} from "solid-icons/fa";
 import {SiCrowdin as IconCrowdin} from "solid-icons/si";
 import {
@@ -18,16 +17,17 @@ import {
     TbOutlineMoon as IconMoon,
     TbOutlineSun as IconSun,
 } from "solid-icons/tb";
-import {children, createMemo, createSignal, For, JSX, onCleanup, onMount, Show} from "solid-js";
+import {createMemo, createSignal, onCleanup, onMount, Show} from "solid-js";
 import {isServer} from "solid-js/web";
+import {CurrencyVisibilitySelect} from "~/components/crafts/CurrencyVisibilitySelect";
 import MainLayout from "~/components/MainLayout";
+import {ButtonGroup, SettingsRow, SettingsSection} from "~/components/shared/SettingsLayout";
 import BricoFace from "~/components/ui/brico-face";
 import {Button} from "~/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select";
 import {Switch, SwitchControl, SwitchThumb} from "~/components/ui/switch";
 import {DATA_LOCALES, dataTranslationsPending} from "~/lib/data-translation";
 import {localeLabel, PSEUDOLOCALE_ENABLED, UI_LOCALES, uiLocaleLoading} from "~/lib/i18n";
-import {CurrencyVisibilitySelect} from "~/components/crafts/CurrencyVisibilitySelect";
 import {useLabel} from "~/lib/labels";
 import {AUTO_LOCALE, NaturalSortOrder, type PayoutDisplayMode, type SortMode, useSettings, type ViewMode} from "~/lib/settings";
 import {SIDEBAR_GROUPS, SidebarGroupDef, type SidebarItemDef} from "~/lib/sidebar-items";
@@ -62,71 +62,6 @@ function LocaleSelect(props: {
             </SelectTrigger>
             <SelectContent/>
         </Select>
-    );
-}
-
-// `title`/`description` are JSX rather than `string` so callers can pass <Trans> directly.
-function SettingsSection(props: {title: JSX.Element; description?: JSX.Element; children: JSX.Element}) {
-    const description = children(() => props.description);
-    return (
-        <section class="flex flex-col gap-3">
-            <div>
-                <h2 class="text-base font-semibold">{props.title}</h2>
-                <Show when={description()}>
-                    <p class="text-sm text-muted-foreground">{description()}</p>
-                </Show>
-            </div>
-            <div class="rounded-lg border bg-card p-4 flex flex-col gap-4">
-                {props.children}
-            </div>
-        </section>
-    );
-}
-
-function SettingsRow(props: {label: JSX.Element; description?: JSX.Element; children: JSX.Element}) {
-    const description = children(() => props.description);
-    return (
-        <div class="flex flex-row items-center justify-between gap-4">
-            <div class="flex flex-col gap-0.5">
-                <span class="text-sm font-medium">{props.label}</span>
-                <Show when={description()}>
-                    <span class="text-xs text-muted-foreground">{description()}</span>
-                </Show>
-            </div>
-            <div class="shrink-0">{props.children}</div>
-        </div>
-    );
-}
-
-function ButtonGroup<T extends string>(props: {
-    // `label` is a plain string, not JSX: it is used as `title`/`aria-label` as well as visible
-    // text, so callers resolve it with `useLingui()._(msg\`…\`)` rather than wrapping in <Trans>.
-    options: {value: T; icon: IconTypes; label: string}[];
-    value: T;
-    onChange: (v: T) => void;
-}) {
-    return (
-        <div class="flex flex-col sm:flex-row rounded-md border border-input overflow-hidden">
-            <For each={props.options}>
-                {(opt) => (
-                    <button
-                        title={opt.label}
-                        aria-label={opt.label}
-                        aria-pressed={props.value === opt.value}
-                        class={`flex items-center gap-1.5 px-3 py-1.5 text-sm transition-colors
-                            ${props.value === opt.value
-                                ? "bg-primary text-primary-foreground font-medium"
-                                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                            }
-                            not-last:border-r not-last:border-input`}
-                        onClick={() => props.onChange(opt.value)}
-                    >
-                        {opt.icon({class: "size-4 shrink-0"})}
-                        <span>{opt.label}</span>
-                    </button>
-                )}
-            </For>
-        </div>
     );
 }
 

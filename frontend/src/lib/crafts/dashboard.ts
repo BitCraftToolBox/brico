@@ -18,6 +18,7 @@ export interface DashboardPayee {
 }
 
 export interface Dashboard {
+    name?: string;
     payees: DashboardPayee[];
     /** Bounties the owner pays, public and private. */
     bounties: (CraftBountyFacts & {craftId: string})[];

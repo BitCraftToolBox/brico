@@ -118,7 +118,7 @@ function buildColumns(label: LabelResolver): ColumnDef<BountyTableRow, any>[] {
                 return (
                     <For each={sums()}>
                         {([currency, sum]) => (
-                            <p class="flex h-6 items-center justify-end gap-1">
+                            <p class="flex h-6 items-baseline justify-end gap-1">
                                 <span class="tabular-nums">{formatAmount(sum)}</span> <CurrencyLabel currency={currency} iconOnly={true}/>
                             </p>
                         )}
@@ -126,7 +126,7 @@ function buildColumns(label: LabelResolver): ColumnDef<BountyTableRow, any>[] {
                 );
             },
             cell: (props: Cell<number>) => (
-                <span class="inline-flex items-center gap-1">
+                <span class="inline-flex items-baseline gap-1">
                     <span class="tabular-nums">{formatAmount(props.getValue())}</span>
                     <CurrencyLabel currency={props.row.original.bounty.currency} iconOnly={true}/>
                 </span>

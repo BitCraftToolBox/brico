@@ -13,7 +13,7 @@
     "./stelo/*": "./stelo/*.ts"
   },
   "dependencies": {
-    "spacetimedb": "2.10.2"
+    "spacetimedb": "2.14.0"
   },
   "scripts": {
     "generate:stelo": "node scripts/generate-stelo.mjs"

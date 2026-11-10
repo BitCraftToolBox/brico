@@ -9,6 +9,7 @@
  * — TypeScript refuses to compile if `@brico/crafts/errors` grows a code this file hasn't caught up
  * to, the same compile-time guarantee `filter-vocab.ts` uses for field/comparator labels.
  */
+import {MAX_COMMENT_LENGTH, MIN_DISPLAY_NAME_LENGTH} from "@brico/crafts/comments";
 import {MAX_DISPLAY_REFRESH_SECONDS, MAX_DISPLAY_ROWS_HARD_CAP, MAX_STICKY_MINUTES, MIN_DISPLAY_REFRESH_SECONDS, MIN_STICKY_MINUTES} from "@brico/crafts/discord-display";
 import {
     CraftError,
@@ -24,6 +25,8 @@ import {
 } from "@brico/crafts/errors";
 import {i18n, type MessageDescriptor} from "@lingui/core";
 import {msg} from "@lingui/core/macro";
+
+const PROCEDURE_ERROR_PREFIX = "The module instance encountered a fatal error: ";
 
 type VocabEntry = MessageDescriptor | ((value: string) => MessageDescriptor);
 
@@ -120,7 +123,35 @@ const ERROR_VOCAB: Record<CraftErrorCode, VocabEntry> = {
     [CraftError.FUNDING_WALLET_UNVERIFIED]: msg`That wallet can't fund bounties: Brico.app hasn't verified that you administer it.`,
     [CraftError.INVALID_FUNDING_STATUS]: msg`That funding status isn't valid.`,
     [CraftError.FUNDING_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT]: msg`That funding alert setting belongs to a different account.`,
+    [CraftError.COMMENT_NOTIFY_TRIGGER_BELONGS_TO_ANOTHER_ACCOUNT]: msg`That comment notification setting belongs to a different account.`,
+    [CraftError.COMMENT_NOTIFY_SINK_UNSUPPORTED]: msg`Comment notifications can only be shown on the site.`,
     [CraftError.DISCORD_FUNDING_NOTIFY_TARGET_BELONGS_TO_ANOTHER_ACCOUNT]: msg`That Discord funding alert setting belongs to a different account.`,
+    [CraftError.DISPLAY_NAME_INVALID]: msg`Names can only use letters, numbers, and single spaces, dots, dashes or underscores (at least ${MIN_DISPLAY_NAME_LENGTH} characters).`,
+    [CraftError.NAME_CHANGE_RESTRICTED]: msg`Your display name has been locked by a moderator.`,
+    [CraftError.INVALID_COMMENT_PAGE_KEY]: msg`That page can't have comments.`,
+    [CraftError.INVALID_COMMENT_BODY]: msg`Write a comment of up to ${MAX_COMMENT_LENGTH} characters.`,
+    [CraftError.COMMENT_AUTHOR_NAME_REQUIRED]: msg`Set a display name or link an account in your profile to post.`,
+    [CraftError.POSTING_RESTRICTED]: msg`You can't post comments right now.`,
+    [CraftError.COMMENT_COOLDOWN]: msg`You're posting too quickly. Wait a moment and try again.`,
+    [CraftError.COMMENT_RATE_LIMITED]: msg`You've reached the hourly comment limit. Try again later.`,
+    [CraftError.COMMENT_PAGE_FULL]: msg`This page has reached its comment limit.`,
+    [CraftError.INVALID_COMMENT_PARENT]: msg`The comment you're replying to is no longer available.`,
+    [CraftError.COMMENT_TOO_DEEP]: msg`Replies can't be nested any deeper.`,
+    [CraftError.UNKNOWN_COMMENT]: msg`That comment no longer exists.`,
+    [CraftError.COMMENT_BELONGS_TO_ANOTHER_ACCOUNT]: msg`That comment belongs to a different account.`,
+    [CraftError.COMMENT_NOT_EDITABLE]: msg`That comment can't be edited.`,
+    [CraftError.CANNOT_VOTE_OWN_COMMENT]: msg`You can't vote on your own comment.`,
+    [CraftError.COMMENT_NOT_VOTABLE]: msg`That comment can't be voted on.`,
+    [CraftError.NOT_MODERATOR]: msg`Only moderators can do that.`,
+    [CraftError.REPORTING_RESTRICTED]: msg`You can't report comments right now.`,
+    [CraftError.REPORT_RATE_LIMITED]: msg`You've reached the hourly report limit. Try again later.`,
+    [CraftError.INVALID_REPORT_REASON]: msg`Choose a reason for the report.`,
+    [CraftError.INVALID_REPORT_NOTE]: msg`The note is too long or contains unsupported characters.`,
+    [CraftError.UNKNOWN_COMMENT_REPORT]: msg`That report no longer exists.`,
+    [CraftError.INVALID_COMMENT_STATUS]: msg`That status can't be set.`,
+    [CraftError.INVALID_MODERATION_REASON]: msg`The reason is too long or contains unsupported characters.`,
+    [CraftError.INVALID_RESTRICTION_END]: msg`That end date is out of range.`,
+    [CraftError.CANNOT_MODERATE_MODERATOR]: msg`Moderators can't be moderated this way.`,
 };
 
 /**
@@ -132,7 +163,8 @@ const ERROR_VOCAB: Record<CraftErrorCode, VocabEntry> = {
  * e.g. a network failure) doesn't match any code below and falls through to the raw text.
  */
 export function describeServerError(err: unknown): string {
-    const raw = err instanceof Error ? err.message : String(err);
+    // A procedure's rejection arrives wrapped, unlike a reducer's bare code.
+    const raw = (err instanceof Error ? err.message : String(err)).replace(PROCEDURE_ERROR_PREFIX, "");
     const [code, value] = raw.split(/:(.*)/s, 2) as [string, string | undefined];
     const entry = (ERROR_VOCAB as Partial<Record<string, VocabEntry>>)[code];
     if (!entry) return raw;

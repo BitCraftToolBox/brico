@@ -14,7 +14,7 @@
   "dependencies": {
     "@brico/crafts": "file:../../../common/crafts",
     "@noble/hashes": "^2.4.0",
-    "spacetimedb": "2.10.0"
+    "spacetimedb": "2.14.0"
   },
   "devDependencies": {
     "@types/d3-dsv": "^3.0.7",

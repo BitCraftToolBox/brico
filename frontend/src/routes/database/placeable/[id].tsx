@@ -1,6 +1,7 @@
 import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailGroup, DetailPageLayout, RelationshipTab} from "~/components/shared/DetailPageLayout";
 import {PlaceableIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, GrowthPanel, PlacementPanel, RecipeSelect} from "~/components/shared/RecipeDisplay";
@@ -177,6 +178,7 @@ export default function PlaceableDetail() {
             result.push(placeableGraphTab(placement));
         }
 
+        result.push(modelTab(() => placeable() && {paths: [placeable()!.modelAssetName]}));
         return result;
     });
 

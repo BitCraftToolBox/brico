@@ -32,9 +32,20 @@ export interface FundingNotificationPayload {
     payeeName?: string;
 }
 
+/** A reply to the receiver's comment (`tag: "comment"`). */
+export interface CommentNotificationPayload {
+    /** The replier's name as snapshotted on the reply; not updated if they rename. */
+    senderName: string;
+    /** The page the thread is on, `"<table>:<id>"`. */
+    pageKey: string;
+    /** The reply's `comment.id`. */
+    commentId: string;
+}
+
 export type NotificationPayload =
     | {tag: "craft"; value: CraftNotificationPayload}
-    | {tag: "funding"; value: FundingNotificationPayload};
+    | {tag: "funding"; value: FundingNotificationPayload}
+    | {tag: "comment"; value: CommentNotificationPayload};
 
 export function encodeNotificationPayload(payload: NotificationPayload): string {
     return JSON.stringify(payload);
@@ -76,6 +87,11 @@ export function parseNotificationPayload(json: string): NotificationPayload | nu
             if (str(v.kind) && str(v.role) && str(v.currency) && optStr(v.craftId) && optStr(v.amount) && optStr(v.reason)
                 && optStr(v.payerName) && optStr(v.payeeName)) {
                 return {tag: "funding", value: v as unknown as FundingNotificationPayload};
+            }
+            return null;
+        case "comment":
+            if (str(v.senderName) && str(v.pageKey) && str(v.commentId)) {
+                return {tag: "comment", value: v as unknown as CommentNotificationPayload};
             }
             return null;
         default:

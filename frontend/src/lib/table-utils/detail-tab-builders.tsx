@@ -669,7 +669,7 @@ function achievementRequirementTarget(req: AchievementRequirement) {
             return <AchievementLink id={req.achievement.id} name={req.achievement.name}/>;
         case "skill":
             return (
-                <span class="inline-flex items-center gap-1">
+                <span class="inline-flex items-baseline gap-1">
                     <SkillLinkById skillId={req.skillId}/> <span class="text-muted-foreground"><Trans>Lvl. {req.skillLevel}</Trans></span>
                 </span>
             );

@@ -55,3 +55,7 @@ export function requireAccount(ctx: Ctx) {
     if (row === null) throw new SenderError(CraftError.NO_BRICO_ACCOUNT);
     return row;
 }
+
+export function requireModerator(ctx: Ctx): void {
+    if (ctx.db.moderator.identity.find(ctx.sender) === null) throw new SenderError(CraftError.NOT_MODERATOR);
+}

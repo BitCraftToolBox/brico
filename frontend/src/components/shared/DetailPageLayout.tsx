@@ -17,8 +17,9 @@ import {
     TbOutlineClipboardText as IconClipboardText,
     TbOutlineExternalLink as IconExternal
 } from "solid-icons/tb";
-import {Component, createEffect, createSignal, For, JSX, onMount, Show} from "solid-js";
+import {Component, createEffect, createSignal, For, JSX, onMount, Show, untrack} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
+import {createCommentsTab, detailPageCommentKey} from "~/components/comments/comments-tab";
 import {FontIcon} from "~/components/icons/font-icons";
 import MainLayout from "~/components/MainLayout";
 import {TierIcon} from "~/components/shared/GameIcon";
@@ -58,6 +59,8 @@ export interface RelationshipTab {
     label: Label | string;
     showWhenEmpty?: boolean;
     count?: number;
+    /** Stay selectable at a count of 0 (a tab that is more than a list, like Comments). */
+    alwaysEnabled?: boolean;
     content: () => JSX.Element;
 }
 
@@ -223,8 +226,20 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
      */
     const rawData = () => sourceRow(props.rawData);
 
-    const availableTabs = () => props.tabs?.filter(t => t.count === undefined || t.count > 0) ?? [];
-    const disabledTabs = () => props.tabs?.filter(t => t.count !== undefined && t.count === 0 && (t.showWhenEmpty ?? true)) ?? [];
+    // Read once: the layout's own effect rewrites `?detail=` when it auto-selects, which would make
+    // an auto-selected Comments tab look requested.
+    const requestedDetail = untrack(() => Array.isArray(searchParams.detail) ? searchParams.detail[0] : searchParams.detail);
+    const commentsTab = createCommentsTab({
+        pageKey: () => detailPageCommentKey(props.breadcrumbHref, props.objectId),
+        otherTabs: () => (props.tabs?.some(t => t.alwaysEnabled || t.count === undefined || t.count > 0) ?? false),
+        requested: requestedDetail === "comments",
+    });
+    const allTabs = () => {
+        const comments = commentsTab();
+        return comments ? [...(props.tabs ?? []), comments] : props.tabs;
+    };
+    const availableTabs = () => allTabs()?.filter(t => t.alwaysEnabled || t.count === undefined || t.count > 0) ?? [];
+    const disabledTabs = () => allTabs()?.filter(t => !t.alwaysEnabled && t.count !== undefined && t.count === 0 && (t.showWhenEmpty ?? true)) ?? [];
     const metaArgs = () => ({
         kind: props.metaKind ?? "entry",
         tier: props.tier,

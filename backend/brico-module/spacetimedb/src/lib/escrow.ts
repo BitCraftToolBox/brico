@@ -2,8 +2,9 @@ import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {ceilRatio, escrowRequired, type Fraction, splitPayout} from '@brico/crafts/entitlement';
 import {CraftError} from '@brico/crafts/errors';
 import type {Identity, Timestamp} from 'spacetimedb';
-import {SenderError} from 'spacetimedb/server';
+import {type Infer, SenderError} from 'spacetimedb/server';
 import type {Ctx} from '../schema';
+import type {bounty_escrow_pool, craft_bounty_escrow} from '../tables/escrow';
 
 export const JOURNAL_KINDS = ['hold', 'topup', 'extras', 'payout', 'refund'] as const;
 export type JournalKind = (typeof JOURNAL_KINDS)[number];
@@ -18,8 +19,8 @@ export function requireEscrowedCurrency(currency: string): void {
     if (!isEscrowedCurrency(currency)) throw new SenderError(`${CraftError.CURRENCY_NOT_ESCROWED}:${currency}`);
 }
 
-export type EscrowRow = NonNullable<ReturnType<Ctx['db']['craft_bounty_escrow']['id']['find']>>;
-export type PoolRow = NonNullable<ReturnType<Ctx['db']['bounty_escrow_pool']['id']['find']>>;
+export type EscrowRow = Infer<typeof craft_bounty_escrow.rowType>;
+export type PoolRow = Infer<typeof bounty_escrow_pool.rowType>;
 
 /** `a ≥ b` for non-negative fractions. */
 export function ratioAtLeast(a: Fraction, b: Fraction): boolean {

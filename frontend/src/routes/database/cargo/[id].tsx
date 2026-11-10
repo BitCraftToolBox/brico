@@ -3,6 +3,7 @@ import {msg} from "@lingui/core/macro";
 import {useParams} from "@solidjs/router";
 import {createMemo, Show} from "solid-js";
 import {lootTab} from "~/components/fun/BricoLootBox";
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailPageLayout} from "~/components/shared/DetailPageLayout";
 import {CargoIcon} from "~/components/shared/GameIcon";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
@@ -159,6 +160,7 @@ export default function CargoDetail() {
                 claimResearchTab(researchRequires()),
                 itemListsTab(inItemLists()),
                 knowledgeTab(knowledge()),
+                modelTab(() => cargo() && {paths: [...new Set([cargo()!.modelAssetName, cargo()!.carriedModelAssetName])]}),
                 ...(cargo()?.id === 92169812 && easterEggs() ? [lootTab()] : [])
             ]}
         />

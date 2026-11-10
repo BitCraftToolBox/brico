@@ -5,6 +5,7 @@ import {useParams} from "@solidjs/router";
 import {createMemo, For, Show} from "solid-js";
 import {lootTab} from "~/components/fun/BricoLootBox";
 import {FontIcon} from "~/components/icons/font-icons";
+import {modelTab} from "~/components/model-viewer/model-tab";
 import {DetailPageLayout, RelTable} from "~/components/shared/DetailPageLayout";
 import {ResourceIcon} from "~/components/shared/GameIcon";
 import {ExtractionRecipePanel, RecipeSelect, ResourceDepletionPanel, ResourceGrowthPanel} from "~/components/shared/RecipeDisplay";
@@ -185,6 +186,7 @@ export default function ResourceDetail() {
                     ),
                 },
                 enemySpawnsTab(enemies()),
+                modelTab(() => resource() && {paths: [resource()!.modelAssetName]}),
                 ...(resource()?.id === 1702339460 && easterEggs() ? [lootTab()] : [])
             ]}
         />

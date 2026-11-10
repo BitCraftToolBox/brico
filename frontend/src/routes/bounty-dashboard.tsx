@@ -4,13 +4,13 @@
  *
  * Unlinked and unindexed; the owner shares the URL. The key (an API key with the `publicDashboard`
  * scope) is read from the hash so it never reaches a server log or Referer header. Bounties and
- * payees come from the module's polled `GET /dashboard` feed; crafts and player names from the relay.
+ * payees come from the module's `dashboard_*` views, subscribed with the key; crafts and player names from the relay.
  */
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Plural, Trans} from "@lingui/solid/macro";
 import {Meta, Title} from "@solidjs/meta";
-import {useLocation} from "@solidjs/router";
+import {A, useLocation} from "@solidjs/router";
 import type {CellContext, ColumnDef} from "@tanstack/solid-table";
 import {createMemo, Show} from "solid-js";
 import {craftColumns} from "~/components/crafts/craft-columns";
@@ -18,8 +18,9 @@ import {LiveTable} from "~/components/data-table/live-table";
 import {ConnectionStatusIndicator} from "~/components/Nav.tsx";
 import {ConnectionStatusBadge} from "~/components/shared/ConnectionStatusBadge";
 import {Badge} from "~/components/ui/badge";
+import BricoFace from "~/components/ui/brico-face.tsx";
 import {bountyFactsFrom, type DashboardPayeeRow, payeeRowsFrom, readDashboardKey} from "~/lib/crafts/dashboard";
-import {createDashboardFeed} from "~/lib/crafts/dashboard-feed";
+import {createLiveDashboardFeed} from "~/lib/crafts/dashboard-live";
 import {craftEntriesFrom} from "~/lib/crafts/entries";
 import {CurrencyLabel} from "~/lib/crafts/filter-condition";
 import {createCraftRelay, createPlayerNames} from "~/lib/crafts/relay";
@@ -80,7 +81,7 @@ export default function DashboardPage() {
     const location = useLocation();
     const {devMenusEnabled} = useSettings();
     const key = createMemo(() => readDashboardKey(location.hash));
-    const {data, error} = createDashboardFeed(key);
+    const {data, error} = createLiveDashboardFeed(key);
     const relay = createCraftRelay();
     const {names: playerNames} = createPlayerNames();
 
@@ -93,9 +94,16 @@ export default function DashboardPage() {
         <div class="mx-auto flex min-h-dvh max-w-7xl flex-col gap-6 px-4 py-6">
             <Title>{_(msg`Bounty dashboard`)}</Title>
             <Meta name="robots" content="noindex, nofollow"/>
-            <div class="flex flex-wrap items-center gap-3">
-                <h1 class="text-3xl font-bold text-foreground"><Trans>Bounty dashboard</Trans></h1>
-                <div class="ml-auto flex flex-row gap-2">
+            <div class="flex flex-wrap">
+                <h1 class="text-3xl font-bold flex flex-row gap-1">
+                    <A href="/" class="inline-flex items-center" activeClass={""}>
+                        <BricoFace class="inline size-8"/>
+                    </A>
+                    <Show when={data()?.name} fallback={<Trans>Bounty dashboard</Trans>}>
+                        {name => name()}
+                    </Show>
+                </h1>
+                <div class="ml-auto flex flex-row gap-1">
                     <Show when={devMenusEnabled()}>
                         <ConnectionStatusIndicator/>
                     </Show>
@@ -117,31 +125,33 @@ export default function DashboardPage() {
                     </p>
                 </Show>
 
-                <section class="flex flex-col gap-2">
-                    <h2 class="text-xl font-semibold"><Trans>Active bounties</Trans></h2>
-                    <LiveTable
-                        name="dashboard-crafts"
-                        columns={CRAFT_COLUMNS}
-                        data={crafts()}
-                        initialState={{sorting: [{id: "bounty", desc: true}, {id: "remaining", desc: true}]}}
-                        getRowId={entry => entry.id}
-                        empty={data() && relay.ready() ? <Trans>No open crafts have a bounty.</Trans> : <Trans>Loading…</Trans>}
-                        paginationLabel={<Plural value={crafts().length} one="# craft with a bounty" other="# crafts with a bounty"/>}
-                    />
-                </section>
-
-                <section class="flex flex-col gap-2">
-                    <h2 class="text-xl font-semibold"><Trans>Contributors</Trans></h2>
-                    <LiveTable
-                        name="dashboard-payees"
-                        columns={PAYEE_COLUMNS}
-                        data={payees()}
-                        initialState={{sorting: [{id: "effort", desc: true}]}}
-                        getRowId={row => row.id}
-                        searchColumnId="name"
-                        empty={data() ? <Trans>No contributors yet.</Trans> : <Trans>Loading…</Trans>}
-                    />
-                </section>
+                <Show when={error() !== "invalid_key"}>
+                    <section class="flex flex-col gap-2">
+                        <h2 class="text-xl font-semibold"><Trans>Active bounties</Trans></h2>
+                        <LiveTable
+                            name="dashboard-crafts"
+                            columns={CRAFT_COLUMNS}
+                            data={crafts()}
+                            initialState={{sorting: [{id: "bounty", desc: true}, {id: "remaining", desc: true}]}}
+                            getRowId={entry => entry.id}
+                            empty={data() && relay.ready() ? <Trans>No open crafts have a bounty.</Trans> : <Trans>Loading…</Trans>}
+                            paginationLabel={<Plural value={crafts().length} one="# craft with a bounty" other="# crafts with a bounty"/>}
+                        />
+                    </section>
+    
+                    <section class="flex flex-col gap-2">
+                        <h2 class="text-xl font-semibold"><Trans>Contributors</Trans></h2>
+                        <LiveTable
+                            name="dashboard-payees"
+                            columns={PAYEE_COLUMNS}
+                            data={payees()}
+                            initialState={{sorting: [{id: "effort", desc: true}]}}
+                            getRowId={row => row.id}
+                            searchColumnId="name"
+                            empty={data() ? <Trans>No contributors yet.</Trans> : <Trans>Loading…</Trans>}
+                        />
+                    </section>
+                </Show>
             </Show>
         </div>
     );

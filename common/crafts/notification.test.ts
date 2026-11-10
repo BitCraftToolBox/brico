@@ -13,6 +13,12 @@ describe("parseNotificationPayload", () => {
         assert.deepEqual(parseNotificationPayload(encodeNotificationPayload(funding)), funding);
     });
 
+    it("round-trips a comment payload and rejects a malformed one", () => {
+        const comment: NotificationPayload = {tag: "comment", value: {senderName: "Ana", pageKey: "item:1", commentId: "9"}};
+        assert.deepEqual(parseNotificationPayload(encodeNotificationPayload(comment)), comment);
+        assert.equal(parseNotificationPayload(JSON.stringify({tag: "comment", value: {senderName: "Ana"}})), null);
+    });
+
     it("discards unknown tags, bad shapes and malformed JSON", () => {
         assert.equal(parseNotificationPayload(JSON.stringify({tag: "bounty", value: {}})), null);
         assert.equal(parseNotificationPayload(JSON.stringify({tag: "funding", value: {kind: "x"}})), null);

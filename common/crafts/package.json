@@ -19,6 +19,7 @@
     "./icon-render": "./icon-render.ts",
     "./stelo": "./stelo.ts",
     "./note": "./note.ts",
+    "./comments": "./comments.ts",
     "./notification": "./notification.ts",
     "./effort-rate": "./effort-rate.ts"
   },

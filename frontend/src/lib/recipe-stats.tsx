@@ -370,11 +370,11 @@ export function travelerTaskStatLines(task: TravelerTaskDesc): StatLine[] {
 
     const lines: StatLine[] = [
         [
-            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} {skillCategoryLabel(skillTag)}</span>,
+            () => <span class="icon-text gap-1">{skillStatIcon(skill)} {skillCategoryLabel(skillTag)}</span>,
             () => <span><Trans>Lv. {task.levelRequirement.minLevel}-{task.levelRequirement.maxLevel} {skill ? <SkillLink skill={skill} showIcon={false}/> : <Trans>Unknown</Trans>}</Trans></span>,
         ],
         [
-            () => <span class="inline-flex items-center gap-1">{skillStatIcon(skill)} <Trans>{skillName} Exp</Trans></span>,
+            () => <span class="icon-text gap-1">{skillStatIcon(skill)} <Trans>{skillName} Exp</Trans></span>,
             fixFloat(task.rewardedExperience.quantity),
         ],
     ];
