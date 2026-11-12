@@ -1,4 +1,4 @@
-import {ProspectingDesc} from "@brico/bitcraft-bindings/types";
+import {AbilityUnlockDesc, ProspectingDesc} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {Trans} from "@lingui/solid/macro";
 import {useParams} from "@solidjs/router";
@@ -8,7 +8,7 @@ import {type DetailGroup, DetailPageLayout, RelTable} from "~/components/shared/
 import {EnemyIcon, ResourceIcon} from "~/components/shared/GameIcon";
 import {ItemStackArray} from "~/components/shared/ItemStacks";
 import {BitCraftTables, useTablesLoading} from "~/lib/bitcraft-data";
-import {BiomeLink, SkillLinkById} from "~/lib/game-links";
+import {BiomeLink, SkillLink, SkillLinkById} from "~/lib/game-links";
 import {ogImageForCodepoint} from "~/lib/og-meta";
 import {knowledgeRequirementsGroup} from "~/lib/table-utils/detail-group-builders.tsx";
 import {fixFloat, readableSeconds} from "~/lib/utils";
@@ -55,6 +55,7 @@ export default function ProspectingDetail() {
     const biomeIndex = BitCraftTables.BiomeDesc.indexedBy("biomeType", true);
     const enemyIndex = BitCraftTables.EnemyDesc.indexedBy("enemyType");
     const enemyParamsIndex = BitCraftTables.EnemyAiParamsDesc.indexedBy("id");
+    const skillIndex = BitCraftTables.SkillDesc.indexedBy("id");
     const abilityUnlocks = BitCraftTables.AbilityUnlockDesc.get();
 
     const prospecting = createMemo(() => {
@@ -106,7 +107,7 @@ export default function ProspectingDetail() {
         return undefined;
     });
 
-    const abilityUnlock = createMemo((): {requiredKnowledges: number[], blockingKnowledges: number[]} | undefined => {
+    const abilityUnlock = createMemo((): AbilityUnlockDesc | undefined => {
         const pid = prospecting()?.id;
         if (!pid) return undefined;
         for (const unlock of abilityUnlocks ?? []) {
@@ -119,7 +120,17 @@ export default function ProspectingDetail() {
 
     const unlockGroup = createMemo((): DetailGroup[] => {
         const unlock = abilityUnlock();
-        return knowledgeRequirementsGroup(unlock);
+        const group: DetailGroup = {heading: msg`Requirements`, properties: []};
+        group.properties.push(...knowledgeRequirementsGroup(unlock)[0]?.properties ?? []);
+        if (unlock?.levelRequirements?.length) {
+            const req = unlock.levelRequirements[0];
+            const skill = skillIndex().get(req.skillId);
+            group.properties.push({
+                label: () => <Trans>Skill</Trans>,
+                value: () => <span><Trans>Lv. {req.level} {skill ? <SkillLink skill={skill} showIcon={false}/> : `Skill #${req.skillId}`}</Trans></span>
+            })
+        }
+        return [group];
     });
 
     const detailGroups = createMemo((): DetailGroup[] => {
@@ -144,7 +155,7 @@ export default function ProspectingDetail() {
                     {label: msg`Allow Aquatic Breadcrumb`, value: p.allowAquaticBreadCrumb},
                 ]
             },
-            ...unlockGroup()
+            ...(unlockGroup() ?? [])
         ];
     });
 

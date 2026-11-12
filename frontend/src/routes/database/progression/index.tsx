@@ -7,7 +7,6 @@ import {BitCraftTables} from "~/lib/bitcraft-data";
 import {breadcrumbCurrent} from "~/lib/game-links";
 import {gameText, useLabel} from "~/lib/labels";
 import {BITCRAFT_TITLE_SUFFIX} from "~/lib/og-meta";
-import {cn} from "~/lib/utils";
 
 export default function ProgressionNavIcons() {
     const label = useLabel();
@@ -29,15 +28,6 @@ export default function ProgressionNavIcons() {
     const profLabel = gameText(msg`Profession`);
     const skillLabel = gameText(msg`Skill`);
 
-    // manual, to make it more obvious what's WIP or not. eventually this can be removed
-    const hasRework = [
-        12, // Fishing
-        5, // Mining
-        2, // Forestry
-        14, // Foraging
-        9, // Hunting
-    ];
-
     return (
         <MainLayout
             title={label(title)}
@@ -55,10 +45,7 @@ export default function ProgressionNavIcons() {
                                     {(skill) => (
                                         <A
                                             href={`/database/skill/${skill.id}?detail=progression`}
-                                            class={cn(
-                                                "flex flex-col items-center gap-1.5 rounded-lg p-3 text-center transition-colors hover:bg-accent/60",
-                                                (!hasRework.includes(skill.id) ? "text-muted-foreground" : "")
-                                            )}
+                                            class={"flex flex-col items-center gap-1.5 rounded-lg p-3 text-center transition-colors hover:bg-accent/60"}
                                         >
                                             <SkillBanner skill={skill} class="w-20"/>
                                             <span class="text-xs w-full">{skill.name}</span>
