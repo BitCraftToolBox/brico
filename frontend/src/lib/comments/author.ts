@@ -26,5 +26,5 @@ export function previewAuthorName(displayName: string | undefined, activeLinks: 
         const checked = checkDisplayName(displayName);
         if ("name" in checked) return checked.name;
     }
-    return oldestHandle(activeLinks, "bitcraft-ea2") ?? oldestHandle(activeLinks, "discord");
+    return oldestHandle(activeLinks, "bitcraft-rel") ?? oldestHandle(activeLinks, "discord");
 }

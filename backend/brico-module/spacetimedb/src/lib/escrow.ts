@@ -81,7 +81,7 @@ export function requireOwnSteloAccount(ctx: Ctx, accountIdentity: Identity, acco
 
 /** The Stelo account that should receive `payeePlayerId`'s payouts in `currency`, or null if they are unroutable. */
 export function routePayeeWallet(ctx: Ctx, payeePlayerId: bigint, currency: string): bigint | null {
-    for (const link of ctx.db.linked_integration.by_provider_external_id.filter(['bitcraft-ea2', payeePlayerId.toString()])) {
+    for (const link of ctx.db.linked_integration.by_provider_external_id.filter(['bitcraft-rel', payeePlayerId.toString()])) {
         if (link.revokedAt !== undefined) continue;
         for (const receiving of ctx.db.stelo_receiving_wallet.by_account_currency.filter([link.accountIdentity, currency])) {
             const walletLink = ctx.db.linked_integration.id.find(receiving.linkId);

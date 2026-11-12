@@ -447,7 +447,7 @@ export default function CraftDetail() {
     // The viewer's own linked BitCraft player ids — an "owns this craft, or owns its claim" check,
     // done client-side with data this page already has. Non-blocking: `brico-bot` is the real
     // authority for whether a bounty edit is actually accepted.
-    const viewerPlayerIds = createMemo(() => links().filter(l => l.provider === "bitcraft-ea2").map(l => l.externalId));
+    const viewerPlayerIds = createMemo(() => links().filter(l => l.provider === "bitcraft-rel").map(l => l.externalId));
     const canEditBounty = createMemo(() => {
         const entry = craft();
         if (entry?.complete) return false; // craft already complete, bounty is historical reference now

@@ -234,7 +234,7 @@ export default function CraftBrowser() {
     const {links: linkedAccounts} = useLinkedIntegrations();
     const bitcraftAccounts = createMemo(() => {
         const links = linkedAccounts();
-        const bcLinks = links.filter(l => l.provider === "bitcraft-ea2");
+        const bcLinks = links.filter(l => l.provider === "bitcraft-rel");
         return bcLinks.map(link => link.externalId);
     });
     const relay = createCraftRelay();

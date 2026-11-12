@@ -172,7 +172,7 @@ export default function PayoutsPage() {
     const {rows, ready: rowsReady} = createContributorEntitlements();
     const [currencyFilter, setCurrencyFilter] = createSignal<string[]>([]);
     const ownNames = createMemo(() => new Map(
-        links().filter(link => link.provider === "bitcraft-ea2").map(link => [link.externalId, link.externalHandle ?? link.externalId]),
+        links().filter(link => link.provider === "bitcraft-rel").map(link => [link.externalId, link.externalHandle ?? link.externalId]),
     ));
     const [excludeSelf, setExcludeSelf] = createSignal(true);
     const groups = createMemo(() => {

@@ -66,7 +66,7 @@ type Assignment = RowOf<"allCraftBountyAssignment">;
 
 /** The mirrored tables. Maps are mutated by callbacks, so read them synchronously. */
 export interface AppState {
-    /** `bitcraft-ea2` player entity id -> the brico account it is linked to, revoked links excluded. */
+    /** `bitcraft-rel` player entity id -> the brico account it is linked to, revoked links excluded. */
     readonly playerAccounts: ReadonlyMap<bigint, Identity>;
     /** Every account's usable bounty rules by account identity hex, in evaluation order (priority, then id). */
     readonly bountyRules: ReadonlyMap<string, BountyRuleSpec[]>;
@@ -213,7 +213,7 @@ export function createAppCache(log: Logger): AppCache {
     }
 
     function setLink(row: LinkedIntegration): void {
-        if (row.provider !== "bitcraft-ea2" || row.revokedAt !== undefined) {
+        if (row.provider !== "bitcraft-rel" || row.revokedAt !== undefined) {
             removeLink(row);
             return;
         }

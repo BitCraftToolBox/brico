@@ -440,7 +440,7 @@ export default function PayeesPage() {
     const {names: playerNames} = createPlayerNames();
     const [currencyFilter, setCurrencyFilter] = createSignal<string[]>([]);
     const {links} = useLinkedIntegrations();
-    const ownIds = createMemo(() => new Set(links().filter(link => link.provider === "bitcraft-ea2").map(link => link.externalId)));
+    const ownIds = createMemo(() => new Set(links().filter(link => link.provider === "bitcraft-rel").map(link => link.externalId)));
     const [excludeSelf, setExcludeSelf] = createSignal(true);
     const groups = createMemo(() => {
         const byCurrency = filterByCurrency(rows(), currencyFilter());

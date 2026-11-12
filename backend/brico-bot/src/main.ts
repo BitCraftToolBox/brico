@@ -274,7 +274,7 @@ async function main(): Promise<void> {
                 try {
                     await timeReducerCall("link_integration", conn.reducers.linkIntegration({
                         accountIdentity,
-                        provider: "bitcraft-ea2",
+                        provider: "bitcraft-rel",
                         externalId: sub,
                         externalHandle: name,
                     }));

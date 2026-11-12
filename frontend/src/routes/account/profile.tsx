@@ -33,7 +33,7 @@ import {breadcrumb} from "~/lib/game-links";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
 
-const BITCRAFT_PROVIDER = "bitcraft-ea2";
+const BITCRAFT_PROVIDER = "bitcraft-rel";
 const DISCORD_PROVIDER = "discord";
 const STELO_PROVIDER = "stelo";
 

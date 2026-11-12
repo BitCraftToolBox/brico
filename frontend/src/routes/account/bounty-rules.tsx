@@ -59,7 +59,7 @@ const DISALLOWED_FIELDS = ["payout", "currency"] as const;
 // skill tiers, not item tiers
 const TIERS = Tiers.tiers.map((p) => p.value).filter(v => v > 0);
 
-const BITCRAFT_PROVIDER = "bitcraft-ea2";
+const BITCRAFT_PROVIDER = "bitcraft-rel";
 
 /** A grid cell's committed value — `"invalid"` for non-empty typed text that didn't parse, which (unlike a merely *empty* cell, which is just absent from the map) still has to block Save the same way bogus flat-amount text does. */
 type CellAmount = Ratio | "invalid";

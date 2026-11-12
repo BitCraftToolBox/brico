@@ -44,7 +44,7 @@ export function verifySteloAddress(
  * Write, checked live by `canPull`), the account is a Debit account on a configured escrow
  * currency's ledger and is not an escrow wallet itself, and some member with kind User and role
  * Owner or Admin has a Stelo `bitcraftPlayerId` among the linking brico account's active
- * `bitcraft-ea2` players. The bot only sees accounts it belongs to, so a missing account and a
+ * `bitcraft-rel` players. The bot only sees accounts it belongs to, so a missing account and a
  * non-member one are indistinguishable (`bot-not-member`).
  */
 export function verifySteloLink(

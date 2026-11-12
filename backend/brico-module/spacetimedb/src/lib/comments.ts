@@ -30,7 +30,7 @@ export function resolveAuthorName(db: ReadDb, account: Account): string | undefi
         const checked = checkDisplayName(account.displayName);
         if ('name' in checked) return checked.name;
     }
-    return activeHandle(db, account.identity, 'bitcraft-ea2') ?? activeHandle(db, account.identity, 'discord');
+    return activeHandle(db, account.identity, 'bitcraft-rel') ?? activeHandle(db, account.identity, 'discord');
 }
 
 /** The NFC-normalized, trimmed name, or a `SenderError` with the code for what is wrong with it. */
