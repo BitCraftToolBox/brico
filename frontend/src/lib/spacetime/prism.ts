@@ -116,7 +116,7 @@ export const prismAdapter: SdkAdapter<PrismConnection, PrismQuery> = {
  */
 export const PRISM_SERVER: ServerDescriptor<PrismConnection, PrismQuery> = {
     uri: import.meta.env.VITE_RELAY_HOST as string ?? "https://st.prism.brico.app",
-    module: import.meta.env.VITE_RELAY_MODULE as string ?? "prism-relay",
+    module: import.meta.env.VITE_RELAY_MODULE as string ?? "prism-release",
     adapter: prismAdapter,
     tokenNamespace: "prism",
 };
