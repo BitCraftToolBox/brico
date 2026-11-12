@@ -4060,6 +4060,7 @@ msgstr "crwdns6330:0crwdne6330:0"
 msgid "{name} Lvl {level}"
 msgstr "crwdns5104:0{name}crwdnd5104:0{level}crwdne5104:0"
 
+#: src/routes/account/payees.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copy CSV"
 msgstr "crwdns6332:0crwdne6332:0"
@@ -4203,6 +4204,7 @@ msgstr ""
 #: src/components/comments/CommentItem.tsx
 #: src/components/model-viewer/DressingRoom.tsx
 #: src/components/shared/DetailPageLayout.tsx
+#: src/routes/account/payees.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
 msgstr "crwdns5124:0crwdne5124:0"
@@ -4957,6 +4959,10 @@ msgstr "crwdns6492:0crwdne6492:0"
 
 #: src/components/comments/admin/AdminLayout.tsx
 msgid "Reports"
+msgstr ""
+
+#: src/routes/account/payees.tsx
+msgid "Copy History CSV"
 msgstr ""
 
 #: src/routes/account/bounties.tsx

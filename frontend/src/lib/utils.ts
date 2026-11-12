@@ -150,6 +150,11 @@ export function downloadTextFile(filename: string, content: string, mime: string
     URL.revokeObjectURL(url);
 }
 
+/** Quotes a CSV field only when it needs it, doubling any embedded quotes. */
+export function csvField(value: string): string {
+    return /[",\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
+}
+
 export function useCopy(content: string | Accessor<string>, delay: number = 1500): [() => void, Accessor<boolean>] {
     const [contentCopied, setContentCopied] = createSignal(false);
     const copyContent = () => {

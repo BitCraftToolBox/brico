@@ -4060,6 +4060,7 @@ msgstr ""
 msgid "{name} Lvl {level}"
 msgstr ""
 
+#: src/routes/account/payees.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copy CSV"
 msgstr ""
@@ -4203,6 +4204,7 @@ msgstr ""
 #: src/components/comments/CommentItem.tsx
 #: src/components/model-viewer/DressingRoom.tsx
 #: src/components/shared/DetailPageLayout.tsx
+#: src/routes/account/payees.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
 msgstr ""
@@ -4957,6 +4959,10 @@ msgstr ""
 
 #: src/components/comments/admin/AdminLayout.tsx
 msgid "Reports"
+msgstr ""
+
+#: src/routes/account/payees.tsx
+msgid "Copy History CSV"
 msgstr ""
 
 #: src/routes/account/bounties.tsx

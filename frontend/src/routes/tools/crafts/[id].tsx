@@ -54,7 +54,7 @@ import {useLabel} from "~/lib/labels";
 import {type PayoutDisplayMode, useSettings} from "~/lib/settings";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
-import {fixFloat, useCopy} from "~/lib/utils";
+import {csvField, fixFloat, useCopy} from "~/lib/utils";
 
 const BROWSE_HREF = "/tools/crafts/browse";
 
@@ -140,11 +140,6 @@ const CONTRIBUTOR_COLUMNS: ColumnDef<CraftContributor, any>[] = [
         )
     },
 ];
-
-/** Quotes a CSV field only when it needs it, doubling any embedded quotes. */
-function csvField(value: string): string {
-    return /[",\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
-}
 
 /** Snapshots the current contributor rows as `player_id,player_name,effort,estimated_payout` CSV text. */
 function contributorsToCsv(contributors: CraftContributor[]): string {

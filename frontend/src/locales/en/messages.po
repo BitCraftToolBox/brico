@@ -4055,6 +4055,7 @@ msgstr "Member"
 msgid "{name} Lvl {level}"
 msgstr "{name} Lvl {level}"
 
+#: src/routes/account/payees.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copy CSV"
 msgstr "Copy CSV"
@@ -4198,6 +4199,7 @@ msgstr "Guaranteed drop on depletion."
 #: src/components/comments/CommentItem.tsx
 #: src/components/model-viewer/DressingRoom.tsx
 #: src/components/shared/DetailPageLayout.tsx
+#: src/routes/account/payees.tsx
 #: src/routes/tools/crafts/[id].tsx
 msgid "Copied!"
 msgstr "Copied!"
@@ -4953,6 +4955,10 @@ msgstr "That account can't be linked as a wallet: it is Brico's own escrow accou
 #: src/components/comments/admin/AdminLayout.tsx
 msgid "Reports"
 msgstr "Reports"
+
+#: src/routes/account/payees.tsx
+msgid "Copy History CSV"
+msgstr "Copy History CSV"
 
 #: src/routes/account/bounties.tsx
 msgid "Hex Coin bounties are an honor system: the owner still has to pay you in-game, so only work for owners you trust."

@@ -10,7 +10,7 @@
  * The payment editor is a single page-level `Dialog` rather than a per-row popover as that would get torn
  * down and reset mid-keystroke as the report updates underneath it.
  */
-import type {LoyaltyBonusTotal, LoyaltyReward} from "@brico/bindings/brico-app/types";
+import type {BountyPayoutLogRow, LoyaltyBonusTotal, LoyaltyReward} from "@brico/bindings/brico-app/types";
 import {ESCROWED_BOUNTY_CURRENCIES} from "@brico/crafts/currencies";
 import {addRatio, bonusFromMultiplier} from "@brico/crafts/entitlement";
 import {normalizePayoutNote, PAYOUT_NOTE_MAX_BYTES} from "@brico/crafts/note";
@@ -18,8 +18,13 @@ import {msg, t} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import {Trans} from "@lingui/solid/macro";
 import type {CellContext, ColumnDef} from "@tanstack/solid-table";
-import {TbOutlineChevronRight as IconChevronRight, TbOutlineHistory as IconHistory} from "solid-icons/tb";
-import {type Accessor, createEffect, createMemo, createSignal, For, Show} from "solid-js";
+import {
+    TbOutlineChevronRight as IconChevronRight,
+    TbOutlineClipboardCheck as IconClipboardCheck,
+    TbOutlineClipboardCopy as IconClipboardCopy,
+    TbOutlineHistory as IconHistory,
+} from "solid-icons/tb";
+import {type Accessor, createEffect, createMemo, createSignal, For, type JSX, Show} from "solid-js";
 import {CurrencyFilterButton} from "~/components/crafts/CurrencyFilterButton";
 import {PayoutHistoryDialog, type PayoutHistoryFilter} from "~/components/crafts/PayoutHistoryDialog";
 import {PayoutScheduleLine} from "~/components/crafts/PayoutScheduleLine";
@@ -55,7 +60,7 @@ import {useSettings} from "~/lib/settings";
 import {BRICO_APP_SERVER} from "~/lib/spacetime/brico-app";
 import {useConnection} from "~/lib/spacetime/manager";
 import {PRISM_SERVER} from "~/lib/spacetime/prism";
-import {cn} from "~/lib/utils";
+import {cn, csvField, useCopy} from "~/lib/utils";
 import {formatBonusPercent} from "~/routes/account/loyalty";
 
 const TABLE_NAME = "account-payees";
@@ -69,6 +74,9 @@ interface PayeeRow {
     /** Set only on a row that represents exactly one (player, currency) line — a payment always
      * targets one player and currency, never a whole group. `null` on a parent row. */
     playerId: string | null;
+    /** Leaf rows only: the player's own name, and the payee account/group name (empty when the group has none). */
+    playerName?: string;
+    groupName?: string;
     /** Every (player, currency) pair this row covers — one for a single-line row, or the union of
      * every sub-row's pair for a group's parent row. Scopes the history icon's filter, since
      * transactions are recorded per-player and currency, not per-group. */
@@ -128,7 +136,15 @@ function toRows(
             securedTotal: securedOf(group.lines),
             paidTotal: group.paidTotal,
         };
-        if (single) return {...base, playerId: single.playerId, loyalty: loyaltyMap.get(`${single.playerId}:${single.currency}`)};
+        if (single) {
+            return {
+                ...base,
+                playerId: single.playerId,
+                playerName: playerNames.get(single.playerId) ?? single.playerId,
+                groupName: group.payeeName ?? "",
+                loyalty: loyaltyMap.get(`${single.playerId}:${single.currency}`),
+            };
+        }
         return {
             ...base,
             playerId: null,
@@ -137,6 +153,8 @@ function toRows(
                 name: playerNames.get(line.playerId) ?? line.playerId,
                 note: group.isLocal && line.accountName ? `(${line.accountName})` : undefined,
                 playerId: line.playerId,
+                playerName: playerNames.get(line.playerId) ?? line.playerId,
+                groupName: group.payeeName ?? "",
                 entries: [{playerId: line.playerId, currency: line.currency}],
                 currency: line.currency,
                 loyalty: loyaltyMap.get(`${line.playerId}:${line.currency}`),
@@ -235,6 +253,54 @@ function PaymentDialog(props: {target: Accessor<EditTarget | null>; onClose: () 
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+    );
+}
+
+/** Every (player, currency) leaf row as CSV, ignoring column visibility and omitting group sum rows. */
+function payeesToCsv(rows: readonly PayeeRow[]): string {
+    const lines = ["player_id,player_name,group_name,currency,effort_total,earned_total,paid_total"];
+    for (const row of rows.flatMap(r => r.subRows ?? [r])) {
+        lines.push([
+            row.playerId ?? "",
+            csvField(row.playerName ?? ""),
+            csvField(row.groupName ?? ""),
+            csvField(row.currency ?? ""),
+            row.effortTotal.toString(),
+            row.earnedTotal.toString(),
+            row.paidTotal.toString(),
+        ].join(","));
+    }
+    return lines.join("\n");
+}
+
+/** The payout history as CSV; `time` is ISO 8601 UTC. */
+function payoutLogToCsv(rows: readonly BountyPayoutLogRow[], playerName: (id: string) => string): string {
+    const lines = ["id,player_id,player_name,currency,amount,time,source,note"];
+    for (const row of rows) {
+        const playerId = row.payeePlayerId.toString();
+        lines.push([
+            row.id,
+            playerId,
+            csvField(playerName(playerId)),
+            csvField(row.currency),
+            row.amount.toString(),
+            new Date(Number(row.createdAt.toMillis())).toISOString(),
+            csvField(row.source),
+            csvField(row.note ?? ""),
+        ].join(","));
+    }
+    return lines.join("\n");
+}
+
+/** A toolbar button that copies `getCsv()` to the clipboard. */
+function CopyCsvButton(props: {getCsv: () => string; children: JSX.Element}) {
+    const [copy, copied] = useCopy(props.getCsv);
+    return (
+        <Button variant="outline" size="sm" class="h-8" onClick={copy}>
+            <Show when={copied()} fallback={<><IconClipboardCopy class="mr-1"/> {props.children}</>}>
+                <IconClipboardCheck class="mr-1"/> <Trans>Copied!</Trans>
+            </Show>
+        </Button>
     );
 }
 
@@ -455,6 +521,10 @@ export default function PayeesPage() {
                                 >
                                     <IconHistory class="mr-1 size-4"/><Trans>History</Trans>
                                 </Button>
+                                <CopyCsvButton getCsv={() => payeesToCsv(tableRows())}><Trans>Copy CSV</Trans></CopyCsvButton>
+                                <CopyCsvButton getCsv={() => payoutLogToCsv(paymentLog(), id => playerNames().get(id) ?? id)}>
+                                    <Trans>Copy History CSV</Trans>
+                                </CopyCsvButton>
                                 <Checkbox checked={excludeSelf()} onChange={setExcludeSelf} class="items-center" label={<Trans>Exclude Self</Trans>}/>
                             </>
                         }
