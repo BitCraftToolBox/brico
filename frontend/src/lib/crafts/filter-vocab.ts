@@ -98,7 +98,7 @@ export function claimAccessFlagLabel(flag: ClaimAccessFlag): Label {
  */
 export interface CurrencyData {
     id: string;
-    label: Label;
+    label: Label | string;
 }
 
 /**
@@ -108,6 +108,7 @@ export interface CurrencyData {
 const CURRENCY_DATA: Record<VocabCurrencyId, CurrencyData> = {
     "hex-coin": {id: "hex-coin", label: gameText(msg`Hex Coin`)},
     "stelo-hex-coin": {id: "stelo-hex-coin", label: msg`Stelo Hex Coin`},
+    "solis-lux": {id: "solis-lux", label: "Lux"},
 };
 
 export function currencyData(currency: string): CurrencyData | undefined {
