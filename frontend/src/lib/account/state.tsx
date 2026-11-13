@@ -33,7 +33,7 @@ export interface AccountContextValue {
      * zero-round-trip Discord linking shortcut (`linkDiscordViaSpacetimeAuth`) applies.
      */
     loginMethod: () => string | null;
-    /** Starts the SpacetimeAuth login flow. Navigates away. */
+    /** Starts the SpacetimeAuth login flow. Navigates away; the user returns to the current page afterwards. */
     login: () => Promise<void>;
     /** Drops the `brico-app` connection's resource claim. Clears auth from local session. If local is false, also redirects to SpacetimeAuth logout. */
     logout: (local: boolean) => Promise<void>;

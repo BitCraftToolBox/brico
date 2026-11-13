@@ -22,7 +22,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 export interface PayoutDeps {
     config: SteloConfig;
     escrow: EscrowCache;
-    /** BitCraft player id -> brico account, from active `bitcraft-ea2` links. */
+    /** BitCraft player id -> brico account, from active `bitcraft-rel` links. */
     playerAccounts(): ReadonlyMap<bigint, Identity>;
     stelo: SteloReadModel & {readonly isLive: boolean};
     writes: SteloWrites;

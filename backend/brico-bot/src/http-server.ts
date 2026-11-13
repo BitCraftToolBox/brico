@@ -172,7 +172,7 @@ export function createLinkHttpServer(options: LinkHttpServerOptions): LinkHttpSe
             if (accountIdentity && accounts.length > 0) {
                 await options.linkAdditionalBitauthAccounts({accountIdentity, accounts});
             }
-            redirect(res, withParam(returnUrl, "linked", "bitcraft-ea2"));
+            redirect(res, withParam(returnUrl, "linked", "bitcraft-rel"));
         } catch (cause) {
             options.log.warn("BitAuth link finalization failed", {error: describeError(cause)});
             failLink(res, returnUrl, describeError(cause));

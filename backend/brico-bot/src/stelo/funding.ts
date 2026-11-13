@@ -57,7 +57,7 @@ export interface FundingDeps {
     config: SteloConfig;
     escrow: EscrowCache;
     stelo: SteloReadModel & {readonly isLive: boolean};
-    /** BitCraft player id -> brico account, from active `bitcraft-ea2` links. */
+    /** BitCraft player id -> brico account, from active `bitcraft-rel` links. */
     playerAccounts(): ReadonlyMap<bigint, Identity>;
     writes: SteloWrites;
     log: Logger;

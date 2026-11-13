@@ -160,7 +160,7 @@ const PayerEntitlementRow = t.row('PayerEntitlementRow', {
 
 /**
  * The caller's own entitlements as a contributor, across every BitCraft player id they've ever
- * linked (`bitcraft-ea2`, revoked included — past earnings on a since-unlinked character are still
+ * linked (`bitcraft-rel`, revoked included — past earnings on a since-unlinked character are still
  * theirs): one row per (payer, currency) they've earned from or been paid by, summed off the two
  * totals tables directly. Procedural, not a query view.
  */

@@ -277,7 +277,7 @@ function generator(seed: number) {
             const id = linkId++ % 5n, player = pick(PLAYERS), account = pick(ACCOUNTS), revoked = chance(0.2);
             const revokedAt = revoked ? Timestamp.now() : undefined;
             return side => side.module.tables.allLinkedIntegration.upsert({
-                id, accountIdentity: account, provider: "bitcraft-ea2", externalId: player.toString(), revokedAt,
+                id, accountIdentity: account, provider: "bitcraft-rel", externalId: player.toString(), revokedAt,
             });
         },
         () => {
@@ -367,7 +367,7 @@ test("the random runs exercise every kind of write", () => {
 
 /** A hex-coin rule matching every craft, owned by account 1 who is linked to player 200, who owns craft 1. */
 function bountiedCraft(side: Side) {
-    side.module.tables.allLinkedIntegration.upsert({id: 1n, accountIdentity: ACCOUNTS[0], provider: "bitcraft-ea2", externalId: "200", revokedAt: undefined});
+    side.module.tables.allLinkedIntegration.upsert({id: 1n, accountIdentity: ACCOUNTS[0], provider: "bitcraft-rel", externalId: "200", revokedAt: undefined});
     side.module.tables.allBountyRule.upsert({
         id: "rule", accountIdentity: ACCOUNTS[0], priority: 0, filterJson: JSON.stringify(matchAll()), private: false,
         value: {tag: "Flat", value: {ratioNumerator: 1n, ratioDenominator: 4n, currency: "hex-coin"}}, deletedAt: undefined,
@@ -490,7 +490,7 @@ describe("escrowed bounties", () => {
             },
         };
         const side = createSide({forceFull: false, seed: 1, funding});
-        side.module.tables.allLinkedIntegration.upsert({id: 1n, accountIdentity: ACCOUNTS[0], provider: "bitcraft-ea2", externalId: "200", revokedAt: undefined});
+        side.module.tables.allLinkedIntegration.upsert({id: 1n, accountIdentity: ACCOUNTS[0], provider: "bitcraft-rel", externalId: "200", revokedAt: undefined});
         side.module.tables.allBountyRule.upsert({
             id: "rule", accountIdentity: ACCOUNTS[0], priority: 0, filterJson: JSON.stringify(matchAll()), private: false, fundingLinkId: 9n,
             value: {tag: "Flat", value: {ratioNumerator: 1n, ratioDenominator: 4n, currency: "stelo-hex-coin"}}, deletedAt: undefined,

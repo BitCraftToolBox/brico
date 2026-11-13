@@ -62,9 +62,9 @@ function linkIntegrationInternal(
     });
 
     // UX convenience, not identity: set display name on first time link.
-    if (provider === 'bitcraft-ea2' && externalHandle && account.displayName === undefined) {
+    if (provider === 'bitcraft-rel' && externalHandle && account.displayName === undefined) {
         const activeBitcraftLinks = [...ctx.db.linked_integration.accountIdentity.filter(accountIdentity)]
-            .filter(link => link.provider === 'bitcraft-ea2' && link.revokedAt === undefined);
+            .filter(link => link.provider === 'bitcraft-rel' && link.revokedAt === undefined);
         if (activeBitcraftLinks.length === 1) {
             ctx.db.account.identity.update({...account, displayName: externalHandle});
         }

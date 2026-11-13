@@ -807,23 +807,21 @@ function computeLayout(
     // ── Subtree range computation ──
 
     const subtreeRanges: SubtreeRange[] = [];
-    if (DEV) {
-        for (const n of nodes) {
-            const kids = finalOrder.get(n.id) ?? [];
-            if (kids.length === 0) continue;
-            const subtreeNodes = getOwnedSubtreeNodes(n.id);
-            const rows = subtreeNodes.map(id => nodeRow.get(id) ?? 0);
-            const cols = subtreeNodes.map(id => nodeById.get(id)?.column ?? 0);
-            subtreeRanges.push({
-                rootId: n.id,
-                rootName: n.name,
-                startRow: Math.min(...rows),
-                endRow: Math.max(...rows),
-                startCol: n.column,
-                endCol: Math.max(...cols),
-                depth: ownerDepth.get(n.id) ?? 0,
-            });
-        }
+    for (const n of nodes) {
+        const kids = finalOrder.get(n.id) ?? [];
+        if (kids.length === 0) continue;
+        const subtreeNodes = getOwnedSubtreeNodes(n.id);
+        const rows = subtreeNodes.map(id => nodeRow.get(id) ?? 0);
+        const cols = subtreeNodes.map(id => nodeById.get(id)?.column ?? 0);
+        subtreeRanges.push({
+            rootId: n.id,
+            rootName: n.name,
+            startRow: Math.min(...rows),
+            endRow: Math.max(...rows),
+            startCol: n.column,
+            endCol: Math.max(...cols),
+            depth: ownerDepth.get(n.id) ?? 0,
+        });
     }
 
     return {positions: pos, subtreeRanges};

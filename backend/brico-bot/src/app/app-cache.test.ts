@@ -65,7 +65,7 @@ for (const seed of [1, 2, 3, 4]) {
             // At most one active link per player in the module, so each link id owns one player here.
             () => {
                 const id = int(3);
-                t.allLinkedIntegration.upsert({id: BigInt(id), accountIdentity: pick(ACCOUNTS), provider: pick(["bitcraft-ea2", "bitcraft-ea2", "discord"]), externalId: String(200 + id), revokedAt: chance(0.3) ? Timestamp.now() : undefined});
+                t.allLinkedIntegration.upsert({id: BigInt(id), accountIdentity: pick(ACCOUNTS), provider: pick(["bitcraft-rel", "bitcraft-rel", "discord"]), externalId: String(200 + id), revokedAt: chance(0.3) ? Timestamp.now() : undefined});
             },
             () => t.allLinkedIntegration.remove(String(int(3))),
             () => t.allBountyRule.upsert(flatRule(`rule${int(3)}`, pick(ACCOUNTS), JSON.stringify(pick([{field: "tier", cmp: "gte", value: 2}, {field: "payout", cmp: "gte", value: 1}])), {priority: int(2), deletedAt: chance(0.2) ? Timestamp.now() : undefined})),
@@ -130,11 +130,11 @@ test("drain reports what changed and then resets", () => {
     assert.equal(delta.resolveAll, false, "overrides, assignments and loyalty rows never re-resolve every craft");
     assert.equal(cache.drain().overrideCrafts.size, 0);
 
-    t.allLinkedIntegration.upsert({id: 1n, accountIdentity: ACCOUNTS[0], provider: "bitcraft-ea2", externalId: "200", revokedAt: undefined});
+    t.allLinkedIntegration.upsert({id: 1n, accountIdentity: ACCOUNTS[0], provider: "bitcraft-rel", externalId: "200", revokedAt: undefined});
     assert.equal(cache.drain().resolveAll, true);
     assert.equal(cache.state.playerAccounts.get(200n)?.isEqual(ACCOUNTS[0]), true);
 
-    t.allLinkedIntegration.upsert({id: 1n, accountIdentity: ACCOUNTS[0], provider: "bitcraft-ea2", externalId: "200", revokedAt: Timestamp.now()});
+    t.allLinkedIntegration.upsert({id: 1n, accountIdentity: ACCOUNTS[0], provider: "bitcraft-rel", externalId: "200", revokedAt: Timestamp.now()});
     assert.equal(cache.drain().resolveAll, true);
     assert.equal(cache.state.playerAccounts.size, 0, "a revoked link no longer resolves");
 });

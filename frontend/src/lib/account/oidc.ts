@@ -41,14 +41,31 @@ function getManager(): UserManager {
     return manager;
 }
 
-/** Starts the login flow. Navigates away — nothing after this call runs. */
+/**
+ * Starts the login flow, remembering the current page so `/account/callback` can return to it.
+ * Navigates away — nothing after this call runs.
+ */
 export function login(): Promise<void> {
-    return getManager().signinRedirect();
+    const {pathname, search, hash} = window.location;
+    return getManager().signinRedirect({state: `${pathname}${search}${hash}`});
 }
 
 /** Completes the login flow on `/account/callback`. Throws on a rejected/invalid response. */
 export function handleCallback(): Promise<User> {
     return getManager().signinCallback() as Promise<User>;
+}
+
+/**
+ * The same-origin path the login was started from, or `null` if absent or not a safe
+ * in-app path (the state round-trips through the URL, so it is validated before use).
+ */
+export function returnPath(user: User | undefined): string | null {
+    const state = user?.state;
+    if (typeof state !== "string" || !state.startsWith("/") || state.startsWith("//") || state.startsWith("/\\")) {
+        return null;
+    }
+    if (state === "/account/callback" || state.startsWith("/account/callback?")) return null;
+    return state;
 }
 
 /** The current session, or `null` if there isn't one or it has expired. */

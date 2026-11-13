@@ -10,11 +10,10 @@ import {useAccount} from "~/lib/account/state";
 
 /**
  * The SpacetimeAuth redirect target. By the time SpacetimeAuth redirects back here, the app has
- * already booted fresh (an external-origin redirect is a real page load, unavoidably) — but from
- * here on this is a normal mounted SPA, so completing the exchange only needs `AccountProvider`'s
+ * already booted fresh (an external-origin redirect is a real page load, unavoidably).
+ * From here on this is a normal mounted SPA, so completing the exchange only needs `AccountProvider`'s
  * `refresh()` (to pick up the session `handleCallback` just stored) followed by a client-side
- * `navigate`, not a second full reload that would also re-run every other data fetch the app does
- * on load.
+ * `navigate`.
  */
 export default function AccountCallback() {
     const {_} = useLingui();
@@ -24,7 +23,7 @@ export default function AccountCallback() {
 
     onMount(async () => {
         try {
-            await oidc.handleCallback();
+            const user = await oidc.handleCallback();
             await refresh();
             // If login was kicked off from `/account/link` (the Discord `/link` bot-initiated
             // flow needing a login first), return there with the code restored instead of the
@@ -34,7 +33,7 @@ export default function AccountCallback() {
                 sessionStorage.removeItem(PENDING_LINK_CODE_KEY);
                 navigate(`/account/link?code=${encodeURIComponent(pendingCode)}`, {replace: true});
             } else {
-                navigate("/account/profile", {replace: true});
+                navigate(oidc.returnPath(user) ?? "/account/profile", {replace: true});
             }
         } catch (e) {
             setError(e instanceof Error ? e.message : String(e));

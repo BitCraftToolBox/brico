@@ -20,10 +20,6 @@ import {type Label, type LabelResolver, useLabel} from "~/lib/labels";
 /**
  * A currency's full display identity: `filter-vocab.ts`'s `CurrencyData` plus an icon, for
  * space-constrained or purely-visual spots.
- *
- * Two consumption shapes read off the same entry: `<>{vocab.icon()} {label(vocab.label)}</>` where
- * space allows, or `<span title={label(vocab.label)}>{vocab.icon()}</span>` where it doesn't (e.g.
- * next to a payout number in a table cell).
  */
 export interface CurrencyVocab extends CurrencyData {
     icon: () => JSX.Element;
@@ -31,8 +27,9 @@ export interface CurrencyVocab extends CurrencyData {
 
 /** Icons keyed the same as `filter-vocab.ts`'s `CURRENCY_DATA` — kept separate since it's JSX. */
 const CURRENCY_ICONS: Record<VocabCurrencyId, () => JSX.Element> = {
-    "hex-coin": () => <img src={getAssetURL("Items/HexCoin")} class="size-4" alt="hex-coin"/>,
-    "stelo-hex-coin": () => <img src="/Stelo.svg" class="size-4" alt="stelo-hex-coin"/>,
+    "hex-coin": () => <img src={getAssetURL("Items/HexCoin")} class="size-4" alt="hex coin icon"/>,
+    "stelo-hex-coin": () => <img src="/Stelo.svg" class="size-4" alt="stelo icon"/>,
+    "solis-lux": () => <img src="/solis-lux.svg" class="size-4" alt="solis currency icon"/>,
 };
 
 export function currencyVocab(currency: string): CurrencyVocab | undefined {

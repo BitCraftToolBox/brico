@@ -8,7 +8,7 @@ import type {ReadDb} from '../schema';
 
 /**
  * Resolves a payer account's display name for the report views: its own `displayName` if
- * set; otherwise its oldest still-active `bitcraft-ea2` link's handle (preferring the longest-
+ * set; otherwise its oldest still-active `bitcraft-rel` link's handle (preferring the longest-
  * standing proof of who they are over a more recent one); otherwise its most-recently-revoked
  * one's handle (a payer must have linked a BitCraft account at some point to have assigned a
  * bounty — unlinking doesn't let them out of an existing payer relationship); otherwise, for a
@@ -21,7 +21,7 @@ function resolvePayerDisplayName(db: ReadDb, payerAccountIdentity: Identity): st
     let oldestActive: { linkedAt: Timestamp; externalHandle?: string } | null = null;
     let mostRecentRevoked: { revokedAt: Timestamp; externalHandle?: string } | null = null;
     for (const link of db.linked_integration.accountIdentity.filter(payerAccountIdentity)) {
-        if (link.provider !== 'bitcraft-ea2') continue;
+        if (link.provider !== 'bitcraft-rel') continue;
         if (link.revokedAt === undefined) {
             if (oldestActive === null || link.linkedAt.microsSinceUnixEpoch < oldestActive.linkedAt.microsSinceUnixEpoch) {
                 oldestActive = link;
@@ -49,12 +49,12 @@ function cachedPayerDisplayName(db: ReadDb): (payerAccountIdentity: Identity) =>
 
 /**
  * Resolves the brico account a payee player id should be grouped under for the manager-side
- * report, or `null` if it shouldn't be grouped at all. Only an *active* `bitcraft-ea2` link
+ * report, or `null` if it shouldn't be grouped at all. Only an *active* `bitcraft-rel` link
  * counts, and only when that account has itself set a `displayName`: an unnamed account is
  * reported exactly as if the player id weren't linked.
  */
 function resolvePayeeAccount(db: ReadDb, payeePlayerId: bigint): { identity: Identity; displayName: string } | null {
-    for (const link of db.linked_integration.by_provider_external_id.filter(['bitcraft-ea2', payeePlayerId.toString()])) {
+    for (const link of db.linked_integration.by_provider_external_id.filter(['bitcraft-rel', payeePlayerId.toString()])) {
         if (link.revokedAt !== undefined) continue;
         const account = db.account.identity.find(link.accountIdentity);
         return account?.displayName ? {identity: account.identity, displayName: account.displayName} : null;
@@ -62,11 +62,11 @@ function resolvePayeeAccount(db: ReadDb, payeePlayerId: bigint): { identity: Ide
     return null;
 }
 
-/** Every BitCraft player id the account has ever linked (`bitcraft-ea2`, revoked included). */
+/** Every BitCraft player id the account has ever linked (`bitcraft-rel`, revoked included). */
 export function linkedPlayerIds(db: ReadDb, accountIdentity: Identity): Set<bigint> {
     const playerIds = new Set<bigint>();
     for (const link of db.linked_integration.accountIdentity.filter(accountIdentity)) {
-        if (link.provider === 'bitcraft-ea2') playerIds.add(BigInt(link.externalId));
+        if (link.provider === 'bitcraft-rel') playerIds.add(BigInt(link.externalId));
     }
     return playerIds;
 }
@@ -114,7 +114,7 @@ export function payoutLogAsContributor(db: ReadDb, accountIdentity: Identity) {
 
 /**
  * The account's entitlements as a contributor, across every BitCraft player id it has ever linked
- * (`bitcraft-ea2`, revoked included — past earnings on a since-unlinked character are still
+ * (`bitcraft-rel`, revoked included — past earnings on a since-unlinked character are still
  * theirs): one row per (payer, currency) they've earned from or been paid by, summed off the two
  * totals tables directly.
  */
