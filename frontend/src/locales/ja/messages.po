@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-30 10:43\n"
+"PO-Revision-Date: 2026-11-13 11:51\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -63,7 +63,7 @@ msgstr "パッシブスロットの合計"
 
 #: src/lib/premium-items.ts
 msgid "Other"
-msgstr ""
+msgstr "その他"
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Go to your <0>Stelo</0> account."
@@ -104,7 +104,7 @@ msgstr "{skillName}タスク：{itemName}"
 
 #: src/lib/premium-items.ts
 msgid "Clothing"
-msgstr ""
+msgstr "衣服"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "You've reached the hourly report limit. Try again later."
@@ -1081,7 +1081,7 @@ msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Hexite Exchange"
-msgstr ""
+msgstr "ヘキサイト交換所"
 
 #: src/routes/account/payees.tsx
 msgid "Secured"
@@ -1809,7 +1809,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Bundles"
-msgstr ""
+msgstr "バンドル"
 
 #: src/routes/account/my-bounties.tsx
 msgid "Assigned: <0/>"
@@ -2501,7 +2501,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Premium Items"
-msgstr ""
+msgstr "プレミアムアイテム"
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "Funding…"
@@ -3499,7 +3499,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Emotes"
-msgstr ""
+msgstr "エモート"
 
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "in"
@@ -3775,7 +3775,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Pets"
-msgstr ""
+msgstr "ペット"
 
 #: src/routes/search.tsx
 msgid "Search items, buildings, creatures, recipes..."
@@ -5237,7 +5237,7 @@ msgstr "タグ"
 
 #: src/lib/premium-items.ts
 msgid "Decor"
-msgstr ""
+msgstr "装飾"
 
 #: src/routes/admin/comments/commenter.tsx
 msgid "Actioned"
@@ -6374,3 +6374,4 @@ msgstr "Brico's Toolboxは、<0>BitCraft</0>のアイテム、レシピ、生き
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "{buildingName}を解体"
+

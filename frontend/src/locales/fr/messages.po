@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-30 10:43\n"
+"PO-Revision-Date: 2026-11-13 11:51\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -63,7 +63,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Other"
-msgstr ""
+msgstr "Autre"
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Go to your <0>Stelo</0> account."
@@ -104,7 +104,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Clothing"
-msgstr ""
+msgstr "Vêtements"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "You've reached the hourly report limit. Try again later."
@@ -369,7 +369,7 @@ msgstr ""
 
 #: src/routes/database/progression/index.tsx
 msgid "Profession"
-msgstr "Profession"
+msgstr "Métier"
 
 #: src/lib/table-defs/buffs-table.tsx
 #: src/routes/database/buff/[id].tsx
@@ -1081,7 +1081,7 @@ msgstr ""
 
 #: src/routes/database/collectible/[id].tsx
 msgid "Hexite Exchange"
-msgstr ""
+msgstr "Échange d'Hexite"
 
 #: src/routes/account/payees.tsx
 msgid "Secured"
@@ -1809,7 +1809,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Bundles"
-msgstr ""
+msgstr "Lots"
 
 #: src/routes/account/my-bounties.tsx
 msgid "Assigned: <0/>"
@@ -2501,7 +2501,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "Premium Items"
-msgstr ""
+msgstr "Objets premium"
 
 #: src/lib/crafts/funding-vocab.ts
 msgid "Funding…"
@@ -3499,7 +3499,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Emotes"
-msgstr ""
+msgstr "Émotes"
 
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "in"
@@ -3775,7 +3775,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Pets"
-msgstr ""
+msgstr "Familiers"
 
 #: src/routes/search.tsx
 msgid "Search items, buildings, creatures, recipes..."
@@ -5237,7 +5237,7 @@ msgstr ""
 
 #: src/lib/premium-items.ts
 msgid "Decor"
-msgstr ""
+msgstr "Décor"
 
 #: src/routes/admin/comments/commenter.tsx
 msgid "Actioned"
@@ -5350,7 +5350,7 @@ msgstr ""
 
 #: src/lib/sidebar-items.ts
 msgid "World"
-msgstr ""
+msgstr "Monde"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Night Detect Range"
