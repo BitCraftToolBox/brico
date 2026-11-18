@@ -4543,6 +4543,7 @@ msgid "Hide replies"
 msgstr ""
 
 #: src/components/comments/CommentComposer.tsx
+#: src/components/model-viewer/SlotPicker.tsx
 msgid "Preview"
 msgstr ""
 

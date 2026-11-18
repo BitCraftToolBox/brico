@@ -8,8 +8,8 @@ import type {Rarity} from "@brico/bitcraft-bindings/types";
 import {msg} from "@lingui/core/macro";
 import {useLingui} from "@lingui/solid";
 import Fuse from "fuse.js";
-import {TbOutlineSearch as IconSearch} from "solid-icons/tb";
-import {createMemo, createSignal, For, type JSX, onMount, Show} from "solid-js";
+import {TbOutlineEye as IconPreview, TbOutlineSearch as IconSearch} from "solid-icons/tb";
+import {createMemo, createSignal, For, type JSX, onCleanup, onMount, Show} from "solid-js";
 import {TierIcon} from "~/components/shared/GameIcon";
 import {Rarities} from "~/lib/bitcraft-utils";
 import {cn} from "~/lib/utils";
@@ -31,6 +31,10 @@ export function SlotPicker(props: {
     clearLabel: string;
     /** `keepOpen` is true for shift+click / shift+Enter. */
     onSelect: (option: PickerOption | undefined, keepOpen: boolean) => void;
+    /** Pointer entered (or pressed, on touch) an option's preview button, or ↑/↓ landed on an option. */
+    onPreviewStart?: (option: PickerOption) => void;
+    /** Preview ended: pointer left, ↑/↓ landed on the clear row, the list changed, or the picker unmounted. */
+    onPreviewStop?: () => void;
 }) {
     const {_} = useLingui();
     const [query, setQuery] = createSignal("");
@@ -47,14 +51,22 @@ export function SlotPicker(props: {
     const choose = (row: number, keepOpen: boolean) => props.onSelect(row === 0 ? undefined : results()[row - 1], keepOpen);
 
     onMount(() => queueMicrotask(() => input?.focus()));
+    onCleanup(() => props.onPreviewStop?.());
+
+    // Arrow navigation previews the row it lands on; the clear row has nothing to preview.
+    const moveTo = (row: number) => {
+        setActive(row);
+        const option = row === 0 ? undefined : results()[row - 1];
+        if (option) props.onPreviewStart?.(option); else props.onPreviewStop?.();
+    };
 
     const onKeyDown = (e: KeyboardEvent) => {
         if (e.key === "ArrowDown") {
             e.preventDefault();
-            setActive(i => Math.min(i + 1, rowCount() - 1));
+            moveTo(Math.min(active() + 1, rowCount() - 1));
         } else if (e.key === "ArrowUp") {
             e.preventDefault();
-            setActive(i => Math.max(i - 1, 0));
+            moveTo(Math.max(active() - 1, 0));
         } else if (e.key === "Enter") {
             e.preventDefault();
             choose(query().trim() && active() === 0 ? 1 : active(), e.shiftKey);
@@ -80,20 +92,32 @@ export function SlotPicker(props: {
                     onInput={e => {
                         setQuery(e.currentTarget.value);
                         setActive(0);
+                        props.onPreviewStop?.();
                     }}
                     onKeyDown={onKeyDown}
                 />
             </div>
             <ul class="max-h-80 overflow-y-auto py-1" role="listbox">
                 <li role="option" aria-selected={active() === 0}>
-                    <button type="button" class={cn(rowClass(0), "text-muted-foreground")} onClick={e => choose(0, e.shiftKey)} onMouseEnter={() => setActive(0)}>
+                    <button type="button" class={cn(rowClass(0), "text-muted-foreground")} onClick={e => choose(0, e.shiftKey)} onMouseEnter={() => {
+                        setActive(0);
+                        props.onPreviewStop?.();
+                    }}>
                         {props.clearLabel}
                     </button>
                 </li>
                 <For each={results()}>
                     {(option, i) => (
-                        <li role="option" aria-selected={active() === i() + 1}>
-                            <button type="button" class={rowClass(i() + 1)} onClick={e => choose(i() + 1, e.shiftKey)} onMouseEnter={() => setActive(i() + 1)}>
+                        <li
+                            role="option"
+                            aria-selected={active() === i() + 1}
+                            class={cn("flex items-center transition-colors", active() === i() + 1 ? "bg-accent text-accent-foreground" : "hover:bg-accent/50")}
+                            onMouseEnter={() => {
+                                setActive(i() + 1);
+                                props.onPreviewStop?.();
+                            }}
+                        >
+                            <button type="button" class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 py-1.5 pl-3 text-left text-sm" onClick={e => choose(i() + 1, e.shiftKey)}>
                                 <span class={cn(
                                     "inline-flex items-center gap-1.5 truncate rounded-sm px-1 font-medium",
                                     option.rarity && `border ${Rarities.getBorderColorClass(option.rarity)}`,
@@ -101,6 +125,17 @@ export function SlotPicker(props: {
                                     <Show when={option.tier} keyed>{tier => <TierIcon tier={tier}/>}</Show>
                                     {option.name}
                                 </span>
+                            </button>
+                            <button
+                                type="button"
+                                class="mx-1 shrink-0 cursor-pointer rounded-sm p-1.5 text-muted-foreground hover:text-foreground"
+                                title={_(msg`Preview`)}
+                                aria-label={_(msg`Preview`)}
+                                onPointerEnter={() => props.onPreviewStart?.(option)}
+                                onPointerLeave={() => props.onPreviewStop?.()}
+                                onPointerCancel={() => props.onPreviewStop?.()}
+                            >
+                                <IconPreview class="size-4"/>
                             </button>
                         </li>
                     )}
