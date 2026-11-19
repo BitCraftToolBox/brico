@@ -71,6 +71,8 @@ function SlotButton(props: {
     options: PickerOption[];
     selected: PickerOption | undefined;
     onSelect: (option: PickerOption | undefined) => void;
+    /** Called with the hovered option while its preview button is hovered/pressed, and `undefined` when that ends. */
+    onPreview: (option: PickerOption | undefined) => void;
     /** Rendered beside the button (the tool's mesh selector). */
     aside?: JSX.Element;
 }) {
@@ -95,6 +97,8 @@ function SlotButton(props: {
                     <SlotPicker
                         options={props.options}
                         clearLabel={_(msg`None`)}
+                        onPreviewStart={props.onPreview}
+                        onPreviewStop={() => props.onPreview(undefined)}
                         onSelect={(o, keepOpen) => {
                             props.onSelect(o);
                             if (!keepOpen) setOpen(false);
@@ -120,6 +124,8 @@ export default function DressingRoom() {
     const [chosen, setChosen] = createSignal<Record<string, CollectibleDesc | undefined>>({});
     const [tool, setTool] = createSignal<{ item: ItemDesc; equipment: EquipmentDesc; meshIndex: number }>();
     const [meshOpen, setMeshOpen] = createSignal(false);
+    // Transient override of one slot while its preview button is hovered; never written to `chosen`/`tool`.
+    const [preview, setPreview] = createSignal<{ slot: string; id: number }>();
 
     const optionsByType = createMemo(() => {
         const map = new Map<string, { row: CollectibleDesc; option: PickerOption }[]>();
@@ -199,8 +205,16 @@ export default function DressingRoom() {
     const viewer = useViewerHandle();
 
     const model = createMemo(() => {
-        const c = chosen();
-        const t = tool();
+        let c = chosen();
+        let t = tool();
+        const p = preview();
+        if (p?.slot === "Tool") {
+            const found = toolOptions().find(o => o.item.id === p.id);
+            if (found) t = {item: found.item, equipment: found.equipment, meshIndex: 0};
+        } else if (p) {
+            const row = optionsByType().get(p.slot)?.find(e => e.row.id === p.id)?.row;
+            if (row) c = {...c, [p.slot]: row};
+        }
         const slots: Partial<Record<ModelSlot, CollectibleDesc>> = {};
         for (const [type, row] of Object.entries(c)) if (row && CUSTOMIZATION_TYPES.has(type)) slots[type as ModelSlot] = row;
         return characterModel({
@@ -225,6 +239,7 @@ export default function DressingRoom() {
                     codepoint={slot.codepoint}
                     options={toolOptions().map(o => o.option)}
                     selected={toolOptions().find(o => o.item.id === tool()?.item.id)?.option}
+                    onPreview={o => setPreview(o && {slot: slot.id, id: o.id})}
                     onSelect={o => {
                         const found = o && toolOptions().find(t => t.item.id === o.id);
                         setTool(found && {item: found.item, equipment: found.equipment, meshIndex: 0});
@@ -272,6 +287,7 @@ export default function DressingRoom() {
                 codepoint={slot.codepoint}
                 options={entries().map(e => e.option)}
                 selected={entries().find(e => e.row.id === chosen()[slot.id]?.id)?.option}
+                onPreview={o => setPreview(o && {slot: slot.id, id: o.id})}
                 onSelect={o => setChosen(c => ({...c, [slot.id]: o && entries().find(e => e.row.id === o.id)?.row}))}
             />
         );

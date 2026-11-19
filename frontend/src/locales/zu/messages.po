@@ -4543,6 +4543,7 @@ msgid "Hide replies"
 msgstr "crwdns7166:0crwdne7166:0"
 
 #: src/components/comments/CommentComposer.tsx
+#: src/components/model-viewer/SlotPicker.tsx
 msgid "Preview"
 msgstr "crwdns7168:0crwdne7168:0"
 
@@ -6374,4 +6375,3 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
-

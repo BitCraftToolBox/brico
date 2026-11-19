@@ -59,6 +59,11 @@ function isForbidden(cause: unknown): boolean {
     return cause instanceof DiscordAPIError && cause.status === 403;
 }
 
+/** The target is an archived thread (Discord error 50083, HTTP 400), which no longer accepts messages. */
+function isThreadArchived(cause: unknown): boolean {
+    return cause instanceof DiscordAPIError && cause.code === 50083;
+}
+
 export function createDisplayManager(options: DisplayManagerOptions): DisplayManager {
     const log = options.log.child("display");
     let latestRows: CraftRow[] = [];
@@ -78,7 +83,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
                 await recordMessage(conn, display.id, messageId, true);
                 return;
             } catch (cause) {
-                if (isForbidden(cause)) {
+                if (isForbidden(cause) || isThreadArchived(cause)) {
                     await markDeleted(conn, display);
                     return;
                 }
@@ -105,7 +110,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
             displayUpdatesTotal.inc({outcome: "posted"});
             await recordMessage(conn, display.id, posted.id, false);
         } catch (cause) {
-            if (isForbidden(cause) || isNotFound(cause)) {
+            if (isForbidden(cause) || isNotFound(cause) || isThreadArchived(cause)) {
                 await markDeleted(conn, display);
                 return;
             }
@@ -124,7 +129,7 @@ export function createDisplayManager(options: DisplayManagerOptions): DisplayMan
         });
     }
 
-    /** The channel stopped accepting posts (403/404): tombstone the display (same reducer as `/crafts display-remove`). */
+    /** The channel stopped accepting posts (403/404/archived thread): tombstone the display (same reducer as `/crafts display-remove`). */
     async function markDeleted(conn: DbConnection, display: DiscordWatchDisplay): Promise<void> {
         if (!conn.isActive) return;
         displayUpdatesTotal.inc({outcome: "detached"});

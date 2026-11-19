@@ -79,7 +79,7 @@ export const StatLineList: Component<{ stats?: StatLine[] }> = (props) => {
     const lines = createMemo(() => props.stats ?? []);
     return (
         <Show when={lines().length}>
-            <div class="flex flex-col items-center self-center mt-4 max-w-xl">
+            <div class="flex flex-col items-center self-center mt-4 max-w-full">
                 <For each={lines()}>
                     {(pair) => (
                         <div class="flex flex-row min-w-25 w-full">
