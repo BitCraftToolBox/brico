@@ -217,7 +217,7 @@ export function craftingStatLines(recipe: CraftingRecipeDesc): StatLine[] {
     const buildingData = BitCraftTables.BuildingTypeDesc.indexedBy("id")();
     const lines: StatLine[] = [
         [t`Effort`, recipe.actionsRequired],
-        [t`Time`, readableSeconds(fixFloat(recipe.timeRequirement))],
+        [t`Time`, readableSeconds(recipe.timeRequirement)],
         [t`Stamina`, fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
@@ -293,7 +293,7 @@ export function extractionStatLines(recipe: ExtractionRecipeDesc, resource?: Res
             lines.push([t`Total HP`, resource.maxHealth]);
         }
     }
-    lines.push([t`Time`, readableSeconds(fixFloat(recipe.timeRequirement))]);
+    lines.push([t`Time`, readableSeconds(recipe.timeRequirement)]);
     lines.push([t`Stamina`, fixFloat(recipe.staminaRequirement)]);
     addCommonRequirements(lines, recipe, totalEffort);
     addSkillProgressInfo(lines, recipe);
@@ -306,7 +306,7 @@ export function constructionStatLines(recipe: ConstructionRecipeDesc): StatLine[
     trackUILocale();
     const lines: StatLine[] = [
         [t`Effort`, recipe.actionsRequired],
-        [t`Time`, readableSeconds(fixFloat(recipe.timeRequirement))],
+        [t`Time`, readableSeconds(recipe.timeRequirement)],
         [t`Stamina`, fixFloat(recipe.staminaRequirement)],
     ];
     addCommonRequirements(lines, recipe, recipe.actionsRequired);
@@ -318,7 +318,7 @@ export function constructionStatLines(recipe: ConstructionRecipeDesc): StatLine[
 export function deconstructionStatLines(recipe: DeconstructionRecipeDesc): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Time`, readableSeconds(fixFloat(recipe.timeRequirement))],
+        [t`Time`, readableSeconds(recipe.timeRequirement)],
     ];
     addCommonRequirements(lines, recipe);
     return lines;
@@ -328,7 +328,7 @@ export function pavingStatLines(recipe: PavingTileDesc): StatLine[] {
     trackUILocale();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const lines: StatLine[] = [
-        [t`Time`, readableSeconds(fixFloat(recipe.pavingDuration))],
+        [t`Time`, readableSeconds(recipe.pavingDuration)],
     ];
     recipe.experiencePerProgress.forEach(xp => {
         const pair = skillExpPair(xp, undefined, skillData);
@@ -342,7 +342,7 @@ export function pillarShapingStatLines(recipe: PillarShapingDesc): StatLine[] {
     trackUILocale();
     const skillData = BitCraftTables.SkillDesc.indexedBy("id")();
     const lines: StatLine[] = [
-        [t`Time`, readableSeconds(fixFloat(recipe.duration))],
+        [t`Time`, readableSeconds(recipe.duration)],
     ];
     recipe.experiencePerProgress.forEach(xp => {
         const pair = skillExpPair(xp, undefined, skillData);
@@ -355,7 +355,7 @@ export function pillarShapingStatLines(recipe: PillarShapingDesc): StatLine[] {
 export function conversionStatLines(recipe: ItemConversionRecipeDesc): StatLine[] {
     trackUILocale();
     return [
-        [t`Time`, readableSeconds(fixFloat(recipe.timeCost))],
+        [t`Time`, readableSeconds(recipe.timeCost)],
         [t`Stamina`, fixFloat(recipe.staminaCost)],
     ];
 }
@@ -530,7 +530,7 @@ function addPlaceableSelfBuffs(lines: StatLine[], placeableBuffs: PlaceableSelfB
             () => (
                 <IconLink href={`/database/buff/${b.buffId}`}>
                     {buff?.description ?? `Buff #${b.buffId}`}
-                    {duration ? <span class="text-muted-foreground">{readableSeconds(fixFloat(duration))}</span> : null}
+                    {duration ? <span class="text-muted-foreground">{readableSeconds(duration)}</span> : null}
                     {
                         <Tooltip>
                             <TooltipTrigger class="text-muted-foreground decoration-dotted underline">
@@ -550,7 +550,7 @@ function addPlaceableSelfBuffs(lines: StatLine[], placeableBuffs: PlaceableSelfB
 export function interactionStatLines(interaction: PlaceableInteractionDesc, sourcePlaceable: PlaceableDesc | undefined): StatLine[] {
     trackUILocale();
     const lines: StatLine[] = [
-        [t`Time`, readableSeconds(fixFloat(interaction.timeRequirement))],
+        [t`Time`, readableSeconds(interaction.timeRequirement)],
         [t`Stamina`, fixFloat(interaction.staminaRequirement)],
     ];
 
@@ -577,8 +577,8 @@ export function growthStatLines(growth: PlaceableGrowthDesc): StatLine[] {
     const maxTime = growth.time[1] ?? minTime;
     const lines: StatLine[] = [
         [t`Time`, minTime === maxTime
-            ? `${readableSeconds(fixFloat(minTime))}`
-            : `${readableSeconds(fixFloat(minTime))} - ${readableSeconds(fixFloat(maxTime))}`],
+            ? `${readableSeconds(minTime)}`
+            : `${readableSeconds(minTime)} - ${readableSeconds(maxTime)}`],
     ];
     if (!growth.showTimeLeft) {
         lines.push([t`Shows Time Left`, t`No`]);

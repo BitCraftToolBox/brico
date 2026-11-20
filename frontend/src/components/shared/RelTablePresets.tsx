@@ -43,7 +43,7 @@ interface BuffEffectWithLabel extends BuffEffect {
 
 const buffColumns: RelTableColumn<BuffEffectWithLabel>[] = [
     {header: msg`Buff`, cell: (row) => <BuffLink buffId={row.buffId} label={row.label ?? `Buff #${row.buffId}`}/>},
-    {header: msg`Duration`, cell: (row) => <span>{row.duration != null ? readableSeconds(fixFloat(row.duration)) : "∞"}</span>},
+    {header: msg`Duration`, cell: (row) => <span>{row.duration != null ? readableSeconds(row.duration) : "∞"}</span>},
     {header: msg`Stats`, cell: (row) => {
         const buffIdx = BitCraftTables.BuffDesc.indexedBy("id")();
         const stats = buffIdx.get(row.buffId)?.stats ?? [];

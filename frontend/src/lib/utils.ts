@@ -107,6 +107,22 @@ function getDurationFormats(locale: string): [Intl.DurationFormat, Intl.Duration
     return [durationFormat, durationFormatZero];
 }
 
+let subMinuteFormat: Intl.NumberFormat | undefined;
+let subMinuteFormatLocale: string | undefined;
+
+/** Localized "1.6s" style; `Intl.DurationFormat` rejects fractional units, so sub-minute fractions go through here. */
+function formatFractionalSeconds(seconds: number, locale: string): string {
+    if (!subMinuteFormat || subMinuteFormatLocale !== locale) {
+        subMinuteFormatLocale = locale;
+        try {
+            subMinuteFormat = new Intl.NumberFormat(locale, {style: "unit", unit: "second", unitDisplay: "narrow", maximumFractionDigits: 3});
+        } catch {
+            subMinuteFormat = new Intl.NumberFormat(undefined, {style: "unit", unit: "second", unitDisplay: "narrow", maximumFractionDigits: 3});
+        }
+    }
+    return subMinuteFormat.format(seconds);
+}
+
 function readableSecondsFallback(hours: number, minutes: number, secs: number): string {
     return [
         hours > 0 ? `${hours}h` : null,
@@ -122,7 +138,12 @@ export function readableSeconds(seconds: number | undefined, shorten: boolean = 
     if (seconds === undefined) return undefined;
     trackUILocale();
     if (seconds === -1) return t`Infinite`;
-    seconds = Math.round(seconds);
+    seconds = fixFloat(seconds);
+    // Fractions are only meaningful (and only displayed) for durations under a minute.
+    if (seconds >= 60) seconds = Math.round(seconds);
+    else if (!Number.isInteger(seconds)) {
+        return formatFractionalSeconds(seconds, PSEUDOLOCALE_ENABLED ? activeDataLocale() : i18n.locale);
+    }
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
     const secs = hours > 0 && shorten ? 0 : seconds % 60;
