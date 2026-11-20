@@ -17,7 +17,7 @@ import {prospectingForResource} from "~/lib/recipe-stats";
 import {enemiesForResource, extractionRecipeForResource, resourceGrowthFrom, resourceGrowthInto, resourcesYieldingResource} from "~/lib/relations";
 import {useSettings} from "~/lib/settings";
 import {enemySpawnsTab} from "~/lib/table-utils/detail-tab-builders.tsx";
-import {fixFloat, readableSeconds} from "~/lib/utils";
+import {readableSeconds} from "~/lib/utils";
 
 export default function ResourceDetail() {
     const params = useParams();
@@ -78,8 +78,8 @@ export default function ResourceDetail() {
             {
                 heading: msg`Resource Spawning`,
                 properties: [
-                    {label: msg`Despawn Time`, value: r.despawnTime ? `${readableSeconds(fixFloat(r.despawnTime))}` : undefined},
-                    {label: msg`Scheduled Respawn`, value: r.scheduledRespawnTime ? `${readableSeconds(fixFloat(r.scheduledRespawnTime))}` : undefined},
+                    {label: msg`Despawn Time`, value: r.despawnTime ? `${readableSeconds(r.despawnTime)}` : undefined},
+                    {label: msg`Scheduled Respawn`, value: r.scheduledRespawnTime ? `${readableSeconds(r.scheduledRespawnTime)}` : undefined},
                     {label: msg`Not Respawning`, value: r.notRespawning ? true : undefined},
                     {label: msg`Spawn Priority`, value: r.spawnPriority},
                     ...(r.spawnsOnLand ? [{label: msg`Land Elevation`, value: `${r.landElevationMin}-${r.landElevationMax}`}] : []),

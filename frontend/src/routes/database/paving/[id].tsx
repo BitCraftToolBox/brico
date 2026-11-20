@@ -75,7 +75,7 @@ export default function PavingDetail() {
             metaImage={ogImageForAsset(tile()?.iconAddress)}
             details={[
                 {label: msg`Experience`, value: experienceStr()},
-                {label: msg`Build Time`, value: tile() ? readableSeconds(fixFloat(tile()!.pavingDuration)) : undefined},
+                {label: msg`Build Time`, value: tile() ? readableSeconds(tile()!.pavingDuration) : undefined},
             ]}
             rawData={tile()}
             spacetimeTable={BitCraftTables.PavingTileDesc.spacetimeName}

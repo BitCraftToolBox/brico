@@ -17,7 +17,7 @@ import {
     TbOutlineClipboardText as IconClipboardText,
     TbOutlineExternalLink as IconExternal
 } from "solid-icons/tb";
-import {Component, createEffect, createSignal, For, JSX, onMount, Show, untrack} from "solid-js";
+import {Component, createEffect, createMemo, createSignal, For, JSX, onMount, Show, untrack} from "solid-js";
 import {Spinner, SpinnerType} from "solid-spinner";
 import {createCommentsTab, detailPageCommentKey} from "~/components/comments/comments-tab";
 import {FontIcon} from "~/components/icons/font-icons";
@@ -240,6 +240,12 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
     };
     const availableTabs = () => allTabs()?.filter(t => t.alwaysEnabled || t.count === undefined || t.count > 0) ?? [];
     const disabledTabs = () => allTabs()?.filter(t => !t.alwaysEnabled && t.count !== undefined && t.count === 0 && (t.showWhenEmpty ?? true)) ?? [];
+    // The tab lists render by id, not by tab object: `props.tabs` is rebuilt on a locale switch, and
+    // remounting the triggers makes Kobalte re-select a tab (firing `onChange`, which writes `?detail=`).
+    const availableTabIds = createMemo(() => availableTabs().map(t => t.id));
+    const disabledTabIds = createMemo(() => disabledTabs().map(t => t.id));
+    const availableTab = (id: string) => availableTabs().find(t => t.id === id);
+    const disabledTab = (id: string) => disabledTabs().find(t => t.id === id);
     const metaArgs = () => ({
         kind: props.metaKind ?? "entry",
         tier: props.tier,
@@ -498,12 +504,12 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                 <Tabs value={selectedTab()} onChange={setSelectedTab}>
                                     <Show when={availableTabs().length}>
                                         <TabsList class="flex flex-wrap h-auto gap-1">
-                                            <For each={availableTabs()}>
-                                                {(tab) => (
-                                                    <TabsTrigger value={tab.id} class="text-sm items-baseline">
-                                                        {tabLabel(tab.label)}
-                                                        <Show when={tab.count !== undefined}>
-                                                            <span class="ml-1 text-xs text-muted-foreground">({tab.count})</span>
+                                            <For each={availableTabIds()}>
+                                                {(id) => (
+                                                    <TabsTrigger value={id} class="text-sm items-baseline">
+                                                        {tabLabel(availableTab(id)?.label ?? "")}
+                                                        <Show when={availableTab(id)?.count !== undefined}>
+                                                            <span class="ml-1 text-xs text-muted-foreground">({availableTab(id)?.count})</span>
                                                         </Show>
                                                     </TabsTrigger>
                                                 )}
@@ -512,19 +518,19 @@ export const DetailPageLayout: Component<DetailPageProps> = (props) => {
                                     </Show>
                                     <Show when={disabledTabs().length}>
                                         <TabsList class="flex flex-wrap h-auto gap-1">
-                                            <For each={disabledTabs()}>
-                                                {(tab) => (
-                                                    <TabsTrigger value={tab.id} disabled class="text-sm opacity-50">
-                                                        {tabLabel(tab.label)} (0)
+                                            <For each={disabledTabIds()}>
+                                                {(id) => (
+                                                    <TabsTrigger value={id} disabled class="text-sm opacity-50">
+                                                        {tabLabel(disabledTab(id)?.label ?? "")} (0)
                                                     </TabsTrigger>
                                                 )}
                                             </For>
                                         </TabsList>
                                     </Show>
-                                    <For each={availableTabs()}>
-                                        {(tab) => (
-                                            <TabsContent value={tab.id} class="mt-4">
-                                                {tab.content()}
+                                    <For each={availableTabIds()}>
+                                        {(id) => (
+                                            <TabsContent value={id} class="mt-4">
+                                                {availableTab(id)?.content()}
                                             </TabsContent>
                                         )}
                                     </For>
