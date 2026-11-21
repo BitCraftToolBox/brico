@@ -100,6 +100,7 @@ const sidebarGroups = [
         name: "Toolbox", nameLabel: msg`Toolbox`,
         items: [
             {href: '/tools/crafts/browse', title: 'Craft Browser', titleLabel: msg`Craft Browser`, codepoint: "0086"},
+            {href: '/tools/trades/browse', title: 'Trade Finder', titleLabel: msg`Trade Finder`, codepoint: "008E"},
             {href: '/tools/dressing-room', title: 'Dressing Room', titleLabel: msg`Dressing Room`, codepoint: "FF58"},
             {href: '/tools/emblem', title: 'Emblem Editor', titleLabel: msg`Emblem Editor`, codepoint: "FFB7"},
             {href: '/tools/placeable-graph', title: 'Placeable Graph', titleLabel: msg`Placeable Graph`, codepoint: "0072"},

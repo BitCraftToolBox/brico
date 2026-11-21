@@ -1,0 +1,22 @@
+{
+  "name": "@brico/trades",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Framework-free trade/shop stock logic shared by the web frontend and brico-bot.",
+  "exports": {
+    "./goods": "./goods.ts",
+    "./availability": "./availability.ts",
+    "./classify": "./classify.ts",
+    "./stock-config": "./stock-config.ts",
+    "./stock-plan": "./stock-plan.ts"
+  },
+  "scripts": {
+    "test": "node --test \"*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "typescript": "^7.0.2"
+  }
+}

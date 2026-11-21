@@ -1,13 +1,15 @@
 import {type FilterNode, openWorkFilter, parseFilter} from "@brico/crafts/filter";
+import {parseStockConfig, type StockConfig} from "@brico/trades/stock-config";
 import {ColorModeStorageManager, ConfigColorMode} from "@kobalte/core";
 import {ColumnFiltersState, PaginationState, SortingState} from "@tanstack/solid-table";
 import {Accessor, createContext, createEffect, createMemo, createSignal, JSX, onCleanup, onMount, Setter, useContext} from "solid-js";
 import {isServer} from "solid-js/web";
+import {DEFAULT_VISIBLE_CURRENCIES, sanitizeVisibleCurrencies} from "~/lib/crafts/currency-visibility";
 import {dataLocaleFor, isDataLocale} from "~/lib/data-translation";
 import {crowdinTargetUILocale, DEFAULT_UI_LOCALE, detectUILocale, isUILocale, PSEUDOLOCALE_ENABLED, type UILocale} from "~/lib/i18n";
 import type {ProgressionUnlock} from "~/lib/progression";
 import {ALL_SIDEBAR_HREFS} from "~/lib/sidebar-items";
-import {DEFAULT_VISIBLE_CURRENCIES, sanitizeVisibleCurrencies} from "~/lib/crafts/currency-visibility";
+import {EMPTY_TRADE_FILTER, parseTradeFilter, type TradeFilter} from "~/lib/trades/filter";
 
 /**
  * Sentinel stored in place of a locale to mean "derive it": the browser's preferred language for
@@ -78,6 +80,18 @@ export type CraftBrowserState = {
     sorting: Accessor<SortingState>;
     setSorting: Setter<SortingState>;
     /** Same reasoning as `sorting`. `pageIndex` still resets on load — only `pageSize` is persisted, via the same signal `getTableSession`'s ephemeral pagination is composed from. */
+    pagination: Accessor<PaginationState>;
+    setPagination: Setter<PaginationState>;
+}
+
+/** The trade finder's persisted filter panel, filter, sort and page size; same split as `CraftBrowserState`. */
+export type TradeFinderState = {
+    panelOpen: Accessor<boolean>;
+    setPanelOpen: Setter<boolean>;
+    filter: Accessor<TradeFilter>;
+    setFilter: Setter<TradeFilter>;
+    sorting: Accessor<SortingState>;
+    setSorting: Setter<SortingState>;
     pagination: Accessor<PaginationState>;
     setPagination: Setter<PaginationState>;
 }
@@ -229,6 +243,10 @@ export type AppSettings = {
     setFlattenItemListOutputs: (b: boolean) => void;
 
     craftBrowserState: () => CraftBrowserState;
+    tradeFinderState: () => TradeFinderState;
+    /** Stock manager settings per claim id; entries failing `parseStockConfig` are dropped. */
+    stockConfigs: () => Record<string, StockConfig>;
+    setStockConfig: (config: StockConfig) => void;
 
     /** See `PayoutDisplayMode`. Shared by the craft browser, a craft's detail page, and the bounty rule builder. */
     payoutDisplayMode: () => PayoutDisplayMode;
@@ -285,6 +303,11 @@ export const KEYS = {
     craftBrowserAdvancedFiltersOpen: "brico:crafts:browser-advanced-filters-open",
     craftBrowserSorting: "brico:crafts:browser-sorting",
     craftBrowserPageSize: "brico:crafts:browser-page-size",
+    tradeFinderFilter: "brico:trades:finder-filter",
+    tradeFinderPanelOpen: "brico:trades:finder-panel-open",
+    tradeFinderSorting: "brico:trades:finder-sorting",
+    tradeFinderPageSize: "brico:trades:finder-page-size",
+    tradeStockConfigs: "brico:trades:stock-configs",
     notifyToastEverywhere: "brico:notifications:toast-everywhere",
     progressionHiddenTypes: "brico:progression:hidden-types",
     progressionTargetLevels: "brico:progression:target-levels",
@@ -541,6 +564,38 @@ function createSettings(): AppSettings {
         } satisfies CraftBrowserState;
     };
 
+    const [tradeFinderFilterRaw, setTradeFinderFilterRaw] = persist(createSignal<TradeFilter>(EMPTY_TRADE_FILTER), KEYS.tradeFinderFilter);
+    const tradeFinderFilter = createMemo(() => parseTradeFilter(tradeFinderFilterRaw()));
+    const [tradeFinderPanelOpen, setTradeFinderPanelOpen] = persist(createSignal(true), KEYS.tradeFinderPanelOpen);
+    const [tradeFinderSorting, setTradeFinderSorting] = persist(createSignal<SortingState>([]), KEYS.tradeFinderSorting);
+    const [tradeFinderPageIndex, setTradeFinderPageIndex] = createSignal(0);
+    const [tradeFinderPageSize, setTradeFinderPageSize] = persist(createSignal<number>(tablePageSize()), KEYS.tradeFinderPageSize);
+    const tradeFinderPagination = createMemo<PaginationState>(() => ({pageIndex: tradeFinderPageIndex(), pageSize: tradeFinderPageSize()}));
+    const setTradeFinderPagination = ((updater: PaginationState | ((old: PaginationState) => PaginationState)) => {
+        const next = typeof updater === "function" ? updater(tradeFinderPagination()) : updater;
+        setTradeFinderPageIndex(next.pageIndex);
+        setTradeFinderPageSize(next.pageSize);
+    }) as Setter<PaginationState>;
+    const tradeFinderState: Accessor<TradeFinderState> = () => ({
+        filter: tradeFinderFilter, setFilter: setTradeFinderFilterRaw,
+        panelOpen: tradeFinderPanelOpen, setPanelOpen: setTradeFinderPanelOpen,
+        sorting: tradeFinderSorting, setSorting: setTradeFinderSorting,
+        pagination: tradeFinderPagination, setPagination: setTradeFinderPagination,
+    });
+
+    const [stockConfigsRaw, setStockConfigsRaw] = persist(createSignal<Record<string, unknown>>({}), KEYS.tradeStockConfigs);
+    const stockConfigs = createMemo(() => {
+        const raw = stockConfigsRaw();
+        const clean: Record<string, StockConfig> = {};
+        if (!raw || typeof raw !== "object") return clean;
+        for (const [claimId, value] of Object.entries(raw)) {
+            const config = parseStockConfig(value);
+            if (config && config.claimEntityId === claimId) clean[claimId] = config;
+        }
+        return clean;
+    });
+    const setStockConfig = (config: StockConfig) => setStockConfigsRaw({...stockConfigs(), [config.claimEntityId]: config});
+
     // Session-only table state — keyed by table name
     const tableSessions = new Map<string, TableSessionState>();
     const getTableSession = (name: string): TableSessionState => {
@@ -652,6 +707,9 @@ function createSettings(): AppSettings {
         progressionTargetLevels,
         setProgressionTargetLevels,
         craftBrowserState,
+        tradeFinderState,
+        stockConfigs,
+        setStockConfig,
         getTableSession,
         payoutDisplayMode,
         setPayoutDisplayMode,

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    // The tests run under `node --test` (native type stripping), whose ESM resolver takes
+    // relative specifiers literally, so imports between these files carry the `.ts` extension.
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["*.ts"]
+}

@@ -10,6 +10,7 @@ sets of row/connection class identities in the same bundle).
 | Package | Contents | Depends on |
 | --- | --- | --- |
 | `@brico/crafts` | Framework-free craft logic. `./filter` is the AND/OR/NOT filter engine that the web preview and `brico-bot`'s notification matching must agree on byte-for-byte. | nothing |
+| `@brico/trades` | Framework-free shop/trade-order logic: goods keys, order capacity and shop room (mirroring upstream `barter_stall_order_accept`), buy/sell classification, claim stall stock config (`parseStockConfig`) and restock status (`buildStockLines`). | nothing |
 | `@brico/bindings` | Generated SpacetimeDB **2.x** client bindings: `./prism` (prism's `relay-module`), `./brico-app` (Phase 1 Track A, not yet generated). | `spacetimedb@^2.9` |
 | `@brico/bitcraft-bindings` | Generated BitCraft upstream schema bindings, SpacetimeDB SDK **2.x**. `src/` is the `BitCraft_Bindings` git submodule (branch `ts-region-2`). Used only for offline BSATN decoding (`~/lib/bitcraft-data.ts`, `backend/brico-bot/src/game-data/load.ts`) — no live connection anywhere reads from it. | `spacetimedb@^2.9` |
 

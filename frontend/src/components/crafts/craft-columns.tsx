@@ -39,7 +39,7 @@ function getRelativeTimeFormat(locale: string): Intl.RelativeTimeFormat {
  * follow the target locale's own rules instead of an English template — the same reasoning as
  * `~/lib/utils.ts`'s `Intl.DurationFormat` usage.
  */
-function sinceText(ms: number, now: number, locale: string): string {
+export function sinceText(ms: number, now: number, locale: string): string {
     trackUILocale();
     const seconds = Math.max(Math.round((now - ms) / 1000), 0);
     const rtf = getRelativeTimeFormat(locale);

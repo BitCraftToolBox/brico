@@ -52,6 +52,10 @@ msgstr "Tree"
 msgid "Compendium"
 msgstr "Compendium"
 
+#: src/components/trades/ThresholdFields.tsx
+msgid "Raise buy limit at"
+msgstr "Raise buy limit at"
+
 #: src/routes/database/building/[id].tsx
 msgid "Total Passive Slots"
 msgstr "Total Passive Slots"
@@ -110,6 +114,10 @@ msgstr "You've reached the hourly report limit. Try again later."
 msgid "Clear outdated"
 msgstr "Clear outdated"
 
+#: src/components/trades/TradeEventTable.tsx
+msgid "Coins from treasury"
+msgstr "Coins from treasury"
+
 #: src/routes/tools/crafts/[id].tsx
 msgid "Edit bounty"
 msgstr "Edit bounty"
@@ -167,6 +175,11 @@ msgstr "Auto-cast"
 #: src/lib/crafts/error-vocab.ts
 msgid "Your display name has been locked by a moderator."
 msgstr "Your display name has been locked by a moderator."
+
+#: src/components/trades/ShopCard.tsx
+#: src/components/trades/trade-columns.tsx
+msgid "Trade limit"
+msgstr "Trade limit"
 
 #: src/routes/database/skill/[id].tsx
 msgid "Prospect for {target}"
@@ -289,6 +302,10 @@ msgstr "Search for a page to link…"
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "{0, plural, one {Imported # filter.} other {Imported # filters.}}"
 msgstr "{0, plural, one {Imported # filter.} other {Imported # filters.}}"
+
+#: src/components/trades/ShopCard.tsx
+msgid "No trade orders."
+msgstr "No trade orders."
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That link no longer exists."
@@ -420,6 +437,14 @@ msgstr "Unlocks"
 msgid "EXP"
 msgstr "EXP"
 
+#: src/components/trades/TradeEventTable.tsx
+msgid "When"
+msgstr "When"
+
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "Claim defaults"
+msgstr "Claim defaults"
+
 #: src/lib/crafts/error-vocab.ts
 msgid "Choose a reason for the report."
 msgstr "Choose a reason for the report."
@@ -485,6 +510,7 @@ msgid "<0>effort per</0><1/>"
 msgstr "<0>effort per</0><1/>"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/components/trades/StockConfigDialog.tsx
 msgid "Upload file"
 msgstr "Upload file"
 
@@ -679,6 +705,10 @@ msgstr "Funding failed"
 msgid "Choose a sticky interval between {MIN_STICKY_MINUTES} and {MAX_STICKY_MINUTES} minutes."
 msgstr "Choose a sticky interval between {MIN_STICKY_MINUTES} and {MAX_STICKY_MINUTES} minutes."
 
+#: src/components/trades/StockOverrideDialog.tsx
+msgid "claim default: {value}"
+msgstr "claim default: {value}"
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "Output item tag"
 msgstr "Output item tag"
@@ -686,6 +716,10 @@ msgstr "Output item tag"
 #: src/components/data-table/table-pagination.tsx
 msgid "Go to next page"
 msgstr "Go to next page"
+
+#: src/components/trades/StockLinksCard.tsx
+msgid "Remove link"
+msgstr "Remove link"
 
 #: src/lib/notifications/funding.tsx
 msgid "A payout could not be pulled from your wallet"
@@ -697,6 +731,10 @@ msgstr "A payout could not be pulled from your wallet"
 #: src/routes/database/quest-chain/[id].tsx
 msgid "Rewards"
 msgstr "Rewards"
+
+#: src/routes/tools/trades/claim/[id]/index.tsx
+msgid "No such claim."
+msgstr "No such claim."
 
 #: src/routes/account/settings.tsx
 msgid "Finished"
@@ -732,6 +770,21 @@ msgstr "Player Ability"
 msgid "now matches"
 msgstr "now matches"
 
+#: src/components/trades/StockConfigDialog.tsx
+msgid "Not a valid stock settings file."
+msgstr "Not a valid stock settings file."
+
+#. placeholder {0}: n(quantity())
+#. placeholder {1}: props.intake
+#. placeholder {2}: props.outlet
+#: src/components/trades/StockIssues.tsx
+msgid "Move {0} from {1} to {2}."
+msgstr "Move {0} from {1} to {2}."
+
+#: src/components/trades/StockConfigDialog.tsx
+msgid "This file was exported for a different claim."
+msgstr "This file was exported for a different claim."
+
 #: src/routes/account/loyalty.tsx
 msgid "Could not delete loyalty reward"
 msgstr "Could not delete loyalty reward"
@@ -744,9 +797,17 @@ msgstr "This craft has no funded bounty."
 msgid "Effort of this currency"
 msgstr "Effort of this currency"
 
+#: src/components/trades/TradeQuickFilters.tsx
+msgid "Requested item"
+msgstr "Requested item"
+
 #: src/lib/crafts/error-vocab.ts
 msgid "A watch display can show at most {MAX_DISPLAY_ROWS_HARD_CAP} crafts."
 msgstr "A watch display can show at most {MAX_DISPLAY_ROWS_HARD_CAP} crafts."
+
+#: src/routes/tools/trades/shop/[id].tsx
+msgid "Loading this shop…"
+msgstr "Loading this shop…"
 
 #: src/lib/recipe-stats.tsx
 msgid "Level {level} {toolName}"
@@ -776,6 +837,10 @@ msgstr "Delete loyalty reward"
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Item Stack Size"
 msgstr "Item Stack Size"
+
+#: src/components/trades/ShopInventoryView.tsx
+msgid "No inventory."
+msgstr "No inventory."
 
 #: src/components/comments/admin/AdminCommentList.tsx
 msgid "Any status"
@@ -858,9 +923,17 @@ msgstr "Payment"
 msgid "Craft Browser"
 msgstr "Craft Browser"
 
+#: src/routes/tools/trades/shop/[id].tsx
+msgid "Trade orders"
+msgstr "Trade orders"
+
 #: src/lib/relations.ts
 msgid "Task: {itemName}"
 msgstr "Task: {itemName}"
+
+#: src/components/trades/ShopInventoryView.tsx
+msgid "Totals"
+msgstr "Totals"
 
 #: src/components/account/ApiKeysCard.tsx
 msgid "No API keys."
@@ -971,6 +1044,10 @@ msgstr "Total"
 msgid "Object ID"
 msgstr "Object ID"
 
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "Stall links and claim-wide defaults. Set per-item values from each row's settings button."
+msgstr "Stall links and claim-wide defaults. Set per-item values from each row's settings button."
+
 #: src/lib/table-defs/abilities-table.tsx
 msgid "Profession Hit Bonus"
 msgstr "Profession Hit Bonus"
@@ -1058,6 +1135,10 @@ msgstr "Tables"
 msgid "Enter a whole number."
 msgstr "Enter a whole number."
 
+#: src/components/trades/StockOverrideDialog.tsx
+msgid "not set"
+msgstr "not set"
+
 #: src/routes/account/payouts.tsx
 msgid "No bounty earnings yet."
 msgstr "No bounty earnings yet."
@@ -1117,6 +1198,10 @@ msgstr "Effort threshold"
 #: src/lib/crafts/error-vocab.ts
 msgid "You need to be logged in to do that."
 msgstr "You need to be logged in to do that."
+
+#: src/components/trades/stock-columns.tsx
+msgid "Sold 24h"
+msgstr "Sold 24h"
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Explore"
@@ -1178,6 +1263,10 @@ msgstr "of the following"
 msgid "Placeable Placement"
 msgstr "Placeable Placement"
 
+#: src/components/trades/StockOverrideDialog.tsx
+msgid "Don't list this item under \"Needs attention\""
+msgstr "Don't list this item under \"Needs attention\""
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Link your BitCraft account above first."
 msgstr "Link your BitCraft account above first."
@@ -1197,6 +1286,10 @@ msgstr "Join the project on Crowdin and contribute by using <0>translate.brico.a
 #: src/components/comments/admin/AdminCommentList.tsx
 msgid "Filtered to one author"
 msgstr "Filtered to one author"
+
+#: src/components/trades/StockConfigDialog.tsx
+msgid "Check"
+msgstr "Check"
 
 #: src/routes/database/buff/[id].tsx
 msgid "If No, buff ticks down while offline."
@@ -1243,6 +1336,11 @@ msgstr "Funded"
 msgid "{field} {cmpEl} {value}"
 msgstr "{field} {cmpEl} {value}"
 
+#. placeholder {0}: props.orders.length
+#: src/components/trades/ShopCard.tsx
+msgid "{0, plural, one {# order} other {# orders}}"
+msgstr "{0, plural, one {# order} other {# orders}}"
+
 #: src/components/app-sidebar.tsx
 msgid "Showing favorites"
 msgstr "Showing favorites"
@@ -1288,6 +1386,10 @@ msgstr "Depletion Drops"
 #: src/routes/database/combat/[id].tsx
 msgid "Base Threat"
 msgstr "Base Threat"
+
+#: src/components/trades/StockLinksCard.tsx
+msgid "Stall links"
+msgstr "Stall links"
 
 #: src/routes/admin/comments/commenter.tsx
 msgid "Name replaced"
@@ -1345,6 +1447,10 @@ msgstr "Abusive or harassing"
 msgid "Grows Into"
 msgstr "Grows Into"
 
+#: src/components/trades/stock-columns.tsx
+msgid "Outlet stock"
+msgstr "Outlet stock"
+
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Satiation"
@@ -1357,6 +1463,13 @@ msgstr "Sort order"
 #: src/routes/settings.tsx
 msgid "Jamba Be Praised"
 msgstr "Jamba Be Praised"
+
+#: src/components/trades/trade-columns.tsx
+#: src/components/trades/TradeEventTable.tsx
+#: src/components/trades/TradeQuickFilters.tsx
+#: src/routes/tools/trades/shop/[id].tsx
+msgid "Shop"
+msgstr "Shop"
 
 #: src/components/crafts/FundingStatus.tsx
 msgid "Released"
@@ -1377,6 +1490,10 @@ msgstr "An admin can run <0>/command-mode flat</0> or <1>/command-mode grouped</
 #: src/components/data-table/table-toolbar.tsx
 msgid "Search by {0}..."
 msgstr "Search by {0}..."
+
+#: src/components/trades/ThresholdFields.tsx
+msgid "Trades, as entered in game when editing the buy order."
+msgstr "Trades, as entered in game when editing the buy order."
 
 #: src/routes/tools/crafts/[id].tsx
 msgid "This recipe is not in the loaded game data."
@@ -1552,6 +1669,11 @@ msgstr "No funds are held for this craft yet."
 msgid "Extraction"
 msgstr "Extraction"
 
+#: src/components/trades/trade-columns.tsx
+#: src/components/trades/TradeQuickFilters.tsx
+msgid "Shop type"
+msgstr "Shop type"
+
 #: src/components/shared/RelTablePresets.tsx
 #: src/lib/table-defs/abilities-table.tsx
 #: src/lib/table-defs/combat-table.tsx
@@ -1565,6 +1687,10 @@ msgstr "Cooldown"
 #: src/lib/crafts/error-vocab.ts
 msgid "Set a display name or link an account in your profile to post."
 msgstr "Set a display name or link an account in your profile to post."
+
+#: src/routes/tools/trades/browse.tsx
+msgid "No trades match this filter."
+msgstr "No trades match this filter."
 
 #: src/routes/database/creature/[id].tsx
 msgid "Exp"
@@ -1625,6 +1751,19 @@ msgstr "Output Items"
 msgid "You can't report comments right now."
 msgstr "You can't report comments right now."
 
+#: src/components/trades/StockOverrideDialog.tsx
+msgid "default: 0"
+msgstr "default: 0"
+
+#: src/components/trades/TradeEventTable.tsx
+msgid "No recorded trades."
+msgstr "No recorded trades."
+
+#. placeholder {0}: groups().stalls.length
+#: src/routes/tools/trades/claim/[id]/index.tsx
+msgid "Barter stalls ({0})"
+msgstr "Barter stalls ({0})"
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Verified. Linking…"
 msgstr "Verified. Linking…"
@@ -1678,6 +1817,10 @@ msgstr "Terraforming Drops"
 msgid "Report comment"
 msgstr "Report comment"
 
+#: src/components/trades/stock-columns.tsx
+msgid "Intake stock"
+msgstr "Intake stock"
+
 #: src/routes/admin/comments/commenter.tsx
 msgid "Display name locked"
 msgstr "Display name locked"
@@ -1693,6 +1836,11 @@ msgstr "Inaction Time"
 #: src/routes/tools/crafts/[id].tsx
 msgid "collected"
 msgstr "collected"
+
+#. placeholder {0}: props.intake
+#: src/components/trades/StockIssues.tsx
+msgid "No buy or sell order left for this in {0}."
+msgstr "No buy or sell order left for this in {0}."
 
 #: src/routes/settings.tsx
 msgid "Moves the <0/> menu to the first column instead of the last."
@@ -1755,6 +1903,7 @@ msgid "Delete"
 msgstr "Delete"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/components/trades/StockConfigDialog.tsx
 msgid "Not valid JSON."
 msgstr "Not valid JSON."
 
@@ -1798,7 +1947,12 @@ msgstr "Options for the craft browser, a craft's detail page, and bounty rules."
 msgid "That Stelo transfer isn't valid: {reason}"
 msgstr "That Stelo transfer isn't valid: {reason}"
 
+#: src/components/trades/trade-columns.tsx
+msgid "Available"
+msgstr "Available"
+
 #: src/routes/tools/crafts/browse.tsx
+#: src/routes/tools/trades/browse.tsx
 msgid "Filters"
 msgstr "Filters"
 
@@ -1826,6 +1980,10 @@ msgstr "Cooldown Multiplier"
 #: src/lib/crafts/filter-vocab.ts
 msgid "Output item"
 msgstr "Output item"
+
+#: src/components/trades/TradeEventTable.tsx
+msgid "Load full history"
+msgstr "Load full history"
 
 #: src/routes/database/building/[id].tsx
 msgid "Decay"
@@ -1925,6 +2083,7 @@ msgstr "Durability"
 #: src/components/comments/CommentItem.tsx
 #: src/components/comments/ReportDialog.tsx
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/components/trades/StockOverrideDialog.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/profile.tsx
 #: src/routes/account/settings.tsx
@@ -1935,6 +2094,10 @@ msgstr "Cancel"
 #: src/routes/account/bounty-rules.tsx
 msgid "<0/><1>per effort</1>"
 msgstr "<0/><1>per effort</1>"
+
+#: src/components/trades/TradeBits.tsx
+msgid "No room for what this shop receives. Ask the owner to make room."
+msgstr "No room for what this shop receives. Ask the owner to make room."
 
 #: src/components/comments/CommentSection.tsx
 msgid "Show comments"
@@ -1947,6 +2110,10 @@ msgstr "Allow Gathering"
 #: src/routes/settings.tsx
 msgid "Customize how the navigation sidebar is organized and displayed."
 msgstr "Customize how the navigation sidebar is organized and displayed."
+
+#: src/components/trades/TradeBits.tsx
+msgid "Out of stock"
+msgstr "Out of stock"
 
 #: src/routes/settings.tsx
 msgid "Same as interface"
@@ -1985,6 +2152,10 @@ msgstr "Spawned Placeables"
 #: src/components/model-viewer/model-tab.tsx
 msgid "Try on in the Dressing Room"
 msgstr "Try on in the Dressing Room"
+
+#: src/components/trades/StockIssues.tsx
+msgid "Sell limit reached"
+msgstr "Sell limit reached"
 
 #: src/routes/database/ability/[id].tsx
 msgid "Required Buffs"
@@ -2132,6 +2303,10 @@ msgstr "Wallet linked"
 msgid "Click to toggle between percentage and weight"
 msgstr "Click to toggle between percentage and weight"
 
+#: src/components/trades/stock-columns.tsx
+msgid "Hours until empty"
+msgstr "Hours until empty"
+
 #: src/lib/table-defs/prospecting-table.tsx
 msgid "Contribution"
 msgstr "Contribution"
@@ -2150,6 +2325,7 @@ msgstr "All items visible"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/routes/tools/crafts/browse.tsx
+#: src/routes/tools/trades/claim/[id]/stock.tsx
 msgid "Import / Export"
 msgstr "Import / Export"
 
@@ -2159,6 +2335,10 @@ msgstr "Import / Export"
 #: src/routes/database/item/[id].tsx
 msgid "Buff"
 msgstr "Buff"
+
+#: src/routes/tools/trades/shop/[id].tsx
+msgid "This shop isn't in the world right now (a stowed trader stand), so its orders can't be traded."
+msgstr "This shop isn't in the world right now (a stowed trader stand), so its orders can't be traded."
 
 #: src/components/crafts/EffortChart.tsx
 msgid "resting"
@@ -2228,6 +2408,10 @@ msgstr "Drops"
 msgid "No transactions yet."
 msgstr "No transactions yet."
 
+#: src/components/trades/TradeEventTable.tsx
+msgid "No trades in the last 24 hours."
+msgstr "No trades in the last 24 hours."
+
 #: src/lib/crafts/error-vocab.ts
 msgid "Only moderators can do that."
 msgstr "Only moderators can do that."
@@ -2261,9 +2445,18 @@ msgstr "Stat Bonuses"
 msgid "Report this comment as outdated?"
 msgstr "Report this comment as outdated?"
 
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "Needs attention"
+msgstr "Needs attention"
+
 #: src/components/comments/admin/AdminCommentList.tsx
 msgid "No comments match."
 msgstr "No comments match."
+
+#. placeholder {0}: blocked()
+#: src/components/trades/ShopCard.tsx
+msgid "{0} not tradeable"
+msgstr "{0} not tradeable"
 
 #: src/components/comments/CommentItem.tsx
 msgid "Upvote"
@@ -2307,6 +2500,10 @@ msgstr "Otherwise it is rolled over to <0/> {0, plural, one {# day} other {# day
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Item List Output"
 msgstr "Item List Output"
+
+#: src/components/trades/TradeBits.tsx
+msgid "The shop isn't placed in the world right now."
+msgstr "The shop isn't placed in the world right now."
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Deconstruction returns"
@@ -2379,6 +2576,11 @@ msgstr "Log in to sync saved filters and watches to your account, and to set up 
 msgid "Total HP"
 msgstr "Total HP"
 
+#: src/routes/tools/trades/claim/[id]/index.tsx
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "Loading this claim…"
+msgstr "Loading this claim…"
+
 #: src/lib/table-defs/collectible-table.tsx
 #: src/routes/database/collectible/[id].tsx
 msgid "Locked"
@@ -2387,6 +2589,10 @@ msgstr "Locked"
 #: src/routes/account/bounties.tsx
 msgid "<0>Paying with Stelo:</0> link a wallet on your <1/> and pick it as the funding wallet on each rule or craft. The funds for the craft's remaining effort are held in escrow before the bounty starts. If you lower or remove the bounty, or the craft ends, whatever is unspent is refunded to that wallet. The <2>My bounties</2> tab shows each craft's funding status, and you can enable alerts for funding problems in your account settings."
 msgstr "<0>Paying with Stelo:</0> link a wallet on your <1/> and pick it as the funding wallet on each rule or craft. The funds for the craft's remaining effort are held in escrow before the bounty starts. If you lower or remove the bounty, or the craft ends, whatever is unspent is refunded to that wallet. The <2>My bounties</2> tab shows each craft's funding status, and you can enable alerts for funding problems in your account settings."
+
+#: src/components/trades/TradeBits.tsx
+msgid "Full"
+msgstr "Full"
 
 #: src/routes/account/bounty-rules.tsx
 msgid "Delete this rule?"
@@ -2408,6 +2614,10 @@ msgstr "Paving Tier"
 #: src/lib/crafts/error-vocab.ts
 msgid "You've reached the hourly comment limit. Try again later."
 msgstr "You've reached the hourly comment limit. Try again later."
+
+#: src/routes/tools/trades/shop/[id].tsx
+msgid "That is not a shop id."
+msgstr "That is not a shop id."
 
 #. placeholder {0}: notification.event.craftId
 #: src/routes/tools/crafts/browse.tsx
@@ -2460,6 +2670,10 @@ msgstr "Output"
 #: src/lib/table-defs/deployables-table.tsx
 msgid "Can Auto-Follow"
 msgstr "Can Auto-Follow"
+
+#: src/components/trades/StockLinksCard.tsx
+msgid "Outlet stall"
+msgstr "Outlet stall"
 
 #: src/components/comments/CommentItem.tsx
 #: src/components/comments/ReportDialog.tsx
@@ -2515,6 +2729,7 @@ msgid "not"
 msgstr "not"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/components/trades/StockConfigDialog.tsx
 msgid "Export"
 msgstr "Export"
 
@@ -2569,6 +2784,11 @@ msgstr "Anyone with this dashboard link can see your payees and bounties, includ
 msgid "Where and when Brico.app notifies you."
 msgstr "Where and when Brico.app notifies you."
 
+#: src/components/trades/ShopCard.tsx
+#: src/components/trades/trade-columns.tsx
+msgid "Asks for"
+msgstr "Asks for"
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "is any of"
 msgstr "is any of"
@@ -2607,6 +2827,10 @@ msgstr "That isn't a known command layout."
 msgid "Brico.app is not on that account (or the address is wrong). Add it under Permissions and this retries by itself."
 msgstr "Brico.app is not on that account (or the address is wrong). Add it under Permissions and this retries by itself."
 
+#: src/components/trades/StockConfigDialog.tsx
+msgid "Paste exported stock settings"
+msgstr "Paste exported stock settings"
+
 #: src/lib/crafts/filter-condition.tsx
 msgctxt "not in"
 msgid "{quantifier} {field} {cmpEl} {value}"
@@ -2622,8 +2846,11 @@ msgstr "Effort Required"
 
 #: src/components/crafts/craft-columns.tsx
 #: src/components/crafts/QuickFilterGrid.tsx
+#: src/components/trades/trade-columns.tsx
+#: src/components/trades/TradeQuickFilters.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/trades/shop/[id].tsx
 msgid "Claim"
 msgstr "Claim"
 
@@ -2646,6 +2873,11 @@ msgstr "(pending)"
 #: src/components/ui/toast.tsx
 msgid "Dismiss all"
 msgstr "Dismiss all"
+
+#: src/routes/tools/trades/claim/[id]/index.tsx
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "Stock manager"
+msgstr "Stock manager"
 
 #: src/routes/account/bounties.tsx
 msgid "<0><1/></0> is a trust-based ledger. The site tracks what's owed, but the owner pays in-game and records it. Only work for owners you trust."
@@ -2673,11 +2905,16 @@ msgstr "Show a toast for a watched craft anywhere on the site, not just on craft
 msgid "Byproduct of eating"
 msgstr "Byproduct of eating"
 
+#: src/components/trades/ThresholdFields.tsx
+msgid "Buy limit to set"
+msgstr "Buy limit to set"
+
 #: src/components/crafts/PlayerPicker.tsx
 msgid "Select player…"
 msgstr "Select player…"
 
 #: src/components/crafts/QuickFilterGrid.tsx
+#: src/components/trades/stock-columns.tsx
 #: src/lib/table-defs/quests-table.tsx
 #: src/routes/database/ability/[id].tsx
 #: src/routes/database/knowledge/[id].tsx
@@ -2770,6 +3007,12 @@ msgstr "Link Filters <0/>"
 msgid "Stamina"
 msgstr "Stamina"
 
+#. placeholder {0}: props.intake
+#. placeholder {1}: props.outlet
+#: src/components/trades/StockIssues.tsx
+msgid "{0} has no room for more. Make room or move goods to {1}."
+msgstr "{0} has no room for more. Make room or move goods to {1}."
+
 #: src/lib/table-defs/food-table.tsx
 #: src/routes/database/item/[id].tsx
 msgid "Auto Consume"
@@ -2808,6 +3051,10 @@ msgstr "Visible to Others"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Join Radius"
 msgstr "Join Radius"
+
+#: src/routes/tools/trades/shop/[id].tsx
+msgid "No such shop. It may have been removed, or a stowed trader stand without orders."
+msgstr "No such shop. It may have been removed, or a stowed trader stand without orders."
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That filter isn't valid JSON."
@@ -2850,6 +3097,11 @@ msgstr "Your Discord account is now linked."
 msgid "{0} crafts are still funded from it; they keep accruing and refunds still reach it."
 msgstr "{0} crafts are still funded from it; they keep accruing and refunds still reach it."
 
+#. placeholder {0}: props.intake
+#: src/components/trades/StockIssues.tsx
+msgid "Raise the buy limit in {0}. Set a buy limit to get a suggested amount."
+msgstr "Raise the buy limit in {0}. Set a buy limit to get a suggested amount."
+
 #: src/routes/database/skill/[id].tsx
 msgid "Sell <0/> to {npcName}"
 msgstr "Sell <0/> to {npcName}"
@@ -2862,6 +3114,11 @@ msgstr "You can't post comments right now."
 msgid "Estimated outgoing"
 msgstr "Estimated outgoing"
 
+#. placeholder {0}: props.outlet
+#: src/components/trades/StockIssues.tsx
+msgid "Raise the sell limit in {0}."
+msgstr "Raise the sell limit in {0}."
+
 #: src/routes/database/combat/[id].tsx
 msgid "Accuracy Multiplier"
 msgstr "Accuracy Multiplier"
@@ -2873,6 +3130,12 @@ msgstr "No placements found"
 #: src/routes/account/my-bounties.tsx
 msgid "Loading your bounties…"
 msgstr "Loading your bounties…"
+
+#. placeholder {0}: used(items())
+#. placeholder {1}: items().length
+#: src/components/trades/ShopInventoryView.tsx
+msgid "Items ({0}/{1})"
+msgstr "Items ({0}/{1})"
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Unverified: can receive, not fund"
@@ -2904,9 +3167,17 @@ msgstr "No tool"
 msgid "Required to Start"
 msgstr "Required to Start"
 
+#: src/components/trades/ThresholdFields.tsx
+msgid "Move goods over once the outlet holds this many units or fewer."
+msgstr "Move goods over once the outlet holds this many units or fewer."
+
 #: src/lib/crafts/error-vocab.ts
 msgid "That watch display no longer exists."
 msgstr "That watch display no longer exists."
+
+#: src/components/trades/StockConfigDialog.tsx
+msgid "Replace settings"
+msgstr "Replace settings"
 
 #. placeholder {0}: formatStatLabel(stat)
 #. placeholder {1}: formatStatValue(stat)
@@ -2950,6 +3221,10 @@ msgstr "Reward players who help you finish crafts."
 msgid "Asc Multi"
 msgstr "Asc Multi"
 
+#: src/components/trades/StockIssues.tsx
+msgid "Selling batch"
+msgstr "Selling batch"
+
 #: src/components/crafts/craft-columns.tsx
 #: src/routes/account/my-bounties.tsx
 #: src/routes/tools/crafts/[id].tsx
@@ -2984,6 +3259,10 @@ msgstr "Link Discord"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Required for Quests"
 msgstr "Required for Quests"
+
+#: src/components/trades/trade-columns.tsx
+msgid "Coins each"
+msgstr "Coins each"
 
 #: src/routes/account/my-bounties.tsx
 msgid "You don't have any bounties yet. Set one on a craft or add a rule under Bounty rules."
@@ -3020,6 +3299,10 @@ msgstr "Mark all read"
 msgid "Match all"
 msgstr "Match all"
 
+#: src/components/trades/TradeEventTable.tsx
+msgid "Player received"
+msgstr "Player received"
+
 #: src/routes/settings.tsx
 msgid "Secret features. How did you even find this?"
 msgstr "Secret features. How did you even find this?"
@@ -3042,6 +3325,10 @@ msgstr "Place ({placeDuration})"
 msgid "Chance"
 msgstr "Chance"
 
+#: src/components/trades/StockOverrideDialog.tsx
+msgid "default: move everything"
+msgstr "default: move everything"
+
 #: src/components/comments/VersionBadge.tsx
 msgid "edited"
 msgstr "edited"
@@ -3049,6 +3336,10 @@ msgstr "edited"
 #: src/routes/account/profile.tsx
 msgid "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
 msgstr "Brico will stop paying out to and funding from this wallet. This does not remove Brico.app from the account: also remove it under Permissions on Stelo."
+
+#: src/components/trades/TradeBits.tsx
+msgid "The shop doesn't hold enough of what it offers."
+msgstr "The shop doesn't hold enough of what it offers."
 
 #: src/routes/bounty-dashboard.tsx
 msgid "Bounty dashboard"
@@ -3061,6 +3352,10 @@ msgstr "Category"
 #: src/components/crafts/PlayerPicker.tsx
 msgid "Select claims…"
 msgstr "Select claims…"
+
+#: src/components/trades/TradeEventTable.tsx
+msgid "Loading history…"
+msgstr "Loading history…"
 
 #: src/lib/relations.ts
 msgid "Sell {itemName} to {npcName}"
@@ -3137,6 +3432,7 @@ msgstr "Linking failed"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 #: src/components/shared/DetailPageLayout.tsx
+#: src/components/trades/StockConfigDialog.tsx
 msgid "Copy JSON"
 msgstr "Copy JSON"
 
@@ -3151,6 +3447,11 @@ msgstr "Resource Spawning"
 #: src/routes/account/profile.tsx
 msgid "Linked accounts"
 msgstr "Linked accounts"
+
+#. placeholder {0}: countText(props.entry.capacity.trades)
+#: src/components/trades/TradeBits.tsx
+msgid "{0} available"
+msgstr "{0} available"
 
 #: src/components/comments/CommentComposer.tsx
 msgid "Bold"
@@ -3196,6 +3497,11 @@ msgstr "Occupants"
 msgid "Lvl. {0}"
 msgstr "Lvl. {0}"
 
+#. placeholder {0}: row().intakeName
+#: src/components/trades/StockOverrideDialog.tsx
+msgid "Buying in {0}"
+msgstr "Buying in {0}"
+
 #: src/routes/account/bounties.tsx
 msgid "For contributors"
 msgstr "For contributors"
@@ -3218,6 +3524,7 @@ msgid "Achievement Points"
 msgstr "Achievement Points"
 
 #: src/components/crafts/SavedFiltersDialog.tsx
+#: src/components/trades/StockConfigDialog.tsx
 msgid "Import"
 msgstr "Import"
 
@@ -3307,6 +3614,10 @@ msgstr "{0}% of chunks"
 msgid "Threat Per Damage"
 msgstr "Threat Per Damage"
 
+#: src/components/trades/StockIssues.tsx
+msgid "Sold out"
+msgstr "Sold out"
+
 #: src/components/model-viewer/ModelViewer.tsx
 msgid "Viewer controls and notice"
 msgstr "Viewer controls and notice"
@@ -3352,6 +3663,10 @@ msgstr "Unlinked wallet"
 msgid "<0>Payouts I owe</0> shows what you owe each contributor. For Hex Coin, record each payment there once you've paid in-game. Stelo payments are made and recorded automatically."
 msgstr "<0>Payouts I owe</0> shows what you owe each contributor. For Hex Coin, record each payment there once you've paid in-game. Stelo payments are made and recorded automatically."
 
+#: src/components/trades/stock-columns.tsx
+msgid "Margin each"
+msgstr "Margin each"
+
 #: src/components/shared/RecipeDisplay.tsx
 msgid "No Outputs"
 msgstr "No Outputs"
@@ -3379,6 +3694,10 @@ msgstr "Pointer Duration"
 msgid "Result of other placeable interaction"
 msgstr "Result of other placeable interaction"
 
+#: src/components/trades/ShopInventoryView.tsx
+msgid "Pockets"
+msgstr "Pockets"
+
 #: src/components/crafts/FilterBuilder.tsx
 msgid "No conditions — every craft matches."
 msgstr "No conditions — every craft matches."
@@ -3392,8 +3711,10 @@ msgid "Latest available <0>(check preview <1/>)</0>"
 msgstr "Latest available <0>(check preview <1/>)</0>"
 
 #: src/components/crafts/craft-columns.tsx
+#: src/components/trades/trade-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/trades/shop/[id].tsx
 msgid "Owner"
 msgstr "Owner"
 
@@ -3416,6 +3737,11 @@ msgstr "Reset to default wording"
 #: src/lib/crafts/error-vocab.ts
 msgid "That filter is too large (maximum {MAX_FILTER_JSON_LENGTH} bytes)."
 msgstr "That filter is too large (maximum {MAX_FILTER_JSON_LENGTH} bytes)."
+
+#: src/routes/tools/trades/claim/[id]/index.tsx
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "That is not a claim id."
+msgstr "That is not a claim id."
 
 #: src/lib/crafts/error-vocab.ts
 msgid "Unclaimed money can only roll over to a manually recorded currency."
@@ -3479,6 +3805,10 @@ msgstr "Numbered list"
 #: src/routes/database/cargo/[id].tsx
 msgid "Place Time"
 msgstr "Place Time"
+
+#: src/routes/tools/trades/claim/[id]/index.tsx
+msgid "No shops."
+msgstr "No shops."
 
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Delete all filters?"
@@ -3641,6 +3971,10 @@ msgstr "You are owed money in this currency but have no wallet to receive it. Li
 msgid "No results found."
 msgstr "No results found."
 
+#: src/components/trades/StockConfigDialog.tsx
+msgid "Download"
+msgstr "Download"
+
 #: src/routes/database/creature/[id].tsx
 msgid "Deaggro Health"
 msgstr "Deaggro Health"
@@ -3648,6 +3982,10 @@ msgstr "Deaggro Health"
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Press Link."
 msgstr "Press Link."
+
+#: src/components/trades/TradeBits.tsx
+msgid "Limit reached"
+msgstr "Limit reached"
 
 #: src/components/crafts/EffortChart.tsx
 msgid "Craft complete."
@@ -3800,6 +4138,10 @@ msgstr "Tier"
 msgid "Not Deconstructible"
 msgstr "Not Deconstructible"
 
+#: src/components/trades/TradeBits.tsx
+msgid "Inactive"
+msgstr "Inactive"
+
 #: src/lib/account/route-tabs.tsx
 #: src/routes/account/index.tsx
 #: src/routes/account/payouts.tsx
@@ -3872,9 +4214,21 @@ msgstr "Something went wrong"
 msgid "Shows Time Left"
 msgstr "Shows Time Left"
 
+#: src/components/trades/StockLinksCard.tsx
+msgid "Suggested"
+msgstr "Suggested"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Extraction Recipe"
 msgstr "Extraction Recipe"
+
+#: src/components/trades/StockIssues.tsx
+msgid "Order missing"
+msgstr "Order missing"
+
+#: src/components/trades/TradeEventTable.tsx
+msgid "Player gave"
+msgstr "Player gave"
 
 #: src/routes/database/combat/[id].tsx
 msgid "Weapon Durability Lost"
@@ -3893,6 +4247,11 @@ msgstr "Pick a receiving wallet: payouts and refunds can't be sent until you do.
 #: src/routes/account/notifications.tsx
 msgid "No notifications yet."
 msgstr "No notifications yet."
+
+#. placeholder {0}: row().outletName
+#: src/components/trades/StockOverrideDialog.tsx
+msgid "Selling in {0}"
+msgstr "Selling in {0}"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "A display's template can be at most {MAX_DISPLAY_TEMPLATE_LENGTH} characters."
@@ -3913,6 +4272,11 @@ msgstr "View Map"
 #: src/routes/account/my-bounties.tsx
 msgid "Rule"
 msgstr "Rule"
+
+#. placeholder {0}: props.intake
+#: src/components/trades/StockIssues.tsx
+msgid "{0} has no room for more. Make room in it."
+msgstr "{0} has no room for more. Make room in it."
 
 #: src/lib/table-defs/equipment-table.tsx
 #: src/lib/table-defs/quests-table.tsx
@@ -3950,6 +4314,7 @@ msgstr "e.g. Spreadsheet"
 #: src/routes/settings.tsx
 #: src/routes/tools/crafts/browse.tsx
 #: src/routes/tools/emblem.tsx
+#: src/routes/tools/trades/browse.tsx
 msgid "Reset"
 msgstr "Reset"
 
@@ -4058,6 +4423,10 @@ msgstr "Cargo"
 msgid "Favorite items"
 msgstr "Favorite items"
 
+#: src/components/trades/TradeEventTable.tsx
+msgid "Coins to treasury"
+msgstr "Coins to treasury"
+
 #: src/lib/crafts/filter-vocab.ts
 msgid "Member"
 msgstr "Member"
@@ -4130,6 +4499,7 @@ msgid "That page can't have comments."
 msgstr "That page can't have comments."
 
 #: src/routes/tools/crafts/browse.tsx
+#: src/routes/tools/trades/browse.tsx
 msgid "Connecting to the relay…"
 msgstr "Connecting to the relay…"
 
@@ -4144,6 +4514,11 @@ msgstr "30 days"
 #: src/components/account/SteloWalletsCard.tsx
 msgid "(Optional) As a payer, create a separate account just for crafts to limit funds and permissions."
 msgstr "(Optional) As a payer, create a separate account just for crafts to limit funds and permissions."
+
+#. placeholder {0}: full()
+#: src/components/trades/ShopCard.tsx
+msgid "{0} full"
+msgstr "{0} full"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That name is too long (maximum {MAX_DISPLAY_NAME_LENGTH} characters)."
@@ -4235,6 +4610,10 @@ msgstr "This recipe doesn't use tool power, but can still use stat increases (cr
 msgid "{0} * {perProgress} = {1} XP"
 msgstr "{0} * {perProgress} = {1} XP"
 
+#: src/components/trades/StockLinksCard.tsx
+msgid "No links yet."
+msgstr "No links yet."
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Elevation Difference"
 msgstr "Elevation Difference"
@@ -4251,6 +4630,10 @@ msgstr "Nothing"
 msgid "Comment notifications can only be shown on the site."
 msgstr "Comment notifications can only be shown on the site."
 
+#: src/components/trades/ThresholdFields.tsx
+msgid "Restock outlet to"
+msgstr "Restock outlet to"
+
 #: src/components/shared/DetailPageLayout.tsx
 #: src/routes/database/skill/[id].tsx
 msgid "No data"
@@ -4263,6 +4646,11 @@ msgstr "Login issuer not accepted: {issuer}"
 #: src/routes/account/settings.tsx
 msgid "Craft watches"
 msgstr "Craft watches"
+
+#: src/lib/sidebar-items.ts
+#: src/routes/tools/trades/browse.tsx
+msgid "Trade Finder"
+msgstr "Trade Finder"
 
 #: src/lib/table-defs/claim-research-table.tsx
 #: src/routes/database/claim-research/[id].tsx
@@ -4285,6 +4673,10 @@ msgstr "Asc"
 #: src/routes/database/ability/[id].tsx
 msgid "Bonus"
 msgstr "Bonus"
+
+#: src/components/trades/StockIssues.tsx
+msgid "Intake full"
+msgstr "Intake full"
 
 #: src/routes/database/prospecting/[id].tsx
 msgid "Deadzone Angle"
@@ -4365,6 +4757,11 @@ msgstr "Currency"
 msgid "Level Range"
 msgstr "Level Range"
 
+#. placeholder {0}: groups().stands.length
+#: src/routes/tools/trades/claim/[id]/index.tsx
+msgid "Trader stands ({0})"
+msgstr "Trader stands ({0})"
+
 #: src/routes/account/bounties.tsx
 msgid "What are bounties?"
 msgstr "What are bounties?"
@@ -4381,6 +4778,14 @@ msgstr "Output is rolled a number of times equal to your contribution. One full 
 msgid "This login can't be used here."
 msgstr "This login can't be used here."
 
+#: src/components/trades/TradeQuickFilters.tsx
+msgid "Hide full shops"
+msgstr "Hide full shops"
+
+#: src/components/trades/StockLinksCard.tsx
+msgid "Intake stall"
+msgstr "Intake stall"
+
 #: src/lib/crafts/filter-condition.tsx
 msgid " or "
 msgstr " or "
@@ -4393,9 +4798,18 @@ msgstr "Mark actioned"
 msgid "[removed]"
 msgstr "[removed]"
 
+#: src/components/trades/stock-columns.tsx
+msgid "Sells at"
+msgstr "Sells at"
+
 #: src/components/data-table/table-faceted-filter.tsx
 msgid "Matching mode"
 msgstr "Matching mode"
+
+#: src/components/trades/ShopCard.tsx
+#: src/components/trades/trade-columns.tsx
+msgid "Offers"
+msgstr "Offers"
 
 #: src/routes/account/payees.tsx
 msgid "Log in to see the payouts for your bounties."
@@ -4440,6 +4854,10 @@ msgstr "Requirements"
 msgid "Open the account, then Add Permission, App, and add the app <0>Brico.app <1>· wiz</1></0>. Payers must grant <2>Write</2> permissions to the app. Receiving payouts only needs <3>Read</3>, or use the option below to skip verification."
 msgstr "Open the account, then Add Permission, App, and add the app <0>Brico.app <1>· wiz</1></0>. Payers must grant <2>Write</2> permissions to the app. Receiving payouts only needs <3>Read</3>, or use the option below to skip verification."
 
+#: src/components/trades/StockLinksCard.tsx
+msgid "Link a stall that buys goods from players (intake) to the stall that sells them on (outlet). Stalls that buy and sell the same goods themselves need no link."
+msgstr "Link a stall that buys goods from players (intake) to the stall that sells them on (outlet). Stalls that buy and sell the same goods themselves need no link."
+
 #: src/lib/crafts/error-vocab.ts
 msgid "That loyalty rule no longer exists."
 msgstr "That loyalty rule no longer exists."
@@ -4460,6 +4878,10 @@ msgstr "Chance of consumption per hit"
 #: src/routes/settings.tsx
 msgid "Choose how Brico's Toolbox looks."
 msgstr "Choose how Brico's Toolbox looks."
+
+#: src/routes/tools/trades/shop/[id].tsx
+msgid "not placed"
+msgstr "not placed"
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "Copy the account address (starts with #) and paste it here."
@@ -4482,6 +4904,10 @@ msgstr "Active bounties"
 #: src/routes/tools/crafts/[id].tsx
 msgid "Effort"
 msgstr "Effort"
+
+#: src/components/trades/StockIssues.tsx
+msgid "Raise buy limit"
+msgstr "Raise buy limit"
 
 #: src/components/crafts/FundingAlertsCard.tsx
 msgid "set via <0>/funding notify-setup</0> in Discord."
@@ -4520,6 +4946,10 @@ msgstr "Deploy time"
 msgid "That comment belongs to a different account."
 msgstr "That comment belongs to a different account."
 
+#: src/components/trades/ThresholdFields.tsx
+msgid "Units to fill the outlet up to; empty moves everything."
+msgstr "Units to fill the outlet up to; empty moves everything."
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Enemy Drops"
 msgstr "Enemy Drops"
@@ -4536,6 +4966,13 @@ msgstr "Save and leave"
 #: src/components/comments/CommentItem.tsx
 msgid "Hide replies"
 msgstr "Hide replies"
+
+#. placeholder {0}: matched().length.toLocaleString(uiLocale())
+#. placeholder {1}: listed().length
+#. placeholder {2}: matched().length
+#: src/routes/tools/trades/browse.tsx
+msgid "{0} of {1, plural, one {# tradeable order} other {# tradeable orders}} {2, plural, one {matches} other {match}}."
+msgstr "{0} of {1, plural, one {# tradeable order} other {# tradeable orders}} {2, plural, one {matches} other {match}}."
 
 #: src/components/comments/CommentComposer.tsx
 #: src/components/model-viewer/SlotPicker.tsx
@@ -4635,9 +5072,17 @@ msgstr "How bounty rates are shown and entered."
 msgid "Reset hidden columns"
 msgstr "Reset hidden columns"
 
+#: src/components/trades/stock-columns.tsx
+msgid "Buy limit left"
+msgstr "Buy limit left"
+
 #: src/routes/tools/crafts/browse.tsx
 msgid "Open Crafts"
 msgstr "Open Crafts"
+
+#: src/components/trades/TradeBits.tsx
+msgid "The owner's trade limit for this order is used up."
+msgstr "The owner's trade limit for this order is used up."
 
 #: src/routes/settings.tsx
 msgid "Enable easter eggs"
@@ -4751,6 +5196,10 @@ msgstr "{0} effort / <0/>"
 msgid "Inappropriate display name"
 msgstr "Inappropriate display name"
 
+#: src/components/trades/stock-columns.tsx
+msgid "Buys at"
+msgstr "Buys at"
+
 #: src/components/crafts/SavedFiltersDialog.tsx
 msgid "Paste a filter, a list of filters, or a share code"
 msgstr "Paste a filter, a list of filters, or a share code"
@@ -4758,6 +5207,11 @@ msgstr "Paste a filter, a list of filters, or a share code"
 #: src/lib/recipe-stats.tsx
 msgid "{skillName} Exp"
 msgstr "{skillName} Exp"
+
+#: src/routes/tools/trades/claim/[id]/index.tsx
+#: src/routes/tools/trades/shop/[id].tsx
+msgid "Recent trades"
+msgstr "Recent trades"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness Threshold"
@@ -4884,6 +5338,10 @@ msgstr "Achievements"
 msgid "Favorites only"
 msgstr "Favorites only"
 
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "Stock settings"
+msgstr "Stock settings"
+
 #: src/components/crafts/EffortChart.tsx
 msgid "Advanced"
 msgstr "Advanced"
@@ -4967,6 +5425,10 @@ msgstr "Spam"
 msgid "permanent"
 msgstr "permanent"
 
+#: src/components/trades/TradeQuickFilters.tsx
+msgid "Offered item"
+msgstr "Offered item"
+
 #: src/components/account/SteloWalletsCard.tsx
 msgid "That account can't be linked as a wallet: it is Brico's own escrow account."
 msgstr "That account can't be linked as a wallet: it is Brico's own escrow account."
@@ -5003,6 +5465,7 @@ msgstr "Whether to show the sidebar in its collapsed (icon only) state on initia
 
 #: src/components/comments/CommentItem.tsx
 #: src/components/crafts/LocalGroupingsManager.tsx
+#: src/components/trades/StockOverrideDialog.tsx
 #: src/routes/account/bounty-rules.tsx
 #: src/routes/account/loyalty.tsx
 #: src/routes/account/profile.tsx
@@ -5018,6 +5481,10 @@ msgstr "That filter belongs to a different account."
 #: src/lib/recipe-stats.tsx
 msgid "Claim Tier"
 msgstr "Claim Tier"
+
+#: src/components/trades/TradeEventTable.tsx
+msgid "Loading trades…"
+msgstr "Loading trades…"
 
 #. placeholder {0}: task.levelRequirement.minLevel
 #. placeholder {1}: task.levelRequirement.maxLevel
@@ -5057,6 +5524,10 @@ msgstr "Names can only use letters, numbers, and single spaces, dots, dashes or 
 msgid "That link code has already been claimed."
 msgstr "That link code has already been claimed."
 
+#: src/components/trades/ShopInventoryView.tsx
+msgid "Empty."
+msgstr "Empty."
+
 #: src/routes/database/resource/[id].tsx
 msgid "Timed Growth"
 msgstr "Timed Growth"
@@ -5077,6 +5548,12 @@ msgstr "{0, plural, one {# result} other {# results}}"
 #: src/routes/database/deployable/[id].tsx
 msgid "Wind Multiplier"
 msgstr "Wind Multiplier"
+
+#. placeholder {0}: props.intake
+#. placeholder {1}: n(limit())
+#: src/components/trades/StockIssues.tsx
+msgid "Raise the buy limit in {0} to {1}."
+msgstr "Raise the buy limit in {0} to {1}."
 
 #: src/components/account/SteloWalletsCard.tsx
 msgid "No wallets linked."
@@ -5109,10 +5586,12 @@ msgstr "Search stats..."
 
 #: src/components/crafts/FundingAlertsCard.tsx
 #: src/components/Nav.tsx
+#: src/components/trades/stock-columns.tsx
 #: src/lib/account/route-tabs.tsx
 #: src/routes/account/index.tsx
 #: src/routes/account/settings.tsx
 #: src/routes/settings.tsx
+#: src/routes/tools/trades/claim/[id]/stock.tsx
 msgid "Settings"
 msgstr "Settings"
 
@@ -5155,10 +5634,16 @@ msgstr "Defense Level"
 msgid "Clear filters"
 msgstr "Clear filters"
 
+#: src/routes/tools/trades/shop/[id].tsx
+msgid "This shop has no trade orders."
+msgstr "This shop has no trade orders."
+
 #: src/lib/crafts/payout-source.ts
 msgid "Unclaimed: rolled over"
 msgstr "Unclaimed: rolled over"
 
+#: src/components/trades/ShopCard.tsx
+#: src/components/trades/stock-columns.tsx
 #: src/routes/account/my-bounties.tsx
 msgid "Status"
 msgstr "Status"
@@ -5180,6 +5665,12 @@ msgstr "Water Depth"
 #: src/components/comments/CommentItem.tsx
 msgid "Mark as outdated"
 msgstr "Mark as outdated"
+
+#. placeholder {0}: used(cargo())
+#. placeholder {1}: cargo().length
+#: src/components/trades/ShopInventoryView.tsx
+msgid "Cargo ({0}/{1})"
+msgstr "Cargo ({0}/{1})"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That Discord funding alert setting belongs to a different account."
@@ -5207,8 +5698,10 @@ msgid "Share link"
 msgstr "Share link"
 
 #: src/components/crafts/craft-columns.tsx
+#: src/components/trades/trade-columns.tsx
 #: src/lib/crafts/filter-vocab.ts
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/trades/shop/[id].tsx
 msgid "Region"
 msgstr "Region"
 
@@ -5254,6 +5747,10 @@ msgstr "Health"
 #: src/components/account/ApiKeysCard.tsx
 msgid "Public Dashboard"
 msgstr "Public Dashboard"
+
+#: src/components/trades/StockConfigDialog.tsx
+msgid "Import / export stock settings"
+msgstr "Import / export stock settings"
 
 #: src/routes/database/buff/[id].tsx
 msgid "Buff Type"
@@ -5373,6 +5870,11 @@ msgstr "Could not delete loyalty rule"
 #: src/routes/database/prospecting/[id].tsx
 msgid "Consumed on Ability Use"
 msgstr "Consumed on Ability Use"
+
+#. placeholder {0}: claimName()
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "{0} stock"
+msgstr "{0} stock"
 
 #: src/routes/database/creature/[id].tsx
 msgid "Awareness & Aggro"
@@ -5499,6 +6001,8 @@ msgstr "Payout due since {0}"
 
 #: src/components/crafts/PayoutHistoryDialog.tsx
 #: src/components/crafts/QuickFilterGrid.tsx
+#: src/components/trades/TradeEventTable.tsx
+#: src/components/trades/TradeQuickFilters.tsx
 msgid "Player"
 msgstr "Player"
 
@@ -5528,6 +6032,10 @@ msgstr "You're not logged in"
 msgid "Write a comment of up to {MAX_COMMENT_LENGTH} characters."
 msgstr "Write a comment of up to {MAX_COMMENT_LENGTH} characters."
 
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "Nothing to do right now."
+msgstr "Nothing to do right now."
+
 #: src/components/comments/CommentItem.tsx
 msgid "Clear the outdated flag?"
 msgstr "Clear the outdated flag?"
@@ -5543,6 +6051,10 @@ msgstr "That notification setting belongs to a different account."
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Placeable Interactions"
 msgstr "Placeable Interactions"
+
+#: src/components/trades/StockLinksCard.tsx
+msgid "Add link"
+msgstr "Add link"
 
 #: src/lib/recipe-stats.tsx
 msgid "Level {level} {toolName} (Power >= {power})"
@@ -5691,6 +6203,12 @@ msgstr "A standing condition — claim membership or cumulative effort — that 
 #: src/routes/database/resource/[id].tsx
 msgid "Show Time Left"
 msgstr "Show Time Left"
+
+#. placeholder {0}: config().links.length
+#. placeholder {1}: Object.keys(config().overrides).length
+#: src/components/trades/StockConfigDialog.tsx
+msgid "{0} stall links and {1} item settings. Importing replaces this claim's current settings."
+msgstr "{0} stall links and {1} item settings. Importing replaces this claim's current settings."
 
 #: src/components/crafts/FundingStatus.tsx
 msgid "Raising to"
@@ -5854,6 +6372,11 @@ msgstr "Timed Node"
 msgid "Biomes"
 msgstr "Biomes"
 
+#: src/routes/tools/trades/claim/[id]/index.tsx
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "Claim shops"
+msgstr "Claim shops"
+
 #: src/lib/crafts/error-vocab.ts
 msgid "Too many filters selected (maximum {MAX_SHARED_FILTER_IDS})."
 msgstr "Too many filters selected (maximum {MAX_SHARED_FILTER_IDS})."
@@ -5920,6 +6443,11 @@ msgstr "Compact list or icon grid."
 msgid "Blocking Knowledge"
 msgstr "Blocking Knowledge"
 
+#. placeholder {0}: suggestion.sharedGoods
+#: src/components/trades/StockLinksCard.tsx
+msgid "{0, plural, one {# shared item} other {# shared items}}"
+msgstr "{0, plural, one {# shared item} other {# shared items}}"
+
 #: src/routes/settings.tsx
 msgid "Database Order"
 msgstr "Database Order"
@@ -5975,6 +6503,10 @@ msgstr "Select a placement to visualize its lifecycle graph."
 #: src/routes/database/cargo/[id].tsx
 msgid "Movement Modifier"
 msgstr "Movement Modifier"
+
+#: src/components/trades/stock-columns.tsx
+msgid "Sellable units"
+msgstr "Sellable units"
 
 #: src/routes/database/deployable/[id].tsx
 msgid "Item Deed"
@@ -6056,6 +6588,10 @@ msgstr "finished crafting"
 msgid "Despawn"
 msgstr "Despawn"
 
+#: src/components/trades/stock-columns.tsx
+msgid "Bought 24h"
+msgstr "Bought 24h"
+
 #: src/components/data-table/live-table.tsx
 #: src/components/data-table/table-toolbar.tsx
 #: src/components/GlobalSearchInput.tsx
@@ -6069,6 +6605,10 @@ msgstr "Search..."
 #: src/lib/notifications/comment.tsx
 msgid "{0} replied to your comment on {1}"
 msgstr "{0} replied to your comment on {1}"
+
+#: src/components/trades/TradeBits.tsx
+msgid "Unknown shop"
+msgstr "Unknown shop"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Despawn Time"
@@ -6089,6 +6629,10 @@ msgstr "Automatic loyalty rules"
 #: src/components/comments/CommentComposer.tsx
 msgid "Bulleted list"
 msgstr "Bulleted list"
+
+#: src/components/trades/ThresholdFields.tsx
+msgid "Once the buy limit is used up and on-hand units (intake + outlet) drop to this."
+msgstr "Once the buy limit is used up and on-hand units (intake + outlet) drop to this."
 
 #: src/routes/database/creature/[id].tsx
 msgid "Stat Scaling"
@@ -6147,6 +6691,10 @@ msgstr "Replace display name"
 msgid "3D rendering is not available in this browser."
 msgstr "3D rendering is not available in this browser."
 
+#: src/components/trades/StockConfigDialog.tsx
+msgid "Share these with the claim's other managers. Settings are stored in this browser only."
+msgstr "Share these with the claim's other managers. Settings are stored in this browser only."
+
 #: src/routes/database/resource/[id].tsx
 msgid "Not Respawning"
 msgstr "Not Respawning"
@@ -6169,6 +6717,7 @@ msgstr "Close"
 
 #: src/components/account/SteloWalletsCard.tsx
 #: src/components/comments/CommentComposer.tsx
+#: src/components/trades/StockLinksCard.tsx
 msgid "Link"
 msgstr "Link"
 
@@ -6204,9 +6753,18 @@ msgstr "Approve"
 msgid "Share"
 msgstr "Share"
 
+#. placeholder {0}: n(quantity())
+#: src/components/trades/StockIssues.tsx
+msgid "Move {0}"
+msgstr "Move {0}"
+
 #: src/lib/recipe-stats.tsx
 msgid "Paving Type"
 msgstr "Paving Type"
+
+#: src/routes/tools/trades/claim/[id]/stock.tsx
+msgid "This claim's barter stalls have no coin buy or sell orders."
+msgstr "This claim's barter stalls have no coin buy or sell orders."
 
 #: src/lib/sidebar-items.ts
 msgid "Placeables"
@@ -6231,9 +6789,21 @@ msgstr "Buffs"
 msgid "Used in Paving"
 msgstr "Used in Paving"
 
+#: src/components/trades/stock-columns.tsx
+msgid "Stalls"
+msgstr "Stalls"
+
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"
 msgstr "Offered by"
+
+#: src/components/trades/TradeEventTable.tsx
+msgid "Trades"
+msgstr "Trades"
+
+#: src/components/trades/StockIssues.tsx
+msgid "OK"
+msgstr "OK"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That Discord channel isn't linked for notifications anymore."
@@ -6318,11 +6888,16 @@ msgstr "Collectible"
 msgid "Show comments ({0})"
 msgstr "Show comments ({0})"
 
+#: src/components/trades/ThresholdFields.tsx
+msgid "Restock outlet at"
+msgstr "Restock outlet at"
+
 #: src/routes/database/deployable/[id].tsx
 msgid "Appearances"
 msgstr "Appearances"
 
 #: src/routes/database/deployable/[id].tsx
+#: src/routes/tools/trades/shop/[id].tsx
 msgid "Inventory"
 msgstr "Inventory"
 
@@ -6348,6 +6923,10 @@ msgstr "Delete loyalty rule"
 #: src/routes/tools/crafts/[id].tsx
 msgid "Not connected."
 msgstr "Not connected."
+
+#: src/components/trades/stock-columns.tsx
+msgid "Edit settings"
+msgstr "Edit settings"
 
 #: src/lib/crafts/filter-condition.tsx
 msgid "everything"
