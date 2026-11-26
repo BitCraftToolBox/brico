@@ -497,6 +497,10 @@ msgstr "You can have at most {MAX_API_KEYS_PER_ACCOUNT} API keys. Delete one fir
 msgid "{0} <0/> / effort"
 msgstr "{0} <0/> / effort"
 
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "Loading crafts…"
+msgstr "Loading crafts…"
+
 #: src/routes/account/notifications.tsx
 msgid "Mark read"
 msgstr "Mark read"
@@ -623,6 +627,7 @@ msgstr "Copy link to this outfit"
 
 #: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/building/[id].tsx
 msgid "private"
 msgstr "private"
 
@@ -4089,6 +4094,8 @@ msgstr "Tags"
 
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/recipe-stats.tsx
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/building/[id].tsx
 msgid "Building"
 msgstr "Building"
 
@@ -4331,6 +4338,10 @@ msgstr "Max Equip Count"
 #: src/routes/database/combat/[id].tsx
 msgid "Combat Action"
 msgstr "Combat Action"
+
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "No open crafts in this building."
+msgstr "No open crafts in this building."
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows From"
@@ -5268,6 +5279,7 @@ msgid "Moderators can't be moderated this way."
 msgstr "Moderators can't be moderated this way."
 
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/building/[id].tsx
 msgid "← Back to the craft browser"
 msgstr "← Back to the craft browser"
 
@@ -5710,6 +5722,10 @@ msgstr "Switch between currency/effort and effort/currency"
 #: src/lib/crafts/error-vocab.ts
 msgid "That account doesn't exist."
 msgstr "That account doesn't exist."
+
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "That is not a building id."
+msgstr "That is not a building id."
 
 #: src/components/crafts/FilterBuilder.tsx
 msgid "Condition"
@@ -6234,6 +6250,10 @@ msgstr "Used in Paving"
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"
 msgstr "Offered by"
+
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "complete"
+msgstr "complete"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That Discord channel isn't linked for notifications anymore."

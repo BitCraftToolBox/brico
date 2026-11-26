@@ -5,6 +5,12 @@
 /* tslint:disable */
 import {type Infer as __Infer, t as __t,} from "spacetimedb";
 
+// The tagged union or sum type for the algebraic type `BarterStallInventoryChangeReason`.
+export const BarterStallInventoryChangeReason = __t.enum("BarterStallInventoryChangeReason", {
+  Sale: __t.unit(),
+});
+export type BarterStallInventoryChangeReason = __Infer<typeof BarterStallInventoryChangeReason>;
+
 export const ClaimInfo = __t.object("ClaimInfo", {
   entityId: __t.u64(),
   regionId: __t.u8(),
@@ -110,6 +116,7 @@ export const CraftMeta = __t.object("CraftMeta", {
   get status() {
     return CraftStatus;
   },
+  buildingDescId: __t.i32(),
 });
 export type CraftMeta = __Infer<typeof CraftMeta>;
 
@@ -146,6 +153,7 @@ export const CraftUpdate = __t.object("CraftUpdate", {
   public: __t.bool(),
   progress: __t.i32(),
   lastSeen: __t.timestamp(),
+  buildingDescId: __t.i32(),
 });
 export type CraftUpdate = __Infer<typeof CraftUpdate>;
 
@@ -163,6 +171,12 @@ export const ExpiringCraft = __t.object("ExpiringCraft", {
   scheduledAt: __t.scheduleAt(),
 });
 export type ExpiringCraft = __Infer<typeof ExpiringCraft>;
+
+export const ExpiringTradeEvent = __t.object("ExpiringTradeEvent", {
+  eventId: __t.u64(),
+  scheduledAt: __t.scheduleAt(),
+});
+export type ExpiringTradeEvent = __Infer<typeof ExpiringTradeEvent>;
 
 export const GrowthTimer = __t.object("GrowthTimer", {
   entityId: __t.u64(),
@@ -189,6 +203,30 @@ export const HerdLocation = __t.object("HerdLocation", {
   regionId: __t.u8(),
 });
 export type HerdLocation = __Infer<typeof HerdLocation>;
+
+// The tagged union or sum type for the algebraic type `InventoryPart`.
+export const InventoryPart = __t.enum("InventoryPart", {
+  Items: __t.unit(),
+  Cargo: __t.unit(),
+});
+export type InventoryPart = __Infer<typeof InventoryPart>;
+
+export const ItemStack = __t.object("ItemStack", {
+  itemId: __t.i32(),
+  quantity: __t.i32(),
+  get itemType() {
+    return ItemType;
+  },
+  durability: __t.option(__t.i32()),
+});
+export type ItemStack = __Infer<typeof ItemStack>;
+
+// The tagged union or sum type for the algebraic type `ItemType`.
+export const ItemType = __t.enum("ItemType", {
+  Item: __t.unit(),
+  Cargo: __t.unit(),
+});
+export type ItemType = __Infer<typeof ItemType>;
 
 export const MobileMoveUpdate = __t.object("MobileMoveUpdate", {
   entityId: __t.u64(),
@@ -219,6 +257,15 @@ export const PlayerState = __t.object("PlayerState", {
   name: __t.string(),
 });
 export type PlayerState = __Infer<typeof PlayerState>;
+
+export const Pocket = __t.object("Pocket", {
+  volume: __t.i32(),
+  get contents() {
+    return __t.option(ItemStack);
+  },
+  locked: __t.bool(),
+});
+export type Pocket = __Infer<typeof Pocket>;
 
 export const RecipeMeta = __t.object("RecipeMeta", {
   id: __t.i32(),
@@ -256,4 +303,98 @@ export const ResourceLocation = __t.object("ResourceLocation", {
   z: __t.i32(),
 });
 export type ResourceLocation = __Infer<typeof ResourceLocation>;
+
+export const ShopActiveUpdate = __t.object("ShopActiveUpdate", {
+  shopEntityId: __t.u64(),
+  active: __t.bool(),
+});
+export type ShopActiveUpdate = __Infer<typeof ShopActiveUpdate>;
+
+export const ShopClaimUpdate = __t.object("ShopClaimUpdate", {
+  shopEntityId: __t.u64(),
+  claimEntityId: __t.u64(),
+});
+export type ShopClaimUpdate = __Infer<typeof ShopClaimUpdate>;
+
+export const ShopInfo = __t.object("ShopInfo", {
+  shopEntityId: __t.u64(),
+  regionId: __t.u8(),
+  claimEntityId: __t.u64(),
+  shopName: __t.string(),
+  playerOwnerId: __t.u64(),
+  get shopType() {
+    return ShopType;
+  },
+});
+export type ShopInfo = __Infer<typeof ShopInfo>;
+
+export const ShopInventory = __t.object("ShopInventory", {
+  shopEntityId: __t.u64(),
+  regionId: __t.u8(),
+  get pockets() {
+    return __t.array(Pocket);
+  },
+  cargoIndex: __t.u32(),
+});
+export type ShopInventory = __Infer<typeof ShopInventory>;
+
+export const ShopInventoryUpdate = __t.object("ShopInventoryUpdate", {
+  shopEntityId: __t.u64(),
+  regionId: __t.u8(),
+  get part() {
+    return InventoryPart;
+  },
+  get pockets() {
+    return __t.array(Pocket);
+  },
+});
+export type ShopInventoryUpdate = __Infer<typeof ShopInventoryUpdate>;
+
+// The tagged union or sum type for the algebraic type `ShopType`.
+export const ShopType = __t.enum("ShopType", {
+  BarterStall: __t.i32(),
+  TraderStand: __t.i32(),
+  Unknown: __t.i32(),
+});
+export type ShopType = __Infer<typeof ShopType>;
+
+export const TradeEvent = __t.object("TradeEvent", {
+  id: __t.u64(),
+  regionId: __t.u8(),
+  shopEntityId: __t.u64(),
+  claimEntityId: __t.u64(),
+  actorEntityId: __t.u64(),
+  get reason() {
+    return BarterStallInventoryChangeReason;
+  },
+  tradeOrderEntityId: __t.option(__t.u64()),
+  tradeAmount: __t.option(__t.i32()),
+  get addedItems() {
+    return __t.array(ItemStack);
+  },
+  get removedItems() {
+    return __t.array(ItemStack);
+  },
+  treasuryCoinsAdded: __t.i32(),
+  treasuryCoinsRemoved: __t.i32(),
+  timestamp: __t.timestamp(),
+});
+export type TradeEvent = __Infer<typeof TradeEvent>;
+
+export const TradeOrder = __t.object("TradeOrder", {
+  id: __t.u64(),
+  shopEntityId: __t.u64(),
+  remainingStock: __t.i32(),
+  get offerItems() {
+    return __t.array(ItemStack);
+  },
+  get requiredItems() {
+    return __t.array(ItemStack);
+  },
+  claimEntityId: __t.u64(),
+  regionId: __t.u8(),
+  shopName: __t.string(),
+  active: __t.bool(),
+});
+export type TradeOrder = __Infer<typeof TradeOrder>;
 

@@ -502,6 +502,10 @@ msgstr ""
 msgid "{0} <0/> / effort"
 msgstr ""
 
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "Loading crafts…"
+msgstr ""
+
 #: src/routes/account/notifications.tsx
 msgid "Mark read"
 msgstr ""
@@ -628,6 +632,7 @@ msgstr ""
 
 #: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/building/[id].tsx
 msgid "private"
 msgstr ""
 
@@ -4094,6 +4099,8 @@ msgstr "標籤"
 
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/recipe-stats.tsx
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/building/[id].tsx
 msgid "Building"
 msgstr ""
 
@@ -4335,6 +4342,10 @@ msgstr ""
 
 #: src/routes/database/combat/[id].tsx
 msgid "Combat Action"
+msgstr ""
+
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "No open crafts in this building."
 msgstr ""
 
 #: src/routes/database/resource/[id].tsx
@@ -5273,6 +5284,7 @@ msgid "Moderators can't be moderated this way."
 msgstr ""
 
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/building/[id].tsx
 msgid "← Back to the craft browser"
 msgstr ""
 
@@ -5714,6 +5726,10 @@ msgstr ""
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That account doesn't exist."
+msgstr ""
+
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "That is not a building id."
 msgstr ""
 
 #: src/components/crafts/FilterBuilder.tsx
@@ -6238,6 +6254,10 @@ msgstr ""
 
 #: src/lib/table-utils/detail-tab-builders.tsx
 msgid "Offered by"
+msgstr ""
+
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "complete"
 msgstr ""
 
 #: src/lib/crafts/error-vocab.ts

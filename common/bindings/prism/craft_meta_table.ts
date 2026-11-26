@@ -20,4 +20,5 @@ export default __t.row({
   get status() {
     return CraftStatus;
   },
+  buildingDescId: __t.i32().name("building_desc_id"),
 });

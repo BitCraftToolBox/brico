@@ -115,6 +115,20 @@ export function craftDetailResource(craftId: bigint): ResourceSpec<PrismQuery> {
     };
 }
 
+/**
+ * The open crafts of one building entity, plus all progress rows (`craft_progress` has no building
+ * column to narrow by).
+ */
+export function craftBuildingResource(buildingEntityId: bigint): ResourceSpec<PrismQuery> {
+    return {
+        key: `crafts:building:${buildingEntityId}`,
+        tables: [
+            prismRows(tables.craftMeta, tables.craftMeta.where(row => row.buildingEntityId.eq(buildingEntityId))),
+            prismTable(tables.craftProgress),
+        ],
+    };
+}
+
 export interface CraftSnapshot {
     /** Crafts in scope. The browser's snapshot holds only `Active` ones — see `readSnapshot`. */
     crafts: CraftMeta[];
@@ -221,6 +235,12 @@ export function readCraftSnapshot(conn: PrismConnection, craftId: bigint): Craft
             break;
         }
     }
+    return {...readReference(conn), crafts};
+}
+
+/** The open crafts in one building entity, resolved against the reference tables. */
+export function readBuildingSnapshot(conn: PrismConnection, buildingEntityId: bigint): CraftSnapshot {
+    const crafts = conn.db.craftMeta.iter().filter(row => row.buildingEntityId === buildingEntityId && isActive(row)).toArray();
     return {...readReference(conn), crafts};
 }
 
@@ -464,6 +484,47 @@ export function createCraftDetailRelay(craftId: Accessor<bigint | null>): CraftD
     return {
         snapshot,
         contributions,
+        ready,
+        status: connection.status,
+        error: connection.error,
+        reconnect: connection.reconnect,
+    };
+}
+
+/**
+ * Opens the relay for one building entity: the reference tables plus that building's open crafts.
+ * `buildingId` is an accessor because the route param is one; the per-building resource follows it.
+ */
+export function createBuildingRelay(buildingId: Accessor<bigint | null>): CraftRelay {
+    const [snapshot, setSnapshot] = createSignal<CraftSnapshot>(EMPTY_SNAPSHOT);
+    const [ready, setReady] = createSignal(false);
+    const connection = useConnection(PRISM_SERVER);
+
+    const rebuild = () => {
+        const conn = connection.active();
+        const id = buildingId();
+        if (conn && id !== null) setSnapshot(readBuildingSnapshot(conn, id));
+    };
+    const scheduleRebuild = leadingAndTrailing(throttle, rebuild, REBUILD_INTERVAL_MS);
+    onCleanup(() => scheduleRebuild.clear());
+
+    onMount(() => connection.requestResource(CRAFT_REFERENCE_RESOURCE, scheduleRebuild));
+
+    createEffect(() => {
+        const id = buildingId();
+        setSnapshot(EMPTY_SNAPSHOT);
+        setReady(false);
+        if (id === null) return;
+        const request = connection.requestResource(craftBuildingResource(id), scheduleRebuild);
+        createEffect(() => {
+            const isReady = request.ready();
+            if (isReady) rebuild();
+            setReady(isReady);
+        });
+    });
+
+    return {
+        snapshot,
         ready,
         status: connection.status,
         error: connection.error,

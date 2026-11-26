@@ -49,7 +49,7 @@ function sinceText(ms: number, now: number, locale: string): string {
     return rtf.format(-Math.floor(seconds / 86400), "day");
 }
 
-function ProgressBar(props: {entry: CraftEntry}) {
+export function ProgressBar(props: {entry: CraftEntry}) {
     return (
         <div class="flex items-center gap-2">
             <div class="h-2 w-24 overflow-hidden rounded-full bg-muted">

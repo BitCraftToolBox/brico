@@ -56,6 +56,9 @@ export interface CraftEntry {
     complete: boolean;
     claimName: string | null;
     ownerName: string | null;
+    /** Building entity id as a decimal string; `"0"` when the relay has no building for the craft. */
+    buildingEntityId: string;
+    buildingDescId: number;
     /**
      * True when the craft is open to anyone. A non-public craft is private to its owner.
      */
@@ -190,6 +193,8 @@ export function craftEntriesFrom(snapshot: CraftSnapshot, bountyAssignments?: Re
             complete: subject.complete,
             claimName: claim ? claimDisplayName(claim.name) : null,
             ownerName: owner?.name ?? null,
+            buildingEntityId: craft.buildingEntityId.toString(),
+            buildingDescId: craft.buildingDescId,
             public: craft.public,
             firstSeenMs,
             lastActiveMs: progress ? Number(progress.lastSeen.toMillis()) : firstSeenMs,
