@@ -8,7 +8,7 @@ msgstr ""
 "Language: zu\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-20 12:29\n"
+"PO-Revision-Date: 2026-11-27 13:28\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -504,7 +504,7 @@ msgstr "crwdns5706:0{0}crwdne5706:0"
 
 #: src/routes/tools/crafts/building/[id].tsx
 msgid "Loading crafts…"
-msgstr ""
+msgstr "crwdns7292:0crwdne7292:0"
 
 #: src/routes/account/notifications.tsx
 msgid "Mark read"
@@ -4346,7 +4346,7 @@ msgstr "crwdns5580:0crwdne5580:0"
 
 #: src/routes/tools/crafts/building/[id].tsx
 msgid "No open crafts in this building."
-msgstr ""
+msgstr "crwdns7294:0crwdne7294:0"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows From"
@@ -5730,7 +5730,7 @@ msgstr "crwdns6614:0crwdne6614:0"
 
 #: src/routes/tools/crafts/building/[id].tsx
 msgid "That is not a building id."
-msgstr ""
+msgstr "crwdns7296:0crwdne7296:0"
 
 #: src/components/crafts/FilterBuilder.tsx
 msgid "Condition"
@@ -6258,7 +6258,7 @@ msgstr "crwdns5486:0crwdne5486:0"
 
 #: src/routes/tools/crafts/building/[id].tsx
 msgid "complete"
-msgstr ""
+msgstr "crwdns7298:0crwdne7298:0"
 
 #: src/lib/crafts/error-vocab.ts
 msgid "That Discord channel isn't linked for notifications anymore."
@@ -6395,3 +6395,4 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
+
