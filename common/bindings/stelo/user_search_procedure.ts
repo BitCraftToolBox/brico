@@ -5,7 +5,10 @@
 /* tslint:disable */
 import {t as __t,} from "spacetimedb";
 
-export default {
-  accountId: __t.u64(),
-  tokenIds: __t.array(__t.u64()),
+import {UserSearchHit,} from "./types";
+
+export const params = {
+  term: __t.string(),
+  exclude: __t.array(__t.identity()),
 };
+export const returnType = __t.result(__t.array(UserSearchHit), __t.string())

@@ -186,6 +186,11 @@ function OrDash(props: {value: string | null}) {
     );
 }
 
+/** A building desc's name, falling back to its id while the game data is loading or has no such row. */
+function BuildingName(props: {id: number}) {
+    return <>{BitCraftTables.BuildingDesc.indexedBy("id")().get(props.id)?.name ?? `Building #${props.id}`}</>;
+}
+
 /**
  * The "Rate" tab's amount input — same commit-on-blur/exact-ratio treatment as
  * `~/routes/account/bounty-rules.tsx`'s `FlatAmountField` (both wrap the shared `useAmountField`):
@@ -538,6 +543,13 @@ export default function CraftDetail() {
                                 <div class="space-y-1 text-sm">
                                     <MetaRow label={label(msg`Claim`)}><OrDash value={entry().claimName}/></MetaRow>
                                     <MetaRow label={label(msg`Owner`)}><OrDash value={entry().ownerName}/></MetaRow>
+                                    <MetaRow label={label(msg`Building`)}>
+                                        <Show when={entry().buildingEntityId !== "0"} fallback={<BuildingName id={entry().buildingDescId}/>}>
+                                            <A href={`/tools/crafts/building/${entry().buildingEntityId}`} class="hover:underline">
+                                                <BuildingName id={entry().buildingDescId}/>
+                                            </A>
+                                        </Show>
+                                    </MetaRow>
                                     <MetaRow label={label(msg`Region`)}>{entry().regionName}</MetaRow>
                                     <MetaRow label={label(msg`Skill`)}>
                                         <Show when={entry().skillName} fallback={<span class="text-muted-foreground">—</span>}>

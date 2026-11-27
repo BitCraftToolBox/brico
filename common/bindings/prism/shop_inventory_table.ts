@@ -4,11 +4,14 @@
 /* eslint-disable */
 /* tslint:disable */
 import {t as __t,} from "spacetimedb";
+import {Pocket,} from "./types";
+
 
 export default __t.row({
-  id: __t.u64().primaryKey(),
-  accountId: __t.u64().name("account_id"),
-  label: __t.string(),
-  createdBy: __t.identity().name("created_by"),
-  createdAt: __t.timestamp().name("created_at"),
+  shopEntityId: __t.u64().primaryKey().name("shop_entity_id"),
+  regionId: __t.u8().name("region_id"),
+  get pockets() {
+    return __t.array(Pocket);
+  },
+  cargoIndex: __t.u32().name("cargo_index"),
 });

@@ -8,7 +8,7 @@ msgstr ""
 "Language: zu\n"
 "Project-Id-Version: brico\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-13 11:51\n"
+"PO-Revision-Date: 2026-11-27 13:28\n"
 "Last-Translator: \n"
 "Language-Team: Zulu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -502,6 +502,10 @@ msgstr "crwdns6780:0{MAX_API_KEYS_PER_ACCOUNT}crwdne6780:0"
 msgid "{0} <0/> / effort"
 msgstr "crwdns5706:0{0}crwdne5706:0"
 
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "Loading crafts…"
+msgstr "crwdns7292:0crwdne7292:0"
+
 #: src/routes/account/notifications.tsx
 msgid "Mark read"
 msgstr "crwdns5708:0crwdne5708:0"
@@ -628,6 +632,7 @@ msgstr "crwdns6970:0crwdne6970:0"
 
 #: src/components/crafts/craft-columns.tsx
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/building/[id].tsx
 msgid "private"
 msgstr "crwdns5732:0crwdne5732:0"
 
@@ -4094,6 +4099,8 @@ msgstr "crwdns5110:0crwdne5110:0"
 
 #: src/lib/crafts/filter-vocab.ts
 #: src/lib/recipe-stats.tsx
+#: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/building/[id].tsx
 msgid "Building"
 msgstr "crwdns6336:0crwdne6336:0"
 
@@ -4336,6 +4343,10 @@ msgstr "crwdns5144:0crwdne5144:0"
 #: src/routes/database/combat/[id].tsx
 msgid "Combat Action"
 msgstr "crwdns5580:0crwdne5580:0"
+
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "No open crafts in this building."
+msgstr "crwdns7294:0crwdne7294:0"
 
 #: src/routes/database/resource/[id].tsx
 msgid "Grows From"
@@ -5273,6 +5284,7 @@ msgid "Moderators can't be moderated this way."
 msgstr "crwdns7218:0crwdne7218:0"
 
 #: src/routes/tools/crafts/[id].tsx
+#: src/routes/tools/crafts/building/[id].tsx
 msgid "← Back to the craft browser"
 msgstr "crwdns6540:0crwdne6540:0"
 
@@ -5715,6 +5727,10 @@ msgstr "crwdns6612:0crwdne6612:0"
 #: src/lib/crafts/error-vocab.ts
 msgid "That account doesn't exist."
 msgstr "crwdns6614:0crwdne6614:0"
+
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "That is not a building id."
+msgstr "crwdns7296:0crwdne7296:0"
 
 #: src/components/crafts/FilterBuilder.tsx
 msgid "Condition"
@@ -6240,6 +6256,10 @@ msgstr "crwdns5610:0crwdne5610:0"
 msgid "Offered by"
 msgstr "crwdns5486:0crwdne5486:0"
 
+#: src/routes/tools/crafts/building/[id].tsx
+msgid "complete"
+msgstr "crwdns7298:0crwdne7298:0"
+
 #: src/lib/crafts/error-vocab.ts
 msgid "That Discord channel isn't linked for notifications anymore."
 msgstr "crwdns6704:0crwdne6704:0"
@@ -6375,3 +6395,4 @@ msgstr "crwdns5532:0crwdne5532:0"
 #: src/lib/relations.ts
 msgid "Deconstruct {buildingName}"
 msgstr "crwdns5506:0{buildingName}crwdne5506:0"
+

@@ -55,7 +55,7 @@ export default function PillarShapingDetail() {
             metaImage={ogImageForAsset(pillar()?.iconAddress)}
             details={[
                 {label: msg`Experience`, value: experienceStr()},
-                {label: msg`Build Time`, value: pillar() ? readableSeconds(fixFloat(pillar()!.duration)) : undefined},
+                {label: msg`Build Time`, value: pillar() ? readableSeconds(pillar()!.duration) : undefined},
             ]}
             rawData={pillar()}
             spacetimeTable={BitCraftTables.PillarShapingDesc.spacetimeName}

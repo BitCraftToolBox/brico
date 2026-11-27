@@ -6,6 +6,5 @@
 import {t as __t,} from "spacetimedb";
 
 export default {
-  accountId: __t.u64(),
-  webhook: __t.option(__t.string()),
+  id: __t.identity(),
 };

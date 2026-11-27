@@ -13,7 +13,6 @@ export default {
     return AccountKind;
   },
   address: __t.option(__t.string()),
-  webhook: __t.option(__t.string()),
   label: __t.option(__t.string()),
   isPrimary: __t.bool(),
 };
