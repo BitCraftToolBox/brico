@@ -26,6 +26,5 @@ export default __t.row({
   },
   isPrimary: __t.bool().name("is_primary"),
   ownerUsername: __t.option(__t.string()).name("owner_username"),
-  webhook: __t.option(__t.string()),
   createdAt: __t.timestamp().name("created_at"),
 });

@@ -9,7 +9,6 @@ export const Account = __t.object("Account", {
   id: __t.u64(),
   address: __t.string(),
   label: __t.option(__t.string()),
-  webhook: __t.option(__t.string()),
   userId: __t.identity(),
   debitsPending: __t.u64(),
   debitsPosted: __t.u64(),
@@ -62,16 +61,6 @@ export const AccountSearchScope = __t.enum("AccountSearchScope", {
   Address: __t.unit(),
 });
 export type AccountSearchScope = __Infer<typeof AccountSearchScope>;
-
-export const AccountToken = __t.object("AccountToken", {
-  id: __t.u64(),
-  accountId: __t.u64(),
-  token: __t.string(),
-  label: __t.string(),
-  createdBy: __t.identity(),
-  createdAt: __t.timestamp(),
-});
-export type AccountToken = __Infer<typeof AccountToken>;
 
 export const App = __t.object("App", {
   id: __t.identity(),
@@ -184,19 +173,9 @@ export const MyAccountRow = __t.object("MyAccountRow", {
   },
   isPrimary: __t.bool(),
   ownerUsername: __t.option(__t.string()),
-  webhook: __t.option(__t.string()),
   createdAt: __t.timestamp(),
 });
 export type MyAccountRow = __Infer<typeof MyAccountRow>;
-
-export const MyAccountTokenRow = __t.object("MyAccountTokenRow", {
-  id: __t.u64(),
-  accountId: __t.u64(),
-  label: __t.string(),
-  createdBy: __t.identity(),
-  createdAt: __t.timestamp(),
-});
-export type MyAccountTokenRow = __Infer<typeof MyAccountTokenRow>;
 
 export const MyAppRow = __t.object("MyAppRow", {
   id: __t.identity(),
@@ -316,14 +295,9 @@ export const User = __t.object("User", {
 });
 export type User = __Infer<typeof User>;
 
-export const WebhookDelivery = __t.object("WebhookDelivery", {
-  id: __t.u64(),
-  scheduledAt: __t.scheduleAt(),
-  accountId: __t.u64(),
-  transferId: __t.u64(),
-  url: __t.string(),
-  payloadJson: __t.string(),
-  attempts: __t.u32(),
+export const UserSearchHit = __t.object("UserSearchHit", {
+  id: __t.identity(),
+  bitcraftUsername: __t.string(),
 });
-export type WebhookDelivery = __Infer<typeof WebhookDelivery>;
+export type UserSearchHit = __Infer<typeof UserSearchHit>;
 
